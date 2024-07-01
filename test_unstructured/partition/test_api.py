@@ -22,75 +22,84 @@ skip_outside_ci = os.getenv("CI", "").lower() in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
 
-def test_partition_via_api_from_filename(request: FixtureRequest, expected_call: tuple[Any, Any]):
+def test_partition_via_api_with_filename_correctly_calls_sdk(
+    request: FixtureRequest, expected_call_: list[Any]
+):
     partition_mock_ = method_mock(
         request, General, "partition", return_value=FakeResponse(status_code=200)
     )
 
-    elements = partition_via_api(example_doc_path("eml/fake-email.eml"))
+    elements = partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
 
-    partition_mock_.assert_called_once_with(*expected_call)
+    partition_mock_.assert_called_once_with(*expected_call_)
     assert isinstance(partition_mock_.call_args_list[0].args[0], General)
     assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
 
-def test_partition_via_api_from_file(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+def test_partition_via_api_with_file_correctly_calls_sdk(
+    request: FixtureRequest, expected_call_: list[Any]
+):
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
     )
 
     with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
         elements = partition_via_api(
             file=f, metadata_filename=example_doc_path("eml/fake-email.eml")
         )
+
+    # Update the fixture content to match the format passed to partition_via_api
+    modified_expected_call = expected_call_[:]
+    modified_expected_call[1].files.content = f
+
+    partition_mock_.assert_called_once_with(*modified_expected_call)
+    assert isinstance(partition_mock_.call_args_list[0].args[0], General)
+    assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
 
-def test_partition_via_api_from_file_warns_with_file_filename(
-    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+def test_partition_via_api_warns_with_file_and_filename_and_calls_sdk(
+    request: FixtureRequest, expected_call_: list[Any], caplog: pytest.LogCaptureFixture
 ):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=200)
     )
 
     with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
         partition_via_api(file=f, file_filename=example_doc_path("eml/fake-email.eml"))
 
+    # Update the fixture content to match the format passed to partition_via_api
+    modified_expected_call = expected_call_[:]
+    modified_expected_call[1].files.content = f
+
+    partition_mock_.assert_called_once_with(*modified_expected_call)
     assert "WARNING" in caplog.text
     assert "The file_filename kwarg will be deprecated" in caplog.text
 
 
-def test_partition_via_api_from_file_raises_with_metadata_and_file_filename(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
-    )
+def test_partition_via_api_from_file_raises_with_metadata_and_file_and_filename():
     filename = example_doc_path("eml/fake-email.eml")
 
     with open(filename, "rb") as f, pytest.raises(ValueError):
         partition_via_api(file=f, file_filename=filename, metadata_filename=filename)
 
 
-def test_partition_via_api_from_file_raises_without_filename(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
-    )
-
+def test_partition_via_api_from_file_raises_without_filename():
     with open(example_doc_path("eml/fake-email.eml"), "rb") as f, pytest.raises(ValueError):
         partition_via_api(file=f)
 
 
-def test_partition_via_api_raises_with_bad_response(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
+def test_partition_via_api_raises_with_bad_response(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, General, "partition", return_value=FakeResponse(status_code=500)
     )
 
     with pytest.raises(ValueError):
         partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
+    partition_mock_.assert_called_once()
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
@@ -100,12 +109,16 @@ def test_partition_via_api_with_no_strategy():
         filename=example_doc_path("layout-parser-paper-fast.pdf"),
         strategy="auto",
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
         skip_infer_table_types=["pdf"],
     )
     elements_hi_res = partition_via_api(
         filename=example_doc_path("layout-parser-paper-fast.pdf"),
         strategy="hi_res",
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
         skip_infer_table_types=["pdf"],
     )
 
@@ -125,6 +138,8 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
         strategy="hi_res",
         coordinates="true",
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
     )
 
     assert elements[0].metadata.coordinates is not None
@@ -137,6 +152,8 @@ def test_partition_via_api_valid_request_data_kwargs():
         filename=example_doc_path("layout-parser-paper-fast.pdf"),
         strategy="fast",
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
     )
 
     assert isinstance(elements, list)
@@ -168,45 +185,51 @@ def test_partition_via_api_image_block_extraction():
 #         partition_via_api(filename=filename, strategy="not_a_strategy")
 
 
-def test_partition_multiple_via_api_with_single_filename(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests, "post", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+def test_partition_multiple_via_api_with_single_filename(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, requests, "post", return_value=FakeResponse(status_code=200)
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml")
+    filename = example_doc_path("eml/fake-email.eml")
 
     elements = partition_multiple_via_api(filenames=[filename])
+
+    partition_mock_.assert_called_once_with(
+        "https://api.unstructured.io/general/v0/general",
+        headers={"ACCEPT": "application/json", "UNSTRUCTURED-API-KEY": ANY},
+        data={},
+        files=[("files", (example_doc_path("eml/fake-email.eml"), ANY, None))],
+    )
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
-def test_partition_multiple_via_api_from_filenames(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+def test_partition_multiple_via_api_from_filenames(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, requests, "post", return_value=FakeMultipleResponse(status_code=200)
     )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     elements = partition_multiple_via_api(filenames=filenames)
 
+    partition_mock_.assert_called_once_with(
+        "https://api.unstructured.io/general/v0/general",
+        headers={"ACCEPT": "application/json", "UNSTRUCTURED-API-KEY": ANY},
+        data={},
+        files=[
+            ("files", (example_doc_path("eml/fake-email.eml"), ANY, None)),
+            ("files", (example_doc_path("fake.docx"), ANY, None)),
+        ],
+    )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
-def test_partition_multiple_via_api_from_files(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+def test_partition_multiple_via_api_from_files(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, requests, "post", return_value=FakeMultipleResponse(status_code=200)
     )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with contextlib.ExitStack() as stack:
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
@@ -214,23 +237,28 @@ def test_partition_multiple_via_api_from_files(monkeypatch: pytest.MonkeyPatch):
             files=files,
             metadata_filenames=filenames,
         )
+
+    partition_mock_.assert_called_once_with(
+        "https://api.unstructured.io/general/v0/general",
+        headers={"ACCEPT": "application/json", "UNSTRUCTURED-API-KEY": ANY},
+        data={},
+        files=[
+            ("files", (example_doc_path("eml/fake-email.eml"), ANY, None)),
+            ("files", (example_doc_path("fake.docx"), ANY, None)),
+        ],
+    )
     assert len(elements) == 2
     assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0][0].metadata.filetype == "message/rfc822"
 
 
 def test_partition_multiple_via_api_warns_with_file_filename(
-    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    caplog: pytest.LogCaptureFixture, request: FixtureRequest
 ):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    partition_mock_ = method_mock(
+        request, requests, "post", return_value=FakeMultipleResponse(status_code=200)
     )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with contextlib.ExitStack() as stack:
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
@@ -238,21 +266,22 @@ def test_partition_multiple_via_api_warns_with_file_filename(
             files=files,
             file_filenames=filenames,
         )
+
+    partition_mock_.assert_called_once_with(
+        "https://api.unstructured.io/general/v0/general",
+        headers={"ACCEPT": "application/json", "UNSTRUCTURED-API-KEY": ANY},
+        data={},
+        files=[
+            ("files", (example_doc_path("eml/fake-email.eml"), ANY, None)),
+            ("files", (example_doc_path("fake.docx"), ANY, None)),
+        ],
+    )
     assert "WARNING" in caplog.text
     assert "The file_filenames kwarg will be deprecated" in caplog.text
 
 
-def test_partition_multiple_via_api_warns_with_file_and_metadata_filename(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+def test_partition_multiple_via_api_raises_with_file_and_metadata_filename():
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with contextlib.ExitStack() as stack:
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
@@ -264,29 +293,27 @@ def test_partition_multiple_via_api_warns_with_file_and_metadata_filename(
             )
 
 
-def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
+def test_partition_multiple_via_api_raises_with_bad_response(request: FixtureRequest):
+    partition_mock_ = method_mock(
+        request, requests, "post", return_value=FakeMultipleResponse(status_code=500)
     )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with pytest.raises(ValueError):
         partition_multiple_via_api(filenames=filenames)
-
-
-def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
+    partition_mock_.assert_called_once_with(
+        "https://api.unstructured.io/general/v0/general",
+        headers={"ACCEPT": "application/json", "UNSTRUCTURED-API-KEY": ANY},
+        data={},
+        files=[
+            ("files", (example_doc_path("eml/fake-email.eml"), ANY, None)),
+            ("files", (example_doc_path("fake.docx"), ANY, None)),
+        ],
     )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+
+
+def test_partition_multiple_via_api_raises_with_content_types_size_mismatch():
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with pytest.raises(ValueError):
         partition_multiple_via_api(
@@ -295,19 +322,8 @@ def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(
         )
 
 
-def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+def test_partition_multiple_via_api_from_files_raises_with_size_mismatch():
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with contextlib.ExitStack() as stack:
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
@@ -319,19 +335,8 @@ def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(
             )
 
 
-def test_partition_multiple_via_api_from_files_raises_without_filenames(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
+def test_partition_multiple_via_api_from_files_raises_without_filenames():
+    filenames = [example_doc_path("eml/fake-email.eml"), example_doc_path("fake.docx")]
 
     with contextlib.ExitStack() as stack:
         files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
@@ -352,14 +357,16 @@ def get_api_key():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+        example_doc_path("layout-parser-paper-fast.pdf"),
+        example_doc_path("layout-parser-paper-fast.jpg"),
     ]
 
     elements = partition_multiple_via_api(
         filenames=filenames,
         strategy="auto",
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
     )
     assert isinstance(elements, list)
 
@@ -367,14 +374,16 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+        example_doc_path("layout-parser-paper-fast.pdf"),
+        example_doc_path("layout-parser-paper-fast.jpg"),
     ]
     with pytest.raises(ValueError):
         partition_multiple_via_api(
             filenames=filenames,
             strategy="not_a_strategy",
             api_key=get_api_key(),
+            # The url has changed since the 06/24 API release while the sdk defaults to the old url
+            api_url="https://api.unstructuredapp.io/general/v0/general",
         )
 
 
@@ -470,10 +479,10 @@ class FakeMultipleResponse:
 
 
 @pytest.fixture()
-def expected_call():
+def expected_call_():
     with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
         file_bytes = f.read()
-    return (
+    return [
         ANY,
         PartitionParameters(
             files=shared.Files(
@@ -507,4 +516,4 @@ def expected_call():
             unique_element_ids=False,
             xml_keep_tags=False,
         ),
-    )
+    ]
