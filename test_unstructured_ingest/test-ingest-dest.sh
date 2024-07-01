@@ -36,6 +36,7 @@ all_tests=(
   'sqlite.sh'
   'vectara.sh'
   'weaviate.sh'
+  'databricks-volumes.sh'
 )
 
 full_python_matrix_tests=(
