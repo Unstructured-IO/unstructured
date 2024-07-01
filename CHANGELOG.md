@@ -1,10 +1,12 @@
-## 0.14.10-dev0
+## 0.14.10-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
 
 ## 0.14.9
 
