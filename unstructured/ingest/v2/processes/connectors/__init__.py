@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unstructured.ingest.v2.processes.connectors.fsspec  # noqa: F401
 from unstructured.ingest.v2.processes.connector_registry import (
     add_destination_entry,
     add_source_entry,
