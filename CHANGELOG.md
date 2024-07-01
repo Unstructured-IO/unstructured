@@ -1,4 +1,14 @@
-## 0.14.9-dev9
+## 0.14.10-dev1
+
+### Enhancements
+
+### Features
+
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
+
+### Fixes
+
+## 0.14.9
 
 ### Enhancements
 
@@ -6,8 +16,6 @@
 * **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
 
 ### Features
-
-* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
 
