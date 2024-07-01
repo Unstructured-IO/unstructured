@@ -1,6 +1,8 @@
-## 0.14.10-dev0
+## 0.14.10-dev1
 
 ### Enhancements
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to
+  greater than min version and updated tests that were failing given the update.
 
 ### Features
 
