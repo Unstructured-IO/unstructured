@@ -2,6 +2,9 @@
 
 ### Enhancements
 
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+
+
 ### Features
 
 ### Fixes
