@@ -2,7 +2,7 @@ import os
 
 from unstructured.documents.elements import Text
 from unstructured.embed.mixedbreadai import (
-    MixedBreadAIEmbeddingConfig,
+    MixedbreadAIEmbeddingConfig,
     MixedbreadAIEmbeddingEncoder,
 )
 
@@ -14,7 +14,7 @@ from unstructured.embed.mixedbreadai import (
 # at https://www.mixedbread.ai/docs/embeddings/models#whats-new-in-the-mixedbread-embed-model-family
 
 embedding_encoder = MixedbreadAIEmbeddingEncoder(
-    config=MixedBreadAIEmbeddingConfig(
+    config=MixedbreadAIEmbeddingConfig(
         api_key=os.environ.get("MXBAI_API_KEY", None),
         model_name="mixedbread-ai/mxbai-embed-large-v1",
     )

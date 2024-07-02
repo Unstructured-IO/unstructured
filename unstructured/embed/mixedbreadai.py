@@ -9,7 +9,7 @@ from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
 from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
-USER_AGENT = "mixedbread-ai@unstructured"
+USER_AGENT = "@mixedbread-ai/unstructured"
 MAX_BATCH_SIZE = 256
 
 if TYPE_CHECKING:
@@ -64,7 +64,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
     Embedding encoder for Mixedbread AI.
 
     Attributes:
-        config (MixedBreadAIEmbeddingConfig): Configuration for the embedding encoder.
+        config (MixedbreadAIEmbeddingConfig): Configuration for the embedding encoder.
     """
 
     config: MixedbreadAIEmbeddingConfig

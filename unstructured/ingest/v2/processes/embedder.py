@@ -60,11 +60,11 @@ class EmbedderConfig(EnhancedDataClassJsonMixin):
             return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
         elif self.embedding_provider == "mixedbread-ai":
             from unstructured.embed.mixedbreadai import (
-                MixedBreadAIEmbeddingConfig,
+                MixedbreadAIEmbeddingConfig,
                 MixedbreadAIEmbeddingEncoder,
             )
 
-            return MixedbreadAIEmbeddingEncoder(config=MixedBreadAIEmbeddingConfig(**kwargs))
+            return MixedbreadAIEmbeddingEncoder(config=MixedbreadAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.embedding_provider} not a recognized encoder")
 
