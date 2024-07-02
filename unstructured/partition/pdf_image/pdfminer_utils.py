@@ -85,11 +85,12 @@ def open_pdfminer_pages_generator(
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
     import pikepdf
-
+    from io import BytesIO
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
     device, interpreter = init_pdfminer()
     try:
+        fp = BytesIO(fp.read())
         pages = PDFPage.get_pages(fp)
         # Detect invalid dictionary construct for entire PDF
         for i, page in enumerate(pages):
