@@ -166,23 +166,6 @@ class SalesforceIndexer(Indexer):
                 for record in records["records"]:
                     # breakpoint()
                     ingest_docs.append(
-                        # SalesforceIngestDoc(
-                        #     connector_config=self.connector_config,
-                        #     processor_config=self.processor_config,
-                        #     read_config=self.read_config,
-                        #     record_type=record_type,
-                        #     record_id=record["Id"],
-                        # ),
-                        # record["Id"]
-#             data = sf.query_all_iter("SELECT Id, Email FROM Contact WHERE LastName = 'Jones'")
-# for row in data:
-#   process(row)
-
-            #             OrderedDict([('attributes',
-            #   OrderedDict([('type', 'EmailMessage'),
-            #                ('url',
-            #                 '/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU')])),
-            #  ('Id', '02sHu00001efErPIAU')])
                         FileData(
                             connector_type=CONNECTOR_TYPE,
                             identifier=record["Id"],
@@ -253,27 +236,10 @@ class SalesforceDownloader(Downloader):
             )
         return extension
 
-    # def get_download_path(self, file_data: FileData) -> Path:
-    #     rel_path = file_data.source_identifiers.relative_path
-    #     rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-    #     return self.download_dir / Path(rel_path)
-
-    # def _tmp_download_file(self, file_data: FileData) -> Path:
-    #     print("********* _tmp_download_file ******")
-    #     record_file =  file_data.identifier + self.get_file_extension(file_data.additional_metadata['record_type'])
-    #     # download_path = self.get_download_path(file_data=file_data)
-    #     # download_path.parent.mkdir(parents=True, exist_ok=True)
-    #     # breakpoint()
-
-    #     print(Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file)
-    #     return Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file
 
     def get_download_path(self, file_data: FileData) -> Path:
         print("********* _tmp_download_file ******")
         record_file =  file_data.identifier + self.get_file_extension(file_data.additional_metadata['record_type'])
-        # download_path = self.get_download_path(file_data=file_data)
-        # download_path.parent.mkdir(parents=True, exist_ok=True)
-        # breakpoint()
 
         print(Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file)
         return Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file
