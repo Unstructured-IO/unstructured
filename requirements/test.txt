@@ -36,7 +36,9 @@ coverage[toml]==7.5.4
     #   -r ./test.in
     #   pytest-cov
 exceptiongroup==1.2.1
-    # via pytest
+    # via
+    #   -c ./base.txt
+    #   pytest
 flake8==7.1.0
     # via
     #   -r ./test.in
@@ -96,11 +98,11 @@ pycodestyle==2.12.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 pyflakes==3.2.0
     # via

@@ -49,7 +49,7 @@ urllib3<1.27
 botocore<1.34.52
 
 # NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
-unstructured-client<=0.18.0
+unstructured-client>=0.15.1
 
 fsspec==2024.5.0
 
