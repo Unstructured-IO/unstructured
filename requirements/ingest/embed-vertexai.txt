@@ -54,7 +54,7 @@ google-auth==2.30.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.56.0
+google-cloud-aiplatform==1.57.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform

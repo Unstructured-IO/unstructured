@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "a500347d938ff5f3441fd2e2847721ce",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "8"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "0eaad18f63d8a4493e782546af8d84b4",
+    "text": "No prints of the first American film adaptation of A Christmas Carol are known to exist,[1] but The Moving Picture World magazine provided a scene-by-scene description before the film's release. [2] Scrooge goes into his office and begins working. His nephew, along with three women who wish for Scrooge to donate enter. However, Scrooge dismisses them. On the night of Christmas Eve, his long-dead partner Jacob Marley comes as a ghost, warning him of a horrible fate if he does not change his ways. Scrooge meets three spirits that show Scrooge the real meaning of Christmas, along with his grave, the result of his parsimonious ways. The next morning, he wakes and realizes the error of his ways. Scrooge was then euphoric and generous for the rest of his life.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "8"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "bed253d34e1f7a33b4ddd242a77ffb91",
+    "text": "Unknown",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "8"
+        }
+      }
+    }
+  }
+]

@@ -13,7 +13,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.5.2
+clarifai==10.5.3
     # via -r ./ingest/clarifai.in
 clarifai-grpc==10.5.4
     # via clarifai
@@ -40,7 +40,7 @@ numpy==1.26.4
     #   tritonclient
 pfzy==0.3.4
     # via inquirerpy
-pillow==10.3.0
+pillow==10.4.0
     # via clarifai
 prompt-toolkit==3.0.47
     # via inquirerpy
@@ -51,7 +51,7 @@ protobuf==4.23.4
     #   googleapis-common-protos
 pygments==2.18.0
     # via rich
-python-rapidjson==1.17
+python-rapidjson==1.18
     # via tritonclient
 pyyaml==6.0.1
     # via clarifai
