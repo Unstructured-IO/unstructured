@@ -45,6 +45,7 @@
 
 * **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
 * **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
+* **Compatibility Issue with Chinese Text in Document Parsing**
 
 ### Features
 
