@@ -49,6 +49,7 @@ class MissingCategoryError(Exception):
 CONNECTOR_TYPE = "salesforce"
 
 if TYPE_CHECKING:
+    # from simple_salesforce import Salesforce
     pass
 
 SALESFORCE_API_VERSION = "57.0"
@@ -120,6 +121,7 @@ class SalesforceConnectionConfig(ConnectionConfig):
 class SalesforceIndexerConfig(IndexerConfig):
     categories: t.List[str]
 
+
 @dataclass
 class SalesforceIndexer(Indexer):
     connection_config: SalesforceConnectionConfig
@@ -135,7 +137,7 @@ class SalesforceIndexer(Indexer):
 
         client = self.connection_config.get_client()
 
-        ingest_docs = []
+        files_list = []
         for record_type in self.index_config.categories:
             if record_type not in ACCEPTED_CATEGORIES:
                 raise ValueError(f"{record_type} not currently an accepted Salesforce category")
@@ -146,7 +148,7 @@ class SalesforceIndexer(Indexer):
                     f"select Id, SystemModstamp, CreatedDate, LastModifiedDate from {record_type}",
                 )
                 for record in records:
-                    ingest_docs.append(
+                    files_list.append(
                         FileData(
                             connector_type=CONNECTOR_TYPE,
                             identifier=record["Id"],
@@ -167,7 +169,7 @@ class SalesforceIndexer(Indexer):
             except SalesforceMalformedRequest as e:
                 raise SalesforceMalformedRequest(f"Problem with Salesforce query: {e}")
 
-        return ingest_docs
+        return files_list
 
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         for f in self.list_files():
@@ -256,7 +258,6 @@ class SalesforceDownloader(Downloader):
 
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         record = self.get_record(file_data)
-        file_data.identifier
 
         try:
             if file_data.additional_metadata["record_type"] == "EmailMessage":
