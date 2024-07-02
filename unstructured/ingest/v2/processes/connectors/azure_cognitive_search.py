@@ -63,7 +63,7 @@ class AzureCognitiveSearchUploadStagerConfig(UploadStagerConfig):
 @dataclass
 class AzureCognitiveSearchUploaderConfig(UploaderConfig):
     batch_size: int = 100
-    num_of_processes: int = 1
+    num_processes: int = 1
 
 
 @dataclass
@@ -194,18 +194,18 @@ class AzureCognitiveSearchUploader(Uploader):
             f" endpoint at {str(self.connection_config.endpoint)}"
             f" index at {str(self.connection_config.index)}"
             f" with batch size {str(self.upload_config.batch_size)} and"
-            f" {str(self.upload_config.num_of_processes)} (number of) processes"
+            f" {str(self.upload_config.num_processes)} (number of) processes"
         )
 
         batch_size = self.upload_config.batch_size
 
-        if self.upload_config.num_of_processes == 1:
+        if self.upload_config.num_processes == 1:
             for chunk in chunk_generator(elements_dict, batch_size):
                 self.write_dict(elements_dict=chunk)  # noqa: E203
 
         else:
             with mp.Pool(
-                processes=self.upload_config.num_of_processes,
+                processes=self.upload_config.num_processes,
             ) as pool:
                 pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
 
