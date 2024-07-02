@@ -31,8 +31,6 @@ from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
@@ -386,24 +384,18 @@ class ElasticsearchUploader(Uploader):
                     )
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=ElasticsearchConnectionConfig,
-        indexer=ElasticsearchIndexer,
-        indexer_config=ElasticsearchIndexerConfig,
-        downloader=ElasticsearchDownloader,
-        downloader_config=ElasticsearchDownloaderConfig,
-    ),
+elasticsearch_source_entry = SourceRegistryEntry(
+    connection_config=ElasticsearchConnectionConfig,
+    indexer=ElasticsearchIndexer,
+    indexer_config=ElasticsearchIndexerConfig,
+    downloader=ElasticsearchDownloader,
+    downloader_config=ElasticsearchDownloaderConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=ElasticsearchConnectionConfig,
-        upload_stager_config=ElasticsearchUploadStagerConfig,
-        upload_stager=ElasticsearchUploadStager,
-        uploader_config=ElasticsearchUploaderConfig,
-        uploader=ElasticsearchUploader,
-    ),
+elasticsearch_destination_entry = DestinationRegistryEntry(
+    connection_config=ElasticsearchConnectionConfig,
+    upload_stager_config=ElasticsearchUploadStagerConfig,
+    upload_stager=ElasticsearchUploadStager,
+    uploader_config=ElasticsearchUploaderConfig,
+    uploader=ElasticsearchUploader,
 )
