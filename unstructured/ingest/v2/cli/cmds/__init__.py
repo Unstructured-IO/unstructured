@@ -15,6 +15,7 @@ from .google_drive import google_drive_src_cmd
 from .local import local_dest_cmd, local_src_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
+from .pinecone import pinecone_dest_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -50,6 +51,7 @@ dest_cmds = [
     gcs_dest_cmd,
     local_dest_cmd,
     opensearch_dest_cmd,
+    pinecone_dest_cmd,
     s3_dest_cmd,
     sftp_dest_cmd,
     weaviate_dest_cmd,
