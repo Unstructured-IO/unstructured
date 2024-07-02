@@ -119,12 +119,6 @@ class SalesforceConnectionConfig(ConnectionConfig):
 @dataclass
 class SalesforceIndexerConfig(IndexerConfig):
     categories: t.List[str]
-    record_type: str = None
-    record_id: str = None
-    registry_name: str = "salesforce"
-    _record: OrderedDict = field(default_factory=lambda: OrderedDict())
-    recursive: bool = False
-
 
 @dataclass
 class SalesforceIndexer(Indexer):
@@ -274,6 +268,7 @@ class SalesforceDownloader(Downloader):
 
             with open(download_path, "w") as page_file:
                 page_file.write(document)
+
             return DownloadResponse(
                 file_data=file_data,
                 path=Path(download_path),

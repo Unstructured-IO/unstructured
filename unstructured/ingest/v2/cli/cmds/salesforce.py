@@ -50,13 +50,6 @@ class SalesforceCliIndexerConfig(CliConfig):
                 help="Comma-delimited salesforce categories to download. "
                 "Currently only {}.".format(", ".join(possible_categories)),
             ),
-            click.Option(
-                ["--recursive"],
-                is_flag=True,
-                default=False,
-                help="Recursively download files in their respective folders "
-                "otherwise stop at the files in provided folder level.",
-            ),
         ]
         return options
 
