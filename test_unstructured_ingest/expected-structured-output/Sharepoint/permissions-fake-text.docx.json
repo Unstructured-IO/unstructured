@@ -1,0 +1,134 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "d7eba20cdf64938f67975aee65d98548",
+    "text": "Ingest test test document. Particularly aimed towards testing permissions.",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  },
+  {
+    "type": "Address",
+    "element_id": "2d4d2de7860b327b280a0c3ced53493e",
+    "text": "Doylestown, PA 18901",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "904726a3e2fe60a24f18e703913d93e1",
+    "text": "Important points:",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "96f4223239fb687e7e0e9025171e561b",
+    "text": "- Hamburgers are delicious",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "6cfb5e11e57fb52bbb64effa3d003e25",
+    "text": "- Dogs are the best",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "70af88aec0bb835f65361710f9bd4f92",
+    "text": "- I love fuzzy blankets",
+    "metadata": {
+      "filename": "permissions-fake-text.docx",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "data_source": {
+        "url": "https://unstructuredio.sharepoint.com/Shared%20Documents/permissions-fake-text.docx",
+        "version": "2.0",
+        "record_locator": {
+          "server_path": "/Shared Documents/permissions-fake-text.docx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "date_created": "1698404784.0",
+        "date_modified": "1698404854.0"
+      }
+    }
+  }
+]
