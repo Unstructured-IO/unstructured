@@ -67,4 +67,5 @@ langsmith==0.1.62
 # instead of 7.2.0. Need to investigate
 importlib-metadata==7.1.0
 
+# NOTE(rui): for compatbility with Mixedbread AI embeddings
 mixedbread-ai>=2.2.6
