@@ -19,13 +19,10 @@ from unstructured.metrics.table.table_eval import calculate_table_detection_metr
         ([1, -1], 2, (0.5, 0.5, 0.5)),  # typical case with false positive and false negative
         ([-1, -1, -1], 2, (0, 0, 0)),  # nothing was matched
         ([-1, -1, -1], 0, (0, 0, 0)),  # there was no table in ground truth
+        ([], 0, (0, 0, 0)),  # just zeros to account for errors
     ],
 )
 def test_calculate_table_metrics(matched_indices, ground_truth_tables_number, expected_metrics):
-    assert (
-        ground_truth_tables_number >= max(matched_indices) + 1
-    ), "Matched table indexes can be higher than amount of tables"
-
     expected_recall, expected_precision, expected_f1 = expected_metrics
     pred_recall, pred_precision, pred_f1 = calculate_table_detection_metrics(
         matched_indices=matched_indices, ground_truth_tables_number=ground_truth_tables_number
