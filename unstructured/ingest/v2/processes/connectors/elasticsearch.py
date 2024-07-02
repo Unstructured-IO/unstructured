@@ -130,9 +130,14 @@ class ElasticsearchIndexer(Indexer):
         self.client = self.connection_config.get_client()
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def load_scan(self):
+        from elasticsearch.helpers import scan
+
+        return scan
+
     def _get_doc_ids(self) -> set[str]:
         """Fetches all document ids in an index"""
-        from elasticsearch.helpers import scan
+        scan = self.load_scan()
 
         scan_query: dict = {"stored_fields": [], "query": {"match_all": {}}}
         hits = scan(
@@ -248,9 +253,14 @@ class ElasticsearchDownloader(Downloader):
         raise NotImplementedError()
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
+    def load_async(self):
+        from elasticsearch import AsyncElasticsearch
         from elasticsearch.helpers import async_scan
+
+        return AsyncElasticsearch, async_scan
+
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        AsyncClient, async_scan = self.load_async()
 
         index_name: str = file_data.additional_metadata["index_name"]
         ids: list[str] = file_data.additional_metadata["ids"]
@@ -262,7 +272,7 @@ class ElasticsearchDownloader(Downloader):
         }
 
         download_responses = []
-        async with AsyncElasticsearchClient(**self.connection_config.get_client_kwargs()) as client:
+        async with AsyncClient(**self.connection_config.get_client_kwargs()) as client:
             async for result in async_scan(
                 client,
                 query=scan_query,

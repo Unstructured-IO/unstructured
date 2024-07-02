@@ -1,0 +1,107 @@
+[
+  {
+    "type": "Title",
+    "element_id": "9cd9874c944c6a15749fe5767312a79a",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "0"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "45ff90a252493aeb54e26b45050887eb",
+    "text": "Alice follows a large white rabbit down a \"Rabbit-hole\". She finds a tiny door. When she finds a bottle labeled \"Drink me\", she does, and shrinks, but not enough to pass through the door. She then eats something labeled \"Eat me\" and grows larger. She finds a fan when enables her to shrink enough to get into the \"Garden\" and try to get a \"Dog\" to play with her. She enters the \"White Rabbit's tiny House,\" but suddenly resumes her normal size. In order to get out, she has to use the \"magic fan.\"",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "0"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9c0d9fed3eb8eea0634a5a4ee471f45a",
+    "text": "She enters a kitchen, in which there is a cook and a woman holding a baby. She persuades the woman to give her the child and takes the infant outside after the cook starts throwing things around. The baby then turns into a pig and squirms out of her grip. \"The Duchess's Cheshire Cat\" appears and disappears a couple of times to Alice and directs her to the Mad Hatter's \"Mad Tea-Party.\" After a while, she leaves.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "0"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f952e51ad6b8be3007a729980b04bcaa",
+    "text": "The Queen invites Alice to join the \"ROYAL PROCESSION\": a parade of marching playing cards and others headed by the White Rabbit. When Alice \"unintentionally offends the Queen\", the latter summons the \"Executioner\". Alice \"boxes the ears\", then flees when all the playing cards come for her. Then she wakes up and realizes it was all a dream.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "0"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "9e8f5aedbd95405adce2563747bce093",
+    "text": "Cecil Hepworth",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "0"
+        }
+      }
+    }
+  }
+]
