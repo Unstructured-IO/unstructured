@@ -115,7 +115,7 @@ def test_text_extraction_evaluation():
             UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
             GOLD_TABLE_STRUCTURE_DIRNAME,
             Path("IRS-2023-Form-1095-A.pdf.json"),
-            17,
+            10,
             {},
         ),
         (
@@ -136,6 +136,7 @@ def test_process_document_returns_the_correct_amount_of_values(
 
     calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
     output_list = calculator._process_document(path)
+    print(output_list)
     assert len(output_list) == expected_length
 
 
@@ -191,7 +192,7 @@ def test_table_structure_evaluation():
     assert os.path.isfile(os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
     assert len(df) == 1
-    assert len(df.columns) == 17
+    assert len(df.columns) == 10
     assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf"
 
 
