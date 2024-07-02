@@ -41,19 +41,22 @@ class DescribeOCRAgent:
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT)
         assert ocr_agent is ocr_agent_
 
-    def but_it_raises_when_no_such_ocr_agent_class_is_found(self, _get_ocr_agent_cls_qname_: Mock):
+    def but_it_raises_when_the_requested_agent_is_not_whitelisted(
+        self, _get_ocr_agent_cls_qname_: Mock
+    ):
         _get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(ValueError, match="must be set to a whitelisted module"):
             OCRAgent.get_agent()
-        assert "must be set to a whitelisted module" in str(exc_info.value)
 
+    @pytest.mark.parametrize("exception_cls", [ImportError, AttributeError])
+    def and_it_raises_when_the_requested_agent_cannot_be_loaded(
+        self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception]
+    ):
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
-        for exception_cls in [ImportError, AttributeError]:
-            with patch("importlib.import_module", side_effect=exception_cls), pytest.raises(
-                RuntimeError
-            ) as exc_info:
-                OCRAgent.get_agent()
-            assert "Could not get the OCRAgent instance" in str(exc_info.value)
+        with patch("importlib.import_module", side_effect=exception_cls), pytest.raises(
+            RuntimeError, match="Could not get the OCRAgent instance"
+        ):
+            OCRAgent.get_agent()
 
     @pytest.mark.parametrize(
         ("OCR_AGENT", "expected_value"),
