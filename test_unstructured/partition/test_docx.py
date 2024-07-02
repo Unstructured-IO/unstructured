@@ -1403,3 +1403,91 @@ class Describe_DocxPartitioner:
 
         element = next(footer_iter)
         assert element.text == "para1\ncell1 a b c d e f\npara2"
+
+
+def create_test_docx(file_path):
+    from docx import Document as DocxDocument
+
+    doc = DocxDocument()
+
+    # 添加标题和文本内容
+    doc.add_heading("春节放假通知", level=1)
+    doc.add_paragraph("\n")
+    doc.add_paragraph("春节放假从大年 30 开始\n共计放假一个月\n比法定假期长三周\n")
+
+    doc.add_heading("标题 2", level=2)
+    doc.add_heading("标题 3", level=3)
+    doc.add_heading("又一个标题 2", level=2)
+
+    doc.add_paragraph("正文普通\n")
+
+    # 添加列表
+    doc.add_paragraph("一组\n", style="ListBullet")
+    doc.add_paragraph("二组\n", style="ListBullet")
+    doc.add_paragraph("三组\n", style="ListBullet")
+
+    doc.add_paragraph("继续正文\n")
+
+    # 保存文档
+    doc.save(file_path)
+
+
+def test_partition_zh_docs() -> None:
+    """
+    Fix the issue of erroneously recognizing NarrativeText as Title when splitting
+    Chinese DOCX documents
+    """
+    with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
+        create_test_docx(tmp.name)
+        elements = partition_docx(tmp.name)
+
+        # 打印或检查分区结果
+        for element in elements:
+            print(element)
+
+        # 进行断言检查
+        assert any("春节放假通知" in element.text for element in elements)
+        assert any("春节放假从大年 30 开始" in element.text for element in elements)
+        assert any("标题 2" in element.text for element in elements)
+        assert any("标题 3" in element.text for element in elements)
+        assert any("又一个标题 2" in element.text for element in elements)
+        assert any("正文普通" in element.text for element in elements)
+        assert any("一组" in element.text for element in elements)
+        assert any("二组" in element.text for element in elements)
+        assert any("三组" in element.text for element in elements)
+        assert any("继续正文" in element.text for element in elements)
+        assert list(filter(lambda x: "正文普通" in x.text, elements))[0].category == "NarrativeText"
+        assert list(filter(lambda x: "一组" in x.text, elements))[0].category == "ListItem"
+        assert list(filter(lambda x: "继续正文" in x.text, elements))[0].category == "NarrativeText"
+
+
+def test_partition_zh_docs_as_eng() -> None:
+    """
+    Fix the issue of erroneously recognizing NarrativeText as Title when splitting
+    Chinese DOCX documents
+
+    When specifying the language as English, the partitioning result should be
+    deceived, it will be recognized incorrectly.
+    """
+    with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
+        create_test_docx(tmp.name)
+        elements = partition_docx(tmp.name, languages=["eng"])
+
+        # 打印或检查分区结果
+        for element in elements:
+            print(element)
+
+        # 进行断言检查
+        assert any("春节放假通知" in element.text for element in elements)
+        assert any("春节放假从大年 30 开始" in element.text for element in elements)
+        assert any("标题 2" in element.text for element in elements)
+        assert any("标题 3" in element.text for element in elements)
+        assert any("又一个标题 2" in element.text for element in elements)
+        assert any("正文普通" in element.text for element in elements)
+        assert any("一组" in element.text for element in elements)
+        assert any("二组" in element.text for element in elements)
+        assert any("三组" in element.text for element in elements)
+        assert any("继续正文" in element.text for element in elements)
+        assert list(filter(lambda x: "正文普通" in x.text, elements))[0].category == "Title"
+        assert list(filter(lambda x: "一组" in x.text, elements))[0].category == "ListItem"
+        assert list(filter(lambda x: "继续正文" in x.text, elements))[0].category == "Title"
