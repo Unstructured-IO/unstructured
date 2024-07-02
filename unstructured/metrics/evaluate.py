@@ -47,6 +47,13 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 AGG_HEADERS = ["metric", "average", "sample_sd", "population_sd", "count"]
+AGG_HEADERS_MAPPING = {
+    "index": "metric",
+    "_mean": "average",
+    "_stdev": "sample_sd",
+    "_pstdev": "population_sd",
+    "_count": "count",
+}
 OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
@@ -272,10 +279,10 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
                 if metric == "total_tables":
                     agg_metric["_mean"] = metric_df[metric].mean()
                 else:
-                    agg_metric["_mean"] = np.average(
-                        metric_df[metric], weights=metric_df["total_tables"]
+                    agg_metric["_mean"] = np.round(
+                        np.average(metric_df[metric], weights=metric_df["total_tables"]),
+                        3,
                     )
-                print(agg_metric)
                 if agg_metric.empty:
                     element_metrics_results[metric] = pd.Series(
                         data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
@@ -283,7 +290,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
                 else:
                     element_metrics_results[metric] = agg_metric
             agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
-        agg_df.columns = AGG_HEADERS
+        agg_df = agg_df.rename(columns=AGG_HEADERS_MAPPING)
         return df, agg_df
 
 
