@@ -4,6 +4,7 @@ from pathlib import Path
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
+from unstructured.ingest.v2.processes.chunker import ChunkerConfig
 from unstructured.ingest.v2.processes.connectors.azure_cognitive_search import (
     AzureCognitiveSearchAccessConfig,
     AzureCognitiveSearchConnectionConfig,
@@ -35,7 +36,9 @@ if __name__ == "__main__":
         downloader_config=LocalDownloaderConfig(download_dir=download_path),
         source_connection_config=LocalConnectionConfig(),
         partitioner_config=PartitionerConfig(strategy="fast"),
-        # chunker_config=ChunkerConfig(chunking_strategy="by_title"),
+        chunker_config=ChunkerConfig(
+            chunking_strategy="by_title", chunk_include_orig_elements=False
+        ),
         embedder_config=EmbedderConfig(
             embedding_provider="langchain-openai", embedding_api_key=os.getenv("OPENAI_API_KEY")
         ),

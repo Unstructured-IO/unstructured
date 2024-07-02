@@ -50,6 +50,10 @@
           "type": "Edm.DateTimeOffset"
         },
         {
+          "name": "is_continuation",
+          "type": "Edm.Boolean"
+        },
+        {
           "name": "file_directory",
           "type": "Edm.String"
         },
