@@ -41,7 +41,7 @@ class DescribeOCRAgent:
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT)
         assert ocr_agent is ocr_agent_
 
-    def but_it_raises_whan_no_such_ocr_agent_class_is_found(self, _get_ocr_agent_cls_qname_: Mock):
+    def but_it_raises_when_no_such_ocr_agent_class_is_found(self, _get_ocr_agent_cls_qname_: Mock):
         _get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
         with pytest.raises(ValueError) as exc_info:
             OCRAgent.get_agent()
