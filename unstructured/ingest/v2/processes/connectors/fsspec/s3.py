@@ -10,8 +10,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -143,22 +141,16 @@ class S3Uploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=S3Indexer,
-        indexer_config=S3IndexerConfig,
-        downloader=S3Downloader,
-        downloader_config=S3DownloaderConfig,
-        connection_config=S3ConnectionConfig,
-    ),
+s3_source_entry = SourceRegistryEntry(
+    indexer=S3Indexer,
+    indexer_config=S3IndexerConfig,
+    downloader=S3Downloader,
+    downloader_config=S3DownloaderConfig,
+    connection_config=S3ConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=S3Uploader,
-        uploader_config=S3UploaderConfig,
-        connection_config=S3ConnectionConfig,
-    ),
+s3_destination_entry = DestinationRegistryEntry(
+    uploader=S3Uploader,
+    uploader_config=S3UploaderConfig,
+    connection_config=S3ConnectionConfig,
 )
