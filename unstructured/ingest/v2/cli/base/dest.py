@@ -6,7 +6,7 @@ import click
 
 from unstructured.ingest.v2.cli.base.cmd import BaseCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
-from unstructured.ingest.v2.cli.utils import conform_click_options
+from unstructured.ingest.v2.cli.utils import Dict, conform_click_options
 from unstructured.ingest.v2.logger import logger
 
 
@@ -53,4 +53,24 @@ class DestCmd(BaseCmd):
             if x
         ]
         self.add_options(cmd, extras=extras)
+        cmd.params.append(
+            click.Option(
+                ["--custom-stager"],
+                required=False,
+                type=str,
+                default=None,
+                help="Pass a pointer to a custom upload stager to use, "
+                "must be in format '<module>:<attribute>'",
+            )
+        )
+        cmd.params.append(
+            click.Option(
+                ["--custom-stager-config-kwargs"],
+                required=False,
+                type=Dict(),
+                default=None,
+                help="Any kwargs to instantiate the configuration "
+                "associated with the customer stager",
+            )
+        )
         return cmd
