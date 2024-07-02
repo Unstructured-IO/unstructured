@@ -15,6 +15,7 @@ MAX_BATCH_SIZE = 256
 if TYPE_CHECKING:
     from mixedbread_ai.client import MixedbreadAI
     from mixedbread_ai.core import RequestOptions
+    from mixedbread_ai.types import EncodingFormat, TruncationStrategy
 
 
 @dataclass
@@ -36,8 +37,6 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
         prompt (Optional[str]): Optional prompt for embedding generation.
     """
 
-    from mixedbread_ai import EncodingFormat, TruncationStrategy
-
     api_key: str = field(
         default_factory=lambda: os.environ.get("MXBAI_API_KEY", None),
     )
@@ -50,10 +49,8 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
         default="mixedbread-ai/mxbai-embed-large-v1",
     )
     normalized: bool = field(default=True)
-    encoding_format: Optional["EncodingFormat"] = field(
-        default=EncodingFormat.FLOAT,
-    )
-    truncation_strategy: Optional["TruncationStrategy"] = field(default=TruncationStrategy.START)
+    encoding_format: Optional["EncodingFormat"] = field(default="float")
+    truncation_strategy: Optional["TruncationStrategy"] = field(default="start")
     dimensions: Optional[int] = field(default=None)
     prompt: Optional[str] = field(default=None)
 
