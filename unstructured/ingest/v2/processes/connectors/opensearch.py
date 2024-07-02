@@ -13,8 +13,6 @@ from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.elasticsearch import (
     ElasticsearchDownloader,
@@ -139,23 +137,19 @@ class OpenSearchUploader(ElasticsearchUploader):
         return parallel_bulk
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=OpenSearchConnectionConfig,
-        indexer=OpenSearchIndexer,
-        indexer_config=ElasticsearchIndexerConfig,
-        downloader=OpenSearchDownloader,
-        downloader_config=ElasticsearchDownloaderConfig,
-    ),
+opensearch_source_entry = SourceRegistryEntry(
+    connection_config=OpenSearchConnectionConfig,
+    indexer=OpenSearchIndexer,
+    indexer_config=ElasticsearchIndexerConfig,
+    downloader=OpenSearchDownloader,
+    downloader_config=ElasticsearchDownloaderConfig,
 )
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=OpenSearchConnectionConfig,
-        upload_stager_config=ElasticsearchUploadStagerConfig,
-        upload_stager=ElasticsearchUploadStager,
-        uploader_config=ElasticsearchUploaderConfig,
-        uploader=OpenSearchUploader,
-    ),
+
+
+opensearch_destination_entry = DestinationRegistryEntry(
+    connection_config=OpenSearchConnectionConfig,
+    upload_stager_config=ElasticsearchUploadStagerConfig,
+    upload_stager=ElasticsearchUploadStager,
+    uploader_config=ElasticsearchUploaderConfig,
+    uploader=OpenSearchUploader,
 )
