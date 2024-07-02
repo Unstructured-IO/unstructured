@@ -136,7 +136,6 @@ def test_process_document_returns_the_correct_amount_of_values(
 
     calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
     output_list = calculator._process_document(path)
-    print(output_list)
     assert len(output_list) == expected_length
 
 
