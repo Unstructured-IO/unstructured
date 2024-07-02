@@ -213,9 +213,13 @@ class SalesforceIndexer(Indexer):
             try:
                 # Get ids from Salesforce
                 records = client.query_all(
-                    f"select Id from {record_type}",
+                    # "select {Id} from EmailMessage",
+                    f"select Id, SystemModstamp, CreatedDate, LastModifiedDate from {record_type}",
+
+                    # also try query_all_iter
                 )
                 for record in records["records"]:
+                    # breakpoint()
                     ingest_docs.append(
                         # SalesforceIngestDoc(
                         #     connector_config=self.connector_config,
@@ -224,13 +228,66 @@ class SalesforceIndexer(Indexer):
                         #     record_type=record_type,
                         #     record_id=record["Id"],
                         # ),
-                        record["Id"]
+                        # record["Id"]
+#             data = sf.query_all_iter("SELECT Id, Email FROM Contact WHERE LastName = 'Jones'")
+# for row in data:
+#   process(row)
+
+            #             OrderedDict([('attributes',
+            #   OrderedDict([('type', 'EmailMessage'),
+            #                ('url',
+            #                 '/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU')])),
+            #  ('Id', '02sHu00001efErPIAU')])
+                        FileData(
+                            connector_type=CONNECTOR_TYPE,
+                            identifier=record["Id"],
+                            source_identifiers=SourceIdentifiers(
+                                filename=record["Id"],
+                                fullpath=record["attributes"]["url"],
+                                rel_path=record["attributes"]["url"],
+                                ),
+                            metadata=DataSourceMetadata(
+                                url=record["attributes"]["url"],
+                                version=record["SystemModstamp"],
+                                date_created=record["CreatedDate"],
+                                date_modified=record["LastModifiedDate"],
+                                record_locator={"id": record["Id"]},
+                            ),
+                            additional_metadata={"type":record["attributes"]["type"]},
+
+
+                        )
                     )
             except SalesforceMalformedRequest as e:
                 raise SalesforceMalformedRequest(f"Problem with Salesforce query: {e}")
 
         return ingest_docs
 
+    def get_files(
+        self,
+        files_client,
+        object_id: str,
+        recursive: bool = False,
+        extensions: Optional[list[str]] = None,
+    ) -> list[FileData]:
+        root_info = self.get_root_info(files_client=files_client, object_id=object_id)
+        if not self.is_dir(root_info):
+            data = [self.map_file_data(root_info)]
+        else:
+
+            file_contents = self.get_paginated_results(
+                files_client=files_client,
+                object_id=object_id,
+                extensions=extensions,
+                recursive=recursive,
+                previous_path=root_info["name"],
+            )
+            data = [self.map_file_data(f=f) for f in file_contents]
+        for d in data:
+            d.metadata.record_locator["drive_id"]: object_id
+        return data
+
+        
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         # breakpoint()
         for f in self.get_ingest_docs():
@@ -239,6 +296,8 @@ class SalesforceIndexer(Indexer):
             # recursive=self.index_config.recursive,
             # extensions=self.index_config.extensions,
         # ):
+
+            
             print(f"********* run ****** {f}")
             yield f
 
