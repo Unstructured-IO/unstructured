@@ -43,7 +43,7 @@ class AzureCognitiveSearchConnectionConfig(ConnectionConfig):
     index: str
     access_config: AzureCognitiveSearchAccessConfig = enhanced_field(sensitive=True)
 
-    @requires_dependencies(["azure.search"], extras="azure-cognitive-search")
+    @requires_dependencies(["azure.search", "azure.core"], extras="azure-cognitive-search")
     def generate_client(self) -> "SearchClient":
         from azure.core.credentials import AzureKeyCredential
         from azure.search.documents import SearchClient
