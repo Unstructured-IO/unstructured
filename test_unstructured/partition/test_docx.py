@@ -770,6 +770,19 @@ def opts_args() -> dict[str, Any]:
 class DescribeDocxPartitionerOptions:
     """Unit-test suite for `unstructured.partition.docx.DocxPartitionerOptions` objects."""
 
+    # -- .load() ---------------------------------
+
+    def it_provides_a_validating_constructor(self, opts_args: dict[str, Any]):
+        opts_args["file_path"] = example_doc_path("simple.docx")
+
+        opts = DocxPartitionerOptions.load(**opts_args)
+
+        assert isinstance(opts, DocxPartitionerOptions)
+
+    def and_it_raises_when_options_are_not_valid(self, opts_args: dict[str, Any]):
+        with pytest.raises(ValueError, match="no DOCX document specified, "):
+            DocxPartitionerOptions.load(**opts_args)
+
     # -- .document -------------------------------
 
     def it_loads_the_docx_document(
@@ -1024,13 +1037,31 @@ class DescribeDocxPartitionerOptions:
         assert isinstance(docx_file, io.BytesIO)
         assert docx_file.getvalue() == b"abcdefg"
 
-    def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
+    # -- ._validate() ----------------------------
+
+    def it_raises_when_no_file_exists_at_file_path(self, opts_args: dict[str, Any]):
+        opts_args["file_path"] = "l/m/n.docx"
+        with pytest.raises(FileNotFoundError, match="no such file or directory: 'l/m/n.docx'"):
+            DocxPartitionerOptions.load(**opts_args)
+
+    def and_it_raises_when_the_file_at_file_path_is_not_a_ZIP_archive(
         self, opts_args: dict[str, Any]
     ):
-        opts = DocxPartitionerOptions(**opts_args)
+        opts_args["file_path"] = example_doc_path("simple.doc")
+        with pytest.raises(ValueError, match=r"not a ZIP archive \(so not a DOCX file\): "):
+            DocxPartitionerOptions.load(**opts_args)
 
-        with pytest.raises(ValueError, match="No DOCX document specified, either `filename` or "):
-            opts._docx_file
+    def and_it_raises_when_the_file_like_object_is_not_a_ZIP_archive(
+        self, opts_args: dict[str, Any]
+    ):
+        with open(example_doc_path("simple.doc"), "rb") as f:
+            opts_args["file"] = f
+            with pytest.raises(ValueError, match=r"not a ZIP archive \(so not a DOCX file\): "):
+                DocxPartitionerOptions.load(**opts_args)
+
+    def and_it_raises_when_neither_a_file_path_or_file_is_provided(self, opts_args: dict[str, Any]):
+        with pytest.raises(ValueError, match="no DOCX document specified, either `filename` or "):
+            DocxPartitionerOptions.load(**opts_args)
 
     # -- fixtures --------------------------------------------------------------------------------
 

@@ -246,7 +246,7 @@ class FsspecDownloader(Downloader):
 
     def get_download_path(self, file_data: FileData) -> Path:
         return (
-            self.download_config.download_dir / Path(file_data.source_identifiers.relative_path)
+            self.download_dir / Path(file_data.source_identifiers.relative_path)
             if self.download_config
             else Path(file_data.source_identifiers.rel_path)
         )
@@ -304,10 +304,8 @@ FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderCon
 
 @dataclass
 class FsspecUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: FsspecUploaderConfigT = field(default=None)
-
-    def is_async(self) -> bool:
-        return self.fs.async_impl
 
     @property
     def fs(self) -> "AbstractFileSystem":
@@ -344,7 +342,7 @@ class FsspecUploader(Uploader):
         if self.fs.exists(path=str(upload_path)) and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
-        logger.info(f"Writing local file {path_str} to {upload_path}")
+        logger.debug(f"Writing local file {path_str} to {upload_path}")
         self.fs.upload(lpath=path_str, rpath=str(upload_path))
 
     async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
@@ -355,5 +353,5 @@ class FsspecUploader(Uploader):
         if already_exists and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
-        logger.info(f"Writing local file {path_str} to {upload_path}")
-        await self.fs.upload(lpath=path_str, rpath=str(upload_path))
+        logger.debug(f"Writing local file {path_str} to {upload_path}")
+        self.fs.upload(lpath=path_str, rpath=str(upload_path))

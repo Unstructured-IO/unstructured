@@ -1,3 +1,44 @@
+## 0.14.10-dev3
+
+### Enhancements
+
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+
+
+### Features
+
+### Fixes
+
+* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+
+## 0.14.9
+
+### Enhancements
+
+* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used to visualize the result of the OD model and dump the result to a file. Additionally, the visualization of bounding boxes of each layout source is rendered and saved for each page.
+* **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
+
+### Features
+
+### Fixes
+
+* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
+
+## 0.14.8
+
+### Enhancements
+
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+* **Fix missing sensitive field markers** for embedders
+
 ## 0.14.7
 
 ### Enhancements
@@ -9,6 +50,8 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
 

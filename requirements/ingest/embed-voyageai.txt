@@ -42,20 +42,19 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.3
+langchain==0.2.6
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.2
+langchain-core==0.2.10
     # via
     #   langchain
     #   langchain-text-splitters
     #   langchain-voyageai
-langchain-text-splitters==0.2.1
+langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.62
+langsmith==0.1.82
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-core
 multidict==6.0.5
@@ -65,7 +64,6 @@ multidict==6.0.5
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   voyageai
 orjson==3.10.5
@@ -92,9 +90,9 @@ requests==2.32.3
     #   langchain
     #   langsmith
     #   voyageai
-sqlalchemy==2.0.30
+sqlalchemy==2.0.31
     # via langchain
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-core
@@ -105,7 +103,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

@@ -31,7 +31,7 @@ dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.15.1
+filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch
@@ -67,20 +67,21 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.3
+langchain==0.2.6
     # via langchain-community
-langchain-community==0.2.4
-    # via -r ./ingest/embed-huggingface.in
-langchain-core==0.2.2
+langchain-community==0.2.6
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/embed-huggingface.in
+langchain-core==0.2.10
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.1
+langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.62
+langsmith==0.1.82
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -105,7 +106,6 @@ networkx==3.2.1
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   scikit-learn
@@ -122,7 +122,7 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.3.0
+pillow==10.4.0
     # via sentence-transformers
 pydantic==2.7.4
     # via
@@ -161,13 +161,13 @@ scipy==1.11.3
     #   sentence-transformers
 sentence-transformers==3.0.1
     # via -r ./ingest/embed-huggingface.in
-sqlalchemy==2.0.30
+sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
 sympy==1.12.1
     # via torch
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community
@@ -186,7 +186,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.41.2
+transformers==4.42.3
     # via sentence-transformers
 typing-extensions==4.12.2
     # via
@@ -201,7 +201,7 @@ typing-inspect==0.9.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

@@ -160,6 +160,7 @@ class LocalUploaderConfig(UploaderConfig):
 
 @dataclass
 class LocalUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: LocalUploaderConfig = field(default_factory=lambda: LocalUploaderConfig())
     connection_config: LocalConnectionConfig = field(
         default_factory=lambda: LocalConnectionConfig()
@@ -173,7 +174,12 @@ class LocalUploader(Uploader):
         for content in contents:
             if source_identifiers := content.file_data.source_identifiers:
                 identifiers = source_identifiers
-                new_path = self.upload_config.output_path / identifiers.relative_path
+                rel_path = (
+                    identifiers.relative_path[1:]
+                    if identifiers.relative_path.startswith("/")
+                    else identifiers.relative_path
+                )
+                new_path = self.upload_config.output_path / Path(rel_path)
                 final_path = str(new_path).replace(
                     identifiers.filename, f"{identifiers.filename}.json"
                 )
@@ -193,6 +199,7 @@ add_source_entry(
         indexer_config=LocalIndexerConfig,
         downloader=LocalDownloader,
         downloader_config=LocalDownloaderConfig,
+        connection_config=LocalConnectionConfig,
     ),
 )
 

@@ -66,7 +66,7 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.8.1
+debugpy==1.8.2
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -82,7 +82,7 @@ executing==2.0.1
     # via stack-data
 fastjsonschema==2.20.0
     # via nbformat
-filelock==3.15.1
+filelock==3.15.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -104,6 +104,7 @@ idna==3.7
     #   requests
 importlib-metadata==7.1.0
     # via
+    #   -c ././deps/constraints.txt
     #   build
     #   jupyter-client
     #   jupyter-lsp
@@ -185,7 +186,7 @@ jupyter-server==2.14.1
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.2
+jupyterlab==4.2.3
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -265,8 +266,10 @@ prompt-toolkit==3.0.47
     # via
     #   ipython
     #   jupyter-console
-psutil==5.9.8
-    # via ipykernel
+psutil==6.0.0
+    # via
+    #   -c ./base.txt
+    #   ipykernel
 ptyprocess==0.7.0
     # via
     #   pexpect
@@ -400,13 +403,13 @@ typing-extensions==4.12.2
     #   ipython
 uri-template==1.3.0
     # via jsonschema
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.26.2
+virtualenv==20.26.3
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit

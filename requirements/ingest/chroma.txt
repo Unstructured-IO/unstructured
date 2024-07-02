@@ -9,6 +9,7 @@ annotated-types==0.7.0
 anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
+    #   httpx
     #   starlette
     #   watchfiles
 asgiref==3.8.1
@@ -27,6 +28,8 @@ certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
+    #   httpcore
+    #   httpx
     #   kubernetes
     #   requests
 charset-normalizer==3.3.2
@@ -35,7 +38,7 @@ charset-normalizer==3.3.2
     #   requests
 chroma-hnswlib==0.7.3
     # via chromadb
-chromadb==0.5.0
+chromadb==0.5.3
     # via -r ./ingest/chroma.in
 click==8.1.7
     # via
@@ -52,7 +55,7 @@ exceptiongroup==1.2.1
     # via anyio
 fastapi==0.110.3
     # via chromadb
-filelock==3.15.1
+filelock==3.15.4
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
@@ -62,16 +65,22 @@ fsspec==2024.5.0
     #   huggingface-hub
 google-auth==2.30.0
     # via kubernetes
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
 grpcio==1.64.1
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
 h11==0.14.0
-    # via uvicorn
+    # via
+    #   httpcore
+    #   uvicorn
+httpcore==1.0.5
+    # via httpx
 httptools==0.6.1
     # via uvicorn
+httpx==0.27.0
+    # via chromadb
 huggingface-hub==0.23.4
     # via tokenizers
 humanfriendly==10.0
@@ -80,9 +89,11 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
+    #   httpx
     #   requests
 importlib-metadata==7.1.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/chroma.in
     #   build
     #   opentelemetry-api
@@ -99,7 +110,6 @@ mpmath==1.3.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   chroma-hnswlib
     #   chromadb
     #   onnxruntime
@@ -107,7 +117,7 @@ oauthlib==3.2.2
     # via
     #   kubernetes
     #   requests-oauthlib
-onnxruntime==1.18.0
+onnxruntime==1.18.1
     # via chromadb
 opentelemetry-api==1.25.0
     # via
@@ -214,12 +224,14 @@ six==1.16.0
     #   posthog
     #   python-dateutil
 sniffio==1.3.1
-    # via anyio
+    # via
+    #   anyio
+    #   httpx
 starlette==0.37.2
     # via fastapi
 sympy==1.12.1
     # via onnxruntime
-tenacity==8.4.1
+tenacity==8.4.2
     # via chromadb
 tokenizers==0.19.1
     # via chromadb
@@ -247,7 +259,7 @@ typing-extensions==4.12.2
     #   starlette
     #   typer
     #   uvicorn
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
