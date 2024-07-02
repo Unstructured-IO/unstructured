@@ -51,6 +51,8 @@ install-test:
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
 	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
+	# NOTE(rui) - Installing mixedbread-ai
+	python3 -m pip install mixedbread-ai -c requirements/deps/constraints.txt
 
 .PHONY: install-dev
 install-dev:
