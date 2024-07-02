@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import importlib
 from unittest.mock import patch
 
 import pytest
@@ -53,7 +54,7 @@ class DescribeOCRAgent:
         self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception]
     ):
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
-        with patch("importlib.import_module", side_effect=exception_cls), pytest.raises(
+        with patch.object(importlib, "import_module", side_effect=exception_cls), pytest.raises(
             RuntimeError, match="Could not get the OCRAgent instance"
         ):
             OCRAgent.get_agent()
