@@ -13,6 +13,7 @@ from .fsspec.s3 import s3_dest_cmd, s3_src_cmd
 from .fsspec.sftp import sftp_dest_cmd, sftp_src_cmd
 from .google_drive import google_drive_src_cmd
 from .local import local_dest_cmd, local_src_cmd
+from .mongodb import mongodb_dest_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
@@ -55,6 +56,7 @@ dest_cmds = [
     s3_dest_cmd,
     sftp_dest_cmd,
     weaviate_dest_cmd,
+    mongodb_dest_cmd,
 ]
 
 duplicate_dest_names = [
