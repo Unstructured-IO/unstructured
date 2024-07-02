@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "be5a065c5ce087943e789d60ebf73a13",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "6"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "325a7036f0b3c5a8b1ae81ccfb6df889",
+    "text": "A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "6"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b726239d6c8d050cffcaeebf24fcf8c0",
+    "text": "D.W. Griffith",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "6"
+        }
+      }
+    }
+  }
+]

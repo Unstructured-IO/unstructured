@@ -25,7 +25,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     SourceRegistryEntry,
-    add_source_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -231,13 +230,10 @@ class OnedriveDownloader(Downloader):
         return DownloadResponse(file_data=file_data, path=download_path)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=OnedriveConnectionConfig,
-        indexer_config=OnedriveIndexerConfig,
-        indexer=OnedriveIndexer,
-        downloader_config=OnedriveDownloaderConfig,
-        downloader=OnedriveDownloader,
-    ),
+onedrive_source_entry = SourceRegistryEntry(
+    connection_config=OnedriveConnectionConfig,
+    indexer_config=OnedriveIndexerConfig,
+    indexer=OnedriveIndexer,
+    downloader_config=OnedriveDownloaderConfig,
+    downloader=OnedriveDownloader,
 )
