@@ -181,6 +181,9 @@ class AzureCognitiveSearchUploader(Uploader):
                 ),
             )
 
+    def write_dict_wrapper(self, elements_dict):
+        return self.write_dict(elements_dict=elements_dict)
+
     def run(self, contents: list[UploadContent], **kwargs: t.Any) -> None:
 
         elements_dict = []
@@ -207,7 +210,7 @@ class AzureCognitiveSearchUploader(Uploader):
             with mp.Pool(
                 processes=self.upload_config.num_processes,
             ) as pool:
-                pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
+                pool.map(self.write_dict_wrapper, list(chunk_generator(elements_dict, batch_size)))
 
 
 add_destination_entry(
