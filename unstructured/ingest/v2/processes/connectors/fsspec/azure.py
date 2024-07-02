@@ -9,8 +9,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -131,22 +129,16 @@ class AzureUploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=AzureIndexer,
-        indexer_config=AzureIndexerConfig,
-        downloader=AzureDownloader,
-        downloader_config=AzureDownloaderConfig,
-        connection_config=AzureConnectionConfig,
-    ),
+azure_source_entry = SourceRegistryEntry(
+    indexer=AzureIndexer,
+    indexer_config=AzureIndexerConfig,
+    downloader=AzureDownloader,
+    downloader_config=AzureDownloaderConfig,
+    connection_config=AzureConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=AzureUploader,
-        uploader_config=AzureUploaderConfig,
-        connection_config=AzureConnectionConfig,
-    ),
+azure_destination_entry = DestinationRegistryEntry(
+    uploader=AzureUploader,
+    uploader_config=AzureUploaderConfig,
+    connection_config=AzureConnectionConfig,
 )
