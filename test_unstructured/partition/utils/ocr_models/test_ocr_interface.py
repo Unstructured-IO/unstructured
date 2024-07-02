@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 
 from test_unstructured.unit_utils import (
@@ -39,18 +41,19 @@ class DescribeOCRAgent:
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT)
         assert ocr_agent is ocr_agent_
 
-    @pytest.mark.parametrize("ExceptionCls", [ImportError, AttributeError])
-    def but_it_raises_whan_no_such_ocr_agent_class_is_found(
-        self, ExceptionCls: type, _get_ocr_agent_cls_qname_: Mock, get_instance_: Mock
-    ):
+    def but_it_raises_whan_no_such_ocr_agent_class_is_found(self, _get_ocr_agent_cls_qname_: Mock):
         _get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
-        get_instance_.side_effect = ExceptionCls
-
-        with pytest.raises(ValueError, match="OCR_AGENT must be set to an existing OCR agent "):
+        with pytest.raises(ValueError) as exc_info:
             OCRAgent.get_agent()
+        assert "must be set to a whitelisted module" in str(exc_info.value)
 
-        _get_ocr_agent_cls_qname_.assert_called_once_with()
-        get_instance_.assert_called_once_with("Invalid.Ocr.Agent.Qname")
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
+        for exception_cls in [ImportError, AttributeError]:
+            with patch("importlib.import_module", side_effect=exception_cls), pytest.raises(
+                RuntimeError
+            ) as exc_info:
+                OCRAgent.get_agent()
+            assert "Could not get the OCRAgent instance" in str(exc_info.value)
 
     @pytest.mark.parametrize(
         ("OCR_AGENT", "expected_value"),
