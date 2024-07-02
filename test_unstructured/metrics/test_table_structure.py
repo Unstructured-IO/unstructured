@@ -1,5 +1,9 @@
+from unittest import mock
+
+import numpy as np
 import pytest
 
+from unstructured.metrics.table.table_alignment import TableAlignment
 from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.table_structure import (
     eval_table_transformer_for_file,
@@ -542,3 +546,154 @@ def test_table_eval_processor_merged_cells():
     assert result.element_col_level_index_acc == 1.0
     assert result.element_row_level_content_acc == 1.0
     assert result.element_col_level_content_acc == 1.0
+
+
+def test_table_eval_processor_when_no_match_with_pred():
+    prediction = [
+        {
+            "type": "Table",
+            "metadata": {"text_as_html": """<table><tr><td>Some cell</td></tr></table>"""},
+        }
+    ]
+
+    ground_truth = [
+        {
+            "type": "Table",
+            "text": [
+                {
+                    "id": "ee862c7a-d27e-4484-92de-4faa42a63f3b",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "11",
+                },
+                {
+                    "id": "6237ac7b-bfc8-40d2-92f2-d138277205e2",
+                    "x": 0,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "21",
+                },
+                {
+                    "id": "9d0933a9-5984-4cad-80d9-6752bf9bc4df",
+                    "x": 1,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "12",
+                },
+                {
+                    "id": "1152d043-5ead-4ab8-8b88-888d48831ac2",
+                    "x": 1,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "22",
+                },
+            ],
+        }
+    ]
+
+    with mock.patch.object(TableAlignment, "get_table_level_alignment") as align_fn:
+        align_fn.return_value = [-1]
+        te_processor = TableEvalProcessor(prediction, ground_truth)
+        result = te_processor.process_file()
+
+    assert result.total_tables == 1
+    assert result.table_level_acc == 0
+    assert result.element_row_level_index_acc == 0
+    assert result.element_col_level_index_acc == 0
+    assert result.element_row_level_content_acc == 0
+    assert result.element_col_level_content_acc == 0
+
+
+def test_table_eval_processor_when_no_tables():
+    prediction = [{}]
+
+    ground_truth = [{}]
+
+    te_processor = TableEvalProcessor(prediction, ground_truth)
+    result = te_processor.process_file()
+    assert result.total_tables == 0
+    assert result.table_level_acc == 1
+    assert np.isnan(result.element_row_level_index_acc)
+    assert np.isnan(result.element_col_level_index_acc)
+    assert np.isnan(result.element_row_level_content_acc)
+    assert np.isnan(result.element_col_level_content_acc)
+
+
+def test_table_eval_processor_when_only_gt():
+    prediction = []
+
+    ground_truth = [
+        {
+            "type": "Table",
+            "text": [
+                {
+                    "id": "ee862c7a-d27e-4484-92de-4faa42a63f3b",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "11",
+                },
+                {
+                    "id": "6237ac7b-bfc8-40d2-92f2-d138277205e2",
+                    "x": 0,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "21",
+                },
+                {
+                    "id": "9d0933a9-5984-4cad-80d9-6752bf9bc4df",
+                    "x": 1,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "12",
+                },
+                {
+                    "id": "1152d043-5ead-4ab8-8b88-888d48831ac2",
+                    "x": 1,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "22",
+                },
+            ],
+        }
+    ]
+
+    te_processor = TableEvalProcessor(prediction, ground_truth)
+    result = te_processor.process_file()
+
+    assert result.total_tables == 1
+    assert result.table_level_acc == 0
+    assert result.element_row_level_index_acc == 0
+    assert result.element_col_level_index_acc == 0
+    assert result.element_row_level_content_acc == 0
+    assert result.element_col_level_content_acc == 0
+
+
+def test_table_eval_processor_when_only_pred():
+    prediction = [
+        {
+            "type": "Table",
+            "metadata": {"text_as_html": """<table><tr><td>Some cell</td></tr></table>"""},
+        }
+    ]
+
+    ground_truth = [{}]
+
+    te_processor = TableEvalProcessor(prediction, ground_truth)
+    result = te_processor.process_file()
+
+    assert result.total_tables == 0
+    assert result.table_level_acc == 0
+    assert result.element_row_level_index_acc == 0
+    assert result.element_col_level_index_acc == 0
+    assert result.element_row_level_content_acc == 0
+    assert result.element_col_level_content_acc == 0
