@@ -6,8 +6,6 @@ from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
 from urllib.parse import quote
 
-from dateutil import parser
-
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionNetworkError
@@ -29,6 +27,8 @@ from unstructured.ingest.v2.processes.connector_registry import (
     add_source_entry,
 )
 from unstructured.utils import requires_dependencies
+
+from .utils import parse_datetime
 
 if TYPE_CHECKING:
     from office365.graph_client import GraphClient
@@ -169,9 +169,9 @@ class SharepointIndexer(Indexer):
         unique_id = site_page.properties.get("UniqueId", None)
         modified_date = site_page.properties.get("Modified", None)
         url = site_page.properties.get("AbsoluteUrl", None)
-        date_modified_dt = parser.parse(modified_date) if modified_date else None
+        date_modified_dt = parse_datetime(modified_date) if modified_date else None
         date_created_at = (
-            parser.parse(site_page.first_published)
+            parse_datetime(site_page.first_published)
             if (site_page.first_published and site_page.first_published != "0001-01-01T08:00:00Z")
             else None
         )
@@ -204,9 +204,10 @@ class SharepointIndexer(Indexer):
         file.expand(file.properties.keys()).get().execute_query()
         absolute_url = f"{client.base_url}{quote(file.serverRelativeUrl)}"
         date_modified_dt = (
-            parser.parse(file.time_last_modified) if file.time_last_modified else None
+            parse_datetime(file.time_last_modified) if file.time_last_modified else None
         )
-        date_created_at = parser.parse(file.time_created) if file.time_created else None
+
+        date_created_at = parse_datetime(file.time_created) if file.time_created else None
         additional_metadata = self.get_properties(raw_properties=file.properties)
         additional_metadata["sharepoint_content_type"] = SharepointContentType.DOCUMENT.value
         fullpath = str(file.serverRelativeUrl)
