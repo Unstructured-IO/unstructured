@@ -188,8 +188,9 @@ class SalesforceIndexer(Indexer):
                             identifier=record["Id"],
                             source_identifiers=SourceIdentifiers(
                                 filename=record["Id"],
-                                fullpath=record["attributes"]["url"], # fix this
-                                rel_path=record["attributes"]["url"],
+                                # fullpath=record["attributes"]["url"], # fix this
+                                # rel_path=record["attributes"]["url"],
+                                fullpath=f"{record['attributes']['type']}/{record['Id']}",
                                 ),
                             metadata=DataSourceMetadata(
                                 url=record["attributes"]["url"],
@@ -237,7 +238,8 @@ class SalesforceDownloader(Downloader):
     connector_type: str = CONNECTOR_TYPE
 
     def is_async(self) -> bool:
-        return False
+        # return False
+        return True
 
     def get_file_extension(self, record_type) -> str:
         print("********* get_file_extension ******")
@@ -251,12 +253,22 @@ class SalesforceDownloader(Downloader):
             )
         return extension
 
-    def get_download_path(self, file_data: FileData) -> Path:
-        rel_path = file_data.source_identifiers.relative_path
-        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-        return self.download_dir / Path(rel_path)
+    # def get_download_path(self, file_data: FileData) -> Path:
+    #     rel_path = file_data.source_identifiers.relative_path
+    #     rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+    #     return self.download_dir / Path(rel_path)
 
-    def _tmp_download_file(self, file_data) -> Path:
+    # def _tmp_download_file(self, file_data: FileData) -> Path:
+    #     print("********* _tmp_download_file ******")
+    #     record_file =  file_data.identifier + self.get_file_extension(file_data.additional_metadata['record_type'])
+    #     # download_path = self.get_download_path(file_data=file_data)
+    #     # download_path.parent.mkdir(parents=True, exist_ok=True)
+    #     # breakpoint()
+
+    #     print(Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file)
+    #     return Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file
+
+    def get_download_path(self, file_data: FileData) -> Path:
         print("********* _tmp_download_file ******")
         record_file =  file_data.identifier + self.get_file_extension(file_data.additional_metadata['record_type'])
         # download_path = self.get_download_path(file_data=file_data)
@@ -265,11 +277,6 @@ class SalesforceDownloader(Downloader):
 
         print(Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file)
         return Path(self.download_dir) / file_data.additional_metadata['record_type'] / record_file
-
-    def get_download_path(self, file_data: FileData) -> Path:
-        rel_path = file_data.source_identifiers.relative_path
-        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-        return self.download_dir / Path(rel_path)
 
 
     def _xml_for_record(self, record: OrderedDict) -> str:
@@ -333,7 +340,7 @@ class SalesforceDownloader(Downloader):
         record_json = records[0]
         return record_json
 
-    def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         # breakpoint()
         record=self.get_record(file_data)
         # breakpoint()
@@ -345,11 +352,14 @@ class SalesforceDownloader(Downloader):
                 document = self._eml_for_record(record)
             else:
                 document = self._xml_for_record(record)
-            download_path = self._tmp_download_file(file_data=file_data)
+            download_path = self.get_download_path(file_data=file_data)
             download_path.parent.mkdir(parents=True, exist_ok=True)
             # breakpoint()
             with open(download_path, "w") as page_file:
                 page_file.write(document)
+            return DownloadResponse(
+                file_data=file_data, path=Path(download_path),
+            )
 
         except Exception as e:
             logger.error(
