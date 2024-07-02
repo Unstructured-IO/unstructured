@@ -73,8 +73,8 @@ class ChromaUploadStager(UploadStager):
             logger.debug(f"date {date_string} string not a timestamp: {e}")
         return parser.parse(date_string)
 
-    @classmethod
-    def conform_dict(cls, data: dict) -> dict:
+    @staticmethod
+    def conform_dict(data: dict) -> dict:
         """
         Prepares dictionary in the format that Chroma requires
         """
@@ -96,11 +96,7 @@ class ChromaUploadStager(UploadStager):
     ) -> Path:
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
-
-        conformed_elements = []
-        for element in elements_contents:
-            conformed_elements.append(self.conform_dict(data=element))
-
+        conformed_elements = [self.conform_dict(data=element) for element in elements_contents]
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
             json.dump(conformed_elements, output_file)

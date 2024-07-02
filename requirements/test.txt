@@ -92,8 +92,6 @@ platformdirs==3.10.0
     #   black
 pluggy==1.5.0
     # via pytest
-psutil==6.0.0
-    # via -r ./test.in
 pycodestyle==2.12.0
     # via
     #   flake8

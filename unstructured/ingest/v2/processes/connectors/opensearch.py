@@ -1,8 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
-from unstructured.ingest.error import DestinationConnectionError
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+)
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -10,9 +12,15 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
+    SourceRegistryEntry,
     add_destination_entry,
+    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.elasticsearch import (
+    ElasticsearchDownloader,
+    ElasticsearchDownloaderConfig,
+    ElasticsearchIndexer,
+    ElasticsearchIndexerConfig,
     ElasticsearchUploader,
     ElasticsearchUploaderConfig,
     ElasticsearchUploadStager,
@@ -95,6 +103,31 @@ class OpenSearchConnectionConfig(ConnectionConfig):
 
 
 @dataclass
+class OpenSearchIndexer(ElasticsearchIndexer):
+    connection_config: OpenSearchConnectionConfig
+    client: "OpenSearch" = field(init=False)
+
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
+    def load_scan(self):
+        from opensearchpy.helpers import scan
+
+        return scan
+
+
+@dataclass
+class OpenSearchDownloader(ElasticsearchDownloader):
+    connection_config: OpenSearchConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
+
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
+    def load_async(self):
+        from opensearchpy import AsyncOpenSearch
+        from opensearchpy.helpers import async_scan
+
+        return AsyncOpenSearch, async_scan
+
+
+@dataclass
 class OpenSearchUploader(ElasticsearchUploader):
     connection_config: OpenSearchConnectionConfig
     connector_type: str = CONNECTOR_TYPE
@@ -106,6 +139,16 @@ class OpenSearchUploader(ElasticsearchUploader):
         return parallel_bulk
 
 
+add_source_entry(
+    source_type=CONNECTOR_TYPE,
+    entry=SourceRegistryEntry(
+        connection_config=OpenSearchConnectionConfig,
+        indexer=OpenSearchIndexer,
+        indexer_config=ElasticsearchIndexerConfig,
+        downloader=OpenSearchDownloader,
+        downloader_config=ElasticsearchDownloaderConfig,
+    ),
+)
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
