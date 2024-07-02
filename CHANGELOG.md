@@ -7,8 +7,8 @@
 ### Features
 
 ### Fixes
-- Fix counting false negatives and false positives in table structure evaluation
 
+* **Fix counting false negatives and false positives in table structure evaluation**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
 
 ## 0.14.9
