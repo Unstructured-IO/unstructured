@@ -81,7 +81,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   --chunking-strategy by_title \
-  --chunk-combine-text-under-n-chars 150 --chunk-new-after-n-chars 1500 --chunk-max-characters 2500 --chunk-multipage-sections --chunk-no-include-orig-elements \
+  --chunk-combine-text-under-n-chars 150 \
+  --chunk-new-after-n-chars 1500 \
+  --chunk-max-characters 2500 \
+  --chunk-multipage-sections \
+  --chunk-no-include-orig-elements \
   --embedding-provider "langchain-huggingface" \
   azure-cognitive-search \
   --num-processes "$max_processes" \
