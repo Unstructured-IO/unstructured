@@ -14,7 +14,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -114,7 +114,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
 
         astra_batch_size = self.write_config.batch_size
 
-        for chunk in chunk_generator(elements_dict, astra_batch_size):
+        for chunk in batch_generator(elements_dict, astra_batch_size):
             self._astra_db_collection.insert_many(chunk)
 
     def normalize_dict(self, element_dict: dict) -> dict:

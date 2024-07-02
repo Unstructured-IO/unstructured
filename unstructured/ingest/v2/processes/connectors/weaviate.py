@@ -21,6 +21,7 @@ from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
 )
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from weaviate import Client
@@ -153,17 +154,19 @@ class WeaviateUploaderConfig(UploaderConfig):
 
 @dataclass
 class WeaviateUploader(Uploader):
-    connector_type: str = CONNECTOR_TYPE
     upload_config: WeaviateUploaderConfig
     connection_config: WeaviateConnectionConfig
     client: Optional["Client"] = field(init=False)
+    connector_type: str = CONNECTOR_TYPE
 
+    @requires_dependencies(["weaviate"], extras="weaviate")
     def __post_init__(self):
         from weaviate import Client
 
         auth = self._resolve_auth_method()
         self.client = Client(url=self.connection_config.host_url, auth_client_secret=auth)
 
+    @requires_dependencies(["weaviate"], extras="weaviate")
     def _resolve_auth_method(self):
         access_configs = self.connection_config.access_config
         connection_config = self.connection_config
