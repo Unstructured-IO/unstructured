@@ -23,7 +23,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
@@ -197,13 +196,10 @@ class ChromaUploader(Uploader):
             self.upsert_batch(collection, self.prepare_chroma_list(chunk))
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=ChromaConnectionConfig,
-        uploader=ChromaUploader,
-        uploader_config=ChromaUploaderConfig,
-        upload_stager=ChromaUploadStager,
-        upload_stager_config=ChromaUploadStagerConfig,
-    ),
+chroma_destination_entry = DestinationRegistryEntry(
+    connection_config=ChromaConnectionConfig,
+    uploader=ChromaUploader,
+    uploader_config=ChromaUploaderConfig,
+    upload_stager=ChromaUploadStager,
+    upload_stager_config=ChromaUploadStagerConfig,
 )
