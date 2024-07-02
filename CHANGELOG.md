@@ -1,13 +1,13 @@
-## 0.14.10-dev3
+## 0.14.10-dev4
 
 ### Enhancements
 
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
 
-
 ### Features
 
 ### Fixes
+- Fix counting false negatives and false positives in table structure evaluation
 
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
 
