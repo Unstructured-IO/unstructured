@@ -6,11 +6,11 @@
 #
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.30.1
+azure-core==1.30.2
     # via azure-search-documents
 azure-search-documents==11.4.0
     # via -r ./ingest/azure-cognitive-search.in
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -25,7 +25,7 @@ idna==3.7
     #   requests
 isodate==0.6.1
     # via azure-search-documents
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
@@ -34,11 +34,11 @@ six==1.16.0
     #   -c ./ingest/../base.txt
     #   azure-core
     #   isodate
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

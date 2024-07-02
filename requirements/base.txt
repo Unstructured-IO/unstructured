@@ -8,7 +8,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ././deps/constraints.txt
     #   requests
@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     #   unstructured-client
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.6
+dataclasses-json==0.6.7
     # via -r ./base.in
 dataclasses-json-speakeasy==0.5.11
     # via unstructured-client
@@ -41,7 +41,7 @@ langdetect==1.0.9
     # via -r ./base.in
 lxml==5.2.2
     # via -r ./base.in
-marshmallow==3.21.2
+marshmallow==3.21.3
     # via
     #   dataclasses-json
     #   dataclasses-json-speakeasy
@@ -53,25 +53,25 @@ mypy-extensions==1.0.0
 nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt
     #   marshmallow
     #   unstructured-client
+psutil==6.0.0
+    # via -r ./base.in
 python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.1
+rapidfuzz==3.9.3
     # via -r ./base.in
 regex==2024.5.15
     # via nltk
-requests==2.32.2
+requests==2.32.3
     # via
     #   -r ./base.in
     #   unstructured-client
@@ -85,8 +85,10 @@ soupsieve==2.5
 tabulate==0.9.0
     # via -r ./base.in
 tqdm==4.66.4
-    # via nltk
-typing-extensions==4.12.0
+    # via
+    #   -r ./base.in
+    #   nltk
+typing-extensions==4.12.2
     # via
     #   -r ./base.in
     #   emoji
@@ -101,7 +103,7 @@ unstructured-client==0.18.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   requests

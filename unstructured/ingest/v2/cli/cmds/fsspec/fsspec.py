@@ -33,6 +33,25 @@ class FsspecCliFileConfig(CliConfig):
 
 
 @dataclass
+class FsspecCliUploaderConfig(FsspecCliFileConfig):
+    @staticmethod
+    def get_cli_options() -> list[click.Option]:
+        options = super(FsspecCliUploaderConfig, FsspecCliUploaderConfig).get_cli_options()
+        options.extend(
+            [
+                click.Option(
+                    ["--overwrite"],
+                    is_flag=True,
+                    default=False,
+                    show_default=True,
+                    help="If set, will overwrite content if content already exists",
+                )
+            ]
+        )
+        return options
+
+
+@dataclass
 class FsspecCliIndexerConfig(FsspecCliFileConfig):
     @staticmethod
     def get_cli_options() -> list[click.Option]:

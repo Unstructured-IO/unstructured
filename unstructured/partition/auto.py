@@ -72,7 +72,7 @@ if dependency_exists("markdown"):
     PARTITION_WITH_EXTRAS_MAP["md"] = partition_md
 
 
-if dependency_exists("msg_parser"):
+if dependency_exists("oxmsg"):
     from unstructured.partition.msg import partition_msg
 
     PARTITION_WITH_EXTRAS_MAP["msg"] = partition_msg
@@ -316,6 +316,7 @@ def partition(
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
+            strategy=strategy,
             **kwargs,
         )
     elif filetype == FileType.DOCX:
@@ -327,6 +328,7 @@ def partition(
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
+            strategy=strategy,
             **kwargs,
         )
     elif filetype == FileType.ODT:
@@ -338,6 +340,7 @@ def partition(
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
+            strategy=strategy,
             **kwargs,
         )
     elif filetype == FileType.EML:
@@ -487,6 +490,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            strategy=strategy,
             **kwargs,
         )
     elif filetype == FileType.PPTX:
@@ -499,6 +503,7 @@ def partition(
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
+            strategy=strategy,
             **kwargs,
         )
     elif filetype == FileType.JSON:

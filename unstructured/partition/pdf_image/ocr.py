@@ -13,6 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
+from unstructured.partition.pdf_image.analysis.bbox_visualisation import OCRLayoutDrawer
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
@@ -35,6 +36,7 @@ def process_data_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -63,12 +65,16 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    with tempfile.NamedTemporaryFile() as tmp_file:
+    file_name = ""
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         data_bytes = data if isinstance(data, bytes) else data.read()
         tmp_file.write(data_bytes)
         tmp_file.flush()
+        file_name = tmp_file.name
+
+    try:
         merged_layouts = process_file_with_ocr(
-            filename=tmp_file.name,
+            filename=file_name,
             out_layout=out_layout,
             extracted_layout=extracted_layout,
             is_image=is_image,
@@ -76,8 +82,13 @@ def process_data_with_ocr(
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
+            ocr_drawer=ocr_drawer,
         )
-        return merged_layouts
+    finally:
+        if os.path.isfile(file_name):
+            os.remove(file_name)
+
+    return merged_layouts
 
 
 @requires_dependencies("unstructured_inference")
@@ -90,6 +101,7 @@ def process_file_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -136,6 +148,7 @@ def process_file_with_ocr(
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                         extracted_regions=extracted_regions,
+                        ocr_drawer=ocr_drawer,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -158,6 +171,7 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
+                            ocr_drawer=ocr_drawer,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -176,6 +190,7 @@ def supplement_page_layout_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -191,6 +206,8 @@ def supplement_page_layout_with_ocr(
             image,
             ocr_languages=ocr_languages,
         )
+        if ocr_drawer:
+            ocr_drawer.add_ocred_page(ocr_layout)
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
@@ -280,7 +297,8 @@ def supplement_element_with_table_extraction(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
         )
 
-        text_as_html = cells_to_html(tatr_cells)
+        # NOTE(christine): `tatr_cells == ""` means that the table was not recognized
+        text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
         element.text_as_html = text_as_html
 
         if env_config.EXTRACT_TABLE_AS_CELLS:

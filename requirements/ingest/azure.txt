@@ -14,18 +14,18 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-azure-core==1.30.1
+azure-core==1.30.2
     # via
     #   adlfs
     #   azure-identity
     #   azure-storage-blob
 azure-datalake-store==0.0.53
     # via adlfs
-azure-identity==1.16.0
+azure-identity==1.17.1
     # via adlfs
 azure-storage-blob==12.20.0
     # via adlfs
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -38,7 +38,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -60,29 +60,24 @@ idna==3.7
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.28.0
+msal==1.29.0
     # via
     #   azure-datalake-store
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.1.0
+msal-extensions==1.2.0
     # via azure-identity
 multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-packaging==23.2
-    # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
-    #   msal-extensions
-portalocker==2.8.2
+portalocker==2.10.0
     # via msal-extensions
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
@@ -93,12 +88,13 @@ six==1.16.0
     #   -c ./ingest/../base.txt
     #   azure-core
     #   isodate
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
+    #   azure-identity
     #   azure-storage-blob
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

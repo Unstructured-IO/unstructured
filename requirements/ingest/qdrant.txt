@@ -10,7 +10,7 @@ anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -18,7 +18,7 @@ certifi==2024.2.2
     #   httpx
 exceptiongroup==1.2.1
     # via anyio
-grpcio==1.64.0
+grpcio==1.64.1
     # via
     #   grpcio-tools
     #   qdrant-client
@@ -44,30 +44,29 @@ idna==3.7
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   qdrant-client
-portalocker==2.8.2
+portalocker==2.10.0
     # via qdrant-client
 protobuf==4.23.4
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
-pydantic==2.7.1
+pydantic==2.7.4
     # via qdrant-client
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
-qdrant-client==1.9.1
+qdrant-client==1.9.2
     # via -r ./ingest/qdrant.in
 sniffio==1.3.1
     # via
     #   anyio
     #   httpx
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

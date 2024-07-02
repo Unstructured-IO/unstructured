@@ -57,6 +57,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --username "$ELASTIC_USER" \
   --password "$ELASTIC_PASSWORD" \
   --batch-size-bytes 15000000 \
-  --num-processes "$max_processes"
+  --num-threads "$max_processes"
 
-PYTHONPATH=. scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py
+desired_count=$(cat "$WORK_DIR"/upload_stage/* | jq 'length')
+desired_embeddings=$(cat "$WORK_DIR"/upload_stage/* | jq '.[0]._source.embeddings' | tr -d '\n')
+
+PYTHONPATH=. scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py \
+  --num-elements "$desired_count" \
+  --embeddings "$desired_embeddings"

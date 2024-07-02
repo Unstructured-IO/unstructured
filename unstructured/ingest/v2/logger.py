@@ -84,7 +84,8 @@ def redact_jsons(s: str) -> str:
         try:
             formatted_j = json.dumps(json.loads(j))
         except json.JSONDecodeError:
-            formatted_j = json.dumps(ast.literal_eval(j))
+            lit = ast.literal_eval(j)
+            formatted_j = json.dumps(lit)
         hidden_j = json.dumps(hide_sensitive_fields(json.loads(formatted_j)))
         s = s.replace(j, hidden_j)
     return s
@@ -96,6 +97,15 @@ class SensitiveFormatter(Formatter):
         return redact_jsons(s)
 
 
+def remove_root_handlers(logger: Logger) -> None:
+    # NOTE(robinson) - in some environments such as Google Colab, there is a root handler
+    # that doesn't not mask secrets, meaning sensitive info such as api keys appear in logs.
+    # Removing these when they exist prevents this behavior
+    if logger.root.hasHandlers():
+        for handler in logger.root.handlers:
+            logger.root.removeHandler(handler)
+
+
 def make_default_logger(level: int) -> Logger:
     """Return a custom logger."""
     logger = getLogger(LOGGER_NAME)
@@ -103,8 +113,10 @@ def make_default_logger(level: int) -> Logger:
     handler.name = "ingest_log_handler"
     formatter = SensitiveFormatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
     handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if handler.name not in [h.name for h in logger.handlers]:
+        logger.addHandler(handler)
     logger.setLevel(level)
+    remove_root_handlers(logger)
     return logger
 
 

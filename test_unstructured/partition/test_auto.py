@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
 import json
@@ -6,6 +8,7 @@ import pathlib
 import tempfile
 import warnings
 from importlib import import_module
+from typing import Iterator
 from unittest.mock import Mock, patch
 
 import docx
@@ -20,10 +23,12 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
     EXPECTED_TITLE,
 )
+from test_unstructured.unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
+    Element,
     ElementMetadata,
     ListItem,
     NarrativeText,
@@ -171,6 +176,45 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
     with open(doc_filename, "rb") as f:
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
     assert elements == expected_docx_elements
+
+
+@pytest.mark.parametrize("file_name", ["simple.docx", "simple.doc", "simple.odt"])
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_forwards_strategy_arg_to_partition_docx_and_its_brokers(
+    request: FixtureRequest, file_name: str, strategy: str
+):
+    """The `strategy` arg value received by `partition()` is received by `partition_docx().
+
+    To do this in the brokering-partitioner cases (DOC, ODT) it must make its way to
+    `partition_doc()` or `partition_odt()` which must then forward it to `partition_docx()`. This
+    test makes sure it made it all the way.
+
+    Note this is 3 file-types X 4 strategies = 12 test-cases.
+    """
+    from unstructured.partition.docx import _DocxPartitioner
+
+    def fake_iter_document_elements(self: _DocxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy=={self._opts.strategy}")
+
+    _iter_elements_ = method_mock(
+        request,
+        _DocxPartitioner,
+        "_iter_document_elements",
+        side_effect=fake_iter_document_elements,
+    )
+
+    (element,) = partition(example_doc_path(file_name), strategy=strategy)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy=={strategy}"
 
 
 @pytest.mark.parametrize(
@@ -554,6 +598,45 @@ def test_auto_partition_pptx_from_filename():
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+
+
+@pytest.mark.parametrize("file_name", ["simple.pptx", "fake-power-point.ppt"])
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_forwards_strategy_arg_to_partition_pptx_and_its_brokers(
+    request: FixtureRequest, file_name: str, strategy: str
+):
+    """The `strategy` arg value received by `partition()` is received by `partition_pptx().
+
+    To do this in the brokering-partitioner case (PPT) the strategy argument must make its way to
+    `partition_ppt()` which must then forward it to `partition_pptx()`. This test makes sure it
+    made it all the way.
+
+    Note this is 2 file-types X 4 strategies = 8 test-cases.
+    """
+    from unstructured.partition.pptx import _PptxPartitioner
+
+    def fake_iter_presentation_elements(self: _PptxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy=={self._opts.strategy}")
+
+    _iter_elements_ = method_mock(
+        request,
+        _PptxPartitioner,
+        "_iter_presentation_elements",
+        side_effect=fake_iter_presentation_elements,
+    )
+
+    (element,) = partition(example_doc_path(file_name), strategy=strategy)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy=={strategy}"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -1272,7 +1355,8 @@ def test_partition_image_with_bmp_with_auto(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><th>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
 
 
 def test_auto_partition_eml_add_signature_to_metadata():

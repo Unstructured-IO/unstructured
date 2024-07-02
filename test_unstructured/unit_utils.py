@@ -89,6 +89,12 @@ def example_doc_path(file_name: str) -> str:
     return str(file_path.resolve())
 
 
+def example_doc_text(file_name: str) -> str:
+    """Contents of example-doc `file_name` as text (decoded as utf-8)."""
+    with open(example_doc_path(file_name)) as f:
+        return f.read()
+
+
 def parse_optional_datetime(datetime_str: Optional[str]) -> Optional[dt.datetime]:
     """Parse `datetime_str` to a datetime.datetime instance or None if `datetime_str` is None."""
     return dt.datetime.fromisoformat(datetime_str) if datetime_str else None

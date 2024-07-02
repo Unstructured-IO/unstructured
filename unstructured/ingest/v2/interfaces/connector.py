@@ -1,8 +1,8 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 
-from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 
 
 @dataclass
@@ -16,7 +16,7 @@ AccessConfigT = TypeVar("AccessConfigT", bound=AccessConfig)
 
 @dataclass
 class ConnectionConfig(EnhancedDataClassJsonMixin):
-    access_config: Optional[AccessConfigT] = enhanced_field(sensitive=True, default=None)
+    access_config: AccessConfigT
 
     def get_access_config(self) -> dict[str, Any]:
         if not self.access_config:
@@ -29,4 +29,4 @@ ConnectionConfigT = TypeVar("ConnectionConfigT", bound=ConnectionConfig)
 
 @dataclass
 class BaseConnector(ABC):
-    connection_config: Optional[ConnectionConfigT] = None
+    connection_config: ConnectionConfigT

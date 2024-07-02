@@ -3,8 +3,10 @@ import io
 import os
 import pathlib
 from dataclasses import dataclass
+from multiprocessing import Pool
 from unittest import mock
 
+import numpy as np
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
@@ -12,6 +14,7 @@ from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -335,20 +338,58 @@ def test_normalize_layout_element_bulleted_list():
     ]
 
 
-class MockPopenWithError:
-    def __init__(self, *args, **kwargs):
-        pass
+class MockRunOutput:
 
-    def communicate(self):
-        return b"", b"an error occurred"
+    def __init__(self, returncode, stdout, stderr):
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
 
 
 def test_convert_office_doc_captures_errors(monkeypatch, caplog):
-    import subprocess
+    from unstructured.partition.common import subprocess
 
-    monkeypatch.setattr(subprocess, "Popen", MockPopenWithError)
+    def mock_run(*args, **kwargs):
+        return MockRunOutput(1, "an error occurred".encode(), "error details".encode())
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
     common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
-    assert "an error occurred" in caplog.text
+    assert "soffice failed to convert to format docx with code 1" in caplog.text
+
+
+def test_convert_office_docs_avoids_concurrent_call_to_soffice():
+    paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2", "/tmp/proc3")]
+    for path in paths_to_save:
+        path.mkdir(exist_ok=True)
+        (path / "simple.docx").unlink(missing_ok=True)
+    file_to_convert = example_doc_path("simple.doc")
+
+    with Pool(3) as pool:
+        pool.starmap(common.convert_office_doc, [(file_to_convert, path) for path in paths_to_save])
+
+    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) == 3
+
+
+def test_convert_office_docs_respects_wait_timeout():
+    paths_to_save = [
+        pathlib.Path(path) for path in ("/tmp/wait/proc1", "/tmp/wait/proc2", "/tmp/wait/proc3")
+    ]
+    for path in paths_to_save:
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "simple.docx").unlink(missing_ok=True)
+    file_to_convert = example_doc_path("simple.doc")
+
+    with Pool(3) as pool:
+        pool.starmap(
+            common.convert_office_doc,
+            # set timeout to wait for soffice to be available to 0 so only one process can convert
+            # the doc file on the first try; then the catch all
+            [(file_to_convert, path, "docx", None, 0) for path in paths_to_save],
+        )
+
+    # because this test file is very small we could have occasions where two files are converted
+    # when one of the processes spawned just a little
+    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) < 3
 
 
 class MockDocxEmptyTable:
@@ -566,6 +607,43 @@ def test_ocr_data_to_elements(
             points=layout_el.bbox.coordinates,
             system=coordinate_system,
         )
+
+
+class Describe_get_last_modified:
+    """Isolated unit-tests for `unstructured.partition.common.get_last_modified()."""
+
+    def it_pulls_last_modified_from_the_filesystem_when_a_path_is_provided(
+        self, file_and_last_modified: tuple[str, str]
+    ):
+        file_path, last_modified = file_and_last_modified
+        last_modified_date = common.get_last_modified(str(file_path), None, False)
+        assert last_modified_date == last_modified
+
+    def and_it_pulls_last_modified_from_the_file_like_object_when_one_is_provided(
+        self, file_and_last_modified: tuple[str, str]
+    ):
+        file_path, last_modified = file_and_last_modified
+        with open(file_path, "rb") as f:
+            last_modified_date = common.get_last_modified(None, f, True)
+        assert last_modified_date == last_modified
+
+    def but_not_when_date_from_file_object_is_False(self, file_and_last_modified: tuple[str, str]):
+        file_path, _ = file_and_last_modified
+        with open(file_path, "rb") as f:
+            last_modified_date = common.get_last_modified(None, f, False)
+        assert last_modified_date is None
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def file_and_last_modified(self, tmp_path: pathlib.Path) -> tuple[str, str]:
+        modified_timestamp = dt.datetime(
+            year=2024, month=6, day=14, hour=15, minute=39, second=25
+        ).timestamp()
+        file_path = tmp_path / "some_file.txt"
+        file_path.write_text("abcdefg")
+        os.utime(file_path, (modified_timestamp, modified_timestamp))
+        return str(file_path), "2024-06-14T15:39:25"
 
 
 class Describe_get_last_modified_date:

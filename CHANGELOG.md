@@ -1,4 +1,97 @@
-## 0.14.4-dev7
+## 0.14.10-dev4
+
+### Enhancements
+
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+
+
+### Features
+
+### Fixes
+
+* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
+
+## 0.14.9
+
+### Enhancements
+
+* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used to visualize the result of the OD model and dump the result to a file. Additionally, the visualization of bounding boxes of each layout source is rendered and saved for each page.
+* **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
+
+### Features
+
+### Fixes
+
+* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
+
+## 0.14.8
+
+### Enhancements
+
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+* **Fix missing sensitive field markers** for embedders
+
+## 0.14.7
+
+### Enhancements
+
+* **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
+* **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
+
+### Features
+
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
+
+### Fixes
+
+* **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
+* **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
+
+## 0.14.6
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.35** Fix syntax for generated HTML tables.
+
+### Features
+
+* **tqdm ingest support** add optional flag to ingest flow to print out progress bar of each step in the process.
+
+### Fixes
+
+* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.** The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
+* **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
+* **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+* **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
+* **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncrasy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
+* **update table metric evaluation to handle corrected HTML syntax for tables** This change is connected to the update in [unstructured-inference change](https://github.com/Unstructured-IO/unstructured-inference/pull/355) - fixes transforming HTML table to deckerd and internal cells format.
+
+## 0.14.5
+
+### Enhancements
+
+* **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+* **Use `python-oxmsg` for `partition_msg()`.** Outlook MSG emails are now partitioned using the `python-oxmsg` package which resolves some shortcomings of the prior MSG parser.
+
+### Features
+
+### Fixes
+
+* **8-bit string Outlook MSG files are parsed.** `partition_msg()` is now able to parse non-unicode Outlook MSG emails.
+* **Attachments to Outlook MSG files are extracted intact.** `partition_msg()` is now able to extract attachments without corruption.
+
+## 0.14.4
 
 ### Enhancements
 
@@ -12,6 +105,7 @@
 
 ### Fixes
 
+* **Address the issue of unrecognized tables in `UnstructuredTableTransformerModel`** When a table is not recognized, the `element.metadata.text_as_html` attribute is set to an empty string.
 * **Remove root handlers in ingest logger**. Removes root handlers in ingest loggers to ensure secrets aren't accidentally exposed in Colab notebooks.
 * **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
 * **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.

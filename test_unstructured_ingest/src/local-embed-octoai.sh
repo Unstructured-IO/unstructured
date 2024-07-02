@@ -20,6 +20,11 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+if [ -z "$OCTOAI_API_KEY" ]; then
+  echo "Skipping local octoai ingest test because the OCTOAI_API_KEY env var is not set."
+  exit 8
+fi
+
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 import time
 
 from opensearchpy import OpenSearch
@@ -20,43 +19,41 @@ if __name__ == "__main__":
 
     initial_query = {"query": {"simple_query_string": {"fields": ["text"], "query": EXPECTED_TEXT}}}
 
-    for i in range(3):
-        try:
-            initial_result = client.search(index="ingest-test-destination", body=initial_query)
-            initial_embeddings = initial_result["hits"]["hits"][0]["_source"]["embeddings"]
+    initial_embeddings = None
+    timeout_s = 9
+    sleep_s = 1
+
+    start = time.time()
+    found = False
+    while time.time() - start < timeout_s and not found:
+        results = client.search(index="ingest-test-destination", body=initial_query)
+        hits = results["hits"]["hits"]
+        if hits:
+            print(f"found results after {time.time() - start}s")
+            initial_embeddings = hits[0]["_source"]["embeddings"]
+            found = True
             break
-        except:  # noqa: E722
-            print("Retrying to get initial embeddings")
-            time.sleep(3)
+        print(f"Waiting {sleep_s}s before checking again")
+        time.sleep(sleep_s)
+
+    if not found:
+        raise TimeoutError(
+            f"timed out after {round(timeout_s, 3)}s trying to get results from opensearch"
+        )
 
     query = {"size": 1, "query": {"knn": {"embeddings": {"vector": initial_embeddings, "k": 1}}}}
 
     vector_search = client.search(index="ingest-test-destination", body=query)
 
-    try:
-        assert vector_search["hits"]["hits"][0]["_source"]["text"] == EXPECTED_TEXT
-        print("OpenSearch vector search test was successful.")
-    except AssertionError:
-        sys.exit(
-            "OpenSearch dest check failed:" f"Did not find {EXPECTED_TEXT} in via vector search."
-        )
+    found_text = vector_search["hits"]["hits"][0]["_source"]["text"]
+    assert found_text == EXPECTED_TEXT, (
+        f"OpenSearch dest check failed: Did not find "
+        f"{EXPECTED_TEXT} in via vector search, instead: {found_text}."
+    )
+    print("OpenSearch vector search test was successful.")
 
-    for i in range(3):
-        try:
-            count = int(client.count(index="ingest-test-destination")["count"])
-            assert count == N_ELEMENTS
-            break
-        except:  # noqa: E722
-            print("Retrying to get count")
-            time.sleep(3)
+    count = client.count(index="ingest-test-destination")["count"]
 
-    try:
-        count = int(client.count(index="ingest-test-destination")["count"])
-        assert count == N_ELEMENTS
-    except AssertionError:
-        sys.exit(
-            "OpenSearch dest check failed:"
-            f"got {count} items in index, expected {N_ELEMENTS} items in index."
-        )
+    assert int(count) == N_ELEMENTS, f"OpenSearch dst check fail: expect {N_ELEMENTS} got {count}"
 
     print(f"OpenSearch destination test was successful with {count} items being uploaded.")
