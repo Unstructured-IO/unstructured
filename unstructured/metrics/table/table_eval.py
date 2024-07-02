@@ -100,8 +100,10 @@ def calculate_table_detection_metrics(
     """
     Calculate the table detection metrics: recall, precision, and f1 score.
     Args:
-        matched_indices: a list of indices indicating matches between predicted and ground truth tables. For example
-            matched_indices[i] = j means that the i-th predicted table is matched with the j-th ground truth table.
+        matched_indices:
+            List of indices indicating matches between predicted and ground truth tables
+            For example: matched_indices[i] = j means that the
+            i-th predicted table is matched with the j-th ground truth table.
         ground_truth_tables_number: the number of ground truth tables.
 
     Returns:
