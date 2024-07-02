@@ -50,7 +50,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.lang import apply_lang_metadata, detect_languages
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -129,6 +129,8 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    detect_language_per_element
+        Detect language per element instead of at the document level.
     include_page_breaks
         When True, add a `PageBreak` element to the element-stream when a page-break is detected in
         the document. Note that not all DOCX files include page-break information.
@@ -167,6 +169,7 @@ def partition_docx(
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
         strategy=strategy,
+        languages=languages,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
@@ -204,6 +207,7 @@ class DocxPartitionerOptions:
         metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
         strategy: str | None = None,
+        **kwargs: Any,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -215,6 +219,8 @@ class DocxPartitionerOptions:
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
+        # -- languages is a list of languages to use for category detection --
+        self._languages: list[str] = kwargs.get("languages") or ["auto"]
 
     @classmethod
     def load(cls, **kwargs: Any) -> DocxPartitionerOptions:
@@ -230,6 +236,10 @@ class DocxPartitionerOptions:
     def document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
         return docx.Document(self._docx_file)
+
+    @property
+    def languages(self) -> list[str]:
+        return self._languages
 
     @lazyproperty
     def include_page_breaks(self) -> bool:
@@ -956,9 +966,23 @@ class _DocxPartitioner:
             return Address
         if is_email_address(text):
             return EmailAddress
-        if is_possible_narrative_text(text):
+        if is_possible_narrative_text(
+            text,
+            languages=(
+                self._opts.languages
+                if "auto" not in self._opts.languages
+                else detect_languages(text, self._opts.languages)
+            ),
+        ):
             return NarrativeText
-        if is_possible_title(text):
+        if is_possible_title(
+            text,
+            languages=(
+                self._opts.languages
+                if "auto" not in self._opts.languages
+                else detect_languages(text, self._opts.languages)
+            ),
+        ):
             return Title
 
         return None

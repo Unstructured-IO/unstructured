@@ -257,6 +257,7 @@ def element_from_text(
     text: str,
     coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
+    languages: Optional[list[str]] = None,
 ) -> Element:
     if is_in_header_position(coordinates, coordinate_system):
         return Header(
@@ -291,13 +292,13 @@ def element_from_text(
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_possible_narrative_text(text):
+    elif is_possible_narrative_text(text, languages=languages):
         return NarrativeText(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_possible_title(text):
+    elif is_possible_title(text, languages=languages):
         return Title(
             text=text,
             coordinates=coordinates,

@@ -468,6 +468,7 @@ def _process_pdfminer_pages(
                         _text,
                         coordinates=points,
                         coordinate_system=coordinate_system,
+                        languages=languages,
                     )
                     coordinates_metadata = CoordinatesMetadata(
                         points=points,
