@@ -85,7 +85,7 @@ langchain-core==0.2.10
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.82
+langsmith==0.1.83
     # via
     #   langchain
     #   langchain-community
@@ -107,7 +107,7 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   langchain
     #   langchain-community
-openai==1.35.7
+openai==1.35.8
     # via -r ./ingest/embed-openai.in
 orjson==3.10.5
     # via langsmith
@@ -117,13 +117,13 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   langchain
     #   langchain-core
     #   langsmith
     #   openai
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 pyyaml==6.0.1
     # via

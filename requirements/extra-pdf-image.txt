@@ -48,7 +48,7 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.30.0
+google-auth==2.31.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -164,7 +164,7 @@ pillow==10.4.0
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.16.0
+pillow-heif==0.17.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.0
     # via iopath

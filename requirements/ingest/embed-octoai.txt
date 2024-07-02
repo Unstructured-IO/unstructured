@@ -47,11 +47,11 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.35.7
+openai==1.35.8
     # via -r ./ingest/embed-octoai.in
-pydantic==2.7.4
+pydantic==2.8.0
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 regex==2024.5.15
     # via

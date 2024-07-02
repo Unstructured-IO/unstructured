@@ -119,7 +119,7 @@ importlib-metadata==7.1.0
     #   jupyterlab
     #   jupyterlab-server
     #   nbconvert
-ipykernel==6.29.4
+ipykernel==6.29.5
     # via
     #   jupyter
     #   jupyter-console
