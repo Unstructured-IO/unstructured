@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -267,7 +268,14 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             element_metrics_results = {}
             for metric in combined_table_metrics:
                 metric_df = has_tables_df[has_tables_df[metric].notnull()]
-                agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+                agg_metric = metric_df[metric].agg([_stdev, _pstdev, _count]).transpose()
+                if metric == "total_tables":
+                    agg_metric["_mean"] = metric_df[metric].mean()
+                else:
+                    agg_metric["_mean"] = np.average(
+                        metric_df[metric], weights=metric_df["total_tables"]
+                    )
+                print(agg_metric)
                 if agg_metric.empty:
                     element_metrics_results[metric] = pd.Series(
                         data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
