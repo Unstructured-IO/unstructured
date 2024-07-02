@@ -9,6 +9,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_FOLDER_NAME=azure-cog-search-dest
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
+UPLOAD_DIR=$WORK_DIR/upload_stage
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 AZURE_SEARCH_ENDPOINT="https://ingest-test-azure-cognitive-search.search.windows.net"
@@ -79,7 +80,15 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
+  --chunking-strategy by_title \
+  --chunk-combine-text-under-n-chars 150 \
+  --chunk-new-after-n-chars 1500 \
+  --chunk-max-characters 2500 \
+  --chunk-multipage-sections \
+  --chunk-no-include-orig-elements \
+  --embedding-provider "langchain-huggingface" \
   azure-cognitive-search \
+  --num-processes "$max_processes" \
   --key "$AZURE_SEARCH_API_KEY" \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \
   --index "$DESTINATION_INDEX"
@@ -103,7 +112,7 @@ while [ "$docs_count_remote" -eq 0 ] && [ "$attempt" -lt 6 ]; do
 done
 
 docs_count_local=0
-for i in $(jq length "$OUTPUT_DIR"/*.json); do
+for i in $(jq length "$UPLOAD_DIR"/*.json); do
   docs_count_local=$((docs_count_local + i))
 done
 
