@@ -49,7 +49,6 @@ class MissingCategoryError(Exception):
 CONNECTOR_TYPE = "salesforce"
 
 if TYPE_CHECKING:
-    # from simple_salesforce import Salesforce
     pass
 
 SALESFORCE_API_VERSION = "57.0"
