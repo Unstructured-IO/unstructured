@@ -17,8 +17,8 @@ from .mongodb import mongodb_dest_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
-from .weaviate import weaviate_dest_cmd
 from .salesforce import salesforce_src_cmd
+from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
     azure_src_cmd,

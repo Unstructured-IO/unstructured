@@ -4,7 +4,7 @@ import click
 
 from unstructured.ingest.v2.cli.base import SrcCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
-from unstructured.ingest.v2.cli.utils import DelimitedString, FileOrJson
+from unstructured.ingest.v2.cli.utils import DelimitedString
 from unstructured.ingest.v2.processes.connectors.salesforce import CONNECTOR_TYPE
 
 
