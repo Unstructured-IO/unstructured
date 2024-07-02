@@ -1,0 +1,191 @@
+[
+  {
+    "type": "Title",
+    "element_id": "bec7e6ad2ef7e1e8f16ef452637b26b5",
+    "text": "Hey Sean.",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a3e4b2201edb4fecdc7ef055e871310e",
+    "text": "Testing email parsing here.",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "ff15ab0b7f162b02420efbb16866a2fe",
+    "text": "Type: email",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7b314c7653fd2890729cd4910778ad04",
+    "text": "Just testing the email system",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "c8805f36ed5571165d1f36ce32514b9a",
+    "text": "_____________________________________________________________________",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "d600397e8498fd001b8fc9efac09a97a",
+    "text": "Powered by Salesforce",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "10c6ea4dc1b92ab41aefb37d7ca73013",
+    "text": "http://www.salesforce.com/",
+    "metadata": {
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "2023-09-14T11:40:03.000+0000",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "2023-08-20T14:35:49.000+0000",
+        "date_modified": "2023-08-20T14:35:55.000+0000"
+      }
+    }
+  }
+]

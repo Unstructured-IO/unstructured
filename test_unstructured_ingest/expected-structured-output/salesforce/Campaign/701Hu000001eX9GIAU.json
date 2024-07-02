@@ -1,0 +1,702 @@
+[
+  {
+    "type": "Title",
+    "element_id": "384002952158b638e0b0e0de4326767f",
+    "text": "attributes.type: Campaign",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "36fb14db4feae21ae81dc54420fb7229",
+    "text": "attributes.url: /services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "64dade36c284ac2fdadda70f781ca507",
+    "text": "Id: 701Hu000001eX9GIAU",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c34ffadbb153e54a823c8e5b0cc21caa",
+    "text": "IsDeleted: False",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "fc11a6cd224ce37677e0c253cb933704",
+    "text": "Name: DM Campaign to Top Customers - Nov 12-23, 2001",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "cbdfe36e3457af76b03e169d28a19d1c",
+    "text": "ParentId: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "4ace811f7bbc33d8b95facef65856cf1",
+    "text": "Type: Direct Mail",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "53a1e71b8bd4e2d5a30d4af512f80ba8",
+    "text": "Status: Completed",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "5e321d800a1e80ab003f9fb2d9f88fa6",
+    "text": "StartDate: 2022-12-04",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "62cc54910da392e4778c23fe7096d534",
+    "text": "EndDate: 2022-12-15",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "3b165deaf908f966020c80dcd185ef62",
+    "text": "ExpectedRevenue: 2500000.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1d9b95ae4f404ad28fec93d018014ace",
+    "text": "BudgetedCost: 25000.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a3f84e8cda21f0ff6520ec9d751ec3ef",
+    "text": "ActualCost: 23500.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f89dd3ea17fd475ede7aa46517d471e0",
+    "text": "ExpectedResponse: 7.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "981c4dac9336aef33c84789dd3f935a2",
+    "text": "NumberSent: 15000.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "10d5600792ee19a78466e8bab179077a",
+    "text": "IsActive: True",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a78ce899f2cdd7dd1bdb33be2978befa",
+    "text": "Description: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "711f7f171ca8adb577158818aa6215df",
+    "text": "NumberOfLeads: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a26dbaf7065c06c5781ed38da3644dab",
+    "text": "NumberOfConvertedLeads: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "7f8dcc8ab4ffc389356892276eecaef6",
+    "text": "NumberOfContacts: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "cf2dd58831695b56230043a4fc88dba9",
+    "text": "NumberOfResponses: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "099c678fbce3b9974f292d0704fe91c3",
+    "text": "NumberOfOpportunities: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "0d98aaf501f215ed5607b21f3ec4b979",
+    "text": "NumberOfWonOpportunities: 0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8a72e631369ce1f49e6bd56fbec605db",
+    "text": "AmountAllOpportunities: 0.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "907b076b6090743b65338ef33b5eca9d",
+    "text": "AmountWonOpportunities: 0.0",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "0bc816d554c6bab3637b92d4041e1fe3",
+    "text": "OwnerId: 005Hu00000Owz9uIAB",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "463b1ce8df8b8a1e164e17b66d7df1b1",
+    "text": "CreatedDate: 2023-08-18T11:48:08.000+0000",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "cd294220d25876f7c6d880f1423ad2fb",
+    "text": "CreatedById: 005Hu00000Owz9uIAB",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "33da254eff165dbf906196e5264d398e",
+    "text": "LastModifiedDate: 2023-08-18T11:48:08.000+0000",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "d9cd552b47094aff7ff11912a6f6f593",
+    "text": "LastModifiedById: 005Hu00000Owz9uIAB",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f96f44c83f7852ceda27d4b58236dc1f",
+    "text": "SystemModstamp: 2023-08-18T11:48:08.000+0000",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "51dffcdd6c5a7b824f4740ff1901d84f",
+    "text": "LastActivityDate: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "861d773c5e169691e5d04747b29ffcc3",
+    "text": "LastViewedDate: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "7b213fd9493280a93c2ee76754d88b82",
+    "text": "LastReferencedDate: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "28e13edcb5033ed4d0be71977e918631",
+    "text": "CampaignMemberRecordTypeId: None",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/xml",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/Campaign/701Hu000001eX9GIAU",
+        "version": "2023-08-18T11:48:08.000+0000",
+        "record_locator": {
+          "id": "701Hu000001eX9GIAU"
+        },
+        "date_created": "2023-08-18T11:48:08.000+0000",
+        "date_modified": "2023-08-18T11:48:08.000+0000"
+      }
+    }
+  }
+]
