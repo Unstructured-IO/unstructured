@@ -10,6 +10,7 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 USER_AGENT = "mixedbread-ai@unstructured"
+MAX_BATCH_SIZE = 256
 
 if TYPE_CHECKING:
     from mixedbread_ai.client import MixedbreadAI
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class MixedBreadAIEmbeddingConfig(EmbeddingConfig):
+class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
     """
     Configuration class for Mixedbread AI Embedding Encoder.
 
@@ -66,7 +67,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         config (MixedBreadAIEmbeddingConfig): Configuration for the embedding encoder.
     """
 
-    config: MixedBreadAIEmbeddingConfig
+    config: MixedbreadAIEmbeddingConfig
 
     _client: Optional["MixedbreadAI"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
@@ -89,7 +90,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
     def initialize(self):
         if self.config.api_key is None:
             raise ValueError(
-                "The mixedbread ai API key must be specified."
+                "The Mixedbread AI API key must be specified."
                 + "You either pass it in the constructor using 'api_key'"
                 + "or via the 'MXBAI_API_KEY' environment variable."
             )
@@ -99,8 +100,13 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         if self.config.max_retries is not None and self.config.max_retries < 0:
             raise ValueError("The max_retries parameter must be greater than or equal to 0.")
 
-        if self.config.batch_size is not None and self.config.batch_size <= 0:
-            raise ValueError("The batch_size parameter must be greater than 0.")
+        if self.config.batch_size is not None and (
+            self.config.batch_size <= 0 or self.config.batch_size > MAX_BATCH_SIZE
+        ):
+            raise ValueError(
+                f"The batch_size parameter "
+                f"must be greater than 0 and smaller than or equal to {MAX_BATCH_SIZE}."
+            )
 
         from mixedbread_ai.core import RequestOptions
 

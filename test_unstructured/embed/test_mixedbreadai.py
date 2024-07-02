@@ -4,7 +4,7 @@ import pytest
 
 from unstructured.documents.elements import Text
 from unstructured.embed.mixedbreadai import (
-    MixedBreadAIEmbeddingConfig,
+    MixedbreadAIEmbeddingConfig,
     MixedbreadAIEmbeddingEncoder,
 )
 
@@ -32,7 +32,7 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     mocker.patch.object(MixedbreadAIEmbeddingEncoder, "create_client", return_value=mock_client)
 
     encoder = MixedbreadAIEmbeddingEncoder(
-        config=MixedBreadAIEmbeddingConfig(
+        config=MixedbreadAIEmbeddingConfig(
             api_key="api_key", model_name="mixedbread-ai/mxbai-embed-large-v1"
         )
     )
@@ -56,7 +56,7 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
 )
 def test_embed_documents_live():
     encoder = MixedbreadAIEmbeddingEncoder(
-        config=MixedBreadAIEmbeddingConfig(model_name="mixedbread-ai/mxbai-embed-large-v1")
+        config=MixedbreadAIEmbeddingConfig(model_name="mixedbread-ai/mxbai-embed-large-v1")
     )
 
     encoder.initialize()
