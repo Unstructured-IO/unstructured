@@ -5,6 +5,7 @@ import re
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, BinaryIO, Iterator, List, Optional, Sequence, Tuple, Union, cast
+from io import BytesIO
 
 import numpy as np
 import pdf2image
@@ -475,6 +476,8 @@ def _process_pdfminer_pages(
     laparams = LAParams()
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+    fp = BytesIO(fp.read())
 
     for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
         interpreter.process_page(page)
