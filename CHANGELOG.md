@@ -1,3 +1,13 @@
+## 0.14.10-dev0
+
+### Enhancements
+
+* **Use (number of actual table) weighted average for table metrics** In evaluating table metrics the mean aggregation now uses the actual number of tables in a document to weight the metric scores
+
+### Features
+
+### Fixes
+
 ## 0.14.9
 
 ### Enhancements
