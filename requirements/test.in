@@ -8,11 +8,12 @@ flake8-print
 freezegun
 label_studio_sdk
 mypy
-psutil
 pydantic
 pytest-cov
 pytest-mock
-ruff
+# NOTE(robison) - we need to do additional cleanup to pass
+# linting for the latest version of ruff
+ruff<0.5.0
 types-Markdown
 types-requests
 types-tabulate

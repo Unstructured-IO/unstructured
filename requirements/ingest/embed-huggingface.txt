@@ -67,20 +67,21 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.3
+langchain==0.2.6
     # via langchain-community
-langchain-community==0.2.4
-    # via -r ./ingest/embed-huggingface.in
-langchain-core==0.2.2
+langchain-community==0.2.6
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/embed-huggingface.in
+langchain-core==0.2.10
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.1
+langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.62
+langsmith==0.1.83
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -121,14 +122,14 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.3.0
+pillow==10.4.0
     # via sentence-transformers
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -185,7 +186,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.41.2
+transformers==4.42.3
     # via sentence-transformers
 typing-extensions==4.12.2
     # via

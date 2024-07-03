@@ -13,6 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
+from unstructured.partition.pdf_image.analysis.bbox_visualisation import OCRLayoutDrawer
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
@@ -35,6 +36,7 @@ def process_data_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -80,6 +82,7 @@ def process_data_with_ocr(
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
+            ocr_drawer=ocr_drawer,
         )
     finally:
         if os.path.isfile(file_name):
@@ -98,6 +101,7 @@ def process_file_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -144,6 +148,7 @@ def process_file_with_ocr(
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                         extracted_regions=extracted_regions,
+                        ocr_drawer=ocr_drawer,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -166,6 +171,7 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
+                            ocr_drawer=ocr_drawer,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -184,6 +190,7 @@ def supplement_page_layout_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
+    ocr_drawer: Optional[OCRLayoutDrawer] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -199,6 +206,8 @@ def supplement_page_layout_with_ocr(
             image,
             ocr_languages=ocr_languages,
         )
+        if ocr_drawer:
+            ocr_drawer.add_ocred_page(ocr_layout)
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,

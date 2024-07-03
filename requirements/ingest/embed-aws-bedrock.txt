@@ -55,20 +55,21 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.3
+langchain==0.2.6
     # via langchain-community
-langchain-community==0.2.4
-    # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.2
+langchain-community==0.2.6
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/embed-aws-bedrock.in
+langchain-core==0.2.10
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.1
+langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.62
+langsmith==0.1.83
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -97,12 +98,12 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 python-dateutil==2.9.0.post0
     # via

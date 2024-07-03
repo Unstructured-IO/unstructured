@@ -20,7 +20,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 
 if TYPE_CHECKING:
@@ -154,6 +153,7 @@ class WeaviateUploaderConfig(UploaderConfig):
 
 @dataclass
 class WeaviateUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: WeaviateUploaderConfig
     connection_config: WeaviateConnectionConfig
     client: Optional["Client"] = field(init=False)
@@ -223,13 +223,10 @@ class WeaviateUploader(Uploader):
                 )
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=WeaviateConnectionConfig,
-        uploader=WeaviateUploader,
-        uploader_config=WeaviateUploaderConfig,
-        upload_stager=WeaviateUploadStager,
-        upload_stager_config=WeaviateUploadStagerConfig,
-    ),
+weaviate_destination_entry = DestinationRegistryEntry(
+    connection_config=WeaviateConnectionConfig,
+    uploader=WeaviateUploader,
+    uploader_config=WeaviateUploaderConfig,
+    upload_stager=WeaviateUploadStager,
+    upload_stager_config=WeaviateUploadStagerConfig,
 )

@@ -20,7 +20,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -92,6 +91,7 @@ class AstraUploaderConfig(UploaderConfig):
 class AstraUploader(Uploader):
     connection_config: AstraConnectionConfig
     upload_config: AstraUploaderConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["astrapy"], extras="astra")
     def get_collection(self) -> "AstraDBCollection":
@@ -142,13 +142,10 @@ class AstraUploader(Uploader):
             collection.insert_many(chunk)
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=AstraConnectionConfig,
-        upload_stager_config=AstraUploadStagerConfig,
-        upload_stager=AstraUploadStager,
-        uploader_config=AstraUploaderConfig,
-        uploader=AstraUploader,
-    ),
+astra_destination_entry = DestinationRegistryEntry(
+    connection_config=AstraConnectionConfig,
+    upload_stager_config=AstraUploadStagerConfig,
+    upload_stager=AstraUploadStager,
+    uploader_config=AstraUploaderConfig,
+    uploader=AstraUploader,
 )
