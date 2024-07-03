@@ -529,6 +529,11 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
+    if 'pdf_skip_ocr_element_types' in kwargs.keys():
+        pdf_skip_ocr_element_types = kwargs['pdf_skip_ocr_element_types']
+    else:
+        pdf_skip_ocr_element_types = []
+
     if languages is None:
         languages = ["eng"]
 
@@ -606,6 +611,7 @@ def _partition_pdf_or_image_local(
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
+                pdf_skip_ocr_element_types=pdf_skip_ocr_element_types,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_drawer=ocr_drawer,
             )
@@ -665,6 +671,7 @@ def _partition_pdf_or_image_local(
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
+                pdf_skip_ocr_element_types=pdf_skip_ocr_element_types,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_drawer=ocr_drawer,
             )

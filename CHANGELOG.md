@@ -6,6 +6,8 @@
 
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
 
+* **Added kwarg in partition_pdf() to skip ocr for certain element_types**. kWARG is 'pdf_skip_ocr_element_types' it is parameter that contains list of element types that will not be OCR-ed.
+
 ### Features
 
 ### Fixes
