@@ -90,7 +90,7 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via -r ./base.in
 regex==2024.5.15
     # via nltk

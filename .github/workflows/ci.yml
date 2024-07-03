@@ -54,7 +54,23 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install all extras
         run: make check-extras
-      - name: Checks licenses on all extras
+
+  check-licenses:
+    strategy:
+      matrix:
+        python-version: [ "3.12" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install all doc and test dependencies
+        run: make install-ci
+      - name: Install all ingest dependencies
+        run: make install-all-ingest
+      - name: Checks licenses on dependencies
         run: make check-licenses
 
   lint:

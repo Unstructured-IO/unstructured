@@ -165,7 +165,7 @@ opentelemetry-util-http==0.46b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-orjson==3.10.5
+orjson==3.10.6
     # via chromadb
 overrides==7.7.0
     # via chromadb

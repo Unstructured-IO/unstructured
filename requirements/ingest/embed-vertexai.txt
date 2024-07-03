@@ -108,7 +108,7 @@ langchain-community==0.2.6
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.10
+langchain-core==0.2.11
     # via
     #   langchain
     #   langchain-community
@@ -141,7 +141,7 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   shapely
-orjson==3.10.5
+orjson==3.10.6
     # via langsmith
 packaging==23.2
     # via

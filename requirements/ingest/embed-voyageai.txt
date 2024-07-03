@@ -44,7 +44,7 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.6
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.10
+langchain-core==0.2.11
     # via
     #   langchain
     #   langchain-text-splitters
@@ -66,7 +66,7 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   langchain
     #   voyageai
-orjson==3.10.5
+orjson==3.10.6
     # via langsmith
 packaging==23.2
     # via

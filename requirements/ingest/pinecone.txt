@@ -9,7 +9,7 @@ certifi==2024.6.2
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   pinecone-client
-pinecone-client==4.1.1
+pinecone-client==4.1.2
     # via -r ./ingest/pinecone.in
 pinecone-plugin-interface==0.0.7
     # via pinecone-client
