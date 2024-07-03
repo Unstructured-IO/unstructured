@@ -190,9 +190,16 @@ def test_table_structure_evaluation():
     assert os.path.isfile(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"))
     assert os.path.isfile(os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
-    assert len(df) == 1
+    agg_df = pd.read_csv(
+        os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"), sep="\t"
+    ).set_index("metric")
+    assert len(df) == 2
     assert len(df.columns) == 17
-    assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf"
+    assert df.iloc[1].filename == "IRS-2023-Form-1095-A.pdf"
+    assert (
+        np.round(np.average(df["table_level_acc"], weights=df["total_tables"]), 3)
+        == agg_df.loc["table_level_acc", "average"]
+    )
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
