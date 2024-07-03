@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-## 0.14.9-dev6
+## 0.14.10-dev7
 
 ### Enhancements
 
@@ -9,20 +8,18 @@
 
 ### Fixes
 
-## 0.14.9-dev5
-=======
 ## 0.14.10-dev6
->>>>>>> 0046f58a4ff675747985127f19b4908fbcd4d923
 
 ### Enhancements
+
 * **Update unstructured-client dependency** Change unstructured-client dependency pin back to
   greater than min version and updated tests that were failing given the update.
-
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
 
 ### Features
 
 ### Fixes
+
 - Fix counting false negatives and false positives in table structure evaluation
 
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
@@ -866,7 +863,7 @@
 * **Refactor of the ingest cli workflow** The refactored approach uses a dynamically set pipeline with a snapshot along each step to save progress and accommodate continuation from a snapshot if an error occurs. This also allows the pipeline to dynamically assign any number of steps to modify the partitioned content before it gets written to a destination.
 * **Applies `max_characters=<n>` argument to all element types in `add_chunking_strategy` decorator** Previously this argument was only utilized in chunking Table elements and now applies to all partitioned elements if `add_chunking_strategy` decorator is utilized, further preparing the elements for downstream processing.
 * **Add common retry strategy utilities for unstructured-ingest** Dynamic retry strategy with exponential backoff added to Notion source connector.
-* 
+*
 
 ### Features
 
@@ -2314,4 +2311,3 @@
 ## 0.2.0
 
 * Initial release of unstructured
-
