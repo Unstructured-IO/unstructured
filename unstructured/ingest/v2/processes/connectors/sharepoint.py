@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Generator, Optional
 from urllib.parse import quote
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.error import SourceConnectionNetworkError
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -61,7 +61,7 @@ class SharepointAccessConfig(AccessConfig):
 
 
 @dataclass
-class SharepointPermissionsConfig:
+class SharepointPermissionsConfig(EnhancedDataClassJsonMixin):
     permissions_application_id: str
     permissions_tenant: str
     permissions_client_cred: str = enhanced_field(sensitive=True)
