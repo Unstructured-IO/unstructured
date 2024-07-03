@@ -18,6 +18,7 @@ from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
 from .salesforce import salesforce_src_cmd
+from .singlestore import singlestore_dest_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -57,6 +58,7 @@ dest_cmds = [
     pinecone_dest_cmd,
     s3_dest_cmd,
     sftp_dest_cmd,
+    singlestore_dest_cmd,
     weaviate_dest_cmd,
     mongodb_dest_cmd,
 ]

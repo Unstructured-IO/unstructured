@@ -17,7 +17,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
@@ -111,7 +111,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
 
         logger.info(f"using {self.write_config.num_processes} processes to upload")
         if self.write_config.num_processes == 1:
-            for chunk in chunk_generator(elements_dict, pinecone_batch_size):
+            for chunk in batch_generator(elements_dict, pinecone_batch_size):
                 self.upsert_batch(chunk)  # noqa: E203
 
         else:
@@ -119,7 +119,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
                 processes=self.write_config.num_processes,
             ) as pool:
                 pool.map(
-                    self.upsert_batch, list(chunk_generator(elements_dict, pinecone_batch_size))
+                    self.upsert_batch, list(batch_generator(elements_dict, pinecone_batch_size))
                 )
 
     def normalize_dict(self, element_dict: dict) -> dict:
