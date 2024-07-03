@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Final, Iterator, cast
-from typing import IO, Any, Final, Iterator, cast
 
 from lxml import etree
 
