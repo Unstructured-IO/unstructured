@@ -51,7 +51,9 @@ requests==2.32.3
 requests-file==2.1.0
     # via zeep
 requests-toolbelt==1.0.0
-    # via zeep
+    # via
+    #   -c ./ingest/../base.txt
+    #   zeep
 simple-salesforce==1.12.6
     # via -r ./ingest/salesforce.in
 six==1.16.0

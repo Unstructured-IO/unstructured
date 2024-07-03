@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import Dict
 from unstructured.ingest.v2.cli.base import DestCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
+from unstructured.ingest.v2.cli.utils import Dict
 from unstructured.ingest.v2.processes.connectors.chroma import CONNECTOR_TYPE
 
 
