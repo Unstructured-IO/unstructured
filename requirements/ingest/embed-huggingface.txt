@@ -80,7 +80,7 @@ langchain-core==0.2.10
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.82
+langsmith==0.1.83
     # via
     #   langchain
     #   langchain-community
@@ -122,14 +122,14 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.3.0
+pillow==10.4.0
     # via sentence-transformers
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -186,7 +186,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.41.2
+transformers==4.42.3
     # via sentence-transformers
 typing-extensions==4.12.2
     # via

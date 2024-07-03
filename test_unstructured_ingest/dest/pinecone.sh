@@ -20,6 +20,7 @@ RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 
 # Set the variables with default values if they're not set in the environment
 PINECONE_INDEX=${PINECONE_INDEX:-"ingest-test-$RANDOM_SUFFIX"}
+PINECONE_HOST_POSTFIX=${PINECONE_HOST_POSTFIX:-"4627-b74a"}
 PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT:-"us-east1-gcp"}
 PINECONE_PROJECT_ID=${PINECONE_PROJECT_ID:-"art8iaj"}
 
@@ -96,7 +97,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   --chunking-strategy by_title \
-  --chunk-combine-text-under-n-chars 200 --chunk-new-after-n-chars 2500 --chunk-max-characters 38000 --chunk-multipage-sections \
+  --chunk-combine-text-under-n-chars 150 --chunk-new-after-n-chars 1500 --chunk-max-characters 2500 --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
@@ -116,7 +117,7 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
 
   num_of_vectors_remote=$(curl --request POST \
     -s \
-    --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
+    --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.aped-$PINECONE_HOST_POSTFIX.pinecone.io/describe_index_stats" \
     --header "accept: application/json" \
     --header "content-type: application/json" \
     --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
@@ -125,7 +126,7 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   attempt=$((attempt + 1))
 done
 
-EXPECTED=1404
+EXPECTED=1825
 
 if [ "$num_of_vectors_remote" -ne $EXPECTED ]; then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."

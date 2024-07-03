@@ -31,8 +31,6 @@ from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
@@ -53,10 +51,10 @@ class ElasticsearchAccessConfig(AccessConfig):
 
 @dataclass
 class ElasticsearchClientInput(EnhancedDataClassJsonMixin):
-    hosts: Optional[str] = None
+    hosts: Optional[list[str]] = None
     cloud_id: Optional[str] = None
     ca_certs: Optional[str] = None
-    basic_auth: Optional[tuple[str, str]] = None
+    basic_auth: Optional[tuple[str, str]] = enhanced_field(sensitive=True, default=None)
     api_key: Optional[str] = enhanced_field(sensitive=True, default=None)
 
 
@@ -130,9 +128,14 @@ class ElasticsearchIndexer(Indexer):
         self.client = self.connection_config.get_client()
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def load_scan(self):
+        from elasticsearch.helpers import scan
+
+        return scan
+
     def _get_doc_ids(self) -> set[str]:
         """Fetches all document ids in an index"""
-        from elasticsearch.helpers import scan
+        scan = self.load_scan()
 
         scan_query: dict = {"stored_fields": [], "query": {"match_all": {}}}
         hits = scan(
@@ -248,9 +251,14 @@ class ElasticsearchDownloader(Downloader):
         raise NotImplementedError()
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
+    def load_async(self):
+        from elasticsearch import AsyncElasticsearch
         from elasticsearch.helpers import async_scan
+
+        return AsyncElasticsearch, async_scan
+
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        AsyncClient, async_scan = self.load_async()
 
         index_name: str = file_data.additional_metadata["index_name"]
         ids: list[str] = file_data.additional_metadata["ids"]
@@ -262,7 +270,7 @@ class ElasticsearchDownloader(Downloader):
         }
 
         download_responses = []
-        async with AsyncElasticsearchClient(**self.connection_config.get_client_kwargs()) as client:
+        async with AsyncClient(**self.connection_config.get_client_kwargs()) as client:
             async for result in async_scan(
                 client,
                 query=scan_query,
@@ -322,7 +330,7 @@ class ElasticsearchUploadStager(UploadStager):
 class ElasticsearchUploaderConfig(UploaderConfig):
     index_name: str
     batch_size_bytes: int = 15_000_000
-    thread_count: int = 4
+    num_threads: int = 4
 
 
 @dataclass
@@ -331,7 +339,14 @@ class ElasticsearchUploader(Uploader):
     upload_config: ElasticsearchUploaderConfig
     connection_config: ElasticsearchConnectionConfig
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def load_parallel_bulk(self):
+        from elasticsearch.helpers import parallel_bulk
+
+        return parallel_bulk
+
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        parallel_bulk = self.load_parallel_bulk()
         elements_dict = []
         for content in contents:
             with open(content.path) as elements_file:
@@ -342,14 +357,13 @@ class ElasticsearchUploader(Uploader):
             f"writing {len(elements_dict)} elements via document batches to destination "
             f"index named {self.upload_config.index_name} at {upload_destination} with "
             f"batch size (in bytes) {self.upload_config.batch_size_bytes} with "
-            f"{self.upload_config.thread_count} (number of) threads"
+            f"{self.upload_config.num_threads} (number of) threads"
         )
-        from elasticsearch.helpers import parallel_bulk
 
         client = self.connection_config.get_client()
         if not client.indices.exists(index=self.upload_config.index_name):
             logger.warning(
-                f"Elasticsearch index does not exist: "
+                f"{(self.__class__.__name__).replace('Uploader', '')} index does not exist: "
                 f"{self.upload_config.index_name}. "
                 f"This may cause issues when uploading."
             )
@@ -359,32 +373,29 @@ class ElasticsearchUploader(Uploader):
             for success, info in parallel_bulk(
                 client=client,
                 actions=batch,
-                thread_count=self.upload_config.thread_count,
+                thread_count=self.upload_config.num_threads,
             ):
                 if not success:
                     logger.error(
-                        "upload failed for a batch in elasticsearch destination connector:", info
+                        "upload failed for a batch in "
+                        f"{(self.__class__.__name__).replace('Uploader', '')} "
+                        "destination connector:",
+                        info,
                     )
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=ElasticsearchConnectionConfig,
-        indexer=ElasticsearchIndexer,
-        indexer_config=ElasticsearchIndexerConfig,
-        downloader=ElasticsearchDownloader,
-        downloader_config=ElasticsearchDownloaderConfig,
-    ),
+elasticsearch_source_entry = SourceRegistryEntry(
+    connection_config=ElasticsearchConnectionConfig,
+    indexer=ElasticsearchIndexer,
+    indexer_config=ElasticsearchIndexerConfig,
+    downloader=ElasticsearchDownloader,
+    downloader_config=ElasticsearchDownloaderConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=ElasticsearchConnectionConfig,
-        upload_stager_config=ElasticsearchUploadStagerConfig,
-        upload_stager=ElasticsearchUploadStager,
-        uploader_config=ElasticsearchUploaderConfig,
-        uploader=ElasticsearchUploader,
-    ),
+elasticsearch_destination_entry = DestinationRegistryEntry(
+    connection_config=ElasticsearchConnectionConfig,
+    upload_stager_config=ElasticsearchUploadStagerConfig,
+    upload_stager=ElasticsearchUploadStager,
+    uploader_config=ElasticsearchUploaderConfig,
+    uploader=ElasticsearchUploader,
 )

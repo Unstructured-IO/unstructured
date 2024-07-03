@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2012
 
 set -e
 
@@ -67,9 +68,10 @@ python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
   --collection "$DESTINATION_MONGO_COLLECTION" \
   check --expected-records 5
 
+stage_file=$(ls -1 "$WORK_DIR"/upload_stage | head -n 1)
 python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
   --uri "$MONGODB_URI" \
   --database "$MONGODB_DATABASE_NAME" \
   --collection "$DESTINATION_MONGO_COLLECTION" \
   check-vector \
-  --output-json "$OUTPUT_ROOT"/structured-output/$OUTPUT_FOLDER_NAME/fake-memo.pdf.json
+  --output-json "$WORK_DIR"/upload_stage/"$stage_file"
