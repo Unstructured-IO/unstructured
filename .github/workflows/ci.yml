@@ -54,6 +54,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install all extras
         run: make check-extras
+      - name: Checks licenses on all extras
+        run: make check-licenses
 
   lint:
     strategy:
@@ -132,7 +134,6 @@ jobs:
         fi
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
-        make check-licenses
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
@@ -359,7 +360,6 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make check-licenses
         ./test_unstructured_ingest/test-ingest-src.sh
 
 
@@ -432,7 +432,6 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make check-licenses
         ./test_unstructured_ingest/test-ingest-dest.sh
 
   test_ingest_help:
