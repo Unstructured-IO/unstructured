@@ -147,7 +147,7 @@ for i in "${!FILES_TO_CHECK[@]}"; do
       CURRENT_VERSION=1.archaic
     else
       CURRENT_VERSION=$($SED_CMD --version | awk 'NR==1{print $4}')
-#      CURRENT_VERSION=$(sed --version | head -n1 | cut -d" " -f4)
+      # CURRENT_VERSION=$(sed --version | head -n1 | cut -d" " -f4)
     fi
     echo "Detected sed version: $CURRENT_VERSION"
     REQUIRED_VERSION="4.3"
