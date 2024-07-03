@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 
 from test_unstructured.unit_utils import (
@@ -39,18 +41,23 @@ class DescribeOCRAgent:
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT)
         assert ocr_agent is ocr_agent_
 
-    @pytest.mark.parametrize("ExceptionCls", [ImportError, AttributeError])
-    def but_it_raises_whan_no_such_ocr_agent_class_is_found(
-        self, ExceptionCls: type, _get_ocr_agent_cls_qname_: Mock, get_instance_: Mock
+    def but_it_raises_when_the_requested_agent_is_not_whitelisted(
+        self, _get_ocr_agent_cls_qname_: Mock
     ):
         _get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
-        get_instance_.side_effect = ExceptionCls
-
-        with pytest.raises(ValueError, match="OCR_AGENT must be set to an existing OCR agent "):
+        with pytest.raises(ValueError, match="must be set to a whitelisted module"):
             OCRAgent.get_agent()
 
-        _get_ocr_agent_cls_qname_.assert_called_once_with()
-        get_instance_.assert_called_once_with("Invalid.Ocr.Agent.Qname")
+    @pytest.mark.parametrize("exception_cls", [ImportError, AttributeError])
+    def and_it_raises_when_the_requested_agent_cannot_be_loaded(
+        self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
+    ):
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
+        with patch(
+            "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
+            side_effect=exception_cls,
+        ), pytest.raises(RuntimeError, match="Could not get the OCRAgent instance"):
+            OCRAgent.get_agent()
 
     @pytest.mark.parametrize(
         ("OCR_AGENT", "expected_value"),
@@ -76,6 +83,16 @@ class DescribeOCRAgent:
         assert f"OCR agent name {OCR_AGENT} is outdated " in caplog.text
 
     # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def _clear_cache(self):
+        # Clear the cache created by @functools.lru_cache(maxsize=None) on OCRAgent.get_instance()
+        # before each test
+        OCRAgent.get_instance.cache_clear()
+        yield
+        # Clear the cache created by @functools.lru_cache(maxsize=None) on OCRAgent.get_instance()
+        # after each test (just in case)
+        OCRAgent.get_instance.cache_clear()
 
     @pytest.fixture()
     def get_instance_(self, request: FixtureRequest):
