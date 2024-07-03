@@ -43,4 +43,11 @@ def ensure_isoformat_datetime(timestamp: t.Union[datetime, str]) -> str:
         except ValueError:
             logger.debug(f"Failed to parse '{timestamp}' as a unix timestamp.")
     else:
-        raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
+        raise TypeError(
+            f"Expected a datetime object or a unix timestamp string, but got '{timestamp}' "
+            f"of type {type(timestamp)}."
+        )
+    raise ValueError(
+        f"Expected a datetime object or a unix timestamp, but got '{timestamp}' "
+        f"of type {type(timestamp)}."
+    )
