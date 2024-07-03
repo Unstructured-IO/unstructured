@@ -13,6 +13,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from email.utils import formatdate
 from pathlib import Path
+from pprint import pp
 from string import Template
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Generator, Tuple, Type
@@ -160,9 +161,11 @@ class SalesforceIndexer(Indexer):
                             ),
                             metadata=DataSourceMetadata(
                                 url=record["attributes"]["url"],
-                                version=str(parser.parse(record["SystemModstamp"])),
-                                date_created=str(parser.parse(record["CreatedDate"])),
-                                date_modified=str(parser.parse(record["LastModifiedDate"])),
+                                version=str(parser.parse(record["SystemModstamp"]).timestamp()),
+                                date_created=str(parser.parse(record["CreatedDate"]).timestamp()),
+                                date_modified=str(
+                                    parser.parse(record["LastModifiedDate"]).timestamp()
+                                ),
                                 record_locator={"id": record["Id"]},
                             ),
                             additional_metadata={"record_type": record["attributes"]["type"]},
@@ -215,14 +218,26 @@ class SalesforceDownloader(Downloader):
         def flatten_dict(data, parent, prefix=""):
             for key, value in data.items():
                 if isinstance(value, OrderedDict):
+                    print("******* ORDERED DICT")
                     flatten_dict(value, parent, prefix=f"{prefix}{key}.")
                 else:
+                    print("******* NOTTT ORDERED DICT")
                     item = ET.Element("item")
                     item.text = f"{prefix}{key}: {value}"
                     parent.append(item)
 
         root = ET.Element("root")
+        print("*** before flatten_dict ***")
+        pp(root)
+        pp(record)
+        print("*** before flatten_dict ***")
         flatten_dict(record, root)
+        # flatten_dict2(record, root)
+        print("*** after flatten_dict ***")
+        pp(root)
+        pp(record)
+        print("*** after flatten_dict ***")
+
         xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
 
@@ -272,10 +287,7 @@ class SalesforceDownloader(Downloader):
             with open(download_path, "w") as page_file:
                 page_file.write(document)
 
-            return DownloadResponse(
-                file_data=file_data,
-                path=Path(download_path),
-            )
+            return self.generate_download_response(file_data=file_data, download_path=download_path)
 
         except Exception as e:
             logger.error(
