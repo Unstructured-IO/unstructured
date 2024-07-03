@@ -4,8 +4,6 @@ from datetime import datetime
 
 from dateutil import parser
 
-from unstructured.ingest.logger import logger
-
 
 def json_to_dict(json_string: str) -> t.Union[str, t.Dict[str, t.Any]]:
     """Helper function attempts to deserialize json string to a dictionary."""
@@ -26,7 +24,7 @@ def json_to_dict(json_string: str) -> t.Union[str, t.Dict[str, t.Any]]:
 def ensure_isoformat_datetime(timestamp: t.Union[datetime, str]) -> str:
     """
     Ensures that the input value is converted to an ISO format datetime string.
-    Handles both datetime objects, unix timestamps, and other strings.
+    Handles both datetime objects and strings.
     """
     if isinstance(timestamp, datetime):
         return timestamp.isoformat()
@@ -35,19 +33,7 @@ def ensure_isoformat_datetime(timestamp: t.Union[datetime, str]) -> str:
             # Parse the datetime string in various formats
             dt = parser.parse(timestamp)
             return dt.isoformat()
-        except ValueError:
-            logger.debug(f"Failed to parse '{timestamp}' as a dateutil supported time format.")
-        try:
-            dt = datetime.fromtimestamp(float(timestamp))
-            return dt.isoformat()
-        except ValueError:
-            logger.debug(f"Failed to parse '{timestamp}' as a unix timestamp.")
+        except ValueError as e:
+            raise ValueError(f"String '{timestamp}' could not be parsed as a datetime.") from e
     else:
-        raise TypeError(
-            f"Expected a datetime object or a unix timestamp string, but got '{timestamp}' "
-            f"of type {type(timestamp)}."
-        )
-    raise ValueError(
-        f"Expected a datetime object or a unix timestamp, but got '{timestamp}' "
-        f"of type {type(timestamp)}."
-    )
+        raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
