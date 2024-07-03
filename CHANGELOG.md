@@ -3,6 +3,7 @@
 ### Enhancements
 
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* Improved the make check script to support lint checks on MacOS. On MacOS, gsed (installed via brew) replaces the default sed. The script includes platform checks to use gsed on MacOS and sed on Linux. Additionally, awk is used for version extraction. Preliminary tests indicate the script works correctly on both Linux and MacOS.
 
 ### Features
 
