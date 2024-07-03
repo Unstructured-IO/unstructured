@@ -9,14 +9,13 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_de
 """
 
 import json
-import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Generator
+from typing import TYPE_CHECKING, Any, Generator, Tuple, Type
 
 from dateutil import parser
 
@@ -37,7 +36,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     SourceRegistryEntry,
-    add_source_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -53,8 +51,10 @@ if TYPE_CHECKING:
 
 SALESFORCE_API_VERSION = "57.0"
 
+# TODO: Add more categories as needed
 ACCEPTED_CATEGORIES = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
 
+# Generic email template to process EmailMessage records as .eml files
 EMAIL_TEMPLATE = Template(
     """MIME-Version: 1.0
 Date: $date
@@ -80,7 +80,7 @@ class SalesforceAccessConfig(AccessConfig):
     private_key: str
 
     @requires_dependencies(["cryptography"])
-    def get_private_key_value_and_type(self) -> t.Tuple[str, t.Type]:
+    def get_private_key_value_and_type(self) -> Tuple[str, Type]:
         from cryptography.hazmat.primitives import serialization
 
         try:
@@ -118,7 +118,7 @@ class SalesforceConnectionConfig(ConnectionConfig):
 
 @dataclass
 class SalesforceIndexerConfig(IndexerConfig):
-    categories: t.List[str]
+    categories: list[str]
 
 
 @dataclass
@@ -127,7 +127,7 @@ class SalesforceIndexer(Indexer):
     index_config: SalesforceIndexerConfig
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
-    def list_files(self) -> t.List[FileData]:
+    def list_files(self) -> list[FileData]:
         """Get Salesforce Ids for the records.
         Send them to next phase where each doc gets downloaded into the
         appropriate format for partitioning.
@@ -223,7 +223,7 @@ class SalesforceDownloader(Downloader):
         xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
 
-    def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
+    def _eml_for_record(self, email_json: dict[str, Any]) -> str:
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
@@ -281,13 +281,10 @@ class SalesforceDownloader(Downloader):
             logger.error(e)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=SalesforceConnectionConfig,
-        indexer_config=SalesforceIndexerConfig,
-        indexer=SalesforceIndexer,
-        downloader_config=SalesforceDownloaderConfig,
-        downloader=SalesforceDownloader,
-    ),
+salesforce_source_entry = SourceRegistryEntry(
+    connection_config=SalesforceConnectionConfig,
+    indexer_config=SalesforceIndexerConfig,
+    indexer=SalesforceIndexer,
+    downloader_config=SalesforceDownloaderConfig,
+    downloader=SalesforceDownloader,
 )

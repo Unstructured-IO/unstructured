@@ -5,7 +5,10 @@ import click
 from unstructured.ingest.v2.cli.base import SrcCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import DelimitedString
-from unstructured.ingest.v2.processes.connectors.salesforce import CONNECTOR_TYPE
+from unstructured.ingest.v2.processes.connectors.salesforce import (
+    ACCEPTED_CATEGORIES,
+    CONNECTOR_TYPE,
+)
 
 
 @dataclass
@@ -40,7 +43,7 @@ class SalesforceCliConnectionConfig(CliConfig):
 class SalesforceCliIndexerConfig(CliConfig):
     @staticmethod
     def get_cli_options() -> list[click.Option]:
-        possible_categories = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
+        possible_categories = ACCEPTED_CATEGORIES
         options = [
             click.Option(
                 ["--categories"],

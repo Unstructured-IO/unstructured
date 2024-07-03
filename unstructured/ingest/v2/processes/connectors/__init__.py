@@ -20,6 +20,8 @@ from .onedrive import CONNECTOR_TYPE as ONEDRIVE_CONNECTOR_TYPE
 from .onedrive import onedrive_source_entry
 from .opensearch import CONNECTOR_TYPE as OPENSEARCH_CONNECTOR_TYPE
 from .opensearch import opensearch_destination_entry, opensearch_source_entry
+from .salesforce import CONNECTOR_TYPE as SALESFORCE_CONNECTOR_TYPE
+from .salesforce import salesforce_source_entry
 from .weaviate import CONNECTOR_TYPE as WEAVIATE_CONNECTOR_TYPE
 from .weaviate import weaviate_destination_entry
 
@@ -43,5 +45,7 @@ add_source_entry(source_type=OPENSEARCH_CONNECTOR_TYPE, entry=opensearch_source_
 add_destination_entry(
     destination_type=OPENSEARCH_CONNECTOR_TYPE, entry=opensearch_destination_entry
 )
+
+add_source_entry(source_type=SALESFORCE_CONNECTOR_TYPE, entry=salesforce_source_entry)
 
 add_destination_entry(destination_type=WEAVIATE_CONNECTOR_TYPE, entry=weaviate_destination_entry)
