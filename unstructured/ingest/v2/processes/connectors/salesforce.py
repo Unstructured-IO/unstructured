@@ -275,13 +275,11 @@ class SalesforceDownloader(Downloader):
             with open(download_path, "w") as page_file:
                 page_file.write(document)
 
-            return self.generate_download_response(file_data=file_data, download_path=download_path)
-
         except Exception as e:
-            logger.error(
-                f"Error while downloading and saving file: {file_data.identifier}.",
-            )
-            logger.error(e)
+            logger.error(f"failed to download file {file_data.identifier}: {e}", exc_info=True)
+            raise SourceConnectionNetworkError(f"failed to download file {file_data.identifier}")
+
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
 
 salesforce_source_entry = SourceRegistryEntry(
