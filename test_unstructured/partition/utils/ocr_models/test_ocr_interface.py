@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import importlib
 from unittest.mock import patch
 
 import pytest
@@ -24,7 +23,6 @@ from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
     OCR_AGENT_TESSERACT_OLD,
 )
-from unstructured.partition.utils.ocr_models import ocr_interface
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
 
@@ -54,7 +52,6 @@ class DescribeOCRAgent:
     def and_it_raises_when_the_requested_agent_cannot_be_loaded(
         self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception]
     ):
-        importlib.reload(ocr_interface)
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
         with patch(
             "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
@@ -86,6 +83,16 @@ class DescribeOCRAgent:
         assert f"OCR agent name {OCR_AGENT} is outdated " in caplog.text
 
     # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture(autouse=True)
+    def _clear_cache(self):
+        # Clear the cache created by @functools.lru_cache(maxsize=None) on OCRAgent.get_instance()
+        # before each test
+        OCRAgent.get_instance.cache_clear()
+        yield
+        # Clear the cache created by @functools.lru_cache(maxsize=None) on OCRAgent.get_instance()
+        # after each test (just in case)
+        OCRAgent.get_instance.cache_clear()
 
     @pytest.fixture()
     def get_instance_(self, request: FixtureRequest):
