@@ -47,7 +47,7 @@ class MissingCategoryError(Exception):
 CONNECTOR_TYPE = "salesforce"
 
 if TYPE_CHECKING:
-    pass
+    from simple_salesforce import Salesforce
 
 SALESFORCE_API_VERSION = "57.0"
 
@@ -102,7 +102,7 @@ class SalesforceConnectionConfig(ConnectionConfig):
     access_config: SalesforceAccessConfig = enhanced_field(sensitive=True)
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
-    def get_client(self):
+    def get_client(self) -> "Salesforce":
         from simple_salesforce import Salesforce
 
         pkey_value, pkey_type = self.access_config.get_private_key_value_and_type()
@@ -119,6 +119,9 @@ class SalesforceConnectionConfig(ConnectionConfig):
 @dataclass
 class SalesforceIndexerConfig(IndexerConfig):
     categories: list[str]
+    # categories: list[Literal[ACCEPTED_CATEGORIES]]
+    # categories: str
+    # categories: set[Literal[ACCEPTED_CATEGORIES]]
 
 
 @dataclass
@@ -138,8 +141,8 @@ class SalesforceIndexer(Indexer):
 
         files_list = []
         for record_type in self.index_config.categories:
-            if record_type not in ACCEPTED_CATEGORIES:
-                raise ValueError(f"{record_type} not currently an accepted Salesforce category")
+            # if record_type not in ACCEPTED_CATEGORIES:
+            #     raise ValueError(f"{record_type} not currently an accepted Salesforce category")
 
             try:
                 # Get ids from Salesforce
@@ -157,9 +160,9 @@ class SalesforceIndexer(Indexer):
                             ),
                             metadata=DataSourceMetadata(
                                 url=record["attributes"]["url"],
-                                version=record["SystemModstamp"],
-                                date_created=record["CreatedDate"],
-                                date_modified=record["LastModifiedDate"],
+                                version=str(parser.parse(record["SystemModstamp"])),
+                                date_created=str(parser.parse(record["CreatedDate"])),
+                                date_modified=str(parser.parse(record["LastModifiedDate"])),
                                 record_locator={"id": record["Id"]},
                             ),
                             additional_metadata={"record_type": record["attributes"]["type"]},
