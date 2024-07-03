@@ -53,12 +53,6 @@ class AzureCognitiveSearchCliUploaderConfig(CliConfig):
                 type=int,
                 help="Number of records per batch",
             ),
-            click.Option(
-                ["--num-processes"],
-                default=1,
-                type=int,
-                help="Number of processes to use for uploading.",
-            ),
         ]
         return options
 

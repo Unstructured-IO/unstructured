@@ -88,7 +88,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --chunk-no-include-orig-elements \
   --embedding-provider "langchain-huggingface" \
   azure-cognitive-search \
-  --num-processes "$max_processes" \
   --key "$AZURE_SEARCH_API_KEY" \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \
   --index "$DESTINATION_INDEX"

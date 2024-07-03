@@ -47,6 +47,6 @@ if __name__ == "__main__":
             index=os.getenv("AZURE_SEARCH_INDEX"),
             endpoint=os.getenv("AZURE_SEARCH_ENDPOINT"),
         ),
-        uploader_config=AzureCognitiveSearchUploaderConfig(batch_size=10, num_processes=1),
+        uploader_config=AzureCognitiveSearchUploaderConfig(batch_size=10),
         stager_config=AzureCognitiveSearchUploadStagerConfig(),
     ).run()

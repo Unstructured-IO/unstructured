@@ -1,5 +1,4 @@
 import json
-import multiprocessing as mp
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -63,7 +62,6 @@ class AzureCognitiveSearchUploadStagerConfig(UploadStagerConfig):
 @dataclass
 class AzureCognitiveSearchUploaderConfig(UploaderConfig):
     batch_size: int = 100
-    num_processes: int = 1
 
 
 @dataclass
@@ -196,21 +194,13 @@ class AzureCognitiveSearchUploader(Uploader):
             f"writing document batches to destination"
             f" endpoint at {str(self.connection_config.endpoint)}"
             f" index at {str(self.connection_config.index)}"
-            f" with batch size {str(self.upload_config.batch_size)} and"
-            f" {str(self.upload_config.num_processes)} (number of) processes"
+            f" with batch size {str(self.upload_config.batch_size)}"
         )
 
         batch_size = self.upload_config.batch_size
 
-        if self.upload_config.num_processes == 1:
-            for chunk in chunk_generator(elements_dict, batch_size):
-                self.write_dict(elements_dict=chunk)  # noqa: E203
-
-        else:
-            with mp.Pool(
-                processes=self.upload_config.num_processes,
-            ) as pool:
-                pool.map(self.write_dict_wrapper, list(chunk_generator(elements_dict, batch_size)))
+        for chunk in chunk_generator(elements_dict, batch_size):
+            self.write_dict(elements_dict=chunk)  # noqa: E203
 
 
 add_destination_entry(
