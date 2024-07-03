@@ -4,7 +4,6 @@ from pathlib import Path
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
-from unstructured.ingest.v2.processes.chunker import ChunkerConfig
 from unstructured.ingest.v2.processes.connectors.local import (
     LocalUploaderConfig,
 )
@@ -13,8 +12,8 @@ from unstructured.ingest.v2.processes.connectors.sharepoint import (
     SharepointConnectionConfig,
     SharepointDownloaderConfig,
     SharepointIndexerConfig,
+    SharepointPermissionsConfig,
 )
-from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
 base_path = Path(__file__).parent.parent.parent.parent.parent
@@ -34,9 +33,14 @@ if __name__ == "__main__":
             client_id=os.getenv("SHAREPOINT_CLIENT_ID"),
             site=os.getenv("SHAREPOINT_SITE"),
             access_config=SharepointAccessConfig(client_cred=os.getenv("SHAREPOINT_CRED")),
+            permissions_config=SharepointPermissionsConfig(
+                permissions_application_id=os.getenv("SHAREPOINT_PERMISSIONS_APP_ID"),
+                permissions_client_cred=os.getenv("SHAREPOINT_PERMISSIONS_APP_CRED"),
+                permissions_tenant=os.getenv("SHAREPOINT_PERMISSIONS_TENANT"),
+            ),
         ),
         partitioner_config=PartitionerConfig(strategy="fast"),
-        chunker_config=ChunkerConfig(chunking_strategy="by_title"),
-        embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
+        # chunker_config=ChunkerConfig(chunking_strategy="by_title"),
+        # embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         uploader_config=LocalUploaderConfig(output_dir=str(output_path.resolve())),
     ).run()
