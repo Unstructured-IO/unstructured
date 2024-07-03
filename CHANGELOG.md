@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Added kwarg in partition_pdf() to skip ocr for certain element_types**. kWARG is 'pdf_skip_ocr_element_types' it is parameter that contains list of element types that will not be OCR-ed.
+
 ### Features
 
 ### Fixes
