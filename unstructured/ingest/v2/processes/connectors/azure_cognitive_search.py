@@ -22,6 +22,7 @@ from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     add_destination_entry,
 )
+from unstructured.ingest.v2.processes.connectors.utils import parse_datetime
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -100,21 +101,20 @@ class AzureCognitiveSearchUploadStager(UploadStager):
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             )
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            data["metadata"]["data_source"]["date_created"] = parser.parse(
-                ensure_isoformat_datetime(date_created)
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
+            data["metadata"]["data_source"]["date_created"] = parse_datetime(date_created).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ"
             )
+
         if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            data["metadata"]["data_source"]["date_modified"] = parser.parse(
-                ensure_isoformat_datetime(date_modified)
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
-            data["metadata"]["data_source"]["date_processed"] = parser.parse(
-                ensure_isoformat_datetime(date_processed)
+            data["metadata"]["data_source"]["date_modified"] = parse_datetime(
+                date_modified
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
+            data["metadata"]["data_source"]["date_processed"] = parse_datetime(
+                date_processed
+            ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
         if page_number := data.get("metadata", {}).get("page_number"):
