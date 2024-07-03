@@ -46,7 +46,7 @@ google-api-core[grpc]==2.19.1
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-auth==2.30.0
+google-auth==2.31.0
     # via
     #   google-api-core
     #   google-cloud-aiplatform
@@ -118,7 +118,7 @@ langchain-google-vertexai==1.0.6
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.82
+langsmith==0.1.83
     # via
     #   langchain
     #   langchain-community
@@ -172,13 +172,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.4
+pydantic==2.8.0
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 python-dateutil==2.9.0.post0
     # via

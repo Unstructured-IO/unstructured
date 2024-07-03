@@ -25,7 +25,9 @@ requests==2.32.3
     #   python-gitlab
     #   requests-toolbelt
 requests-toolbelt==1.0.0
-    # via python-gitlab
+    # via
+    #   -c ./ingest/../base.txt
+    #   python-gitlab
 urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt

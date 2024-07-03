@@ -10,8 +10,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -128,22 +126,16 @@ class GcsUploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=GcsIndexer,
-        indexer_config=GcsIndexerConfig,
-        downloader=GcsDownloader,
-        downloader_config=GcsDownloaderConfig,
-        connection_config=GcsConnectionConfig,
-    ),
+gcs_source_entry = SourceRegistryEntry(
+    indexer=GcsIndexer,
+    indexer_config=GcsIndexerConfig,
+    downloader=GcsDownloader,
+    downloader_config=GcsDownloaderConfig,
+    connection_config=GcsConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=GcsUploader,
-        uploader_config=GcsUploaderConfig,
-        connection_config=GcsConnectionConfig,
-    ),
+gcs_destination_entry = DestinationRegistryEntry(
+    uploader=GcsUploader,
+    uploader_config=GcsUploaderConfig,
+    connection_config=GcsConnectionConfig,
 )
