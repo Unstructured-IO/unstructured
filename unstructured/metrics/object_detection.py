@@ -35,14 +35,12 @@ class ObjectDetectionEvalProcessor:
 
         Args:
             document_preds (list):      list (of length pages of document) of
-                                        Tensors of shape
-                                        (num_predictions, 6)
+                                        Tensors of shape (num_predictions, 6)
                                         format: (x1, y1, x2, y2, confidence,class_label)
                                         where x1,y1,x2,y2 are according to image size
             document_targets (list):    list (of length pages of document) of
-                                        Tensors of shape
-                                        (num_targets, 6)
-                                        format: (label, cx, cy, w, h,)
+                                        Tensors of shape (num_targets, 6)
+                                        format: (label, x1, y1, x2, y2)
                                         where x,y,w,h are according to image size
             pages_height (list):        list of height of each page in the document
             pages_width (list):         list of width of each page in the document
@@ -119,14 +117,12 @@ class ObjectDetectionEvalProcessor:
                 # Extract coordinates, confidence, and class label from each prediction
                 class_label = element["type"]
                 class_idx = class_labels.index(class_label)
+                x1, y1, x2, y2 = element["bbox"]
                 if prediction:
                     confidence = element["prob"]
-                    x1, y1, x2, y2 = element["bbox"]
                     page_elements.append([x1, y1, x2, y2, confidence, class_idx])
                 else:
-                    x, y, w, h = element["bbox"]
-                    page_elements.append([class_idx, x, y, w, h])
-
+                    page_elements.append([class_idx, x1, y1, x2, y2])
             page_tensor = torch.tensor(page_elements)
             pages_list.append(page_tensor)
 
@@ -176,24 +172,6 @@ class ObjectDetectionEvalProcessor:
         boxes[..., [0, 2]] = boxes[..., [0, 2]].clip(min=0, max=img_shape[1])
         boxes[..., [1, 3]] = boxes[..., [1, 3]].clip(min=0, max=img_shape[0])
         return boxes
-
-    @staticmethod
-    def _cxcywh2xyxy(bboxes: torch.Tensor | np.ndarray) -> torch.Tensor | np.ndarray:
-        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
-        """
-        Transforms bboxes from centerized xy wh format to xyxy format.
-
-        Args:
-            bboxes:  array, shaped (nboxes, 4)
-
-        Returns:
-            bboxes:  modified bboxes
-        """
-        bboxes[:, 1] = bboxes[:, 1] - bboxes[:, 3] * 0.5
-        bboxes[:, 0] = bboxes[:, 0] - bboxes[:, 2] * 0.5
-        bboxes[:, 3] = bboxes[:, 3] + bboxes[:, 1]
-        bboxes[:, 2] = bboxes[:, 2] + bboxes[:, 0]
-        return bboxes
 
     @staticmethod
     def _box_iou(box1: torch.Tensor, box2: torch.Tensor) -> torch.Tensor:
@@ -320,7 +298,8 @@ class ObjectDetectionEvalProcessor:
                             format: (x1, y1, x2, y2, confidence, class_label)
                             where x1,y1,x2,y2 are according to image size
             targets:        targets for this image of shape (num_img_targets, 5)
-                            format:     (label, cx, cy, w, h) where cx,cy,w,h
+                            format:     (label, x1, y1, x2, y2)
+                            where x1,y1,x2,y2 are according to image size
             height:         dimensions of the image
             width:          dimensions of the image
             top_k:          Number of predictions to keep per class, ordered by confidence score
@@ -372,8 +351,6 @@ class ObjectDetectionEvalProcessor:
 
         if len(targets) > 0:  # or len(crowd_targets) > 0:
             self._change_bbox_bounds_for_image_size(preds, (height, width))
-
-            targets_box = self._cxcywh2xyxy(targets_box)
 
             preds_matched = self._compute_targets(
                 preds_box,
@@ -657,14 +634,10 @@ class ObjectDetectionEvalProcessor:
                 mean_f1_per_class[class_index] = float(f1_per_class[i])
 
         output_dict = {
-            "f1_score": mean_f1,
-            "precision": mean_precision,
-            "recall": mean_recall,
-            "mAP": mean_ap,
-            "per_class_f1_score": mean_f1_per_class,
-            "per_class_precision": mean_precision_per_class,
-            "per_class_recall": mean_recall_per_class,
-            "per_class_mAP": mean_ap_per_class,
+            "f1_score": float(mean_f1),
+            "precision": float(mean_precision),
+            "recall": float(mean_recall),
+            "mAP": float(mean_ap),
         }
 
         return output_dict
@@ -672,12 +645,20 @@ class ObjectDetectionEvalProcessor:
 
 if __name__ == "__main__":
     # Example usage
-    prediction_file_path = Path("path/to/predictions.json")
-    ground_truth_file_path = Path("path/to/ground_truth.json")
+    prediction_file_paths = [Path("pths/to/predictions.json"), Path("pths/to/predictions2.json")]
+    ground_truth_file_paths = [
+        Path("pths/to/ground_truth.json"),
+        Path("pths/to/ground_truth2.json"),
+    ]
 
-    eval_processor = ObjectDetectionEvalProcessor.from_json_files(
-        prediction_file_path, ground_truth_file_path
-    )
+    for prediction_file_path, ground_truth_file_path in zip(
+        prediction_file_paths, ground_truth_file_paths
+    ):
+        eval_processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file_path, ground_truth_file_path
+        )
 
-    metrics = eval_processor.get_metrics()
-    print(metrics)
+        metrics = eval_processor.get_metrics()
+        print(f"Metrics for {ground_truth_file_path.name}:")
+        print(metrics)
+        print("\n")
