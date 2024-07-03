@@ -46,7 +46,9 @@ requests==2.32.3
     #   boxsdk
     #   requests-toolbelt
 requests-toolbelt==1.0.0
-    # via boxsdk
+    # via
+    #   -c ./ingest/../base.txt
+    #   boxsdk
 six==1.16.0
     # via
     #   -c ./ingest/../base.txt
