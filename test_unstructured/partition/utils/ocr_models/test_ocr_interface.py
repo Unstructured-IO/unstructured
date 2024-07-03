@@ -50,7 +50,7 @@ class DescribeOCRAgent:
 
     @pytest.mark.parametrize("exception_cls", [ImportError, AttributeError])
     def and_it_raises_when_the_requested_agent_cannot_be_loaded(
-        self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception]
+        self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
     ):
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
         with patch(
@@ -84,7 +84,7 @@ class DescribeOCRAgent:
 
     # -- fixtures --------------------------------------------------------------------------------
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture()
     def _clear_cache(self):
         # Clear the cache created by @functools.lru_cache(maxsize=None) on OCRAgent.get_instance()
         # before each test
