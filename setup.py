@@ -177,6 +177,7 @@ setup(
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
         "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
+        "singlestore": load_requirements("requirements/ingest/singlestore.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt", "py.typed"]},

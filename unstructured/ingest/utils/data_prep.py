@@ -2,9 +2,8 @@ import itertools
 import json
 
 
-def chunk_generator(iterable, batch_size=100):
-    # TODO: rename to batch_generator across the lib, as "chunk" is a specific term for unstructured
-    """A helper function to break an iterable into chunks of size batch_size."""
+def batch_generator(iterable, batch_size=100):
+    """A helper function to break an iterable into batches of size batch_size."""
     it = iter(iterable)
     chunk = tuple(itertools.islice(it, batch_size))
     while chunk:

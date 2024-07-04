@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -158,15 +158,15 @@ class PineconeUploader(Uploader):
         pinecone_batch_size = self.upload_config.batch_size
 
         if self.upload_config.num_of_processes == 1:
-            for chunk in chunk_generator(elements_dict, pinecone_batch_size):
-                self.upsert_batch(chunk)  # noqa: E203
+            for batch in batch_generator(elements_dict, pinecone_batch_size):
+                self.upsert_batch(batch)  # noqa: E203
 
         else:
             with mp.Pool(
                 processes=self.upload_config.num_of_processes,
             ) as pool:
                 pool.map(
-                    self.upsert_batch, list(chunk_generator(elements_dict, pinecone_batch_size))
+                    self.upsert_batch, list(batch_generator(elements_dict, pinecone_batch_size))
                 )
 
 
