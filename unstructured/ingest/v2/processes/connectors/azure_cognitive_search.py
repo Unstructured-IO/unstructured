@@ -6,7 +6,7 @@ from pathlib import Path
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -199,7 +199,7 @@ class AzureCognitiveSearchUploader(Uploader):
 
         batch_size = self.upload_config.batch_size
 
-        for chunk in chunk_generator(elements_dict, batch_size):
+        for chunk in batch_generator(elements_dict, batch_size):
             self.write_dict(elements_dict=chunk)  # noqa: E203
 
 
