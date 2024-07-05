@@ -20,7 +20,7 @@ def _download_nltk_package_if_not_present(package_name: str, package_category: s
     try:
         nltk.find(f"{package_category}/{package_name}")
     except LookupError:
-        nltk.download(package_name)
+        nltk.download(package_name, quiet=True)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
