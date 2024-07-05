@@ -19,6 +19,7 @@ from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
 from .singlestore import singlestore_dest_cmd
+from .sql import sql_dest_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -61,6 +62,7 @@ dest_cmds = [
     weaviate_dest_cmd,
     mongodb_dest_cmd,
     databricks_volumes_dest_cmd,
+    sql_dest_cmd,
 ]
 
 duplicate_dest_names = [
