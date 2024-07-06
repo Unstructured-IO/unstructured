@@ -92,7 +92,7 @@ def check_vector(ctx, output_json):
     scope_name = ctx.parent.params["scope"]
 
     search_req = search.SearchRequest.create(
-        VectorSearch.from_vector_query(VectorQuery("embedding", exact_embedding, 1))
+        VectorSearch.from_vector_query(VectorQuery("embedding", exact_embedding, 2))
     )
 
     bucket = cluster.bucket(bucket_name)
@@ -102,14 +102,21 @@ def check_vector(ctx, output_json):
         index_name,
         search_req,
         SearchOptions(
-            limit=1,
+            limit=2,
             fields=["text"],
         ),
     )
 
-    for row in search_iter.rows():
-        assert math.isclose(row.score, 1.0, abs_tol=1e-4)
-        assert row.fields["text"] == exact_text
+    rows = list(search_iter.rows())
+    print("rows are", rows)
+    assert 2 >= len(rows) >= 1  # only 1 or 2 length list
+
+    assert math.isclose(rows[0].score, 1.0, abs_tol=1e-4)
+    assert rows[0].fields["text"] == exact_text
+
+    if len(rows) == 2:
+        assert not math.isclose(rows[1].score, 1, abs_tol=1e-4)
+        assert rows[1].fields["text"] != exact_text
 
 
 if __name__ == "__main__":

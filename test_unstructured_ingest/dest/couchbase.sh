@@ -15,16 +15,29 @@ DESTINATION_CB_SCOPE="_default"
 DESTINATION_CB_COLLECTION="_default"
 CI=${CI:-"false"}
 
+source scripts/couchbase-test-helpers/constants.env
+
 # Check if all necessary environment variables are set
 if [ -z "$CB_USERNAME" ] || [ -z "$CB_PASSWORD" ] || [ -z "$CB_CONN_STR" ] || [ -z "$CB_BUCKET" ];  then
   echo "Error: One or more environment variables are not set. Please set CB_CONN_STR, CB_USERNAME, CB_PASSWORD, and CB_BUCKET"
   exit 1
 fi
 
+echo "CB_CONN_STR: $CB_CONN_STR"
+echo "CB_USERNAME: $CB_USERNAME"
+echo "CB_PASSWORD: $CB_PASSWORD"
+echo "CB_BUCKET: $CB_BUCKET"
+
+
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
+
+   # Remove docker container
+  echo "Stopping Couchbase Docker container"
+  docker-compose -f scripts/couchbase-test-helpers/docker-compose.yaml down --remove-orphans
+
   # Kill couchbase background process
   pgrep -f couchbase-dest | xargs kill
   cleanup_dir "$DESTINATION_PATH"
@@ -33,17 +46,23 @@ function cleanup() {
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
   fi
+#  python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
+#    --connection-string "$CB_CONN_STR" \
+#    --username "$CB_USERNAME" \
+#    --password "$CB_PASSWORD" \
+#    --bucket "$CB_BUCKET" \
+#    --scope "$DESTINATION_CB_SCOPE" \
+#    --collection "$DESTINATION_CB_COLLECTION" down
 
-  python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
-    --connection-string "$CB_CONN_STR" \
-    --username "$CB_USERNAME" \
-    --password "$CB_PASSWORD" \
-    --bucket "$CB_BUCKET" \
-    --scope "$DESTINATION_CB_SCOPE" \
-    --collection "$DESTINATION_CB_COLLECTION" down
 }
 
 trap cleanup EXIT
+
+echo "Starting Couchbase Docker container and setup"
+
+bash scripts/couchbase-test-helpers/setup_couchbase_cluster.sh
+wait
+
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
