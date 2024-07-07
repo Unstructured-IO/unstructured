@@ -8,6 +8,7 @@ import io
 import os
 import pathlib
 
+import magic
 import pytest
 
 from test_unstructured.unit_utils import (
@@ -17,7 +18,7 @@ from test_unstructured.unit_utils import (
     MonkeyPatch,
     call,
     example_doc_path,
-    function_mock,
+    method_mock,
 )
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
@@ -546,11 +547,13 @@ def test_detect_TXT_from_yaml_file(magic_from_buffer_: Mock):
 # ================================================================================================
 
 
+# -- `from_buffer()` and `from_file()` are not "methods" on `magic` per-se (`magic` is a module)
+# -- but they behave like methods for mocking purposes.
 @pytest.fixture()
 def magic_from_buffer_(request: FixtureRequest):
-    return function_mock(request, "unstructured.file_utils.filetype.magic.from_buffer")
+    return method_mock(request, magic, "from_buffer")
 
 
 @pytest.fixture()
 def magic_from_file_(request: FixtureRequest):
-    return function_mock(request, "unstructured.file_utils.filetype.magic.from_file")
+    return method_mock(request, magic, "from_file")

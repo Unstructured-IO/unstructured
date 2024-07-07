@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import enum
 import functools
+import importlib.util
 import json
 import os
 import re
@@ -12,7 +13,8 @@ from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
-from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
+from unstructured.logger import logger
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     add_element_metadata,
     exactly_one,
@@ -21,15 +23,7 @@ from unstructured.partition.common import (
 )
 from unstructured.utils import get_call_args_applying_defaults
 
-try:
-    import magic
-
-    LIBMAGIC_AVAILABLE = True
-except ImportError:  # pragma: nocover
-    LIBMAGIC_AVAILABLE = False  # pragma: nocover
-
-from unstructured.logger import logger
-from unstructured.nlp.patterns import EMAIL_HEAD_RE
+LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
 
 TXT_MIME_TYPES = [
     "text/plain",
@@ -102,7 +96,7 @@ class FileType(enum.Enum):
     # Audio Files
     WAV = 80
 
-    def __lt__(self, other):
+    def __lt__(self, other: FileType) -> bool:
         """Makes `FileType` members comparable with relational operators, at least with `<`.
 
         This makes them sortable, in particular it supports sorting for pandas groupby functions.
@@ -245,7 +239,7 @@ PLAIN_TEXT_EXTENSIONS = [
 ]
 
 
-def _resolve_symlink(file_path):
+def _resolve_symlink(file_path: str) -> str:
     """Resolve `file_path` containing symlink to the actual file path."""
     if os.path.islink(file_path):
         file_path = os.path.realpath(file_path)
@@ -280,14 +274,13 @@ def detect_filetype(
         _, extension = os.path.splitext(_filename)
         extension = extension.lower()
         if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            mime_type = magic.from_file(
-                _resolve_symlink(filename or file_filename),
-                mime=True,
-            )  # type: ignore
+            import magic
+
+            mime_type = magic.from_file(_resolve_symlink(_filename), mime=True)
         elif os.path.isfile(_filename):
             import filetype as ft
 
-            mime_type = ft.guess_mime(filename)
+            mime_type = ft.guess_mime(_filename)
         if mime_type is None:
             return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
@@ -301,6 +294,8 @@ def detect_filetype(
         # Increased to 4096 because otherwise .xlsx files get detected as a zip file
         # ref: https://github.com/ahupp/python-magic#usage
         if LIBMAGIC_AVAILABLE:
+            import magic
+
             mime_type = magic.from_buffer(file.read(4096), mime=True)
         else:
             import filetype as ft
@@ -435,6 +430,8 @@ def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
             return FileType.PPTX
 
     if LIBMAGIC_AVAILABLE:
+        import magic
+
         # Infer mime type using magic if octet-stream is not zip file
         mime_type = magic.from_buffer(file.read(4096), mime=True)
         return STR_TO_FILETYPE.get(mime_type, FileType.UNK)
@@ -451,6 +448,7 @@ def _read_file_start_for_type_check(
 ) -> str:
     """Reads the start of the file and returns the text content."""
     exactly_one(filename=filename, file=file)
+
     if file is not None:
         file.seek(0)
         file_content = file.read(4096)
@@ -459,14 +457,19 @@ def _read_file_start_for_type_check(
         else:
             file_text = file_content.decode(errors="ignore")
         file.seek(0)
-    if filename is not None:
-        try:
-            with open(filename, encoding=encoding) as f:
-                file_text = f.read(4096)
-        except UnicodeDecodeError:
-            formatted_encoding, _ = detect_file_encoding(filename=filename)
-            with open(filename, encoding=formatted_encoding) as f:
-                file_text = f.read(4096)
+        return file_text
+
+    # -- guaranteed by `exactly_one()` call --
+    assert filename is not None
+
+    try:
+        with open(filename, encoding=encoding) as f:
+            file_text = f.read(4096)
+    except UnicodeDecodeError:
+        formatted_encoding, _ = detect_file_encoding(filename=filename)
+        with open(filename, encoding=formatted_encoding) as f:
+            file_text = f.read(4096)
+
     return file_text
 
 
@@ -489,9 +492,7 @@ def _is_text_file_a_json(
         # References:
         # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
         # https://www.ietf.org/rfc/rfc4627.txt
-        if isinstance(output, str):
-            return False
-        return True
+        return not isinstance(output, str)
     except json.JSONDecodeError:
         return False
 
@@ -517,19 +518,19 @@ def is_json_processable(
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
-def _count_commas(text: str):
-    """Counts the number of commas in a line, excluding commas in quotes."""
-    pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
-    matches = re.findall(pattern, text)
-    return len(matches)
-
-
 def _is_text_file_a_csv(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     encoding: Optional[str] = "utf-8",
 ):
     """Detects if a file that has a text/plain MIME type is a CSV file."""
+
+    def count_commas(text: str):
+        """Counts the number of commas in a line, excluding commas in quotes."""
+        pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
+        matches = re.findall(pattern, text)
+        return len(matches)
+
     file_text = _read_file_start_for_type_check(
         file=file,
         filename=filename,
@@ -539,13 +540,13 @@ def _is_text_file_a_csv(
     if len(lines) < 2:
         return False
     lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
-    header_count = _count_commas(lines[0])
+    header_count = count_commas(lines[0])
     if any("," not in line for line in lines):
         return False
-    return all(_count_commas(line) == header_count for line in lines[1:])
+    return all(count_commas(line) == header_count for line in lines[1:])
 
 
-def _check_eml_from_buffer(file: IO[bytes]) -> bool:
+def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:
     """Checks if a text/plain file is actually a .eml file.
 
     Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
