@@ -102,8 +102,11 @@ class FileType(enum.Enum):
     # Audio Files
     WAV = 80
 
-    # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
+        """Makes `FileType` members comparable with relational operators, at least with `<`.
+
+        This makes them sortable, in particular it supports sorting for pandas groupby functions.
+        """
         return self.name < other.name
 
 
@@ -243,7 +246,7 @@ PLAIN_TEXT_EXTENSIONS = [
 
 
 def _resolve_symlink(file_path):
-    # Resolve the symlink to get the actual file path
+    """Resolve `file_path` containing symlink to the actual file path."""
     if os.path.islink(file_path):
         file_path = os.path.realpath(file_path)
     return file_path
@@ -256,8 +259,10 @@ def detect_filetype(
     file_filename: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[FileType]:
-    """Use libmagic to determine a file's type. Helps determine which partition brick
-    to use for a given file. A return value of None indicates a non-supported file type.
+    """Use libmagic to determine a file's type.
+
+    Helps determine which partition brick to use for a given file. A return value of None indicates
+    a non-supported file type.
     """
     mime_type = None
     exactly_one(filename=filename, file=file)
@@ -497,6 +502,11 @@ def is_json_processable(
     file_text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> bool:
+    """True when file looks like a JSON array of objects.
+
+    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
+    file is JSON.
+    """
     exactly_one(filename=filename, file=file, file_text=file_text)
     if file_text is None:
         file_text = _read_file_start_for_type_check(
@@ -536,8 +546,11 @@ def _is_text_file_a_csv(
 
 
 def _check_eml_from_buffer(file: IO[bytes]) -> bool:
-    """Checks if a text/plain file is actually a .eml file. Uses a regex pattern to see if the
-    start of the file matches the typical pattern for a .eml file."""
+    """Checks if a text/plain file is actually a .eml file.
+
+    Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
+    file.
+    """
     file.seek(0)
     file_content = file.read(4096)
     if isinstance(file_content, bytes):
@@ -563,8 +576,7 @@ PROGRAMMING_LANGUAGES = [
 
 
 def _is_code_mime_type(mime_type: str) -> bool:
-    """Checks to see if the MIME type is a MIME type that would be used for a code
-    file."""
+    """True when `mime_type` plausibly indicates a programming language source-code file."""
     mime_type = mime_type.lower()
     # NOTE(robinson) - check this one explicitly to avoid conflicts with other
     # MIME types that contain "go"
