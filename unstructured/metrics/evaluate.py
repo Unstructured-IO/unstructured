@@ -229,35 +229,18 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             source_type="html",
         )
         report_from_html = processor_from_text_as_html.process_file()
-
-        processor_from_table_as_cells = TableEvalProcessor.from_json_files(
-            prediction_file=prediction_file,
-            ground_truth_file=ground_truth_file,
-            cutoff=self.cutoff,
-            source_type="cells",
-        )
-        report_from_cells = processor_from_table_as_cells.process_file()
-        return (
-            [
-                out_filename,
-                doctype,
-                connector,
-            ]
-            + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
-            + [getattr(report_from_cells, metric) for metric in self.supported_metric_names]
-        )
+        return [
+            out_filename,
+            doctype,
+            connector,
+        ] + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
 
     def _generate_dataframes(self, rows):
-        # NOTE(mike): this logic should be simplified
-        suffixed_table_eval_metrics = [
-            f"{metric}_with_spans" for metric in self.supported_metric_names
-        ]
-        combined_table_metrics = self.supported_metric_names + suffixed_table_eval_metrics
         headers = [
             "filename",
             "doctype",
             "connector",
-        ] + combined_table_metrics
+        ] + self.supported_metric_names
 
         df = pd.DataFrame(rows, columns=headers)
         has_tables_df = df[df["total_tables"] > 0]
@@ -268,7 +251,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             ).reset_index()
         else:
             element_metrics_results = {}
-            for metric in combined_table_metrics:
+            for metric in self.supported_metric_names:
                 metric_df = has_tables_df[has_tables_df[metric].notnull()]
                 agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
                 if agg_metric.empty:
