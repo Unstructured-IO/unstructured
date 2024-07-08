@@ -1,4 +1,4 @@
-## 0.14.10-dev11
+## 0.14.10-dev12
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 
 * **Fix counting false negatives and false positives in table structure evaluation**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigage CVE-2024-39705
 
 ## 0.14.9
 
