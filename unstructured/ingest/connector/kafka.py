@@ -21,7 +21,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -270,7 +270,7 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
         logger.info(f"Writing {len(dict_list)} documents to Kafka")
         num_uploaded = 0
 
-        for chunk in chunk_generator(dict_list, self.write_config.batch_size):
+        for chunk in batch_generator(dict_list, self.write_config.batch_size):
             num_uploaded += self.upload_msg(chunk)  # noqa: E203
 
         producer = self.kafka_producer

@@ -9,7 +9,7 @@ from dateutil import parser
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -192,7 +192,7 @@ class ChromaUploader(Uploader):
         collection = self.client.get_or_create_collection(
             name=self.connection_config.collection_name
         )
-        for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
+        for chunk in batch_generator(elements_dict, self.upload_config.batch_size):
             self.upsert_batch(collection, self.prepare_chroma_list(chunk))
 
 
