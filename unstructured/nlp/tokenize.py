@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import hashlib
 import os
 import sys
@@ -5,12 +7,7 @@ import tarfile
 import tempfile
 import urllib.request
 from functools import lru_cache
-from typing import List, Tuple
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final  # pragma: no cover
-else:
-    from typing import Final
+from typing import Any, Final, List, Tuple
 
 import nltk
 from nltk import pos_tag as _pos_tag
@@ -23,7 +20,7 @@ NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
 NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
 
 
-def _raise_on_nltk_download(*args, **kwargs):
+def _raise_on_nltk_download(*args: Any, **kwargs: Any):
     raise ValueError("NLTK download disabled. See CVE-2024-39705")
 
 
@@ -33,7 +30,7 @@ nltk.download = _raise_on_nltk_download
 # NOTE(robinson) - mimic default dir logic from NLTK
 # https://github.com/nltk/nltk/
 # 	blob/8c233dc585b91c7a0c58f96a9d99244a379740d5/nltk/downloader.py#L1046
-def get_nltk_data_dir():
+def get_nltk_data_dir() -> str | None:
     # Check if we are on GAE where we cannot write into filesystem.
     if "APPENGINE_RUNTIME" in os.environ:
         return
@@ -62,7 +59,7 @@ def get_nltk_data_dir():
 def download_nltk_packages():
     nltk_data_dir = get_nltk_data_dir()
 
-    def sha256_checksum(filename, block_size=65536):
+    def sha256_checksum(filename: str, block_size: int = 65536):
         sha256 = hashlib.sha256()
         with open(filename, "rb") as f:
             for block in iter(lambda: f.read(block_size), b""):
@@ -88,7 +85,7 @@ def download_nltk_packages():
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the file system"""
-    paths = []
+    paths: list[str] = []
     for path in nltk.data.path:
         if not path.endswith("nltk_data"):
             path = os.path.join(path, "nltk_data")
@@ -138,7 +135,7 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
     # for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
     sentences = _sent_tokenize(text)
-    parts_of_speech = []
+    parts_of_speech: list[tuple[str, str]] = []
     for sentence in sentences:
         tokens = _word_tokenize(sentence)
         parts_of_speech.extend(_pos_tag(tokens))
