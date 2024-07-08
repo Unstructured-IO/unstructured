@@ -73,7 +73,7 @@ def download_nltk_packages():
         file_hash = sha256_checksum(tgz_file)
         if file_hash != NLTK_DATA_SHA256:
             os.remove(tgz_file)
-            raise ValueError(f"SHA-256 mismatch: expected {expected_sha256}, got {file_hash}")
+            raise ValueError(f"SHA-256 mismatch: expected {NLTK_DATA_SHA256}, got {file_hash}")
 
         # Extract the contents
         if not os.path.exists(nltk_data_dir):
@@ -92,7 +92,7 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
         paths.append(path)
 
     try:
-        out = nltk.find(f"{package_category}/{package_name}", paths=paths)
+        nltk.find(f"{package_category}/{package_name}", paths=paths)
         return True
     except LookupError:
         return False
@@ -101,11 +101,11 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
 def _download_nltk_packages_if_not_present():
     """If required NLTK packages are not available, download them."""
 
-    tagger_available = check_for_nltk_packages(
+    tagger_available = check_for_nltk_package(
         package_category="taggers",
         package_name="averaged_perceptron_tagger",
     )
-    tokenizer_available = check_for_nltk_packages(
+    tokenizer_available = check_for_nltk_package(
         package_category="tokenizers", package_name="punkt"
     )
 
