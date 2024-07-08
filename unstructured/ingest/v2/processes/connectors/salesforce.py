@@ -7,7 +7,6 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
-
 import json
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -15,7 +14,7 @@ from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Generator, Tuple, Type
+from typing import TYPE_CHECKING, Any, Generator, Tuple, Type, Literal
 
 from dateutil import parser
 
@@ -52,7 +51,7 @@ if TYPE_CHECKING:
 SALESFORCE_API_VERSION = "57.0"
 
 # TODO: Add more categories as needed
-ACCEPTED_CATEGORIES = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
+ACCEPTED_CATEGORIES: list[str] = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
 
 # Generic email template to process EmailMessage records as .eml files
 EMAIL_TEMPLATE = Template(
@@ -119,9 +118,6 @@ class SalesforceConnectionConfig(ConnectionConfig):
 @dataclass
 class SalesforceIndexerConfig(IndexerConfig):
     categories: list[str]
-    # categories: list[Literal[ACCEPTED_CATEGORIES]]
-    # categories: str
-    # categories: set[Literal[ACCEPTED_CATEGORIES]]
 
 
 @dataclass
@@ -141,8 +137,8 @@ class SalesforceIndexer(Indexer):
 
         files_list = []
         for record_type in self.index_config.categories:
-            # if record_type not in ACCEPTED_CATEGORIES:
-            #     raise ValueError(f"{record_type} not currently an accepted Salesforce category")
+            if record_type not in ACCEPTED_CATEGORIES:
+                raise ValueError(f"{record_type} not currently an accepted Salesforce category")
 
             try:
                 # Get ids from Salesforce
@@ -214,17 +210,17 @@ class SalesforceDownloader(Downloader):
         """Creates partitionable xml file from a record"""
         import xml.etree.ElementTree as ET
 
-        def flatten_dict(data, parent, prefix=""):
+        def create_xml_doc(data, parent, prefix=""):
             for key, value in data.items():
                 if isinstance(value, OrderedDict):
-                    flatten_dict(value, parent, prefix=f"{prefix}{key}.")
+                    create_xml_doc(value, parent, prefix=f"{prefix}{key}.")
                 else:
                     item = ET.Element("item")
                     item.text = f"{prefix}{key}: {value}"
                     parent.append(item)
 
         root = ET.Element("root")
-        flatten_dict(record, root)
+        create_xml_doc(record, root)
 
         xml_string = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode()
         return xml_string
