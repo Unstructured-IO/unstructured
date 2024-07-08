@@ -245,8 +245,8 @@ class AstraDestinationConnector(BaseDestinationConnector):
 
         astra_batch_size = self.write_config.batch_size
 
-        for chunk in batch_generator(elements_dict, astra_batch_size):
-            self._astra_db_collection.insert_many(chunk)
+        for batch in batch_generator(elements_dict, astra_batch_size):
+            self._astra_db_collection.insert_many(batch)
 
     def normalize_dict(self, element_dict: dict) -> dict:
         return {
