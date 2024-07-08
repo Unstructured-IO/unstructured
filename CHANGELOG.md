@@ -5,6 +5,7 @@
 * **Update unstructured-client dependency** Change unstructured-client dependency pin back to
   greater than min version and updated tests that were failing given the update.
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* Improved the make check script to support lint checks on MacOS. On MacOS, gsed (installed via brew) replaces the default sed. The script includes platform checks to use gsed on MacOS and sed on Linux. Additionally, awk is used for version extraction. Preliminary tests indicate the script works correctly on both Linux and MacOS.
 
 ### Features
 
@@ -47,6 +48,7 @@
 
 * **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
 * **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
+* **Compatibility Issue with Chinese Text in Document Parsing**
 
 ### Features
 
