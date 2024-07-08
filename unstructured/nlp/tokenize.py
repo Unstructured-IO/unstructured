@@ -36,14 +36,14 @@ def get_nltk_data_dir() -> str | None:
     the default is determined by the rules indicated below. Returns None when
     the directory is not writable.
 
-	On Windows, the default download directory is
-	``PYTHONHOME/lib/nltk``, where *PYTHONHOME* is the
-	directory containing Python, e.g. ``C:\\Python311``.
+        On Windows, the default download directory is
+        ``PYTHONHOME/lib/nltk``, where *PYTHONHOME* is the
+        directory containing Python, e.g. ``C:\\Python311``.
 
-	On all other platforms, the default directory is the first of
-	the following which exists or which can be created with write
-	permission: ``/usr/share/nltk_data``, ``/usr/local/share/nltk_data``,
-	``/usr/lib/nltk_data``, ``/usr/local/lib/nltk_data``, ``~/nltk_data``.
+        On all other platforms, the default directory is the first of
+        the following which exists or which can be created with write
+        permission: ``/usr/share/nltk_data``, ``/usr/local/share/nltk_data``,
+        ``/usr/lib/nltk_data``, ``/usr/local/lib/nltk_data``, ``~/nltk_data``.
     """
 
     # Check if we are on GAE where we cannot write into filesystem.
