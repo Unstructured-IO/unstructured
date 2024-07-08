@@ -256,6 +256,8 @@ jobs:
       matrix:
         python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [ setup_ingest, lint ]
     steps:
       # actions/checkout MUST come before auth
