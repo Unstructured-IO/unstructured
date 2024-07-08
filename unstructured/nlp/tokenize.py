@@ -2,9 +2,9 @@ import hashlib
 import os
 import sys
 import tarfile
+import urllib.request
 from functools import lru_cache
 from typing import List, Tuple
-import urllib.request
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final  # pragma: no cover
@@ -56,12 +56,12 @@ def download_nltk_packages():
 
     def sha256_checksum(filename, block_size=65536):
         sha256 = hashlib.sha256()
-        with open(filename, 'rb') as f:
-            for block in iter(lambda: f.read(block_size), b''):
+        with open(filename, "rb") as f:
+            for block in iter(lambda: f.read(block_size), b""):
                 sha256.update(block)
         return sha256.hexdigest()
 
-    tgz_file = os.path.join(nltk_data_dir, f'unstructured_nltk_data_{NLTK_DATA_SHA256}.tgz')
+    tgz_file = os.path.join(nltk_data_dir, f"unstructured_nltk_data_{NLTK_DATA_SHA256}.tgz")
     urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file)
 
     file_hash = sha256_checksum(tgz_file)
@@ -73,7 +73,7 @@ def download_nltk_packages():
     if not os.path.exists(nltk_data_dir):
         os.makedirs(nltk_data_dir)
 
-    with tarfile.open(tgz_file, 'r:gz') as tar:
+    with tarfile.open(tgz_file, "r:gz") as tar:
         tar.extractall(path=nltk_data_dir)
 
     # Clean up by removing the downloaded .tgz file
