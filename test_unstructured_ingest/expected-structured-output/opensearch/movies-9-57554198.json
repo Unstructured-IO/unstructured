@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "6c76a6263b7302899c540e3350cdbd2b",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "bd2078e66e6b773352f5aa1423ec5d11",
+    "text": "The film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "65acd8a8d5cd5c13cf6f0f6cc36343f7",
+    "text": "D. W. Griffith",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9247"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  }
+]

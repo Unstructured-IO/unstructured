@@ -132,12 +132,15 @@ class DescribeChunker:
             api_key="aaaaaaaaaaaaaaaaaaaaa",
             api_url="https://api.unstructured.io/general/v0/general",
             chunking_strategy="by_similarity",
+            # (jennings) the sdk uses combine_under_n_chars but the ChunkingConfig param is
+            # combine_text_under_n_chars
             combine_under_n_chars=None,
+            include_orig_elements=None,
             max_characters=None,
             multipage_sections=None,
             new_after_n_chars=None,
-            # overlap=None,
-            # overlap_all=None,
+            overlap=None,
+            overlap_all=None,
         )
 
     # -- fixtures --------------------------------------------------------------------------------

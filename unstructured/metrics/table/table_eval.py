@@ -42,6 +42,9 @@ class TableEvaluation:
 
     total_tables: int
     table_level_acc: float
+    table_detection_recall: float
+    table_detection_precision: float
+    table_detection_f1: float
     element_col_level_index_acc: float
     element_row_level_index_acc: float
     element_col_level_content_acc: float
@@ -89,6 +92,42 @@ def _count_predicted_tables(matched_indices: List[int]) -> int:
 
     """
     return sum(1 for idx in matched_indices if idx >= 0)
+
+
+def calculate_table_detection_metrics(
+    matched_indices: list[int], ground_truth_tables_number: int
+) -> tuple[float, float, float]:
+    """
+    Calculate the table detection metrics: recall, precision, and f1 score.
+    Args:
+        matched_indices:
+            List of indices indicating matches between predicted and ground truth tables
+            For example: matched_indices[i] = j means that the
+            i-th predicted table is matched with the j-th ground truth table.
+        ground_truth_tables_number: the number of ground truth tables.
+
+    Returns:
+        Tuple of recall, precision, and f1 scores
+    """
+    predicted_tables_number = len(matched_indices)
+
+    matched_set = set(matched_indices)
+    if -1 in matched_set:
+        matched_set.remove(-1)
+
+    true_positive = len(matched_set)
+    false_positive = predicted_tables_number - true_positive
+    positive = ground_truth_tables_number
+
+    recall = true_positive / positive if positive > 0 else 0
+    precision = (
+        true_positive / (true_positive + false_positive)
+        if true_positive + false_positive > 0
+        else 0
+    )
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall > 0 else 0
+
+    return recall, precision, f1
 
 
 class TableEvalProcessor:
@@ -200,37 +239,71 @@ class TableEvalProcessor:
         predicted_table_data = extract_and_convert_tables_from_prediction(
             file_elements=self.prediction, source_type=self.source_type
         )
-
-        matched_indices = TableAlignment.get_table_level_alignment(
-            predicted_table_data,
-            ground_truth_table_data,
-        )
-        if matched_indices:
+        is_table_in_gt = bool(ground_truth_table_data)
+        is_table_predicted = bool(predicted_table_data)
+        if not is_table_in_gt:
+            # There is no table data in ground truth, you either got perfect score or 0
+            score = 0 if is_table_predicted else np.nan
+            table_acc = 1 if not is_table_predicted else 0
+            return TableEvaluation(
+                total_tables=0,
+                table_level_acc=table_acc,
+                table_detection_recall=score,
+                table_detection_precision=score,
+                table_detection_f1=score,
+                element_col_level_index_acc=score,
+                element_row_level_index_acc=score,
+                element_col_level_content_acc=score,
+                element_row_level_content_acc=score,
+            )
+        if is_table_in_gt and not is_table_predicted:
+            return TableEvaluation(
+                total_tables=len(ground_truth_table_data),
+                table_level_acc=0,
+                table_detection_recall=0,
+                table_detection_precision=0,
+                table_detection_f1=0,
+                element_col_level_index_acc=0,
+                element_row_level_index_acc=0,
+                element_col_level_content_acc=0,
+                element_row_level_content_acc=0,
+            )
+        else:
+            # We have both ground truth tables and predicted tables
+            matched_indices = TableAlignment.get_table_level_alignment(
+                predicted_table_data,
+                ground_truth_table_data,
+            )
             predicted_table_acc = np.mean(
                 table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices)
             )
-        elif ground_truth_table_data:
-            # no matching prediction but has actual table -> total failure
-            predicted_table_acc = 0
-        else:
-            # no predicted and no actual table -> good job
-            predicted_table_acc = 1
 
-        metrics = TableAlignment.get_element_level_alignment(
-            predicted_table_data,
-            ground_truth_table_data,
-            matched_indices,
-            cutoff=self.cutoff,
-        )
+            metrics = TableAlignment.get_element_level_alignment(
+                predicted_table_data,
+                ground_truth_table_data,
+                matched_indices,
+                cutoff=self.cutoff,
+            )
 
-        return TableEvaluation(
-            total_tables=len(ground_truth_table_data),
-            table_level_acc=predicted_table_acc,
-            element_col_level_index_acc=metrics.get("col_index_acc", np.nan),
-            element_row_level_index_acc=metrics.get("row_index_acc", np.nan),
-            element_col_level_content_acc=metrics.get("col_content_acc", np.nan),
-            element_row_level_content_acc=metrics.get("row_content_acc", np.nan),
-        )
+            table_detection_recall, table_detection_precision, table_detection_f1 = (
+                calculate_table_detection_metrics(
+                    matched_indices=matched_indices,
+                    ground_truth_tables_number=len(ground_truth_table_data),
+                )
+            )
+
+            evaluation = TableEvaluation(
+                total_tables=len(ground_truth_table_data),
+                table_level_acc=predicted_table_acc,
+                table_detection_recall=table_detection_recall,
+                table_detection_precision=table_detection_precision,
+                table_detection_f1=table_detection_f1,
+                element_col_level_index_acc=metrics.get("col_index_acc", 0),
+                element_row_level_index_acc=metrics.get("row_index_acc", 0),
+                element_col_level_content_acc=metrics.get("col_content_acc", 0),
+                element_row_level_content_acc=metrics.get("row_content_acc", 0),
+            )
+            return evaluation
 
 
 @click.command()

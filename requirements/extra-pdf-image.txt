@@ -8,7 +8,7 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.3.3
     # via google-auth
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -39,7 +39,7 @@ filelock==3.15.4
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.53.0
+fonttools==4.53.1
     # via matplotlib
 fsspec==2024.5.0
     # via
@@ -48,7 +48,7 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.30.0
+google-auth==2.31.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -121,7 +121,7 @@ onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.18.0
+onnxruntime==1.18.1
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
@@ -149,11 +149,11 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.1
+pdfplumber==0.11.2
     # via layoutparser
 pikepdf==9.0.0
     # via -r ./extra-pdf-image.in
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   layoutparser
     #   matplotlib
@@ -164,7 +164,7 @@ pillow==10.3.0
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.16.0
+pillow-heif==0.17.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.0
     # via iopath
@@ -199,7 +199,9 @@ pyparsing==3.0.9
     #   -c ././deps/constraints.txt
     #   matplotlib
 pypdf==4.2.0
-    # via -r ./extra-pdf-image.in
+    # via
+    #   -c ./base.txt
+    #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
 pytesseract==0.3.10
@@ -220,7 +222,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -275,7 +277,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.41.2
+transformers==4.42.3
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

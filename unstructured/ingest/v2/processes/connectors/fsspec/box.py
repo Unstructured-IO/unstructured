@@ -9,8 +9,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -118,22 +116,16 @@ class BoxUploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=BoxIndexer,
-        indexer_config=BoxIndexerConfig,
-        downloader=BoxDownloader,
-        downloader_config=BoxDownloaderConfig,
-        connection_config=BoxConnectionConfig,
-    ),
+box_source_entry = SourceRegistryEntry(
+    indexer=BoxIndexer,
+    indexer_config=BoxIndexerConfig,
+    downloader=BoxDownloader,
+    downloader_config=BoxDownloaderConfig,
+    connection_config=BoxConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=BoxUploader,
-        uploader_config=BoxUploaderConfig,
-        connection_config=BoxConnectionConfig,
-    ),
+box_destination_entry = DestinationRegistryEntry(
+    uploader=BoxUploader,
+    uploader_config=BoxUploaderConfig,
+    connection_config=BoxConnectionConfig,
 )

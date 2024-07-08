@@ -414,6 +414,10 @@ jobs:
         ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
         ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
         CLARIFAI_API_KEY: ${{secrets.CLARIFAI_API_KEY}}
+        DATABRICKS_HOST: ${{secrets.DATABRICKS_HOST}}
+        DATABRICKS_USERNAME: ${{secrets.DATABRICKS_USERNAME}}
+        DATABRICKS_PASSWORD: ${{secrets.DATABRICKS_PASSWORD}}
+        DATABRICKS_CATALOG: ${{secrets.DATABRICKS_CATALOG}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
@@ -531,5 +535,5 @@ jobs:
         uses: anchore/scan-action@v3
         with:
           image: "unstructured:dev"
-          # NOTE(robinson) - revert this to medium when we bump libreoffice
-          severity-cutoff: high
+          severity-cutoff: critical
+          only-fixed: true

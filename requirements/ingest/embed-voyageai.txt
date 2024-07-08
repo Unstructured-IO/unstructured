@@ -20,7 +20,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -44,7 +44,7 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.6
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.10
+langchain-core==0.2.11
     # via
     #   langchain
     #   langchain-text-splitters
@@ -53,7 +53,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.82
+langsmith==0.1.84
     # via
     #   langchain
     #   langchain-core
@@ -66,19 +66,19 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   langchain
     #   voyageai
-orjson==3.10.5
+orjson==3.10.6
     # via langsmith
 packaging==23.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
-pydantic==2.7.4
+pydantic==2.8.2
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -92,7 +92,7 @@ requests==2.32.3
     #   voyageai
 sqlalchemy==2.0.31
     # via langchain
-tenacity==8.4.2
+tenacity==8.5.0
     # via
     #   langchain
     #   langchain-core

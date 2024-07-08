@@ -74,14 +74,17 @@ class TableAlignment:
           A dictionary with column and row alignment accuracies.
 
         """
-        aligned_element_col_count = 0
-        aligned_element_row_count = 0
-        total_element_count = 0
         content_diff_cols = []
         content_diff_rows = []
+        col_index_acc = []
+        row_index_acc = []
 
         for idx, td in zip(matched_indices, predicted_table_data):
             if idx == -1:
+                content_diff_cols.append(0)
+                content_diff_rows.append(0)
+                col_index_acc.append(0)
+                row_index_acc.append(0)
                 continue
             ground_truth_td = ground_truth_table_data[idx]
 
@@ -96,6 +99,9 @@ class TableAlignment:
             content_diff_cols.append(table_content_diff["by_col_token_ratio"])
             content_diff_rows.append(table_content_diff["by_row_token_ratio"])
 
+            aligned_element_col_count = 0
+            aligned_element_row_count = 0
+            total_element_count = 0
             # Get row and col index accuracy
             ground_truth_td_contents_list = [gtd["content"].lower() for gtd in ground_truth_td]
             used_indices = set()
@@ -148,17 +154,27 @@ class TableAlignment:
                     aligned_element_col_count += 1
                 total_element_count += 1
 
-        if total_element_count > 0:
-            col_index_acc = round(aligned_element_col_count / total_element_count, 2)
-            row_index_acc = round(aligned_element_row_count / total_element_count, 2)
-            col_content_acc = round(np.mean(content_diff_cols) / 100.0, 2)
-            row_content_acc = round(np.mean(content_diff_rows) / 100.0, 2)
+            table_col_index_acc = 0
+            table_row_index_acc = 0
+            if total_element_count > 0:
+                table_col_index_acc = round(aligned_element_col_count / total_element_count, 2)
+                table_row_index_acc = round(aligned_element_row_count / total_element_count, 2)
 
-            return {
-                "col_index_acc": col_index_acc,
-                "row_index_acc": row_index_acc,
-                "col_content_acc": col_content_acc,
-                "row_content_acc": row_content_acc,
-            }
+            col_index_acc.append(table_col_index_acc)
+            row_index_acc.append(table_row_index_acc)
 
-        return {}
+        not_found_gt_table_indexes = [
+            id for id in range(len(ground_truth_table_data)) if id not in matched_indices
+        ]
+        for _ in not_found_gt_table_indexes:
+            content_diff_cols.append(0)
+            content_diff_rows.append(0)
+            col_index_acc.append(0)
+            row_index_acc.append(0)
+
+        return {
+            "col_index_acc": round(np.mean(col_index_acc), 2),
+            "row_index_acc": round(np.mean(row_index_acc), 2),
+            "col_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
+            "row_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
+        }
