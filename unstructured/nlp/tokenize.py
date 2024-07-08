@@ -33,7 +33,8 @@ nltk.download = _raise_on_nltk_download
 def get_nltk_data_dir() -> str | None:
     """Locates the directory the nltk data will be saved too. The directory
     set by the NLTK environment variable takes highest precedence. Otherwise
-    the default is determined by the rules indicated below.
+    the default is determined by the rules indicated below. Returns None when
+    the directory is not writable.
 
 	On Windows, the default download directory is
 	``PYTHONHOME/lib/nltk``, where *PYTHONHOME* is the
@@ -72,6 +73,9 @@ def get_nltk_data_dir() -> str | None:
 
 def download_nltk_packages():
     nltk_data_dir = get_nltk_data_dir()
+
+    if nltk_data_dir is not None:
+        raise OSError("NLTK data directory does not exist or is not writable.")
 
     def sha256_checksum(filename: str, block_size: int = 65536):
         sha256 = hashlib.sha256()
