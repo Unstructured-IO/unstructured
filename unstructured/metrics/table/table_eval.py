@@ -41,6 +41,7 @@ class TableEvaluation:
     """Class representing a gathered table metrics."""
 
     total_tables: int
+    total_predicted_tables: int
     table_level_acc: float
     element_col_level_index_acc: float
     element_row_level_index_acc: float
@@ -208,6 +209,7 @@ class TableEvalProcessor:
             table_acc = 1 if not is_table_predicted else 0
             return TableEvaluation(
                 total_tables=0,
+                total_predicted_tables=len(predicted_table_data),
                 table_level_acc=table_acc,
                 element_col_level_index_acc=score,
                 element_row_level_index_acc=score,
@@ -217,6 +219,7 @@ class TableEvalProcessor:
         if is_table_in_gt and not is_table_predicted:
             return TableEvaluation(
                 total_tables=len(ground_truth_table_data),
+                total_predicted_tables=0,
                 table_level_acc=0,
                 element_col_level_index_acc=0,
                 element_row_level_index_acc=0,
@@ -242,6 +245,7 @@ class TableEvalProcessor:
 
             evaluation = TableEvaluation(
                 total_tables=len(ground_truth_table_data),
+                total_predicted_tables=len(predicted_table_data),
                 table_level_acc=predicted_table_acc,
                 element_col_level_index_acc=metrics.get("col_index_acc", 0),
                 element_row_level_index_acc=metrics.get("row_index_acc", 0),

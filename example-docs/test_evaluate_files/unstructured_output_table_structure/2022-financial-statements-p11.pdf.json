@@ -113,6 +113,631 @@
             "last_modified": "2024-01-11T09:49:09",
             "page_number": 1,
             "parent_id": "65cc604a285e9b4833c3515c205525f1",
+            "table_as_cells": [
+                {
+                    "content": "Assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "content": "Usable currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "content": "Other currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "content": "Credit outstanding",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "content": "Total currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 4
+                },
+                {
+                    "content": "SDR holdings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 5
+                },
+                {
+                    "content": "Investments",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 6
+                },
+                {
+                    "content": "Gold holdings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 7
+                },
+                {
+                    "content": "Property, plant and equipment and intangible assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 8
+                },
+                {
+                    "content": "Net assets under retirement benefit plans",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 9
+                },
+                {
+                    "content": "Other assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 10
+                },
+                {
+                    "content": "Total assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 11
+                },
+                {
+                    "content": "Special Contingent Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 13
+                },
+                {
+                    "content": "Borrowings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 14
+                },
+                {
+                    "content": "Quota subscriptions",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 15
+                },
+                {
+                    "content": "Net liabilities under retirement benefit plans",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 16
+                },
+                {
+                    "content": "Other liabilities",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 17
+                },
+                {
+                    "content": "otal li S",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 18
+                },
+                {
+                    "content": "eserves of the General Resources Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 19
+                },
+                {
+                    "content": "Retained earnings of the Investment Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 20
+                },
+                {
+                    "content": "Resources of the Special Disbursement Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 21
+                },
+                {
+                    "content": "otal lial S, reserves, retained earnings, and resources",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 1
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "content": "5",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 3
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 4
+                },
+                {
+                    "content": "6",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 5
+                },
+                {
+                    "content": "7",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 6
+                },
+                {
+                    "content": "9",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 7
+                },
+                {
+                    "content": "10",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 8
+                },
+                {
+                    "content": "11",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 9
+                },
+                {
+                    "content": "12",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 10
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 11
+                },
+                {
+                    "content": "13",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 13
+                },
+                {
+                    "content": "14",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 14
+                },
+                {
+                    "content": "15",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 15
+                },
+                {
+                    "content": "11",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 16
+                },
+                {
+                    "content": "12",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 17
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 18
+                },
+                {
+                    "content": "16",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 19
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 20
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 21
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "content": "292,280",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 1
+                },
+                {
+                    "content": "69,407",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "content": "93,031",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 3
+                },
+                {
+                    "content": "454,718",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 4
+                },
+                {
+                    "content": "22,270",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 5
+                },
+                {
+                    "content": "25,418",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 6
+                },
+                {
+                    "content": "3,167",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 7
+                },
+                {
+                    "content": "551",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 8
+                },
+                {
+                    "content": "1,375",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 9
+                },
+                {
+                    "content": "911",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 10
+                },
+                {
+                    "content": "508,410",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 11
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 13
+                },
+                {
+                    "content": "2,615",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 14
+                },
+                {
+                    "content": "476,272",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 15
+                },
+                {
+                    "content": "127",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 16
+                },
+                {
+                    "content": "970",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 17
+                },
+                {
+                    "content": "479,984",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 18
+                },
+                {
+                    "content": "26,524",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 19
+                },
+                {
+                    "content": "1,902",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 20
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 21
+                },
+                {
+                    "content": "508,410",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "content": "297,217",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 1
+                },
+                {
+                    "content": "71,651",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 2
+                },
+                {
+                    "content": "89,788",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 3
+                },
+                {
+                    "content": "458,656",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 4
+                },
+                {
+                    "content": "22,203",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 5
+                },
+                {
+                    "content": "23,032",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 6
+                },
+                {
+                    "content": "3,167",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 7
+                },
+                {
+                    "content": "555",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 8
+                },
+                {
+                    "content": "_\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 9
+                },
+                {
+                    "content": "706",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 10
+                },
+                {
+                    "content": "508,319",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 11
+                },
+                {
+                    "content": "1,066",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 13
+                },
+                {
+                    "content": "5,138",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 14
+                },
+                {
+                    "content": "475,808",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 15
+                },
+                {
+                    "content": "205",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 16
+                },
+                {
+                    "content": "761",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 17
+                },
+                {
+                    "content": "482,978",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 18
+                },
+                {
+                    "content": "23,350",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 19
+                },
+                {
+                    "content": "1,991",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 20
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 21
+                },
+                {
+                    "content": "508,319",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 22
+                },
+                {
+                    "content": "-iabilities",
+                    "h": 1,
+                    "w": 4,
+                    "x": 0,
+                    "y": 12
+                }
+            ],
             "text_as_html": "<table><tbody><tr><td>Assets</td><td></td><td></td><td></td></tr><tr><td>Usable currencies</td><td></td><td>292,280</td><td>297,217</td></tr><tr><td>Other currencies</td><td></td><td>69,407</td><td>71,651</td></tr><tr><td>Credit outstanding</td><td>5</td><td>93,031</td><td>89,788</td></tr><tr><td>Total currencies</td><td></td><td>454,718</td><td>458,656</td></tr><tr><td>SDR holdings</td><td>6</td><td>22,270</td><td>22,203</td></tr><tr><td>Investments</td><td>7</td><td>25,418</td><td>23,032</td></tr><tr><td>Gold holdings</td><td>9</td><td>3,167</td><td>3,167</td></tr><tr><td>Property, plant and equipment and intangible assets</td><td>10</td><td>551</td><td>555</td></tr><tr><td>Net assets under retirement benefit plans</td><td>11</td><td>1,375</td><td>_\u2014</td></tr><tr><td>Other assets</td><td>12</td><td>911</td><td>706</td></tr><tr><td>Total assets</td><td></td><td>508,410</td><td>508,319</td></tr><tr><td colspan=\"4\">-iabilities</td></tr><tr><td>Special Contingent Account</td><td>13</td><td>\u2014</td><td>1,066</td></tr><tr><td>Borrowings</td><td>14</td><td>2,615</td><td>5,138</td></tr><tr><td>Quota subscriptions</td><td>15</td><td>476,272</td><td>475,808</td></tr><tr><td>Net liabilities under retirement benefit plans</td><td>11</td><td>127</td><td>205</td></tr><tr><td>Other liabilities</td><td>12</td><td>970</td><td>761</td></tr><tr><td>otal li S</td><td></td><td>479,984</td><td>482,978</td></tr><tr><td>eserves of the General Resources Account</td><td>16</td><td>26,524</td><td>23,350</td></tr><tr><td>Retained earnings of the Investment Account</td><td></td><td>1,902</td><td>1,991</td></tr><tr><td>Resources of the Special Disbursement Account</td><td></td><td>\u2014</td><td>\u2014</td></tr><tr><td>otal lial S, reserves, retained earnings, and resources</td><td></td><td>508,410</td><td>508,319</td></tr></tbody></table>"
         },
         "text": "Note 2022 2021 Usable currencies 292,280 297,217 Other currencies 69,407 71,651 Credit outstanding 5 93,031 89,788 Total currencies 454,718 458,656 SDR holdings 6 22,270 22,203 Investments 7 25,418 23,032 Gold holdings 9 3,167 3,167 Property, plant and equipment and intangible assets 10 551 555 Net assets under retirement benefit plans 11 1,375 \u2014 Other assets 12 911 706 508,410 508,319 Special Contingent Account 13 \u2014 1,066 Borrowings 14 2,615 5,138 Quota subscriptions 15 476,272 475,808 Net liabilities under retirement benefit plans 11 127 205 Other liabilities 12 970 761 479,984 482,978 16 26,524 23,350 1,902 1,991 \u2014 \u2014 Total liabilities, reserves, retained earnings, and resources 508,410 508,319",
