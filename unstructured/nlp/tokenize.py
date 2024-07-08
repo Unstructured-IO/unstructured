@@ -45,7 +45,6 @@ def get_nltk_data_dir() -> str | None:
         permission: ``/usr/share/nltk_data``, ``/usr/local/share/nltk_data``,
         ``/usr/lib/nltk_data``, ``/usr/local/lib/nltk_data``, ``~/nltk_data``.
     """
-
     # Check if we are on GAE where we cannot write into filesystem.
     if "APPENGINE_RUNTIME" in os.environ:
         return
@@ -74,7 +73,7 @@ def get_nltk_data_dir() -> str | None:
 def download_nltk_packages():
     nltk_data_dir = get_nltk_data_dir()
 
-    if nltk_data_dir is not None:
+    if nltk_data_dir is None:
         raise OSError("NLTK data directory does not exist or is not writable.")
 
     def sha256_checksum(filename: str, block_size: int = 65536):
