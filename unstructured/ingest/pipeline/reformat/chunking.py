@@ -107,23 +107,18 @@ class Chunker(ReformatNode):
         if self.partition_config.partition_by_api:
             return partition_via_api(
                 filename=elements_json_file,
-                # -- If api_key or api_url are None, partition_via_api will raise an error, which
-                # -- will be caught and logged by Chunker.run()
+                # -- (jennings) If api_key or api_url are None, partition_via_api will raise an
+                # -- error, which will be caught and logged by Chunker.run()
                 api_key=self.partition_config.api_key,  # type: ignore
                 api_url=self.partition_config.partition_endpoint,  # type: ignore
                 chunking_strategy=self.chunking_config.chunking_strategy,
                 combine_under_n_chars=self.chunking_config.combine_text_under_n_chars,
-                # -- These are not currently supported by the sdk and raise an error.
-                # -- They will need to be updated once we bump the client version.
-                # combine_text_under_n_chars=self.chunking_config.combine_text_under_n_chars,
-                # include_orig_elements=self.chunking_config.include_orig_elements,
+                include_orig_elements=self.chunking_config.include_orig_elements,
                 max_characters=self.chunking_config.max_characters,
                 multipage_sections=self.chunking_config.multipage_sections,
                 new_after_n_chars=self.chunking_config.new_after_n_chars,
-                # -- These are not supported by older versions of unstructured-client, which we have
-                # -- pinned to <=0.18.0
-                # overlap=self.chunking_config.overlap,
-                # overlap_all=self.chunking_config.overlap_all,
+                overlap=self.chunking_config.overlap,
+                overlap_all=self.chunking_config.overlap_all,
             )
         # -- Warn that the defined chunking_strategy is not locally available --
         logger.warning(

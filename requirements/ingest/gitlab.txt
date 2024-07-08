@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/gitlab.in
 #
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -25,7 +25,9 @@ requests==2.32.3
     #   python-gitlab
     #   requests-toolbelt
 requests-toolbelt==1.0.0
-    # via python-gitlab
+    # via
+    #   -c ./ingest/../base.txt
+    #   python-gitlab
 urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt

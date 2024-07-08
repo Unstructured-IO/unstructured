@@ -184,6 +184,9 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         return [
             "total_tables",
             "table_level_acc",
+            "table_detection_recall",
+            "table_detection_precision",
+            "table_detection_f1",
             "composite_structure_acc",
             "element_col_level_index_acc",
             "element_row_level_index_acc",
