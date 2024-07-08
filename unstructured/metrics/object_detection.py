@@ -3,6 +3,7 @@ Implements object detection metrics: average precision, precision, recall, and f
 """
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -13,6 +14,16 @@ IOU_THRESHOLDS = torch.tensor(
 )
 SCORE_THRESHOLD = 0.1
 RECALL_THRESHOLDS = torch.arange(0, 1.01, 0.01)
+
+
+@dataclass
+class ObjectDetectionEvaluation:
+    """Class representing a gathered table metrics."""
+
+    f1_score: float
+    precision: float
+    recall: float
+    m_ap: float
 
 
 class ObjectDetectionEvalProcessor:
@@ -562,7 +573,7 @@ class ObjectDetectionEvalProcessor:
 
         return ap, precision, recall
 
-    def get_metrics(self) -> dict:
+    def get_metrics(self) -> ObjectDetectionEvaluation:
         """Get per document OD metrics.
 
         Returns:
@@ -633,14 +644,14 @@ class ObjectDetectionEvalProcessor:
                 mean_recall_per_class[class_index] = float(recall_per_class[i])
                 mean_f1_per_class[class_index] = float(f1_per_class[i])
 
-        output_dict = {
-            "f1_score": float(mean_f1),
-            "precision": float(mean_precision),
-            "recall": float(mean_recall),
-            "mAP": float(mean_ap),
-        }
+        od_evaluation = ObjectDetectionEvaluation(
+            f1_score=float(mean_f1),
+            precision=float(mean_precision),
+            recall=float(mean_recall),
+            m_ap=float(mean_ap),
+        )
 
-        return output_dict
+        return od_evaluation
 
 
 if __name__ == "__main__":
@@ -658,7 +669,9 @@ if __name__ == "__main__":
             prediction_file_path, ground_truth_file_path
         )
 
-        metrics = eval_processor.get_metrics()
+        metrics: ObjectDetectionEvaluation = eval_processor.get_metrics()
         print(f"Metrics for {ground_truth_file_path.name}:")
-        print(metrics)
+        from dataclasses import asdict
+
+        print(asdict(metrics))
         print("\n")

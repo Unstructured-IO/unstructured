@@ -74,6 +74,20 @@ class BaseMetricsCalculator(ABC):
             path.relative_to(self.ground_truths_dir) for path in self.ground_truths_dir.rglob("*")
         ]
 
+    @property
+    @abstractmethod
+    def default_tsv_name(self):
+        """Default name for the per-document metrics TSV file."""
+
+    @property
+    @abstractmethod
+    def default_agg_tsv_name(self):
+        """Default name for the aggregated metrics TSV file."""
+
+    @abstractmethod
+    def _generate_dataframes(self, rows: list) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Generates pandas DataFrames from the list of rows."""
+
     def on_files(
         self,
         document_paths: Optional[list[str | Path]] = None,
@@ -608,11 +622,13 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
 
     @property
     def supported_metric_names(self):
-        return ["f1_score", "precision", "recall", "mAP"]
+        return ["f1_score", "precision", "recall", "m_ap"]
 
+    @property
     def default_tsv_name(self):
         return "all-docs-object-detection-metrics.tsv"
 
+    @property
     def default_agg_tsv_name(self):
         return "aggregate-object-detection-metrics.tsv"
 
