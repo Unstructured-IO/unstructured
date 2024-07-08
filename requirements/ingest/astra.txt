@@ -17,7 +17,7 @@ cassandra-driver==3.29.1
     # via cassio
 cassio==0.1.8
     # via astrapy
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

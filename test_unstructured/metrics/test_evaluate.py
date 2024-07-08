@@ -115,7 +115,7 @@ def test_text_extraction_evaluation():
             UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
             GOLD_TABLE_STRUCTURE_DIRNAME,
             Path("IRS-2023-Form-1095-A.pdf.json"),
-            18,
+            14,
             {},
         ),
         (
@@ -194,7 +194,7 @@ def test_table_structure_evaluation():
         os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"), sep="\t"
     ).set_index("metric")
     assert len(df) == 2
-    assert len(df.columns) == 19
+    assert len(df.columns) == 15
     assert df.iloc[1].filename == "IRS-2023-Form-1095-A.pdf"
     assert (
         np.round(np.average(df["table_level_acc"], weights=df["total_tables"]), 3)
