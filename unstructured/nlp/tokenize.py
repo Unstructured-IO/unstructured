@@ -31,6 +31,20 @@ nltk.download = _raise_on_nltk_download
 # https://github.com/nltk/nltk/
 # 	blob/8c233dc585b91c7a0c58f96a9d99244a379740d5/nltk/downloader.py#L1046
 def get_nltk_data_dir() -> str | None:
+    """Locates the directory the nltk data will be saved too. The directory
+    set by the NLTK environment variable takes highest precedence. Otherwise
+    the default is determined by the rules indicated below.
+
+	On Windows, the default download directory is
+	``PYTHONHOME/lib/nltk``, where *PYTHONHOME* is the
+	directory containing Python, e.g. ``C:\\Python311``.
+
+	On all other platforms, the default directory is the first of
+	the following which exists or which can be created with write
+	permission: ``/usr/share/nltk_data``, ``/usr/local/share/nltk_data``,
+	``/usr/lib/nltk_data``, ``/usr/local/lib/nltk_data``, ``~/nltk_data``.
+    """
+
     # Check if we are on GAE where we cannot write into filesystem.
     if "APPENGINE_RUNTIME" in os.environ:
         return
