@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.__version__ import __version__ as unstructured_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -125,7 +125,7 @@ class MongoDBUploader(Uploader):
         )
         db = self.client[self.connection_config.database]
         collection = db[self.connection_config.collection]
-        for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
+        for chunk in batch_generator(elements_dict, self.upload_config.batch_size):
             collection.insert_many(chunk)
 
 

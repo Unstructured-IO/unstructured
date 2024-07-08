@@ -1,15 +1,17 @@
-## 0.14.10-dev7
+## 0.14.10-dev11
 
 ### Enhancements
 
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to
+  greater than min version and updated tests that were failing given the update.
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
 * Add table detection metrics: recall, precision and f1
 
 ### Features
 
 ### Fixes
-- Fix counting false negatives and false positives in table structure evaluation
 
+* **Fix counting false negatives and false positives in table structure evaluation**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
 
 ## 0.14.9

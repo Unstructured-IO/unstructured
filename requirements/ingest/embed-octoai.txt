@@ -8,6 +8,7 @@ annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
     # via
+    #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
     #   openai
@@ -25,24 +26,32 @@ charset-normalizer==3.3.2
 distro==1.9.0
     # via openai
 exceptiongroup==1.2.1
-    # via anyio
+    # via
+    #   -c ./ingest/../base.txt
+    #   anyio
 h11==0.14.0
-    # via httpcore
+    # via
+    #   -c ./ingest/../base.txt
+    #   httpcore
 httpcore==1.0.5
-    # via httpx
+    # via
+    #   -c ./ingest/../base.txt
+    #   httpx
 httpx==0.27.0
-    # via openai
+    # via
+    #   -c ./ingest/../base.txt
+    #   openai
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
     #   httpx
     #   requests
-openai==1.35.7
+openai==1.35.8
     # via -r ./ingest/embed-octoai.in
-pydantic==2.7.4
+pydantic==2.8.0
     # via openai
-pydantic-core==2.18.4
+pydantic-core==2.20.0
     # via pydantic
 regex==2024.5.15
     # via
@@ -54,6 +63,7 @@ requests==2.32.3
     #   tiktoken
 sniffio==1.3.1
     # via
+    #   -c ./ingest/../base.txt
     #   anyio
     #   httpx
     #   openai
