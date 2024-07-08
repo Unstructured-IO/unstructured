@@ -7,6 +7,7 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
+
 import json
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -14,7 +15,7 @@ from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Generator, Tuple, Type, Literal
+from typing import TYPE_CHECKING, Any, Generator, Tuple, Type
 
 from dateutil import parser
 
@@ -125,6 +126,17 @@ class SalesforceIndexer(Indexer):
     connection_config: SalesforceConnectionConfig
     index_config: SalesforceIndexerConfig
 
+    def get_file_extension(self, record_type) -> str:
+        if record_type == "EmailMessage":
+            extension = ".eml"
+        elif record_type in ["Account", "Lead", "Case", "Campaign"]:
+            extension = ".xml"
+        else:
+            raise MissingCategoryError(
+                f"There are no categories with the name: {record_type}",
+            )
+        return extension
+
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def list_files(self) -> list[FileData]:
         """Get Salesforce Ids for the records.
@@ -146,13 +158,17 @@ class SalesforceIndexer(Indexer):
                     f"select Id, SystemModstamp, CreatedDate, LastModifiedDate from {record_type}",
                 )
                 for record in records:
+                    record_with_extension = record["Id"] + self.get_file_extension(
+                        record["attributes"]["type"]
+                    )
                     files_list.append(
                         FileData(
                             connector_type=CONNECTOR_TYPE,
                             identifier=record["Id"],
                             source_identifiers=SourceIdentifiers(
-                                filename=record["Id"],
-                                fullpath=f"{record['attributes']['type']}/{record['Id']}",
+                                filename=record_with_extension,
+                                fullpath=f"{record['attributes']['type']}/{record_with_extension}",
+                                rel_path=f"{record['attributes']['type']}/{record_with_extension}",
                             ),
                             metadata=DataSourceMetadata(
                                 url=record["attributes"]["url"],
@@ -189,22 +205,10 @@ class SalesforceDownloader(Downloader):
     )
     connector_type: str = CONNECTOR_TYPE
 
-    def get_file_extension(self, record_type) -> str:
-        if record_type == "EmailMessage":
-            extension = ".eml"
-        elif record_type in ["Account", "Lead", "Case", "Campaign"]:
-            extension = ".xml"
-        else:
-            raise MissingCategoryError(
-                f"There are no categories with the name: {record_type}",
-            )
-        return extension
-
     def get_download_path(self, file_data: FileData) -> Path:
-        record_file = file_data.identifier + self.get_file_extension(
-            file_data.additional_metadata["record_type"]
-        )
-        return Path(self.download_dir) / file_data.additional_metadata["record_type"] / record_file
+        rel_path = file_data.source_identifiers.relative_path
+        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+        return self.download_dir / Path(rel_path)
 
     def _xml_for_record(self, record: OrderedDict) -> str:
         """Creates partitionable xml file from a record"""
