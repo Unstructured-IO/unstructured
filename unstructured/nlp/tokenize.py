@@ -23,7 +23,7 @@ NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
 NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
 
 
-def _raise_on_nltk_download():
+def _raise_on_nltk_download(*args, **kwargs):
     raise ValueError("NLTK download disabled. See CVE-2024-39705")
 
 
