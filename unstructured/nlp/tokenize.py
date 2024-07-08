@@ -23,6 +23,13 @@ NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
 NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
 
 
+def _raise_on_nltk_download():
+    raise ValueError("NLTK download disabled. See CVE-2024-39705")
+
+
+nltk.download = _raise_on_nltk_download
+
+
 # NOTE(robinson) - mimic default dir logic from NLTK
 # https://github.com/nltk/nltk/
 # 	blob/8c233dc585b91c7a0c58f96a9d99244a379740d5/nltk/downloader.py#L1046
