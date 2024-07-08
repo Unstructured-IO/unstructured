@@ -482,9 +482,13 @@ def get_mean_grouping(
     elif eval_name == "element_type":
         agg_fields = ["element-type-accuracy"]
         agg_name = "element-type"
+    elif eval_name == "object_detection":
+        agg_fields = ["f1_score", "m_ap"]
+        agg_name = "object-detection"
     else:
         raise ValueError(
-            "Unknown metric. Expected `text_extraction` or `element_type` or `table_extraction`."
+            f"Unknown metric for eval {eval_name}. "
+            f"Expected `text_extraction` or `element_type` or `table_extraction`."
         )
 
     if isinstance(data_input, str):
