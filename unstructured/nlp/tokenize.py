@@ -4,6 +4,7 @@ import sys
 import tarfile
 import urllib.request
 from functools import lru_cache
+import tempfile
 from typing import List, Tuple
 
 if sys.version_info < (3, 8):
@@ -61,23 +62,21 @@ def download_nltk_packages():
                 sha256.update(block)
         return sha256.hexdigest()
 
-    tgz_file = os.path.join(nltk_data_dir, f"unstructured_nltk_data_{NLTK_DATA_SHA256}.tgz")
-    urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file)
+    with tempfile.NamedTemporaryFile() as tmp_file:
+        tgz_file = tmp_file.name
+        urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file)
 
-    file_hash = sha256_checksum(tgz_file)
-    if file_hash != NLTK_DATA_SHA256:
-        os.remove(tgz_file)
-        raise ValueError(f"SHA-256 mismatch: expected {expected_sha256}, got {file_hash}")
+        file_hash = sha256_checksum(tgz_file)
+        if file_hash != NLTK_DATA_SHA256:
+            os.remove(tgz_file)
+            raise ValueError(f"SHA-256 mismatch: expected {expected_sha256}, got {file_hash}")
 
-    # Extract the contents
-    if not os.path.exists(nltk_data_dir):
-        os.makedirs(nltk_data_dir)
+        # Extract the contents
+        if not os.path.exists(nltk_data_dir):
+            os.makedirs(nltk_data_dir)
 
-    with tarfile.open(tgz_file, "r:gz") as tar:
-        tar.extractall(path=nltk_data_dir)
-
-    # Clean up by removing the downloaded .tgz file
-    os.remove(tgz_file)
+        with tarfile.open(tgz_file, "r:gz") as tar:
+            tar.extractall(path=nltk_data_dir)
 
 
 def _download_nltk_package_if_not_present(package_name: str, package_category: str):
