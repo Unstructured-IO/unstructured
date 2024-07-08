@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
-import unstructured_pytesseract
+import pytesseract
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
@@ -70,7 +70,7 @@ def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
 
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
-        unstructured_pytesseract,
+        pytesseract,
         "image_to_data",
         lambda *args, **kwargs: pd.DataFrame(
             {
@@ -156,7 +156,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
-        unstructured_pytesseract,
+        pytesseract,
         "image_to_string",
         lambda *args, **kwargs: "Hello World",
     )
@@ -443,7 +443,7 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
     monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")
     monkeypatch.setattr(
-        unstructured_pytesseract,
+        pytesseract,
         "image_to_data",
         lambda *args, **kwargs: pd.DataFrame(
             {
