@@ -1,6 +1,10 @@
+import hashlib
+import os
 import sys
+import tarfile
 from functools import lru_cache
 from typing import List, Tuple
+import urllib.request
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final  # pragma: no cover
@@ -13,6 +17,67 @@ from nltk import sent_tokenize as _sent_tokenize
 from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
+
+NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
+NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
+
+
+# NOTE(robinson) - mimic default dir logic from NLTK
+# https://github.com/nltk/nltk/
+# 	blob/8c233dc585b91c7a0c58f96a9d99244a379740d5/nltk/downloader.py#L1046
+def get_nltk_data_dir():
+    # Check if we are on GAE where we cannot write into filesystem.
+    if "APPENGINE_RUNTIME" in os.environ:
+        return
+
+    # Check if we have sufficient permissions to install in a
+    # variety of system-wide locations.
+    for nltkdir in nltk.data.path:
+        if os.path.exists(nltkdir) and nltk.internals.is_writable(nltkdir):
+            return nltkdir
+
+    # On Windows, use %APPDATA%
+    if sys.platform == "win32" and "APPDATA" in os.environ:
+        homedir = os.environ["APPDATA"]
+
+    # Otherwise, install in the user's home directory.
+    else:
+        homedir = os.path.expanduser("~/")
+        if homedir == "~/":
+            raise ValueError("Could not find a default download directory")
+
+    # NOTE(robinson) - NLTK appends nltk_data to the homedir. That's already
+    # present in the tar file so we don't have to do that here.
+    return homedir
+
+
+def download_nltk_packages():
+    nltk_data_dir = get_nltk_data_dir()
+
+    def sha256_checksum(filename, block_size=65536):
+        sha256 = hashlib.sha256()
+        with open(filename, 'rb') as f:
+            for block in iter(lambda: f.read(block_size), b''):
+                sha256.update(block)
+        return sha256.hexdigest()
+
+    tgz_file = os.path.join(nltk_data_dir, f'unstructured_nltk_data_{NLTK_DATA_SHA256}.tgz')
+    urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file)
+
+    file_hash = sha256_checksum(tgz_file)
+    if file_hash != NLTK_DATA_SHA256:
+        os.remove(tgz_file)
+        raise ValueError(f"SHA-256 mismatch: expected {expected_sha256}, got {file_hash}")
+
+    # Extract the contents
+    if not os.path.exists(nltk_data_dir):
+        os.makedirs(nltk_data_dir)
+
+    with tarfile.open(tgz_file, 'r:gz') as tar:
+        tar.extractall(path=nltk_data_dir)
+
+    # Clean up by removing the downloaded .tgz file
+    os.remove(tgz_file)
 
 
 def _download_nltk_package_if_not_present(package_name: str, package_category: str):
