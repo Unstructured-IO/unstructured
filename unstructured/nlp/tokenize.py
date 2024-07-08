@@ -2,9 +2,9 @@ import hashlib
 import os
 import sys
 import tarfile
+import tempfile
 import urllib.request
 from functools import lru_cache
-import tempfile
 from typing import List, Tuple
 
 if sys.version_info < (3, 8):
@@ -79,36 +79,54 @@ def download_nltk_packages():
             tar.extractall(path=nltk_data_dir)
 
 
-def _download_nltk_package_if_not_present(package_name: str, package_category: str):
-    """If the required nlt package is not present, download it."""
+def check_for_nltk_package(package_name: str, package_category: str) -> bool:
+    """Checks to see if the specified NLTK package exists on the file system"""
+    paths = []
+    for path in nltk.data.path:
+        if not path.endswith("nltk_data"):
+            path = os.path.join(path, "nltk_data")
+        paths.append(path)
+
     try:
-        nltk.find(f"{package_category}/{package_name}")
+        out = nltk.find(f"{package_category}/{package_name}", paths=paths)
+        return True
     except LookupError:
-        nltk.download(package_name)
+        return False
+
+
+def _download_nltk_packages_if_not_present():
+    """If required NLTK packages are not available, download them."""
+
+    tagger_available = check_for_nltk_packages(
+        package_category="taggers",
+        package_name="averaged_perceptron_tagger",
+    )
+    tokenizer_available = check_for_nltk_packages(
+        package_category="tokenizers", package_name="punkt"
+    )
+
+    if not (tokenizer_available and tagger_available):
+        download_nltk_packages()
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
-    _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
+    _download_nltk_packages_if_not_present()
     return _sent_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
-    _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
+    _download_nltk_packages_if_not_present()
     return _word_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
-    _download_nltk_package_if_not_present(
-        package_category="taggers",
-        package_name="averaged_perceptron_tagger",
-    )
+    _download_nltk_packages_if_not_present()
     # NOTE(robinson) - Splitting into sentences before tokenizing. The helps with
     # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
     # for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
