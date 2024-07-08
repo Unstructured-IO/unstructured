@@ -1,0 +1,3 @@
+from __future__ import annotations
+
+def is_writable(path: str) -> bool: ...
