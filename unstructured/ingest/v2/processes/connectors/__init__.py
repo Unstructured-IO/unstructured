@@ -22,6 +22,8 @@ from .onedrive import CONNECTOR_TYPE as ONEDRIVE_CONNECTOR_TYPE
 from .onedrive import onedrive_source_entry
 from .opensearch import CONNECTOR_TYPE as OPENSEARCH_CONNECTOR_TYPE
 from .opensearch import opensearch_destination_entry, opensearch_source_entry
+from .sql import CONNECTOR_TYPE as SQL_CONNECTOR_TYPE
+from .sql import sql_destination_entry
 from .weaviate import CONNECTOR_TYPE as WEAVIATE_CONNECTOR_TYPE
 from .weaviate import weaviate_destination_entry
 
@@ -51,3 +53,5 @@ add_destination_entry(destination_type=WEAVIATE_CONNECTOR_TYPE, entry=weaviate_d
 add_destination_entry(
     destination_type=DATABRICKS_VOLUMES_CONNECTOR_TYPE, entry=databricks_volumes_destination_entry
 )
+
+add_destination_entry(destination_type=SQL_CONNECTOR_TYPE, entry=sql_destination_entry)

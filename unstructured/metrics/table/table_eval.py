@@ -42,6 +42,9 @@ class TableEvaluation:
 
     total_tables: int
     table_level_acc: float
+    table_detection_recall: float
+    table_detection_precision: float
+    table_detection_f1: float
     element_col_level_index_acc: float
     element_row_level_index_acc: float
     element_col_level_content_acc: float
@@ -89,6 +92,42 @@ def _count_predicted_tables(matched_indices: List[int]) -> int:
 
     """
     return sum(1 for idx in matched_indices if idx >= 0)
+
+
+def calculate_table_detection_metrics(
+    matched_indices: list[int], ground_truth_tables_number: int
+) -> tuple[float, float, float]:
+    """
+    Calculate the table detection metrics: recall, precision, and f1 score.
+    Args:
+        matched_indices:
+            List of indices indicating matches between predicted and ground truth tables
+            For example: matched_indices[i] = j means that the
+            i-th predicted table is matched with the j-th ground truth table.
+        ground_truth_tables_number: the number of ground truth tables.
+
+    Returns:
+        Tuple of recall, precision, and f1 scores
+    """
+    predicted_tables_number = len(matched_indices)
+
+    matched_set = set(matched_indices)
+    if -1 in matched_set:
+        matched_set.remove(-1)
+
+    true_positive = len(matched_set)
+    false_positive = predicted_tables_number - true_positive
+    positive = ground_truth_tables_number
+
+    recall = true_positive / positive if positive > 0 else 0
+    precision = (
+        true_positive / (true_positive + false_positive)
+        if true_positive + false_positive > 0
+        else 0
+    )
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall > 0 else 0
+
+    return recall, precision, f1
 
 
 class TableEvalProcessor:
@@ -209,6 +248,9 @@ class TableEvalProcessor:
             return TableEvaluation(
                 total_tables=0,
                 table_level_acc=table_acc,
+                table_detection_recall=score,
+                table_detection_precision=score,
+                table_detection_f1=score,
                 element_col_level_index_acc=score,
                 element_row_level_index_acc=score,
                 element_col_level_content_acc=score,
@@ -218,6 +260,9 @@ class TableEvalProcessor:
             return TableEvaluation(
                 total_tables=len(ground_truth_table_data),
                 table_level_acc=0,
+                table_detection_recall=0,
+                table_detection_precision=0,
+                table_detection_f1=0,
                 element_col_level_index_acc=0,
                 element_row_level_index_acc=0,
                 element_col_level_content_acc=0,
@@ -240,9 +285,19 @@ class TableEvalProcessor:
                 cutoff=self.cutoff,
             )
 
+            table_detection_recall, table_detection_precision, table_detection_f1 = (
+                calculate_table_detection_metrics(
+                    matched_indices=matched_indices,
+                    ground_truth_tables_number=len(ground_truth_table_data),
+                )
+            )
+
             evaluation = TableEvaluation(
                 total_tables=len(ground_truth_table_data),
                 table_level_acc=predicted_table_acc,
+                table_detection_recall=table_detection_recall,
+                table_detection_precision=table_detection_precision,
+                table_detection_f1=table_detection_f1,
                 element_col_level_index_acc=metrics.get("col_index_acc", 0),
                 element_row_level_index_acc=metrics.get("row_index_acc", 0),
                 element_col_level_content_acc=metrics.get("col_content_acc", 0),

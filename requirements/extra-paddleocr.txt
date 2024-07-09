@@ -14,7 +14,7 @@ blinker==1.8.2
     # via flask
 cachetools==5.3.3
     # via premailer
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -45,7 +45,7 @@ flask==3.0.3
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.53.0
+fonttools==4.53.1
     # via matplotlib
 future==1.0.0
     # via bce-python-sdk
@@ -173,7 +173,7 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -205,7 +205,7 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.6.18
+tifffile==2024.7.2
     # via scikit-image
 tqdm==4.66.4
     # via

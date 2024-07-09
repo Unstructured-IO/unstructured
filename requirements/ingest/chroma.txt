@@ -25,7 +25,7 @@ build==1.2.1
     # via chromadb
 cachetools==5.3.3
     # via google-auth
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -165,7 +165,7 @@ opentelemetry-util-http==0.46b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-orjson==3.10.5
+orjson==3.10.6
     # via chromadb
 overrides==7.7.0
     # via chromadb
@@ -190,11 +190,11 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.8.0
+pydantic==2.8.2
     # via
     #   chromadb
     #   fastapi
-pydantic-core==2.20.0
+pydantic-core==2.20.1
     # via pydantic
 pypika==0.48.9
     # via chromadb
@@ -240,7 +240,7 @@ starlette==0.37.2
     # via fastapi
 sympy==1.12.1
     # via onnxruntime
-tenacity==8.4.2
+tenacity==8.5.0
     # via chromadb
 tokenizers==0.19.1
     # via chromadb
