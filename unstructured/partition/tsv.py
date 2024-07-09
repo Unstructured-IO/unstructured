@@ -38,6 +38,7 @@ def partition_tsv(
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
+    encoding: Optional[str] = "utf-8",
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions TSV files into document elements.
@@ -61,6 +62,8 @@ def partition_tsv(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    encoding
+        The encoding to use when reading the CSV file.
     """
     exactly_one(filename=filename, file=file)
 
@@ -68,13 +71,13 @@ def partition_tsv(
     header = 0 if include_header else None
 
     if filename:
-        table = pd.read_csv(filename, sep="\t", header=header)
+        table = pd.read_csv(filename, sep="\t", header=header, encoding=encoding)
         last_modification_date = get_last_modified_date(filename)
     elif file:
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
-        table = pd.read_csv(f, sep="\t", header=header)
+        table = pd.read_csv(f, sep="\t", header=header, encoding=encoding)
         last_modification_date = (
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )

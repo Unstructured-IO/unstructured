@@ -542,6 +542,7 @@ def partition(
             file=file,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            encoding=encoding,
             **kwargs,
         )
     elif filetype == FileType.EMPTY:
