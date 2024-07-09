@@ -75,10 +75,9 @@ Other background
 
 from __future__ import annotations
 
-import itertools
 from collections import defaultdict, deque
 from types import MappingProxyType
-from typing import Any, Iterable, Iterator, Mapping, NamedTuple, cast
+from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
 
 from lxml import etree
 from typing_extensions import TypeAlias
@@ -102,7 +101,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import htmlify_matrix_of_cell_texts
+from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
 
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
@@ -117,14 +116,14 @@ differ between the individual (text-segment) and consolidated (Element) forms.
 """
 
 
-def _consolidate_annotations(text_segments: Iterable[TextSegment]) -> Annotation:
+def _consolidate_annotations(annotations: Iterable[Annotation]) -> Annotation:
     """Combine individual text-segment annotations into an element-level annotation.
 
     Sequence is significant.
     """
     combined_annotations = cast(defaultdict[str, list[str]], defaultdict(list))
-    for ts in text_segments:
-        for k, v in ts.annotation.items():
+    for a in annotations:
+        for k, v in a.items():
             if isinstance(v, list):
                 combined_annotations[k].extend(cast(list[Any], v))
             else:
@@ -161,6 +160,171 @@ class TextSegment(NamedTuple):
     annotation: Annotation
 
 
+Phrase: TypeAlias = Sequence[TextSegment]
+"""Contiguous text-segments formed from text and contiguous phrasing.
+
+These occur within a block element as the element text and contiguous phrasing or the tail and
+contiguous phrasing. For example, there are two phrases in this div, one before and one after the
+<p> child element:
+
+    <div>
+      Seagulls <b>gonna <i>come</i></b> and
+      <p>Poke me in the coconut</p>
+      And they <b>did</b>, they <i>did</i>
+    </div>
+
+The first is `div.text` and the phrasing (text and tail of phrasing elements) that follow it. A
+phrase terminates at a block element (`<p>` in this case) or at the end of the enclosing block (the
+`</div>` in this example).
+"""
+
+
+# ------------------------------------------------------------------------------------------------
+# PHRASING ACCUMULATORS
+# ------------------------------------------------------------------------------------------------
+
+
+class _PhraseAccumulator:
+    """Accumulates sequential `TextSegment`s making them available as iterable on flush().
+
+    - The accumulator starts empty.
+    - `.flush()` is a Phrase iterator and generates zero or one Phrase.
+    - `.flush()` generates zero items when no text-segments have been accumulated
+    - `flush()` resets the accumulator to its initial empty state.
+
+    So far, phrases are used only by the Anchor class.
+    """
+
+    def __init__(self):
+        self._text_segments: list[TextSegment] = []
+
+    def add(self, text_segment: TextSegment) -> None:
+        """Add `text_segment` to this collection."""
+        self._text_segments.append(text_segment)
+
+    def flush(self) -> Iterator[Phrase]:
+        """Generate each of the stored `TextSegment` objects and clears the accumulator."""
+        # -- harvest accumulated text-segments and empty the accumulator --
+        text_segments = self._text_segments[:]
+        self._text_segments.clear()
+
+        if not text_segments:
+            return
+
+        yield tuple(text_segments)
+
+
+class _ElementAccumulator:
+    """Accumulates sequential `TextSegment`s and forms them into an element on flush().
+
+    The text segments come from element text or tails and any contiguous phrasing elements that
+    follow that text or tail.
+
+    - The accumulator starts empty.
+    - `.flush()` is an element iterator and generates zero or one Element.
+    - `.flush()` generates zero elements when no text-segments have been accumulated or the ones
+      that have been accumulated contain only whitespace.
+    - `flush()` resets the accumulator to its initial empty state.
+    """
+
+    def __init__(self, element: etree.ElementBase):
+        self._element = element
+        self._text_segments: list[TextSegment] = []
+
+    def add(self, text_segment: TextSegment) -> None:
+        """Add `text_segment` to this Element-under-construction."""
+        self._text_segments.append(text_segment)
+
+    def flush(self, ElementCls: type[Element] | None) -> Iterator[Element]:
+        """Generate zero-or-one document-`Element` object and clear the accumulator."""
+        # -- normalized-text must be computed before resetting the accumulator --
+        normalized_text = self._normalized_text
+
+        # -- harvest accumulated text-segments and empty the accumulator --
+        text_segments = self._text_segments[:]
+        self._text_segments.clear()
+
+        if not text_segments or not normalized_text:
+            return
+
+        # -- if we don't have a more specific element-class, choose one based on the text --
+        if ElementCls is None:
+            ElementCls = derive_element_type_from_text(normalized_text)
+            # -- normalized text that contains only a single character is skipped unless it
+            # -- identifies as a list-item
+            if ElementCls is None:
+                return
+            # -- derived ListItem means text starts with a bullet character that needs removing --
+            if ElementCls is ListItem:
+                normalized_text = clean_bullets(normalized_text)
+                if not normalized_text:
+                    return
+
+        category_depth = self._category_depth(ElementCls)
+
+        yield ElementCls(
+            normalized_text,
+            metadata=ElementMetadata(
+                **_consolidate_annotations(ts.annotation for ts in text_segments),
+                category_depth=category_depth,
+            ),
+        )
+
+    def _category_depth(self, ElementCls: type[Element]) -> int | None:
+        """Not clear on concept. Something to do with hierarchy ..."""
+        if ElementCls is ListItem:
+            return (
+                len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
+                if self._element.tag in ("li", "dd")
+                else 0
+            )
+
+        if ElementCls is Title:
+            return (
+                int(self._element.tag[1]) - 1
+                if self._element.tag in ("h1", "h2", "h3", "h4", "h5", "h6")
+                else 0
+            )
+
+        return None
+
+    @property
+    def _normalized_text(self) -> str:
+        """Consolidate text-segment text values into a single whitespace-normalized string.
+
+        This normalization is suitable for text inside a block element including any segments from
+        phrasing elements immediately following that text. The spec is:
+
+        - All text segments are concatenated (without adding or removing whitespace)
+        - Leading and trailing whitespace are removed.
+        - Each run of whitespace in the string is reduced to a single space.
+
+        For example:
+          "  \n   foo  bar\nbaz bada \t bing\n  "
+        becomes:
+          "foo bar baz bada bing"
+        """
+        return " ".join("".join(ts.text for ts in self._text_segments).split())
+
+
+class _PreElementAccumulator(_ElementAccumulator):
+    """Accumulator specific to `<pre>` element, preserves (most) whitespace in normalized text."""
+
+    @property
+    def _normalized_text(self) -> str:
+        """Consolidate `texts` into a single whitespace-normalized string.
+
+        This normalization is specific to the `<pre>` element. Only a leading and or trailing
+        newline is removed. All other whitespace is preserved.
+        """
+        text = "".join(ts.text for ts in self._text_segments)
+
+        start = 1 if text.startswith("\n") else 0
+        end = -1 if text.endswith("\n") else len(text)
+
+        return text[start:end]
+
+
 # ------------------------------------------------------------------------------------------------
 # CUSTOM ELEMENT-CLASSES
 # ------------------------------------------------------------------------------------------------
@@ -195,19 +359,10 @@ class Flow(etree.ElementBase):
             yield from block_item.iter_elements()
             yield from self._element_from_text_or_tail(block_item.tail or "", q)
 
-    def _category_depth(self, ElementCls: type[Element]) -> int | None:
-        """Not clear on concept. Something to do with hierarchy ..."""
-        if ElementCls is ListItem:
-            return (
-                len([e for e in self.iterancestors() if e.tag in ("dl", "ol", "ul")])
-                if self.tag in ("li", "dd")
-                else 0
-            )
-
-        if ElementCls is Title:
-            return int(self.tag[1]) - 1 if self.tag in ("h1", "h2", "h3", "h4", "h5", "h6") else 0
-
-        return None
+    @lazyproperty
+    def _element_accum(self) -> _ElementAccumulator:
+        """Text-segment accumulator suitable for this block-element."""
+        return _ElementAccumulator(self)
 
     def _element_from_text_or_tail(
         self, text: str, q: deque[Flow | Phrasing], ElementCls: type[Element] | None = None
@@ -216,37 +371,34 @@ class Flow(etree.ElementBase):
 
         Note this mutates `q` by popping phrasing elements off as they are processed.
         """
-        text_segments = tuple(self._iter_text_segments(text, q))
-        normalized_text = " ".join("".join(ts.text for ts in text_segments).split())
+        element_accum = self._element_accum
 
-        if not normalized_text:
-            return
+        for node in self._iter_text_segments(text, q):
+            if isinstance(node, TextSegment):
+                element_accum.add(node)
+            else:
+                # -- otherwise x is an Element, which terminates any accumulating Element --
+                yield from element_accum.flush(ElementCls)
+                yield node
 
-        # -- if we don't have a more specific element-class, choose one based on the text --
-        if ElementCls is None:
-            ElementCls = derive_element_type_from_text(normalized_text)
-            # -- normalized text that contains only a bullet character is skipped --
-            if ElementCls is None:
-                return
-            # -- derived ListItem means text starts with a bullet character that needs removing --
-            if ElementCls is ListItem:
-                normalized_text = clean_bullets(normalized_text)
-                if not normalized_text:
-                    return
+        yield from element_accum.flush(ElementCls)
 
-        category_depth = self._category_depth(ElementCls)
+    def _iter_text_segments(
+        self, text: str, q: deque[Flow | Phrasing]
+    ) -> Iterator[TextSegment | Element]:
+        """Generate zero-or-more `TextSegment`s or `Element`s from text and leading phrasing.
 
-        yield ElementCls(
-            normalized_text,
-            metadata=ElementMetadata(
-                **_consolidate_annotations(text_segments), category_depth=category_depth
-            ),
-        )
+        Note that while this method is named "._iter_text_segments()", it can also generate
+        `Element` objects when a block item is nested within a phrasing element. This is not
+        technically valid HTML, but folks write some wacky HTML and the browser is pretty forgiving
+        so we try to do the right thing (what the browser does) when that happens, generally
+        interpret each nested block as its own paragraph and generate a separate `Element` object
+        for each.
 
-    def _iter_text_segments(self, text: str, q: deque[Flow | Phrasing]) -> Iterator[TextSegment]:
-        """Generate zero-or-more `TextSegment`s from text and leading phrasing elements.
+        This method is used to process the text or tail of a block element, including any phrasing
+        elements immediately following the text or tail.
 
-        This is used to process the text or tail of a flow element. For example, this <div>:
+        For example, this <div>:
 
             <div>
                For a <b>moment, <i>nothing</i> happened.</b>
@@ -254,8 +406,13 @@ class Flow(etree.ElementBase):
                The dolphins had always believed that <em>they</em> were far more intelligent.
             </div>
 
-        Should generate three distinct elements, one for each contained line. This method is
-        invoked to process the first beginning "For a" and the third line beginning "The dolphins".
+        Should generate three distinct elements:
+        - One for the div's text "For a " and the <b> phrasing element after it,
+        - one for the <p> element, and
+        - one for the tail of the <p> and the phrasing <em> element that follows it.
+
+        This method is invoked to process the first line beginning "For a" and the third line
+        beginning "The dolphins", in two separate calls.
 
         Note this method mutates `q` by popping phrasing elements off as they are processed.
         """
@@ -314,33 +471,10 @@ class Pre(BlockItem):
     Can only contain phrasing content.
     """
 
-    def iter_elements(self) -> Iterator[Element]:
-        """Generate zero or one document element for the entire `<pre>` element.
-
-        Whitespace is preserved just as it appears in the source HTML.
-        """
-        pre_text = self.text or ""
-        # -- this is pretty subtle, but in a browser, if the opening `<pre>` is immediately
-        # -- followed by a newline, that newline is removed from the rendered text.
-        if pre_text.startswith("\n"):
-            pre_text = pre_text[1:]
-
-        text_segments = tuple(self._iter_text_segments(pre_text, deque(self)))
-        text = "".join(ts.text for ts in text_segments)
-
-        # -- also subtle, but in a browser, if the closing `</pre>` tag is immediately preceded
-        # -- by a newline (starts in column 1), that preceding newline is removed too.
-        if text.endswith("\n"):
-            text = text[:-1]
-
-        if not text:
-            return
-
-        ElementCls = derive_element_type_from_text(text)
-        if not ElementCls:
-            return
-
-        yield ElementCls(text, metadata=ElementMetadata(**_consolidate_annotations(text_segments)))
+    @lazyproperty
+    def _element_accum(self) -> _ElementAccumulator:
+        """Text-segment accumulator suitable for this block-element."""
+        return _PreElementAccumulator(self)
 
 
 class TableBlock(Flow):
@@ -404,7 +538,7 @@ class Phrasing(etree.ElementBase):
     def is_phrasing(self) -> bool:
         return True
 
-    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment]:
+    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
         """Generate text segments for text, children, and tail of this element."""
         inside_emphasis = self._inside_emphasis(enclosing_emphasis)
 
@@ -445,14 +579,25 @@ class Phrasing(etree.ElementBase):
         """
         return enclosing_emphasis
 
-    def _iter_child_text_segments(self, emphasis: str) -> Iterator[TextSegment]:
+    def _iter_child_text_segments(self, emphasis: str) -> Iterator[TextSegment | Element]:
         """Generate zero-or-more text-segments for phrasing children of this element.
 
         All generated text segments will be annotated with `emphasis` when it is other than the
         empty string.
         """
-        for child in self:
-            yield from child.iter_text_segments(emphasis)
+        q: deque[Flow | Phrasing] = deque(self)
+        # -- Recurse into any nested tags. Phrasing children contribute `TextSegment`s to the
+        # -- stream. Block children contribute document `Element`s. Note however that a phrasing
+        # -- child can also produce an `Element` from any nested block element.
+        while q:
+            child = q.popleft()
+            if child.is_phrasing:
+                yield from cast(Phrasing, child).iter_text_segments(emphasis)
+            else:
+                yield from cast(Flow, child).iter_elements()
+                yield from self._iter_text_segments_from_block_tail_and_phrasing(
+                    child.tail or "", q, emphasis
+                )
 
     def _iter_tail_segment(self, emphasis: str) -> Iterator[TextSegment]:
         """Generate zero-or-one text-segment for tail of this element.
@@ -471,6 +616,150 @@ class Phrasing(etree.ElementBase):
         """
         if text := self.text:
             yield TextSegment(text, self._annotation(text, emphasis))
+
+    def _iter_text_segments_from_block_tail_and_phrasing(
+        self, tail: str, q: deque[Flow | Phrasing], emphasis: str
+    ) -> Iterator[TextSegment | Element]:
+        """Generate zero-or-more `TextSegment`s or `Element`s from tail+phrasing of block child.
+
+        When this phrasing element contains a block child (not valid HTML but accepted by
+        browsers), the tail of that block child and any phrasing elements contiguous with that tail
+        also need to contribute their text. This method takes care of that job.
+
+        Note this mutates `q` by popping phrasing elements off as they are processed.
+        """
+        if tail:
+            yield TextSegment(tail, self._annotation(tail, emphasis))
+        while q and q[0].is_phrasing:
+            e = cast(Phrasing, q.popleft())
+            yield from e.iter_text_segments(emphasis)
+
+
+class Anchor(Phrasing):
+    """Custom element-class for `<a>` element.
+
+    Provides link annotations.
+    """
+
+    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
+        """Generate text segments for contents and tail of this element, when they exist.
+
+        Phrasing is emitted as `TextSegment` objects. Any nested block items (not valid HTML but
+        are accepted by browser so can occur) are emitted as `Element` objects.
+
+        When an anchor contains a nested block element, there can be multiple phrases and/or
+        elements. Link annotation is only added to the first phrase or element. Otherwise the link
+        annotation would span multiple document-elements.
+        """
+        q: deque[Phrase | Element] = deque(self._iter_phrases_and_elements(enclosing_emphasis))
+
+        # -- the first non-whitespace phrase or element gets the link annotation --
+        while q:
+            x = q.popleft()
+            if isinstance(x, Element):
+                yield self._link_annotate_element(x)
+                break
+            else:
+                # -- a whitespace-only phrase will not receive the link annotation (no link text) --
+                if lts := self._link_text_segment(x):
+                    yield lts
+                    break
+                else:
+                    yield from x
+
+        # -- whatever phrases or elements remain are emitted without link annotation --
+
+        while q:
+            x = q.popleft()
+            if isinstance(x, Element):
+                yield x
+            else:
+                yield from x
+
+        # -- A tail is emitted when present whether anchor itself was emitted or not --
+        yield from self._iter_tail_segment(enclosing_emphasis)
+
+    def _iter_phrases_and_elements(self, emphasis: str) -> Iterator[Phrase | Element]:
+        """Divide contents (text+children, but not tail) into phrases and document-elements."""
+        # -- place child elements in a queue, method calls use some and leave the rest --
+        q: deque[Flow | Phrasing] = deque(self)
+
+        yield from self._iter_phrasing(self.text or "", q, emphasis)
+
+        while q:
+            assert not q[0].is_phrasing
+            block_item = cast(Flow, q.popleft())
+            yield from block_item.iter_elements()
+            yield from self._iter_phrasing(block_item.tail or "", q, emphasis)
+
+    def _iter_phrasing(
+        self, text: str, q: deque[Flow | Phrasing], emphasis: str
+    ) -> Iterator[Phrase | Element]:
+        """Generate zero-or-more `TextSegment`s or `Element`s from text and leading phrasing.
+
+        Note that while this method is named "._iter_phrasing()", it can also generate `Element`
+        objects when a block item is nested within a phrasing element. This is not technically
+        valid HTML, but folks write some wacky HTML and the browser is pretty forgiving so we try
+        to do the right thing (what the browser does) when that happens, generally interpret each
+        nested block as its own paragraph and generate a separate `Element` object for each.
+
+        This method is used to process the text or tail of a block element, including any phrasing
+        elements immediately following the text or tail.
+
+        Note this method mutates `q` by popping phrasing elements off as they are processed.
+        """
+        phrase_accum = _PhraseAccumulator()
+
+        if text:
+            phrase_accum.add(TextSegment(text, self._annotation(text, emphasis)))
+
+        while q and q[0].is_phrasing:
+            e = cast(Phrasing, q.popleft())
+            for x in e.iter_text_segments(emphasis):
+                if isinstance(x, TextSegment):
+                    phrase_accum.add(x)
+                # -- otherwise x is an `Element`, which terminates the accumulating phrase --
+                else:
+                    yield from phrase_accum.flush()
+                    yield x
+
+        # -- emit any phrase remaining in accumulator --
+        yield from phrase_accum.flush()
+
+    def _link_annotate_element(self, element: Element) -> Element:
+        """Apply this link's annotation to `element` and return it."""
+        link_text = element.text
+        link_url = self.get("href")
+
+        if not link_text or not link_url:
+            return element
+
+        element.metadata.link_texts = (element.metadata.link_texts or []) + [link_text]
+        element.metadata.link_urls = (element.metadata.link_urls or []) + [link_url]
+
+        return element
+
+    def _link_text_segment(self, phrase: Phrase) -> TextSegment | None:
+        """Consolidate `phrase` into a single text-segment with link annotation.
+
+        Returns None if the phrase contains only whitespace.
+        """
+        consolidated_text = "".join(text_segment.text for text_segment in phrase)
+        link_text = _normalize_text(consolidated_text)
+        link_url = self.get("href")
+
+        if not link_text or not link_url:
+            return None
+
+        # -- the emphasis annotations must come from the individual text segments in the phrase --
+        consolidated_annotations = _consolidate_annotations(
+            (
+                {"link_texts": [link_text], "link_urls": [link_url]},
+                *(text_segment.annotation for text_segment in phrase),
+            )
+        )
+
+        return TextSegment(consolidated_text, consolidated_annotations)
 
 
 class Bold(Phrasing):
@@ -524,75 +813,6 @@ class RemovedPhrasing(Phrasing):
     def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment]:
         """Generate text segment for tail only of this element."""
         yield from self._iter_tail_segment(enclosing_emphasis)
-
-
-# -- DUAL-ROLE ELEMENTS --------------------------------------------------------------------------
-
-
-class Anchor(Phrasing, Flow):
-    """Custom element-class for `<a>` element.
-
-    Provides link annotations.
-    """
-
-    @property
-    def is_phrasing(self) -> bool:
-        """False when the `<a>` element contains any block items, True otherwise."""
-        return all(e.is_phrasing for e in self)
-
-    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment]:
-        """Generate text segments for text and tail of this element, when they exist.
-
-        The behavior for an anchor element is slightly different because link annotations are only
-        added to the text, not the tail. Also an anchor can have no children.
-        """
-        # -- the text of the link is everything inside the `<a>` element, text and child text --
-        text_segments = tuple(
-            itertools.chain(
-                self._iter_text_segment(enclosing_emphasis),
-                self._iter_child_text_segments(enclosing_emphasis),
-            )
-        )
-
-        link_text = "".join("".join(ts.text for ts in text_segments))
-
-        # -- the link_text and link_url annotation refers to the entire text inside the `<a>` --
-        link_text_segment = TextSegment(
-            link_text, self._link_annotations(link_text, enclosing_emphasis)
-        )
-
-        # -- but the emphasis annotations must come from the individual text segments within --
-        consolidated_annotations = _consolidate_annotations((link_text_segment, *text_segments))
-
-        # -- generate at most one text-segment for the `<a>` element, the full enclosed text with
-        # -- consolidated emphasis and link annotations.
-        if link_text:
-            yield TextSegment(link_text, consolidated_annotations)
-
-        # -- A tail is emitted when present whether anchor itself was or not --
-        yield from self._iter_tail_segment(enclosing_emphasis)
-
-    def _link_annotations(self, text: str, emphasis: str) -> Annotation:
-        """Link and emphasis annotations that apply to the text of this anchor.
-
-        An anchor element does not add any emphasis but uses any introduced by enclosing elements.
-        """
-        normalized_text = _normalize_text(text)
-
-        if not normalized_text:
-            return {}
-
-        def iter_annotation_pairs() -> Iterator[tuple[str, Any]]:
-            # -- emphasis annotation is only added when there is enclosing emphasis --
-            if emphasis:
-                yield "emphasized_text_contents", normalized_text
-                yield "emphasized_text_tags", emphasis
-
-            if href := self.get("href"):
-                yield "link_texts", normalized_text
-                yield "link_urls", href
-
-        return MappingProxyType(dict(iter_annotation_pairs()))
 
 
 # -- DEFAULT ELEMENT -----------------------------------------------------------------------------
