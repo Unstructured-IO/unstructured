@@ -9,7 +9,7 @@ anyio==3.7.1
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

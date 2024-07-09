@@ -1,10 +1,21 @@
-## 0.14.10-dev11
+## 0.14.11-dev2
 
 ### Enhancements
 
-* **Update unstructured-client dependency** Change unstructured-client dependency pin back to
-  greater than min version and updated tests that were failing given the update.
+* **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
+
+### Features
+
+### Fixes
+
+## 0.14.10
+
+### Enhancements
+
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to greater than min version and updated tests that were failing given the update.
 * **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* **Add table detection metrics: recall, precision and f1.**
+* **Remove unused _with_spans metrics.**
 
 ### Features
 
@@ -14,6 +25,7 @@
 
 * **Fix counting false negatives and false positives in table structure evaluation**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
 
 ## 0.14.9
 
@@ -53,6 +65,7 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
 * **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
@@ -182,7 +195,6 @@
 * **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
 
 ### Features
-
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
 
 ### Fixes
