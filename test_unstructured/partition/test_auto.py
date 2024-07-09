@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import sys
 import tempfile
 import warnings
 from importlib import import_module
@@ -86,7 +87,6 @@ def test_auto_partition_csv_from_file():
 # ================================================================================================
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.parametrize(
     ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
@@ -114,29 +114,30 @@ def test_auto_partition_doc_with_filename(
     assert elements[0].metadata.file_directory == str(tmp_path)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "https://github.com/Unstructured-IO/unstructured/issues/3364"
-        " detect_filetype() identifies .doc as `application/x-ole-storage` which is true but not"
-        " specific enough. The `FileType.MSG` file-type is assigned (which is also an OLE file)"
-        " and `partition()` routes the document to `partition_msg` which is where the `KeyError`"
-        " comes from."
-    ),
-    raises=KeyError,
-    strict=True,
-)
-def test_auto_partition_doc_with_file(
-    mock_docx_document: Document, expected_docx_elements: list[Element], tmp_path: pathlib.Path
-):
-    docx_filename = str(tmp_path / "mock_document.docx")
-    doc_filename = str(tmp_path / "mock_document.doc")
-    mock_docx_document.save(docx_filename)
-    convert_office_doc(docx_filename, str(tmp_path), "doc")
+@pytest.mark.skipif(is_in_docker, reason="Passes in CI but not Docker. Remove skip on #3364 fix.")
+@pytest.mark.xfail(sys.platform == "darwin", reason="#3364", raises=KeyError, strict=True)
+def test_auto_partition_doc_with_file():
+    # -- NOTE(scanny): https://github.com/Unstructured-IO/unstructured/issues/3364
+    # -- detect_filetype() identifies .doc as `application/x-ole-storage` which is true but not
+    # -- specific enough. The `FileType.MSG` file-type is assigned (which is also an OLE file)
+    # -- and `partition()` routes the document to `partition_msg` which is where the `KeyError`
+    # -- comes from.
+    # -- For some reason, this xfail problem only occurs locally, not in CI, possibly because we
+    # -- use two different `libmagic` sourcs (`libmagic` on CI and `libmagic1` on Mac). Doesn't
+    # -- matter much though because when we add disambiguation they'll both get it right.
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition(file=f)
 
-    with open(doc_filename, "rb") as f:
-        elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
-
-    assert elements == expected_docx_elements
+    assert elements == [
+        Title("These are a few of my favorite things:"),
+        ListItem("Parrots"),
+        ListItem("Hockey"),
+        Title("Analysis"),
+        NarrativeText("This is my first thought. This is my second thought."),
+        NarrativeText("This is my third thought."),
+        Text("2023"),
+        Address("DOYLESTOWN, PA 18901"),
+    ]
 
 
 # ================================================================================================
@@ -603,13 +604,18 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
         strategy=PartitionStrategy.HI_RES,
     )
 
-    e = elements[2]
+    # NOTE(scanny): gave up trying to figure out why, but this file partitions differently locally
+    # (on Mac) than it does in CI. Basically the first element when partitioning locally is split
+    # in two when partitioning on CI. Other than that split the text is exactly the same.
+    idx = 2 if sys.platform == "darwin" else 3
+
+    e = elements[idx]
     assert isinstance(e, Title)
     assert e.text.startswith("LayoutParser")
     assert e.metadata.filename == os.path.basename(file_path)
     assert e.metadata.file_directory == os.path.split(file_path)[0]
 
-    e = elements[3]
+    e = elements[idx + 1]
     assert isinstance(e, NarrativeText)
     assert e.text.startswith("Zejiang Shen")
 
@@ -670,11 +676,14 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
             strategy=PartitionStrategy.HI_RES,
         )
 
-    e = elements[2]
+    # NOTE(scanny): see "with_filename" version of this test above for more on this oddness
+    idx = 2 if sys.platform == "darwin" else 3
+
+    e = elements[idx]
     assert isinstance(e, Title)
     assert e.text.startswith("LayoutParser")
 
-    e = elements[3]
+    e = elements[idx + 1]
     assert isinstance(e, NarrativeText)
     assert e.text.startswith("Zejiang Shen")
 
