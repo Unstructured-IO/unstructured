@@ -81,8 +81,7 @@ class S3Indexer(FsspecIndexer):
         if etag := info.get("ETag"):
             version = str(etag).rstrip('"').lstrip('"')
         metadata: dict[str, str] = {}
-        metadata: dict[str, str] = {}
-        with contextlib.suppress(NotImplementedError):
+        with contextlib.suppress(AttributeError):
             metadata = self.fs.metadata(path)
         record_locator = {
             "protocol": self.index_config.protocol,
