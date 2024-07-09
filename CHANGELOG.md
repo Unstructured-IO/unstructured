@@ -19,6 +19,8 @@
 
 ### Features
 
+**Add Object Detection Metrics to CI** Add object detection metrics (average precision, precision, recall and f1-score) implementations.
+
 ### Fixes
 
 * **Fix counting false negatives and false positives in table structure evaluation**
