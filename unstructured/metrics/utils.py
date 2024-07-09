@@ -106,8 +106,8 @@ def _write_to_file(
     """
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
-    if directory and not os.path.exists(directory):
-        os.makedirs(directory)
+    if directory:
+        Path(directory).mkdir(exist_ok=True)
     if "count" in df.columns:
         df["count"] = df["count"].astype(int)
     if "filename" in df.columns and "connector" in df.columns:
