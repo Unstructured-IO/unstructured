@@ -15,7 +15,7 @@ from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Generator, Tuple, Type
+from typing import TYPE_CHECKING, Any, Generator, Type
 
 from dateutil import parser
 
@@ -54,7 +54,8 @@ SALESFORCE_API_VERSION = "57.0"
 # TODO: Add more categories as needed
 ACCEPTED_CATEGORIES: list[str] = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
 
-# Generic email template to process EmailMessage records as .eml files
+# Generic minimal email template used only
+# to process EmailMessage records as .eml files
 EMAIL_TEMPLATE = Template(
     """MIME-Version: 1.0
 Date: $date
@@ -80,7 +81,7 @@ class SalesforceAccessConfig(AccessConfig):
     private_key: str
 
     @requires_dependencies(["cryptography"])
-    def get_private_key_value_and_type(self) -> Tuple[str, Type]:
+    def get_private_key_value_and_type(self) -> tuple[str, Type]:
         from cryptography.hazmat.primitives import serialization
 
         try:
