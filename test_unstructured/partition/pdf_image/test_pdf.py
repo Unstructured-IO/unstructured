@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import logging
 import math
@@ -17,6 +19,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
+    Element,
     ElementMetadata,
     ElementType,
     Footer,
@@ -1182,11 +1185,14 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
 
 
 def assert_element_extraction(
-    elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+    elements: list[Element],
+    extract_image_block_types: list[str],
+    extract_image_block_to_payload: bool,
+    tmpdir: str,
 ):
-    extracted_elements = []
+    extracted_elements: list[list[Element]] = []
     for el_type in extract_image_block_types:
-        extracted_elements_by_type = []
+        extracted_elements_by_type: list[Element] = []
         for el in elements:
             if el.category == el_type:
                 extracted_elements_by_type.append(el)
