@@ -38,7 +38,7 @@ def partition_tsv(
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
-    encoding: Optional[str] = "utf-8",
+    encoding: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions TSV files into document elements.
@@ -69,6 +69,7 @@ def partition_tsv(
 
     last_modification_date = None
     header = 0 if include_header else None
+    encoding = encoding or "utf-8"
 
     if filename:
         table = pd.read_csv(filename, sep="\t", header=header, encoding=encoding)

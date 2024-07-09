@@ -40,7 +40,7 @@ def partition_csv(
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
-    encoding: Optional[str] = "utf-8",
+    encoding: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -78,6 +78,7 @@ def partition_csv(
     exactly_one(filename=filename, file=file)
 
     header = 0 if include_header else None
+    encoding = encoding or "utf-8"
 
     if filename:
         delimiter = get_delimiter(file_path=filename, encoding=encoding)
