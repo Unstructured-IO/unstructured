@@ -7,7 +7,6 @@ from pathlib import Path
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.utils.data_prep import batch_generator
-from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -78,7 +77,6 @@ class AzureCognitiveSearchUploadStager(UploadStager):
         into a dictionary that conforms to the schema expected by the
         Azure Cognitive Search index
         """
-        from dateutil import parser
 
         data["id"] = str(uuid.uuid4())
 
@@ -95,10 +93,8 @@ class AzureCognitiveSearchUploadStager(UploadStager):
         if links := data.get("metadata", {}).get("links"):
             data["metadata"]["links"] = [json.dumps(link) for link in links]
         if last_modified := data.get("metadata", {}).get("last_modified"):
-            data["metadata"]["last_modified"] = parser.parse(
-                ensure_isoformat_datetime(last_modified)
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
+            data["metadata"]["last_modified"] = parse_datetime(last_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ"
             )
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
             data["metadata"]["data_source"]["date_created"] = parse_datetime(date_created).strftime(
