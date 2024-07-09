@@ -91,25 +91,11 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         with open(self.filename, "w") as f:
             f.write(concatenated_values)
 
-
+@dataclass
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleAstraConfig
     _astra_db: t.Optional["AstraDB"] = field(init=False, default=None)
     _astra_db_collection: t.Optional["AstraDBCollection"] = field(init=False, default=None)
-
-    # def to_dict(self, **kwargs):
-    #     """
-    #     The _astra_db_collection variable in this dataclass breaks deepcopy due to:
-    #     TypeError: cannot pickle '_thread.lock' object
-    #     When serializing, remove it, meaning client data will need to be reinitialized
-    #     when deserialized
-    #     """
-    #     self_cp = copy.copy(self)
-
-    #     if hasattr(self_cp, "_astra_db_collection"):
-    #         setattr(self_cp, "_astra_db_collection", None)
-
-    #     return _asdict(self_cp, **kwargs)  # type: ignore
 
     @property
     @requires_dependencies(["astrapy"], extras="astra")
@@ -147,7 +133,6 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             _ = self.astra_db_collection
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
-
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["astrapy"], extras="astra")
@@ -200,6 +185,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
+        breakpoint()
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
