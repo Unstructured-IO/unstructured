@@ -1,19 +1,31 @@
-## 0.14.10-dev13
+## 0.14.11-dev3
 
 ### Enhancements
 
-* **Update unstructured-client dependency** Change unstructured-client dependency pin back to
-  greater than min version and updated tests that were failing given the update.
-* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
-* Add table detection metrics: recall, precision and f1
-* Remove unused _with_spans metrics
+* **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
 
 ### Features
 
 ### Fixes
 
+## 0.14.10
+
+### Enhancements
+
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to greater than min version and updated tests that were failing given the update.
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* **Add table detection metrics: recall, precision and f1.**
+* **Remove unused _with_spans metrics.**
+
+### Features
+
+**Add Object Detection Metrics to CI** Add object detection metrics (average precision, precision, recall and f1-score) implementations.
+
+### Fixes
+
 * **Fix counting false negatives and false positives in table structure evaluation**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
 
 ## 0.14.9
 
