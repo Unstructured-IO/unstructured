@@ -65,9 +65,10 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             Path(self.processor_config.output_dir)
             / self.connector_config.collection_name
             / f"{self.metadata['_id']}.json"
-        )
+        ).resolve()
 
     def update_source_metadata(self, **kwargs):
+        breakpoint()
         if not self.metadata:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -92,31 +93,32 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
 
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
-    """Objects of this class support fetching document(s) from Astra DB"""
-
     connector_config: SimpleAstraConfig
     _astra_db: t.Optional["AstraDB"] = field(init=False, default=None)
     _astra_db_collection: t.Optional["AstraDBCollection"] = field(init=False, default=None)
 
-    def to_dict(self, **kwargs):
-        """
-        The _astra_db_collection variable in this dataclass breaks deepcopy due to:
-        TypeError: cannot pickle '_thread.lock' object
-        When serializing, remove it, meaning client data will need to be reinitialized
-        when deserialized
-        """
-        self_cp = copy.copy(self)
+    # def to_dict(self, **kwargs):
+    #     """
+    #     The _astra_db_collection variable in this dataclass breaks deepcopy due to:
+    #     TypeError: cannot pickle '_thread.lock' object
+    #     When serializing, remove it, meaning client data will need to be reinitialized
+    #     when deserialized
+    #     """
+    #     self_cp = copy.copy(self)
 
-        if hasattr(self_cp, "_astra_db_collection"):
-            setattr(self_cp, "_astra_db_collection", None)
+    #     if hasattr(self_cp, "_astra_db_collection"):
+    #         setattr(self_cp, "_astra_db_collection", None)
 
-        return _asdict(self_cp, **kwargs)  # type: ignore
+    #     return _asdict(self_cp, **kwargs)  # type: ignore
 
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        if self._astra_db_collection is not None:  # FIX THIS IS NEVER NONE
+        breakpoint()
+        if self._astra_db_collection is None:
             from astrapy.db import AstraDB
+
+            print("********* AstraSourceConnector.astra_db_collection *********")
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
