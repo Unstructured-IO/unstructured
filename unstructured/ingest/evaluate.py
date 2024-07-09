@@ -257,8 +257,10 @@ def measure_table_structure_accuracy_command(
     "--output_list",
     type=str,
     multiple=True,
-    help="Optional: list of selected structured output file names under the \
-        directory to be evaluate. If none, all files under directory will be used.",
+    help=(
+        "Optional: list of selected structured output file names under the "
+        "directory to be evaluated. If none, all files under directory will be used."
+    ),
 )
 @click.option(
     "--source_list",
