@@ -98,7 +98,7 @@ class Partitioner(BaseProcess, ABC):
         from unstructured.partition.auto import partition
 
         logger.debug(f"Using local partition with kwargs: {self.config.to_partition_kwargs()}")
-        logger.info(f"partitioning file {filename} with metadata {metadata.to_dict()}")
+        logger.debug(f"partitioning file {filename} with metadata {metadata.to_dict()}")
         elements = partition(
             filename=str(filename.resolve()),
             data_source_metadata=metadata,
@@ -142,7 +142,7 @@ class Partitioner(BaseProcess, ABC):
     ) -> list[dict]:
         from unstructured_client import UnstructuredClient
 
-        logger.info(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
+        logger.debug(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
         client = UnstructuredClient(
             server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
         )

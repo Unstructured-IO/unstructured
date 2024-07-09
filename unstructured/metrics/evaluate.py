@@ -18,6 +18,7 @@ from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
+from unstructured.metrics.object_detection import ObjectDetectionEvalProcessor
 from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
@@ -72,6 +73,25 @@ class BaseMetricsCalculator(ABC):
         self._ground_truth_paths = [
             path.relative_to(self.ground_truths_dir) for path in self.ground_truths_dir.rglob("*")
         ]
+
+    @property
+    @abstractmethod
+    def default_tsv_name(self):
+        """Default name for the per-document metrics TSV file."""
+
+    @property
+    @abstractmethod
+    def default_agg_tsv_name(self):
+        """Default name for the aggregated metrics TSV file."""
+
+    @abstractmethod
+    def _generate_dataframes(self, rows: list) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Generates pandas DataFrames from the list of rows.
+
+        The first DF (index 0) is a dataframe containing metrics per file.
+        The second DF (index 1) is a dataframe containing the aggregated
+            metrics.
+        """
 
     def on_files(
         self,
@@ -158,7 +178,7 @@ class BaseMetricsCalculator(ABC):
             return None
 
     @abstractmethod
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         """Should return all metadata and metrics for a single document."""
 
 
@@ -184,6 +204,9 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         return [
             "total_tables",
             "table_level_acc",
+            "table_detection_recall",
+            "table_detection_precision",
+            "table_detection_f1",
             "composite_structure_acc",
             "element_col_level_index_acc",
             "element_row_level_index_acc",
@@ -199,7 +222,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-table-structure-accuracy.tsv"
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         doc_path = Path(doc)
         out_filename = doc_path.stem
         doctype = Path(out_filename).suffix[1:]
@@ -226,35 +249,18 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             source_type="html",
         )
         report_from_html = processor_from_text_as_html.process_file()
-
-        processor_from_table_as_cells = TableEvalProcessor.from_json_files(
-            prediction_file=prediction_file,
-            ground_truth_file=ground_truth_file,
-            cutoff=self.cutoff,
-            source_type="cells",
-        )
-        report_from_cells = processor_from_table_as_cells.process_file()
-        return (
-            [
-                out_filename,
-                doctype,
-                connector,
-            ]
-            + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
-            + [getattr(report_from_cells, metric) for metric in self.supported_metric_names]
-        )
+        return [
+            out_filename,
+            doctype,
+            connector,
+        ] + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
 
     def _generate_dataframes(self, rows):
-        # NOTE(mike): this logic should be simplified
-        suffixed_table_eval_metrics = [
-            f"{metric}_with_spans" for metric in self.supported_metric_names
-        ]
-        combined_table_metrics = self.supported_metric_names + suffixed_table_eval_metrics
         headers = [
             "filename",
             "doctype",
             "connector",
-        ] + combined_table_metrics
+        ] + self.supported_metric_names
 
         df = pd.DataFrame(rows, columns=headers)
         has_tables_df = df[df["total_tables"] > 0]
@@ -265,7 +271,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             ).reset_index()
         else:
             element_metrics_results = {}
-            for metric in combined_table_metrics:
+            for metric in self.supported_metric_names:
                 metric_df = has_tables_df[has_tables_df[metric].notnull()]
                 agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
                 if agg_metric.empty:
@@ -336,7 +342,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
                 "Please note that some files will be skipped."
             )
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
@@ -411,7 +417,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
@@ -467,9 +473,13 @@ def get_mean_grouping(
     elif eval_name == "element_type":
         agg_fields = ["element-type-accuracy"]
         agg_name = "element-type"
+    elif eval_name == "object_detection":
+        agg_fields = ["f1_score", "m_ap"]
+        agg_name = "object-detection"
     else:
         raise ValueError(
-            "Unknown metric. Expected `text_extraction` or `element_type` or `table_extraction`."
+            f"Unknown metric for eval {eval_name}. "
+            f"Expected `text_extraction` or `element_type` or `table_extraction`."
         )
 
     if isinstance(data_input, str):
@@ -585,3 +595,130 @@ def filter_metrics(
         raise ValueError("Please provide `export_filename`.")
     else:
         raise ValueError("Return type must be either `dataframe` or `file`.")
+
+
+@dataclass
+class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
+    """
+    Calculates object detection metrics for each document:
+    - f1 score
+    - precision
+    - recall
+    - average precision (mAP)
+    It also calculates aggregated metrics.
+    """
+
+    def __post_init__(self):
+        super().__post_init__()
+        self._document_paths = [
+            path.relative_to(self.documents_dir)
+            for path in self.documents_dir.rglob("analysis/*/layout_dump/object_detection.json")
+        ]
+
+    @property
+    def supported_metric_names(self):
+        return ["f1_score", "precision", "recall", "m_ap"]
+
+    @property
+    def default_tsv_name(self):
+        return "all-docs-object-detection-metrics.tsv"
+
+    @property
+    def default_agg_tsv_name(self):
+        return "aggregate-object-detection-metrics.tsv"
+
+    def _find_file_in_ground_truth(self, file_stem: str) -> Optional[Path]:
+        """Find the file corresponding to OD model dump file among the set of ground truth files
+
+        The files in ground truth paths keep the original extension and have .json suffix added,
+        e.g.:
+        some_document.pdf.json
+        poster.jpg.json
+
+        To compare to `file_stem` we need to take the prefix part of the file, thus double-stem
+        is applied.
+        """
+        for path in self._ground_truth_paths:
+            if Path(path.stem).stem == file_stem:
+                return path
+        return None
+
+    def _process_document(self, doc: Path) -> Optional[list]:
+        """Calculate metrics for a single document.
+        As OD dump directory structure differes from other simple outputs, it needs
+        a specific processing to match the output OD dump file with corresponding
+        OD GT file.
+
+        The outputs are placed in a dicrectory structure:
+
+        analysis
+        |- document_name
+            |- layout_dump
+                |- object_detection.json
+            |- bboxes # not used in this evaluation
+
+        and the GT file is pleced in od_gt directory for given dataset
+
+        dataset_name
+        |- od_gt
+            |- document_name.pdf.json
+
+        Args:
+            doc (Path): path to the OD dump file
+
+        Returns:
+            list: a list of metrics (representing a single row) for a single document
+        """
+        od_dump_path = Path(doc)
+        file_stem = od_dump_path.parts[-3]  # we take the `document_name` - so the filename stem
+
+        src_gt_filename = self._find_file_in_ground_truth(file_stem)
+
+        if src_gt_filename not in self._ground_truth_paths:
+            return None
+
+        doctype = Path(src_gt_filename.stem).suffix[1:]
+
+        prediction_file = self.documents_dir / doc
+        if not prediction_file.exists():
+            logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+            return None
+
+        ground_truth_file = self.ground_truths_dir / src_gt_filename
+        if not ground_truth_file.exists():
+            logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
+            return None
+
+        processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file_path=prediction_file,
+            ground_truth_file_path=ground_truth_file,
+        )
+        metrics = processor.get_metrics()
+
+        return [
+            src_gt_filename.stem,
+            doctype,
+            None,  # connector
+        ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
+
+    def _generate_dataframes(self, rows) -> tuple[pd.DataFrame, pd.DataFrame]:
+        headers = ["filename", "doctype", "connector"] + self.supported_metric_names
+        df = pd.DataFrame(rows, columns=headers)
+
+        if df.empty:
+            agg_df = pd.DataFrame(columns=AGG_HEADERS)
+        else:
+            element_metrics_results = {}
+            for metric in self.supported_metric_names:
+                metric_df = df[df[metric].notnull()]
+                agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+                if agg_metric.empty:
+                    element_metrics_results[metric] = pd.Series(
+                        data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                    )
+                else:
+                    element_metrics_results[metric] = agg_metric
+            agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
+        agg_df.columns = AGG_HEADERS
+
+        return df, agg_df

@@ -39,6 +39,15 @@
 
 The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://docs.unstructured.io/open-source/core-functionality/partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
+## Try the Unstructured Serverless API!
+
+Looking for better pre-processing performance and less setup?
+Check out our new [Serverless API](https://unstructured.io/api-key-hosted)!
+The Unstructured Serverless API is our most performant API yet, delivering a more responsive,
+production-grade solution to better support your business and LLM needs.
+Head to our [signup page](https://app.unstructured.io/) page to get started for
+free.
+
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:

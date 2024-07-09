@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/clarifai.in
 #
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -13,13 +13,13 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.5.2
+clarifai==10.5.3
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.5.3
+clarifai-grpc==10.6.1
     # via clarifai
 contextlib2==21.6.0
     # via schema
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via clarifai-grpc
 grpcio==1.64.1
     # via clarifai-grpc
@@ -36,12 +36,11 @@ mdurl==0.1.2
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   clarifai
     #   tritonclient
 pfzy==0.3.4
     # via inquirerpy
-pillow==10.3.0
+pillow==10.4.0
     # via clarifai
 prompt-toolkit==3.0.47
     # via inquirerpy
@@ -52,7 +51,7 @@ protobuf==4.23.4
     #   googleapis-common-protos
 pygments==2.18.0
     # via rich
-python-rapidjson==1.17
+python-rapidjson==1.18
     # via tritonclient
 pyyaml==6.0.1
     # via clarifai
