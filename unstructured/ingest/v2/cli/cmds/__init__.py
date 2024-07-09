@@ -3,6 +3,7 @@ from collections import Counter
 import click
 
 from .astra import astra_dest_cmd
+from .azure_cognitive_search import azure_cognitive_search_dest_cmd
 from .chroma import chroma_dest_cmd
 from .databricks_volumes import databricks_volumes_dest_cmd
 from .elasticsearch import elasticsearch_dest_cmd, elasticsearch_src_cmd
@@ -49,6 +50,7 @@ if duplicate_src_names:
 
 dest_cmds = [
     astra_dest_cmd,
+    azure_cognitive_search_dest_cmd,
     azure_dest_cmd,
     box_dest_cmd,
     chroma_dest_cmd,
