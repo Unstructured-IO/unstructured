@@ -658,8 +658,33 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         return None
 
     def _process_document(self, doc: Path) -> Optional[list]:
+        """Calculate metrics for a single document.
+        As OD dump directory structure differes from other simple outputs, it needs
+        a specific processing to match the output OD dump file with corresponding
+        OD GT file.
+
+        The outputs are placed in a dicrectory structure:
+
+        analysis
+        |- document_name
+            |- layout_dump
+                |- object_detection.json
+            |- bboxes # not used in this evaluation
+
+        and the GT file is pleced in od_gt directory for given dataset
+
+        dataset_name
+        |- od_gt
+            |- document_name.pdf.json
+
+        Args:
+            doc (Path): path to the OD dump file
+
+        Returns:
+            list: a list of metrics (representing a single row) for a single document
+        """
         od_dump_path = Path(doc)
-        file_stem = od_dump_path.parts[-3]
+        file_stem = od_dump_path.parts[-3]  # we take the `document_name` - so the filename stem
 
         src_gt_filename = self._find_file_in_ground_truth(file_stem)
 
