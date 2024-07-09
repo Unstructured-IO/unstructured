@@ -51,7 +51,7 @@ from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
 from unstructured.partition.common import convert_office_doc
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.staging.base import elements_to_json
+from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -114,9 +114,17 @@ def test_auto_partition_doc_with_filename(
     assert elements[0].metadata.file_directory == str(tmp_path)
 
 
-# NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to
-# determine that the file is a .doc document
-@pytest.mark.xfail()
+@pytest.mark.xfail(
+    reason=(
+        "https://github.com/Unstructured-IO/unstructured/issues/3364"
+        " detect_filetype() identifies .doc as `application/x-ole-storage` which is true but not"
+        " specific enough. The `FileType.MSG` file-type is assigned (which is also an OLE file)"
+        " and `partition()` routes the document to `partition_msg` which is where the `KeyError`"
+        " comes from."
+    ),
+    raises=KeyError,
+    strict=True,
+)
 def test_auto_partition_doc_with_file(
     mock_docx_document: Document, expected_docx_elements: list[Element], tmp_path: pathlib.Path
 ):
@@ -127,6 +135,7 @@ def test_auto_partition_doc_with_file(
 
     with open(doc_filename, "rb") as f:
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
+
     assert elements == expected_docx_elements
 
 
@@ -437,19 +446,10 @@ def test_partition_image_with_bmp_with_auto(tmp_path: pathlib.Path):
 # ================================================================================================
 
 
-# NOTE(robinson) - skipping this test with docker image to avoid putting the
-# test fixtures into the image
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
+    json_file_path = example_doc_path("spring-weather.html.json")
     original_file_name = "spring-weather.html"
-    json_file_path = (
-        pathlib.Path(__file__).parent.resolve().parents[1]
-        / "test_unstructured_ingest"
-        / "expected-structured-output"
-        / "azure"
-        / f"{original_file_name}.json"
-    )
     with open(json_file_path) as json_f:
         expected_result = json.load(json_f)
 
@@ -487,31 +487,21 @@ def test_auto_partition_json_raises_with_unprocessable_json(tmp_path: pathlib.Pa
 
 
 @pytest.mark.xfail(
-    reason="parsed as text not json, https://github.com/Unstructured-IO/unstructured/issues/492",
+    reason=(
+        "https://github.com/Unstructured-IO/unstructured/issues/3365"
+        " partition_json() does not preserve original element-id or metadata"
+    ),
+    raises=AssertionError,
+    strict=True,
 )
-def test_auto_partition_json_from_file():
-    """Test auto-processing an unstructured json output file by file handle."""
-    file_path = os.path.join(
-        pathlib.Path(__file__).parent.resolve().parents[1]
-        / "test_unstructured_ingest"
-        / "expected-structured-output"
-        / "azure-blob-storage"
-        / "spring-weather.html.json"
-    )
-    with open(file_path) as json_f:
-        json_data = json.load(json_f)
-    with open(file_path, "rb") as partition_f:
-        json_elems = json.loads(
-            cast(
-                str,
-                elements_to_json(partition(file=partition_f, strategy=PartitionStrategy.HI_RES)),
-            )
-        )
-    for elem in json_elems:
-        # coordinates are always in the element data structures, even if None
-        elem.pop("coordinates")
-        elem.pop("coordinate_system")
-    assert json_data == json_elems
+def test_auto_partition_json_from_file_preserves_original_elements():
+    file_path = example_doc_path("simple.json")
+    original_elements = elements_from_json(file_path)
+
+    with open(file_path, "rb") as f:
+        partitioned_elements = partition(file=f)
+
+    assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
 def test_auto_partition_works_with_unstructured_jsons():
@@ -613,16 +603,15 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
         strategy=PartitionStrategy.HI_RES,
     )
 
-    idx = 3
-    assert isinstance(elements[idx], Title)
-    assert elements[idx].text.startswith("LayoutParser")
+    e = elements[2]
+    assert isinstance(e, Title)
+    assert e.text.startswith("LayoutParser")
+    assert e.metadata.filename == os.path.basename(file_path)
+    assert e.metadata.file_directory == os.path.split(file_path)[0]
 
-    assert elements[idx].metadata.filename == os.path.basename(file_path)
-    assert elements[idx].metadata.file_directory == os.path.split(file_path)[0]
-
-    idx += 1
-    assert isinstance(elements[idx], NarrativeText)
-    assert elements[idx].text.startswith("Zejiang Shen")
+    e = elements[3]
+    assert isinstance(e, NarrativeText)
+    assert e.text.startswith("Zejiang Shen")
 
 
 def test_auto_partition_pdf_uses_table_extraction():
@@ -680,10 +669,6 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
             content_type=content_type,
             strategy=PartitionStrategy.HI_RES,
         )
-
-    idx = 3
-    assert isinstance(elements[idx], Title)
-    assert elements[idx].text.startswith("LayoutParser")
 
     e = elements[2]
     assert isinstance(e, Title)
