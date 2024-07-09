@@ -40,6 +40,7 @@ def partition_csv(
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
+    encoding: Optional[str] = "utf-8",
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -71,14 +72,16 @@ def partition_csv(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    encoding
+        The encoding to use when reading the CSV file.
     """
     exactly_one(filename=filename, file=file)
 
     header = 0 if include_header else None
 
     if filename:
-        delimiter = get_delimiter(file_path=filename)
-        table = pd.read_csv(filename, header=header, sep=delimiter)
+        delimiter = get_delimiter(file_path=filename, encoding=encoding)
+        table = pd.read_csv(filename, header=header, sep=delimiter, encoding=encoding)
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
@@ -86,8 +89,8 @@ def partition_csv(
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
         f = spooled_to_bytes_io_if_needed(file)
-        delimiter = get_delimiter(file=f)
-        table = pd.read_csv(f, header=header, sep=delimiter)
+        delimiter = get_delimiter(file=f, encoding=encoding)
+        table = pd.read_csv(f, header=header, sep=delimiter, encoding=encoding)
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = cast(str, soupparser_fromstring(html_text).text_content())
@@ -111,7 +114,9 @@ def partition_csv(
     return list(elements)
 
 
-def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
+def get_delimiter(
+    file_path: str | None = None, file: IO[bytes] | None = None, encoding: str = "utf-8"
+) -> str:
     """Use the standard csv sniffer to determine the delimiter.
 
     Reads just a small portion in case the file is large.
@@ -123,9 +128,9 @@ def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
     if file:
         lines = file.readlines(num_bytes)
         file.seek(0)
-        data = "\n".join(ln.decode("utf-8") for ln in lines)
+        data = "\n".join(ln.decode(encoding) for ln in lines)
     elif file_path is not None:
-        with open(file_path) as f:
+        with open(file_path, encoding=encoding) as f:
             data = "\n".join(f.readlines(num_bytes))
     else:
         raise ValueError("either `file_path` or `file` argument must be provided")

@@ -532,6 +532,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            encoding=encoding,
             **kwargs,
         )
     elif filetype == FileType.TSV:
