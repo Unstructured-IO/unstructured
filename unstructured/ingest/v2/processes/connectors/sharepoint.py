@@ -299,11 +299,19 @@ class SharepointIndexer(Indexer):
             ]
             file_data.metadata.permissions_data = permissions_data
 
+    @property
+    def process_permissions(self) -> bool:
+        return (
+            self.connection_config.permissions_config.permissions_tenant
+            and self.connection_config.permissions_config.permissions_client_cred
+            and self.connection_config.permissions_config.permissions_application_id
+        )
+
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         client = self.connection_config.get_client()
         root_folder = self.get_root(client=client)
         logger.debug(f"processing content from path: {self.index_config.path}")
-        if not self.index_config.omit_files:
+        if not self.index_config.omit_files and self.process_permissions:
             files = self.list_files(root_folder, recursive=self.index_config.recursive)
             file_data = [self.file_to_file_data(file=file, client=client) for file in files]
             self.enrich_permissions_on_files(
