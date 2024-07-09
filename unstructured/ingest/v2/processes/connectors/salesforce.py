@@ -127,6 +127,11 @@ class SalesforceIndexer(Indexer):
     connection_config: SalesforceConnectionConfig
     index_config: SalesforceIndexerConfig
 
+    def __post_init__(self):
+        for record_type in self.index_config.categories:
+            if record_type not in ACCEPTED_CATEGORIES:
+                raise ValueError(f"{record_type} not currently an accepted Salesforce category")
+
     def get_file_extension(self, record_type) -> str:
         if record_type == "EmailMessage":
             extension = ".eml"
@@ -150,9 +155,6 @@ class SalesforceIndexer(Indexer):
 
         files_list = []
         for record_type in self.index_config.categories:
-            if record_type not in ACCEPTED_CATEGORIES:
-                raise ValueError(f"{record_type} not currently an accepted Salesforce category")
-
             try:
                 # Get ids from Salesforce
                 records = client.query_all_iter(
@@ -169,7 +171,6 @@ class SalesforceIndexer(Indexer):
                             source_identifiers=SourceIdentifiers(
                                 filename=record_with_extension,
                                 fullpath=f"{record['attributes']['type']}/{record_with_extension}",
-                                rel_path=f"{record['attributes']['type']}/{record_with_extension}",
                             ),
                             metadata=DataSourceMetadata(
                                 url=record["attributes"]["url"],
@@ -244,7 +245,7 @@ class SalesforceDownloader(Downloader):
         return dedent(eml)
 
     @SourceConnectionNetworkError.wrap
-    def _get_response(self, file_data: FileData):
+    def _get_response(self, file_data: FileData) -> OrderedDict:
         client = self.connection_config.get_client()
         return client.query(
             f"select FIELDS(STANDARD) from {file_data.additional_metadata['record_type']} where Id='{file_data.identifier}'",  # noqa: E501
