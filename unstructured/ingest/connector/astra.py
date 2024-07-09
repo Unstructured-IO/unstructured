@@ -68,7 +68,6 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         ).resolve()
 
     def update_source_metadata(self, **kwargs):
-        breakpoint()
         if not self.metadata:
             self.source_metadata = SourceMetadata(
                 exists=False,
@@ -101,7 +100,6 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        breakpoint()
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
@@ -184,7 +182,6 @@ class AstraDestinationConnector(BaseDestinationConnector):
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        breakpoint()
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
