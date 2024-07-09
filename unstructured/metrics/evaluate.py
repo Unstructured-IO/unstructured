@@ -86,7 +86,12 @@ class BaseMetricsCalculator(ABC):
 
     @abstractmethod
     def _generate_dataframes(self, rows: list) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Generates pandas DataFrames from the list of rows."""
+        """Generates pandas DataFrames from the list of rows.
+
+        The first DF (index 0) is a dataframe containing metrics per file.
+        The second DF (index 1) is a dataframe containing the aggregated
+            metrics.
+        """
 
     def on_files(
         self,
@@ -173,7 +178,7 @@ class BaseMetricsCalculator(ABC):
             return None
 
     @abstractmethod
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         """Should return all metadata and metrics for a single document."""
 
 
@@ -214,7 +219,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-table-structure-accuracy.tsv"
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         doc_path = Path(doc)
         out_filename = doc_path.stem
         doctype = Path(out_filename).suffix[1:]
@@ -351,7 +356,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
                 "Please note that some files will be skipped."
             )
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
@@ -426,7 +431,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
@@ -636,13 +641,23 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-object-detection-metrics.tsv"
 
-    def _find_file_in_ground_truth(self, file_stem: str):
+    def _find_file_in_ground_truth(self, file_stem: str) -> Optional[Path]:
+        """Find the file corresponding to OD model dump file among the set of ground truth files
+
+        The files in ground truth paths keep the original extension and have .json suffix added,
+        e.g.:
+        some_document.pdf.json
+        poster.jpg.json
+
+        To compare to `file_stem` we need to take the prefix part of the file, thus double-stem
+        is applied.
+        """
         for path in self._ground_truth_paths:
             if Path(path.stem).stem == file_stem:
                 return path
         return None
 
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, doc: Path) -> Optional[list]:
         od_dump_path = Path(doc)
         file_stem = od_dump_path.parts[-3]
 
@@ -675,7 +690,7 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
             None,  # connector
         ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
 
-    def _generate_dataframes(self, rows):
+    def _generate_dataframes(self, rows) -> tuple[pd.DataFrame, pd.DataFrame]:
         headers = ["filename", "doctype", "connector"] + self.supported_metric_names
         df = pd.DataFrame(rows, columns=headers)
 

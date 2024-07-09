@@ -655,6 +655,8 @@ class ObjectDetectionEvalProcessor:
 
 
 if __name__ == "__main__":
+    from dataclasses import asdict
+
     # Example usage
     prediction_file_paths = [Path("pths/to/predictions.json"), Path("pths/to/predictions2.json")]
     ground_truth_file_paths = [
@@ -670,8 +672,4 @@ if __name__ == "__main__":
         )
 
         metrics: ObjectDetectionEvaluation = eval_processor.get_metrics()
-        print(f"Metrics for {ground_truth_file_path.name}:")
-        from dataclasses import asdict
-
-        print(asdict(metrics))
-        print("\n")
+        print(f"Metrics for {ground_truth_file_path.name}:\n{asdict(metrics)}")
