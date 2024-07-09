@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import fnmatch
-import os
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -250,28 +249,6 @@ class FsspecDownloader(Downloader):
             if self.download_config
             else Path(file_data.source_identifiers.rel_path)
         )
-
-    @staticmethod
-    def is_float(value: str):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
-
-    def generate_download_response(
-        self, file_data: FileData, download_path: Path
-    ) -> DownloadResponse:
-        if (
-            file_data.metadata.date_modified
-            and self.is_float(file_data.metadata.date_modified)
-            and file_data.metadata.date_created
-            and self.is_float(file_data.metadata.date_created)
-        ):
-            date_modified = float(file_data.metadata.date_modified)
-            date_created = float(file_data.metadata.date_created)
-            os.utime(download_path, times=(date_created, date_modified))
-        return DownloadResponse(file_data=file_data, path=download_path)
 
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         download_path = self.get_download_path(file_data=file_data)
