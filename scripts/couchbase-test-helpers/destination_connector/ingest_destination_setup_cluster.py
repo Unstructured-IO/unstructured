@@ -3,9 +3,9 @@
 
 import argparse
 import json
+import time
 from dataclasses import dataclass
 from datetime import timedelta
-from urllib.parse import urlparse
 
 from couchbase.auth import PasswordAuthenticator
 from couchbase.cluster import Cluster
@@ -25,7 +25,6 @@ class ClusterConfig:
 
 
 def get_client(cluster_config: ClusterConfig) -> Cluster:
-    print(cluster_config)
     auth = PasswordAuthenticator(cluster_config.username, cluster_config.password)
     options = ClusterOptions(auth)
     options.apply_profile("wan_development")
@@ -45,101 +44,6 @@ def setup_cluster(cluster_config: ClusterConfig):
             cluster_config.bucket_name, cluster_config.scope_name, cluster_config.collection_name
         )
     )
-
-    # # Create Search Index
-    # search_index = SearchIndex(
-    #     name=search_index_name,
-    #     source_type="couchbase",
-    #     idx_type="fulltext-index",
-    #     source_name=bucket_name,
-    #     params={
-    #         "doc_config": {
-    #             "docid_prefix_delim": "",
-    #             "docid_regexp": "",
-    #             "mode": "scope.collection.type_field",
-    #             "type_field": "type"
-    #         },
-    #         "mapping": {
-    #             "analysis": {},
-    #             "default_analyzer": "standard",
-    #             "default_datetime_parser": "dateTimeOptional",
-    #             "default_field": "_all",
-    #             "default_mapping": {
-    #                 "dynamic": False,
-    #                 "enabled": False
-    #             },
-    #             "default_type": "_default",
-    #             "docvalues_dynamic": False,
-    #             "index_dynamic": False,
-    #             "store_dynamic": True,
-    #             "type_field": "_type",
-    #             "types": {
-    #                 f"{scope_name}.{collection_name}": {
-    #                     "dynamic": False,
-    #                     "enabled": True,
-    #                     "properties": {
-    #                         "embedding": {
-    #                             "dynamic": False,
-    #                             "enabled": True,
-    #                             "fields": [
-    #                                 {
-    #                                     "dims": 384,
-    #                                     "index": True,
-    #                                     "name": "embedding",
-    #                                     "similarity": "l2_norm",
-    #                                     "type": "vector",
-    #                                     "vector_index_optimized_for": "recall"
-    #                                 }
-    #                             ]
-    #                         },
-    #                         "metadata": {
-    #                             "dynamic": True,
-    #                             "enabled": True
-    #                         },
-    #                         "text": {
-    #                             "dynamic": False,
-    #                             "enabled": True,
-    #                             "fields": [
-    #                                 {
-    #                                     "analyzer": "keyword",
-    #                                     "include_term_vectors": True,
-    #                                     "index": True,
-    #                                     "name": "text",
-    #                                     "store": True,
-    #                                     "type": "text"
-    #                                 }
-    #                             ]
-    #                         }
-    #                     }
-    #                 }
-    #             }
-    #         },
-    #         "store": {
-    #             "indexType": "scorch",
-    #             "segmentVersion": 16
-    #         }
-    #     }
-    # )
-
-    # scope.search_indexes().upsert_index(search_index)
-
-    # Create Search Index using REST API
-
-    # Parse the connection string to extract the host and port
-    parsed_url = urlparse(config.connection_string)
-    print("parsed url")
-
-    is_secure = parsed_url.scheme == "couchbases"
-    host = parsed_url.hostname
-    port = 18094 if is_secure else 8094
-    scheme = "https" if is_secure else "http"
-
-    url = (
-        f"{scheme}://{host}:{port}/api/bucket/{cluster_config.bucket_name}"
-        f"/scope/{cluster_config.scope_name}"
-        f"/index/{cluster_config.search_index_name}"
-    )
-    print("url is", url)
 
     index_definition = {
         "type": "fulltext-index",
@@ -206,8 +110,23 @@ def setup_cluster(cluster_config: ClusterConfig):
         },
         "sourceParams": {},
     }
+
     scope_index_manager = scope.search_indexes()
-    scope_index_manager.upsert_index(SearchIndex.from_json(json.dumps(index_definition)))
+    search_index_def = SearchIndex.from_json(json.dumps(index_definition))
+    max_attempts = 20
+    attempt = 0
+    while attempt < max_attempts:
+        try:
+            scope_index_manager.upsert_index(search_index_def)
+            break
+        except Exception as e:
+            print(f"Attempt {attempt + 1}/{max_attempts}: Error creating search index: {e}")
+            time.sleep(3)
+            attempt += 1
+
+    if attempt == max_attempts:
+        print(f"Error creating search index after {max_attempts} attempts.")
+        raise RuntimeError(f"Error creating search index after {max_attempts} attempts.")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import copy
+import time
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -249,7 +250,7 @@ class CouchbaseIngestDocBatch(BaseIngestDocBatch):
 
 @dataclass
 class CouchbaseSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
-    connector_config = SimpleCouchbaseConfig
+    connector_config: SimpleCouchbaseConfig
     _couchbase_cluster: t.Optional["Cluster"] = field(init=False, default=None)
 
     @property
@@ -279,9 +280,19 @@ class CouchbaseSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
             f"`{self.connector_config.scope}`."
             f"`{self.connector_config.collection}` as d"
         )
-        result = self.couchbase_cluster.query(query)
-        document_ids = [row["id"] for row in result]
-        return document_ids
+
+        max_attempts = 5
+        attempts = 0
+        while attempts < max_attempts:
+            try:
+                result = self.couchbase_cluster.query(query)
+                document_ids = [row["id"] for row in result]
+                return document_ids
+            except Exception as e:
+                attempts += 1
+                time.sleep(3)
+                if attempts == max_attempts:
+                    raise SourceConnectionError(f"failed to get document ids: {e}")
 
     @requires_dependencies(["couchbase"], extras="couchbase")
     def get_ingest_docs(self):

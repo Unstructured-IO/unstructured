@@ -67,7 +67,7 @@ class CouchbaseCliConfig(SimpleCouchbaseConfig, CliConfig):
 @dataclass
 class CouchbaseCliWriteConfig(CouchbaseWriteConfig, CliConfig):
     @staticmethod
-    def get_cli_options() -> t.List[click.option]:
+    def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--batch-size"],

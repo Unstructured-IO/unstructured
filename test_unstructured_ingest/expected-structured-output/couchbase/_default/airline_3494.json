@@ -1,0 +1,192 @@
+[
+  {
+    "element_id": "b0ee1b67f49077a06e635311e9b8097e",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "MIDWAY",
+    "type": "Title"
+  },
+  {
+    "element_id": "0d7e7427f586c08f57cb4af1f64dfd0b",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  },
+  {
+    "element_id": "b5ad04747e91cd225a1849acdead7081",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline_3494",
+    "type": "Title"
+  },
+  {
+    "element_id": "3bdbabed038ef098ad5f8fbef83cc432",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "inventory",
+    "type": "Title"
+  },
+  {
+    "element_id": "42a89451dff146aa28c441d1dbdd6766",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "United States",
+    "type": "Title"
+  },
+  {
+    "element_id": "d3bdb48dbcd96a26ae6fbcb8f0bf3381",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "JI",
+    "type": "Title"
+  },
+  {
+    "element_id": "c23ea922aa5b3b25adb4568a5803021c",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "MDW",
+    "type": "Title"
+  },
+  {
+    "element_id": "173faa047e74c80b1d74ac1a7293ed42",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "3494",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "a907122db2203ca8be6d5cef0c71784a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Midway Airlines",
+    "type": "Title"
+  },
+  {
+    "element_id": "31f011128a95b2016677dedd658f5bd6",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_3494",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_3494.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  }
+]

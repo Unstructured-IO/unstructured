@@ -1,0 +1,192 @@
+[
+  {
+    "element_id": "7ebe6a19a3c65f33d66ba6b89973ca6e",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "None",
+    "type": "Title"
+  },
+  {
+    "element_id": "82298fb0132e1a2834331ba70b1f1baf",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  },
+  {
+    "element_id": "f3579747ab9dd7d9ba0b3d8e06777aa8",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline_16264",
+    "type": "Title"
+  },
+  {
+    "element_id": "9e2ecad0f8bff406c5665ea85ec2ee76",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "inventory",
+    "type": "Title"
+  },
+  {
+    "element_id": "5f5043a0c220a79af28471f72bb74449",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "United States",
+    "type": "Title"
+  },
+  {
+    "element_id": "86c355b25e1d5c1a67681287872814b9",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "T6",
+    "type": "Title"
+  },
+  {
+    "element_id": "610516a6b8f4003d5c030d61b38cd257",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "TP6",
+    "type": "Title"
+  },
+  {
+    "element_id": "c1f824835fcb1840de59f2b547a3b552",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "16264",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "fdba2e7f2539ffd008c2fd3513c037fc",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Trans Pas Air",
+    "type": "Title"
+  },
+  {
+    "element_id": "28e36f03c37a24bfb952f7a6526d2e0d",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_16264",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_16264.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  }
+]

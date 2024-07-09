@@ -10,8 +10,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class CouchbaseWriter(Writer):
-    write_config: "CouchbaseWriteConfig"
-    connector_config: "SimpleCouchbaseConfig"
+    write_config: "CouchbaseWriteConfig"  # type: ignore
+    connector_config: "SimpleCouchbaseConfig"  # type: ignore
 
     def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.couchbase import CouchbaseDestinationConnector

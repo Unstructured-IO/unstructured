@@ -40,6 +40,7 @@ all_tests=(
   'onedrive.sh'
   'outlook.sh'
   'elasticsearch.sh'
+  'couchbase.sh'
   'confluence-diff.sh'
   'confluence-large.sh'
   'airtable-diff.sh'

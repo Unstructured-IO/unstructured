@@ -1,0 +1,192 @@
+[
+  {
+    "element_id": "1d0833f02ab0ba0b239dd2c50ac71cbe",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "BEE MED",
+    "type": "Title"
+  },
+  {
+    "element_id": "198e72b1379361f823aaba706f1e1aac",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  },
+  {
+    "element_id": "2230ca8698df32b4515eaea0f419e303",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline_1543",
+    "type": "Title"
+  },
+  {
+    "element_id": "485eb79c65d2f00b14044f793fd8f3d8",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "inventory",
+    "type": "Title"
+  },
+  {
+    "element_id": "f0169ef34e5f9d11f860acef0eedaf4c",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "United Kingdom",
+    "type": "Title"
+  },
+  {
+    "element_id": "40d5f453471fe5e3ce121dc4cd9a1a1b",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "KJ",
+    "type": "Title"
+  },
+  {
+    "element_id": "8d6a561f17014cb384324792aad31491",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "LAJ",
+    "type": "Title"
+  },
+  {
+    "element_id": "06bb5d00a40b38ba76b58575c3f28875",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "1543",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "c6ba71037e836743356adab5d2fbe996",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "British Mediterranean Airways",
+    "type": "Title"
+  },
+  {
+    "element_id": "211eddfdc1ec52472e6f9901b2009dcd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1543",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1543.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  }
+]

@@ -1,0 +1,5 @@
+{"callsign":"LOCAIR","cbmc":"airline","cbmid":"airline_10748","cbms":"inventory","country":"United States","iata":"ZQ","icao":"LOC","id":10748,"name":"Locair","type":"airline"}
+{"callsign":"CHAUTAUQUA","cbmc":"airline","cbmid":"airline_1739","cbms":"inventory","country":"United States","iata":"RP","icao":"CHQ","id":1739,"name":"Chautauqua Airlines","type":"airline"}
+{"callsign":"MIDWAY","cbmc":"airline","cbmid":"airline_3494","cbms":"inventory","country":"United States","iata":"JI","icao":"MDW","id":3494,"name":"Midway Airlines","type":"airline"}
+{"callsign":null,"cbmc":"airline","cbmid":"airline_16264","cbms":"inventory","country":"United States","iata":"T6","icao":"TP6","id":16264,"name":"Trans Pas Air","type":"airline"}
+{"callsign":"BEE MED","cbmc":"airline","cbmid":"airline_1543","cbms":"inventory","country":"United Kingdom","iata":"KJ","icao":"LAJ","id":1543,"name":"British Mediterranean Airways","type":"airline"}

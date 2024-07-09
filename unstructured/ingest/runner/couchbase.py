@@ -13,7 +13,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class CouchbaseRunner(Runner):
-    connector_config: "SimpleCouchbaseConfig"
+    connector_config: "SimpleCouchbaseConfig"  # type: ignore
 
     def update_read_config(self):
         hashed_dir_name = hashlib.sha256(

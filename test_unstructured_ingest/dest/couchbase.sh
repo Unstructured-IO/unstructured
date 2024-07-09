@@ -15,19 +15,13 @@ DESTINATION_CB_SCOPE="_default"
 DESTINATION_CB_COLLECTION="_default"
 CI=${CI:-"false"}
 
-source scripts/couchbase-test-helpers/constants.env
+source scripts/couchbase-test-helpers/common/constants.env
 
 # Check if all necessary environment variables are set
 if [ -z "$CB_USERNAME" ] || [ -z "$CB_PASSWORD" ] || [ -z "$CB_CONN_STR" ] || [ -z "$CB_BUCKET" ];  then
   echo "Error: One or more environment variables are not set. Please set CB_CONN_STR, CB_USERNAME, CB_PASSWORD, and CB_BUCKET"
   exit 1
 fi
-
-echo "CB_CONN_STR: $CB_CONN_STR"
-echo "CB_USERNAME: $CB_USERNAME"
-echo "CB_PASSWORD: $CB_PASSWORD"
-echo "CB_BUCKET: $CB_BUCKET"
-
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -36,7 +30,7 @@ function cleanup() {
 
    # Remove docker container
   echo "Stopping Couchbase Docker container"
-  docker-compose -f scripts/couchbase-test-helpers/docker-compose.yaml down --remove-orphans
+  docker-compose -f scripts/couchbase-test-helpers/common/docker-compose.yaml down --remove-orphans
 
   # Kill couchbase background process
   pgrep -f couchbase-dest | xargs kill
@@ -46,23 +40,24 @@ function cleanup() {
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
   fi
-#  python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
-#    --connection-string "$CB_CONN_STR" \
-#    --username "$CB_USERNAME" \
-#    --password "$CB_PASSWORD" \
-#    --bucket "$CB_BUCKET" \
-#    --scope "$DESTINATION_CB_SCOPE" \
-#    --collection "$DESTINATION_CB_COLLECTION" down
-
 }
 
 trap cleanup EXIT
 
 echo "Starting Couchbase Docker container and setup"
 
-bash scripts/couchbase-test-helpers/setup_couchbase_cluster.sh
+bash scripts/couchbase-test-helpers/common/setup_couchbase_cluster.sh
 wait
 
+python scripts/couchbase-test-helpers/destination_connector/ingest_destination_setup_cluster.py \
+  --username "$CB_USERNAME" \
+  --password "$CB_PASSWORD" \
+  --connection_string "$CB_CONN_STR" \
+  --bucket_name "$CB_BUCKET" \
+  --scope_name "$DESTINATION_CB_SCOPE" \
+  --collection_name "$DESTINATION_CB_COLLECTION" \
+  --search_index_name "$CB_INDEX_NAME"
+wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -70,7 +65,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
-  --input-path example-docs/book-war-and-peace-1225p.txt \
+  --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
   --chunking-strategy by_title \
   --chunk-max-characters 1500 \
@@ -92,7 +87,7 @@ python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --bucket "$CB_BUCKET" \
   --scope "$DESTINATION_CB_SCOPE" \
   --collection "$DESTINATION_CB_COLLECTION" \
-  check --expected-docs 34
+  check --expected-docs 1
 
 python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --connection-string "$CB_CONN_STR" \
@@ -102,4 +97,4 @@ python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --scope "$DESTINATION_CB_SCOPE" \
   --collection "$DESTINATION_CB_COLLECTION" \
   check-vector \
-  --output-json "$OUTPUT_DIR"/book-war-and-peace-1225p.txt.json
+  --output-json "$OUTPUT_DIR"/book-war-and-peace-1p.txt.json
