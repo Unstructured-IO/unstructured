@@ -91,6 +91,7 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         with open(self.filename, "w") as f:
             f.write(concatenated_values)
 
+
 @dataclass
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleAstraConfig
@@ -103,8 +104,6 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         breakpoint()
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
-
-            print("********* AstraSourceConnector.astra_db_collection *********")
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
