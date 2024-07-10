@@ -1,3 +1,4 @@
+import contextlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -79,16 +80,22 @@ class S3Indexer(FsspecIndexer):
         info: dict[str, Any] = self.fs.info(path)
         if etag := info.get("ETag"):
             version = str(etag).rstrip('"').lstrip('"')
+        metadata: dict[str, str] = {}
+        with contextlib.suppress(AttributeError):
+            metadata = self.fs.metadata(path)
+        record_locator = {
+            "protocol": self.index_config.protocol,
+            "remote_file_path": self.index_config.remote_url,
+        }
+        if metadata:
+            record_locator["metadata"] = metadata
         return DataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
             version=version,
             url=f"{self.index_config.protocol}://{path}",
-            record_locator={
-                "protocol": self.index_config.protocol,
-                "remote_file_path": self.index_config.remote_url,
-            },
+            record_locator=record_locator,
         )
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
