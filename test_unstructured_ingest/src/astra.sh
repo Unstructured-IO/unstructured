@@ -9,6 +9,7 @@ OUTPUT_FOLDER_NAME=astra
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 if [ -z "$ASTRA_DB_APPLICATION_TOKEN" ]; then
   echo "Skipping Astra DB source test because ASTRA_DB_APPLICATION_TOKEN env var is not set."
   exit 0
@@ -28,7 +29,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --collection-name "$COLLECTION_NAME" \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-  --num-processes "1" \
+  --num-processes "$max_processes" \
   --strategy hi_res \
   --preserve-downloads \
   --reprocess \
