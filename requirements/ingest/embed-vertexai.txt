@@ -46,7 +46,7 @@ google-api-core[grpc]==2.19.1
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-auth==2.31.0
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-cloud-aiplatform
@@ -62,7 +62,7 @@ google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-resource-manager==1.12.3
+google-cloud-resource-manager==1.12.4
     # via google-cloud-aiplatform
 google-cloud-storage==2.17.0
     # via
@@ -100,15 +100,15 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.6
+langchain==0.2.7
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.6
+langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.11
+langchain-core==0.2.12
     # via
     #   langchain
     #   langchain-community
