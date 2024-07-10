@@ -48,11 +48,11 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.31.0
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.7.2
+google-cloud-vision==3.7.3
     # via -r ./extra-pdf-image.in
 googleapis-common-protos==1.63.2
     # via
@@ -250,7 +250,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.12.1
+sympy==1.13.0
     # via
     #   onnxruntime
     #   torch
