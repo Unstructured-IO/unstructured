@@ -1,4 +1,4 @@
-## 0.14.11-dev5
+## 0.14.11-dev6
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 * **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
 
 ### Features
+
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
 

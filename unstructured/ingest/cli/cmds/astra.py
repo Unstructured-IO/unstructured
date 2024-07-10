@@ -17,7 +17,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=True,
                 type=str,
                 help="Astra DB Token with access to the database.",
-                envvar="ASTRA_DB_TOKEN",
+                envvar="ASTRA_DB_APPLICATION_TOKEN",
                 show_envvar=True,
             ),
             click.Option(
@@ -25,7 +25,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=True,
                 type=str,
                 help="The API endpoint for the Astra DB.",
-                envvar="ASTRA_DB_ENDPOINT",
+                envvar="ASTRA_DB_API_ENDPOINT",
                 show_envvar=True,
             ),
             click.Option(
@@ -75,6 +75,16 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
             ),
         ]
         return options
+
+
+def get_base_src_cmd():
+    from unstructured.ingest.cli.base.src import BaseSrcCmd
+
+    cmd_cls = BaseSrcCmd(
+        cmd_name="astra",
+        cli_config=AstraCliConfig,
+    )
+    return cmd_cls
 
 
 def get_base_dest_cmd():
