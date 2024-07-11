@@ -185,15 +185,13 @@ class AstraDestinationConnector(BaseDestinationConnector):
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
-            # Get the collection_name and embedding dimension
             collection_name = self.connector_config.collection_name
             embedding_dimension = self.write_config.embedding_dimension
-            requested_indexing_policy = self.connector_config.requested_indexing_policy
 
             # If the user has requested an indexing policy, pass it to the AstraDB
+            requested_indexing_policy = self.connector_config.requested_indexing_policy
             options = {"indexing": requested_indexing_policy} if requested_indexing_policy else None
 
-            # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
             self._astra_db = AstraDB(
                 api_endpoint=self.connector_config.access_config.api_endpoint,
