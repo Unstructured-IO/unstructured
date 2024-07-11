@@ -70,13 +70,23 @@ jobs:
       # produces an error if there is a a mismatch between the dep version
       # in the requirements file and the dep version in site packages
       - name: Install all doc and test dependencies
-        run: make install-ci
-      - name: Install paddleocr
-        run: make install-paddleocr
-      - name: Install all ingest dependencies
-        run: make install-all-ingest
-      - name: Checks licenses on dependencies
-        run: make check-licenses
+        run: |
+          make install-ci
+          make install-paddleocr
+          make install-all-ingest
+          pip uninstall nvidia-cublas-cu12
+            nvidia-cuda-cupti-cu12 \
+            nvidia-cuda-nvrtc-cu12 \
+            nvidia-cuda-runtime-cu12 \
+            nvidia-cudnn-cu12 \
+            nvidia-cufft-cu12 \
+            nvidia-curand-cu12 \
+            nvidia-cusolver-cu12 \
+            nvidia-cusparse-cu12 \
+            nvidia-nccl-cu12 \
+            nvidia-nvjitlink-cu12 \
+            nvidia-nvtx-cu12
+          make check-licenses
 
   lint:
     strategy:
