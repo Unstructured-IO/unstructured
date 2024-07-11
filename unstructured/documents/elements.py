@@ -552,7 +552,11 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
         parent_id = e.metadata.parent_id
         if not parent_id:
             continue
-        e.metadata.parent_id = old_to_new_mapping[parent_id]
+        metadata = copy.deepcopy(e.metadata)
+        if not old_to_new_mapping.get(parent_id):
+            raise KeyError(f"Parent ID {parent_id} not found in mapping.")
+        metadata.parent_id = old_to_new_mapping[parent_id]
+        e.metadata = metadata
 
     return elements
 
