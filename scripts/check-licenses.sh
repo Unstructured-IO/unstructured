@@ -1,20 +1,14 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2317  # Shellcheck complains that trap functions are unreachable...
+REQUIREMENTS_FILES=$(find requirements -type f -name "*.txt")
 
-LICCHECK_FILE="${PWD}/requirements-liccheck.txt"
-
-pip freeze >"$LICCHECK_FILE"
-
-liccheck -r "$LICCHECK_FILE"
-EXIT_CODE=$?
-
-if [ "$EXIT_CODE" -eq 0 ]; then
-  echo "All dependencies have authorized licenses."
-  rm "$LICCHECK_FILE"
-  exit 0
-else
-  echo "There are dependencies with unauthorized or unknown licenses."
-  rm "$LICCHECK_FILE"
-  exit 1
-fi
+for REQUIREMENTS_FILE in $REQUIREMENTS_FILES; do
+  liccheck -r "$REQUIREMENTS_FILE"
+  EXIT_CODE=$?
+  if [ "$EXIT_CODE" -eq 0 ]; then
+    echo "All dependencies have authorized licenses."
+  else
+    echo "There are dependencies with unauthorized or unknown licenses."
+    exit 1
+  fi
+done

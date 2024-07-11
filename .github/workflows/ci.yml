@@ -66,8 +66,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      # NOTE(robinson) - dependencies are installed first because liccheck
+      # produces an error if there is a a mismatch between the dep version
+      # in the requirements file and the dep version in site packages
       - name: Install all doc and test dependencies
         run: make install-ci
+      - name: Install paddleocr
+        run: make install-paddleocr
       - name: Install all ingest dependencies
         run: make install-all-ingest
       - name: Checks licenses on dependencies
