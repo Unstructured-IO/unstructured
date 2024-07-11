@@ -609,6 +609,11 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
     # in two when partitioning on CI. Other than that split the text is exactly the same.
     idx = 2 if sys.platform == "darwin" else 3
 
+    print("[")
+    for e in elements[:10]:
+        print(f"{e.metadata.detection_origin}-{type(e).__name__}({repr(e.text)}),")
+    print("]")
+
     e = elements[idx]
     assert isinstance(e, Title)
     assert e.text.startswith("LayoutParser")
