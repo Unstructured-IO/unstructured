@@ -14,10 +14,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -36,10 +39,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -58,10 +64,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -80,10 +89,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -102,10 +114,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -124,10 +139,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -146,10 +164,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -168,10 +189,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -190,10 +214,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -212,10 +239,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -234,10 +264,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -256,10 +289,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -278,10 +314,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -300,10 +339,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -322,10 +364,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -344,10 +389,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -366,10 +414,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -388,10 +439,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -410,10 +464,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -432,10 +489,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -454,10 +514,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -476,10 +539,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -498,10 +564,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -520,10 +589,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -542,10 +614,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -564,10 +639,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -586,10 +664,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -608,10 +689,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -630,10 +714,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -652,10 +739,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -674,10 +764,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -696,10 +789,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -718,10 +814,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -740,10 +839,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -762,10 +864,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -784,10 +889,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -806,10 +914,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -828,10 +939,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -850,10 +964,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -872,10 +989,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -894,10 +1014,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -916,10 +1039,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -938,10 +1064,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -960,10 +1089,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -982,10 +1114,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1004,10 +1139,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1026,10 +1164,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1048,10 +1189,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1070,10 +1214,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1092,10 +1239,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1114,10 +1264,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1136,10 +1289,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1158,10 +1314,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1180,10 +1339,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1202,10 +1364,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1224,10 +1389,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1246,10 +1414,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1268,10 +1439,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1290,10 +1464,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1312,10 +1489,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1334,10 +1514,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1356,10 +1539,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1378,10 +1564,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1400,10 +1589,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1422,10 +1614,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1444,10 +1639,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1466,10 +1664,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1488,10 +1689,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1510,10 +1714,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1532,10 +1739,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1554,10 +1764,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1576,10 +1789,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1598,10 +1814,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1620,10 +1839,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1642,10 +1864,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1664,10 +1889,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1686,10 +1914,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1708,10 +1939,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1730,10 +1964,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1752,10 +1989,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1774,10 +2014,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1796,10 +2039,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1818,10 +2064,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1840,10 +2089,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1862,10 +2114,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1884,10 +2139,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1906,10 +2164,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1928,10 +2189,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1950,10 +2214,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1972,10 +2239,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -1994,10 +2264,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2016,10 +2289,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2038,10 +2314,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2060,10 +2339,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2082,10 +2364,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2104,10 +2389,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2126,10 +2414,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2148,10 +2439,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2170,10 +2464,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2192,10 +2489,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2214,10 +2514,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2236,10 +2539,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2258,10 +2564,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2280,10 +2589,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2302,10 +2614,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2324,10 +2639,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2346,10 +2664,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2368,10 +2689,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2390,10 +2714,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2412,10 +2739,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2434,10 +2764,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2456,10 +2789,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2478,10 +2814,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   },
@@ -2500,10 +2839,13 @@
         "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
         "record_locator": {
           "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
         },
-        "date_created": "1676359888.0",
-        "date_modified": "1676359888.0"
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
       }
     }
   }

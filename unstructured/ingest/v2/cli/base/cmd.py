@@ -1,9 +1,11 @@
+import inspect
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import Any, Optional, Type, TypeVar
 
 import click
 
+from unstructured.ingest.v2.cli.base.importer import import_from_string
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import extract_config
 from unstructured.ingest.v2.interfaces import ProcessorConfig
@@ -14,6 +16,8 @@ from unstructured.ingest.v2.processes.connector_registry import (
     DownloaderT,
     IndexerT,
     UploaderT,
+    UploadStager,
+    UploadStagerConfig,
     UploadStagerT,
     destination_registry,
     source_registry,
@@ -33,6 +37,10 @@ class BaseCmd(ABC):
     @property
     def cmd_name_key(self):
         return self.cmd_name.replace("-", "_")
+
+    @property
+    def cli_cmd_name(self):
+        return self.cmd_name.replace("_", "-")
 
     @abstractmethod
     def cmd(self, ctx: click.Context, **options) -> None:
@@ -144,7 +152,43 @@ class BaseCmd(ABC):
         return downloader_cls(**downloader_kwargs)
 
     @staticmethod
+    def get_custom_stager(
+        stager_reference: str, stager_config_kwargs: Optional[dict] = None
+    ) -> Optional[UploadStagerT]:
+        uploader_cls = import_from_string(stager_reference)
+        if not inspect.isclass(uploader_cls):
+            raise ValueError(
+                f"custom stager must be a reference to a python class, got: {type(uploader_cls)}"
+            )
+        if not issubclass(uploader_cls, UploadStager):
+            raise ValueError(
+                "custom stager must be an implementation of the UploadStager interface"
+            )
+        fields_dict = {f.name: f.type for f in fields(uploader_cls)}
+        upload_stager_config_cls = fields_dict["upload_stager_config"]
+        if not inspect.isclass(upload_stager_config_cls):
+            raise ValueError(
+                f"custom stager config must be a class, got: {type(upload_stager_config_cls)}"
+            )
+        if not issubclass(upload_stager_config_cls, UploadStagerConfig):
+            raise ValueError(
+                "custom stager config must be an implementation "
+                "of the UploadStagerUploadStagerConfig interface"
+            )
+        upload_stager_kwargs: dict[str, Any] = {}
+        if stager_config_kwargs:
+            upload_stager_kwargs["upload_stager_config"] = upload_stager_config_cls(
+                **stager_config_kwargs
+            )
+        return uploader_cls(**upload_stager_kwargs)
+
+    @staticmethod
     def get_upload_stager(dest: str, options: dict[str, Any]) -> Optional[UploadStagerT]:
+        if custom_stager := options.get("custom_stager"):
+            return BaseCmd.get_custom_stager(
+                stager_reference=custom_stager,
+                stager_config_kwargs=options.get("custom_stager_config_kwargs"),
+            )
         dest_entry = destination_registry[dest]
         upload_stager_kwargs: dict[str, Any] = {}
         if upload_stager_config_cls := dest_entry.upload_stager_config:

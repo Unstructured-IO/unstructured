@@ -19,6 +19,11 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+  echo "Skipping local bedrock ingest test because AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY env var is not set."
+  exit 8
+fi
+
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \

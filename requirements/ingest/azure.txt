@@ -21,11 +21,11 @@ azure-core==1.30.2
     #   azure-storage-blob
 azure-datalake-store==0.0.53
     # via adlfs
-azure-identity==1.16.1
+azure-identity==1.17.1
     # via adlfs
 azure-storage-blob==12.20.0
     # via adlfs
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -60,23 +60,18 @@ idna==3.7
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.28.1
+msal==1.29.0
     # via
     #   azure-datalake-store
     #   azure-identity
     #   msal-extensions
-msal-extensions==1.1.0
+msal-extensions==1.2.0
     # via azure-identity
 multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-packaging==23.2
-    # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
-    #   msal-extensions
-portalocker==2.8.2
+portalocker==2.10.0
     # via msal-extensions
 pycparser==2.22
     # via cffi
@@ -97,8 +92,9 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
+    #   azure-identity
     #   azure-storage-blob
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

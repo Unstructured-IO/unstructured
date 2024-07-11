@@ -21,17 +21,10 @@ def test_partition_epub_from_filename():
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():
-    filename = example_doc_path("winter-sports.epub")
-    elements = partition_epub(filename=filename)
-    assert len(elements) > 0
-    assert (
-        elements[14].text.replace("\n", " ")
-        == Table(
-            text="Contents. List of Illustrations "
-            "(In certain versions of this etext [in certain browsers] "
-            "clicking on the image will bring up a larger version.) "
-            "(etext transcriber's note)",
-        ).text
+    elements = partition_epub(example_doc_path("winter-sports.epub"))
+    assert elements[10] == Table(
+        "Contents. List of Illustrations (In certain versions of this etext [in certain\nbrowsers]"
+        " clicking on the image will bring up a larger\nversion.) (etext transcriber's note)"
     )
 
 

@@ -2,6 +2,7 @@ import json
 from typing import Dict, Type, cast
 
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
+from unstructured.ingest.connector.astra import AstraIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
 from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
 from unstructured.ingest.connector.delta_table import DeltaTableIngestDoc
@@ -21,6 +22,7 @@ from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
 from unstructured.ingest.connector.hubspot import HubSpotIngestDoc
 from unstructured.ingest.connector.jira import JiraIngestDoc
+from unstructured.ingest.connector.kafka import KafkaIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
 from unstructured.ingest.connector.mongodb import MongoDBIngestDoc, MongoDBIngestDocBatch
 from unstructured.ingest.connector.notion.connector import (
@@ -44,6 +46,7 @@ from unstructured.ingest.interfaces import BaseIngestDoc
 
 INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "airtable": AirtableIngestDoc,
+    "astra": AstraIngestDoc,
     "azure": AzureBlobStorageIngestDoc,
     "biomed": BiomedIngestDoc,
     "box": BoxIngestDoc,
@@ -59,6 +62,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "google_drive": GoogleDriveIngestDoc,
     "hubspot": HubSpotIngestDoc,
     "jira": JiraIngestDoc,
+    "kafka": KafkaIngestDoc,
     "local": LocalIngestDoc,
     "mongodb": MongoDBIngestDoc,
     "mongodb_batch": MongoDBIngestDocBatch,

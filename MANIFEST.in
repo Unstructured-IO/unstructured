@@ -38,6 +38,7 @@ include requirements/ingest/gitlab.in
 include requirements/ingest/google-drive.in
 include requirements/ingest/hubspot.in
 include requirements/ingest/jira.in
+include requirements/ingest/kafka.in
 include requirements/ingest/mongodb.in
 include requirements/ingest/notion.in
 include requirements/ingest/onedrive.in
@@ -52,5 +53,6 @@ include requirements/ingest/salesforce.in
 include requirements/ingest/sftp.in
 include requirements/ingest/sharepoint.in
 include requirements/ingest/slack.in
+include requirements/ingest/singlestore.in
 include requirements/ingest/weaviate.in
 include requirements/ingest/wikipedia.in

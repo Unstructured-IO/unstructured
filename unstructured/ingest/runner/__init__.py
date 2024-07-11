@@ -2,6 +2,7 @@ import typing as t
 from typing import Type
 
 from .airtable import AirtableRunner
+from .astra import AstraRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
 from .confluence import ConfluenceRunner
@@ -20,6 +21,7 @@ from .gitlab import GitlabRunner
 from .google_drive import GoogleDriveRunner
 from .hubspot import HubSpotRunner
 from .jira import JiraRunner
+from .kafka import KafkaRunner
 from .local import LocalRunner
 from .mongodb import MongoDBRunner
 from .notion import NotionRunner
@@ -34,6 +36,7 @@ from .wikipedia import WikipediaRunner
 
 runner_map: t.Dict[str, Type[Runner]] = {
     "airtable": AirtableRunner,
+    "astra": AstraRunner,
     "azure": AzureRunner,
     "biomed": BiomedRunner,
     "box": BoxRunner,
@@ -50,6 +53,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "google_drive": GoogleDriveRunner,
     "hubspot": HubSpotRunner,
     "jira": JiraRunner,
+    "kafka": KafkaRunner,
     "local": LocalRunner,
     "mongodb": MongoDBRunner,
     "notion": NotionRunner,
@@ -67,6 +71,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
 
 __all__ = [
     "AirtableRunner",
+    "AstraRunner",
     "AzureRunner",
     "BiomedRunner",
     "BoxRunner",
@@ -81,6 +86,7 @@ __all__ = [
     "GithubRunner",
     "GitlabRunner",
     "JiraRunner",
+    "KafkaRunner",
     "LocalRunner",
     "MongoDBRunner",
     "NotionRunner",

@@ -6,7 +6,7 @@
 #
 attrs==23.2.0
     # via zeep
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -51,7 +51,9 @@ requests==2.32.3
 requests-file==2.1.0
     # via zeep
 requests-toolbelt==1.0.0
-    # via zeep
+    # via
+    #   -c ./ingest/../base.txt
+    #   zeep
 simple-salesforce==1.12.6
     # via -r ./ingest/salesforce.in
 six==1.16.0
@@ -62,7 +64,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   simple-salesforce
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

@@ -4,8 +4,10 @@ import pytest
 
 from unstructured.metrics import text_extraction
 from unstructured.metrics.table.table_extraction import (
+    deckerd_table_to_html,
     extract_cells_from_table_as_cells,
     extract_cells_from_text_as_html,
+    html_table_to_deckerd,
 )
 from unstructured.partition.auto import partition
 
@@ -556,3 +558,81 @@ def test_cells_extraction_from_prediction_when_missing_prediction():
     example_element = {"type": "Table", "metadata": {"text_as_html": "", "table_as_cells": []}}
     assert extract_cells_from_text_as_html(example_element) is None
     assert extract_cells_from_table_as_cells(example_element) is None
+
+
+def _trim_html(html: str) -> str:
+    html_lines = [line.strip() for line in html.split("\n") if line]
+    return "".join(html_lines)
+
+
+@pytest.mark.parametrize(
+    "html_to_test",
+    [
+        """
+<table>
+    <thead>
+        <tr>
+            <th>Month A.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>22</td>
+        </tr>
+    </tbody>
+</table>
+""",
+        """
+<table>
+    <thead>
+        <tr>
+            <th>Month A.</th>
+            <th>Month B.</th>
+            <th>Month C.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>11</td>
+            <td>12</td>
+            <td>13</td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>22</td>
+            <td>23</td>
+        </tr>
+    </tbody>
+</table>
+""",
+        """
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2">h12col1</th>
+            <th colspan="2">h1col23</th>
+            <th>h1col4</th>
+        </tr>
+        <tr>
+            <th>h2col2</th>
+            <th colspan="2">h2col34</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>r3col1</td>
+            <td>r3col2</td>
+            <td colspan="2" rowspan="2">r34col34</td>
+        </tr>
+        <tr>
+            <td colspan="2">r4col12</td>
+        </tr>
+    </tbody>
+</table>
+""",
+    ],
+)
+def test_deckerd_html_converter(html_to_test):
+    deckerd_table = html_table_to_deckerd(html_to_test)
+    html_table = deckerd_table_to_html(deckerd_table)
+    assert _trim_html(html_to_test) == html_table

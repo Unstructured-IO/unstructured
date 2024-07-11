@@ -6,5 +6,5 @@
 #
 dnspython==2.6.1
     # via pymongo
-pymongo==4.7.3
+pymongo==4.8.0
     # via -r ./ingest/mongodb.in
