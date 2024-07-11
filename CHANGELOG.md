@@ -1,4 +1,4 @@
-## 0.15.0-dev7
+## 0.15.0-dev8
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 * **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
+
+* **Move Astra embedded_dimension to write config**
 
 ## 0.14.10
 
