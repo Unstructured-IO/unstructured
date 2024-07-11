@@ -614,6 +614,8 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
         print(f"{e.metadata.detection_origin}-{type(e).__name__}({repr(e.text)}),")
     print("]")
 
+    pytest.fail("WIP Inspection")
+
     e = elements[idx]
     assert isinstance(e, Title)
     assert e.text.startswith("LayoutParser")
