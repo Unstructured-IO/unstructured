@@ -37,13 +37,6 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 "numbers, and underscores.",
             ),
             click.Option(
-                ["--embedding-dimension"],
-                required=True,
-                default=384,
-                type=int,
-                help="The dimensionality of the embeddings",
-            ),
-            click.Option(
                 ["--namespace"],
                 required=False,
                 default=None,
@@ -67,6 +60,13 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
+            click.Option(
+                ["--embedding-dimension"],
+                required=True,
+                default=384,
+                type=int,
+                help="The dimensionality of the embeddings",
+            ),
             click.Option(
                 ["--batch-size"],
                 default=20,
