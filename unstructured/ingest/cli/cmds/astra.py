@@ -41,15 +41,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=False,
                 default=None,
                 type=str,
-                help="The Astra DB namespace to write into.",
-            ),
-            click.Option(
-                ["--requested-indexing-policy"],
-                required=False,
-                default=None,
-                type=Dict(),
-                help="The indexing policy to use for the collection."
-                'example: \'{"deny": ["metadata"]}\' ',
+                help="The Astra DB namespace to connect to.",
             ),
         ]
         return options
@@ -66,6 +58,14 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
                 default=384,
                 type=int,
                 help="The dimensionality of the embeddings",
+            ),
+            click.Option(
+                ["--requested-indexing-policy"],
+                required=False,
+                default=None,
+                type=Dict(),
+                help="The indexing policy to use for the collection."
+                'example: \'{"deny": ["metadata"]}\' ',
             ),
             click.Option(
                 ["--batch-size"],

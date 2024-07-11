@@ -41,7 +41,6 @@ class SimpleAstraConfig(BaseConnectorConfig):
     access_config: AstraAccessConfig
     collection_name: str
     namespace: t.Optional[str] = None
-    requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
 
 
 @dataclass
@@ -155,6 +154,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 @dataclass
 class AstraWriteConfig(WriteConfig):
     embedding_dimension: int
+    requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
     batch_size: int = 20
 
 
@@ -189,7 +189,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             embedding_dimension = self.write_config.embedding_dimension
 
             # If the user has requested an indexing policy, pass it to the AstraDB
-            requested_indexing_policy = self.connector_config.requested_indexing_policy
+            requested_indexing_policy = self.write_config.requested_indexing_policy
             options = {"indexing": requested_indexing_policy} if requested_indexing_policy else None
 
             # caller_name/version for AstraDB tracking
