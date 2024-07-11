@@ -21,7 +21,7 @@ contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.63.2
     # via clarifai-grpc
-grpcio==1.64.1
+grpcio==1.65.0
     # via clarifai-grpc
 idna==3.7
     # via
