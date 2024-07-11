@@ -113,6 +113,12 @@ jobs:
       uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Check Ubuntu version
+      run: |
+        echo "Checking Ubuntu version"
+        lsb_release -a
+        echo "OS Release Info"
+        cat /etc/os-release
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
