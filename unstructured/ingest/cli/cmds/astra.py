@@ -32,7 +32,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 ["--collection-name"],
                 required=False,
                 type=str,
-                help="The name of the Astra DB collection to write into. "
+                help="The name of the Astra DB collection. "
                 "Note that the collection name must only include letters, "
                 "numbers, and underscores.",
             ),
@@ -41,7 +41,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=False,
                 default=None,
                 type=str,
-                help="The Astra DB namespace to connect to.",
+                help="The Astra DB connection namespace.",
             ),
         ]
         return options
