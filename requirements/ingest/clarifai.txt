@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/clarifai.in
 #
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     #   requests
 clarifai==10.5.3
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.5.4
+clarifai-grpc==10.6.1
     # via clarifai
 contextlib2==21.6.0
     # via schema

@@ -6,7 +6,7 @@
 #
 build==1.2.1
     # via singlestoredb
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -42,7 +42,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   singlestoredb
-singlestoredb==1.4.1
+singlestoredb==1.4.2
     # via -r ./ingest/singlestore.in
 sqlparams==6.0.1
     # via singlestoredb

@@ -12,7 +12,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   httpcore
@@ -129,7 +129,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.23.8
+unstructured-client==0.24.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in

@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -67,20 +67,20 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.6
+langchain==0.2.7
     # via langchain-community
-langchain-community==0.2.6
+langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-huggingface.in
-langchain-core==0.2.11
+langchain-core==0.2.12
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.83
+langsmith==0.1.84
     # via
     #   langchain
     #   langchain-community
@@ -124,12 +124,12 @@ packaging==23.2
     #   transformers
 pillow==10.4.0
     # via sentence-transformers
-pydantic==2.8.0
+pydantic==2.8.2
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.20.0
+pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -165,9 +165,9 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-sympy==1.12.1
+sympy==1.13.0
     # via torch
-tenacity==8.4.2
+tenacity==8.5.0
     # via
     #   langchain
     #   langchain-community

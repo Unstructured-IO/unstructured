@@ -20,4 +20,3 @@ types-tabulate
 vcrpy
 grpcio
 autoflake
-liccheck
