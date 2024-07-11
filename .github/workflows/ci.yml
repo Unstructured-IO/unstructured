@@ -74,7 +74,7 @@ jobs:
           make install-ci
           make install-paddleocr
           make install-all-ingest
-          pip uninstall -y nvidia-cublas-cu12
+          pip uninstall -y nvidia-cublas-cu12 \
             nvidia-cuda-cupti-cu12 \
             nvidia-cuda-nvrtc-cu12 \
             nvidia-cuda-runtime-cu12 \
