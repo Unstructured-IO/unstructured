@@ -113,11 +113,13 @@ jobs:
       uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Check Ubuntu version
+    - name: Check Platform
       run: |
-        echo "Checking Ubuntu version"
+        echo "Checking architecture"
+        uname -m
+        echo "Checking OS version"
         lsb_release -a
-        echo "OS Release Info"
+        echo "Checking OS Release Info"
         cat /etc/os-release
     - name: Test
       env:
