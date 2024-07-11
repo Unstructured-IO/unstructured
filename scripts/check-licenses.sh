@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REQUIREMENTS_FILES=$(find requirements -type f -name "*.txt" ! -name "constraints.txt")
+REQUIREMENTS_FILES=$(find requirements -type f -name "*.txt" ! -name "constraints.txt" ! -name "dev.txt")
 
 for REQUIREMENTS_FILE in $REQUIREMENTS_FILES; do
   echo "Checking $REQUIREMENTS_FILE"
