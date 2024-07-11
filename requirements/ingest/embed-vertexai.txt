@@ -54,7 +54,7 @@ google-auth==2.32.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.58.0
+google-cloud-aiplatform==1.59.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -83,7 +83,7 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.64.1
+grpcio==1.65.0
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -108,7 +108,7 @@ langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.12
+langchain-core==0.2.13
     # via
     #   langchain
     #   langchain-community
@@ -118,7 +118,7 @@ langchain-google-vertexai==1.0.6
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.84
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community
