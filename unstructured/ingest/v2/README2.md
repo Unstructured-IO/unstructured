@@ -69,7 +69,7 @@ local-working-dir
 
 You can see the source/destination connector file that it runs here:
 
-!!! LINK HERE !!!
+https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2/processes/connectors/local.py
 
 If you look through the file you will notice these Classes (actually @dataclasses because BLABLABLA) and functions
 
@@ -178,7 +178,7 @@ the service should now be running on port 8000
 
 Let's look at the python file that it runs BLABLABLA
 
-!!! link to file
+https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2/processes/connectors/chroma.py
 
 * ChromaAccessConfig - Needed for connecting to Chroma. Usually sensitive attributes that will be hidden.
 
