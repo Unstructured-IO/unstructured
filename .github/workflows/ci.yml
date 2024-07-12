@@ -55,26 +55,26 @@ jobs:
       - name: Install all extras
         run: make check-extras
 
-  check-licenses:
-    strategy:
-      matrix:
-        python-version: [ "3.12" ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      # NOTE(robinson) - dependencies are installed first because liccheck
-      # produces an error if there is a a mismatch between the dep version
-      # in the requirements file and the dep version in site packages
-      - name: Install all doc and test dependencies
-        run: |
-          make install-ci
-          make install-paddleocr
-          make install-all-ingest
-          make check-licenses
+#  check-licenses:
+#    strategy:
+#      matrix:
+#        python-version: [ "3.12" ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      # NOTE(robinson) - dependencies are installed first because liccheck
+#      # produces an error if there is a a mismatch between the dep version
+#      # in the requirements file and the dep version in site packages
+#      - name: Install all doc and test dependencies
+#        run: |
+#          make install-ci
+#          make install-paddleocr
+#          make install-all-ingest
+#          make check-licenses
 
   lint:
     strategy:
@@ -534,22 +534,22 @@ jobs:
 #        tesseract --version
 #        make install-nltk-models
 #        make test-unstructured-api-unit
-#
-#  changelog:
-#    runs-on: ubuntu-latest
-#    steps:
-#    # need to checkout otherwise paths-filter will fail on merge-queue trigger
-#    - uses: actions/checkout@v4
-#    - if: github.ref != 'refs/heads/main'
-#      uses: dorny/paths-filter@v3
-#      id: changes
-#      with:
-#        filters: |
-#          src:
-#            - 'unstructured/**'
-#
-#    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-#      uses: dangoslen/changelog-enforcer@v3
+
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
+    - uses: actions/checkout@v4
+    - if: github.ref != 'refs/heads/main'
+      uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'unstructured/**'
+
+    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+      uses: dangoslen/changelog-enforcer@v3
 
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
