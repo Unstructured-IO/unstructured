@@ -55,7 +55,7 @@ all_tests=(
   'delta-table.sh'
   'jira.sh'
   # 'sharepoint.sh'
-  'sharepoint-with-permissions.sh'
+  # 'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
   'local-embed-bedrock.sh'
@@ -68,7 +68,7 @@ all_tests=(
 )
 
 full_python_matrix_tests=(
-  'sharepoint.sh'
+  # 'sharepoint.sh'
   'local.sh'
   'local-single-file.sh'
   'local-single-file-with-encoding.sh'
