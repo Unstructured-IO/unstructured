@@ -5,6 +5,8 @@ The Unstructured open source repo processes documents (artifacts) in a pipeline.
 ## Simplest Example of a Pipeline
 The simplest example of a pipeline would start with a local source connector, followed by a partioner, and then end with a local destination connector. Here is what the code to run this would look like:
 
+>*** This is the type of Python file you'll want to run during development so that you can iterate on your connector.
+
 `local.py`
 
 ```
@@ -37,7 +39,6 @@ You can run this with `python local.py` (Adjust the `input_path` and `output_dir
 
 The result would be a partitioned `fake-text.txt.json` file in the `local-output` directory.
 
->*** The above is the type of Python file you'll want to run during development so that you can iterate on your connector.
 
 The ProcessorConfig attributes are optional, but are added to make development easier.
 
