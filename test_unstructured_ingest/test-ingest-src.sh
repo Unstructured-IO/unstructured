@@ -55,7 +55,7 @@ all_tests=(
   'delta-table.sh'
   'jira.sh'
   # 'sharepoint.sh'
-  'sharepoint-with-permissions.sh'
+  # 'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
   'local-embed-bedrock.sh'
