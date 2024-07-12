@@ -1,50 +1,12 @@
-## 0.15.0-dev8
+## 0.14.9-dev1
 
 ### Enhancements
 
-* **Bump unstructured.paddleocr to 2.8.0.**
-* **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
-* **Install rewritten HTML parser to fix 12 existing bugs and provide headroom for refinement and growth.** A rewritten HTML parser resolves a collection of outstanding bugs with HTML partitioning and provides a firm foundation for further elaborating that important partitioner.
-* **CI check for dependency licenses** Adds a CI check to ensure dependencies are appropriately licensed.
-
-### Features
-
-* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
-
-### Fixes
-
-## 0.14.10
-
-### Enhancements
-
-* **Update unstructured-client dependency** Change unstructured-client dependency pin back to greater than min version and updated tests that were failing given the update.
-* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
-* **Add table detection metrics: recall, precision and f1.**
-* **Remove unused _with_spans metrics.**
-
-### Features
-
-**Add Object Detection Metrics to CI** Add object detection metrics (average precision, precision, recall and f1-score) implementations.
-
-### Fixes
-
-* **Fix counting false negatives and false positives in table structure evaluation.**
-* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
-* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
-
-## 0.14.9
-
-### Enhancements
-
-* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used to visualize the result of the OD model and dump the result to a file. Additionally, the visualization of bounding boxes of each layout source is rendered and saved for each page.
-* **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
+* **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
 
 ### Features
 
 ### Fixes
-
-* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
-* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
 
 ## 0.14.8
 
@@ -58,6 +20,7 @@
 
 * **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
 * **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+
 * **Fix missing sensitive field markers** for embedders
 
 ## 0.14.7
