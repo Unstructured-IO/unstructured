@@ -54,7 +54,7 @@ all_tests=(
   'notion.sh'
   'delta-table.sh'
   'jira.sh'
-  'sharepoint.sh'
+  # 'sharepoint.sh'
   'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
@@ -68,7 +68,6 @@ all_tests=(
 )
 
 full_python_matrix_tests=(
-  # NOTE(christine): re-enable the test when the github secrets are updated
   #  'sharepoint.sh'
   'local.sh'
   'local-single-file.sh'
