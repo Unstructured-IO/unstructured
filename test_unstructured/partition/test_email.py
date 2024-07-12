@@ -123,15 +123,6 @@ def test_partition_email_from_filename():
         assert element.metadata.filename == "fake-email.eml"
 
 
-def test_partition_email_from_filename_with_metadata_filename():
-    elements = partition_email(
-        filename=example_doc_path("eml/fake-email.eml"), metadata_filename="test"
-    )
-
-    assert len(elements) > 0
-    assert all(element.metadata.filename == "test" for element in elements)
-
-
 def test_partition_email_from_filename_malformed_encoding():
     elements = partition_email(filename=example_doc_path("eml/fake-email-malformed-encoding.eml"))
 
@@ -320,35 +311,7 @@ def test_partition_email_from_file_with_header():
 
     assert len(elements) > 0
     assert elements == RECEIVED_HEADER_OUTPUT
-    for element in elements:
-        assert element.metadata.filename is None
-
-
-def test_partition_email_from_filename_has_metadata():
-    elements = partition_email(filename=example_doc_path("eml/fake-email.eml"))
-    parent_id = elements[0].metadata.parent_id
-
-    assert len(elements) > 0
-    assert (
-        elements[0].metadata.to_dict()
-        == ElementMetadata(
-            coordinates=None,
-            filename=example_doc_path("eml/fake-email.eml"),
-            last_modified="2022-12-16T17:04:16-05:00",
-            page_number=None,
-            url=None,
-            sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
-            sent_to=["NotMatthew <NotMatthew@notunstructured.com>"],
-            subject="Test Email",
-            filetype="message/rfc822",
-            parent_id=parent_id,
-            languages=["eng"],
-        ).to_dict()
-    )
-    expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
-    assert parse_optional_datetime(elements[0].metadata.last_modified) == expected_dt
-    for element in elements:
-        assert element.metadata.filename == "fake-email.eml"
+    all(element.metadata.filename is None for element in elements)
 
 
 def test_extract_email_text_matches_html():
@@ -379,35 +342,6 @@ def test_extract_base64_email_text_matches_html():
     for i, element in enumerate(elements_from_text):
         assert element == elements_from_text[i]
         assert element.metadata.filename == "fake-email-b64.eml"
-
-
-def test_extract_attachment_info():
-    with open(example_doc_path("eml/fake-email-attachment.eml")) as f:
-        msg = email.message_from_file(f)
-    attachment_info = extract_attachment_info(msg)
-
-    assert len(attachment_info) > 0
-    assert attachment_info == ATTACH_EXPECTED_OUTPUT
-
-
-def test_partition_email_raises_with_none_specified():
-    with pytest.raises(ValueError):
-        partition_email()
-
-
-def test_partition_email_raises_with_too_many_specified():
-    with open(example_doc_path("eml/fake-email.eml")) as f:
-        text = f.read()
-
-    with pytest.raises(ValueError):
-        partition_email(filename=example_doc_path("eml/fake-email.eml"), text=text)
-
-
-def test_partition_email_raises_with_invalid_content_type():
-    with pytest.raises(ValueError):
-        partition_email(
-            filename=example_doc_path("eml/fake-email.eml"), content_source="application/json"
-        )
 
 
 def test_partition_email_processes_fake_email_with_header():
@@ -441,6 +375,110 @@ def test_partition_email_still_works_with_no_content(caplog: LogCaptureFixture):
     assert "text/html was not found. Falling back to text/plain" in caplog.text
 
 
+def test_partition_email_with_json():
+    elements = partition_email(example_doc_path("eml/fake-email.eml"))
+    assert_round_trips_through_JSON(elements)
+
+
+def test_partition_email_with_pgp_encrypted_message(caplog: LogCaptureFixture):
+    elements = partition_email(filename=example_doc_path("eml/fake-encrypted.eml"))
+
+    assert elements == []
+    assert "WARNING" in caplog.text
+    assert "Encrypted email detected" in caplog.text
+
+
+def test_partition_email_inline_content_disposition():
+    elements = partition_email(
+        filename="example-docs/eml/email-inline-content-disposition.eml",
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert isinstance(elements[0], Text)
+    assert isinstance(elements[1], Text)
+
+
+def test_add_chunking_strategy_on_partition_email():
+    chunk_elements = partition_email(
+        filename=example_doc_path("eml/fake-email.txt"), chunking_strategy="by_title"
+    )
+    elements = partition_email(filename=example_doc_path("eml/fake-email.txt"))
+    chunks = chunk_by_title(elements)
+
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+# -- raise error behaviors -----------------------------------------------------------------------
+
+
+def test_partition_msg_raises_with_no_partitioner():
+    with pytest.raises(ValueError):
+        partition_email(
+            filename="example-docs/eml/fake-email-attachment.eml", process_attachments=True
+        )
+
+
+def test_partition_email_raises_with_none_specified():
+    with pytest.raises(ValueError):
+        partition_email()
+
+
+def test_partition_email_raises_with_too_many_specified():
+    with open(example_doc_path("eml/fake-email.eml")) as f:
+        text = f.read()
+
+    with pytest.raises(ValueError):
+        partition_email(filename=example_doc_path("eml/fake-email.eml"), text=text)
+
+
+def test_partition_email_raises_with_invalid_content_type():
+    with pytest.raises(ValueError):
+        partition_email(
+            filename=example_doc_path("eml/fake-email.eml"), content_source="application/json"
+        )
+
+
+# -- metadata behaviors --------------------------------------------------------------------------
+
+
+def test_partition_email_from_filename_with_metadata_filename():
+    elements = partition_email(
+        filename=example_doc_path("eml/fake-email.eml"), metadata_filename="test"
+    )
+
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+def test_partition_email_from_filename_has_metadata():
+    elements = partition_email(filename=example_doc_path("eml/fake-email.eml"))
+    parent_id = elements[0].metadata.parent_id
+
+    assert len(elements) > 0
+    assert (
+        elements[0].metadata.to_dict()
+        == ElementMetadata(
+            coordinates=None,
+            filename=example_doc_path("eml/fake-email.eml"),
+            last_modified="2022-12-16T17:04:16-05:00",
+            page_number=None,
+            url=None,
+            sent_from=["Matthew Robinson <mrobinson@unstructured.io>"],
+            sent_to=["NotMatthew <NotMatthew@notunstructured.com>"],
+            subject="Test Email",
+            filetype="message/rfc822",
+            parent_id=parent_id,
+            languages=["eng"],
+        ).to_dict()
+    )
+    expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")
+    assert parse_optional_datetime(elements[0].metadata.last_modified) == expected_dt
+    for element in elements:
+        assert element.metadata.filename == "fake-email.eml"
+
+
 def test_partition_email_from_filename_exclude_metadata():
     elements = partition_email(
         filename=example_doc_path("eml/fake-email-header.eml"), include_metadata=False
@@ -470,6 +508,61 @@ def test_partition_email_from_file_exclude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
+
+
+def test_partition_email_metadata_date_from_header(mocker: MockFixture):
+    mocker.patch("unstructured.partition.email.get_last_modified_date", return_value=None)
+    mocker.patch("unstructured.partition.email.get_last_modified_date_from_file", return_value=None)
+
+    elements = partition_email(filename="example-docs/eml/fake-email-attachment.eml")
+
+    assert elements[0].metadata.last_modified == "2022-12-23T12:08:48-06:00"
+
+
+def test_partition_email_from_file_custom_metadata_date():
+    with open("example-docs/eml/fake-email-attachment.eml", "rb") as f:
+        elements = partition_email(file=f, metadata_last_modified="2020-07-05T09:24:28")
+
+    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+
+
+def test_partition_email_custom_metadata_date():
+    elements = partition_email(
+        filename="example-docs/eml/fake-email-attachment.eml",
+        metadata_last_modified="2020-07-05T09:24:28",
+    )
+
+    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+
+
+def test_partition_eml_add_signature_to_metadata():
+    elements = partition_email(filename=example_doc_path("eml/signed-doc.p7s"))
+
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"
+
+
+# -- attachment behaviors ------------------------------------------------------------------------
+
+
+def test_extract_attachment_info():
+    with open(example_doc_path("eml/fake-email-attachment.eml")) as f:
+        msg = email.message_from_file(f)
+    attachment_info = extract_attachment_info(msg)
+
+    assert len(attachment_info) > 0
+    assert attachment_info == ATTACH_EXPECTED_OUTPUT
+
+
+def test_partition_email_odd_attachment_filename():
+    elements = partition_email(
+        filename=example_doc_path("eml/email-equals-attachment-filename.eml"),
+        process_attachments=True,
+        attachment_partitioner=partition_text,
+    )
+
+    assert elements[1].metadata.filename == "odd=file=name.txt"
 
 
 def test_partition_email_can_process_attachments(tmp_path: pathlib.Path):
@@ -553,81 +646,7 @@ def test_partition_email_can_process_min_max_with_attachments(tmp_path: pathlib.
             assert len(element.text) >= 6
 
 
-def test_partition_msg_raises_with_no_partitioner():
-    with pytest.raises(ValueError):
-        partition_email(
-            filename="example-docs/eml/fake-email-attachment.eml", process_attachments=True
-        )
-
-
-def test_partition_email_metadata_date_from_header(mocker: MockFixture):
-    mocker.patch("unstructured.partition.email.get_last_modified_date", return_value=None)
-    mocker.patch("unstructured.partition.email.get_last_modified_date_from_file", return_value=None)
-
-    elements = partition_email(filename="example-docs/eml/fake-email-attachment.eml")
-
-    assert elements[0].metadata.last_modified == "2022-12-23T12:08:48-06:00"
-
-
-def test_partition_email_from_file_custom_metadata_date():
-    with open("example-docs/eml/fake-email-attachment.eml", "rb") as f:
-        elements = partition_email(file=f, metadata_last_modified="2020-07-05T09:24:28")
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
-
-
-def test_partition_email_custom_metadata_date():
-    elements = partition_email(
-        filename="example-docs/eml/fake-email-attachment.eml",
-        metadata_last_modified="2020-07-05T09:24:28",
-    )
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
-
-
-def test_partition_email_inline_content_disposition():
-    elements = partition_email(
-        filename="example-docs/eml/email-inline-content-disposition.eml",
-        process_attachments=True,
-        attachment_partitioner=partition_text,
-    )
-
-    assert isinstance(elements[0], Text)
-    assert isinstance(elements[1], Text)
-
-
-def test_partition_email_odd_attachment_filename():
-    elements = partition_email(
-        filename=example_doc_path("eml/email-equals-attachment-filename.eml"),
-        process_attachments=True,
-        attachment_partitioner=partition_text,
-    )
-
-    assert elements[1].metadata.filename == "odd=file=name.txt"
-
-
-def test_partition_email_with_json():
-    elements = partition_email(example_doc_path("eml/fake-email.eml"))
-    assert_round_trips_through_JSON(elements)
-
-
-def test_partition_email_with_pgp_encrypted_message(caplog: LogCaptureFixture):
-    elements = partition_email(filename=example_doc_path("eml/fake-encrypted.eml"))
-
-    assert elements == []
-    assert "WARNING" in caplog.text
-    assert "Encrypted email detected" in caplog.text
-
-
-def test_add_chunking_strategy_on_partition_email():
-    chunk_elements = partition_email(
-        filename=example_doc_path("eml/fake-email.txt"), chunking_strategy="by_title"
-    )
-    elements = partition_email(filename=example_doc_path("eml/fake-email.txt"))
-    chunks = chunk_by_title(elements)
-
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
+# -- language behaviors --------------------------------------------------------------------------
 
 
 def test_partition_email_element_metadata_has_languages():
@@ -653,11 +672,3 @@ def test_partition_eml_respects_detect_language_per_element():
 
     assert "eng" in langs
     assert "spa" in langs
-
-
-def test_partition_eml_add_signature_to_metadata():
-    elements = partition_email(filename=example_doc_path("eml/signed-doc.p7s"))
-
-    assert len(elements) == 1
-    assert elements[0].text == "This is a test"
-    assert elements[0].metadata.signature == "<SIGNATURE>\n"
