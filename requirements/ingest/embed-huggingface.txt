@@ -73,14 +73,14 @@ langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-huggingface.in
-langchain-core==0.2.12
+langchain-core==0.2.13
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.84
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community
