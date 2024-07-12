@@ -4,10 +4,12 @@ Received: from ABCDEFG-000.ABC.guide (00.0.0.00) by ABCDEFG-000.ABC.guide
  Transport; Wed, 20 Feb 2023 10:03:18 +1200
 MIME-Version: 1.0
 Date: Fri, 16 Dec 2022 17:04:16 -0500
+Bcc: Hello <hello@unstructured.io>
 Message-ID: <CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>
 Subject: Test Email
 From: Matthew Robinson <mrobinson@unstructured.io>
 To: Matthew Robinson <mrobinson@unstructured.io>
+Cc: John Jennings <john-ctr@unstructured.io>
 Content-Type: multipart/alternative; boundary="00000000000095c9b205eff92630"
 
 --00000000000095c9b205eff92630

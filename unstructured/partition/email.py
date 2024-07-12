@@ -8,7 +8,7 @@ import re
 from email.message import Message
 from functools import partial
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import IO, Any, Callable, Final, Optional
+from typing import IO, Any, Callable, Final, Optional, cast
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
@@ -112,10 +112,11 @@ def partition_email_header(msg: Message) -> list[Element]:
 
 def find_signature(msg: Message) -> Optional[str]:
     """Extracts the signature from an email message, if it's available."""
-    payload = msg.get_payload()
+    payload: Any = msg.get_payload()
     if not isinstance(payload, list):
         return None
 
+    payload = cast(list[Message], payload)
     for item in payload:
         if item.get_content_type().endswith("signature"):
             return item.get_payload()
@@ -177,14 +178,14 @@ def extract_attachment_info(
     message: Message,
     output_dir: Optional[str] = None,
 ) -> list[dict[str, str]]:
-    list_attachments = []
+    list_attachments: list[Any] = []
 
     for part in message.walk():
         if "content-disposition" in part:
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
 
-            attachment_info = {}
+            attachment_info: dict[str, Any] = {}
             for item in cdisp:
                 if item.lower() in ("attachment", "inline"):
                     continue
@@ -204,7 +205,7 @@ def extract_attachment_info(
                         with open(filename, "wb") as f:
                             # Note(harrell) mypy wants to just us `w` when opening the file but this
                             # causes an error since the payloads are bytes not str
-                            f.write(attachment["payload"])  # type: ignore
+                            f.write(attachment["payload"])
                     else:
                         with NamedTemporaryFile(
                             mode="wb",
@@ -212,18 +213,18 @@ def extract_attachment_info(
                             delete=False,
                         ) as f:
                             list_attachments[idx]["filename"] = os.path.basename(f.name)
-                            f.write(attachment["payload"])  # type: ignore
+                            f.write(attachment["payload"])
 
     return list_attachments
 
 
-def has_embedded_image(element):
+def has_embedded_image(element: Element):
     PATTERN = re.compile(r"\[image: .+\]")
     return PATTERN.search(element.text)
 
 
 def find_embedded_image(
-    element: NarrativeText | Title, indices: re.Match
+    element: NarrativeText | Title, indices: re.Match[str]
 ) -> tuple[Element, Element]:
     start, end = indices.start(), indices.end()
 
@@ -353,6 +354,8 @@ def partition_email(
     elif text is not None:
         _text: str = str(text)
         msg = email.message_from_string(_text)
+    else:
+        return []
     if not encoding:
         encoding = detected_encoding
 
@@ -385,6 +388,7 @@ def partition_email(
         else:
             content_map[content_type] = part.get_payload()
 
+    content = None
     if content_source in content_map:
         content = content_map.get(content_source)
     # NOTE(robinson) - If the chosen content source is not available and there is
@@ -435,7 +439,7 @@ def partition_email(
                     element.apply(_replace_mime_encodings)
                 except (UnicodeDecodeError, UnicodeError):
                     # If decoding fails, try decoding through common encodings
-                    common_encodings = []
+                    common_encodings: list[str] = []
                     for x in COMMON_ENCODINGS:
                         _x = format_encoding_str(x)
                         if _x != encoding:
