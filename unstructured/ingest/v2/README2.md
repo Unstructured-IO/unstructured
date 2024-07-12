@@ -40,11 +40,10 @@ You can run this with `python local.py` (Adjust the `input_path` and `output_dir
 The result would be a partitioned `fake-text.txt.json` file in the `local-output` directory.
 
 
-The ProcessorConfig attributes are optional, but are added to make development easier.
 
 Notice that the pipeline runs the following:
 
-* context - The ProcessorConfig runs the pipeline. The arguments are related to the overall pipeline.
+* context - The ProcessorConfig runs the pipeline. The arguments are related to the overall pipeline. We added some optional args to make development easier.
 * source_connection - Takes arguments needed to connect to the source. Local files don't need anything here. Other connectors will.
 * indexer - Takes the files in the `input_path` and creates .json files that point the downloader step to the right files 
 * downloader - This does the actual downloading of the raw files (for non-blob files it may do something different like create a .txt file for every row in a source table)
@@ -80,7 +79,7 @@ If you look through the file you will notice these Classes (actually @dataclasse
 
 * LocalIndexerConfig - Holds information
 
-* LocalIndexer
+* LocalIndexer - BLABLABLA
 
 * LocalDownloaderConfig
 
@@ -97,7 +96,7 @@ If you look through the file you will notice these Classes (actually @dataclasse
 
 
 ## Building a Destination Connector
-We'll start with a Destination Connector because those are the easier to build.
+We'll start with a Destination Connector because those are the easier to build than Source Connectors.
 
 In this case we'll use the Chroma vector database destination because:
 
@@ -199,13 +198,17 @@ Let's take a quick look at the `upload_stage` in  working directory:
 ```
 chroma-working-dir
 - chunk
+  - f0987c36c3b0.json
 - embed
+  - dafc7add1d21.json
 - index
+  - a4a1035d57ed.json
 - partition
+  - 36caa9b04378.json
 - upload_stage
   - e17715933baf.json
 ```
-e17715933baf.json is a json file which is appropriate for this destination connector. But it could very well be a .csv if the uploader is a relational database. Or if the destination is blob(file) storage you 
+`e17715933baf.json` in the `upload_stage` is a `.json` file which is appropriate for this destination connector. But it could very well be a `.csv` if the uploader is a relational database. Or if the destination is blob(file) storage, like AWS S3, you may not need the Staging phase. The embed `.json` file would be uploaded directly.
 
 
 
