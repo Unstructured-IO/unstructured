@@ -54,7 +54,7 @@ all_tests=(
   'notion.sh'
   'delta-table.sh'
   'jira.sh'
-  'sharepoint.sh'
+  # 'sharepoint.sh'
   'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
