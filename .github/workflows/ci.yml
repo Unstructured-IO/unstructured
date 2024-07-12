@@ -165,407 +165,407 @@ jobs:
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
-  test_chipper:
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Test
-      env:
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-      run: |
-        source .venv/bin/activate
-        sudo apt-get update
-        sudo apt-get install -y poppler-utils
-        make install-pandoc install-test
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
-        make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
-
-  test_unit_no_extras:
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Test
-      env:
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-      run: |
-        source .venv/bin/activate
-        make test-no-extras CI=true
-
-  test_unit_dependency_extras:
-    # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
-    strategy:
-      matrix:
-        python-version: ["3.10"]
-        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint, test_unit_no_extras]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: actions/cache/restore@v4
-      id: virtualenv-cache
-      with:
-        path: |
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment
-      run: |
-        python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
-        source .venv-${{ matrix.extra }}/bin/activate
-        make install-base-ci
-        make install-${{ matrix.extra }}
-    - name: Test
-      env:
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      run: |
-        source .venv-${{ matrix.extra }}/bin/activate
-        # NOTE(newelh) - determine what needs to be installed here
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
-        make test-extra-${{ matrix.extra }} CI=true
-
-  setup_ingest:
-    strategy:
-      matrix:
-        python-version: [ "3.9","3.10" ]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/base-ingest-cache
-        with:
-          python-version: ${{ matrix.python-version }}
-
-  test_ingest_unit:
-    strategy:
-      matrix:
-        python-version: [ "3.9","3.10" ]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [ setup_ingest, lint ]
-    steps:
-      # actions/checkout MUST come before auth
-      - uses: 'actions/checkout@v4'
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Get full Python version
-        id: full-python-version
-        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-      - name: Setup virtual environment
-        uses: ./.github/actions/base-ingest-cache
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Test Ingest (unit)
-        run: |
-          source .venv/bin/activate
-          PYTHONPATH=. pytest test_unstructured_ingest/unit
-
-
-  test_ingest_src:
-    strategy:
-      matrix:
-        python-version: ["3.9","3.10"]
-    runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup_ingest, lint]
-    steps:
-    # actions/checkout MUST come before auth
-    - uses: 'actions/checkout@v4'
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Get full Python version
-      id: full-python-version
-      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-ingest-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup docker-compose
-      uses: KengoTODA/actions-setup-docker-compose@v1
-      with:
-        version: '2.22.0'
-    - name: Test (end-to-end)
-      env:
-        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
-        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
-        CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
-        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
-        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
-        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
-        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
-        HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
-        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
-        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
-        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
-        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
-        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
-        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
-        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
-        SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
-        SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
-        SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
-        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
-        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
-        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
-        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
-        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
-        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
-        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
-        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
-        ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
-        ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
-        TABLE_OCR: "tesseract"
-        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
-        CI: "true"
-      run: |
-        source .venv/bin/activate
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr
-        sudo apt-get install -y tesseract-ocr-kor
-        sudo apt-get install diffstat
-        tesseract --version
-        ./test_unstructured_ingest/test-ingest-src.sh
-
-
-  test_ingest_dest:
-    environment: ci
-    strategy:
-      matrix:
-        python-version: ["3.9","3.10"]
-    runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup_ingest, lint]
-    steps:
-    # actions/checkout MUST come before auth
-    - uses: 'actions/checkout@v4'
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Get full Python version
-      id: full-python-version
-      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-ingest-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup docker-compose
-      uses: KengoTODA/actions-setup-docker-compose@v1
-      with:
-        version: '2.22.0'
-    - name: Test (end-to-end)
-      env:
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        S3_INGEST_TEST_ACCESS_KEY: ${{ secrets.S3_INGEST_TEST_ACCESS_KEY }}
-        S3_INGEST_TEST_SECRET_KEY: ${{ secrets.S3_INGEST_TEST_SECRET_KEY }}
-        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
-        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
-        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
-        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
-        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
-        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
-        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
-        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
-        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
-        VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
-        VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
-        VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
-        ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
-        ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
-        CLARIFAI_API_KEY: ${{secrets.CLARIFAI_API_KEY}}
-        DATABRICKS_HOST: ${{secrets.DATABRICKS_HOST}}
-        DATABRICKS_USERNAME: ${{secrets.DATABRICKS_USERNAME}}
-        DATABRICKS_PASSWORD: ${{secrets.DATABRICKS_PASSWORD}}
-        DATABRICKS_CATALOG: ${{secrets.DATABRICKS_CATALOG}}
-        TABLE_OCR: "tesseract"
-        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
-        CI: "true"
-      run: |
-        source .venv/bin/activate
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr
-        sudo apt-get install -y tesseract-ocr-kor
-        sudo apt-get install diffstat
-        tesseract --version
-        ./test_unstructured_ingest/test-ingest-dest.sh
-
-  test_ingest_help:
-    environment: ci
-    strategy:
-      matrix:
-        python-version: ["3.9","3.10","3.11", "3.12"]
-    runs-on: ubuntu-latest
-    needs: [setup_ingest, lint]
-    steps:
-      - uses: 'actions/checkout@v4'
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup virtual environment
-        uses: ./.github/actions/base-ingest-cache
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Validate --help
-        run: |
-          source .venv/bin/activate
-          ./test_unstructured_ingest/test-help.sh
-
-
-  test_unstructured_api_unit:
-    strategy:
-      matrix:
-        # NOTE(yuming): Unstructured API only use Python 3.10
-        python-version: ["3.10"]
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set up flag for running Unstructured API unit tests
-      run: |
-        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
-        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
-        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
-    - name: Set up Python ${{ matrix.python-version }}
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        mkdir "$NLTK_DATA"
-        make install-ci
-    - name: Test Unstructured API Unit
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      run: |
-        source .venv/bin/activate
-        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
-        make install-ci
-        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
-        make install-nltk-models
-        make test-unstructured-api-unit
-
-  changelog:
-    runs-on: ubuntu-latest
-    steps:
-    # need to checkout otherwise paths-filter will fail on merge-queue trigger
-    - uses: actions/checkout@v4
-    - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          src:
-            - 'unstructured/**'
-
-    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
-      uses: dangoslen/changelog-enforcer@v3
+#  test_chipper:
+#    strategy:
+#      matrix:
+#        python-version: ["3.10"]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+#    needs: [setup, lint]
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Setup virtual environment
+#      uses: ./.github/actions/base-cache
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Test
+#      env:
+#        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+#      run: |
+#        source .venv/bin/activate
+#        sudo apt-get update
+#        sudo apt-get install -y poppler-utils
+#        make install-pandoc install-test
+#        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#        sudo apt-get update
+#        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+#        tesseract --version
+#        make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+#
+#  test_unit_no_extras:
+#    strategy:
+#      matrix:
+#        python-version: ["3.10"]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup, lint]
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Setup virtual environment
+#      uses: ./.github/actions/base-cache
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Test
+#      env:
+#        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+#      run: |
+#        source .venv/bin/activate
+#        make test-no-extras CI=true
+#
+#  test_unit_dependency_extras:
+#    # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
+#    strategy:
+#      matrix:
+#        python-version: ["3.10"]
+#        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup, lint, test_unit_no_extras]
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - uses: actions/cache/restore@v4
+#      id: virtualenv-cache
+#      with:
+#        path: |
+#          nltk_data
+#        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
+#    - name: Setup virtual environment
+#      run: |
+#        python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
+#        source .venv-${{ matrix.extra }}/bin/activate
+#        make install-base-ci
+#        make install-${{ matrix.extra }}
+#    - name: Test
+#      env:
+#        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+#        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+#      run: |
+#        source .venv-${{ matrix.extra }}/bin/activate
+#        # NOTE(newelh) - determine what needs to be installed here
+#        sudo apt-get update
+#        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+#        make install-pandoc
+#        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#        sudo apt-get update
+#        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+#        tesseract --version
+#        make test-extra-${{ matrix.extra }} CI=true
+#
+#  setup_ingest:
+#    strategy:
+#      matrix:
+#        python-version: [ "3.9","3.10" ]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup]
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: ./.github/actions/base-ingest-cache
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#
+#  test_ingest_unit:
+#    strategy:
+#      matrix:
+#        python-version: [ "3.9","3.10" ]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [ setup_ingest, lint ]
+#    steps:
+#      # actions/checkout MUST come before auth
+#      - uses: 'actions/checkout@v4'
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Get full Python version
+#        id: full-python-version
+#        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+#      - name: Setup virtual environment
+#        uses: ./.github/actions/base-ingest-cache
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Test Ingest (unit)
+#        run: |
+#          source .venv/bin/activate
+#          PYTHONPATH=. pytest test_unstructured_ingest/unit
+#
+#
+#  test_ingest_src:
+#    strategy:
+#      matrix:
+#        python-version: ["3.9","3.10"]
+#    runs-on: ubuntu-latest-m
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup_ingest, lint]
+#    steps:
+#    # actions/checkout MUST come before auth
+#    - uses: 'actions/checkout@v4'
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Get full Python version
+#      id: full-python-version
+#      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+#    - name: Setup virtual environment
+#      uses: ./.github/actions/base-ingest-cache
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Setup docker-compose
+#      uses: KengoTODA/actions-setup-docker-compose@v1
+#      with:
+#        version: '2.22.0'
+#    - name: Test (end-to-end)
+#      env:
+#        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
+#        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+#        CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+#        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+#        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+#        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+#        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+#        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+#        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+#        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+#        HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
+#        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
+#        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
+#        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+#        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+#        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+#        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+#        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+#        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
+#        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+#        SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
+#        SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
+#        SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
+#        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
+#        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
+#        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+#        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+#        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+#        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
+#        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+#        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+#        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+#        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+#        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+#        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+#        OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
+#        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
+#        ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+#        ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
+#        TABLE_OCR: "tesseract"
+#        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+#        CI: "true"
+#      run: |
+#        source .venv/bin/activate
+#        sudo apt-get update
+#        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+#        make install-pandoc
+#        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#        sudo apt-get update
+#        sudo apt-get install -y tesseract-ocr
+#        sudo apt-get install -y tesseract-ocr-kor
+#        sudo apt-get install diffstat
+#        tesseract --version
+#        ./test_unstructured_ingest/test-ingest-src.sh
+#
+#
+#  test_ingest_dest:
+#    environment: ci
+#    strategy:
+#      matrix:
+#        python-version: ["3.9","3.10"]
+#    runs-on: ubuntu-latest-m
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup_ingest, lint]
+#    steps:
+#    # actions/checkout MUST come before auth
+#    - uses: 'actions/checkout@v4'
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Get full Python version
+#      id: full-python-version
+#      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+#    - name: Setup virtual environment
+#      uses: ./.github/actions/base-ingest-cache
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Setup docker-compose
+#      uses: KengoTODA/actions-setup-docker-compose@v1
+#      with:
+#        version: '2.22.0'
+#    - name: Test (end-to-end)
+#      env:
+#        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        S3_INGEST_TEST_ACCESS_KEY: ${{ secrets.S3_INGEST_TEST_ACCESS_KEY }}
+#        S3_INGEST_TEST_SECRET_KEY: ${{ secrets.S3_INGEST_TEST_SECRET_KEY }}
+#        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+#        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+#        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+#        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+#        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+#        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+#        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+#        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+#        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+#        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+#        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
+#        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
+#        VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
+#        VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
+#        VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
+#        ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+#        ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
+#        CLARIFAI_API_KEY: ${{secrets.CLARIFAI_API_KEY}}
+#        DATABRICKS_HOST: ${{secrets.DATABRICKS_HOST}}
+#        DATABRICKS_USERNAME: ${{secrets.DATABRICKS_USERNAME}}
+#        DATABRICKS_PASSWORD: ${{secrets.DATABRICKS_PASSWORD}}
+#        DATABRICKS_CATALOG: ${{secrets.DATABRICKS_CATALOG}}
+#        TABLE_OCR: "tesseract"
+#        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+#        CI: "true"
+#      run: |
+#        source .venv/bin/activate
+#        sudo apt-get update
+#        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+#        make install-pandoc
+#        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#        sudo apt-get update
+#        sudo apt-get install -y tesseract-ocr
+#        sudo apt-get install -y tesseract-ocr-kor
+#        sudo apt-get install diffstat
+#        tesseract --version
+#        ./test_unstructured_ingest/test-ingest-dest.sh
+#
+#  test_ingest_help:
+#    environment: ci
+#    strategy:
+#      matrix:
+#        python-version: ["3.9","3.10","3.11", "3.12"]
+#    runs-on: ubuntu-latest
+#    needs: [setup_ingest, lint]
+#    steps:
+#      - uses: 'actions/checkout@v4'
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Setup virtual environment
+#        uses: ./.github/actions/base-ingest-cache
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Validate --help
+#        run: |
+#          source .venv/bin/activate
+#          ./test_unstructured_ingest/test-help.sh
+#
+#
+#  test_unstructured_api_unit:
+#    strategy:
+#      matrix:
+#        # NOTE(yuming): Unstructured API only use Python 3.10
+#        python-version: ["3.10"]
+#    runs-on: ubuntu-latest
+#    env:
+#      NLTK_DATA: ${{ github.workspace }}/nltk_data
+#    needs: [setup, lint]
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Setup virtual environment
+#      uses: ./.github/actions/base-cache
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Set up flag for running Unstructured API unit tests
+#      run: |
+#        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
+#        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
+#        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
+#    - name: Set up Python ${{ matrix.python-version }}
+#      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+#      uses: actions/setup-python@v5
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#    - name: Setup virtual environment (no cache hit)
+#      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+#      run: |
+#        python${{ matrix.python-version}} -m venv .venv
+#        source .venv/bin/activate
+#        mkdir "$NLTK_DATA"
+#        make install-ci
+#    - name: Test Unstructured API Unit
+#      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
+#      run: |
+#        source .venv/bin/activate
+#        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+#        make install-ci
+#        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
+#        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+#        sudo apt-get update
+#        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+#        tesseract --version
+#        make install-nltk-models
+#        make test-unstructured-api-unit
+#
+#  changelog:
+#    runs-on: ubuntu-latest
+#    steps:
+#    # need to checkout otherwise paths-filter will fail on merge-queue trigger
+#    - uses: actions/checkout@v4
+#    - if: github.ref != 'refs/heads/main'
+#      uses: dorny/paths-filter@v3
+#      id: changes
+#      with:
+#        filters: |
+#          src:
+#            - 'unstructured/**'
+#
+#    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+#      uses: dangoslen/changelog-enforcer@v3
 
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
-  test_dockerfile:
-    runs-on: ubuntu-latest-m
-    needs: [ setup, lint ]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Test Dockerfile
-        run: |
-          echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-          make docker-build
-          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
-      - name: Scan image
-        uses: anchore/scan-action@v3
-        with:
-          image: "unstructured:dev"
-          severity-cutoff: critical
-          only-fixed: true
+#  test_dockerfile:
+#    runs-on: ubuntu-latest-m
+#    needs: [ setup, lint ]
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Test Dockerfile
+#        run: |
+#          echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+#          make docker-build
+#          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+#      - name: Scan image
+#        uses: anchore/scan-action@v3
+#        with:
+#          image: "unstructured:dev"
+#          severity-cutoff: critical
+#          only-fixed: true
