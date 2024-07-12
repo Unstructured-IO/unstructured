@@ -148,6 +148,7 @@ jobs:
         TESSERACT_VERSION : "5.4.1"
       run: |
         source .venv/bin/activate
+        python --version
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
