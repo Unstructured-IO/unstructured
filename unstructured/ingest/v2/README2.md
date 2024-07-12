@@ -194,7 +194,7 @@ Let's look at the python file that it runs BLABLABLA
 
 * chroma_destination_entry - Registers the Chroma destination connector with the pipeline. (!!! LINK `unstructured/ingest/v2/processes/connectors/__init__.py`)
 
-Let's take a quick look at the working directory:
+Let's take a quick look at the `upload_stage` in  working directory:
 ```
 chroma-working-dir
 - chunk
@@ -202,7 +202,9 @@ chroma-working-dir
 - index
 - partition
 - upload_stage
+  - e17715933baf.json
 ```
+e17715933baf.json is a json file which is appropriate for this destination connector. But it could very well be a .csv if the uploader is a relational database. Or if the destination is blob(file) storage you 
 
 
 
@@ -210,11 +212,4 @@ chroma-working-dir
 
 
 
-
-
-
-
-## More Advanced Pipeline (S3 Source)
-Here is a more advanced pipeline with an S3 source connector, followed by a partioner, and then ending with a local connector. 
->This is the type of Python file you'll want to create while developing a new **source** connector so that you can iterate on your source connector.
 
