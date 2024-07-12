@@ -533,7 +533,10 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
 
     print("[")
     for e in elements[:10]:
-        print(f"{e.metadata.detection_origin}-{type(e).__name__}({repr(e.text)}),")
+        detection_origin = e.metadata.detection_origin
+        x1, y1 = e.metadata.coordinates.points[0]
+        x2, y2 = e.metadata.coordinates.points[2]
+        print(f"{detection_origin}-({x1, y1, x2, y2})-{type(e).__name__}({repr(e.text)}),")
     print("]")
 
     pytest.fail("WIP Inspection")
