@@ -210,6 +210,17 @@ chroma-working-dir
 ```
 `e17715933baf.json` in the `upload_stage` is a `.json` file which is appropriate for this destination connector. But it could very well be a `.csv` if the uploader is a relational database. Or if the destination is blob(file) storage, like AWS S3, you may not need the Staging phase. The embed `.json` file would be uploaded directly.
 
+When you make a **new** Destination Connector you will need these files first:
+
+`unstructured/ingest/v2/processes/connectors/your_connector.py`
+
+BLABLABLA
+
+And add to:
+
+`unstructured/ingest/v2/processes/connectors/__init__.py`
+
+BLABLABLA
 
 
 
