@@ -65,7 +65,7 @@ local-working-dir
   - 36caa9b04378.json
 ```
 
-(Note that the index and partition file names are deterministic and based on the BLABLABLA) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a .json since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a file, the output will be BLABLABLA.
+(Note that the index and partition file names are deterministic and based on the BLABLABLA) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a `.json` extension since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a source file, the output will be BLABLABLA.
 
 You can see the source/destination connector file that it runs here:
 
@@ -96,7 +96,7 @@ If you look through the file you will notice these Classes (actually @dataclasse
 
 
 ## Building a Destination Connector
-We'll start with a Destination Connector because those are the easier to build than Source Connectors.
+We'll start with building a Destination Connector because those are the easier to build than Source Connectors.
 
 In this case we'll use the Chroma vector database destination because:
 
