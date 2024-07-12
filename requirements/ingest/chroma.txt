@@ -37,9 +37,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-chroma-hnswlib==0.7.3
+chroma-hnswlib==0.7.5
     # via chromadb
-chromadb==0.5.3
+chromadb==0.5.4
     # via -r ./ingest/chroma.in
 click==8.1.7
     # via
@@ -70,7 +70,7 @@ google-auth==2.32.0
     # via kubernetes
 googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.64.1
+grpcio==1.65.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -216,7 +216,6 @@ pyyaml==6.0.1
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
-    #   chromadb
     #   huggingface-hub
     #   kubernetes
     #   posthog
