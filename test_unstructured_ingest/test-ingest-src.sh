@@ -68,7 +68,8 @@ all_tests=(
 )
 
 full_python_matrix_tests=(
-  'sharepoint.sh'
+# NOTE(christine): re-enable the test when the github secrets are updated
+#  'sharepoint.sh'
   'local.sh'
   'local-single-file.sh'
   'local-single-file-with-encoding.sh'
