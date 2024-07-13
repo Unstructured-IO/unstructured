@@ -8,13 +8,13 @@ anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via anyio
 h11==0.14.0
     # via httpcore

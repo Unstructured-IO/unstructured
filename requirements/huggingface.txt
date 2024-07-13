@@ -4,7 +4,7 @@
 #
 #    pip-compile ./huggingface.in
 #
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -86,7 +86,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.12.1
+sympy==1.13.0
     # via torch
 tokenizers==0.19.1
     # via transformers
@@ -100,7 +100,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.41.2
+transformers==4.42.4
     # via -r ./huggingface.in
 typing-extensions==4.12.2
     # via

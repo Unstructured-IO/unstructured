@@ -8,7 +8,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   requests
@@ -67,7 +67,7 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via -r ./base.in
 regex==2024.5.15
     # via nltk

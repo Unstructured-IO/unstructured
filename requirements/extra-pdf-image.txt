@@ -8,7 +8,7 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.3.3
     # via google-auth
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -39,22 +39,22 @@ filelock==3.15.4
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.53.0
+fonttools==4.53.1
     # via matplotlib
 fsspec==2024.5.0
     # via
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.19.0
+google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.30.0
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.7.2
+google-cloud-vision==3.7.3
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
@@ -122,7 +122,7 @@ onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.18.0
+onnxruntime==1.18.1
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
@@ -150,11 +150,11 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.1
+pdfplumber==0.11.2
     # via layoutparser
 pikepdf==9.0.0
     # via -r ./extra-pdf-image.in
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   layoutparser
     #   matplotlib
@@ -165,7 +165,7 @@ pillow==10.3.0
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.16.0
+pillow-heif==0.17.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.0
     # via iopath
@@ -221,7 +221,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -249,7 +249,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.12.1
+sympy==1.13.0
     # via
     #   onnxruntime
     #   torch
@@ -276,7 +276,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.41.2
+transformers==4.42.4
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

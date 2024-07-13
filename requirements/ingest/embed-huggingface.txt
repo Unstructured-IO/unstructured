@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -112,7 +112,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-orjson==3.10.5
+orjson==3.10.6
     # via langsmith
 packaging==23.2
     # via
@@ -122,14 +122,14 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.3.0
+pillow==10.4.0
     # via sentence-transformers
-pydantic==2.7.4
+pydantic==2.8.2
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -152,7 +152,7 @@ requests==2.32.3
     #   transformers
 safetensors==0.4.3
     # via transformers
-scikit-learn==1.5.0
+scikit-learn==1.5.1
     # via sentence-transformers
 scipy==1.11.3
     # via
@@ -165,9 +165,9 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-sympy==1.12.1
+sympy==1.13.0
     # via torch
-tenacity==8.4.1
+tenacity==8.5.0
     # via
     #   langchain
     #   langchain-community
@@ -186,7 +186,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.41.2
+transformers==4.42.4
     # via sentence-transformers
 typing-extensions==4.12.2
     # via

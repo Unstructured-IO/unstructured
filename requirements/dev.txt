@@ -40,7 +40,7 @@ bleach==6.1.0
     # via nbconvert
 build==1.2.1
     # via pip-tools
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -66,7 +66,7 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.8.1
+debugpy==1.8.2
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -74,7 +74,7 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.8
     # via virtualenv
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./test.txt
     #   anyio
@@ -92,7 +92,7 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via jupyterlab
-identify==2.5.36
+identify==2.6.0
     # via pre-commit
 idna==3.7
     # via
@@ -111,7 +111,7 @@ importlib-metadata==7.1.0
     #   jupyterlab
     #   jupyterlab-server
     #   nbconvert
-ipykernel==6.29.4
+ipykernel==6.29.5
     # via
     #   jupyter
     #   jupyter-console
@@ -140,7 +140,7 @@ json5==0.9.25
     # via jupyterlab-server
 jsonpointer==3.0.0
     # via jsonschema
-jsonschema[format-nongpl]==4.22.0
+jsonschema[format-nongpl]==4.23.0
     # via
     #   -c ./test.txt
     #   jupyter-events
@@ -177,7 +177,7 @@ jupyter-events==0.10.0
     # via jupyter-server
 jupyter-lsp==2.2.5
     # via jupyterlab
-jupyter-server==2.14.1
+jupyter-server==2.14.2
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -186,7 +186,7 @@ jupyter-server==2.14.1
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.2
+jupyterlab==4.2.3
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -329,7 +329,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.18.1
+rpds-py==0.19.0
     # via
     #   -c ./test.txt
     #   jsonschema

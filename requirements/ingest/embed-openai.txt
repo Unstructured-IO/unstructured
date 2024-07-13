@@ -23,7 +23,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -40,7 +40,7 @@ dataclasses-json==0.6.7
     #   langchain-community
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via anyio
 frozenlist==1.4.1
     # via
@@ -98,9 +98,9 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-openai==1.35.3
+openai==1.35.13
     # via -r ./ingest/embed-openai.in
-orjson==3.10.5
+orjson==3.10.6
     # via langsmith
 packaging==23.2
     # via
@@ -108,13 +108,13 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.4
+pydantic==2.8.2
     # via
     #   langchain
     #   langchain-core
     #   langsmith
     #   openai
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -141,7 +141,7 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-tenacity==8.4.1
+tenacity==8.5.0
     # via
     #   langchain
     #   langchain-community
