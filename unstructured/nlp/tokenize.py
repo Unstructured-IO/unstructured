@@ -83,20 +83,20 @@ def download_nltk_packages():
                 sha256.update(block)
         return sha256.hexdigest()
 
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        tgz_file = tmp_file.name
-        urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file)
+    with tempfile.TemporaryDirectory() as temp_dir_path:
+        tgz_file_path = os.path.join(temp_dir_path, "nltk_data.tgz")
+        urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file_path)
 
-        file_hash = sha256_checksum(tgz_file)
+        file_hash = sha256_checksum(tgz_file_path)
         if file_hash != NLTK_DATA_SHA256:
-            os.remove(tgz_file)
+            os.remove(tgz_file_path)
             raise ValueError(f"SHA-256 mismatch: expected {NLTK_DATA_SHA256}, got {file_hash}")
 
         # Extract the contents
         if not os.path.exists(nltk_data_dir):
             os.makedirs(nltk_data_dir)
 
-        with tarfile.open(tgz_file, "r:gz") as tar:
+        with tarfile.open(tgz_file_path, "r:gz") as tar:
             tar.extractall(path=nltk_data_dir)
 
 
