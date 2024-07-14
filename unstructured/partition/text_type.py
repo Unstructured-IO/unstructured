@@ -19,6 +19,7 @@ from unstructured.nlp.patterns import (
     EMAIL_ADDRESS_PATTERN_RE,
     ENDS_IN_PUNCT_RE,
     NUMBERED_LIST_RE,
+    SPLITTED_WORDS_RE,
     UNICODE_BULLETS_RE,
     US_CITY_STATE_ZIP_RE,
     US_PHONE_NUMBERS_RE,
@@ -317,3 +318,8 @@ def is_email_address(text: str) -> bool:
 def is_possible_numbered_list(text: str) -> bool:
     """Checks to see if the text is a potential numbered list."""
     return NUMBERED_LIST_RE.match(text.strip()) is not None
+
+
+def is_having_splitted_words(text: str) -> bool:
+    """Checks if the given text has words that continue on the following line"""
+    return SPLITTED_WORDS_RE.search(text.strip()) is not None

@@ -104,6 +104,20 @@ def clean_ligatures(text) -> str:
     return cleaned_text
 
 
+def clean_splitted_words(text: str, pattern: str = r"(\w+)-\s+(\w+)") -> str:
+    """
+    The `clean_splitted_words` function removes the hyphen and whitespace
+    between two words in a given text.
+
+    :param text: A string that contains the text to be cleaned
+    :type text: str
+    :return: modified version of the input text where any occurrence of a word followed by a hyphen
+    and whitespace, followed by another word, is replaced with just the two words
+    concatenated together.
+    """
+    return re.sub(pattern, r"\1\2", text)
+
+
 def group_bullet_paragraph(paragraph: str) -> list:
     """Groups paragraphs with bullets that have line breaks for visual/formatting purposes.
     For example:

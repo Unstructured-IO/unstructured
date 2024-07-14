@@ -6,10 +6,7 @@ import textwrap
 from typing import IO, Any, Callable, Literal, Optional
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.cleaners.core import (
-    auto_paragraph_grouper,
-    clean_bullets,
-)
+from unstructured.cleaners.core import auto_paragraph_grouper, clean_bullets, clean_splitted_words
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     Address,
@@ -37,6 +34,7 @@ from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
+    is_having_splitted_words,
     is_possible_narrative_text,
     is_possible_numbered_list,
     is_possible_title,
@@ -166,6 +164,11 @@ def _partition_text(
         )
     elif text is not None:
         file_text = str(text)
+
+    # NOTE(sksharma0): if there are words that continue on the following line,
+    # merge them into single word
+    if is_having_splitted_words(file_text):
+        file_text = clean_splitted_words(file_text)
 
     if paragraph_grouper is False:
         pass
