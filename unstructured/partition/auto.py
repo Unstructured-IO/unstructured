@@ -307,7 +307,17 @@ def partition(
         pdf_infer_table_structure,
     )
 
-    if filetype == FileType.DOC:
+    if filetype == FileType.CSV:
+        _partition_csv = _get_partition_with_extras("csv")
+        elements = _partition_csv(
+            filename=filename,
+            file=file,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.DOC:
         _partition_doc = _get_partition_with_extras("doc")
         elements = _partition_doc(
             filename=filename,
@@ -331,52 +341,11 @@ def partition(
             strategy=strategy,
             **kwargs,
         )
-    elif filetype == FileType.ODT:
-        _partition_odt = _get_partition_with_extras("odt")
-        elements = _partition_odt(
-            filename=filename,
-            file=file,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-            strategy=strategy,
-            **kwargs,
-        )
     elif filetype == FileType.EML:
         elements = partition_email(
             filename=filename,
             file=file,
             encoding=encoding,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.MSG:
-        _partition_msg = _get_partition_with_extras("msg")
-        elements = _partition_msg(
-            filename=filename,
-            file=file,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.HTML:
-        elements = partition_html(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            encoding=encoding,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.XML:
-        elements = partition_xml(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            xml_keep_tags=xml_keep_tags,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             **kwargs,
@@ -392,54 +361,14 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.ORG:
-        _partition_org = _get_partition_with_extras("org")
-        elements = _partition_org(
+    elif filetype == FileType.HTML:
+        elements = partition_html(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
+            encoding=encoding,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.RST:
-        _partition_rst = _get_partition_with_extras("rst")
-        elements = _partition_rst(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.MD:
-        _partition_md = _get_partition_with_extras("md")
-        elements = _partition_md(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.PDF:
-        _partition_pdf = _get_partition_with_extras("pdf")
-        elements = _partition_pdf(
-            filename=filename,
-            file=file,
-            url=None,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            strategy=strategy,
-            languages=languages,
-            hi_res_model_name=hi_res_model_name or model_name,
-            extract_images_in_pdf=extract_images_in_pdf,
-            extract_image_block_types=extract_image_block_types,
-            extract_image_block_output_dir=extract_image_block_output_dir,
-            extract_image_block_to_payload=extract_image_block_to_payload,
-            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype in IMAGE_FILETYPES:
@@ -460,25 +389,71 @@ def partition(
             starting_page_number=starting_page_number,
             **kwargs,
         )
-    elif filetype == FileType.TXT:
-        elements = partition_text(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            paragraph_grouper=paragraph_grouper,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.RTF:
-        _partition_rtf = _get_partition_with_extras("rtf")
-        elements = _partition_rtf(
+    elif filetype == FileType.JSON:
+        if not is_json_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected a JSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
+        elements = partition_json(filename=filename, file=file, **kwargs)
+    elif filetype == FileType.MD:
+        _partition_md = _get_partition_with_extras("md")
+        elements = _partition_md(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.MSG:
+        _partition_msg = _get_partition_with_extras("msg")
+        elements = _partition_msg(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.ODT:
+        _partition_odt = _get_partition_with_extras("odt")
+        elements = _partition_odt(
+            filename=filename,
+            file=file,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
+            strategy=strategy,
+            **kwargs,
+        )
+    elif filetype == FileType.ORG:
+        _partition_org = _get_partition_with_extras("org")
+        elements = _partition_org(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.PDF:
+        _partition_pdf = _get_partition_with_extras("pdf")
+        elements = _partition_pdf(
+            filename=filename,
+            file=file,
+            url=None,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            strategy=strategy,
+            languages=languages,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.PPT:
@@ -506,29 +481,23 @@ def partition(
             strategy=strategy,
             **kwargs,
         )
-    elif filetype == FileType.JSON:
-        if not is_json_processable(filename=filename, file=file):
-            raise ValueError(
-                "Detected a JSON file that does not conform to the Unstructured schema. "
-                "partition_json currently only processes serialized Unstructured output.",
-            )
-        elements = partition_json(filename=filename, file=file, **kwargs)
-    elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
-        _partition_xlsx = _get_partition_with_extras("xlsx")
-        elements = _partition_xlsx(
+    elif filetype == FileType.RST:
+        _partition_rst = _get_partition_with_extras("rst")
+        elements = _partition_rst(
             filename=filename,
             file=file,
+            include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
             **kwargs,
         )
-    elif filetype == FileType.CSV:
-        _partition_csv = _get_partition_with_extras("csv")
-        elements = _partition_csv(
+    elif filetype == FileType.RTF:
+        _partition_rtf = _get_partition_with_extras("rtf")
+        elements = _partition_rtf(
             filename=filename,
             file=file,
+            include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
@@ -539,6 +508,37 @@ def partition(
         elements = _partition_tsv(
             filename=filename,
             file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.TXT:
+        elements = partition_text(
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            paragraph_grouper=paragraph_grouper,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype in (FileType.XLS, FileType.XLSX):
+        _partition_xlsx = _get_partition_with_extras("xlsx")
+        elements = _partition_xlsx(
+            filename=filename,
+            file=file,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
+            **kwargs,
+        )
+    elif filetype == FileType.XML:
+        elements = partition_xml(
+            filename=filename,
+            file=file,
+            encoding=encoding,
+            xml_keep_tags=xml_keep_tags,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             **kwargs,
