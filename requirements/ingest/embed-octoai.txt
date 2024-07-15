@@ -11,7 +11,7 @@ anyio==3.7.1
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
     #   openai
-certifi==2024.7.4
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -24,7 +24,7 @@ charset-normalizer==3.3.2
     #   requests
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.2
+exceptiongroup==1.2.1
     # via anyio
 h11==0.14.0
     # via httpcore
@@ -38,11 +38,11 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.35.13
+openai==1.35.3
     # via -r ./ingest/embed-octoai.in
-pydantic==2.8.2
+pydantic==2.7.4
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.18.4
     # via pydantic
 regex==2024.5.15
     # via

@@ -10,7 +10,7 @@ beautifulsoup4==4.12.3
     # via
     #   -c ./ingest/../base.txt
     #   atlassian-python-api
-certifi==2024.7.4
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

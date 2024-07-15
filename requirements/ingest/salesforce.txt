@@ -6,7 +6,7 @@
 #
 attrs==23.2.0
     # via zeep
-certifi==2024.7.4
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
