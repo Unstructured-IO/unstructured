@@ -11,8 +11,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -153,22 +151,16 @@ class SftpUploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=SftpIndexer,
-        indexer_config=SftpIndexerConfig,
-        downloader=SftpDownloader,
-        downloader_config=SftpDownloaderConfig,
-        connection_config=SftpConnectionConfig,
-    ),
+sftp_source_entry = SourceRegistryEntry(
+    indexer=SftpIndexer,
+    indexer_config=SftpIndexerConfig,
+    downloader=SftpDownloader,
+    downloader_config=SftpDownloaderConfig,
+    connection_config=SftpConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=SftpUploader,
-        uploader_config=SftpUploaderConfig,
-        connection_config=SftpConnectionConfig,
-    ),
+sftp_destination_entry = DestinationRegistryEntry(
+    uploader=SftpUploader,
+    uploader_config=SftpUploaderConfig,
+    connection_config=SftpConnectionConfig,
 )

@@ -1,0 +1,3 @@
+-c ../deps/constraints.txt
+-c ../base.txt
+singlestoredb

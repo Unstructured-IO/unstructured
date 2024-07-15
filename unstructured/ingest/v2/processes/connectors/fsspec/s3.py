@@ -1,3 +1,4 @@
+import contextlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -10,8 +11,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -81,16 +80,22 @@ class S3Indexer(FsspecIndexer):
         info: dict[str, Any] = self.fs.info(path)
         if etag := info.get("ETag"):
             version = str(etag).rstrip('"').lstrip('"')
+        metadata: dict[str, str] = {}
+        with contextlib.suppress(AttributeError):
+            metadata = self.fs.metadata(path)
+        record_locator = {
+            "protocol": self.index_config.protocol,
+            "remote_file_path": self.index_config.remote_url,
+        }
+        if metadata:
+            record_locator["metadata"] = metadata
         return DataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
             version=version,
             url=f"{self.index_config.protocol}://{path}",
-            record_locator={
-                "protocol": self.index_config.protocol,
-                "remote_file_path": self.index_config.remote_url,
-            },
+            record_locator=record_locator,
         )
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
@@ -143,22 +148,16 @@ class S3Uploader(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=S3Indexer,
-        indexer_config=S3IndexerConfig,
-        downloader=S3Downloader,
-        downloader_config=S3DownloaderConfig,
-        connection_config=S3ConnectionConfig,
-    ),
+s3_source_entry = SourceRegistryEntry(
+    indexer=S3Indexer,
+    indexer_config=S3IndexerConfig,
+    downloader=S3Downloader,
+    downloader_config=S3DownloaderConfig,
+    connection_config=S3ConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=S3Uploader,
-        uploader_config=S3UploaderConfig,
-        connection_config=S3ConnectionConfig,
-    ),
+s3_destination_entry = DestinationRegistryEntry(
+    uploader=S3Uploader,
+    uploader_config=S3UploaderConfig,
+    connection_config=S3ConnectionConfig,
 )

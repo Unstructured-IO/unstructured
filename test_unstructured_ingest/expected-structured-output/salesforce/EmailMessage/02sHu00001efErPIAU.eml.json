@@ -1,98 +1,29 @@
 [
   {
-    "element_id": "0773da7069b4dacf1ec43e7a1d39f26e",
+    "type": "NarrativeText",
+    "element_id": "4196fe41da19e8657761ecffcafd3d2f",
+    "text": "Jane. This is a test of sending you an email from Salesforce! _____________________________________________________________________ Powered by Salesforce http://www.salesforce.com/",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-08-20T14:34:16",
-        "date_modified": "2023-08-21T14:34:16",
-        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
-        "version": "2023-09-14T11:40:03.000+0000"
-      },
-      "filetype": "message/rfc822",
-      "languages": [
-        "eng"
-      ],
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
       ],
       "sent_to": [
         "jane_gray@uoa.edu"
       ],
-      "subject": "Test of email 1"
-    },
-    "text": "Jane. This is a test of sending you an email from Salesforce!",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "ad17b8af68c2c668b2219926d2fecde9",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-20T14:34:16",
-        "date_modified": "2023-08-21T14:34:16",
-        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
-        "version": "2023-09-14T11:40:03.000+0000"
-      },
-      "filetype": "message/rfc822",
+      "subject": "Test of email 1",
       "languages": [
         "eng"
       ],
-      "sent_from": [
-        "devops+salesforce-connector@unstructured.io"
-      ],
-      "sent_to": [
-        "jane_gray@uoa.edu"
-      ],
-      "subject": "Test of email 1"
-    },
-    "text": "_____________________________________________________________________",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "02b3c747f7c5e0e553feb0f99c8a561f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-20T14:34:16",
-        "date_modified": "2023-08-21T14:34:16",
-        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
-        "version": "2023-09-14T11:40:03.000+0000"
-      },
       "filetype": "message/rfc822",
-      "languages": [
-        "eng"
-      ],
-      "sent_from": [
-        "devops+salesforce-connector@unstructured.io"
-      ],
-      "sent_to": [
-        "jane_gray@uoa.edu"
-      ],
-      "subject": "Test of email 1"
-    },
-    "text": "Powered by Salesforce",
-    "type": "Title"
-  },
-  {
-    "element_id": "07a4a605bad4cb7206377108a949ce59",
-    "metadata": {
       "data_source": {
-        "date_created": "2023-08-20T14:34:16",
-        "date_modified": "2023-08-21T14:34:16",
         "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErPIAU",
-        "version": "2023-09-14T11:40:03.000+0000"
-      },
-      "filetype": "message/rfc822",
-      "languages": [
-        "eng"
-      ],
-      "sent_from": [
-        "devops+salesforce-connector@unstructured.io"
-      ],
-      "sent_to": [
-        "jane_gray@uoa.edu"
-      ],
-      "subject": "Test of email 1"
-    },
-    "text": "http://www.salesforce.com/",
-    "type": "Title"
+        "version": "1694691603.0",
+        "record_locator": {
+          "id": "02sHu00001efErPIAU"
+        },
+        "date_created": "1692542056.0",
+        "date_modified": "1692628456.0"
+      }
+    }
   }
 ]

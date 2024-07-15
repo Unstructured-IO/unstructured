@@ -58,7 +58,7 @@
         "Add a header image."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -85,7 +85,7 @@
         "Explain what the space is for."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -112,16 +112,11 @@
         "Share team goals."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "link_start_indexes": [
-        43,
-        49,
-        68
       ],
       "link_texts": [
         "OKRs",
@@ -154,7 +149,7 @@
         "Tell people how to contact you."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -244,11 +239,8 @@
       "languages": [
         "eng"
       ],
-      "link_start_indexes": [
-        186
-      ],
       "link_texts": [
-        ""
+        "Inline comments"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
@@ -337,11 +329,8 @@
       "languages": [
         "eng"
       ],
-      "link_start_indexes": [
-        0
-      ],
       "link_texts": [
-        ""
+        "@mentions"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
@@ -435,7 +424,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0702e0badc70e2f3caa9d29e353e7983",
+    "element_id": "06b459a1ab6ee59cbf44705c24934f15",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -452,7 +441,7 @@
         "eng"
       ]
     },
-    "text": "Extend the capabilities of your Confluence pages by  adding extra functionality or including dynamic content.",
+    "text": "Extend the capabilities of your Confluence pages by adding extra functionality or including dynamic content.",
     "type": "NarrativeText"
   },
   {
@@ -472,7 +461,7 @@
         "To add functionality:"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -501,7 +490,7 @@
       ]
     },
     "text": "Type ' / ' to open the list of items available to use",
-    "type": "ListItem"
+    "type": "NarrativeText"
   },
   {
     "element_id": "885e34b9230d70d0c3257eef2d3f6a0f",
@@ -522,7 +511,7 @@
       ]
     },
     "text": "Find the item to be inserted and select it",
-    "type": "ListItem"
+    "type": "NarrativeText"
   },
   {
     "element_id": "258ee604863fd54e308f2925d07ebd79",
@@ -541,7 +530,7 @@
         "Insert"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -549,7 +538,7 @@
       ]
     },
     "text": "Select Insert",
-    "type": "ListItem"
+    "type": "Title"
   },
   {
     "element_id": "04a5e0e0b40cb961c84088dcc67b26b7",
@@ -589,7 +578,7 @@
         "Introduce the team"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -615,9 +604,6 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "link_start_indexes": [
-        4
       ],
       "link_texts": [
         "user profiles"
@@ -646,7 +632,7 @@
         "Share news and announcements with your team"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -672,9 +658,6 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "link_start_indexes": [
-        27
       ],
       "link_texts": [
         "blog posts"
@@ -703,7 +686,7 @@
         "Display a list of important pages"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -729,9 +712,6 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "link_start_indexes": [
-        53
       ],
       "link_texts": [
         "content report table"
