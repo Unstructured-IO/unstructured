@@ -52,7 +52,7 @@ deprecated==1.2.14
     # via
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -70,7 +70,7 @@ google-auth==2.32.0
     # via kubernetes
 googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.65.0
+grpcio==1.64.1
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc

@@ -34,7 +34,7 @@ click==8.1.7
     #   geomet
 deprecation==2.1.0
     # via astrapy
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
