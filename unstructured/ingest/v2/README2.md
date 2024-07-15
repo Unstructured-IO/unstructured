@@ -194,6 +194,8 @@ https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2
 
 * chroma_destination_entry - Registers the Chroma destination connector with the pipeline. (!!! LINK `unstructured/ingest/v2/processes/connectors/__init__.py`)
 
+Note that the `chroma.py` file imports the official Chroma python package when it *creates* the client and not at the top of the file. This is so that BLABLABLA
+
 Let's take a quick look at the `upload_stage` in  working directory:
 ```
 chroma-working-dir
@@ -212,15 +214,42 @@ chroma-working-dir
 
 When you make a **new** Destination Connector you will need these files first:
 
-`unstructured/ingest/v2/processes/connectors/your_connector.py`
+* `unstructured/ingest/v2/processes/connectors/your_connector.py`
+* And add that to: `unstructured/ingest/v2/processes/connectors/__init__.py`
+* Your python file to iterate on development. You can call it `unstructured/ingest/v2/examples/example_your_connector.py`
+* And some form of **live connection** to the Destination service. In the case of Chroma we have a local service running. Often we will run a docker container (Elasticsearch). At other times we will use a hosted service if there is no docker image (Pinecone).
 
-BLABLABLA
+Once the connector is worked out with those files, you will need to add a few more files. 
 
-And add to:
+* `unstructured/ingest/v2/cli/cmds/your_connector.py`
+* Add that to: `unstructured/ingest/v2/cli/cmds/__init__.py`
+* Makefile
+* Manifest.in
+* setup.py
+* your_connector.in (to create the requirements file)
+* Documentation
 
-`unstructured/ingest/v2/processes/connectors/__init__.py`
+The CLI file. This allows the connector to be run via the command line. All the arguments for the connector need to be exposed.
 
-BLABLABLA
+`unstructured/ingest/v2/cli/cmds/your_connector.py`
+
+
+### Intrgration Test
+And lastly we need an executable .sh file that runs in CI/CD as an integration? test.
+
+`test_unstructured_ingest/dest/weaviate.sh` is a good example because it uses a Docker container to act as the Weaviate service. 
+
+If you run `./test_unstructured_ingest/dest/weaviate.sh` from the root it will spin up a docker container. Create a blank `elements` collection based on the schema. Partition `fake-memo.pdf`. Embed the artifact with vector embeddings. Upload the artifact to the Weaviate vector database. And then it runs `/python/test-ingest-weaviate-output.py` which counts the number of embeddings that were loaded.
+
+In an ideal world, for a vector database destination, the test will also do a vector search and validate the results. (`scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py` is an example of this.)
+
+If you can run the integration test successfully then most of the files should be in order.
+
+## Building a Source Connector
+
+
+
+
 
 
 

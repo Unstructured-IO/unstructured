@@ -10,7 +10,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
   --input-path example-docs/book-war-and-peace-1225p.txt \
-  --output-dir local-to-pinecone \
+  --output-dir local-to-sql \
   --strategy fast \
   --chunking-strategy by_title \
   --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
