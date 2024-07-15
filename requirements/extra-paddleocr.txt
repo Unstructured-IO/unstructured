@@ -136,7 +136,7 @@ scipy==1.11.3
     #   -c ././deps/constraints.txt
     #   imgaug
     #   scikit-image
-shapely==2.0.5
+shapely==2.0.4
     # via
     #   imgaug
     #   unstructured-paddleocr
