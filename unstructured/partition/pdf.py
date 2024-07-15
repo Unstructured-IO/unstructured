@@ -887,16 +887,13 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
-    ocr_agent = OCRAgent.get_agent()
+    ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
-    ocr_data = ocr_agent.get_layout_elements_from_image(
-        image=image,
-        ocr_languages=ocr_languages,
-    )
+    ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
     metadata = ElementMetadata(
         last_modified=metadata_last_modified,

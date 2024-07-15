@@ -7,7 +7,7 @@ from PIL import Image as PILImage
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger, trace_logger
-from unstructured.partition.utils.constants import DEFAULT_PADDLE_LANG, Source
+from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 class OCRAgentPaddle(OCRAgent):
     """OCR service implementation for PaddleOCR."""
 
-    def __init__(self):
-        self.agent = self.load_agent()
+    def __init__(self, language: str = "en"):
+        self.agent = self.load_agent(language)
 
-    def load_agent(self, language: str = DEFAULT_PADDLE_LANG):
+    def load_agent(self, language: str):
         """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
 
         import paddle
