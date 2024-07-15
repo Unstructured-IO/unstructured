@@ -65,7 +65,7 @@ local-working-dir
   - 36caa9b04378.json
 ```
 
-(Note that the index and partition file names are deterministic and based on the BLABLABLA) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a `.json` extension since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a source file, the output will be BLABLABLA.
+(Note that the index and partition file names are deterministic and based on the BLABLABLA) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a `.json` extension since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a source file, the output will be based on a hash of BLABLABLA.
 
 You can see the source/destination connector file that it runs here:
 
@@ -77,21 +77,21 @@ If you look through the file you will notice these Classes (actually @dataclasse
 
 * LocalConnectionConfig - Username, host, port, etc. Anything needed for connecting to the service. It also imports the AccessConfig 
 
-* LocalIndexerConfig - Holds information
+* LocalIndexerConfig - Holds arguments that allow Indexer to connect to the service and what kind of documents to filter for.
 
-* LocalIndexer - BLABLABLA
+* LocalIndexer - Does the actual file listing and filtering. Note that it yields a FileData object
 
-* LocalDownloaderConfig
+* LocalDownloaderConfig - In this case it doesn't need anything that the LocalIndexerConfig already provides.
 
-* LocalDownloader
+* LocalDownloader - Does the actual downloading of the raw files.
 
-* LocalUploaderConfig
+* LocalUploaderConfig - Arguments for upload location
 
-* LocalUploader
+* LocalUploader - Does the actual uploading
 
-* local_source_entry
+* local_source_entry - Used to register the source connector here: `unstructured/ingest/v2/processes/connectors/__init__.py`
 
-* local_destination_entry
+* local_destination_entry - Used to register the destination connector here: `unstructured/ingest/v2/processes/connectors/__init__.py`
 
 
 
@@ -100,7 +100,7 @@ We'll start with building a Destination Connector because those are the easier t
 
 In this case we'll use the Chroma vector database destination because:
 
-* The service can be hosted locally. !!! https://docs.trychroma.com/guides
+* The service can be hosted locally.  https://docs.trychroma.com/guides
 * We can show off the chunking and embedding step (used for vector database destinations)
 * It uses a staging step to prepare the artifacts before uploading
 * You can examine the Chroma database file easily since its just a sqlite database
@@ -160,23 +160,23 @@ if __name__ == "__main__":
 
 ```
 
-Notice how the top part looks similar to the local connector running file. But now we are adding a chunker and an embedder. And the destination connection is for the Chroma uploader. Also note that there is a stager_config. This is where we prepare the document/artifact in a custom way before uploading BLABLABLA.
+Notice how the top part looks similar to the local connector running file. But now we are adding a chunker and an embedder. And the destination connection is for the Chroma uploader. Also note that there is a stager_config. This is where we prepare the document/artifact in a custom way before running the Uploader.
 
 Let's run it.
 
 
 
-* blabla make sure you have run `pip install "unstructured[chroma]"`
+* Make sure your python environment is set up and then run `pip install "unstructured[chroma]"`
 
-* in a separate terminal (with chroma installed) run
+* In a separate terminal (with chroma installed) run
 `./scripts/chroma-test-helpers/create-and-check-chroma.sh chroma-db-file`
 the service should now be running on port 8000
 
-* `python chroma.py`
+* Run your example file: `python chroma.py`
 * You can examine the resulting sqlite database (`chroma.sqlite3`) in the `chroma-db-file` directory if you want to see the results.
 
 
-Let's look at the python file that it runs BLABLABLA
+Let's look at the python file in the Unstructured repo
 
 https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2/processes/connectors/chroma.py
 
@@ -210,7 +210,7 @@ chroma-working-dir
 - upload_stage
   - e17715933baf.json
 ```
-`e17715933baf.json` in the `upload_stage` is a `.json` file which is appropriate for this destination connector. But it could very well be a `.csv` if the uploader is a relational database. Or if the destination is blob(file) storage, like AWS S3, you may not need the Staging phase. The embed `.json` file would be uploaded directly.
+`e17715933baf.json` in the `upload_stage` is a `.json` file which is appropriate for this destination connector. But it could very well be a `.csv` (or file of your choosing) if the uploader is a relational database. Or if the destination is blob(file) storage, like AWS S3, you may not need the Staging phase. The partitioned/embedded `.json` file would be uploaded directly.
 
 When you make a **new** Destination Connector you will need these files first:
 
@@ -263,7 +263,41 @@ https://github.com/Unstructured-IO/unstructured/blob/0c562d80503f6ef96504c6e38f2
 
 The Indexer files (resulting `.json` files in the index folder) also contain metadata that will be used to determine if the files have already been processed.
 
+The file to use for iteration would look like this:
 
+>*** This is the type of Python file you'll want to run during development so that you can iterate on your connector.
+
+`onedrive.py`
+
+```
+EXAMPLE COMING SOON
+from unstructured.ingest.v2.interfaces import ProcessorConfig
+from unstructured.ingest.v2.pipeline.pipeline import Pipeline
+from unstructured.ingest.v2.processes.connectors.local import (
+    LocalConnectionConfig,
+    LocalDownloaderConfig,
+    LocalIndexerConfig,
+    LocalUploaderConfig,
+)
+
+from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
+
+if __name__ == "__main__":
+    Pipeline.from_configs(
+        context=ProcessorConfig(
+            verbose=True,
+            work_dir="local-working-dir",
+            reprocess=True,
+            re_download=True,
+        ),
+        source_connection_config=LocalConnectionConfig(),
+        indexer_config=LocalIndexerConfig(input_path="example-docs/fake-text.txt"),
+        downloader_config=LocalDownloaderConfig(),
+        partitioner_config=PartitionerConfig(),
+        uploader_config=LocalUploaderConfig(output_dir="local-working-dir/output"),
+    ).run()
+```
+To run this would require service credentials for Onedrive. So we will skip that part. But this still gives a good example of the kind of file you need to iterate with.
 
 
 
