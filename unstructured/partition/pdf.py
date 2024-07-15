@@ -45,7 +45,11 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.lang import (
+    check_language_args,
+    prepare_languages_for_tesseract,
+    tesseract_to_paddle_language,
+)
 from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
     AnalysisDrawer,
     FinalLayoutDrawer,
@@ -77,6 +81,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -291,6 +296,8 @@ def partition_pdf_or_image(
         file.seek(0)
 
     ocr_languages = prepare_languages_for_tesseract(languages)
+    if env_config.OCR_AGENT == OCR_AGENT_PADDLE:
+        ocr_languages = tesseract_to_paddle_language(ocr_languages)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
