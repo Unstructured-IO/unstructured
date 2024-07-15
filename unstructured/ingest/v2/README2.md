@@ -247,6 +247,24 @@ If you can run the integration test successfully then most of the files should b
 
 ## Building a Source Connector
 
+The Source Connector example we will use is `onedrive.py`. The S3 connector might be a simpler example, but it relies on the incredibly useful fsspec package.
+https://filesystem-spec.readthedocs.io/en/latest/ 
+If your source connector can take advantage of fsspec, then S3 might be a good example.
+
+
+The Source Connector is similar to the Destination Connector instructions above.
+
+But the key difference is the Indexer. The Indexer essentially gets a list of the documents/artifacts in the Source service. (in the case of a local connector it would be like a bash `ls` command). It then creates individual files for each artifact that need to be downloaded.This is so that the next phase, the Downloader phase, can be scaled out with multiple workers. The Indexer phase needs to return pointers to those artifacts in the shape of the FileData object, which it then downloads as `.json` files.
+
+The Downloader then uses the `.json` files that the Indexer created and downloads the raw files (in the case of a blob type file, .pdf, .txt) or as individual rows in a table, or any other needed format.
+
+Here are some of the file types it can download and partition. 
+https://github.com/Unstructured-IO/unstructured/blob/0c562d80503f6ef96504c6e38f27cfd9da8761df/unstructured/file_utils/filetype.py
+
+The Indexer files (resulting `.json` files in the index folder) also contain metadata that will be used to determine if the files have already been processed.
+
+
+
 
 
 
