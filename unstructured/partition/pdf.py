@@ -227,7 +227,6 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
@@ -291,6 +290,8 @@ def partition_pdf_or_image(
     if file is not None:
         file.seek(0)
 
+    ocr_languages = prepare_languages_for_tesseract(languages)
+
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
@@ -302,6 +303,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 hi_res_model_name=hi_res_model_name,
                 pdf_text_extractable=pdf_text_extractable,
@@ -333,6 +335,7 @@ def partition_pdf_or_image(
                 file=file,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 starting_page_number=starting_page_number,
@@ -500,6 +503,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
     hi_res_model_name: Optional[str] = None,
@@ -531,8 +535,6 @@ def _partition_pdf_or_image_local(
 
     if languages is None:
         languages = ["eng"]
-
-    ocr_languages = prepare_languages_for_tesseract(languages)
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
@@ -819,7 +821,8 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     include_page_breaks: bool = False,
-    languages: Optional[list[str]] = ["eng"],
+    languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
@@ -838,6 +841,7 @@ def _partition_pdf_or_image_with_ocr(
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
@@ -851,6 +855,7 @@ def _partition_pdf_or_image_with_ocr(
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
@@ -864,6 +869,7 @@ def _partition_pdf_or_image_with_ocr(
 def _partition_pdf_or_image_with_ocr_from_image(
     image: PILImage.Image,
     languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
@@ -875,7 +881,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
     ocr_agent = OCRAgent.get_agent()
-    ocr_languages = prepare_languages_for_tesseract(languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
