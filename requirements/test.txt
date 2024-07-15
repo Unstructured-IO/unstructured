@@ -35,7 +35,7 @@ coverage[toml]==7.6.0
     # via
     #   -r ./test.in
     #   pytest-cov
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   pytest
@@ -47,7 +47,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.0
+grpcio==1.64.1
     # via -r ./test.in
 idna==3.7
     # via
@@ -136,7 +136,7 @@ rpds-py==0.19.0
     # via
     #   jsonschema
     #   referencing
-ruff==0.5.2
+ruff==0.4.10
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck

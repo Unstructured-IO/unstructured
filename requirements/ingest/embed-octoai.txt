@@ -25,7 +25,7 @@ charset-normalizer==3.3.2
     #   requests
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio

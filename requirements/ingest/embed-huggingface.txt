@@ -67,13 +67,13 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.7
+langchain==0.2.8
     # via langchain-community
 langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-huggingface.in
-langchain-core==0.2.13
+langchain-core==0.2.19
     # via
     #   langchain
     #   langchain-community
@@ -186,7 +186,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.42.3
+transformers==4.42.4
     # via sentence-transformers
 typing-extensions==4.12.2
     # via
