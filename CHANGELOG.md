@@ -30,6 +30,7 @@
 
 * **Fix counting false negatives and false positives in table structure evaluation.**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
 * **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
 
 ## 0.14.9

@@ -12,6 +12,7 @@ from unstructured.metrics.evaluate import (
     TableStructureMetricsCalculator,
     TextExtractionMetricsCalculator,
     filter_metrics,
+    get_document_type,
     get_mean_grouping,
 )
 
@@ -139,6 +140,19 @@ def test_process_document_returns_the_correct_amount_of_values(
     assert len(output_list) == expected_length
 
 
+@pytest.mark.parametrize(
+    ("filename", "expected"),
+    [
+        ("document.pdf", "pdf"),
+        ("report.docx", "docx"),
+        ("file.txt", "txt"),
+        ("file.with.multiple.dots.pdf", "pdf"),
+    ],
+)
+def test_get_document_type_from_filename_returns_correct_document_type(filename, expected):
+    assert get_document_type(Path(filename)) == expected
+
+
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_evaluation_type_txt():
@@ -206,7 +220,7 @@ def test_text_extraction_takes_list():
     TextExtractionMetricsCalculator(
         documents_dir=output_dir,
         ground_truths_dir=source_dir,
-    ).on_files(document_paths=output_list).calculate(export_dir=export_dir)
+    ).on_files(relative_document_paths=output_list).calculate(export_dir=export_dir)
 
     # check that only the listed files are included
     assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))

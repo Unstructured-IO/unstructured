@@ -85,7 +85,7 @@ def measure_text_extraction_accuracy_command(
             weights=weights,
             document_type=output_type,
         )
-        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .on_files(relative_document_paths=output_list, relative_ground_truth_paths=source_list)
         .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
@@ -134,7 +134,7 @@ def measure_element_type_accuracy_command(
             documents_dir=output_dir,
             ground_truths_dir=source_dir,
         )
-        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .on_files(relative_document_paths=output_list, relative_ground_truth_paths=source_list)
         .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
@@ -245,7 +245,7 @@ def measure_table_structure_accuracy_command(
             ground_truths_dir=source_dir,
             cutoff=cutoff,
         )
-        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .on_files(relative_document_paths=output_list, relative_ground_truth_paths=source_list)
         .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
