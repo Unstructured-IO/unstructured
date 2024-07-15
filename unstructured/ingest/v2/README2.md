@@ -270,34 +270,42 @@ The file to use for iteration would look like this:
 `onedrive.py`
 
 ```
-EXAMPLE COMING SOON
+import os
+
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
 from unstructured.ingest.v2.processes.connectors.local import (
-    LocalConnectionConfig,
-    LocalDownloaderConfig,
-    LocalIndexerConfig,
     LocalUploaderConfig,
 )
-
+from unstructured.ingest.v2.processes.connectors.onedrive import (
+    OnedriveAccessConfig,
+    OnedriveConnectionConfig,
+    OnedriveDownloaderConfig,
+    OnedriveIndexerConfig,
+)
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
 if __name__ == "__main__":
     Pipeline.from_configs(
         context=ProcessorConfig(
             verbose=True,
-            work_dir="local-working-dir",
+            work_dir="onedrive-working-dir",
             reprocess=True,
             re_download=True,
         ),
-        source_connection_config=LocalConnectionConfig(),
-        indexer_config=LocalIndexerConfig(input_path="example-docs/fake-text.txt"),
-        downloader_config=LocalDownloaderConfig(),
+        indexer_config=OnedriveIndexerConfig(path="/utic-test-ingest-fixtures", recursive=True),
+        downloader_config=OnedriveDownloaderConfig(download_dir="onedrive-working-dir/download"),
+        source_connection_config=OnedriveConnectionConfig(
+            client_id=os.getenv("MS_CLIENT_ID"),
+            user_pname=os.getenv("MS_USER_PNAME"),
+            tenant=os.getenv("MS_TENANT_ID"),
+            access_config=OnedriveAccessConfig(client_cred=os.getenv("MS_CLIENT_CRED")),
+        ),
         partitioner_config=PartitionerConfig(),
-        uploader_config=LocalUploaderConfig(output_dir="local-working-dir/output"),
+        uploader_config=LocalUploaderConfig(output_dir="onedrive-working-dir/output"),
     ).run()
 ```
-To run this would require service credentials for Onedrive. So we will skip that part. But this still gives a good example of the kind of file you need to iterate with.
+To run this would require service credentials for Onedrive. And we can't run a Docker container locally. So we will skip that part. But this still gives a good example of the kind of file you need to iterate with.
 
 
 
