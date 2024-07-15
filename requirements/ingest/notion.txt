@@ -15,7 +15,7 @@ certifi==2024.7.4
     #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio

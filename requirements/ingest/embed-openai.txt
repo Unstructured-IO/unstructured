@@ -41,7 +41,7 @@ dataclasses-json==0.6.7
     #   langchain-community
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -78,7 +78,7 @@ langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-openai.in
-langchain-core==0.2.13
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community

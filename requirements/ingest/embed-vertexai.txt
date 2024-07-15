@@ -83,7 +83,7 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.65.0
+grpcio==1.64.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -108,7 +108,7 @@ langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.13
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community
@@ -200,7 +200,7 @@ requests==2.32.3
     #   langsmith
 rsa==4.9
     # via google-auth
-shapely==2.0.4
+shapely==2.0.5
     # via google-cloud-aiplatform
 six==1.16.0
     # via

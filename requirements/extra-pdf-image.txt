@@ -58,7 +58,7 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.65.0
+grpcio==1.64.1
     # via
     #   google-api-core
     #   grpcio-status
@@ -166,7 +166,7 @@ pillow==10.4.0
     #   unstructured-pytesseract
 pillow-heif==0.17.0
     # via -r ./extra-pdf-image.in
-portalocker==2.10.0
+portalocker==2.10.1
     # via iopath
 proto-plus==1.24.0
     # via
@@ -198,7 +198,7 @@ pyparsing==3.0.9
     # via
     #   -c ././deps/constraints.txt
     #   matplotlib
-pypdf==4.2.0
+pypdf==4.3.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -277,7 +277,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.42.3
+transformers==4.42.4
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

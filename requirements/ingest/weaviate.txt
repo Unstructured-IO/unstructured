@@ -28,11 +28,11 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==42.0.8
     # via authlib
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.0
+grpcio==1.64.1
     # via
     #   grpcio-health-checking
     #   grpcio-tools
