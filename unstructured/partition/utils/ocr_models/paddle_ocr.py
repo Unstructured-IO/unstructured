@@ -59,16 +59,14 @@ class OCRAgentPaddle(OCRAgent):
             )
         return paddle_ocr
 
-    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+    def get_text_from_image(self, image: PILImage.Image) -> str:
         ocr_regions = self.get_layout_from_image(image)
         return "\n\n".join([r.text for r in ocr_regions])
 
     def is_text_sorted(self):
         return False
 
-    def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
         """Get the OCR regions from image as a list of text regions with paddle."""
 
         trace_logger.detail("Processing entire page OCR with paddle...")
@@ -82,15 +80,10 @@ class OCRAgentPaddle(OCRAgent):
         return ocr_regions
 
     @requires_dependencies("unstructured_inference")
-    def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[LayoutElement]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
         from unstructured.partition.pdf_image.inference_utils import build_layout_element
 
-        ocr_regions = self.get_layout_from_image(
-            image,
-            ocr_languages=ocr_languages,
-        )
+        ocr_regions = self.get_layout_from_image(image)
 
         # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
         # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
