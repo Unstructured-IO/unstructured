@@ -16,7 +16,6 @@ from unstructured.ingest.v2.interfaces import (
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
-    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
@@ -26,7 +25,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     SourceRegistryEntry,
-    add_source_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -185,8 +183,8 @@ class GoogleDriveIndexer(Indexer):
         if extensions:
             ext_filter = " or ".join([f"fileExtension = '{e}'" for e in extensions])
             q = f"{q} and ({ext_filter} or mimeType = 'application/vnd.google-apps.folder')"
-        logger.info(f"Query used when indexing: {q}")
-        logger.info("response fields limited to: {}".format(", ".join(self.fields)))
+        logger.debug(f"Query used when indexing: {q}")
+        logger.debug("response fields limited to: {}".format(", ".join(self.fields)))
         done = False
         page_token = None
         files_response = []
@@ -286,36 +284,19 @@ class GoogleDriveDownloader(Downloader):
             _, downloaded = downloader.next_chunk()
         return downloaded
 
-    @staticmethod
-    def is_float(value: str):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
-
     def _write_file(self, file_data: FileData, file_contents: io.BytesIO):
         download_path = self.get_download_path(file_data=file_data)
         download_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.info(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
+        logger.debug(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
         with open(download_path, "wb") as handler:
             handler.write(file_contents.getbuffer())
-        if (
-            file_data.metadata.date_modified
-            and self.is_float(file_data.metadata.date_modified)
-            and file_data.metadata.date_created
-            and self.is_float(file_data.metadata.date_created)
-        ):
-            date_modified = float(file_data.metadata.date_modified)
-            date_created = float(file_data.metadata.date_created)
-            os.utime(download_path, times=(date_created, date_modified))
-        return DownloadResponse(file_data=file_data, path=download_path)
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         from googleapiclient.http import MediaIoBaseDownload
 
-        logger.info(f"fetching file: {file_data.source_identifiers.fullpath}")
+        logger.debug(f"fetching file: {file_data.source_identifiers.fullpath}")
         mime_type = file_data.additional_metadata["mimeType"]
         record_id = file_data.identifier
         files_client = self.connection_config.get_files_service()
@@ -345,13 +326,10 @@ class GoogleDriveDownloader(Downloader):
         return self._write_file(file_data=file_data, file_contents=file_contents)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=GoogleDriveConnectionConfig,
-        indexer_config=GoogleDriveIndexerConfig,
-        indexer=GoogleDriveIndexer,
-        downloader_config=GoogleDriveDownloaderConfig,
-        downloader=GoogleDriveDownloader,
-    ),
+google_drive_source_entry = SourceRegistryEntry(
+    connection_config=GoogleDriveConnectionConfig,
+    indexer_config=GoogleDriveIndexerConfig,
+    indexer=GoogleDriveIndexer,
+    downloader_config=GoogleDriveDownloaderConfig,
+    downloader=GoogleDriveDownloader,
 )

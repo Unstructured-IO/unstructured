@@ -12,6 +12,7 @@
 * **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 * **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
 
+
 ### Fixes
 
 ## 0.14.10
@@ -44,6 +45,9 @@
 
 ### Fixes
 
+* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
+
 ## 0.14.8
 
 ### Enhancements
@@ -56,7 +60,6 @@
 
 * **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
 * **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
-
 * **Fix missing sensitive field markers** for embedders
 
 ## 0.14.7

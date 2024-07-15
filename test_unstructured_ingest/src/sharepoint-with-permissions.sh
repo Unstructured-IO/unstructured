@@ -56,7 +56,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --permissions-application-id "$SHAREPOINT_PERMISSIONS_APP_ID" \
   --permissions-client-cred "$SHAREPOINT_PERMISSIONS_APP_CRED" \
   --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
-  --path "Shared Documents" \
   --recursive \
   --work-dir "$WORK_DIR"
 

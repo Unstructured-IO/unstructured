@@ -54,7 +54,6 @@ if __name__ == "__main__":
 
     count = client.count(index="ingest-test-destination")["count"]
 
-    assert int(count) == N_ELEMENTS, "OpenSearch dest check failed:"
-    f"got {count} items in index, expected {N_ELEMENTS} items in index."
+    assert int(count) == N_ELEMENTS, f"OpenSearch dst check fail: expect {N_ELEMENTS} got {count}"
 
     print(f"OpenSearch destination test was successful with {count} items being uploaded.")

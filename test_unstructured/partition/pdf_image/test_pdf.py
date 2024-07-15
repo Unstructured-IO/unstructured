@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import base64
 import logging
 import math
 import os
 import tempfile
+from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -16,6 +19,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
+    Element,
     ElementMetadata,
     ElementType,
     Footer,
@@ -1181,11 +1185,14 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
 
 
 def assert_element_extraction(
-    elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+    elements: list[Element],
+    extract_image_block_types: list[str],
+    extract_image_block_to_payload: bool,
+    tmpdir: str,
 ):
-    extracted_elements = []
+    extracted_elements: list[list[Element]] = []
     for el_type in extract_image_block_types:
-        extracted_elements_by_type = []
+        extracted_elements_by_type: list[Element] = []
         for el in elements:
             if el.category == el_type:
                 extracted_elements_by_type.append(el)
@@ -1322,3 +1329,32 @@ def test_unique_and_deterministic_element_ids(strategy, expected_ids):
     )
     ids = [element.id for element in elements]
     assert ids == expected_ids, "Element IDs do not match expected IDs"
+
+
+def test_analysis_artifacts_saved():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        filename = example_doc_path("layout-parser-paper-fast.pdf")
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            analysis=True,
+            analyzed_image_output_dir_path=temp_dir,
+        )
+
+        analysis_dir = Path(temp_dir)
+        layout_dump_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "layout_dump"
+        assert layout_dump_dir.exists()
+        layout_dump_files = list(layout_dump_dir.iterdir())
+        assert len(layout_dump_files) == 1
+        assert (layout_dump_dir / "object_detection.json").exists()
+
+        bboxes_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "bboxes"
+        assert bboxes_dir.exists()
+        bboxes_files = list(bboxes_dir.iterdir())
+        assert len(bboxes_files) == 2 * 4  # 2 pages * 4 different layouts per page
+
+        expected_layouts = ["od_model", "ocr", "pdfminer", "final"]
+        expected_pages = [1, 2]
+        for el in expected_layouts:
+            for page in expected_pages:
+                assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
