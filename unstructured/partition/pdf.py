@@ -202,7 +202,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
+    languages = check_language_args(languages or [], ocr_languages)
 
     return partition_pdf_or_image(
         filename=filename,
@@ -250,6 +250,9 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    if languages is None:
+        languages = ["eng"]
 
     # init ability to process .heic files
     register_heif_opener()
@@ -539,9 +542,6 @@ def _partition_pdf_or_image_local(
         process_data_with_pdfminer,
         process_file_with_pdfminer,
     )
-
-    if languages is None:
-        languages = ["eng"]
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
