@@ -516,7 +516,7 @@ def test_auto_partition_org_from_file():
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
 def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     metadata_filename = file_path if pass_metadata_filename else None
 
     elements = partition(
@@ -547,7 +547,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
 def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     metadata_filename = file_path if pass_metadata_filename else None
 
     with open(file_path, "rb") as f:
@@ -571,7 +571,7 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch: MonkeyPatch):
-    file_path = example_doc_path("layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     mock_return = [NarrativeText("Hello there!")]
     with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
@@ -603,7 +603,7 @@ def test_auto_partition_pdf_uses_pdf_infer_table_structure_argument():
         "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(
-            example_doc_path("layout-parser-paper-fast.pdf"),
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
             pdf_infer_table_structure=True,
             strategy=PartitionStrategy.HI_RES,
         )
@@ -616,7 +616,7 @@ def test_auto_partition_pdf_element_extraction(extract_image_block_to_payload: b
 
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = partition(
-            example_doc_path("embedded-images-tables.pdf"),
+            example_doc_path("pdf/embedded-images-tables.pdf"),
             extract_image_block_types=extract_image_block_types,
             extract_image_block_to_payload=extract_image_block_to_payload,
             extract_image_block_output_dir=tmpdir,
@@ -635,7 +635,7 @@ def test_partition_pdf_does_not_raise_warning():
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         partition(
-            example_doc_path("layout-parser-paper-fast.pdf"), strategy=PartitionStrategy.HI_RES
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"), strategy=PartitionStrategy.HI_RES
         )
 
 
@@ -1056,7 +1056,7 @@ def test_auto_partition_respects_language_arg(file_extension: str):
 
 def test_auto_partition_forwards_include_page_breaks_to_partition_pdf():
     elements = partition(
-        example_doc_path("layout-parser-paper-fast.pdf"),
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         include_page_breaks=True,
         strategy=PartitionStrategy.HI_RES,
     )
@@ -1124,7 +1124,7 @@ def test_auto_partition_ignores_empty_string_for_ocr_languages(
 
 def test_auto_partition_warns_with_ocr_languages(caplog: LogCaptureFixture):
     partition(
-        example_doc_path("chevron-page.pdf"), strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
+        example_doc_path("pdf/chevron-page.pdf"), strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
     )
 
     assert caplog.records[0].levelname == "WARNING"
@@ -1186,7 +1186,7 @@ def test_auto_partition_adds_filetype_to_metadata(
     monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
 
     elements = partition(
-        example_doc_path("layout-parser-paper-fast.pdf"), content_type=content_type
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type
     )
 
     assert len(elements) == 2
@@ -1213,7 +1213,7 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
     )
     monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", {"pdf": partition_pdf_})
 
-    elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
+    elements = partition(example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type)
 
     assert len(elements) == 2
     assert all(e.metadata.filetype == "application/pdf" for e in elements)
@@ -1256,7 +1256,7 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype:
 
 def test_auto_partition_passes_user_provided_languages_arg_to_PDF():
     elements = partition(
-        example_doc_path("chevron-page.pdf"),
+        example_doc_path("pdf/chevron-page.pdf"),
         strategy=PartitionStrategy.OCR_ONLY,
         languages=["eng"],
     )
