@@ -580,3 +580,12 @@ def test_partition_text_detects_more_than_3_languages():
         {element.metadata.languages[0] for element in elements if element.metadata.languages},
     )
     assert len(langs) > 10
+
+
+def test_partition_text_for_text_having_splitted_words():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "text_having_splitted_words.txt")
+    elements = partition_text(filename=filename)
+    assert [element.text for element in elements] == [
+        "This is a test document to test text having splitted words to next line.",
+        "These words are described as a character followed by a dash and 1+ whitespaces",
+    ]
