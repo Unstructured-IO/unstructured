@@ -238,7 +238,7 @@ def tesseract_to_paddle_language(tesseract_language: str) -> str:
     if not lang:
         logger.warning(
             f"{tesseract_language} is not a language code supported by PaddleOCR, "
-            f"proceed with `en` instead."
+            f"proceeding with `en` instead."
         )
         return "en"
 
