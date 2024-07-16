@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import enum
 import functools
 import importlib.util
 import json
@@ -13,6 +12,13 @@ from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
+from unstructured.file_utils.model import (
+    EXT_TO_FILETYPE,
+    FILETYPE_TO_MIMETYPE,
+    PLAIN_TEXT_EXTENSIONS,
+    STR_TO_FILETYPE,
+    FileType,
+)
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
@@ -24,219 +30,6 @@ from unstructured.partition.common import (
 from unstructured.utils import get_call_args_applying_defaults
 
 LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
-
-TXT_MIME_TYPES = [
-    "text/plain",
-    "message/rfc822",  # ref: https://www.rfc-editor.org/rfc/rfc822
-]
-
-# NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
-# If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
-# looking for expected filenames within the zip file.
-EXPECTED_DOCX_FILES = [
-    "docProps/core.xml",
-    "word/document.xml",
-]
-
-EXPECTED_XLSX_FILES = [
-    "xl/workbook.xml",
-]
-
-EXPECTED_PPTX_FILES = [
-    "docProps/core.xml",
-    "ppt/presentation.xml",
-]
-
-
-class FileType(enum.Enum):
-    UNK = 0
-    EMPTY = 1
-
-    # MS Office Types
-    DOC = 10
-    DOCX = 11
-    XLS = 12
-    XLSX = 13
-    PPT = 14
-    PPTX = 15
-    MSG = 16
-
-    # Adobe Types
-    PDF = 20
-
-    # Image Types
-    JPG = 30
-    PNG = 31
-    TIFF = 32
-    BMP = 33
-    HEIC = 34
-
-    # Plain Text Types
-    EML = 40
-    RTF = 41
-    TXT = 42
-    JSON = 43
-    CSV = 44
-    TSV = 45
-
-    # Markup Types
-    HTML = 50
-    XML = 51
-    MD = 52
-    EPUB = 53
-    RST = 54
-    ORG = 55
-
-    # Compressed Types
-    ZIP = 60
-
-    # Open Office Types
-    ODT = 70
-
-    # Audio Files
-    WAV = 80
-
-    def __lt__(self, other: FileType) -> bool:
-        """Makes `FileType` members comparable with relational operators, at least with `<`.
-
-        This makes them sortable, in particular it supports sorting for pandas groupby functions.
-        """
-        return self.name < other.name
-
-
-STR_TO_FILETYPE = {
-    "application/pdf": FileType.PDF,
-    "application/msword": FileType.DOC,
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
-    "image/jpeg": FileType.JPG,
-    "image/png": FileType.PNG,
-    "image/heic": FileType.HEIC,
-    "image/tiff": FileType.TIFF,
-    "image/bmp": FileType.BMP,
-    # NOTE(robinson) - https://mimetype.io/application/yaml
-    # In the future, we may have special processing for YAML
-    # files instead of treating them as plaintext
-    "application/yaml": FileType.TXT,
-    "application/x-yaml": FileType.TXT,
-    "text/x-yaml": FileType.TXT,
-    "text/yaml": FileType.TXT,
-    "text/plain": FileType.TXT,
-    "text/x-csv": FileType.CSV,
-    "application/csv": FileType.CSV,
-    "application/x-csv": FileType.CSV,
-    "text/comma-separated-values": FileType.CSV,
-    "text/x-comma-separated-values": FileType.CSV,
-    "text/csv": FileType.CSV,
-    "text/tsv": FileType.TSV,
-    "text/markdown": FileType.MD,
-    "text/x-markdown": FileType.MD,
-    "text/org": FileType.ORG,
-    "text/x-rst": FileType.RST,
-    "application/epub": FileType.EPUB,
-    "application/epub+zip": FileType.EPUB,
-    "application/json": FileType.JSON,
-    "application/rtf": FileType.RTF,
-    "text/rtf": FileType.RTF,
-    "text/html": FileType.HTML,
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": FileType.XLSX,
-    "application/vnd.ms-excel": FileType.XLS,
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": FileType.PPTX,
-    "application/vnd.ms-powerpoint": FileType.PPT,
-    "application/xml": FileType.XML,
-    "application/vnd.oasis.opendocument.text": FileType.ODT,
-    "message/rfc822": FileType.EML,
-    "application/x-ole-storage": FileType.MSG,
-    "application/vnd.ms-outlook": FileType.MSG,
-    # NOTE(robinson) - https://mimetype.io/audio/wav
-    "audio/vnd.wav": FileType.WAV,
-    "audio/vnd.wave": FileType.WAV,
-    "audio/wave": FileType.WAV,
-    "audio/x-pn-wav": FileType.WAV,
-    "audio/x-wav": FileType.WAV,
-    "inode/x-empty": FileType.EMPTY,
-}
-
-MIMETYPES_TO_EXCLUDE = [
-    "text/x-markdown",
-    "application/epub+zip",
-    "text/x-csv",
-    "application/csv",
-    "application/x-csv",
-    "text/comma-separated-values",
-    "text/x-comma-separated-values",
-]
-
-FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
-
-EXT_TO_FILETYPE = {
-    ".pdf": FileType.PDF,
-    ".docx": FileType.DOCX,
-    ".jpg": FileType.JPG,
-    ".jpeg": FileType.JPG,
-    ".txt": FileType.TXT,
-    ".text": FileType.TXT,
-    ".log": FileType.TXT,
-    ".eml": FileType.EML,
-    ".xml": FileType.XML,
-    ".heic": FileType.HEIC,
-    ".htm": FileType.HTML,
-    ".html": FileType.HTML,
-    ".md": FileType.MD,
-    ".org": FileType.ORG,
-    ".rst": FileType.RST,
-    ".xlsx": FileType.XLSX,
-    ".pptx": FileType.PPTX,
-    ".p7s": FileType.EML,
-    ".png": FileType.PNG,
-    ".doc": FileType.DOC,
-    ".zip": FileType.ZIP,
-    ".xls": FileType.XLS,
-    ".ppt": FileType.PPT,
-    ".rtf": FileType.RTF,
-    ".json": FileType.JSON,
-    ".epub": FileType.EPUB,
-    ".msg": FileType.MSG,
-    ".odt": FileType.ODT,
-    ".csv": FileType.CSV,
-    ".tsv": FileType.TSV,
-    ".tab": FileType.TSV,
-    ".tiff": FileType.TIFF,
-    ".bmp": FileType.BMP,
-    ".wav": FileType.WAV,
-    # NOTE(robinson) - for now we are treating code files as plain text
-    ".js": FileType.TXT,
-    ".py": FileType.TXT,
-    ".java": FileType.TXT,
-    ".cpp": FileType.TXT,
-    ".cc": FileType.TXT,
-    ".cxx": FileType.TXT,
-    ".c": FileType.TXT,
-    ".cs": FileType.TXT,
-    ".php": FileType.TXT,
-    ".rb": FileType.TXT,
-    ".swift": FileType.TXT,
-    ".ts": FileType.TXT,
-    ".go": FileType.TXT,
-    ".yaml": FileType.TXT,
-    ".yml": FileType.TXT,
-    None: FileType.UNK,
-}
-
-PLAIN_TEXT_EXTENSIONS = [
-    ".txt",
-    ".text",
-    ".eml",
-    ".p7s",
-    ".md",
-    ".rtf",
-    ".html",
-    ".rst",
-    ".org",
-    ".csv",
-    ".tsv",
-    ".tab",
-    ".json",
-]
 
 
 def detect_filetype(
@@ -317,7 +110,8 @@ def detect_filetype(
         else:
             return FileType.XML
 
-    elif mime_type in TXT_MIME_TYPES or mime_type.startswith("text"):
+    # -- ref: https://www.rfc-editor.org/rfc/rfc822 --
+    elif mime_type == "message/rfc822" or mime_type.startswith("text"):
         if not encoding:
             encoding = "utf-8"
         formatted_encoding = format_encoding_str(encoding)
@@ -450,12 +244,15 @@ def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
         file.seek(0)
         archive = zipfile.ZipFile(file)
 
+        # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
+        # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
+        # looking for expected filenames within the zip file.
         archive_filenames = [f.filename for f in archive.filelist]
-        if all(f in archive_filenames for f in EXPECTED_DOCX_FILES):
+        if all(f in archive_filenames for f in ("docProps/core.xml", "word/document.xml")):
             return FileType.DOCX
-        elif all(f in archive_filenames for f in EXPECTED_XLSX_FILES):
+        elif all(f in archive_filenames for f in ("xl/workbook.xml",)):
             return FileType.XLSX
-        elif all(f in archive_filenames for f in EXPECTED_PPTX_FILES):
+        elif all(f in archive_filenames for f in ("docProps/core.xml", "ppt/presentation.xml")):
             return FileType.PPTX
 
     if LIBMAGIC_AVAILABLE:
