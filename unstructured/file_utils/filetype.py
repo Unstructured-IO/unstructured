@@ -239,13 +239,6 @@ PLAIN_TEXT_EXTENSIONS = [
 ]
 
 
-def _resolve_symlink(file_path: str) -> str:
-    """Resolve `file_path` containing symlink to the actual file path."""
-    if os.path.islink(file_path):
-        file_path = os.path.realpath(file_path)
-    return file_path
-
-
 def detect_filetype(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
@@ -414,6 +407,42 @@ def detect_filetype(
     return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
 
+def is_json_processable(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    file_text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
+) -> bool:
+    """True when file looks like a JSON array of objects.
+
+    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
+    file is JSON.
+    """
+    exactly_one(filename=filename, file=file, file_text=file_text)
+    if file_text is None:
+        file_text = _read_file_start_for_type_check(
+            file=file,
+            filename=filename,
+            encoding=encoding,
+        )
+    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+
+
+def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:
+    """Checks if a text/plain file is actually a .eml file.
+
+    Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
+    file.
+    """
+    file.seek(0)
+    file_content = file.read(4096)
+    if isinstance(file_content, bytes):
+        file_head = file_content.decode("utf-8", errors="ignore")
+    else:
+        file_head = file_content
+    return EMAIL_HEAD_RE.match(file_head) is not None
+
+
 def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
     """Detects the filetype, given a file with an application/octet-stream MIME type."""
     file.seek(0)
@@ -439,6 +468,81 @@ def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
         "Could not detect the filetype from application/octet-stream MIME type.",
     )
     return FileType.UNK
+
+
+def _is_code_mime_type(mime_type: str) -> bool:
+    """True when `mime_type` plausibly indicates a programming language source-code file."""
+    PROGRAMMING_LANGUAGES = [
+        "javascript",
+        "python",
+        "java",
+        "c++",
+        "cpp",
+        "csharp",
+        "c#",
+        "php",
+        "ruby",
+        "swift",
+        "typescript",
+    ]
+    mime_type = mime_type.lower()
+    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
+    # MIME types that contain "go"
+    if mime_type == "text/x-go":
+        return True
+    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
+
+
+def _is_text_file_a_csv(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    encoding: Optional[str] = "utf-8",
+):
+    """Detects if a file that has a text/plain MIME type is a CSV file."""
+
+    def count_commas(text: str):
+        """Counts the number of commas in a line, excluding commas in quotes."""
+        pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
+        matches = re.findall(pattern, text)
+        return len(matches)
+
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
+    lines = file_text.strip().splitlines()
+    if len(lines) < 2:
+        return False
+    lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
+    header_count = count_commas(lines[0])
+    if any("," not in line for line in lines):
+        return False
+    return all(count_commas(line) == header_count for line in lines[1:])
+
+
+def _is_text_file_a_json(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    encoding: Optional[str] = "utf-8",
+):
+    """Detects if a file that has a text/plain MIME type is a JSON file."""
+    file_text = _read_file_start_for_type_check(
+        file=file,
+        filename=filename,
+        encoding=encoding,
+    )
+    try:
+        output = json.loads(file_text)
+        # NOTE(robinson) - Per RFC 4627 which defines the application/json media type,
+        # a string is a valid JSON. For our purposes, however, we want to treat that
+        # as a text file even if it is serializable as json.
+        # References:
+        # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
+        # https://www.ietf.org/rfc/rfc4627.txt
+        return not isinstance(output, str)
+    except json.JSONDecodeError:
+        return False
 
 
 def _read_file_start_for_type_check(
@@ -473,117 +577,11 @@ def _read_file_start_for_type_check(
     return file_text
 
 
-def _is_text_file_a_json(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-):
-    """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(
-        file=file,
-        filename=filename,
-        encoding=encoding,
-    )
-    try:
-        output = json.loads(file_text)
-        # NOTE(robinson) - Per RFC 4627 which defines the application/json media type,
-        # a string is a valid JSON. For our purposes, however, we want to treat that
-        # as a text file even if it is serializable as json.
-        # References:
-        # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
-        # https://www.ietf.org/rfc/rfc4627.txt
-        return not isinstance(output, str)
-    except json.JSONDecodeError:
-        return False
-
-
-def is_json_processable(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    file_text: Optional[str] = None,
-    encoding: Optional[str] = "utf-8",
-) -> bool:
-    """True when file looks like a JSON array of objects.
-
-    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
-    file is JSON.
-    """
-    exactly_one(filename=filename, file=file, file_text=file_text)
-    if file_text is None:
-        file_text = _read_file_start_for_type_check(
-            file=file,
-            filename=filename,
-            encoding=encoding,
-        )
-    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
-
-
-def _is_text_file_a_csv(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-):
-    """Detects if a file that has a text/plain MIME type is a CSV file."""
-
-    def count_commas(text: str):
-        """Counts the number of commas in a line, excluding commas in quotes."""
-        pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
-        matches = re.findall(pattern, text)
-        return len(matches)
-
-    file_text = _read_file_start_for_type_check(
-        file=file,
-        filename=filename,
-        encoding=encoding,
-    )
-    lines = file_text.strip().splitlines()
-    if len(lines) < 2:
-        return False
-    lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
-    header_count = count_commas(lines[0])
-    if any("," not in line for line in lines):
-        return False
-    return all(count_commas(line) == header_count for line in lines[1:])
-
-
-def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:
-    """Checks if a text/plain file is actually a .eml file.
-
-    Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
-    file.
-    """
-    file.seek(0)
-    file_content = file.read(4096)
-    if isinstance(file_content, bytes):
-        file_head = file_content.decode("utf-8", errors="ignore")
-    else:
-        file_head = file_content
-    return EMAIL_HEAD_RE.match(file_head) is not None
-
-
-PROGRAMMING_LANGUAGES = [
-    "javascript",
-    "python",
-    "java",
-    "c++",
-    "cpp",
-    "csharp",
-    "c#",
-    "php",
-    "ruby",
-    "swift",
-    "typescript",
-]
-
-
-def _is_code_mime_type(mime_type: str) -> bool:
-    """True when `mime_type` plausibly indicates a programming language source-code file."""
-    mime_type = mime_type.lower()
-    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
-    # MIME types that contain "go"
-    if mime_type == "text/x-go":
-        return True
-    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
+def _resolve_symlink(file_path: str) -> str:
+    """Resolve `file_path` containing symlink to the actual file path."""
+    if os.path.islink(file_path):
+        file_path = os.path.realpath(file_path)
+    return file_path
 
 
 _P = ParamSpec("_P")
