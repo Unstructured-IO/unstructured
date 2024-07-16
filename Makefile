@@ -201,6 +201,10 @@ install-ingest-sharepoint:
 install-ingest-singlestore:
 	python3 -m pip install -r requirements/ingest/singlestore.txt
 
+.PHONY: install-ingest-milvus
+install-ingest-milvus:
+	python3 -m pip install -r requirements/ingest/milvus.txt
+
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
 	python3 -m pip install -r requirements/ingest/weaviate.txt

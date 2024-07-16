@@ -20,6 +20,8 @@ from .local import CONNECTOR_TYPE as LOCAL_CONNECTOR_TYPE
 from .local import local_destination_entry, local_source_entry
 from .mongodb import CONNECTOR_TYPE as MONGODB_CONNECTOR_TYPE
 from .mongodb import mongodb_destination_entry
+from .milvus import CONNECTOR_TYPE as MILVUS_CONNECTOR_TYPE
+from .milvus import milvus_destination_entry
 from .onedrive import CONNECTOR_TYPE as ONEDRIVE_CONNECTOR_TYPE
 from .onedrive import onedrive_source_entry
 from .opensearch import CONNECTOR_TYPE as OPENSEARCH_CONNECTOR_TYPE
@@ -74,3 +76,4 @@ add_source_entry(source_type=SHAREPOINT_CONNECTOR_TYPE, entry=sharepoint_source_
 add_destination_entry(
     destination_type=SINGLESTORE_CONNECTOR_TYPE, entry=singlestore_destination_entry
 )
+add_destination_entry(destination_type=MILVUS_CONNECTOR_TYPE, entry=milvus_destination_entry)
