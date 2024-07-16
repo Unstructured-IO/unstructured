@@ -41,7 +41,7 @@ dataclasses-json==0.6.7
     #   langchain-community
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -78,14 +78,14 @@ langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-openai.in
-langchain-core==0.2.12
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.84
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community
@@ -107,7 +107,7 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   langchain
     #   langchain-community
-openai==1.35.12
+openai==1.35.13
     # via -r ./ingest/embed-openai.in
 orjson==3.10.6
     # via langsmith

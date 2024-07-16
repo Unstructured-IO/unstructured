@@ -49,8 +49,6 @@ lanms-neo==1.0.2
     # via unstructured-paddleocr
 lazy-loader==0.4
     # via scikit-image
-lmdb==1.5.1
-    # via unstructured-paddleocr
 lxml==5.2.2
     # via
     #   -c ./base.txt
@@ -138,7 +136,7 @@ scipy==1.11.3
     #   -c ././deps/constraints.txt
     #   imgaug
     #   scikit-image
-shapely==2.0.4
+shapely==2.0.5
     # via
     #   imgaug
     #   unstructured-paddleocr
@@ -154,7 +152,7 @@ tqdm==4.66.4
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
-unstructured-paddleocr==2.8.0
+unstructured-paddleocr==2.8.0.1
     # via -r ./extra-paddleocr.in
 urllib3==1.26.19
     # via

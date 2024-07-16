@@ -31,11 +31,11 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.5.4
+coverage[toml]==7.6.0
     # via
     #   -r ./test.in
     #   pytest-cov
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   pytest
@@ -64,6 +64,8 @@ label-studio-sdk==0.0.34
     # via -r ./test.in
 label-studio-tools==0.0.4
     # via label-studio-sdk
+liccheck==0.9.2
+    # via -r ./test.in
 lxml==5.2.2
     # via
     #   -c ./base.txt
@@ -136,10 +138,14 @@ rpds-py==0.19.0
     #   referencing
 ruff==0.4.10
     # via -r ./test.in
+semantic-version==2.10.0
+    # via liccheck
 six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
+toml==0.10.2
+    # via liccheck
 tomli==2.0.1
     # via
     #   autoflake

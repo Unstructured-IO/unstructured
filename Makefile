@@ -395,6 +395,10 @@ check-black:
 check-flake8:
 	flake8 .
 
+.PHONY: check-licenses
+check-licenses:
+	@scripts/check-licenses.sh
+
 # Check for print statements in ingest since anything going to console should be using the ingest logger
 # as it has a built in filter to redact sensitive information
 .PHONY: check-flake8-print

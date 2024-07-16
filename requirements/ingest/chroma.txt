@@ -37,9 +37,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-chroma-hnswlib==0.7.3
+chroma-hnswlib==0.7.5
     # via chromadb
-chromadb==0.5.3
+chromadb==0.5.4
     # via -r ./ingest/chroma.in
 click==8.1.7
     # via
@@ -52,7 +52,7 @@ deprecated==1.2.14
     # via
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -216,7 +216,6 @@ pyyaml==6.0.1
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
-    #   chromadb
     #   huggingface-hub
     #   kubernetes
     #   posthog
