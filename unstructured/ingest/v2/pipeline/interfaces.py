@@ -160,6 +160,8 @@ class PipelineStep(ABC):
             logger.error(f"Exception raised while running {self.identifier}", exc_info=e)
             if "file_data_path" in kwargs:
                 self.context.status[kwargs["file_data_path"]] = {self.identifier: str(e)}
+            else:
+                self.context.status[self.identifier] = {"step_error": str(e)}
             if self.context.raise_on_error:
                 raise e
             return None

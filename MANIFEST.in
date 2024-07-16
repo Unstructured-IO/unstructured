@@ -39,6 +39,7 @@ include requirements/ingest/google-drive.in
 include requirements/ingest/hubspot.in
 include requirements/ingest/jira.in
 include requirements/ingest/kafka.in
+include requirements/ingest/milvus.in
 include requirements/ingest/mongodb.in
 include requirements/ingest/notion.in
 include requirements/ingest/onedrive.in

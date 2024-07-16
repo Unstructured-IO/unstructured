@@ -16,7 +16,7 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
-  echo "Stopping Singlestore Docker container"
+  echo "Stopping Milvus Docker container"
   docker compose -f scripts/milvus-test-helpers/docker-compose.yml down --remove-orphans -v
 
   # Local file cleanup
