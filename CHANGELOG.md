@@ -1,4 +1,4 @@
-## 0.15.0-dev12
+## 0.15.0-dev13
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 
 ### Features
 
+* **Add support for specifying OCR language to `partition_pdf()`.** Extend language specification capability to `PaddleOCR` in addition to `TesseractOCR`. Users can now specify OCR languages for both OCR engines when using `partition_pdf()`.
 * **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
