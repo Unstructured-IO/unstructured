@@ -33,22 +33,23 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 class OCRAgentTesseract(OCRAgent):
     """OCR service implementation for Tesseract."""
 
+    def __init__(self, language: str = "eng"):
+        self.language = language
+
     def is_text_sorted(self):
         return True
 
-    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
-        return unstructured_pytesseract.image_to_string(np.array(image), lang=ocr_languages)
+    def get_text_from_image(self, image: PILImage.Image) -> str:
+        return unstructured_pytesseract.image_to_string(np.array(image), lang=self.language)
 
-    def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> List[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> List[TextRegion]:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
         trace_logger.detail("Processing entire page OCR with tesseract...")
         zoom = 1
         ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
             np.array(image),
-            lang=ocr_languages,
+            lang=self.language,
             output_type=Output.DATAFRAME,
         )
         ocr_df = ocr_df.dropna()
@@ -77,7 +78,7 @@ class OCRAgentTesseract(OCRAgent):
             )
             ocr_df = unstructured_pytesseract.image_to_data(
                 np.array(zoom_image(image, zoom)),
-                lang=ocr_languages,
+                lang=self.language,
                 output_type=Output.DATAFRAME,
             )
             ocr_df = ocr_df.dropna()
@@ -87,17 +88,12 @@ class OCRAgentTesseract(OCRAgent):
         return ocr_regions
 
     @requires_dependencies("unstructured_inference")
-    def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> List["LayoutElement"]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> List["LayoutElement"]:
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
         )
 
-        ocr_regions = self.get_layout_from_image(
-            image,
-            ocr_languages=ocr_languages,
-        )
+        ocr_regions = self.get_layout_from_image(image)
 
         # NOTE(christine): For tesseract, the ocr_text returned by
         # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
@@ -106,10 +102,7 @@ class OCRAgentTesseract(OCRAgent):
         # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
         # the text regions in each group to create a list of layout elements.
 
-        ocr_text = self.get_text_from_image(
-            image,
-            ocr_languages=ocr_languages,
-        )
+        ocr_text = self.get_text_from_image(image)
 
         return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
