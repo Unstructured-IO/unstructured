@@ -51,8 +51,8 @@ OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
 def get_document_type(filename: str) -> str:
-    """Extracts the last extension from a filename (without the leading dot)"""
-    return Path(filename).suffix.removeprefix(".")
+    """Extracts the last extension from a filename"""
+    return Path(filename).suffix
 
 
 @dataclass
