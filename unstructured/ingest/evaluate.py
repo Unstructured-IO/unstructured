@@ -251,8 +251,8 @@ def measure_table_structure_accuracy_command(
 
 
 @main.command()
-@click.option("--output_dir", type=str, help="Directory to structured output.")
-@click.option("--source_dir", type=str, help="Directory to structured source.")
+@click.option("--output_dir", type=str, required=True, help="Directory to structured output.")
+@click.option("--source_dir", type=str, required=True, help="Directory to structured source.")
 @click.option(
     "--output_list",
     type=str,
