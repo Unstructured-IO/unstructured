@@ -42,7 +42,7 @@ class AstraCliUploaderConfig(CliConfig):
                 ["--collection-name"],
                 required=False,
                 type=str,
-                help="The name of the Astra DB collection to write into. "
+                help="The name of the Astra DB collection. "
                 "Note that the collection name must only include letters, "
                 "numbers, and underscores.",
             ),
@@ -58,7 +58,7 @@ class AstraCliUploaderConfig(CliConfig):
                 required=False,
                 default=None,
                 type=str,
-                help="The Astra DB namespace to write into.",
+                help="The Astra DB connection namespace.",
             ),
             click.Option(
                 ["--requested-indexing-policy"],

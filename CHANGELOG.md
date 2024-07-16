@@ -1,4 +1,4 @@
-## 0.15.0-dev12
+## 0.15.0-dev13
 
 ### Enhancements
 
@@ -14,6 +14,8 @@
 ### Fixes
 
 * **Remedy error on Windows when `nltk` binaries are downloaded.** Work around a quirk in the Windows implementation of `tempfile.NamedTemporaryFile` where accessing the temporary file by name raises `PermissionError`.
+
+* **Move Astra embedded_dimension to write config**
 
 ## 0.14.10
 
