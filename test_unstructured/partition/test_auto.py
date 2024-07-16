@@ -1124,7 +1124,9 @@ def test_auto_partition_ignores_empty_string_for_ocr_languages(
 
 def test_auto_partition_warns_with_ocr_languages(caplog: LogCaptureFixture):
     partition(
-        example_doc_path("pdf/chevron-page.pdf"), strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
+        example_doc_path("pdf/chevron-page.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        ocr_languages="eng",
     )
 
     assert caplog.records[0].levelname == "WARNING"
@@ -1213,7 +1215,9 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
     )
     monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", {"pdf": partition_pdf_})
 
-    elements = partition(example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type)
+    elements = partition(
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type
+    )
 
     assert len(elements) == 2
     assert all(e.metadata.filetype == "application/pdf" for e in elements)
