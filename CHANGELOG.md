@@ -1,4 +1,4 @@
-## 0.15.0-dev9
+## 0.15.0-dev12
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 * **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
+
+* **Remedy error on Windows when `nltk` binaries are downloaded.** Work around a quirk in the Windows implementation of `tempfile.NamedTemporaryFile` where accessing the temporary file by name raises `PermissionError`.
 
 ## 0.14.10
 
