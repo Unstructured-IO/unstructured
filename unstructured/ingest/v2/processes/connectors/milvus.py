@@ -182,7 +182,7 @@ class MilvusUploader(Uploader):
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         if self.upload_config.num_of_processes == 1:
             for content in contents:
-                self.upload_csv(content=content)
+                self.upload(content=content)
 
         else:
             with mp.Pool(
