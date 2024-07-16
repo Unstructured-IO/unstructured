@@ -65,10 +65,10 @@ STR_TO_FILETYPE = {
     # -- BMP --
     "image/bmp": FileType.BMP,
     # -- CSV --
+    "text/csv": FileType.CSV,
     "application/csv": FileType.CSV,
     "application/x-csv": FileType.CSV,
     "text/comma-separated-values": FileType.CSV,
-    "text/csv": FileType.CSV,
     "text/x-comma-separated-values": FileType.CSV,
     "text/x-csv": FileType.CSV,
     # -- DOC --
@@ -109,8 +109,8 @@ STR_TO_FILETYPE = {
     # -- RST --
     "text/x-rst": FileType.RST,
     # -- RTF --
-    "application/rtf": FileType.RTF,
     "text/rtf": FileType.RTF,
+    "application/rtf": FileType.RTF,
     # -- TIFF --
     "image/tiff": FileType.TIFF,
     # -- TSV --
@@ -120,12 +120,13 @@ STR_TO_FILETYPE = {
     # NOTE(robinson) - https://mimetype.io/application/yaml
     # In the future, we may have special processing for YAML
     # files instead of treating them as plaintext
+    "text/yaml": FileType.TXT,
     "application/x-yaml": FileType.TXT,
     "application/yaml": FileType.TXT,
     "text/x-yaml": FileType.TXT,
-    "text/yaml": FileType.TXT,
     # -- WAV --
     # NOTE(robinson) - https://mimetype.io/audio/wav
+    "audio/wav": FileType.WAV,
     "audio/vnd.wav": FileType.WAV,
     "audio/vnd.wave": FileType.WAV,
     "audio/wave": FileType.WAV,
@@ -141,18 +142,29 @@ STR_TO_FILETYPE = {
     "inode/x-empty": FileType.EMPTY,
 }
 
-MIMETYPES_TO_EXCLUDE = [
+# -- MIME-types in STR_TO_FILETYPE that are not the canonical MIME-type for that file-type --
+MIMETYPE_ALIASES = (
     "application/csv",
     "application/epub+zip",
+    "application/rtf",
     "application/x-csv",
     "application/x-ole-storage",
+    "application/x-yaml",
+    "application/yaml",
+    "audio/vnd.wav",
+    "audio/vnd.wave",
+    "audio/wave",
+    "audio/x-pn-wav",
+    "audio/x-wav",
     "text/comma-separated-values",
     "text/x-comma-separated-values",
     "text/x-csv",
     "text/x-markdown",
-]
+    "text/x-yaml",
+    "text/yaml",
+)
 
-FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPES_TO_EXCLUDE}
+FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPE_ALIASES}
 
 EXT_TO_FILETYPE = {
     # -- BMP --

@@ -45,9 +45,7 @@ is_in_docker = os.path.exists("/.dockerenv")
         ("example-10k.html", FileType.HTML),
         ("fake-html.html", FileType.HTML),
         ("stanley-cups.xlsx", FileType.XLSX),
-        # NOTE(robinson) - currently failing in the docker tests because the detected
-        # MIME type is text/csv
-        # ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.csv", FileType.CSV),
         ("stanley-cups.tsv", FileType.TSV),
         ("fake-power-point.pptx", FileType.PPTX),
         ("winter-sports.epub", FileType.EPUB),
@@ -112,9 +110,7 @@ def test_detect_filetype_from_filename_with_extension(
         ("example-10k.html", [FileType.HTML, FileType.XML]),
         ("fake-html.html", [FileType.HTML]),
         ("stanley-cups.xlsx", [FileType.XLSX]),
-        # NOTE(robinson]) - currently failing in the docker tests because the detected
-        # MIME type is text/csv
-        # ("stanley-cups.csv", [FileType.CSV]),
+        ("stanley-cups.csv", [FileType.CSV]),
         ("stanley-cups.tsv", [FileType.TSV]),
         ("fake-power-point.pptx", [FileType.PPTX]),
         ("winter-sports.epub", [FileType.EPUB]),
