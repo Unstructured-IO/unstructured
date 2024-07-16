@@ -26,6 +26,7 @@ all_tests=(
   'elasticsearch.sh'
   'gcs.sh'
   'kafka-local.sh'
+  'milvus.sh'
   'mongodb.sh'
   'opensearch.sh'
   'pgvector.sh'
