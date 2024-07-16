@@ -51,7 +51,7 @@ OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
 def get_document_type(filename: str) -> str:
-    """Extracts the last extenion from a filename (without leading dot)"""
+    """Extracts the last extension from a filename (without the leading dot)"""
     return Path(filename).suffix.removeprefix(".")
 
 
@@ -184,7 +184,7 @@ class BaseMetricsCalculator(ABC):
             return None
 
     @abstractmethod
-    def _process_document(self, path: Path) -> Optional[list]:
+    def _process_document(self, path: Path) -> list:
         """Should return all metadata and metrics for a single document."""
 
 
@@ -228,19 +228,20 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-table-structure-accuracy.tsv"
 
-    def _process_document(self, path: Path) -> Optional[list]:
-        if src_gt_filename in self._rel_ground_truth_paths:  # type: ignore
-            return None
+    def _process_document(self, path: Path) -> list:
+        original_filename = path.stem
+        src_gt_path = Path(path.stem + ".json")
+        connector = path.parts[-2] if len(path.parts) > 1 else None
 
-        prediction_file = self.documents_dir / path
+        prediction_file = self.documents_dir / path.name
         if not prediction_file.exists():
-            logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
-            return None
+            raise FileNotFoundError(f"Prediction file {prediction_file} does not exist, skipping")
 
-        ground_truth_file = self.ground_truths_dir / src_gt_filename
+        ground_truth_file = self.ground_truths_dir / src_gt_path.name
         if not ground_truth_file.exists():
-            logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
-            return None
+            raise FileNotFoundError(
+                f"Ground truth file {ground_truth_file} does not exist, skipping"
+            )
 
         processor_from_text_as_html = TableEvalProcessor.from_json_files(
             prediction_file=prediction_file,
@@ -250,10 +251,9 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         )
         report_from_html = processor_from_text_as_html.process_file()
 
-        return (
-            [filename, get_document_type(filename), connector]
-            + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
-	)
+        return [original_filename, get_document_type(original_filename), connector] + [
+            getattr(report_from_html, metric) for metric in self.supported_metric_names
+        ]
 
     def _generate_dataframes(self, rows):
         headers = [
@@ -342,8 +342,8 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
                 "Please note that some files will be skipped."
             )
 
-    def _process_document(self, path: Path) -> Optional[list]:
-        filename = path.stem
+    def _process_document(self, path: Path) -> list:
+        original_filename = path.stem
         connector = path.parts[0] if len(path.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(path)
@@ -355,7 +355,13 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
             # 0.01 to distinguish it was set manually
             accuracy = 0.01
         percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
-        return [filename, get_document_type(filename), connector, accuracy, percent_missing]
+        return [
+            original_filename,
+            get_document_type(original_filename),
+            connector,
+            accuracy,
+            percent_missing,
+        ]
 
     def _get_ccts(self, doc: Path) -> tuple[str, str]:
         output_cct = _prepare_output_cct(
@@ -416,16 +422,16 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, path: Path) -> Optional[list]:
-        filename = path.stem
+    def _process_document(self, path: Path) -> list:
+        original_filename = path.stem
         connector = path.parts[0] if len(path.parts) > 1 else None
 
-        output = get_element_type_frequency(_read_text_file(self.documents_dir / path))
+        output = get_element_type_frequency(_read_text_file(self.documents_dir / path.name))
         source = get_element_type_frequency(
             _read_text_file(self.ground_truths_dir / path.with_suffix(".json"))
         )
         accuracy = round(calculate_element_type_percent_match(output, source), 3)
-        return [filename, get_document_type(filename), connector, accuracy]
+        return [original_filename, get_document_type(original_filename), connector, accuracy]
 
     def _generate_dataframes(self, rows):
         headers = ["filename", "doctype", "connector", "element-type-accuracy"]
@@ -608,7 +614,7 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
 
     def __post_init__(self):
         super().__post_init__()
-        self._document_paths = [
+        self._rel_document_paths = [
             path.relative_to(self.documents_dir)
             for path in self.documents_dir.rglob("analysis/*/layout_dump/object_detection.json")
         ]
@@ -636,12 +642,12 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         To compare to `file_stem` we need to take the prefix part of the file, thus double-stem
         is applied.
         """
-        for path in self._ground_truth_paths:
+        for path in self._rel_ground_truth_paths:
             if Path(path.stem).stem == file_stem:
                 return path
         return None
 
-    def _process_document(self, doc: Path) -> Optional[list]:
+    def _process_document(self, path: Path) -> list:
         """Calculate metrics for a single document.
         As OD dump directory structure differes from other simple outputs, it needs
         a specific processing to match the output OD dump file with corresponding
@@ -667,25 +673,22 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         Returns:
             list: a list of metrics (representing a single row) for a single document
         """
-        od_dump_path = Path(doc)
+        od_dump_path = Path(path)
         file_stem = od_dump_path.parts[-3]  # we take the `document_name` - so the filename stem
 
         src_gt_filename = self._find_file_in_ground_truth(file_stem)
 
-        if src_gt_filename not in self._ground_truth_paths:
-            return None
+        doctype = get_document_type(path)
 
-        doctype = Path(src_gt_filename.stem).suffix[1:]
-
-        prediction_file = self.documents_dir / doc
+        prediction_file = self.documents_dir / path.name
         if not prediction_file.exists():
-            logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
-            return None
+            raise FileNotFoundError(f"Prediction file {prediction_file} does not exist, skipping")
 
         ground_truth_file = self.ground_truths_dir / src_gt_filename
         if not ground_truth_file.exists():
-            logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
-            return None
+            raise FileNotFoundError(
+                f"Ground truth file {ground_truth_file} does not exist, skipping"
+            )
 
         processor = ObjectDetectionEvalProcessor.from_json_files(
             prediction_file_path=prediction_file,
