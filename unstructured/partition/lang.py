@@ -226,7 +226,7 @@ def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) ->
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def tesseract_to_paddle_language(tesseract_language: str = "eng") -> str:
+def tesseract_to_paddle_language(tesseract_language: str) -> str:
     """
     Convert TesseractOCR language code to PaddleOCR language code.
 
@@ -234,10 +234,11 @@ def tesseract_to_paddle_language(tesseract_language: str = "eng") -> str:
     :return: str, corresponding language code for PaddleOCR or None if not found
     """
 
-    lang = PYTESSERACT_TO_PADDLE_LANG_CODE_MAP.get(tesseract_language)
+    lang = PYTESSERACT_TO_PADDLE_LANG_CODE_MAP.get(tesseract_language.lower())
     if not lang:
         logger.warning(
-            f"{lang} is not a language supported by PaddleOCR, proceed with `en` instead."
+            f"{tesseract_language} is not a language code supported by PaddleOCR, "
+            f"proceed with `en` instead."
         )
         return "en"
 
