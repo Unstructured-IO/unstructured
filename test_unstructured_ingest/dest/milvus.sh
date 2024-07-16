@@ -39,7 +39,6 @@ echo "Creating milvus instance"
 docker compose -f scripts/milvus-test-helpers/docker-compose.yml up -d --wait-timeout 60
 scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
 
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
   --num-processes "$max_processes" \
@@ -55,7 +54,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --db-name $DB_NAME \
   --collection-name $COLLECTION_NAME
 
-
 sample_embeddings=$(cat "$WORK_DIR"/upload_stage/* | jq '.[0].embeddings')
 expected_count=$(cat "$WORK_DIR"/upload_stage/* | jq 'length')
 
@@ -64,5 +62,3 @@ expected_count=$(cat "$WORK_DIR"/upload_stage/* | jq 'length')
   --embeddings "$sample_embeddings" \
   --collection-name $COLLECTION_NAME \
   --count "$expected_count"
-
-
