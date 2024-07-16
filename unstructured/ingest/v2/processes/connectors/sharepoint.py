@@ -24,7 +24,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     SourceRegistryEntry,
-    add_source_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -403,13 +402,10 @@ class SharepointDownloader(Downloader):
             return self.get_site_page(file_data=file_data)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        connection_config=SharepointConnectionConfig,
-        indexer_config=SharepointIndexerConfig,
-        indexer=SharepointIndexer,
-        downloader_config=SharepointDownloaderConfig,
-        downloader=SharepointDownloader,
-    ),
+sharepoint_source_entry = SourceRegistryEntry(
+    connection_config=SharepointConnectionConfig,
+    indexer_config=SharepointIndexerConfig,
+    indexer=SharepointIndexer,
+    downloader_config=SharepointDownloaderConfig,
+    downloader=SharepointDownloader,
 )
