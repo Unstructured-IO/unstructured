@@ -15,7 +15,6 @@ from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
     FileData,
-    UploadContent,
     Uploader,
     UploaderConfig,
     UploadStager,
@@ -187,6 +186,9 @@ class SQLUploader(Uploader):
     upload_config: SQLUploaderConfig
     connection_config: SimpleSqlConfig
 
+    def is_batch(self) -> bool:
+        return False
+
     @property
     def connection(self):
         if self.connection_config.db_type == DatabaseType.POSTGRESQL:
@@ -233,8 +235,8 @@ class SQLUploader(Uploader):
             output.append(tuple(parsed))
         return output
 
-    def upload_contents(self, content: UploadContent) -> None:
-        df = pd.read_json(content.path, orient="records", lines=True)
+    def upload_contents(self, path: Path) -> None:
+        df = pd.read_json(path, orient="records", lines=True)
         logger.debug(f"uploading {len(df)} entries to {self.connection_config.database} ")
         df.replace({np.nan: None}, inplace=True)
 
@@ -243,7 +245,7 @@ class SQLUploader(Uploader):
                 VALUES({','.join(['?' if self.connection_config.db_type==DatabaseType.SQLITE else '%s' for x in columns])})"  # noqa E501
 
         for rows in pd.read_json(
-            content.path, orient="records", lines=True, chunksize=self.upload_config.batch_size
+            path, orient="records", lines=True, chunksize=self.upload_config.batch_size
         ):
             with self.connection() as conn:
                 values = self.prepare_data(columns, tuple(rows.itertuples(index=False, name=None)))
@@ -255,9 +257,8 @@ class SQLUploader(Uploader):
 
                 conn.commit()
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        for content in contents:
-            self.upload_contents(content=content)
+    def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+        self.upload_contents(path=path)
 
 
 sql_destination_entry = DestinationRegistryEntry(

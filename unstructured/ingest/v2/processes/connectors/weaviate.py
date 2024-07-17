@@ -200,7 +200,7 @@ class WeaviateUploader(Uploader):
             )
         return None
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: Any) -> None:
         # TODO update to use async support in weaviate client
         #  once the version can be bumped to include it
         elements_dict = []

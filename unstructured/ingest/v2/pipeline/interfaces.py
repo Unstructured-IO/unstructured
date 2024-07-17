@@ -12,7 +12,7 @@ from typing import Any, Awaitable, Callable, Optional, TypeVar
 from tqdm import tqdm
 from tqdm.asyncio import tqdm as tqdm_asyncio
 
-from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
+from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig, Uploader
 from unstructured.ingest.v2.logger import logger, make_default_logger
 
 BaseProcessT = TypeVar("BaseProcessT", bound=BaseProcess)
@@ -129,11 +129,25 @@ class PipelineStep(ABC):
         if self.context.async_supported and self.process.is_async():
             return self.process_async(iterable=iterable)
         if self.context.mp_supported:
+            if isinstance(self.process, Uploader) and self.process.is_batch():
+                return self.run_batch(contents=iterable)
             return self.process_multiprocess(iterable=iterable)
         return self.process_serially(iterable=iterable)
 
     def _run(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
         return self.asyncio_run(fn=self.run_async, _fn=fn, **kwargs)
+
+    def _run_batch(self, contents: iterable_input, **kwargs) -> Any:
+        raise NotImplementedError()
+
+    def run_batch(self, contents: iterable_input, **kwargs) -> Any:
+        try:
+            return self._run_batch(contents=contents, **kwargs)
+        except Exception as e:
+            self.context.status[self.identifier] = {"step_error": str(e)}
+            if self.context.raise_on_error:
+                raise e
+            return None
 
     async def _run_async(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError

@@ -1,12 +1,13 @@
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
-    UploadContent,
+    FileData,
     Uploader,
     UploaderConfig,
 )
@@ -70,6 +71,9 @@ class DatabricksVolumesUploader(Uploader):
     connection_config: DatabricksVolumesConnectionConfig
     client: Optional["WorkspaceClient"] = field(init=False, default=None)
 
+    def is_batch(self) -> bool:
+        return False
+
     @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks-volumes")
     def __post_init__(self) -> "WorkspaceClient":
         from databricks.sdk import WorkspaceClient
@@ -78,15 +82,14 @@ class DatabricksVolumesUploader(Uploader):
             host=self.connection_config.host, **self.connection_config.access_config.to_dict()
         )
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        for content in contents:
-            with open(content.path, "rb") as elements_file:
-                output_path = os.path.join(self.upload_config.path, content.path.name)
-                self.client.files.upload(
-                    file_path=output_path,
-                    contents=elements_file,
-                    overwrite=self.upload_config.overwrite,
-                )
+    def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+        with open(path, "rb") as elements_file:
+            output_path = os.path.join(self.upload_config.path, path.name)
+            self.client.files.upload(
+                file_path=output_path,
+                contents=elements_file,
+                overwrite=self.upload_config.overwrite,
+            )
 
 
 databricks_volumes_destination_entry = DestinationRegistryEntry(

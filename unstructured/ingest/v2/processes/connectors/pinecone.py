@@ -138,7 +138,7 @@ class PineconeUploader(Uploader):
             raise DestinationConnectionError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: Any) -> None:
 
         elements_dict = []
         for content in contents:

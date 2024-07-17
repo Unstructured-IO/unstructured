@@ -175,7 +175,7 @@ class ChromaUploader(Uploader):
         )
         return chroma_dict
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: Any) -> None:
 
         elements_dict = []
         for content in contents:

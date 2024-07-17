@@ -178,7 +178,7 @@ class AzureCognitiveSearchUploader(Uploader):
     def write_dict_wrapper(self, elements_dict):
         return self.write_dict(elements_dict=elements_dict)
 
-    def run(self, contents: list[UploadContent], **kwargs: t.Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: t.Any) -> None:
 
         elements_dict = []
         for content in contents:
