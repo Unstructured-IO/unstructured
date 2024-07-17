@@ -53,5 +53,6 @@ include requirements/ingest/salesforce.in
 include requirements/ingest/sftp.in
 include requirements/ingest/sharepoint.in
 include requirements/ingest/slack.in
+include requirements/ingest/singlestore.in
 include requirements/ingest/weaviate.in
 include requirements/ingest/wikipedia.in

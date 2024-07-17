@@ -11,6 +11,7 @@ import tempfile
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional
 
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
 
@@ -179,6 +180,39 @@ class ENVConfig:
         if self.GLOBAL_WORKING_DIR_ENABLED:
             self._setup_tmpdir(tmpdir)
         return tmpdir
+
+    @property
+    def ANALYSIS_DUMP_OD_SKIP(self) -> bool:
+        """Analysis dump object detection skip flag."""
+        return self._get_bool("ANALYSIS_DUMP_OD_SKIP", False)
+
+    @property
+    def ANALYSIS_BBOX_SKIP(self) -> bool:
+        """Analysis draw bboxes on pages skip flag."""
+        return self._get_bool("ANALYSIS_BBOX_SKIP", False)
+
+    @property
+    def ANALYSIS_BBOX_DRAW_GRID(self) -> bool:
+        """Flag for drawing the analysis bboxes on a single image (as grid)"""
+        return self._get_bool("ANALYSIS_BBOX_DRAW_GRID", False)
+
+    @property
+    def ANALYSIS_BBOX_DRAW_CAPTION(self) -> bool:
+        """Flag for drawing the caption above the analysed page (for e.g. layout source)"""
+        return self._get_bool("ANALYSIS_BBOX_DRAW_CAPTION", True)
+
+    @property
+    def ANALYSIS_BBOX_RESIZE(self) -> Optional[float]:
+        """Analaysis bbox resize value"""
+        resize = self._get_float("ANALYSIS_BBOX_RESIZE", -1.0)
+        if resize == -1.0:
+            return None
+        return resize
+
+    @property
+    def ANALYSIS_BBOX_FORMAT(self) -> str:
+        """The format for analysed pages with bboxes drawn on them. Default is 'png'."""
+        return self._get_string("ANALYSIS_BBOX_FORMAT", "png")
 
 
 env_config = ENVConfig()

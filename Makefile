@@ -197,6 +197,10 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest/sharepoint.txt
 
+.PHONY: install-ingest-singlestore
+install-ingest-singlestore:
+	python3 -m pip install -r requirements/ingest/singlestore.txt
+
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
 	python3 -m pip install -r requirements/ingest/weaviate.txt
@@ -390,6 +394,10 @@ check-black:
 .PHONY: check-flake8
 check-flake8:
 	flake8 .
+
+.PHONY: check-licenses
+check-licenses:
+	@scripts/check-licenses.sh
 
 # Check for print statements in ingest since anything going to console should be using the ingest logger
 # as it has a built in filter to redact sensitive information

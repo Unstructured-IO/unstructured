@@ -9,7 +9,7 @@ from dateutil import parser
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -23,16 +23,12 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from chromadb import Client
-
-
-import typing as t
 
 CONNECTOR_TYPE = "chroma"
 
@@ -76,8 +72,8 @@ class ChromaUploadStager(UploadStager):
             logger.debug(f"date {date_string} string not a timestamp: {e}")
         return parser.parse(date_string)
 
-    @classmethod
-    def conform_dict(cls, data: dict) -> dict:
+    @staticmethod
+    def conform_dict(data: dict) -> dict:
         """
         Prepares dictionary in the format that Chroma requires
         """
@@ -99,11 +95,7 @@ class ChromaUploadStager(UploadStager):
     ) -> Path:
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
-
-        conformed_elements = []
-        for element in elements_contents:
-            conformed_elements.append(self.conform_dict(data=element))
-
+        conformed_elements = [self.conform_dict(data=element) for element in elements_contents]
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
             json.dump(conformed_elements, output_file)
@@ -117,6 +109,7 @@ class ChromaUploaderConfig(UploaderConfig):
 
 @dataclass
 class ChromaUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
     client: Optional["Client"] = field(init=False)
@@ -165,7 +158,7 @@ class ChromaUploader(Uploader):
             raise ValueError(f"chroma error: {e}") from e
 
     @staticmethod
-    def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
+    def prepare_chroma_list(chunk: tuple[dict[str, Any]]) -> dict[str, list[Any]]:
         """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
         ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
         chroma_dict = {}
@@ -196,22 +189,17 @@ class ChromaUploader(Uploader):
             f"at {self.connection_config.host}",
         )
 
-        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
-
         collection = self.client.get_or_create_collection(
             name=self.connection_config.collection_name
         )
-        for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
+        for chunk in batch_generator(elements_dict, self.upload_config.batch_size):
             self.upsert_batch(collection, self.prepare_chroma_list(chunk))
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=ChromaConnectionConfig,
-        uploader=ChromaUploader,
-        uploader_config=ChromaUploaderConfig,
-        upload_stager=ChromaUploadStager,
-        upload_stager_config=ChromaUploadStagerConfig,
-    ),
+chroma_destination_entry = DestinationRegistryEntry(
+    connection_config=ChromaConnectionConfig,
+    uploader=ChromaUploader,
+    uploader_config=ChromaUploaderConfig,
+    upload_stager=ChromaUploadStager,
+    upload_stager_config=ChromaUploadStagerConfig,
 )

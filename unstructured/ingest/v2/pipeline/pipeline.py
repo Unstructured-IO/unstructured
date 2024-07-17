@@ -87,17 +87,8 @@ class Pipeline:
         # Make sure that if the set destination connector expects a stager, one is also set
         if not self.uploader_step:
             return
-        matching_registry_entry = [
-            v
-            for v in destination_registry.values()
-            if isinstance(self.uploader_step.process, v.uploader)
-        ]
-        if len(matching_registry_entry) > 1:
-            raise ValueError(
-                f"More than one entry found in destination registry "
-                f"for uploader type: {self.uploader_step.process}"
-            )
-        registry_entry = matching_registry_entry[0]
+        uploader_connector_type = self.uploader_step.process.connector_type
+        registry_entry = destination_registry[uploader_connector_type]
         if registry_entry.upload_stager and self.stager_step is None:
             raise ValueError(
                 f"pipeline with uploader type {self.uploader_step.process.__class__.__name__} "
