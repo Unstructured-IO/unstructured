@@ -37,7 +37,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   s3 \
   --key "$S3_INGEST_TEST_ACCESS_KEY" \

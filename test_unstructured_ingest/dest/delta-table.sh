@@ -38,7 +38,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   delta-table \
   --table-uri "$DESTINATION_TABLE"
