@@ -306,7 +306,7 @@ def test_auto_partition_html_pre_from_file():
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpeg_from_filename(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("layout-parser-paper-fast.jpg")
+    file_path = example_doc_path("img/layout-parser-paper-fast.jpg")
     metadata_filename = file_path if pass_metadata_filename else None
 
     elements = partition(
@@ -328,7 +328,7 @@ def test_auto_partition_jpeg_from_filename(pass_metadata_filename: bool, content
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
 def test_auto_partition_jpeg_from_file(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("layout-parser-paper-fast.jpg")
+    file_path = example_doc_path("img/layout-parser-paper-fast.jpg")
     metadata_filename = file_path if pass_metadata_filename else None
 
     with open(file_path, "rb") as f:
@@ -348,7 +348,7 @@ def test_auto_partition_jpeg_from_file(pass_metadata_filename: bool, content_typ
 
 def test_auto_partition_bmp_from_filename(tmp_path: pathlib.Path):
     bmp_filename = str(tmp_path / "example.bmp")
-    with Image.open(example_doc_path("layout-parser-paper-with-table.jpg")) as img:
+    with Image.open(example_doc_path("img/layout-parser-paper-with-table.jpg")) as img:
         img.save(bmp_filename)
 
     elements = partition(filename=bmp_filename, strategy=PartitionStrategy.HI_RES)
@@ -365,7 +365,7 @@ def test_auto_partition_image_element_extraction(extract_image_block_to_payload:
 
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = partition(
-            filename=example_doc_path("embedded-images-tables.jpg"),
+            filename=example_doc_path("img/embedded-images-tables.jpg"),
             extract_image_block_types=extract_image_block_types,
             extract_image_block_to_payload=extract_image_block_to_payload,
             extract_image_block_output_dir=tmpdir,
