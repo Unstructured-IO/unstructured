@@ -508,7 +508,9 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
 ):
     import math
 
-    elements = image.partition_image(filename=example_doc_path(filename), strategy=PartitionStrategy.OCR_ONLY)
+    elements = image.partition_image(
+        filename=example_doc_path(filename), strategy=PartitionStrategy.OCR_ONLY
+    )
     for element in elements:
         # TODO (jennings) One or multiple elements is an empty string
         # without coordinates. This should be fixed in a new issue
@@ -572,7 +574,9 @@ def test_partition_image_uses_model_name():
         pdf,
         "_partition_pdf_or_image_local",
     ) as mockpartition:
-        image.partition_image(example_doc_path("img/layout-parser-paper-fast.jpg"), model_name="test")
+        image.partition_image(
+            example_doc_path("img/layout-parser-paper-fast.jpg"), model_name="test"
+        )
         print(mockpartition.call_args)
         assert "model_name" in mockpartition.call_args.kwargs
         assert mockpartition.call_args.kwargs["model_name"]
@@ -583,7 +587,9 @@ def test_partition_image_uses_hi_res_model_name():
         pdf,
         "_partition_pdf_or_image_local",
     ) as mockpartition:
-        image.partition_image(example_doc_path("img/layout-parser-paper-fast.jpg"), hi_res_model_name="test")
+        image.partition_image(
+            example_doc_path("img/layout-parser-paper-fast.jpg"), hi_res_model_name="test"
+        )
         print(mockpartition.call_args)
         assert "model_name" not in mockpartition.call_args.kwargs
         assert "hi_res_model_name" in mockpartition.call_args.kwargs
