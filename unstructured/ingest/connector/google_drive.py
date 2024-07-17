@@ -7,7 +7,6 @@ from datetime import datetime
 from mimetypes import guess_extension
 from pathlib import Path
 
-from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
@@ -109,13 +108,6 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     access_config: GoogleDriveAccessConfig
     extension: t.Optional[str] = None
     recursive: bool = False
-
-    def __post_init__(self):
-        if self.extension and self.extension not in EXT_TO_FILETYPE:
-            raise ValueError(
-                f"Extension not supported. "
-                f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
-            )
 
     def create_session_handle(
         self,

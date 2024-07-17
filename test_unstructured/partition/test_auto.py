@@ -45,7 +45,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
+from unstructured.file_utils.model import FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import IMAGE_FILETYPES, _get_partition_with_extras, partition
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -1245,7 +1245,7 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype:
 
     assert elements
     assert all(
-        e.metadata.filetype == FILETYPE_TO_MIMETYPE[filetype]
+        e.metadata.filetype == filetype.mime_type
         for e in elements
         if e.metadata.filetype is not None
     )

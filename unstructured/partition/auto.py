@@ -9,7 +9,7 @@ import requests
 
 from unstructured.documents.elements import DataSourceMetadata, Element
 from unstructured.file_utils.filetype import detect_filetype, is_json_processable
-from unstructured.file_utils.model import FILETYPE_TO_MIMETYPE, STR_TO_FILETYPE, FileType
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
@@ -548,12 +548,10 @@ def partition(
         element.metadata.url = url
         element.metadata.data_source = data_source_metadata
         if content_type is not None:
-            out_filetype = STR_TO_FILETYPE.get(content_type)
-            element.metadata.filetype = (
-                FILETYPE_TO_MIMETYPE[out_filetype] if out_filetype is not None else None
-            )
+            out_filetype = FileType.from_mime_type(content_type)
+            element.metadata.filetype = out_filetype.mime_type if out_filetype is not None else None
         else:
-            element.metadata.filetype = FILETYPE_TO_MIMETYPE[filetype]
+            element.metadata.filetype = filetype.mime_type
 
     return elements
 

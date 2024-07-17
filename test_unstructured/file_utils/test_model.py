@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from unstructured.file_utils.model import NewFileType as FileType
+from unstructured.file_utils.model import FileType
 
 
 class DescribeFileType:
