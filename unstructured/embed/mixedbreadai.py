@@ -198,7 +198,10 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return self._embed([query])[0]
 
     @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(["mixedbread_ai"])
+    @requires_dependencies(
+        ["mixedbread_ai"],
+        extras="embed-mixedbreadai",
+    )
     def create_client(self) -> "MixedbreadAI":
         """
         Create the Mixedbread AI client.
