@@ -8,13 +8,8 @@ from typing import IO, Any, Callable, Literal, Optional
 import requests
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import (
-    FILETYPE_TO_MIMETYPE,
-    STR_TO_FILETYPE,
-    FileType,
-    detect_filetype,
-    is_json_processable,
-)
+from unstructured.file_utils.filetype import detect_filetype, is_json_processable
+from unstructured.file_utils.model import FILETYPE_TO_MIMETYPE, STR_TO_FILETYPE, FileType
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
