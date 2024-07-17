@@ -480,10 +480,10 @@ def test_partition_pdf_uses_table_extraction():
 
 
 @pytest.mark.parametrize(
-    ("ocr_mode"),
+    "ocr_mode",
     [
-        ("entire_page"),
-        ("individual_blocks"),
+        "entire_page",
+        "individual_blocks",
     ],
 )
 def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
@@ -506,11 +506,11 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
 
 
 @pytest.mark.parametrize(
-    ("strategy"),
+    "strategy",
     [
-        (PartitionStrategy.FAST),
-        (PartitionStrategy.HI_RES),
-        (PartitionStrategy.OCR_ONLY),
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
     ],
 )
 def test_partition_pdf_strategies_keep_languages_metadata(strategy):
