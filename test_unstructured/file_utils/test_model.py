@@ -53,6 +53,47 @@ class DescribeFileType:
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
         [
+            (FileType.BMP, ("unstructured_inference",)),
+            (FileType.CSV, ("pandas",)),
+            (FileType.DOC, ("docx",)),
+            (FileType.EMPTY, ()),
+            (FileType.HTML, ()),
+            (FileType.ODT, ("docx", "pypandoc")),
+            (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
+            (FileType.UNK, ()),
+            (FileType.WAV, ()),
+            (FileType.ZIP, ()),
+        ],
+    )
+    def it_knows_which_importable_packages_its_partitioner_depends_on(
+        self, file_type: FileType, expected_value: tuple[str, ...]
+    ):
+        assert file_type.importable_package_dependencies == expected_value
+
+    @pytest.mark.parametrize(
+        ("file_type", "expected_value"),
+        [
+            (FileType.BMP, "image"),
+            (FileType.DOC, "doc"),
+            (FileType.DOCX, "docx"),
+            (FileType.EML, None),
+            (FileType.EMPTY, None),
+            (FileType.MSG, "msg"),
+            (FileType.PDF, "pdf"),
+            (FileType.XLS, "xlsx"),
+            (FileType.UNK, None),
+            (FileType.WAV, None),
+            (FileType.ZIP, None),
+        ],
+    )
+    def and_it_knows_which_pip_extra_needs_to_be_installed_to_get_those_dependencies(
+        self, file_type: FileType, expected_value: str | None
+    ):
+        assert file_type.extra_name == expected_value
+
+    @pytest.mark.parametrize(
+        ("file_type", "expected_value"),
+        [
             (FileType.BMP, True),
             (FileType.CSV, True),
             (FileType.DOC, True),

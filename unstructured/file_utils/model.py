@@ -15,6 +15,12 @@ class FileType(enum.Enum):
     _partitioner_shortname: str | None
     """Like "docx", from which partitioner module and function-name can be derived via template."""
 
+    _importable_package_dependencies: tuple[str, ...]
+    """Packages that must be available for import for this file-type's partitioner to work."""
+
+    _extra_name: str | None
+    """`pip install` extra that provides package dependencies for this file-type."""
+
     _extensions: tuple[str, ...]
     """Filename-extensions recognized as this file-type. Use for secondary identification only."""
 
@@ -28,14 +34,18 @@ class FileType(enum.Enum):
         cls,
         value: str,
         partitioner_shortname: str | None,
+        importable_package_dependencies: Iterable[str],
+        extra_name: str | None,
         extensions: Iterable[str],
         canonical_mime_type: str,
         alias_mime_types: Iterable[str],
     ):
         self = object.__new__(cls)
         self._value_ = value
-        self._extensions = tuple(extensions)
         self._partitioner_shortname = partitioner_shortname
+        self._importable_package_dependencies = tuple(importable_package_dependencies)
+        self._extra_name = extra_name
+        self._extensions = tuple(extensions)
         self._canonical_mime_type = canonical_mime_type
         self._alias_mime_types = tuple(alias_mime_types)
         return self
@@ -78,6 +88,37 @@ class FileType(enum.Enum):
             if mime_type == m._canonical_mime_type or mime_type in m._alias_mime_types:
                 return m
         return None
+
+    @property
+    def extra_name(self) -> str | None:
+        """The `pip` "extra" that must be installed to provide this file-type's dependencies.
+
+        Like "image" for PNG, as in `pip install "unstructured[image]"`.
+
+        `None` when partitioning this file-type requires only the base `unstructured` install.
+        """
+        return self._extra_name
+
+    @property
+    def importable_package_dependencies(self) -> tuple[str, ...]:
+        """Packages that must be importable for this file-type's partitioner to work.
+
+        In general, these are the packages provided by the `pip install` "extra" for this file-type,
+        like `pip install "unstructured[docx]"` loads the `python-docx` package.
+
+        Note that these names are the ones used in an `import` statement, which is not necessarily
+        the same as the _distribution_ package name used by `pip`. For example, the DOCX
+        distribution package name is `"python-docx"` whereas the _importable_ package name is
+        `"docx"`. This latter name as it appears like `import docx` is what is provided by this
+        property.
+
+        The return value is an empty tuple for file-types that do not require optional dependencies.
+
+        Note this property does not complain when accessed on a non-partitionable file-type, it
+        simply returns an empty tuple because file-types that are not partitionable require no
+        optional dependencies.
+        """
+        return self._importable_package_dependencies
 
     @property
     def is_partitionable(self) -> bool:
@@ -147,9 +188,19 @@ class FileType(enum.Enum):
         """
         return self._partitioner_shortname
 
-    BMP = ("bmp", "image", [".bmp"], "image/bmp", cast(list[str], []))
+    BMP = (
+        "bmp",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".bmp"],
+        "image/bmp",
+        cast(list[str], []),
+    )
     CSV = (
         "csv",
+        "csv",
+        ["pandas"],
         "csv",
         [".csv"],
         "text/csv",
@@ -161,41 +212,143 @@ class FileType(enum.Enum):
             "text/x-csv",
         ],
     )
-    DOC = ("doc", "doc", [".doc"], "application/msword", cast(list[str], []))
+    DOC = ("doc", "doc", ["docx"], "doc", [".doc"], "application/msword", cast(list[str], []))
     DOCX = (
         "docx",
+        "docx",
+        ["docx"],
         "docx",
         [".docx"],
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         cast(list[str], []),
     )
-    EML = ("eml", "email", [".eml", ".p7s"], "message/rfc822", cast(list[str], []))
-    EPUB = ("epub", "epub", [".epub"], "application/epub", ["application/epub+zip"])
-    HEIC = ("heic", "image", [".heic"], "image/heic", cast(list[str], []))
-    HTML = ("html", "html", [".html", ".htm"], "text/html", cast(list[str], []))
-    JPG = ("jpg", "image", [".jpeg", ".jpg"], "image/jpeg", cast(list[str], []))
-    JSON = ("json", "json", [".json"], "application/json", cast(list[str], []))
-    MD = ("md", "md", [".md"], "text/markdown", ["text/x-markdown"])
-    MSG = ("msg", "msg", [".msg"], "application/vnd.ms-outlook", ["application/x-ole-storage"])
-    ODT = ("odt", "odt", [".odt"], "application/vnd.oasis.opendocument.text", cast(list[str], []))
-    ORG = ("org", "org", [".org"], "text/org", cast(list[str], []))
-    PDF = ("pdf", "pdf", [".pdf"], "application/pdf", cast(list[str], []))
-    PNG = ("png", "image", [".png"], "image/png", cast(list[str], []))
-    PPT = ("ppt", "ppt", [".ppt"], "application/vnd.ms-powerpoint", cast(list[str], []))
+    EML = (
+        "eml",
+        "email",
+        cast(list[str], []),
+        None,
+        [".eml", ".p7s"],
+        "message/rfc822",
+        cast(list[str], []),
+    )
+    EPUB = (
+        "epub",
+        "epub",
+        ["pypandoc"],
+        "epub",
+        [".epub"],
+        "application/epub",
+        ["application/epub+zip"],
+    )
+    HEIC = (
+        "heic",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".heic"],
+        "image/heic",
+        cast(list[str], []),
+    )
+    HTML = (
+        "html",
+        "html",
+        cast(list[str], []),
+        None,
+        [".html", ".htm"],
+        "text/html",
+        cast(list[str], []),
+    )
+    JPG = (
+        "jpg",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".jpeg", ".jpg"],
+        "image/jpeg",
+        cast(list[str], []),
+    )
+    JSON = (
+        "json",
+        "json",
+        cast(list[str], []),
+        None,
+        [".json"],
+        "application/json",
+        cast(list[str], []),
+    )
+    MD = ("md", "md", ["markdown"], "md", [".md"], "text/markdown", ["text/x-markdown"])
+    MSG = (
+        "msg",
+        "msg",
+        ["oxmsg"],
+        "msg",
+        [".msg"],
+        "application/vnd.ms-outlook",
+        ["application/x-ole-storage"],
+    )
+    ODT = (
+        "odt",
+        "odt",
+        ["docx", "pypandoc"],
+        "odt",
+        [".odt"],
+        "application/vnd.oasis.opendocument.text",
+        cast(list[str], []),
+    )
+    ORG = ("org", "org", ["pypandoc"], "org", [".org"], "text/org", cast(list[str], []))
+    PDF = (
+        "pdf",
+        "pdf",
+        ["pdf2image", "pdfminer", "PIL"],
+        "pdf",
+        [".pdf"],
+        "application/pdf",
+        cast(list[str], []),
+    )
+    PNG = (
+        "png",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".png"],
+        "image/png",
+        cast(list[str], []),
+    )
+    PPT = (
+        "ppt",
+        "ppt",
+        ["pptx"],
+        "ppt",
+        [".ppt"],
+        "application/vnd.ms-powerpoint",
+        cast(list[str], []),
+    )
     PPTX = (
         "pptx",
+        "pptx",
+        ["pptx"],
         "pptx",
         [".pptx"],
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         cast(list[str], []),
     )
-    RST = ("rst", "rst", [".rst"], "text/x-rst", cast(list[str], []))
-    RTF = ("rtf", "rtf", [".rtf"], "text/rtf", ["application/rtf"])
-    TIFF = ("tiff", "image", [".tiff"], "image/tiff", cast(list[str], []))
-    TSV = ("tsv", "tsv", [".tab", ".tsv"], "text/tsv", cast(list[str], []))
+    RST = ("rst", "rst", ["pypandoc"], "rst", [".rst"], "text/x-rst", cast(list[str], []))
+    RTF = ("rtf", "rtf", ["pypandoc"], "rtf", [".rtf"], "text/rtf", ["application/rtf"])
+    TIFF = (
+        "tiff",
+        "image",
+        ["unstructured_inference"],
+        "image",
+        [".tiff"],
+        "image/tiff",
+        cast(list[str], []),
+    )
+    TSV = ("tsv", "tsv", ["pandas"], "tsv", [".tab", ".tsv"], "text/tsv", cast(list[str], []))
     TXT = (
         "txt",
         "text",
+        cast(list[str], []),
+        None,
         [
             ".txt",
             ".text",
@@ -230,6 +383,8 @@ class FileType(enum.Enum):
     WAV = (
         "wav",
         None,
+        cast(list[str], []),
+        None,
         [".wav"],
         "audio/wav",
         [
@@ -240,19 +395,45 @@ class FileType(enum.Enum):
             "audio/x-wav",
         ],
     )
-    XLS = ("xls", "xlsx", [".xls"], "application/vnd.ms-excel", cast(list[str], []))
+    XLS = (
+        "xls",
+        "xlsx",
+        ["pandas", "openpyxl"],
+        "xlsx",
+        [".xls"],
+        "application/vnd.ms-excel",
+        cast(list[str], []),
+    )
     XLSX = (
         "xlsx",
+        "xlsx",
+        ["pandas", "openpyxl"],
         "xlsx",
         [".xlsx"],
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         cast(list[str], []),
     )
-    XML = ("xml", "xml", [".xml"], "application/xml", ["text/xml"])
-    ZIP = ("zip", None, [".zip"], "application/zip", cast(list[str], []))
+    XML = ("xml", "xml", cast(list[str], []), None, [".xml"], "application/xml", ["text/xml"])
+    ZIP = ("zip", None, cast(list[str], []), None, [".zip"], "application/zip", cast(list[str], []))
 
-    UNK = ("unk", None, cast(list[str], []), "application/octet-stream", cast(list[str], []))
-    EMPTY = ("empty", None, cast(list[str], []), "inode/x-empty", cast(list[str], []))
+    UNK = (
+        "unk",
+        None,
+        cast(list[str], []),
+        None,
+        cast(list[str], []),
+        "application/octet-stream",
+        cast(list[str], []),
+    )
+    EMPTY = (
+        "empty",
+        None,
+        cast(list[str], []),
+        None,
+        cast(list[str], []),
+        "inode/x-empty",
+        cast(list[str], []),
+    )
 
 
 PLAIN_TEXT_EXTENSIONS = ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .text .tsv .txt".split()
