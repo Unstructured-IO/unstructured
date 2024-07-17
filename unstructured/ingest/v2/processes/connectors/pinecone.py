@@ -20,7 +20,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
@@ -170,13 +169,10 @@ class PineconeUploader(Uploader):
                 )
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=PineconeConnectionConfig,
-        uploader=PineconeUploader,
-        uploader_config=PineconeUploaderConfig,
-        upload_stager=PineconeUploadStager,
-        upload_stager_config=PineconeUploadStagerConfig,
-    ),
+pinecone_destination_entry = DestinationRegistryEntry(
+    connection_config=PineconeConnectionConfig,
+    uploader=PineconeUploader,
+    uploader_config=PineconeUploaderConfig,
+    upload_stager=PineconeUploadStager,
+    upload_stager_config=PineconeUploadStagerConfig,
 )
