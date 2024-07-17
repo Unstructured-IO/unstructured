@@ -1102,7 +1102,9 @@ def test_auto_partition_image_formats_languages_for_tesseract(request: FixtureRe
     )
 
     partition(
-        example_doc_path("chi_sim_image.jpeg"), strategy=PartitionStrategy.HI_RES, languages=["zh"]
+        example_doc_path("img/chi_sim_image.jpeg"),
+        strategy=PartitionStrategy.HI_RES,
+        languages=["zh"],
     )
 
     call_kwargs = process_file_with_ocr_.call_args_list[0][1]
@@ -1242,7 +1244,8 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype:
 
     # -- partition the first example-doc with the extension for this filetype --
     elements: list[Element] = []
-    for file in pathlib.Path(example_doc_path("")).iterdir():
+    doc_path = example_doc_path("pdf") if filetype == FileType.PDF else example_doc_path("")
+    for file in pathlib.Path(doc_path).iterdir():
         if file.is_file() and file.suffix == f".{extension}":
             elements = partition_fn(str(file))
             break

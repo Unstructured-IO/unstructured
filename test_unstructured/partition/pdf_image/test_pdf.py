@@ -1090,7 +1090,7 @@ def test_get_uris_from_annots_string_annotation(
     ("filename", "is_image"),
     [
         (example_doc_path("pdf/layout-parser-paper-fast.pdf"), False),
-        (example_doc_path("layout-parser-paper-fast.jpg"), True),
+        (example_doc_path("img/layout-parser-paper-fast.jpg"), True),
     ],
 )
 def test_partition_pdf_with_ocr_only_strategy(

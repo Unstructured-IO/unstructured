@@ -562,7 +562,7 @@ def test_document_to_element_list_sets_category_depth_titles():
 
 
 def test_ocr_data_to_elements(
-    filename="example-docs/layout-parser-paper-fast.jpg",
+    filename=example_doc_path("img/layout-parser-paper-fast.jpg"),
 ):
     text_regions = [
         TextRegion.from_coords(
