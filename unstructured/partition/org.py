@@ -5,7 +5,8 @@ from typing import IO, Any, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element
 from unstructured.file_utils.file_conversion import convert_file_to_html_text_using_pandoc
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import exactly_one, get_last_modified
 from unstructured.partition.html import partition_html
 
