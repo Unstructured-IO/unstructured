@@ -10,7 +10,8 @@ import pytest
 from pytest_mock import MockFixture
 
 from unstructured.documents.elements import CompositeElement
-from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.file_utils.filetype import detect_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json

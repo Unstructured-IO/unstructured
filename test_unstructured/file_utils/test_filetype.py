@@ -22,13 +22,13 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
-    FileType,
     _detect_filetype_from_octet_stream,
     _is_code_mime_type,
     _is_text_file_a_csv,
     _is_text_file_a_json,
     detect_filetype,
 )
+from unstructured.file_utils.model import FileType
 
 is_in_docker = os.path.exists("/.dockerenv")
 

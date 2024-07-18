@@ -12,13 +12,7 @@ from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
-from unstructured.file_utils.model import (
-    EXT_TO_FILETYPE,
-    FILETYPE_TO_MIMETYPE,
-    PLAIN_TEXT_EXTENSIONS,
-    STR_TO_FILETYPE,
-    FileType,
-)
+from unstructured.file_utils.model import PLAIN_TEXT_EXTENSIONS, FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
@@ -49,9 +43,9 @@ def detect_filetype(
 
     # first check (content_type)
     if content_type:
-        filetype = STR_TO_FILETYPE.get(content_type)
-        if filetype:
-            return filetype
+        file_type = FileType.from_mime_type(content_type)
+        if file_type:
+            return file_type
 
     # second check (filename/file_name/file)
     # continue if successfully define mime_type
@@ -68,7 +62,7 @@ def detect_filetype(
 
             mime_type = ft.guess_mime(_filename)
         if mime_type is None:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return FileType.from_extension(extension) or FileType.UNK
 
     elif file is not None:
         if hasattr(file, "name"):
@@ -92,7 +86,7 @@ def detect_filetype(
                 "libmagic is unavailable but assists in filetype detection on file-like objects. "
                 "Please consider installing libmagic for better results.",
             )
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return FileType.from_extension(extension) or FileType.UNK
 
     else:
         raise ValueError("No filename, file, nor file_filename were specified.")
@@ -128,7 +122,7 @@ def detect_filetype(
             ".tsv",
             ".json",
         ]:
-            return EXT_TO_FILETYPE.get(extension)
+            return FileType.from_extension(extension)
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"
@@ -151,11 +145,11 @@ def detect_filetype(
             return FileType.EML
 
         if extension in PLAIN_TEXT_EXTENSIONS:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return FileType.from_extension(extension) or FileType.UNK
 
         # Safety catch
-        if mime_type in STR_TO_FILETYPE:
-            return STR_TO_FILETYPE[mime_type]
+        if file_type := FileType.from_mime_type(mime_type):
+            return file_type
 
         return FileType.TXT
 
@@ -165,21 +159,22 @@ def detect_filetype(
         elif file:
             return _detect_filetype_from_octet_stream(file=file)
         else:
-            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+            return FileType.from_extension(extension) or FileType.UNK
 
     elif mime_type == "application/zip":
-        filetype = FileType.UNK
+        file_type = FileType.UNK
         if file:
-            filetype = _detect_filetype_from_octet_stream(file=file)
+            file_type = _detect_filetype_from_octet_stream(file=file)
         elif filename is not None:
             with open(filename, "rb") as f:
-                filetype = _detect_filetype_from_octet_stream(file=f)
+                file_type = _detect_filetype_from_octet_stream(file=f)
 
         extension = extension if extension else ""
-        if filetype == FileType.UNK:
-            return FileType.ZIP
-        else:
-            return EXT_TO_FILETYPE.get(extension, filetype)
+        return (
+            FileType.ZIP
+            if file_type in (FileType.UNK, FileType.ZIP)
+            else FileType.from_extension(extension) or file_type
+        )
 
     elif _is_code_mime_type(mime_type):
         # NOTE(robinson) - we'll treat all code files as plain text for now.
@@ -191,14 +186,14 @@ def detect_filetype(
         return FileType.EMPTY
 
     # For everything else
-    elif mime_type in STR_TO_FILETYPE:
-        return STR_TO_FILETYPE[mime_type]
+    elif file_type := FileType.from_mime_type(mime_type):
+        return file_type
 
     logger.warning(
         f"The MIME type{f' of {filename!r}' if filename else ''} is {mime_type!r}. "
         "This file type is not currently supported in unstructured.",
     )
-    return EXT_TO_FILETYPE.get(extension, FileType.UNK)
+    return FileType.from_extension(extension) or FileType.UNK
 
 
 def is_json_processable(
@@ -260,7 +255,7 @@ def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
 
         # Infer mime type using magic if octet-stream is not zip file
         mime_type = magic.from_buffer(file.read(4096), mime=True)
-        return STR_TO_FILETYPE.get(mime_type, FileType.UNK)
+        return FileType.from_mime_type(mime_type) or FileType.UNK
     logger.warning(
         "Could not detect the filetype from application/octet-stream MIME type.",
     )
@@ -439,7 +434,7 @@ def add_filetype(
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function
                     if element.metadata.attached_to_filename is None:
-                        add_element_metadata(element, filetype=FILETYPE_TO_MIMETYPE[filetype])
+                        add_element_metadata(element, filetype=filetype.mime_type)
 
                 return elements
             else:
