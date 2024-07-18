@@ -153,6 +153,38 @@ def test_it_detects_correct_file_type_from_file_no_name_with_correct_asserted_co
     assert file_type is expected_value
 
 
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.DOCX, "simple.docx"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+    ],
+)
+@pytest.mark.parametrize(
+    "content_type",
+    [
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
+)
+def test_it_detects_correct_file_type_from_file_no_name_with_swapped_ms_office_content_type(
+    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- disable strategies 2 & 3, content-type strategy should get this on its own --
+    ctx_mime_type_.return_value = None
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file, content_type=content_type)
+
+    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
+    # -- fall-back to strategy 2 for any of these test cases.
+    ctx_mime_type_.assert_not_called()
+    assert file_type is expected_value
+
+
 # ================================================================================================
 # STRATEGY #2 - GUESS MIME-TYPE WITH LIBMAGIC
 # ================================================================================================
