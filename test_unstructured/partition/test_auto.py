@@ -10,7 +10,7 @@ import sys
 import tempfile
 import warnings
 from importlib import import_module
-from typing import Callable, Iterator, cast
+from typing import Iterator, cast
 from unittest.mock import patch
 
 import pytest
@@ -27,7 +27,6 @@ from test_unstructured.unit_utils import (
     ANY,
     FixtureRequest,
     LogCaptureFixture,
-    MonkeyPatch,
     example_doc_path,
     function_mock,
     method_mock,
@@ -46,8 +45,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
-from unstructured.partition import auto
-from unstructured.partition.auto import IMAGE_FILETYPES, _get_partition_with_extras, partition
+from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
@@ -570,17 +568,22 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
     assert e.text.startswith("Zejiang Shen")
 
 
-def test_auto_partition_pdf_with_fast_strategy(monkeypatch: MonkeyPatch):
-    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
+    partition_pdf_ = function_mock(
+        request,
+        "unstructured.partition.pdf.partition_pdf",
+        return_value=[NarrativeText("Hello there!")],
+    )
+    partitioner_loader_get_ = method_mock(
+        request, _PartitionerLoader, "get", return_value=partition_pdf_
+    )
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
-    mock_return = [NarrativeText("Hello there!")]
-    with patch.object(auto, "partition_pdf", return_value=mock_return) as mock_partition:
-        mock_partition_with_extras_map = {"pdf": mock_partition}
-        monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
-        partition(filename=file_path, strategy=PartitionStrategy.FAST)
+    partition(filename=filename, strategy=PartitionStrategy.FAST)
 
-    mock_partition.assert_called_once_with(
-        filename=file_path,
+    partitioner_loader_get_.assert_called_once_with(ANY, FileType.PDF)
+    partition_pdf_.assert_called_once_with(
+        filename=filename,
         file=None,
         url=None,
         strategy=PartitionStrategy.FAST,
@@ -919,10 +922,10 @@ def test_auto_partition_xml_from_file_with_tags():
 
 def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
     detect_filetype_ = function_mock(
-        request, "unstructured.partition.auto.detect_filetype", return_value=None
+        request, "unstructured.partition.auto.detect_filetype", return_value=FileType.UNK
     )
 
-    with pytest.raises(ValueError, match="Invalid file made-up.fake. The None file type is not "):
+    with pytest.raises(ValueError, match="Invalid file made-up.fake. The FileType.UNK file type "):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
     detect_filetype_.assert_called_once_with(
@@ -1026,23 +1029,7 @@ def test_auto_partition_respects_detect_language_per_element_arg():
 
 
 @pytest.mark.parametrize(
-    "file_extension",
-    [
-        "doc",
-        "docx",
-        "eml",
-        "epub",
-        "html",
-        "md",
-        "odt",
-        "org",
-        "ppt",
-        "pptx",
-        "rst",
-        "rtf",
-        "txt",
-        "xml",
-    ],
+    "file_extension", "doc docx eml epub html md odt org ppt pptx rst rtf txt xml".split()
 )
 def test_auto_partition_respects_language_arg(file_extension: str):
     elements = partition(
@@ -1167,7 +1154,7 @@ def test_auto_partition_respects_skip_infer_table_types(
 
 
 @pytest.mark.parametrize(
-    ("content_type", "filetype_shortname", "expected_value"),
+    ("content_type", "shortname", "expected_value"),
     [
         ("text/csv", "csv", "text/csv"),
         ("text/html", "html", "text/html"),
@@ -1177,22 +1164,23 @@ def test_auto_partition_respects_skip_infer_table_types(
 def test_auto_partition_adds_filetype_to_metadata(
     request: FixtureRequest,
     content_type: str,
-    filetype_shortname: str,
+    shortname: str,
     expected_value: str | None,
-    monkeypatch: MonkeyPatch,
 ):
     partition_fn_ = function_mock(
         request,
-        f"unstructured.partition.auto.partition_{filetype_shortname}",
+        f"unstructured.partition.{shortname}.partition_{shortname}",
         return_value=[Text("text 1"), Text("text 2")],
     )
-    mock_partition_with_extras_map = {filetype_shortname: partition_fn_}
-    monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", mock_partition_with_extras_map)
+    partitioner_loader_get_ = method_mock(
+        request, _PartitionerLoader, "get", return_value=partition_fn_
+    )
 
     elements = partition(
         example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type
     )
 
+    partitioner_loader_get_.assert_called_once()
     assert len(elements) == 2
     assert all(e.metadata.filetype == expected_value for e in elements)
 
@@ -1207,20 +1195,23 @@ def test_auto_partition_adds_filetype_to_metadata(
     ],
 )
 def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partitioner(
-    request: FixtureRequest, content_type: str | None, monkeypatch: MonkeyPatch
+    request: FixtureRequest, content_type: str | None
 ):
     metadata = ElementMetadata(filetype="imapdf")
     partition_pdf_ = function_mock(
         request,
-        "unstructured.partition.auto.partition_pdf",
+        "unstructured.partition.pdf.partition_pdf",
         return_value=[Text("text 1", metadata=metadata), Text("text 2", metadata=metadata)],
     )
-    monkeypatch.setattr(auto, "PARTITION_WITH_EXTRAS_MAP", {"pdf": partition_pdf_})
+    partitioner_loader_get_ = method_mock(
+        request, _PartitionerLoader, "get", return_value=partition_pdf_
+    )
 
     elements = partition(
         example_doc_path("pdf/layout-parser-paper-fast.pdf"), content_type=content_type
     )
 
+    partitioner_loader_get_.assert_called_once_with(ANY, FileType.PDF)
     assert len(elements) == 2
     assert all(e.metadata.filetype == "application/pdf" for e in elements)
 
@@ -1231,7 +1222,7 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
         t
         for t in FileType
         if t not in (FileType.EMPTY, FileType.UNK, FileType.WAV, FileType.XLS, FileType.ZIP)
-        and t not in IMAGE_FILETYPES
+        and t.partitioner_function_name != "partition_image"
     ],
 )
 def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype: FileType):
@@ -1305,10 +1296,18 @@ def test_auto_partition_from_file_works_on_empty_file():
         assert partition(file=f) == []
 
 
-def test_auto_partition_requiring_extras_prompts_to_install_missing_dependencies():
-    partition_with_extras_map: dict[str, Callable[..., list[Element]]] = {}
-    with pytest.raises(ImportError, match="partition_pdf is not available. Install the pdf depen"):
-        _get_partition_with_extras("pdf", partition_with_extras_map)
+def test_auto_partition_that_requires_extras_raises_when_dependencies_are_not_installed(
+    request: FixtureRequest,
+):
+    _PartitionerLoader._partitioners.pop(FileType.PDF, None)
+    dependency_exists_ = function_mock(
+        request, "unstructured.partition.auto.dependency_exists", return_value=False
+    )
+    match = r"partition_pdf\(\) is not available because one or more dependencies are not installed"
+    with pytest.raises(ImportError, match=match):
+        partition(example_doc_path("layout-parser-paper-fast.pdf"))
+
+    dependency_exists_.assert_called_once_with("pdf2image")
 
 
 # ================================================================================================
