@@ -253,13 +253,6 @@ class FsspecDownloader(Downloader):
             **self.connection_config.get_access_config(),
         )
 
-    def get_download_path(self, file_data: FileData) -> Path:
-        return (
-            self.download_dir / Path(file_data.source_identifiers.relative_path)
-            if self.download_config
-            else Path(file_data.source_identifiers.rel_path)
-        )
-
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         download_path = self.get_download_path(file_data=file_data)
         download_path.parent.mkdir(parents=True, exist_ok=True)
