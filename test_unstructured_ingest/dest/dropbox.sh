@@ -62,7 +62,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   dropbox \
   --token "$DROPBOX_ACCESS_TOKEN" \

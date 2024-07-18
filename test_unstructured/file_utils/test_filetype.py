@@ -99,9 +99,9 @@ def test_detect_filetype_from_filename_with_extension(
 @pytest.mark.parametrize(
     ("file_name", "expected_value"),
     [
-        ("layout-parser-paper-fast.pdf", [FileType.PDF]),
+        ("pdf/layout-parser-paper-fast.pdf", [FileType.PDF]),
         ("fake.docx", [FileType.DOCX]),
-        ("example.jpg", [FileType.JPG]),
+        ("img/example.jpg", [FileType.JPG]),
         ("fake-text.txt", [FileType.TXT]),
         ("eml/fake-email.eml", [FileType.EML]),
         ("factbook.xml", [FileType.XML]),
@@ -424,7 +424,7 @@ def test_detect_BMP_from_file_path():
 
 
 def test_detect_BMP_from_file_no_extension():
-    with open(example_doc_path("bmp_24.bmp"), "rb") as f:
+    with open(example_doc_path("img/bmp_24.bmp"), "rb") as f:
         file = io.BytesIO(f.read())
     assert detect_filetype(file=file) == FileType.BMP
 
