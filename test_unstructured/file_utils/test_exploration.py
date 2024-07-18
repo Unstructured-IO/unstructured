@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from unstructured.file_utils import exploration
-from unstructured.file_utils.filetype import FileType
+from unstructured.file_utils.model import FileType
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 

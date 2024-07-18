@@ -3,55 +3,36 @@
 from __future__ import annotations
 
 import enum
+from typing import Iterable, cast
 
 
 class FileType(enum.Enum):
-    UNK = 0
-    EMPTY = 1
+    """The collection of file-types recognized by `unstructured`.
 
-    # MS Office Types
-    DOC = 10
-    DOCX = 11
-    XLS = 12
-    XLSX = 13
-    PPT = 14
-    PPTX = 15
-    MSG = 16
+    Note not all of these can be partitioned, e.g. WAV and ZIP have no partitioner.
+    """
 
-    # Adobe Types
-    PDF = 20
+    _extensions: tuple[str, ...]
 
-    # Image Types
-    JPG = 30
-    PNG = 31
-    TIFF = 32
-    BMP = 33
-    HEIC = 34
+    _canonical_mime_type: str
+    """The MIME-type used as `.metadata.filetype` for this file-type."""
 
-    # Plain Text Types
-    EML = 40
-    RTF = 41
-    TXT = 42
-    JSON = 43
-    CSV = 44
-    TSV = 45
+    _alias_mime_types: tuple[str, ...]
+    """MIME-types accepted as identifying this file-type."""
 
-    # Markup Types
-    HTML = 50
-    XML = 51
-    MD = 52
-    EPUB = 53
-    RST = 54
-    ORG = 55
-
-    # Compressed Types
-    ZIP = 60
-
-    # Open Office Types
-    ODT = 70
-
-    # Audio Files
-    WAV = 80
+    def __new__(
+        cls,
+        value: str,
+        extensions: Iterable[str],
+        canonical_mime_type: str,
+        alias_mime_types: Iterable[str],
+    ):
+        self = object.__new__(cls)
+        self._value_ = value
+        self._extensions = tuple(extensions)
+        self._canonical_mime_type = canonical_mime_type
+        self._alias_mime_types = tuple(alias_mime_types)
+        return self
 
     def __lt__(self, other: FileType) -> bool:
         """Makes `FileType` members comparable with relational operators, at least with `<`.
@@ -60,193 +41,148 @@ class FileType(enum.Enum):
         """
         return self.name < other.name
 
+    BMP = ("bmp", [".bmp"], "image/bmp", cast(list[str], []))
+    CSV = (
+        "csv",
+        [".csv"],
+        "text/csv",
+        [
+            "application/csv",
+            "application/x-csv",
+            "text/comma-separated-values",
+            "text/x-comma-separated-values",
+            "text/x-csv",
+        ],
+    )
+    DOC = ("doc", [".doc"], "application/msword", cast(list[str], []))
+    DOCX = (
+        "docx",
+        [".docx"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        cast(list[str], []),
+    )
+    EML = ("eml", [".eml", ".p7s"], "message/rfc822", cast(list[str], []))
+    EPUB = ("epub", [".epub"], "application/epub", ["application/epub+zip"])
+    HEIC = ("heic", [".heic"], "image/heic", cast(list[str], []))
+    HTML = ("html", [".html", ".htm"], "text/html", cast(list[str], []))
+    JPG = ("jpg", [".jpeg", ".jpg"], "image/jpeg", cast(list[str], []))
+    JSON = ("json", [".json"], "application/json", cast(list[str], []))
+    MD = ("md", [".md"], "text/markdown", ["text/x-markdown"])
+    MSG = ("msg", [".msg"], "application/vnd.ms-outlook", ["application/x-ole-storage"])
+    ODT = ("odt", [".odt"], "application/vnd.oasis.opendocument.text", cast(list[str], []))
+    ORG = ("org", [".org"], "text/org", cast(list[str], []))
+    PDF = ("pdf", [".pdf"], "application/pdf", cast(list[str], []))
+    PNG = ("png", [".png"], "image/png", cast(list[str], []))
+    PPT = ("ppt", [".ppt"], "application/vnd.ms-powerpoint", cast(list[str], []))
+    PPTX = (
+        "pptx",
+        [".pptx"],
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        cast(list[str], []),
+    )
+    RST = ("rst", [".rst"], "text/x-rst", cast(list[str], []))
+    RTF = ("rtf", [".rtf"], "text/rtf", ["application/rtf"])
+    TIFF = ("tiff", [".tiff"], "image/tiff", cast(list[str], []))
+    TSV = ("tsv", [".tab", ".tsv"], "text/tsv", cast(list[str], []))
+    TXT = (
+        "txt",
+        [
+            ".txt",
+            ".text",
+            # NOTE(robinson) - for now we are treating code files as plain text
+            ".c",
+            ".cc",
+            ".cpp",
+            ".cs",
+            ".cxx",
+            ".go",
+            ".java",
+            ".js",
+            ".log",
+            ".php",
+            ".py",
+            ".rb",
+            ".swift",
+            ".ts",
+            ".yaml",
+            ".yml",
+        ],
+        "text/plain",
+        [
+            # NOTE(robinson) - In the future, we may have special processing for YAML files
+            # instead of treating them as plaintext.
+            "text/yaml",
+            "application/x-yaml",
+            "application/yaml",
+            "text/x-yaml",
+        ],
+    )
+    WAV = (
+        "wav",
+        [".wav"],
+        "audio/wav",
+        [
+            "audio/vnd.wav",
+            "audio/vnd.wave",
+            "audio/wave",
+            "audio/x-pn-wav",
+            "audio/x-wav",
+        ],
+    )
+    XLS = ("xls", [".xls"], "application/vnd.ms-excel", cast(list[str], []))
+    XLSX = (
+        "xlsx",
+        [".xlsx"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        cast(list[str], []),
+    )
+    XML = ("xml", [".xml"], "application/xml", ["text/xml"])
+    ZIP = ("zip", [".zip"], "application/zip", cast(list[str], []))
 
-STR_TO_FILETYPE = {
-    # -- BMP --
-    "image/bmp": FileType.BMP,
-    # -- CSV --
-    "text/csv": FileType.CSV,
-    "application/csv": FileType.CSV,
-    "application/x-csv": FileType.CSV,
-    "text/comma-separated-values": FileType.CSV,
-    "text/x-comma-separated-values": FileType.CSV,
-    "text/x-csv": FileType.CSV,
-    # -- DOC --
-    "application/msword": FileType.DOC,
-    # -- DOCX --
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
-    # -- EML --
-    "message/rfc822": FileType.EML,
-    # -- EPUB --
-    "application/epub": FileType.EPUB,
-    "application/epub+zip": FileType.EPUB,
-    # -- HEIF --
-    "image/heic": FileType.HEIC,
-    # -- HTML --
-    "text/html": FileType.HTML,
-    # -- JPG --
-    "image/jpeg": FileType.JPG,
-    # -- JSON --
-    "application/json": FileType.JSON,
-    # -- MD --
-    "text/markdown": FileType.MD,
-    "text/x-markdown": FileType.MD,
-    # -- MSG --
-    "application/vnd.ms-outlook": FileType.MSG,
-    "application/x-ole-storage": FileType.MSG,
-    # -- ODT --
-    "application/vnd.oasis.opendocument.text": FileType.ODT,
-    # -- ORG --
-    "text/org": FileType.ORG,
-    # -- PDF --
-    "application/pdf": FileType.PDF,
-    # -- PNG --
-    "image/png": FileType.PNG,
-    # -- PPT --
-    "application/vnd.ms-powerpoint": FileType.PPT,
-    # -- PPTX --
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": FileType.PPTX,
-    # -- RST --
-    "text/x-rst": FileType.RST,
-    # -- RTF --
-    "text/rtf": FileType.RTF,
-    "application/rtf": FileType.RTF,
-    # -- TIFF --
-    "image/tiff": FileType.TIFF,
-    # -- TSV --
-    "text/tsv": FileType.TSV,
-    # -- TXT --
-    "text/plain": FileType.TXT,
-    # NOTE(robinson) - https://mimetype.io/application/yaml
-    # In the future, we may have special processing for YAML
-    # files instead of treating them as plaintext
-    "text/yaml": FileType.TXT,
-    "application/x-yaml": FileType.TXT,
-    "application/yaml": FileType.TXT,
-    "text/x-yaml": FileType.TXT,
-    # -- WAV --
-    # NOTE(robinson) - https://mimetype.io/audio/wav
-    "audio/wav": FileType.WAV,
-    "audio/vnd.wav": FileType.WAV,
-    "audio/vnd.wave": FileType.WAV,
-    "audio/wave": FileType.WAV,
-    "audio/x-pn-wav": FileType.WAV,
-    "audio/x-wav": FileType.WAV,
-    # -- XLS --
-    "application/vnd.ms-excel": FileType.XLS,
-    # -- XLSX --
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": FileType.XLSX,
-    # -- XML --
-    "application/xml": FileType.XML,
-    # -- EMPTY --
-    "inode/x-empty": FileType.EMPTY,
-}
+    UNK = ("unk", cast(list[str], []), "application/octet-stream", cast(list[str], []))
+    EMPTY = ("empty", cast(list[str], []), "inode/x-empty", cast(list[str], []))
 
-# -- MIME-types in STR_TO_FILETYPE that are not the canonical MIME-type for that file-type --
-MIMETYPE_ALIASES = (
-    "application/csv",
-    "application/epub+zip",
-    "application/rtf",
-    "application/x-csv",
-    "application/x-ole-storage",
-    "application/x-yaml",
-    "application/yaml",
-    "audio/vnd.wav",
-    "audio/vnd.wave",
-    "audio/wave",
-    "audio/x-pn-wav",
-    "audio/x-wav",
-    "text/comma-separated-values",
-    "text/x-comma-separated-values",
-    "text/x-csv",
-    "text/x-markdown",
-    "text/x-yaml",
-    "text/yaml",
-)
+    @classmethod
+    def from_extension(cls, extension: str | None) -> FileType | None:
+        """Select a FileType member based on an extension.
 
-FILETYPE_TO_MIMETYPE = {v: k for k, v in STR_TO_FILETYPE.items() if k not in MIMETYPE_ALIASES}
+        `extension` must include the leading period, like `".pdf"`. Extension is suitable as a
+        secondary file-type identification method but is unreliable for primary identification..
 
-EXT_TO_FILETYPE = {
-    # -- BMP --
-    ".bmp": FileType.BMP,
-    # -- CSV --
-    ".csv": FileType.CSV,
-    # -- DOC --
-    ".doc": FileType.DOC,
-    # -- DOCX --
-    ".docx": FileType.DOCX,
-    # -- EML --
-    ".eml": FileType.EML,
-    ".p7s": FileType.EML,
-    # -- EPUB --
-    ".epub": FileType.EPUB,
-    # -- HEIC --
-    ".heic": FileType.HEIC,
-    # -- HTML --
-    ".htm": FileType.HTML,
-    ".html": FileType.HTML,
-    # -- JPG --
-    ".jpeg": FileType.JPG,
-    ".jpg": FileType.JPG,
-    # -- JSON --
-    ".json": FileType.JSON,
-    # -- MD --
-    ".md": FileType.MD,
-    # -- MSG --
-    ".msg": FileType.MSG,
-    # -- ODT --
-    ".odt": FileType.ODT,
-    # -- ORG --
-    ".org": FileType.ORG,
-    # -- PDF --
-    ".pdf": FileType.PDF,
-    # -- PNG --
-    ".png": FileType.PNG,
-    # -- PPT --
-    ".ppt": FileType.PPT,
-    # -- PPTX --
-    ".pptx": FileType.PPTX,
-    # -- RST --
-    ".rst": FileType.RST,
-    # -- RTF --
-    ".rtf": FileType.RTF,
-    # -- TIFF --
-    ".tiff": FileType.TIFF,
-    # -- TSV --
-    ".tab": FileType.TSV,
-    ".tsv": FileType.TSV,
-    # -- TXT --
-    ".text": FileType.TXT,
-    ".txt": FileType.TXT,
-    # NOTE(robinson) - for now we are treating code files as plain text
-    ".c": FileType.TXT,
-    ".cc": FileType.TXT,
-    ".cpp": FileType.TXT,
-    ".cs": FileType.TXT,
-    ".cxx": FileType.TXT,
-    ".go": FileType.TXT,
-    ".java": FileType.TXT,
-    ".js": FileType.TXT,
-    ".log": FileType.TXT,
-    ".php": FileType.TXT,
-    ".py": FileType.TXT,
-    ".rb": FileType.TXT,
-    ".swift": FileType.TXT,
-    ".ts": FileType.TXT,
-    ".yaml": FileType.TXT,
-    ".yml": FileType.TXT,
-    # -- WAV --
-    ".wav": FileType.WAV,
-    # -- XLS --
-    ".xls": FileType.XLS,
-    # -- XLSX --
-    ".xlsx": FileType.XLSX,
-    # -- XML --
-    ".xml": FileType.XML,
-    # -- ZIP --
-    ".zip": FileType.ZIP,
-    # -- UNK --
-    None: FileType.UNK,
-}
+        Returns `None` when `extension` is not registered for any supported file-type.
+        """
+        if extension in (None, "", "."):
+            return None
+        # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
+        # -- limitations on defining a class variable on an Enum.
+        for m in cls.__members__.values():
+            if extension in m._extensions:
+                return m
+        return None
+
+    @classmethod
+    def from_mime_type(cls, mime_type: str) -> FileType | None:
+        """Select a FileType member based on a MIME-type.
+
+        `extension` must include the leading period, like `".pdf"`. Extension is suitable as a
+        secondary file-type identification method but is unreliable for primary identification..
+        """
+        # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
+        # -- limitations on defining a class variable on an Enum.
+        for m in cls.__members__.values():
+            if mime_type == m._canonical_mime_type or mime_type in m._alias_mime_types:
+                return m
+        return None
+
+    @property
+    def mime_type(self) -> str:
+        """The canonical MIME-type for this file-type, suitable for use in metadata.
+
+        This value is used in `.metadata.filetype` for elements partitioned from files of this
+        type. In general it is the "offical", "recommended", or "defacto-standard" MIME-type for
+        files of this type, in that order, as available.
+        """
+        return self._canonical_mime_type
+
 
 PLAIN_TEXT_EXTENSIONS = ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .text .tsv .txt".split()

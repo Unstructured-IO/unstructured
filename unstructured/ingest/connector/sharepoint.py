@@ -6,7 +6,6 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
-from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -94,11 +93,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         if not self.extension:
             raise ValueError("Unsupported file without extension.")
 
-        if self.extension not in EXT_TO_FILETYPE:
-            raise ValueError(
-                f"Extension {self.extension} not supported. "
-                f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
-            )
         self._set_download_paths()
 
     def _set_download_paths(self) -> None:

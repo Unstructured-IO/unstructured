@@ -14,7 +14,8 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
