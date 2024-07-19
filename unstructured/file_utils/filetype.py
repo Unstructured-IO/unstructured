@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import contextlib
 import functools
 import importlib.util
 import json
 import os
 import re
 import zipfile
-from typing import IO, Callable, Optional
+from typing import IO, Callable, Iterator, Optional
 
+import filetype as ft
 from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
@@ -21,7 +23,7 @@ from unstructured.partition.common import (
     remove_element_metadata,
     set_element_hierarchy,
 )
-from unstructured.utils import get_call_args_applying_defaults
+from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
 
@@ -215,6 +217,182 @@ def is_json_processable(
             encoding=encoding,
         )
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+
+
+class _FileTypeDetectionContext:
+    """Provides all arguments to auto-file detection and values derived from them.
+
+    This keeps computation of derived values out of the file-detection code but more importantly
+    allows the main filetype-detector to pass the full context to any delegates without coupling
+    itself to which values it might need.
+    """
+
+    def __init__(
+        self,
+        file_path: str | None = None,
+        *,
+        file: IO[bytes] | None = None,
+        encoding: str | None = None,
+        content_type: str | None = None,
+        metadata_file_path: str | None = None,
+    ):
+        self._file_path = file_path
+        self._file_arg = file
+        self._encoding_arg = encoding
+        self._content_type = content_type
+        self._metadata_file_path = metadata_file_path
+
+    @classmethod
+    def new(
+        cls,
+        *,
+        file_path: str | None,
+        file: IO[bytes] | None,
+        encoding: str | None,
+        content_type: str | None,
+        metadata_file_path: str | None,
+    ):
+        self = cls(
+            file_path=file_path,
+            file=file,
+            encoding=encoding,
+            content_type=content_type,
+            metadata_file_path=metadata_file_path,
+        )
+        self._validate()
+        return self
+
+    @lazyproperty
+    def content_type(self) -> str | None:
+        """MIME-type asserted by caller; not based on inspection of file by this process.
+
+        Would commonly occur when the file was downloaded via HTTP and a `"Content-Type:` header was
+        present on the response. These are often ambiguous and sometimes just wrong so get some
+        further verification. All lower-case when not `None`.
+        """
+        return self._content_type.lower() if self._content_type else None
+
+    @lazyproperty
+    def encoding(self) -> str:
+        """Character-set used to encode text of this file.
+
+        Relevant for textual file-types only, like HTML, TXT, JSON, etc.
+        """
+        return format_encoding_str(self._encoding_arg or "utf-8")
+
+    @lazyproperty
+    def extension(self) -> str:
+        """Best filename-extension we can muster, "" when there is no available source."""
+        # -- get from file_path, or file when it has a name (path) --
+        with self.open() as file:
+            if hasattr(file, "name") and file.name:
+                return os.path.splitext(file.name)[1].lower()
+
+        # -- otherwise use metadata file-path when provided --
+        if file_path := self._metadata_file_path:
+            return os.path.splitext(file_path)[1].lower()
+
+        # -- otherwise empty str means no extension, same as a path like "a/b/name-no-ext" --
+        return ""
+
+    @lazyproperty
+    def file_head(self) -> bytes:
+        """The initial bytes of the file to be recognized, for use with libmagic detection."""
+        with self.open() as file:
+            return file.read(4096)
+
+    @lazyproperty
+    def file_path(self) -> str | None:
+        """Filesystem path to file to be inspected, when provided on call.
+
+        None when the caller specified the source as a file-like object instead. Useful for user
+        feedback on an error, but users of context should have little use for it otherwise.
+        """
+        return self._file_path
+
+    @lazyproperty
+    def mime_type(self) -> str | None:
+        """The best MIME-type we can get from `magic` (or `filetype` package)."""
+        if LIBMAGIC_AVAILABLE:
+            import magic
+
+            return (
+                magic.from_file(_resolve_symlink(self._file_path), mime=True)
+                if self._file_path
+                else magic.from_buffer(self.file_head, mime=True)
+            )
+
+        mime_type = (
+            ft.guess_mime(self._file_path) if self._file_path else ft.guess_mime(self.file_head)
+        )
+
+        if mime_type is None:
+            logger.warning(
+                "libmagic is unavailable but assists in filetype detection. Please consider"
+                " installing libmagic for better results."
+            )
+
+        return mime_type
+
+    @contextlib.contextmanager
+    def open(self) -> Iterator[IO[bytes]]:
+        """Encapsulates complexity of dealing with file-path or file-like-object.
+
+        Provides an `IO[bytes]` object as the "common-denominator" document source.
+
+        Must be used as a context manager using a `with` statement:
+
+            with self._file as file:
+                do things with file
+
+        File is guaranteed to be at read position 0 when called.
+        """
+        if self._file_path:
+            with open(self._file_path, "rb") as f:
+                yield f
+        else:
+            file = self._file_arg
+            assert file is not None  # -- guaranteed by `._validate()` --
+            file.seek(0)
+            yield file
+
+    @lazyproperty
+    def text_head(self) -> str:
+        """The initial characters of the text file for use with text-format differentiation.
+
+        Raises:
+            UnicodeDecodeError if file cannot be read as text.
+        """
+        # TODO: only attempts fallback character-set detection for file-path case, not for
+        # file-like object case. Seems like we should do both.
+
+        if file := self._file_arg:
+            file.seek(0)
+            content = file.read(4096)
+            file.seek(0)
+            return (
+                content
+                if isinstance(content, str)
+                else content.decode(encoding=self.encoding, errors="ignore")
+            )
+
+        file_path = self._file_path
+        assert file_path is not None  # -- guaranteed by `._validate` --
+
+        try:
+            with open(file_path, encoding=self.encoding) as f:
+                return f.read(4096)
+        except UnicodeDecodeError:
+            encoding, _ = detect_file_encoding(filename=file_path)
+            with open(file_path, encoding=encoding) as f:
+                return f.read(4096)
+
+    def _validate(self) -> None:
+        """Raise if the context is invalid."""
+        if self._file_path and not os.path.isfile(self._file_path):
+            raise FileNotFoundError(f"no such file {self._file_path}")
+        if not self._file_path and not self._file_arg:
+            raise ValueError("either `file_path` or `file` argument must be provided")
 
 
 def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:

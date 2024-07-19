@@ -19,10 +19,12 @@ from test_unstructured.unit_utils import (
     call,
     example_doc_path,
     method_mock,
+    patch,
 )
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     _detect_filetype_from_octet_stream,
+    _FileTypeDetectionContext,
     _is_code_mime_type,
     _is_text_file_a_csv,
     _is_text_file_a_json,
@@ -548,3 +550,260 @@ def magic_from_buffer_(request: FixtureRequest):
 @pytest.fixture()
 def magic_from_file_(request: FixtureRequest):
     return method_mock(request, magic, "from_file")
+
+
+# ================================================================================================
+# UNIT-TESTS
+# ================================================================================================
+
+
+class Describe_FileTypeDetectionContext:
+    """Unit-test suite for `unstructured.file_utils.filetype._FileTypeDetectionContext`."""
+
+    # -- .new() -------------------------------------------------
+
+    def it_provides_a_validating_alternate_constructor(self):
+        ctx = _FileTypeDetectionContext.new(
+            file_path=example_doc_path("simple.docx"),
+            file=None,
+            encoding="utf-8",
+            content_type="text/plain",
+            metadata_file_path="a/b/foo.bar",
+        )
+        assert isinstance(ctx, _FileTypeDetectionContext)
+
+    def and_the_validating_constructor_raises_on_an_invalid_context(self):
+        with pytest.raises(ValueError, match="either `file_path` or `file` argument must be pro"):
+            _FileTypeDetectionContext.new(
+                file_path=None,
+                file=None,
+                encoding=None,
+                content_type=None,
+                metadata_file_path=None,
+            )
+
+    # -- .content_type ------------------------------------------
+
+    def it_knows_the_content_type_asserted_by_the_caller(self):
+        assert _FileTypeDetectionContext(content_type="TEXT/hTmL").content_type == "text/html"
+
+    # -- .encoding ----------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("encoding", "expected_value"),
+        [
+            ("utf-8", "utf-8"),
+            ("UTF_8", "utf-8"),
+            ("UTF_16LE", "utf-16le"),
+            ("ISO_8859_6_I", "iso-8859-6"),
+            # -- default value is utf-8 --
+            (None, "utf-8"),
+        ],
+    )
+    def it_knows_the_encoding_asserted_by_the_caller_and_normalizes_it(
+        self, encoding: str | None, expected_value: str
+    ):
+        assert _FileTypeDetectionContext(encoding=encoding).encoding == expected_value
+
+    # -- .extension ---------------------------------------------
+
+    def it_derives_the_filename_extension_from_the_file_path_when_one_is_provided(self):
+        ctx = _FileTypeDetectionContext(file_path=example_doc_path("simple.docx"))
+        assert ctx.extension == ".docx"
+
+    def and_it_derives_the_extension_from_a_file_opened_from_a_path(self):
+        with open(example_doc_path("picture.pptx"), "rb") as f:
+            assert _FileTypeDetectionContext(file=f).extension == ".pptx"
+
+    @pytest.mark.parametrize(
+        "file_name",
+        [
+            # -- case 1: file-like object has no `.name` attribute
+            None,
+            # -- case 2: file-like object has `.name` attribute but it's value is the empty string
+            "",
+        ],
+    )
+    def and_it_derives_the_extension_from_metadata_file_path_when_file_object_has_no_name(
+        self, file_name: str | None
+    ):
+        with open(example_doc_path("ideas-page.html"), "rb") as f:
+            file = io.BytesIO(f.read())
+            if file_name is not None:
+                file.name = file_name
+
+        ctx = _FileTypeDetectionContext(file=file, metadata_file_path="a/b/c.html")
+
+        assert ctx.extension == ".html"
+
+    @pytest.mark.parametrize(
+        "file_name",
+        [
+            # -- case 1: file-like object has no `.name` attribute
+            None,
+            # -- case 2: file-like object has `.name` attribute but it's value is the empty string
+            "",
+        ],
+    )
+    def and_it_returns_the_empty_string_as_the_extension_when_there_are_no_file_name_sources(
+        self, file_name: str | None
+    ):
+        with open(example_doc_path("ideas-page.html"), "rb") as f:
+            file = io.BytesIO(f.read())
+            if file_name is not None:
+                file.name = file_name
+
+        assert _FileTypeDetectionContext(file=file).extension == ""
+
+    # -- .file_head ---------------------------------------------
+
+    def it_grabs_the_first_4k_bytes_of_the_file_for_use_by_magic(self):
+        ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
+
+        head = ctx.file_head
+
+        assert isinstance(head, bytes)
+        assert len(head) == 4096
+        assert head.startswith(b"Iwan Roberts\nRoberts celebrating after")
+
+    # -- .file_path ---------------------------------------------
+
+    @pytest.mark.parametrize("file_path", [None, "a/b/c.pdf"])
+    def it_knows_the_file_path_provided_by_the_caller(self, file_path: str | None):
+        assert _FileTypeDetectionContext(file_path=file_path).file_path == file_path
+
+    # -- .mime_type ---------------------------------------------
+
+    def it_provides_the_MIME_type_detected_by_libmagic_from_a_file_path(self):
+        ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
+        assert ctx.mime_type == "text/plain"
+
+    def and_it_provides_the_MIME_type_from_path_using_filetype_lib_when_magic_is_unavailable(self):
+        with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", False):
+            ctx = _FileTypeDetectionContext(file_path=example_doc_path("simple.doc"))
+            assert ctx.mime_type == "application/msword"
+
+    def but_it_warns_to_install_libmagic_when_the_filetype_lib_cannot_detect_the_MIME_type(
+        self, caplog: LogCaptureFixture
+    ):
+        with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", False):
+            ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
+            assert ctx.mime_type is None
+            assert "WARNING" in caplog.text
+            assert "libmagic is unavailable" in caplog.text
+            assert "consider installing libmagic" in caplog.text
+
+    def it_provides_the_MIME_type_detected_by_libmagic_from_a_file_like_object(self):
+        with open(example_doc_path("norwich-city.txt"), "rb") as f:
+            ctx = _FileTypeDetectionContext(file=f)
+            assert ctx.mime_type == "text/plain"
+
+    def and_it_provides_the_MIME_type_from_file_using_filetype_lib_when_magic_is_unavailable(self):
+        with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", False):
+            file_path = example_doc_path("simple.doc")
+            with open(file_path, "rb") as f:
+                ctx = _FileTypeDetectionContext(file=f)
+                assert ctx.mime_type == "application/msword"
+
+    # -- .open() ------------------------------------------------
+
+    def it_provides_transparent_access_to_the_source_file_when_it_is_a_file_like_object(self):
+        with open(example_doc_path("norwich-city.txt"), "rb") as f:
+            ctx = _FileTypeDetectionContext(file=f)
+            with ctx.open() as file:
+                assert file is f
+                assert file.read(38) == b"Iwan Roberts\nRoberts celebrating after"
+
+    def it_provides_transparent_access_to_the_source_file_when_it_is_a_file_path(self):
+        ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
+        with ctx.open() as file:
+            assert file.read(38) == b"Iwan Roberts\nRoberts celebrating after"
+
+    # -- .text_head ---------------------------------------------
+
+    def it_grabs_the_first_4k_chars_from_file_path_for_textual_type_differentiation(self):
+        ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
+
+        text_head = ctx.text_head
+
+        assert isinstance(text_head, str)
+        assert len(text_head) == 4096
+        assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def and_it_uses_character_detection_to_correct_a_wrong_encoding_arg_for_file_path(self):
+        ctx = _FileTypeDetectionContext(
+            file_path=example_doc_path("norwich-city.txt"), encoding="utf_32_be"
+        )
+
+        text_head = ctx.text_head
+
+        assert isinstance(text_head, str)
+        assert len(text_head) == 4096
+        assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def but_not_to_correct_a_wrong_encoding_arg_for_a_file_like_object_open_in_binary_mode(self):
+        """Fails silently in this case, returning empty string."""
+        with open(example_doc_path("norwich-city.txt"), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file, encoding="utf_32_be")
+
+        text_head = ctx.text_head
+
+        assert text_head == ""
+
+    def and_it_grabs_the_first_4k_chars_from_binary_file_for_textual_type_differentiation(self):
+        with open(example_doc_path("norwich-city.txt"), "rb") as f:
+            ctx = _FileTypeDetectionContext(file=f)
+
+            text_head = ctx.text_head
+
+            assert isinstance(text_head, str)
+            # -- some characters consume multiple bytes, so shorter than 4096 --
+            assert len(text_head) == 4063
+            assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def and_it_grabs_the_first_4k_chars_from_text_file_for_textual_type_differentiation(self):
+        """Not a documented behavior to accept IO[str], but support is implemented."""
+        with open(example_doc_path("norwich-city.txt")) as f:
+            ctx = _FileTypeDetectionContext(file=f)  # pyright: ignore[reportArgumentType]
+
+            text_head = ctx.text_head
+
+            assert isinstance(text_head, str)
+            assert len(text_head) == 4096
+            assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def it_accommodates_a_utf_32_encoded_file_path(self):
+        ctx = _FileTypeDetectionContext(example_doc_path("fake-text-utf-32.txt"))
+
+        text_head = ctx.text_head
+
+        assert isinstance(text_head, str)
+        # -- test document is short --
+        assert len(text_head) == 188
+        assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
+
+    # TODO: this fails because `.text_head` ignores decoding errors on a file open for binary
+    # reading. Probably better if it used chardet in that case as it does for a file-path.
+    @pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
+    def and_it_accommodates_a_utf_32_encoded_file_like_object(self):
+        with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert isinstance(text_head, str)
+        # -- test document is short --
+        assert len(text_head) == 188
+        assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
+
+    # -- .validate() --------------------------------------------
+
+    def it_raises_when_no_file_exists_at_the_specified_file_path(self):
+        with pytest.raises(FileNotFoundError, match="no such file a/b/c.foo"):
+            _FileTypeDetectionContext(file_path="a/b/c.foo")._validate()
+
+    def it_raises_when_neither_file_path_nor_file_is_provided(self):
+        with pytest.raises(ValueError, match="either `file_path` or `file` argument must be pro"):
+            _FileTypeDetectionContext()._validate()
