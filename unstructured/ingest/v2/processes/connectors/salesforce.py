@@ -207,11 +207,6 @@ class SalesforceDownloader(Downloader):
     )
     connector_type: str = CONNECTOR_TYPE
 
-    def get_download_path(self, file_data: FileData) -> Path:
-        rel_path = file_data.source_identifiers.relative_path
-        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-        return self.download_dir / Path(rel_path)
-
     def _xml_for_record(self, record: OrderedDict) -> str:
         """Creates partitionable xml file from a record"""
         import xml.etree.ElementTree as ET

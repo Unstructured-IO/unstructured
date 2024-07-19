@@ -126,6 +126,8 @@ class PipelineStep(ABC):
             logger.info(
                 f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore
             )
+        else:
+            logger.info(f"Calling {self.__class__.__name__} with no inputs")
         if self.context.async_supported and self.process.is_async():
             return self.process_async(iterable=iterable)
         if self.context.mp_supported:

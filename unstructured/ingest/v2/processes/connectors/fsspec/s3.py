@@ -5,9 +5,13 @@ from pathlib import Path
 from time import time
 from typing import Any, Generator, Optional
 
-from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
+from unstructured.ingest.v2.interfaces import (
+    DownloadResponse,
+    FileData,
+    FileDataSourceMetadata,
+    UploadContent,
+)
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -65,9 +69,10 @@ class S3Indexer(FsspecIndexer):
     index_config: S3IndexerConfig
     connector_type: str = CONNECTOR_TYPE
 
-    def get_metadata(self, path: str) -> DataSourceMetadata:
+    def get_metadata(self, path: str) -> FileDataSourceMetadata:
         date_created = None
         date_modified = None
+        file_size = None
         try:
             modified: Optional[datetime] = self.fs.modified(path)
             if modified:
@@ -75,6 +80,8 @@ class S3Indexer(FsspecIndexer):
                 date_modified = str(modified.timestamp())
         except NotImplementedError:
             pass
+        with contextlib.suppress(AttributeError):
+            file_size = self.fs.size(path)
 
         version = None
         info: dict[str, Any] = self.fs.info(path)
@@ -89,13 +96,14 @@ class S3Indexer(FsspecIndexer):
         }
         if metadata:
             record_locator["metadata"] = metadata
-        return DataSourceMetadata(
+        return FileDataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
             version=version,
             url=f"{self.index_config.protocol}://{path}",
             record_locator=record_locator,
+            filesize_bytes=file_size,
         )
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")

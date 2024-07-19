@@ -36,6 +36,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
   --anonymous \
+  --max-file-size 6164770 \
   --work-dir "$WORK_DIR"
 
 set +e

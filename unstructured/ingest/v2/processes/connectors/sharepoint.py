@@ -339,10 +339,9 @@ class SharepointDownloader(Downloader):
     connector_type: str = CONNECTOR_TYPE
 
     def get_download_path(self, file_data: FileData) -> Path:
+        download_path = super().get_download_path(file_data=file_data)
+
         content_type = file_data.additional_metadata.get("sharepoint_content_type")
-        rel_path = file_data.source_identifiers.fullpath
-        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-        download_path = self.download_dir / Path(rel_path)
         if content_type == SharepointContentType.SITEPAGE.value:
             # Update output extension to html if site page
             download_path = download_path.with_suffix(".html")

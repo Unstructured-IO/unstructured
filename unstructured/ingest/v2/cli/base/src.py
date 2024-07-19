@@ -8,6 +8,7 @@ from unstructured.ingest.v2.cli.base.cmd import BaseCmd
 from unstructured.ingest.v2.cli.configs import (
     ChunkerCliConfig,
     EmbedderCliConfig,
+    FilterCliConfig,
     PartitionerCliConfig,
     ProcessorCliConfig,
 )
@@ -26,6 +27,7 @@ class SrcCmd(BaseCmd):
             ProcessorCliConfig,
             PartitionerCliConfig,
             EmbedderCliConfig,
+            FilterCliConfig,
             ChunkerCliConfig,
         ]
     )

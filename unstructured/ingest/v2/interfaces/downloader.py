@@ -30,6 +30,11 @@ class Downloader(BaseProcess, BaseConnector, ABC):
     connector_type: str
     download_config: DownloaderConfigT
 
+    def get_download_path(self, file_data: FileData) -> Path:
+        rel_path = file_data.source_identifiers.relative_path
+        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+        return self.download_dir / Path(rel_path)
+
     @staticmethod
     def is_float(value: str):
         try:
@@ -67,9 +72,6 @@ class Downloader(BaseProcess, BaseConnector, ABC):
 
     def is_async(self) -> bool:
         return True
-
-    def get_download_path(self, file_data: FileData) -> Optional[Path]:
-        return None
 
     @abstractmethod
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
