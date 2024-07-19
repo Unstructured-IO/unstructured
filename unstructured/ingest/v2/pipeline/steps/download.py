@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Optional, TypedDict, TypeVar
 
 from unstructured.ingest.v2.interfaces import FileData, download_responses
@@ -70,11 +71,40 @@ class DownloadStep(PipelineStep):
             return True
         return False
 
+    def update_file_data(
+        self, file_data: FileData, file_data_path: Path, download_path: Path
+    ) -> None:
+        file_size_bytes = download_path.stat().st_size
+        changed = False
+        if not file_data.metadata.filesize_bytes and file_size_bytes:
+            changed = True
+            file_data.metadata.filesize_bytes = file_size_bytes
+        if (
+            file_data.metadata.filesize_bytes
+            and file_data.metadata.filesize_bytes != file_size_bytes
+        ):
+            logger.warning(
+                f"file size in original file data "
+                f"({file_data.metadata.filesize_bytes}) doesn't "
+                f"match size of local file: {file_size_bytes}, updating"
+            )
+            changed = True
+            file_data.metadata.filesize_bytes = file_size_bytes
+        if changed:
+            logger.debug(f"Updating file data with new content: {file_data.to_dict()}")
+            with file_data_path.open("w") as file:
+                json.dump(file_data, file, indent=2)
+
     async def _run_async(self, fn: Callable, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
             logger.debug(f"Skipping download, file already exists locally: {download_path}")
+            self.update_file_data(
+                file_data=file_data,
+                file_data_path=Path(file_data_path),
+                download_path=download_path,
+            )
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
         fn_kwargs = {"file_data": file_data}
         if not asyncio.iscoroutinefunction(fn):
@@ -85,26 +115,60 @@ class DownloadStep(PipelineStep):
         else:
             download_results = await fn(**fn_kwargs)
         return self.create_step_results(
-            current_file_data_path=file_data_path, download_results=download_results
+            current_file_data_path=file_data_path,
+            download_results=download_results,
+            current_file_data=file_data,
         )
 
     def create_step_results(
-        self, current_file_data_path: str, download_results: download_responses
+        self,
+        current_file_data_path: str,
+        current_file_data: FileData,
+        download_results: download_responses,
     ) -> list[DownloadStepResponse]:
+        responses = []
         if not isinstance(download_results, list):
-            return [
-                DownloadStepResponse(
-                    file_data_path=current_file_data_path, path=str(download_results["path"])
+            file_data = current_file_data
+            file_data_path = current_file_data_path
+            download_path = download_results["path"]
+            if download_results["file_data"].identifier == current_file_data.identifier:
+                self.update_file_data(
+                    file_data=file_data,
+                    file_data_path=Path(file_data_path),
+                    download_path=download_path,
                 )
-            ]
+                responses = [
+                    DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))
+                ]
+            else:
+                file_data = download_results["file_data"]
+                file_data_path = self.persist_new_file_data(file_data=file_data)
+                self.update_file_data(
+                    file_data=file_data,
+                    file_data_path=Path(file_data_path),
+                    download_path=download_path,
+                )
+                responses = [
+                    DownloadStepResponse(
+                        file_data_path=current_file_data_path, path=str(download_results["path"])
+                    )
+                ]
+        else:
             # Supplemental results generated as part of the download process
-        download_step_results = []
-        for res in download_results:
-            file_data_path = self.persist_new_file_data(file_data=res["file_data"])
-            download_step_results.append(
-                DownloadStepResponse(file_data_path=file_data_path, path=res["path"])
-            )
-        return download_step_results
+            for res in download_results:
+                file_data = res["file_data"]
+                file_data_path = self.persist_new_file_data(file_data=file_data)
+                download_path = res["path"]
+                self.update_file_data(
+                    file_data=file_data,
+                    file_data_path=Path(file_data_path),
+                    download_path=download_path,
+                )
+                responses.append(
+                    DownloadStepResponse(file_data_path=file_data_path, path=res["path"])
+                )
+
+        return responses
 
     def persist_new_file_data(self, file_data: FileData) -> str:
         record_hash = self.get_hash(extras=[file_data.identifier])

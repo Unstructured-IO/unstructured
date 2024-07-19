@@ -8,7 +8,6 @@ from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional, TypeVar
 
-from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.v2.interfaces import (
@@ -18,6 +17,7 @@ from unstructured.ingest.v2.interfaces import (
     DownloaderConfig,
     DownloadResponse,
     FileData,
+    FileDataSourceMetadata,
     Indexer,
     IndexerConfig,
     SourceIdentifiers,
@@ -155,10 +155,10 @@ class FsspecIndexer(Indexer):
             else:
                 raise TypeError(f"unhandled response type from find: {type(found)}")
 
-    def get_metadata(self, path: str) -> DataSourceMetadata:
+    def get_metadata(self, path: str) -> FileDataSourceMetadata:
         date_created = None
         date_modified = None
-
+        file_size = None
         try:
             created: Optional[Any] = self.fs.created(path)
             if created:
@@ -178,6 +178,8 @@ class FsspecIndexer(Indexer):
                     date_modified = str(modified)
         except NotImplementedError:
             pass
+        with contextlib.suppress(AttributeError):
+            file_size = self.fs.size(path)
 
         version = self.fs.checksum(path)
         metadata: dict[str, str] = {}
@@ -192,13 +194,14 @@ class FsspecIndexer(Indexer):
             record_locator["file_id"] = file_id
         if metadata:
             record_locator["metadata"] = metadata
-        return DataSourceMetadata(
+        return FileDataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
             version=str(version),
             url=f"{self.index_config.protocol}://{path}",
             record_locator=record_locator,
+            filesize_bytes=file_size,
         )
 
     def sterilize_info(self, path) -> dict:

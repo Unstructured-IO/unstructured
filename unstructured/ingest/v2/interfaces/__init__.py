@@ -1,6 +1,6 @@
 from .connector import AccessConfig, BaseConnector, ConnectionConfig
 from .downloader import Downloader, DownloaderConfig, DownloadResponse, download_responses
-from .file_data import FileData, SourceIdentifiers
+from .file_data import FileData, FileDataSourceMetadata, SourceIdentifiers
 from .indexer import Indexer, IndexerConfig
 from .process import BaseProcess
 from .processor import ProcessorConfig
@@ -26,4 +26,5 @@ __all__ = [
     "AccessConfig",
     "ConnectionConfig",
     "BaseConnector",
+    "FileDataSourceMetadata",
 ]

@@ -9,6 +9,7 @@ from unstructured.ingest.v2.logger import logger, make_default_logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
 from unstructured.ingest.v2.pipeline.steps.download import DownloaderT, DownloadStep
 from unstructured.ingest.v2.pipeline.steps.embed import Embedder, EmbedStep
+from unstructured.ingest.v2.pipeline.steps.filter import Filterer, FilterStep
 from unstructured.ingest.v2.pipeline.steps.index import IndexerT, IndexStep
 from unstructured.ingest.v2.pipeline.steps.partition import Partitioner, PartitionStep
 from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStageStep
@@ -27,6 +28,7 @@ from unstructured.ingest.v2.processes.connector_registry import (
 )
 from unstructured.ingest.v2.processes.connectors.local import LocalUploader
 from unstructured.ingest.v2.processes.embedder import EmbedderConfig
+from unstructured.ingest.v2.processes.filter import FiltererConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
 
@@ -37,21 +39,32 @@ class PipelineError(Exception):
 @dataclass
 class Pipeline:
     context: ProcessorConfig
+
     indexer: InitVar[IndexerT]
     indexer_step: IndexStep = field(init=False)
+
     downloader: InitVar[DownloaderT]
     downloader_step: DownloadStep = field(init=False)
+
     partitioner: InitVar[Partitioner]
     partitioner_step: PartitionStep = field(init=False)
+
     chunker: InitVar[Optional[Chunker]] = None
     chunker_step: ChunkStep = field(init=False, default=None)
+
     embedder: InitVar[Optional[Embedder]] = None
     embedder_step: EmbedStep = field(init=False, default=None)
+
     stager: InitVar[Optional[UploadStager]] = None
     stager_step: UploadStageStep = field(init=False, default=None)
+
     uploader: InitVar[Uploader] = field(default=LocalUploader())
     uploader_step: UploadStep = field(init=False, default=None)
+
     uncompress_step: UncompressStep = field(init=False, default=None)
+
+    filterer: InitVar[Optional[Filterer]] = None
+    filter_step: FilterStep = field(init=False, default=None)
 
     def __post_init__(
         self,
@@ -62,10 +75,12 @@ class Pipeline:
         embedder: Embedder = None,
         stager: UploadStager = None,
         uploader: Uploader = None,
+        filterer: Filterer = None,
     ):
         make_default_logger(level=logging.DEBUG if self.context.verbose else logging.INFO)
         self.indexer_step = IndexStep(process=indexer, context=self.context)
         self.downloader_step = DownloadStep(process=downloader, context=self.context)
+        self.filter_step = FilterStep(process=filterer, context=self.context) if filterer else None
         self.partitioner_step = PartitionStep(process=partitioner, context=self.context)
         self.chunker_step = ChunkStep(process=chunker, context=self.context) if chunker else None
 
@@ -130,6 +145,16 @@ class Pipeline:
         final = [f for f in flat if f]
         return final or None
 
+    def apply_filter(self, records: list[dict]) -> list[dict]:
+        if not self.filter_step:
+            return records
+        data_to_filter = [{"file_data_path": i["file_data_path"]} for i in records]
+        filtered_data = self.filter_step(data_to_filter)
+        filtered_data = [f for f in filtered_data if f is not None]
+        filtered_file_data_paths = [r["file_data_path"] for r in filtered_data]
+        filtered_records = [r for r in records if r["file_data_path"] in filtered_file_data_paths]
+        return filtered_records
+
     def _run(self):
         logger.info(
             f"Running local pipline: {self} with configs: "
@@ -147,9 +172,19 @@ class Pipeline:
         if not indices_inputs:
             return
 
+        # Initial filtering on indexed content
+        indices_inputs = self.apply_filter(records=indices_inputs)
+        if not indices_inputs:
+            return
+
         # Download associated content to local file system
         downloaded_data = self.downloader_step(indices_inputs)
         downloaded_data = self.clean_results(results=downloaded_data)
+        if not downloaded_data:
+            return
+
+        # Post download filtering
+        downloaded_data = self.apply_filter(records=downloaded_data)
         if not downloaded_data:
             return
 
@@ -158,6 +193,11 @@ class Pipeline:
             downloaded_data = self.uncompress_step(downloaded_data)
             # Flatten list of lists
             downloaded_data = self.clean_results(results=downloaded_data)
+
+            # Post incompress filtering
+            downloaded_data = self.apply_filter(records=downloaded_data)
+            if not downloaded_data:
+                return
 
         if not downloaded_data:
             return
@@ -179,9 +219,14 @@ class Pipeline:
         self.uploader_step(iterable=elements)
 
     def __str__(self):
-        s = [str(self.indexer_step), str(self.downloader_step)]
+        s = [str(self.indexer_step)]
+        if filter_step := self.filter_step:
+            s.append(str(filter_step))
+        s.append(str(self.downloader_step))
+        if filter_step := self.filter_step:
+            s.append(str(filter_step))
         if uncompress_step := self.uncompress_step:
-            s.append(str(uncompress_step))
+            s.extend([str(uncompress_step), str(filter_step)])
         s.append(str(self.partitioner_step))
         if chunker_step := self.chunker_step:
             s.append(str(chunker_step))
@@ -200,6 +245,7 @@ class Pipeline:
         downloader_config: DownloaderConfigT,
         source_connection_config: ConnectionConfig,
         partitioner_config: PartitionerConfig,
+        filterer_config: FiltererConfig = None,
         chunker_config: Optional[ChunkerConfig] = None,
         embedder_config: Optional[EmbedderConfig] = None,
         destination_connection_config: Optional[ConnectionConfig] = None,
@@ -235,6 +281,8 @@ class Pipeline:
             ),
             "partitioner": Partitioner(config=partitioner_config),
         }
+        if filterer_config:
+            pipeline_kwargs["filterer"] = Filterer(config=filterer_config)
         if chunker_config:
             pipeline_kwargs["chunker"] = Chunker(config=chunker_config)
         if embedder_config:

@@ -30,12 +30,17 @@ class SourceIdentifiers:
 
 
 @dataclass
+class FileDataSourceMetadata(DataSourceMetadata):
+    filesize_bytes: Optional[int] = None
+
+
+@dataclass
 class FileData(DataClassJsonMixin):
     identifier: str
     connector_type: str
     source_identifiers: Optional[SourceIdentifiers] = None
     doc_type: IndexDocType = field(default=IndexDocType.FILE)
-    metadata: DataSourceMetadata = field(default_factory=DataSourceMetadata)
+    metadata: FileDataSourceMetadata = field(default_factory=lambda: FileDataSourceMetadata())
     additional_metadata: dict[str, Any] = field(default_factory=dict)
     reprocess: bool = False
 
