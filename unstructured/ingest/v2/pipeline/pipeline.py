@@ -194,7 +194,7 @@ class Pipeline:
             # Flatten list of lists
             downloaded_data = self.clean_results(results=downloaded_data)
 
-            # Post incompress filtering
+            # Post uncompress filtering
             downloaded_data = self.apply_filter(records=downloaded_data)
             if not downloaded_data:
                 return

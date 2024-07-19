@@ -4,7 +4,6 @@ import click
 
 from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
-from unstructured.ingest.v2.cli.utils import DelimitedString
 from unstructured.ingest.v2.processes.connectors.local import CONNECTOR_TYPE
 
 
@@ -18,13 +17,6 @@ class LocalCliIndexerConfig(CliConfig):
                 required=True,
                 type=click.Path(file_okay=True, dir_okay=True, exists=True),
                 help="Path to the location in the local file system that will be processed.",
-            ),
-            click.Option(
-                ["--file-glob"],
-                default=None,
-                type=DelimitedString(),
-                help="A comma-separated list of file globs to limit which types of "
-                "local files are accepted, e.g. '*.html,*.txt'",
             ),
             click.Option(
                 ["--recursive"],
