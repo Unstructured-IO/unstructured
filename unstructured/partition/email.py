@@ -416,8 +416,8 @@ def partition_email(
         #    <li>Item 1</li>=
         #    <li>Item 2<li>=
         # </ul>
-        list_content = content.split("=\n")
-        content = "".join(list_content)
+
+        content = content.replace("=\n", "").replace("=\r\n", "")
         elements = partition_html(
             text=content,
             include_metadata=False,
