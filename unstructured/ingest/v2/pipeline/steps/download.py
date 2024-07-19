@@ -93,7 +93,7 @@ class DownloadStep(PipelineStep):
         if changed:
             logger.debug(f"Updating file data with new content: {file_data.to_dict()}")
             with file_data_path.open("w") as file:
-                json.dump(file_data, file, indent=2)
+                json.dump(file_data.to_dict(), file, indent=2)
 
     async def _run_async(self, fn: Callable, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
