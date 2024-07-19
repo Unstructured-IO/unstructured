@@ -187,6 +187,9 @@ class FsspecIndexer(Indexer):
             "protocol": self.index_config.protocol,
             "remote_file_path": self.index_config.remote_url,
         }
+        file_stat = self.fs.stat(path=path)
+        if file_id := file_stat.get("id"):
+            record_locator["file_id"] = file_id
         if metadata:
             record_locator["metadata"] = metadata
         return DataSourceMetadata(
