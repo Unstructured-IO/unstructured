@@ -6,7 +6,7 @@ import json
 import os
 import re
 import zipfile
-from typing import IO, Callable, List, Optional
+from typing import IO, Callable, Optional
 
 from typing_extensions import ParamSpec
 
@@ -379,9 +379,9 @@ def _resolve_symlink(file_path: str) -> str:
 _P = ParamSpec("_P")
 
 
-def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+def add_metadata(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
     @functools.wraps(func)
-    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
         elements = func(*args, **kwargs)
         call_args = get_call_args_applying_defaults(func, *args, **kwargs)
         include_metadata = call_args.get("include_metadata", True)
@@ -412,7 +412,7 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
 
 def add_filetype(
     filetype: FileType,
-) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+) -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for list[Element] from partitioning.
 
     This decorator adds a post-processing step to a document partitioner.
@@ -423,9 +423,9 @@ def add_filetype(
 
     """
 
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
             params = get_call_args_applying_defaults(func, *args, **kwargs)
             include_metadata = params.get("include_metadata", True)
@@ -447,10 +447,10 @@ def add_filetype(
 
 def add_metadata_with_filetype(
     filetype: FileType,
-) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+) -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """..."""
 
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         return add_filetype(filetype=filetype)(add_metadata(func))
 
     return decorator
