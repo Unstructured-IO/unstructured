@@ -307,7 +307,7 @@ class _FileTypeDetectionContext:
     def file_head(self) -> bytes:
         """The initial bytes of the file to be recognized, for use with libmagic detection."""
         with self.open() as file:
-            return file.read(4096)
+            return file.read(8192)
 
     @lazyproperty
     def file_path(self) -> str | None:

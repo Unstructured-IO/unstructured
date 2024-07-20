@@ -664,13 +664,13 @@ class Describe_FileTypeDetectionContext:
 
     # -- .file_head ---------------------------------------------
 
-    def it_grabs_the_first_4k_bytes_of_the_file_for_use_by_magic(self):
+    def it_grabs_the_first_8k_bytes_of_the_file_for_use_by_magic(self):
         ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
 
         head = ctx.file_head
 
         assert isinstance(head, bytes)
-        assert len(head) == 4096
+        assert len(head) == 8192
         assert head.startswith(b"Iwan Roberts\nRoberts celebrating after")
 
     # -- .file_path ---------------------------------------------
