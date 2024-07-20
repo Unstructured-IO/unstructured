@@ -116,13 +116,15 @@ class _FileTypeDetector:
             return file_type
 
         mime_type = ctx.mime_type
-        extension = ctx.extension
-        # -- second check: if can't guess MIME-type use extension --
+
+        # -- strategy 3: use filename-extension, like ".docx" -> FileType.DOCX --
         if mime_type is None:
-            return FileType.from_extension(extension) or FileType.UNK
+            return self._file_type_from_file_extension or FileType.UNK
 
         """Mime type special cases."""
         # third check (mime_type)
+
+        extension = ctx.extension
 
         # NOTE(Crag): older magic lib does not differentiate between xls and doc
         if mime_type == "application/msword" and extension == ".xls":
@@ -181,6 +183,15 @@ class _FileTypeDetector:
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
         return FileType.from_mime_type(content_type)
+
+    @lazyproperty
+    def _file_type_from_file_extension(self) -> FileType | None:
+        """Determine file-type from filename extension.
+
+        Returns `None` when no filename is available or when the extension does not map to a
+        supported file-type.
+        """
+        return FileType.from_extension(self._ctx.extension)
 
 
 class _FileTypeDetectionContext:
