@@ -40,8 +40,13 @@ def detect_filetype(
     Helps determine which partition brick to use for a given file. A return value of None indicates
     a non-supported file type.
     """
-    mime_type = None
-    exactly_one(filename=filename, file=file)
+    ctx = _FileTypeDetectionContext.new(
+        file_path=filename,
+        file=file,
+        encoding=encoding,
+        content_type=content_type,
+        metadata_file_path=file_filename,
+    )
 
     # first check (content_type)
     if content_type:
@@ -49,49 +54,11 @@ def detect_filetype(
         if file_type:
             return file_type
 
-    # second check (filename/file_name/file)
-    # continue if successfully define mime_type
-    if filename or file_filename:
-        _filename = filename or file_filename or ""
-        _, extension = os.path.splitext(_filename)
-        extension = extension.lower()
-        if os.path.isfile(_filename) and LIBMAGIC_AVAILABLE:
-            import magic
-
-            mime_type = magic.from_file(_resolve_symlink(_filename), mime=True)
-        elif os.path.isfile(_filename):
-            import filetype as ft
-
-            mime_type = ft.guess_mime(_filename)
-        if mime_type is None:
-            return FileType.from_extension(extension) or FileType.UNK
-
-    elif file is not None:
-        if hasattr(file, "name"):
-            _, extension = os.path.splitext(file.name)
-        else:
-            extension = ""
-        extension = extension.lower()
-        # NOTE(robinson) - the python-magic docs recommend reading at least the first 2048 bytes
-        # Increased to 4096 because otherwise .xlsx files get detected as a zip file
-        # ref: https://github.com/ahupp/python-magic#usage
-        if LIBMAGIC_AVAILABLE:
-            import magic
-
-            mime_type = magic.from_buffer(file.read(4096), mime=True)
-        else:
-            import filetype as ft
-
-            mime_type = ft.guess_mime(file.read(4096))
-        if mime_type is None:
-            logger.warning(
-                "libmagic is unavailable but assists in filetype detection on file-like objects. "
-                "Please consider installing libmagic for better results.",
-            )
-            return FileType.from_extension(extension) or FileType.UNK
-
-    else:
-        raise ValueError("No filename, file, nor file_filename were specified.")
+    mime_type = ctx.mime_type
+    extension = ctx.extension
+    # -- second check: if can't guess MIME-type use extension --
+    if mime_type is None:
+        return FileType.from_extension(extension) or FileType.UNK
 
     """Mime type special cases."""
     # third check (mime_type)

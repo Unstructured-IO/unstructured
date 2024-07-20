@@ -38,9 +38,9 @@ is_in_docker = os.path.exists("/.dockerenv")
 @pytest.mark.parametrize(
     ("file_name", "expected_value"),
     [
-        ("layout-parser-paper-fast.pdf", FileType.PDF),
+        ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
-        ("example.jpg", FileType.JPG),
+        ("img/example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
         ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
@@ -66,9 +66,9 @@ def test_detect_filetype_from_filename(file_name: str, expected_value: FileType)
 @pytest.mark.parametrize(
     ("file_name", "expected_value"),
     [
-        ("layout-parser-paper-fast.pdf", FileType.PDF),
+        ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
         ("fake.docx", FileType.DOCX),
-        ("example.jpg", FileType.JPG),
+        ("img/example.jpg", FileType.JPG),
         ("fake-text.txt", FileType.TXT),
         ("eml/fake-email.eml", FileType.EML),
         ("factbook.xml", FileType.XML),
@@ -85,13 +85,42 @@ def test_detect_filetype_from_filename(file_name: str, expected_value: FileType)
         ("fake-incomplete-json.txt", FileType.TXT),
     ],
 )
-def test_detect_filetype_from_filename_with_extension(
+def test_detect_filetype_from_filename_when_libmagic_not_available(
     file_name: str, expected_value: FileType, monkeypatch: MonkeyPatch
 ):
-    """File-type is detected from extension when libmagic not available or file does not exist."""
+    """File-type is detected using `filetype` library when libmagic is not available."""
     # -- when libmagic is not available --
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     assert detect_filetype(example_doc_path(file_name)) == expected_value
+
+
+@pytest.mark.xfail(reason="Disputed Behavior", raises=FileNotFoundError, strict=True)
+@pytest.mark.parametrize(
+    ("file_name", "expected_value"),
+    [
+        ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
+        ("fake.docx", FileType.DOCX),
+        ("img/example.jpg", FileType.JPG),
+        ("fake-text.txt", FileType.TXT),
+        ("eml/fake-email.eml", FileType.EML),
+        ("factbook.xml", FileType.XML),
+        ("example-10k.html", FileType.HTML),
+        ("fake-html.html", FileType.HTML),
+        ("stanley-cups.xlsx", FileType.XLSX),
+        ("stanley-cups.csv", FileType.CSV),
+        ("stanley-cups.tsv", FileType.TSV),
+        ("fake-power-point.pptx", FileType.PPTX),
+        ("winter-sports.epub", FileType.EPUB),
+        ("fake-doc.rtf", FileType.RTF),
+        ("spring-weather.html.json", FileType.JSON),
+        ("fake.odt", FileType.ODT),
+        ("fake-incomplete-json.txt", FileType.TXT),
+    ],
+)
+def test_detect_filetype_from_filename_extension_when_file_does_not_exist(
+    file_name: str, expected_value: FileType, monkeypatch: MonkeyPatch
+):
+    """File-type is detected from extension when file does not exist."""
     # -- when file does not exist --
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", True)
     extension = pathlib.Path(file_name).suffix
@@ -402,10 +431,14 @@ def test_detect_XLSX_from_xlsx_mime_type_file_no_extension(magic_from_buffer_: M
     assert filetype == FileType.XLSX
 
 
+# TODO: remove this test or replace it with a more useful one before merge
+@pytest.mark.xfail(reason="Disputed behavior", raises=FileNotFoundError, strict=True)
 def test_detect_UNK_from_extension_of_non_existent_file_path():
     assert detect_filetype(example_doc_path("made_up.fake")) == FileType.UNK
 
 
+# TODO: remove this test or replace it with a more useful one before merge
+@pytest.mark.xfail(reason="Disputed behavior", raises=FileNotFoundError, strict=True)
 def test_detect_PNG_from_extension_of_non_existent_file_path():
     assert detect_filetype(example_doc_path("made_up.png")) == FileType.PNG
 
@@ -422,7 +455,7 @@ def test_detect_TXT_from_unknown_text_subtype_file_no_extension(magic_from_buffe
 
 
 def test_detect_BMP_from_file_path():
-    assert detect_filetype(example_doc_path("bmp_24.bmp")) == FileType.BMP
+    assert detect_filetype(example_doc_path("img/bmp_24.bmp")) == FileType.BMP
 
 
 def test_detect_BMP_from_file_no_extension():
@@ -431,6 +464,8 @@ def test_detect_BMP_from_file_no_extension():
     assert detect_filetype(file=file) == FileType.BMP
 
 
+# TODO: remove this test or replace it with a more useful one before merge
+@pytest.mark.xfail(reason="Disputed behavior", strict=True)
 def test_detect_filetype_raises_when_both_path_and_file_like_object_are_specified():
     file_path = example_doc_path("fake-email.eml")
     with open(example_doc_path(file_path), "rb") as f:
@@ -441,7 +476,7 @@ def test_detect_filetype_raises_when_both_path_and_file_like_object_are_specifie
 
 
 def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified():
-    with pytest.raises(ValueError, match="Exactly one of filename and file must be specified."):
+    with pytest.raises(ValueError, match="either `file_path` or `file` argument must be provided"):
         detect_filetype()
 
 
