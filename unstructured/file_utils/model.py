@@ -436,6 +436,3 @@ class FileType(enum.Enum):
         "inode/x-empty",
         cast(list[str], []),
     )
-
-
-PLAIN_TEXT_EXTENSIONS = ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .text .tsv .txt".split()

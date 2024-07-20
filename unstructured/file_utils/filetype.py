@@ -14,7 +14,7 @@ from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
-from unstructured.file_utils.model import PLAIN_TEXT_EXTENSIONS, FileType
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
@@ -132,54 +132,28 @@ class _FileTypeDetector:
         if mime_type == "application/msword" and extension == ".xls":
             return FileType.XLS
 
-        elif mime_type.endswith("xml"):
-            if extension == ".html" or extension == ".htm":
-                return FileType.HTML
-            else:
-                return FileType.XML
+        if mime_type.endswith("xml"):
+            return FileType.HTML if extension in (".html", ".htm") else FileType.XML
 
         # -- ref: https://www.rfc-editor.org/rfc/rfc822 --
-        elif mime_type == "message/rfc822" or mime_type.startswith("text"):
-            if not encoding:
-                encoding = "utf-8"
-            formatted_encoding = format_encoding_str(encoding)
-
-            if extension in [
-                ".eml",
-                ".p7s",
-                ".md",
-                ".rtf",
-                ".html",
-                ".rst",
-                ".org",
-                ".csv",
-                ".tsv",
-                ".json",
-            ]:
+        if mime_type == "message/rfc822" or mime_type.startswith("text"):
+            if extension in ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .tsv".split():
                 return FileType.from_extension(extension) or FileType.TXT
 
             # NOTE(crag): for older versions of the OS libmagic package, such as is currently
             # installed on the Unstructured docker image, .json files resolve to "text/plain"
             # rather than "application/json". this corrects for that case.
-            if _is_text_file_a_json(
-                file=file,
-                filename=filename,
-                encoding=formatted_encoding,
-            ):
+            if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
                 return FileType.JSON
 
-            if _is_text_file_a_csv(
-                file=file,
-                filename=filename,
-                encoding=formatted_encoding,
-            ):
+            if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
                 return FileType.CSV
 
             if file and _check_eml_from_buffer(file=file) is True:
                 return FileType.EML
 
-            if extension in PLAIN_TEXT_EXTENSIONS:
-                return FileType.from_extension(extension) or FileType.UNK
+            if extension in (".text", ".txt"):
+                return FileType.TXT
 
             # Safety catch
             if file_type := FileType.from_mime_type(mime_type):
@@ -187,40 +161,32 @@ class _FileTypeDetector:
 
             return FileType.TXT
 
-        elif mime_type == "application/octet-stream":
+        if mime_type == "application/octet-stream":
             if extension == ".docx":
                 return FileType.DOCX
-            elif file:
-                return _detect_filetype_from_octet_stream(file=file)
-            else:
-                return FileType.from_extension(extension) or FileType.UNK
-
-        elif mime_type == "application/zip":
-            file_type = FileType.UNK
             if file:
-                file_type = _detect_filetype_from_octet_stream(file=file)
-            elif filename is not None:
-                with open(filename, "rb") as f:
-                    file_type = _detect_filetype_from_octet_stream(file=f)
+                return _detect_filetype_from_octet_stream(file=file)
+            return FileType.from_extension(extension) or FileType.UNK
 
-            extension = extension if extension else ""
+        if mime_type == "application/zip":
+            with self._ctx.open() as file:
+                file_type = _detect_filetype_from_octet_stream(file=file)
+
             return (
                 FileType.ZIP
                 if file_type in (FileType.UNK, FileType.ZIP)
                 else FileType.from_extension(extension) or file_type
             )
 
-        elif _is_code_mime_type(mime_type):
-            # NOTE(robinson) - we'll treat all code files as plain text for now.
-            # we can update this logic and add filetypes for specific languages
-            # later if needed.
+        # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
+        if _is_code_mime_type(mime_type):
             return FileType.TXT
 
-        elif mime_type.endswith("empty"):
+        if mime_type.endswith("empty"):
             return FileType.EMPTY
 
-        # For everything else
-        elif file_type := FileType.from_mime_type(mime_type):
+        # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
+        if file_type := FileType.from_mime_type(mime_type):
             return file_type
 
         logger.warning(
