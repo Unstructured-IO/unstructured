@@ -110,14 +110,11 @@ class _FileTypeDetector:
         ctx = self._ctx
         filename = ctx.file_path
         file = ctx._file_arg  # pyright: ignore[reportPrivateUsage]
-        content_type = ctx.content_type
         encoding = ctx.encoding
 
-        # first check (content_type)
-        if content_type:
-            file_type = FileType.from_mime_type(content_type)
-            if file_type:
-                return file_type
+        # -- strategy 1: use content-type asserted by caller --
+        if file_type := self._file_type_from_content_type:
+            return file_type
 
         mime_type = ctx.mime_type
         extension = ctx.extension
@@ -194,6 +191,20 @@ class _FileTypeDetector:
             "This file type is not currently supported in unstructured.",
         )
         return FileType.from_extension(extension) or FileType.UNK
+
+    # == STRATEGIES ============================================================
+
+    @property
+    def _file_type_from_content_type(self) -> FileType | None:
+        """Map passed content-type argument to a file-type, subject to certain rules."""
+        content_type = self._ctx.content_type
+
+        # -- when no content-type was asserted by caller, this strategy is not applicable --
+        if not content_type:
+            return None
+
+        # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
+        return FileType.from_mime_type(content_type)
 
 
 class _FileTypeDetectionContext:
