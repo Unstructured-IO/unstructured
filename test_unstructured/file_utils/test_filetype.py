@@ -27,6 +27,7 @@ from unstructured.file_utils.filetype import (
     _is_code_mime_type,
     _is_text_file_a_csv,
     _is_text_file_a_json,
+    _TextFileDifferentiator,
     detect_filetype,
 )
 from unstructured.file_utils.model import FileType
@@ -785,3 +786,78 @@ class Describe_FileTypeDetectionContext:
     def it_raises_when_neither_file_path_nor_file_is_provided(self):
         with pytest.raises(ValueError, match="either `file_path` or `file` argument must be pro"):
             _FileTypeDetectionContext()._validate()
+
+
+class Describe_TextFileDifferentiator:
+    """Unit-test suite for `unstructured.file_utils.filetype._TextFileDifferentiator`."""
+
+    # -- .applies() ---------------------------------------------
+
+    def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
+        """The constructor determines whether this differentiator is applicable.
+
+        It returns an instance only when differentiating a text file-type is required, which it can
+        judge from the context (`ctx`).
+        """
+        ctx = _FileTypeDetectionContext(example_doc_path("norwich-city.txt"))
+
+        differentiator = _TextFileDifferentiator.applies(ctx)
+
+        assert isinstance(differentiator, _TextFileDifferentiator)
+
+    def and_it_returns_None_when_text_differentiation_does_not_apply_to_the_detection_context(self):
+        ctx = _FileTypeDetectionContext(example_doc_path("simple.docx"))
+        assert _TextFileDifferentiator.applies(ctx) is None
+
+    # -- ._is_csv -----------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("content", "expected_value"),
+        [
+            # -- no commas, too few lines --
+            (b"d\xe2\x80", False),
+            (b'[{"key": "value"}]', False),
+            # -- at least a header and one data row, at least two columns --
+            (b"column1,column2,column3\nvalue1,value2,value3\n", True),
+            # -- no content --
+            (b"", False),
+        ],
+    )
+    def it_distinguishes_a_CSV_file_from_other_text_files(
+        self, content: bytes, expected_value: bool
+    ):
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+        differentiator = _TextFileDifferentiator(ctx)
+
+        assert differentiator._is_csv is expected_value
+
+    # -- ._is_eml -----------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"), [("fake-email.eml", True), ("norwich-city.txt", False)]
+    )
+    def it_distinguishes_an_EML_file_from_other_text_files(
+        self, file_name: str, expected_value: bool
+    ):
+        ctx = _FileTypeDetectionContext(example_doc_path(file_name))
+        assert _TextFileDifferentiator(ctx)._is_eml is expected_value
+
+    # -- ._is_json ----------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("content", "expected_value"),
+        [
+            (b"d\xe2\x80", False),
+            (b'[{"key": "value"}]', True),
+            (b"", False),
+            # -- valid JSON, but not for our purposes --
+            (b'"This is not a JSON"', False),
+        ],
+    )
+    def it_distinguishes_a_JSON_file_from_other_text_files(
+        self, content: bytes, expected_value: bool
+    ):
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+        differentiator = _TextFileDifferentiator(ctx)
+
+        assert differentiator._is_json is expected_value

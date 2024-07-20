@@ -383,6 +383,110 @@ class _FileTypeDetectionContext:
             raise ValueError("either `file_path` or `file` argument must be provided")
 
 
+class _TextFileDifferentiator:
+    """Refine a textual file-type that may not be as specific as it could be."""
+
+    def __init__(self, ctx: _FileTypeDetectionContext):
+        self._ctx = ctx
+
+    @classmethod
+    def applies(cls, ctx: _FileTypeDetectionContext) -> _TextFileDifferentiator | None:
+        """Constructs an instance, but only if this differentiator applies in `ctx`."""
+        mime_type = ctx.mime_type
+        return (
+            cls(ctx)
+            if mime_type and (mime_type == "message/rfc822" or mime_type.startswith("text"))
+            else None
+        )
+
+    @lazyproperty
+    def file_type(self) -> FileType:
+        """Differentiated file-type for textual content.
+
+        Always produces a file-type, worst case that's `FileType.TXT` when nothing more specific
+        applies.
+        """
+        extension = self._ctx.extension
+
+        if extension in ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .tsv".split():
+            return FileType.from_extension(extension) or FileType.TXT
+
+        # NOTE(crag): for older versions of the OS libmagic package, such as is currently
+        # installed on the Unstructured docker image, .json files resolve to "text/plain"
+        # rather than "application/json". this corrects for that case.
+        if self._is_json:
+            return FileType.JSON
+
+        if self._is_csv:
+            return FileType.CSV
+
+        if self._is_eml:
+            return FileType.EML
+
+        if extension in (".text", ".txt"):
+            return FileType.TXT
+
+        # Safety catch
+        if file_type := FileType.from_mime_type(self._ctx.mime_type):
+            return file_type
+
+        return FileType.TXT
+
+    @lazyproperty
+    def _is_csv(self) -> bool:
+        """True when file is plausibly in Comma Separated Values (CSV) format."""
+
+        def count_commas(text: str):
+            """Counts the number of commas in a line, excluding commas in quotes."""
+            pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
+            matches = re.findall(pattern, text)
+            return len(matches)
+
+        lines = self._ctx.text_head.strip().splitlines()
+        if len(lines) < 2:
+            return False
+        # -- check at most the first 10 lines --
+        lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
+        # -- any lines without at least one comma disqualifies the file --
+        if any("," not in line for line in lines):
+            return False
+        header_count = count_commas(lines[0])
+        return all(count_commas(line) == header_count for line in lines[1:])
+
+    @lazyproperty
+    def _is_eml(self) -> bool:
+        """Checks if a text/plain file is actually a .eml file.
+
+        Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
+        file.
+        """
+        return EMAIL_HEAD_RE.match(self._ctx.text_head) is not None
+
+    @lazyproperty
+    def _is_json(self) -> bool:
+        """True when file is JSON collection.
+
+        A JSON file that contains only a string, number, or boolean, while valid JSON, will fail
+        this test since it is not partitionable.
+        """
+        text_head = self._ctx.text_head
+
+        # -- an empty file is not JSON --
+        if not text_head:
+            return False
+
+        # -- has to be a list or object, no string, number, or bool --
+        if text_head.lstrip()[0] not in "[{":
+            return False
+
+        try:
+            with self._ctx.open() as file:
+                json.load(file)
+            return True
+        except json.JSONDecodeError:
+            return False
+
+
 def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:
     """Checks if a text/plain file is actually a .eml file.
 
