@@ -110,7 +110,6 @@ class _FileTypeDetector:
         ctx = self._ctx
         filename = ctx.file_path
         file = ctx._file_arg  # pyright: ignore[reportPrivateUsage]
-        encoding = ctx.encoding
 
         # -- strategy 1: use content-type asserted by caller --
         if file_type := self._file_type_from_content_type:
@@ -132,31 +131,8 @@ class _FileTypeDetector:
         if mime_type.endswith("xml"):
             return FileType.HTML if extension in (".html", ".htm") else FileType.XML
 
-        # -- ref: https://www.rfc-editor.org/rfc/rfc822 --
-        if mime_type == "message/rfc822" or mime_type.startswith("text"):
-            if extension in ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .tsv".split():
-                return FileType.from_extension(extension) or FileType.TXT
-
-            # NOTE(crag): for older versions of the OS libmagic package, such as is currently
-            # installed on the Unstructured docker image, .json files resolve to "text/plain"
-            # rather than "application/json". this corrects for that case.
-            if _is_text_file_a_json(file=file, filename=filename, encoding=encoding):
-                return FileType.JSON
-
-            if _is_text_file_a_csv(file=file, filename=filename, encoding=encoding):
-                return FileType.CSV
-
-            if file and _check_eml_from_buffer(file=file) is True:
-                return FileType.EML
-
-            if extension in (".text", ".txt"):
-                return FileType.TXT
-
-            # Safety catch
-            if file_type := FileType.from_mime_type(mime_type):
-                return file_type
-
-            return FileType.TXT
+        if differentiator := _TextFileDifferentiator.applies(self._ctx):
+            return differentiator.file_type
 
         if mime_type == "application/octet-stream":
             if extension == ".docx":
@@ -487,21 +463,6 @@ class _TextFileDifferentiator:
             return False
 
 
-def _check_eml_from_buffer(file: IO[bytes] | IO[str]) -> bool:
-    """Checks if a text/plain file is actually a .eml file.
-
-    Uses a regex pattern to see if the start of the file matches the typical pattern for a .eml
-    file.
-    """
-    file.seek(0)
-    file_content = file.read(4096)
-    if isinstance(file_content, bytes):
-        file_head = file_content.decode("utf-8", errors="ignore")
-    else:
-        file_head = file_content
-    return EMAIL_HEAD_RE.match(file_head) is not None
-
-
 def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
     """Detects the filetype, given a file with an application/octet-stream MIME type."""
     file.seek(0)
@@ -553,58 +514,6 @@ def _is_code_mime_type(mime_type: str) -> bool:
     if mime_type == "text/x-go":
         return True
     return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
-
-
-def _is_text_file_a_csv(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-):
-    """Detects if a file that has a text/plain MIME type is a CSV file."""
-
-    def count_commas(text: str):
-        """Counts the number of commas in a line, excluding commas in quotes."""
-        pattern = r"(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$),"
-        matches = re.findall(pattern, text)
-        return len(matches)
-
-    file_text = _read_file_start_for_type_check(
-        file=file,
-        filename=filename,
-        encoding=encoding,
-    )
-    lines = file_text.strip().splitlines()
-    if len(lines) < 2:
-        return False
-    lines = lines[: len(lines)] if len(lines) < 10 else lines[:10]
-    header_count = count_commas(lines[0])
-    if any("," not in line for line in lines):
-        return False
-    return all(count_commas(line) == header_count for line in lines[1:])
-
-
-def _is_text_file_a_json(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-):
-    """Detects if a file that has a text/plain MIME type is a JSON file."""
-    file_text = _read_file_start_for_type_check(
-        file=file,
-        filename=filename,
-        encoding=encoding,
-    )
-    try:
-        output = json.loads(file_text)
-        # NOTE(robinson) - Per RFC 4627 which defines the application/json media type,
-        # a string is a valid JSON. For our purposes, however, we want to treat that
-        # as a text file even if it is serializable as json.
-        # References:
-        # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
-        # https://www.ietf.org/rfc/rfc4627.txt
-        return not isinstance(output, str)
-    except json.JSONDecodeError:
-        return False
 
 
 def _read_file_start_for_type_check(

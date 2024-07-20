@@ -25,8 +25,6 @@ from unstructured.file_utils.filetype import (
     _detect_filetype_from_octet_stream,
     _FileTypeDetectionContext,
     _is_code_mime_type,
-    _is_text_file_a_csv,
-    _is_text_file_a_json,
     _TextFileDifferentiator,
     detect_filetype,
 )
@@ -422,49 +420,6 @@ def test_detect_BMP_from_file_no_extension():
 def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified():
     with pytest.raises(ValueError, match="either `file_path` or `file` argument must be provided"):
         detect_filetype()
-
-
-@pytest.mark.parametrize(
-    ("content", "expected_value"),
-    [
-        (b"d\xe2\x80", False),  # Invalid JSON
-        (b'[{"key": "value"}]', True),  # Valid JSON
-        (b"", False),  # Empty content
-        (b'"This is not a JSON"', False),  # Serializable as JSON, but we want to treat it as txt
-    ],
-)
-def test_is_text_file_a_json_distinguishes_JSON_from_text(content: bytes, expected_value: bool):
-    with io.BytesIO(content) as f:
-        assert _is_text_file_a_json(file=f) == expected_value
-
-
-@pytest.mark.parametrize(
-    ("content", "expected_value"),
-    [
-        (b"d\xe2\x80", False),  # Invalid CSV
-        (b'[{"key": "value"}]', False),  # Invalid CSV
-        (b"column1,column2,column3\nvalue1,value2,value3\n", True),  # Valid CSV
-        (b"", False),  # Empty content
-    ],
-)
-def test_is_text_file_a_csv_distinguishes_CSV_from_text(content: bytes, expected_value: bool):
-    with io.BytesIO(content) as f:
-        assert _is_text_file_a_csv(file=f) == expected_value
-
-
-def test_csv_and_json_checks_with_filename_accommodate_utf_32_encoded_file():
-    file_path = example_doc_path("fake-text-utf-32.txt")
-    assert _is_text_file_a_csv(filename=file_path) is False
-    assert _is_text_file_a_json(filename=file_path) is False
-
-
-def test_csv_and_json_checks_with_file_accommodate_utf_32_encoded_content():
-    with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    assert _is_text_file_a_csv(file=file) is False
-    file.seek(0)
-    assert _is_text_file_a_json(file=file) is False
 
 
 def test_detect_EMPTY_from_file_path_to_empty_file():
