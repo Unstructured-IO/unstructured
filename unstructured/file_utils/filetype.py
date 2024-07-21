@@ -107,68 +107,20 @@ class _FileTypeDetector:
     @property
     def _file_type(self) -> FileType:
         """FileType member corresponding to this document source."""
-        ctx = self._ctx
-        filename = ctx.file_path
-        file = ctx._file_arg  # pyright: ignore[reportPrivateUsage]
-
         # -- strategy 1: use content-type asserted by caller --
         if file_type := self._file_type_from_content_type:
             return file_type
 
-        mime_type = ctx.mime_type
-
-        # -- strategy 3: use filename-extension, like ".docx" -> FileType.DOCX --
-        if mime_type is None:
-            return self._file_type_from_file_extension or FileType.UNK
-
-        """Mime type special cases."""
-        # third check (mime_type)
-
-        extension = ctx.extension
-
-        # NOTE(Crag): older magic lib does not differentiate between xls and doc
-        if mime_type == "application/msword" and extension == ".xls":
-            return FileType.XLS
-
-        if mime_type.endswith("xml"):
-            return FileType.HTML if extension in (".html", ".htm") else FileType.XML
-
-        if differentiator := _TextFileDifferentiator.applies(self._ctx):
-            return differentiator.file_type
-
-        if mime_type == "application/octet-stream":
-            if extension == ".docx":
-                return FileType.DOCX
-            if file:
-                return _detect_filetype_from_octet_stream(file=file)
-            return FileType.from_extension(extension) or FileType.UNK
-
-        if mime_type == "application/zip":
-            with self._ctx.open() as file:
-                file_type = _detect_filetype_from_octet_stream(file=file)
-
-            return (
-                FileType.ZIP
-                if file_type in (FileType.UNK, FileType.ZIP)
-                else FileType.from_extension(extension) or file_type
-            )
-
-        # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
-        if _is_code_mime_type(mime_type):
-            return FileType.TXT
-
-        if mime_type.endswith("empty"):
-            return FileType.EMPTY
-
-        # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
-        if file_type := FileType.from_mime_type(mime_type):
+        # -- strategy 2: guess MIME-type using libmagic and use that --
+        if file_type := self._file_type_from_guessed_mime_type:
             return file_type
 
-        logger.warning(
-            f"The MIME type{f' of {filename!r}' if filename else ''} is {mime_type!r}. "
-            "This file type is not currently supported in unstructured.",
-        )
-        return FileType.from_extension(extension) or FileType.UNK
+        # -- strategy 3: use filename-extension, like ".docx" -> FileType.DOCX --
+        if file_type := self._file_type_from_file_extension:
+            return file_type
+
+        # -- strategy 4: give up and report FileType.UNK --
+        return FileType.UNK
 
     # == STRATEGIES ============================================================
 
@@ -183,6 +135,65 @@ class _FileTypeDetector:
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
         return FileType.from_mime_type(content_type)
+
+    @property
+    def _file_type_from_guessed_mime_type(self) -> FileType | None:
+        """FileType based on auto-detection of MIME-type by libmagic.
+
+        In some cases refinements are necessary on the magic-derived MIME-types. This process
+        includes applying those rules, most of which are accumulated through practical experience.
+        """
+        mime_type = self._ctx.mime_type
+        extension = self._ctx.extension
+
+        # -- when libmagic is not installed, the `filetype` package is used instead.
+        # -- `filetype.guess()` returns `None` for file-types it does not support, which
+        # -- unfortunately includes all the textual file-types like CSV, EML, HTML, MD, RST, RTF,
+        # -- TSV, and TXT. When we have no guessed MIME-type, this strategy is not applicable.
+        if mime_type is None:
+            return None
+
+        # NOTE(Crag): older magic lib does not differentiate between xls and doc
+        if mime_type == "application/msword" and extension == ".xls":
+            return FileType.XLS
+
+        if mime_type.endswith("xml"):
+            return FileType.HTML if extension in (".html", ".htm") else FileType.XML
+
+        if differentiator := _TextFileDifferentiator.applies(self._ctx):
+            return differentiator.file_type
+
+        if mime_type == "application/octet-stream":
+            if extension == ".docx":
+                return FileType.DOCX
+            with self._ctx.open() as file:
+                file_type = _detect_filetype_from_octet_stream(file=file)
+                return None if file_type == FileType.UNK else file_type
+
+        if mime_type == "application/zip":
+            with self._ctx.open() as file:
+                file_type = _detect_filetype_from_octet_stream(file=file)
+            # TODO: this doesn't seem right, DOCX, PPTX, and XLSX are all Zip archives that could be
+            # ambiguously recognized with "application/zip", seems like we should check for that
+            # since it's so easy.
+            return FileType.ZIP if file_type == FileType.ZIP else None
+
+        # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
+        if _is_code_mime_type(mime_type):
+            return FileType.TXT
+
+        if mime_type.endswith("empty"):
+            return FileType.EMPTY
+
+        # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
+        if file_type := FileType.from_mime_type(mime_type):
+            return file_type
+
+        logger.warning(
+            f"The MIME type{f' of {self._ctx.file_path!r}' if self._ctx.file_path else ''} is"
+            f" {mime_type!r}. This file type is not currently supported in unstructured.",
+        )
+        return None
 
     @lazyproperty
     def _file_type_from_file_extension(self) -> FileType | None:
