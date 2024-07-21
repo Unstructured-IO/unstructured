@@ -163,20 +163,14 @@ class _FileTypeDetector:
         if differentiator := _TextFileDifferentiator.applies(self._ctx):
             return differentiator.file_type
 
-        if mime_type == "application/octet-stream":
-            if extension == ".docx":
-                return FileType.DOCX
-            with self._ctx.open() as file:
-                file_type = _detect_filetype_from_octet_stream(file=file)
-                return None if file_type == FileType.UNK else file_type
-
-        if mime_type == "application/zip":
-            with self._ctx.open() as file:
-                file_type = _detect_filetype_from_octet_stream(file=file)
-            # TODO: this doesn't seem right, DOCX, PPTX, and XLSX are all Zip archives that could be
-            # ambiguously recognized with "application/zip", seems like we should check for that
-            # since it's so easy.
-            return FileType.ZIP if file_type == FileType.ZIP else None
+        # -- applicable to "application/octet-stream", "application/zip", and all Office 2007+
+        # -- document MIME-types, i.e. those for DOCX, PPTX, and XLSX. Note however it does NOT
+        # -- apply to EPUB or ODT documents, even though those are also Zip archives. The zip and
+        # -- octet-stream MIME-types are fed in because they are ambiguous. The MS-Office types are
+        # -- differentiated because they are sometimes mistaken for each other, like DOCX mime-type
+        # -- is actually a PPTX file etc.
+        if differentiator := _ZipFileDifferentiator.applies(self._ctx, mime_type):
+            return differentiator.file_type
 
         # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
         if self._ctx.has_code_mime_type:
@@ -295,6 +289,12 @@ class _FileTypeDetectionContext:
         feedback on an error, but users of context should have little use for it otherwise.
         """
         return self._file_path
+
+    @lazyproperty
+    def is_zipfile(self) -> bool:
+        """True when file is a Zip archive."""
+        with self.open() as file:
+            return zipfile.is_zipfile(file)
 
     @lazyproperty
     def has_code_mime_type(self) -> bool:
@@ -507,34 +507,62 @@ class _TextFileDifferentiator:
             return False
 
 
-def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
-    """Detects the filetype, given a file with an application/octet-stream MIME type."""
-    file.seek(0)
-    if zipfile.is_zipfile(file):
-        file.seek(0)
-        archive = zipfile.ZipFile(file)
+class _ZipFileDifferentiator:
+    """Refine a Zip-packaged file-type that may be ambiguous or swapped."""
 
-        # NOTE(robinson) - .docx.xlsx files are actually zip file with a .docx/.xslx extension.
-        # If the MIME type is application/octet-stream, we check if it's a .docx/.xlsx file by
-        # looking for expected filenames within the zip file.
-        archive_filenames = [f.filename for f in archive.filelist]
-        if all(f in archive_filenames for f in ("docProps/core.xml", "word/document.xml")):
-            return FileType.DOCX
-        elif all(f in archive_filenames for f in ("xl/workbook.xml",)):
-            return FileType.XLSX
-        elif all(f in archive_filenames for f in ("docProps/core.xml", "ppt/presentation.xml")):
-            return FileType.PPTX
+    def __init__(self, ctx: _FileTypeDetectionContext):
+        self._ctx = ctx
 
-    if LIBMAGIC_AVAILABLE:
-        import magic
+    @classmethod
+    def applies(
+        cls, ctx: _FileTypeDetectionContext, mime_type: str
+    ) -> _ZipFileDifferentiator | None:
+        """Constructs an instance, but only if this differentiator applies for `mime_type`.
 
-        # Infer mime type using magic if octet-stream is not zip file
-        mime_type = magic.from_buffer(file.read(4096), mime=True)
-        return FileType.from_mime_type(mime_type) or FileType.UNK
-    logger.warning(
-        "Could not detect the filetype from application/octet-stream MIME type.",
-    )
-    return FileType.UNK
+        Separate `mime_type` argument allows it to be applied to either asserted content-type or
+        guessed mime-type.
+        """
+        return (
+            cls(ctx)
+            if mime_type
+            in (
+                "application/octet-stream",
+                "application/zip",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            else None
+        )
+
+    @lazyproperty
+    def file_type(self) -> FileType | None:
+        """Differentiated file-type for a Zip archive.
+
+        Returns `None` if the file is not a Zip archive. Otherwise it returns `FileType.DOCX`,
+        `FileType.PPTX`, or `FileType.XLSX` when one of those applies and `FileType.ZIP` otherwise.
+        """
+        if not self._ctx.is_zipfile:
+            return None
+
+        with self._ctx.open() as file:
+            zip = zipfile.ZipFile(file)
+
+            # NOTE(robinson) - .docx and .xlsx files are actually a zip file with a .docx/.xslx
+            # extension. If the MIME type is application/octet-stream, we check if it's a
+            # .docx/.xlsx file by looking for expected filenames within the zip file.
+            filenames = [f.filename for f in zip.filelist]
+
+            if all(f in filenames for f in ("docProps/core.xml", "word/document.xml")):
+                return FileType.DOCX
+
+            if all(f in filenames for f in ("xl/workbook.xml",)):
+                return FileType.XLSX
+
+            if all(f in filenames for f in ("docProps/core.xml", "ppt/presentation.xml")):
+                return FileType.PPTX
+
+        return FileType.ZIP
 
 
 def _read_file_start_for_type_check(

@@ -15,7 +15,6 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     MonkeyPatch,
-    call,
     example_doc_path,
     method_mock,
     patch,
@@ -23,9 +22,9 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
-    _detect_filetype_from_octet_stream,
     _FileTypeDetectionContext,
     _TextFileDifferentiator,
+    _ZipFileDifferentiator,
     detect_filetype,
 )
 from unstructured.file_utils.model import FileType
@@ -344,14 +343,11 @@ def test_detect_UNK_from_application_octet_stream_text_file_no_extension(magic_f
 
     filetype = detect_filetype(file=file)
 
-    assert magic_from_buffer_.call_args_list == [
-        call(file.getvalue()[:4096], mime=True),
-        call(b"", mime=True),
-    ]
+    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
     assert filetype == FileType.UNK
 
 
-def test_detect_ZIP_from_application_zip_not_a_zip_file(magic_from_buffer_: Mock):
+def test_detect_TXT_from_application_zip_not_a_zip_file(magic_from_buffer_: Mock):
     magic_from_buffer_.return_value = "application/zip"
 
     with open(example_doc_path("fake-text.txt"), "rb") as f:
@@ -359,11 +355,8 @@ def test_detect_ZIP_from_application_zip_not_a_zip_file(magic_from_buffer_: Mock
         f.seek(0)
         filetype = detect_filetype(file=f)
 
-    assert magic_from_buffer_.call_args_list == [
-        call(head, mime=True),
-        call(b"", mime=True),
-    ]
-    assert filetype == FileType.ZIP
+    magic_from_buffer_.assert_called_once_with(head, mime=True)
+    assert filetype == FileType.TXT
 
 
 def test_detect_DOCX_from_docx_mime_type_file_no_extension(magic_from_buffer_: Mock):
@@ -433,11 +426,6 @@ def test_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     assert detect_filetype(filename=file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
-
-
-def test_detect_filetype_from_octet_stream():
-    with open(example_doc_path("emoji.xlsx"), "rb") as f:
-        assert _detect_filetype_from_octet_stream(file=f) == FileType.XLSX
 
 
 def test_detect_WAV_from_filename():
@@ -621,6 +609,23 @@ class Describe_FileTypeDetectionContext:
     ):
         mime_type_prop_.return_value = mime_type
         assert _FileTypeDetectionContext().has_code_mime_type is expected_value
+
+    # -- .is_zipfile --------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [
+            ("README.md", False),
+            ("emoji.xlsx", True),
+            ("simple.doc", False),
+            ("simple.docx", True),
+            ("simple.odt", True),
+            ("simple.zip", True),
+            ("winter-sports.epub", True),
+        ],
+    )
+    def it_knows_whether_it_is_a_zipfile(self, file_name: str, expected_value: bool):
+        assert _FileTypeDetectionContext(example_doc_path(file_name)).is_zipfile is expected_value
 
     # -- .mime_type ---------------------------------------------
 
@@ -838,3 +843,45 @@ class Describe_TextFileDifferentiator:
         differentiator = _TextFileDifferentiator(ctx)
 
         assert differentiator._is_json is expected_value
+
+
+class Describe_ZipFileDifferentiator:
+    """Unit-test suite for `unstructured.file_utils.filetype._ZipFileDifferentiator`."""
+
+    # -- .applies() ---------------------------------------------
+
+    def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
+        """The constructor determines whether this differentiator is applicable.
+
+        It returns an instance only when differentiating a zip file-type is required, which it can
+        judge from the mime-type provided by the context (`ctx`).
+        """
+        ctx = _FileTypeDetectionContext(example_doc_path("simple.docx"))
+
+        differentiator = _ZipFileDifferentiator.applies(ctx, "application/zip")
+
+        assert isinstance(differentiator, _ZipFileDifferentiator)
+
+    def and_it_returns_None_when_zip_differentiation_does_not_apply_to_the_detection_context(self):
+        ctx = _FileTypeDetectionContext(example_doc_path("norwich-city.txt"))
+        assert _ZipFileDifferentiator.applies(ctx, "application/epub") is None
+
+    # -- .file_type ---------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [
+            ("simple.docx", FileType.DOCX),
+            ("picture.pptx", FileType.PPTX),
+            ("vodafone.xlsx", FileType.XLSX),
+            ("simple.zip", FileType.ZIP),
+            ("README.org", None),
+        ],
+    )
+    def it_distinguishes_the_file_type_of_applicable_zip_files(
+        self, file_name: str, expected_value: FileType | None
+    ):
+        ctx = _FileTypeDetectionContext(example_doc_path(file_name))
+        differentiator = _ZipFileDifferentiator(ctx)
+
+        assert differentiator.file_type is expected_value
