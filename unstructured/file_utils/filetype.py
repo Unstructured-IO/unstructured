@@ -179,7 +179,7 @@ class _FileTypeDetector:
             return FileType.ZIP if file_type == FileType.ZIP else None
 
         # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
-        if _is_code_mime_type(mime_type):
+        if self._ctx.has_code_mime_type:
             return FileType.TXT
 
         if mime_type.endswith("empty"):
@@ -297,16 +297,37 @@ class _FileTypeDetectionContext:
         return self._file_path
 
     @lazyproperty
+    def has_code_mime_type(self) -> bool:
+        """True when `mime_type` plausibly indicates a programming language source-code file."""
+        mime_type = self.mime_type
+
+        if mime_type is None:
+            return False
+
+        # -- check Go separately to avoid matching other MIME type containing "go" --
+        if mime_type == "text/x-go":
+            return True
+
+        return any(
+            lang in mime_type
+            for lang in "c# c++ cpp csharp java javascript php python ruby swift typescript".split()
+        )
+
+    @lazyproperty
     def mime_type(self) -> str | None:
-        """The best MIME-type we can get from `magic` (or `filetype` package)."""
+        """The best MIME-type we can get from `magic` (or `filetype` package).
+
+        A `str` return value is always in lower-case.
+        """
         if LIBMAGIC_AVAILABLE:
             import magic
 
-            return (
+            mime_type = (
                 magic.from_file(_resolve_symlink(self._file_path), mime=True)
                 if self._file_path
                 else magic.from_buffer(self.file_head, mime=True)
             )
+            return mime_type.lower() if mime_type else None
 
         mime_type = (
             ft.guess_mime(self._file_path) if self._file_path else ft.guess_mime(self.file_head)
@@ -317,8 +338,9 @@ class _FileTypeDetectionContext:
                 "libmagic is unavailable but assists in filetype detection. Please consider"
                 " installing libmagic for better results."
             )
+            return None
 
-        return mime_type
+        return mime_type.lower()
 
     @contextlib.contextmanager
     def open(self) -> Iterator[IO[bytes]]:
@@ -513,29 +535,6 @@ def _detect_filetype_from_octet_stream(file: IO[bytes]) -> FileType:
         "Could not detect the filetype from application/octet-stream MIME type.",
     )
     return FileType.UNK
-
-
-def _is_code_mime_type(mime_type: str) -> bool:
-    """True when `mime_type` plausibly indicates a programming language source-code file."""
-    PROGRAMMING_LANGUAGES = [
-        "javascript",
-        "python",
-        "java",
-        "c++",
-        "cpp",
-        "csharp",
-        "c#",
-        "php",
-        "ruby",
-        "swift",
-        "typescript",
-    ]
-    mime_type = mime_type.lower()
-    # NOTE(robinson) - check this one explicitly to avoid conflicts with other
-    # MIME types that contain "go"
-    if mime_type == "text/x-go":
-        return True
-    return any(language in mime_type for language in PROGRAMMING_LANGUAGES)
 
 
 def _read_file_start_for_type_check(

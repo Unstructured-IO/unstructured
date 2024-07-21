@@ -19,12 +19,12 @@ from test_unstructured.unit_utils import (
     example_doc_path,
     method_mock,
     patch,
+    property_mock,
 )
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     _detect_filetype_from_octet_stream,
     _FileTypeDetectionContext,
-    _is_code_mime_type,
     _TextFileDifferentiator,
     detect_filetype,
 )
@@ -169,10 +169,6 @@ def test_detect_TXT_from_text_x_script_python_file(magic_from_buffer_: Mock):
 
     magic_from_buffer_.assert_called_once_with(head, mime=True)
     assert filetype == FileType.TXT
-
-
-def test_is_code_mime_type_for_Go():
-    assert _is_code_mime_type("text/x-go") is True
 
 
 def test_detect_TXT_from_text_go_file(magic_from_buffer_: Mock):
@@ -606,6 +602,26 @@ class Describe_FileTypeDetectionContext:
     def it_knows_the_file_path_provided_by_the_caller(self, file_path: str | None):
         assert _FileTypeDetectionContext(file_path=file_path).file_path == file_path
 
+    # -- .has_code_mime_type ------------------------------------
+
+    @pytest.mark.parametrize(
+        ("mime_type", "expected_value"),
+        [
+            ("text/plain", False),
+            ("text/x-csharp", True),
+            ("text/x-go", True),
+            ("text/x-java", True),
+            ("text/x-python", True),
+            ("application/xml", False),
+            (None, False),
+        ],
+    )
+    def it_knows_whether_its_mime_type_indicates_programming_language_source_code(
+        self, mime_type_prop_: Mock, mime_type: str | None, expected_value: bool
+    ):
+        mime_type_prop_.return_value = mime_type
+        assert _FileTypeDetectionContext().has_code_mime_type is expected_value
+
     # -- .mime_type ---------------------------------------------
 
     def it_provides_the_MIME_type_detected_by_libmagic_from_a_file_path(self):
@@ -741,6 +757,12 @@ class Describe_FileTypeDetectionContext:
     def it_raises_when_neither_file_path_nor_file_is_provided(self):
         with pytest.raises(ValueError, match="either `file_path` or `file` argument must be pro"):
             _FileTypeDetectionContext()._validate()
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def mime_type_prop_(self, request: FixtureRequest):
+        return property_mock(request, _FileTypeDetectionContext, "mime_type")
 
 
 class Describe_TextFileDifferentiator:
