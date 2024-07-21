@@ -161,6 +161,11 @@ class _FileTypeDetector:
         if not content_type:
             return None
 
+        # -- OLE-based file-format content_type values are sometimes unreliable. These are
+        # -- DOC, PPT, XLS, and MSG.
+        if differentiator := _OleFileDifferentiator.applies(self._ctx, content_type):
+            return differentiator.file_type
+
         # -- MS-Office 2007+ (OpenXML) content_type value is sometimes unreliable --
         if differentiator := _ZipFileDifferentiator.applies(self._ctx, content_type):
             return differentiator.file_type
@@ -185,9 +190,8 @@ class _FileTypeDetector:
         if mime_type is None:
             return None
 
-        # NOTE(Crag): older magic lib does not differentiate between xls and doc
-        if mime_type == "application/msword" and extension == ".xls":
-            return FileType.XLS
+        if differentiator := _OleFileDifferentiator.applies(self._ctx, mime_type):
+            return differentiator.file_type
 
         if mime_type.endswith("xml"):
             return FileType.HTML if extension in (".html", ".htm") else FileType.XML
@@ -433,6 +437,55 @@ class _FileTypeDetectionContext:
             raise FileNotFoundError(f"no such file {self._file_path}")
         if not self._file_path and not self._file_arg:
             raise ValueError("either `file_path` or `file` argument must be provided")
+
+
+class _OleFileDifferentiator:
+    """Refine an OLE-storage package (CFBF) file-type that may not be as specific as it could be.
+
+    Compound File Binary Format (CFBF), aka. OLE file, is use by Microsoft for legacy MS Office
+    files (DOC, PPT, XLS) as well as for Outlook MSG files. `libmagic` tends to identify these as
+    `"application/x-ole-storage"` which is true but too not specific enough for partitioning
+    purposes.
+    """
+
+    def __init__(self, ctx: _FileTypeDetectionContext):
+        self._ctx = ctx
+
+    @classmethod
+    def applies(
+        cls, ctx: _FileTypeDetectionContext, mime_type: str
+    ) -> _OleFileDifferentiator | None:
+        """Constructs an instance, but only if this differentiator applies for `mime_type`."""
+        return cls(ctx) if cls._is_ole_file(ctx) else None
+
+    @property
+    def file_type(self) -> FileType | None:
+        """Differentiated file-type for Microsoft Compound File Binary Format (CFBF).
+
+        Returns one of:
+        - `FileType.DOC`
+        - `FileType.PPT`
+        - `FileType.XLS`
+        - `FileType.MSG`
+        """
+        # -- if this is not a CFBF file then whatever MIME-type was guessed is wrong, so return
+        # -- `None` to trigger fall-back to next strategy.
+        if not self._is_ole_file(self._ctx):
+            return None
+
+        # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so rely on it to
+        # -- differentiate those. Note it doesn't detect MSG type though, so we assume any OLE file
+        # -- that is not a legacy MS-Office type to be a MSG file.
+        with self._ctx.open() as file:
+            mime_type = ft.guess_mime(file)
+
+        return FileType.from_mime_type(mime_type or "application/vnd.ms-outlook")
+
+    @staticmethod
+    def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:
+        """True when file has CFBF magic first 8 bytes."""
+        with ctx.open() as file:
+            return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
 
 
 class _TextFileDifferentiator:
