@@ -577,13 +577,13 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
     partitioner_loader_get_ = method_mock(
         request, _PartitionerLoader, "get", return_value=partition_pdf_
     )
-    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
-    partition(filename=filename, strategy=PartitionStrategy.FAST)
+    partition(file_path, strategy=PartitionStrategy.FAST)
 
     partitioner_loader_get_.assert_called_once_with(ANY, FileType.PDF)
     partition_pdf_.assert_called_once_with(
-        filename=filename,
+        filename=file_path,
         file=None,
         url=None,
         strategy=PartitionStrategy.FAST,

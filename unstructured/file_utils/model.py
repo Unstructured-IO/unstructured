@@ -62,7 +62,7 @@ class FileType(enum.Enum):
         """Select a FileType member based on an extension.
 
         `extension` must include the leading period, like `".pdf"`. Extension is suitable as a
-        secondary file-type identification method but is unreliable for primary identification..
+        secondary file-type identification method but is unreliable for primary identification.
 
         Returns `None` when `extension` is not registered for any supported file-type.
         """
@@ -79,8 +79,8 @@ class FileType(enum.Enum):
     def from_mime_type(cls, mime_type: str) -> FileType | None:
         """Select a FileType member based on a MIME-type.
 
-        `extension` must include the leading period, like `".pdf"`. Extension is suitable as a
-        secondary file-type identification method but is unreliable for primary identification..
+        Returns `None` when `mime_type` is `None` or does not map to the canonical MIME-type of a
+        `FileType` member or one of its alias MIME-types.
         """
         # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
         # -- limitations on defining a class variable on an Enum.
@@ -189,13 +189,13 @@ class FileType(enum.Enum):
         return self._partitioner_shortname
 
     BMP = (
-        "bmp",
-        "image",
-        ["unstructured_inference"],
-        "image",
-        [".bmp"],
-        "image/bmp",
-        cast(list[str], []),
+        "bmp",  # -- value for this Enum member, like BMP = "bmp" in a simple enum --
+        "image",  # -- partitioner_shortname --
+        ["unstructured_inference"],  # -- importable_package_dependencies --
+        "image",  # -- extra_name - like `pip install "unstructured[image]"` in this case --
+        [".bmp"],  # -- extensions - filename extensions that map to this file-type --
+        "image/bmp",  # -- canonical_mime_type -  MIME-type written to `.metadata.filetype` --
+        cast(list[str], []),  # -- alias_mime-types - other MIME-types that map to this file-type --
     )
     CSV = (
         "csv",
