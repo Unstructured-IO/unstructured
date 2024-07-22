@@ -459,6 +459,39 @@ def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extensi
     assert file_type is FileType.HTML
 
 
+@pytest.mark.parametrize(
+    "mime_type",
+    [
+        "application/octet-stream",
+        "application/zip",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
+)
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.DOCX, "simple.docx"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+        (FileType.ZIP, "simple.zip"),
+    ],
+)
+def test_it_differentiates_files_when_libmagic_guesses_octet_stream_zip_or_modern_ms_office(
+    mime_type: str, file_name: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    ctx_mime_type_.return_value = mime_type
+    # -- disable extension-based strategy #3 --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file)
+
+    ctx_mime_type_.assert_called_with()
+    assert file_type is expected_value
+
+
 def test_detect_TXT_from_text_x_script_python_file_path(magic_from_file_: Mock):
     magic_from_file_.return_value = "text/x-script.python"
     file_path = example_doc_path("logger.py")
@@ -487,102 +520,6 @@ def test_detect_TXT_from_text_go_file(magic_from_buffer_: Mock):
     file_path = example_doc_path("fake.go")
 
     with open(file_path, "rb") as f:
-        head = f.read(4096)
-        f.seek(0)
-        filetype = detect_filetype(file=f)
-
-    magic_from_buffer_.assert_called_once_with(head, mime=True)
-    assert filetype == FileType.TXT
-
-
-def test_detect_DOCX_from_application_octet_stream_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "application/octet-stream"
-    with open(example_doc_path("simple.docx"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.DOCX
-
-
-def test_detect_DOCX_from_application_octet_stream_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/octet-stream"
-    file_path = example_doc_path("simple.docx")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.DOCX
-
-
-def test_detect_DOCX_from_application_zip_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/zip"
-    file_path = example_doc_path("simple.docx")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.DOCX
-
-
-def test_detect_XLSX_from_application_octet_stream_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "application/octet-stream"
-    with open(example_doc_path("stanley-cups.xlsx"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.XLSX
-
-
-def test_detect_XLSX_from_application_octet_stream_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/octet-stream"
-    file_path = example_doc_path("stanley-cups.xlsx")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.XLSX
-
-
-def test_detect_PPTX_from_application_octet_stream_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "application/octet-stream"
-    with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.PPTX
-
-
-def test_detect_PPTX_from_application_octet_stream_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/octet-stream"
-    file_path = example_doc_path("fake-power-point.pptx")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.PPTX
-
-
-def test_detect_UNK_from_application_octet_stream_text_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "application/octet-stream"
-    with open(example_doc_path("fake-text.txt"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.UNK
-
-
-def test_detect_TXT_from_application_zip_not_a_zip_file(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "application/zip"
-
-    with open(example_doc_path("fake-text.txt"), "rb") as f:
         head = f.read(4096)
         f.seek(0)
         filetype = detect_filetype(file=f)
