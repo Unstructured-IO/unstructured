@@ -1,3 +1,31 @@
+"""Automatically detect file-type based on inspection of the file's contents.
+
+Auto-detection proceeds via a sequence of strategies. The first strategy to confidently determine a
+file-type returns that value. A strategy that is not applicable, either because it lacks the input
+required or fails to determine a file-type, returns `None` and execution continues with the next
+strategy.
+
+`_FileTypeDetector` is the main object and implements the three strategies.
+
+The three strategies are:
+
+- Use MIME-type asserted by caller in the `content_type` argument.
+- Guess a MIME-type using libmagic, falling back to the `filetype` package when libmagic is
+  unavailable.
+- Map filename-extension to a `FileType` member.
+
+A file that fails all three strategies is assigned the value `FileType.UNK`, for "unknown".
+
+`_FileTypeDetectionContext` encapsulates the various arguments received by `detect_filetype()` and
+provides values derived from them. This object is immutable and can be passed to delegates of
+`_FileTypeDetector` to provide whatever context they need on the current detection instance.
+
+`_FileTypeDetector` delegates to _differentiator_ objects like `_ZipFileDifferentiator` for
+specialized discrimination and/or confirmation of ambiguous or frequently mis-identified
+MIME-types. Additional differentiators are planned, one for `application/x-ole-storage`
+(DOC, PPT, XLS, and MSG file-types) and perhaps others.
+"""
+
 from __future__ import annotations
 
 import contextlib
@@ -29,11 +57,11 @@ LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
 
 
 def detect_filetype(
-    filename: Optional[str] = None,
-    content_type: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    file_filename: Optional[str] = None,
-    encoding: Optional[str] = "utf-8",
+    file_path: str | None = None,
+    file: IO[bytes] | None = None,
+    encoding: str | None = None,
+    content_type: str | None = None,
+    metadata_file_path: Optional[str] = None,
 ) -> FileType:
     """Determine file-type of specified file using libmagic and/or fallback methods.
 
@@ -63,11 +91,11 @@ def detect_filetype(
         - Neither `file_path` nor `file` were specified.
     """
     ctx = _FileTypeDetectionContext.new(
-        file_path=filename,
+        file_path=file_path,
         file=file,
         encoding=encoding,
         content_type=content_type,
-        metadata_file_path=file_filename,
+        metadata_file_path=metadata_file_path,
     )
     return _FileTypeDetector.file_type(ctx)
 
