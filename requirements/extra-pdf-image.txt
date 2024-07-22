@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-cachetools==5.3.3
+cachetools==5.4.0
     # via google-auth
 certifi==2024.7.4
     # via
@@ -25,7 +25,9 @@ coloredlogs==15.0.1
 contourpy==1.2.1
     # via matplotlib
 cryptography==42.0.8
-    # via pdfminer-six
+    # via
+    #   -c ././deps/constraints.txt
+    #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
 deprecated==1.2.14
@@ -58,13 +60,13 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.64.1
+grpcio==1.65.1
     # via
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.4
+huggingface-hub==0.24.0
     # via
     #   timm
     #   tokenizers
@@ -198,7 +200,7 @@ pyparsing==3.0.9
     # via
     #   -c ././deps/constraints.txt
     #   matplotlib
-pypdf==4.3.0
+pypdf==4.3.1
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -250,7 +252,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.13.0
+sympy==1.13.1
     # via
     #   onnxruntime
     #   torch

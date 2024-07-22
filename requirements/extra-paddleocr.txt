@@ -6,7 +6,7 @@
 #
 attrdict==2.0.1
     # via unstructured-paddleocr
-cachetools==5.3.3
+cachetools==5.4.0
     # via premailer
 certifi==2024.7.4
     # via
@@ -146,7 +146,7 @@ six==1.16.0
     #   attrdict
     #   imgaug
     #   python-dateutil
-tifffile==2024.7.2
+tifffile==2024.7.21
     # via scikit-image
 tqdm==4.66.4
     # via
