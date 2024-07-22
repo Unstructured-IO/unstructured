@@ -11,15 +11,6 @@ from unstructured.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-def init_pdfminer():
-    rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-
-    return device, interpreter
-
-
 def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:
     """
     Recursively extracts LTImage objects from a PDF layout element.
@@ -78,48 +69,61 @@ def rect_to_bbox(
     return (x1, y1, x2, y2)
 
 
+def init_pdfminer():
+    rsrcmgr = PDFResourceManager()
+    laparams = LAParams()
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    return device, interpreter
+
+
+def process_page(fp: BinaryIO, page, device, interpreter, page_number):
+    try:
+        interpreter.process_page(page)
+        page_layout = device.get_result()
+        return page, page_layout
+    except PSSyntaxError:
+        logger.info("Detected invalid dictionary construct for PDFminer")
+        logger.info(f"Repairing the PDF page {page_number + 1} ...")
+        # find the error page from binary data fp
+        from unstructured.partition.pdf_image.pypdf_utils import get_page_data
+        error_page_data = get_page_data(fp, page_number=page_number)
+        # repair the error page with pikepdf
+        with tempfile.NamedTemporaryFile() as tmp:
+            with pikepdf.Pdf.open(error_page_data) as pdf:
+                pdf.save(tmp.name)
+            page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
+            interpreter.process_page(page)
+            page_layout = device.get_result()
+            return page, page_layout
+
+
 @requires_dependencies(["pikepdf", "pypdf"])
-def open_pdfminer_pages_generator(
-    fp: BinaryIO,
-):
+def open_pdfminer_pages_generator(fp: BinaryIO):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
     import pikepdf
     from io import BytesIO
-    from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
     device, interpreter = init_pdfminer()
-    try:
-        fp = BytesIO(fp.read())
-        pages = PDFPage.get_pages(fp)
-        # Detect invalid dictionary construct for entire PDF
-        for i, page in enumerate(pages):
-            try:
-                # Detect invalid dictionary construct for one page
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-            except PSSyntaxError:
-                logger.info("Detected invalid dictionary construct for PDFminer")
-                logger.info(f"Repairing the PDF page {i+1} ...")
-                # find the error page from binary data fp
-                error_page_data = get_page_data(fp, page_number=i)
-                # repair the error page with pikepdf
-                with tempfile.NamedTemporaryFile() as tmp:
-                    with pikepdf.Pdf.open(error_page_data) as pdf:
-                        pdf.save(tmp.name)
-                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
-                    interpreter.process_page(page)
-                    page_layout = device.get_result()
-            yield page, page_layout
-    except PSSyntaxError:
-        logger.info("Detected invalid dictionary construct for PDFminer")
-        logger.info("Repairing the PDF document ...")
-        # repair the entire doc with pikepdf
-        with tempfile.NamedTemporaryFile() as tmp:
-            with pikepdf.Pdf.open(fp) as pdf:
-                pdf.save(tmp.name)
-            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
-            for page in pages:
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-                yield page, page_layout
+    fp = BytesIO(fp.read())
+    pages = list(PDFPage.get_pages(fp))
+
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        try:
+            futures = {executor.submit(process_page, fp, page, device, interpreter, i): i for i, page in enumerate(pages)}
+
+            for future in as_completed(futures):
+                page_number = futures[future]
+                try:
+                    page, page_layout = future.result()
+                    yield page, page_layout
+                except Exception as e:
+                    logger.error(f"Error processing page {page_number + 1}: {e}")
+        except Exception as e:
+            print(f"페이지 {page_number}에서 오류 발생: {e}")
+        finally:
+            print('hi shutting down')
+            executor.shutdown(wait=True)
+
+    print('toto')
