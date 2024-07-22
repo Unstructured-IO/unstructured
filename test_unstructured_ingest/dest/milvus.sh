@@ -33,6 +33,8 @@ PORT=19530
 MILVUS_URI="http://${HOST}:${PORT}"
 COLLECTION_NAME="ingest_test"
 
+# check for pymilvus
+pip freeze
 # Create milvus instance
 echo "Creating milvus instance"
 # shellcheck source=/dev/null
