@@ -112,12 +112,12 @@ def is_json_processable(
     file is JSON.
     """
     exactly_one(filename=filename, file=file, file_text=file_text)
+
     if file_text is None:
-        file_text = _read_file_start_for_type_check(
-            file=file,
-            filename=filename,
-            encoding=encoding,
-        )
+        file_text = _FileTypeDetectionContext.new(
+            file_path=filename, file=file, encoding=encoding
+        ).text_head
+
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -252,7 +252,7 @@ class _FileTypeDetectionContext:
         content_type: str | None = None,
         metadata_file_path: str | None = None,
     ):
-        self._file_path = file_path
+        self._file_path_arg = file_path
         self._file_arg = file
         self._encoding_arg = encoding
         self._content_type = content_type
@@ -265,9 +265,9 @@ class _FileTypeDetectionContext:
         file_path: str | None,
         file: IO[bytes] | None,
         encoding: str | None,
-        content_type: str | None,
-        metadata_file_path: str | None,
-    ):
+        content_type: str | None = None,
+        metadata_file_path: str | None = None,
+    ) -> _FileTypeDetectionContext:
         self = cls(
             file_path=file_path,
             file=file,
@@ -324,7 +324,10 @@ class _FileTypeDetectionContext:
         None when the caller specified the source as a file-like object instead. Useful for user
         feedback on an error, but users of context should have little use for it otherwise.
         """
-        return self._file_path
+        if (file_path := self._file_path_arg) is None:
+            return None
+
+        return os.path.realpath(file_path) if os.path.islink(file_path) else file_path
 
     @lazyproperty
     def is_zipfile(self) -> bool:
@@ -355,19 +358,19 @@ class _FileTypeDetectionContext:
 
         A `str` return value is always in lower-case.
         """
+        file_path = self.file_path
+
         if LIBMAGIC_AVAILABLE:
             import magic
 
             mime_type = (
-                magic.from_file(_resolve_symlink(self._file_path), mime=True)
-                if self._file_path
+                magic.from_file(file_path, mime=True)
+                if file_path
                 else magic.from_buffer(self.file_head, mime=True)
             )
             return mime_type.lower() if mime_type else None
 
-        mime_type = (
-            ft.guess_mime(self._file_path) if self._file_path else ft.guess_mime(self.file_head)
-        )
+        mime_type = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
 
         if mime_type is None:
             logger.warning(
@@ -391,8 +394,8 @@ class _FileTypeDetectionContext:
 
         File is guaranteed to be at read position 0 when called.
         """
-        if self._file_path:
-            with open(self._file_path, "rb") as f:
+        if self.file_path:
+            with open(self.file_path, "rb") as f:
                 yield f
         else:
             file = self._file_arg
@@ -420,7 +423,7 @@ class _FileTypeDetectionContext:
                 else content.decode(encoding=self.encoding, errors="ignore")
             )
 
-        file_path = self._file_path
+        file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
 
         try:
@@ -433,9 +436,9 @@ class _FileTypeDetectionContext:
 
     def _validate(self) -> None:
         """Raise if the context is invalid."""
-        if self._file_path and not os.path.isfile(self._file_path):
-            raise FileNotFoundError(f"no such file {self._file_path}")
-        if not self._file_path and not self._file_arg:
+        if self.file_path and not os.path.isfile(self.file_path):
+            raise FileNotFoundError(f"no such file {self._file_path_arg}")
+        if not self.file_path and not self._file_arg:
             raise ValueError("either `file_path` or `file` argument must be provided")
 
 
@@ -648,45 +651,6 @@ class _ZipFileDifferentiator:
                 return FileType.PPTX
 
         return FileType.ZIP
-
-
-def _read_file_start_for_type_check(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-) -> str:
-    """Reads the start of the file and returns the text content."""
-    exactly_one(filename=filename, file=file)
-
-    if file is not None:
-        file.seek(0)
-        file_content = file.read(4096)
-        if isinstance(file_content, str):
-            file_text = file_content
-        else:
-            file_text = file_content.decode(errors="ignore")
-        file.seek(0)
-        return file_text
-
-    # -- guaranteed by `exactly_one()` call --
-    assert filename is not None
-
-    try:
-        with open(filename, encoding=encoding) as f:
-            file_text = f.read(4096)
-    except UnicodeDecodeError:
-        formatted_encoding, _ = detect_file_encoding(filename=filename)
-        with open(filename, encoding=formatted_encoding) as f:
-            file_text = f.read(4096)
-
-    return file_text
-
-
-def _resolve_symlink(file_path: str) -> str:
-    """Resolve `file_path` containing symlink to the actual file path."""
-    if os.path.islink(file_path):
-        file_path = os.path.realpath(file_path)
-    return file_path
 
 
 _P = ParamSpec("_P")

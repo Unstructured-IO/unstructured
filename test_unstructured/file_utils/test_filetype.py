@@ -23,6 +23,7 @@ from unstructured.file_utils.filetype import (
     _TextFileDifferentiator,
     _ZipFileDifferentiator,
     detect_filetype,
+    is_json_processable,
 )
 from unstructured.file_utils.model import FileType
 
@@ -634,6 +635,41 @@ def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas()
     assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+# ================================================================================================
+# Describe `is_json_processable()`
+# ================================================================================================
+
+
+def it_affirms_JSON_is_array_of_objects_from_a_file_path():
+    assert is_json_processable(example_doc_path("simple.json")) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_a_file_path():
+    assert is_json_processable(example_doc_path("not-unstructured-payload.json")) is False
+
+
+def it_affirms_JSON_is_array_of_objects_from_a_file_like_object_open_for_reading_bytes():
+    with open(example_doc_path("simple.json"), "rb") as f:
+        assert is_json_processable(file=f) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_a_file_like_object_open_for_reading_bytes():
+    with open(example_doc_path("not-unstructured-payload.json"), "rb") as f:
+        assert is_json_processable(file=f) is False
+
+
+def it_affirms_JSON_is_array_of_objects_from_text():
+    with open(example_doc_path("simple.json")) as f:
+        text = f.read()
+    assert is_json_processable(file_text=text) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_text():
+    with open(example_doc_path("not-unstructured-payload.json")) as f:
+        text = f.read()
+    assert is_json_processable(file_text=text) is False
 
 
 # ================================================================================================
