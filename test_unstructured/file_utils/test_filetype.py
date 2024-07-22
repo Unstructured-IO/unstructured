@@ -31,6 +31,136 @@ from unstructured.file_utils.model import FileType
 
 is_in_docker = os.path.exists("/.dockerenv")
 
+# ================================================================================================
+# STRATEGY #1 - CONTENT-TYPE ASSERTED IN CALL
+# ================================================================================================
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name", "content_type"),
+    [
+        (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
+        (FileType.CSV, "stanley-cups.csv", "text/csv"),
+        (FileType.DOC, "simple.doc", "application/msword"),
+        (
+            FileType.DOCX,
+            "simple.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ),
+        (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
+        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
+        (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
+        (FileType.HTML, "example-10k-1p.html", "text/html"),
+        (FileType.JPG, "img/example.jpg", "image/jpeg"),
+        (FileType.JSON, "spring-weather.html.json", "application/json"),
+        (FileType.MD, "README.md", "text/markdown"),
+        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
+        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
+        (FileType.ORG, "README.org", "text/org"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
+        (FileType.PNG, "img/DA-1p.png", "image/png"),
+        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
+        (
+            FileType.PPTX,
+            "fake-power-point.pptx",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ),
+        (FileType.RST, "README.rst", "text/x-rst"),
+        (FileType.RTF, "fake-doc.rtf", "text/rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff", "image/tiff"),
+        (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
+        (FileType.TXT, "norwich-city.txt", "text/plain"),
+        (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
+        (
+            FileType.XLSX,
+            "stanley-cups.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ),
+        (FileType.XML, "factbook.xml", "application/xml"),
+        (FileType.ZIP, "simple.zip", "application/zip"),
+    ],
+)
+def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_content_type(
+    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- disable strategy #2, leaving only asserted content-type and extension --
+    ctx_mime_type_.return_value = None
+
+    file_type = detect_filetype(example_doc_path(file_name), content_type=content_type)
+
+    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
+    # -- fall back to strategy 2 for any of these test cases.
+    ctx_mime_type_.assert_not_called()
+    assert file_type == expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name", "content_type"),
+    [
+        (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
+        (FileType.CSV, "stanley-cups.csv", "text/csv"),
+        (FileType.DOC, "simple.doc", "application/msword"),
+        (
+            FileType.DOCX,
+            "simple.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ),
+        (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
+        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
+        (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
+        (FileType.HTML, "example-10k-1p.html", "text/html"),
+        (FileType.JPG, "img/example.jpg", "image/jpeg"),
+        (FileType.JSON, "spring-weather.html.json", "application/json"),
+        (FileType.MD, "README.md", "text/markdown"),
+        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
+        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
+        (FileType.ORG, "README.org", "text/org"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
+        (FileType.PNG, "img/DA-1p.png", "image/png"),
+        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
+        (
+            FileType.PPTX,
+            "fake-power-point.pptx",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ),
+        (FileType.RST, "README.rst", "text/x-rst"),
+        (FileType.RTF, "fake-doc.rtf", "text/rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff", "image/tiff"),
+        (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
+        (FileType.TXT, "norwich-city.txt", "text/plain"),
+        (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
+        (
+            FileType.XLSX,
+            "stanley-cups.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ),
+        (FileType.XML, "factbook.xml", "application/xml"),
+        (FileType.ZIP, "simple.zip", "application/zip"),
+    ],
+)
+def test_it_detects_correct_file_type_from_file_no_name_with_correct_asserted_content_type(
+    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- disable strategy #2 (guessed mime-type) --
+    ctx_mime_type_.return_value = None
+    # -- disable strategy #3 (filename extension) by supplying no source of file name --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file, content_type=content_type)
+
+    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
+    # -- fall-back to strategy 2 for any of these test cases.
+    ctx_mime_type_.assert_not_called()
+    assert file_type is expected_value
+
+
+# ================================================================================================
+# STRATEGY #2 - GUESS MIME-TYPE WITH LIBMAGIC
+# ================================================================================================
+
 
 @pytest.mark.parametrize(
     ("file_name", "expected_value"),
@@ -456,6 +586,11 @@ def test_detect_TXT_from_yaml_file(magic_from_buffer_: Mock):
 # ================================================================================================
 # MODULE-LEVEL FIXTURES
 # ================================================================================================
+
+
+@pytest.fixture()
+def ctx_mime_type_(request: FixtureRequest):
+    return property_mock(request, _FileTypeDetectionContext, "mime_type")
 
 
 # -- `from_buffer()` and `from_file()` are not "methods" on `magic` per-se (`magic` is a module)
