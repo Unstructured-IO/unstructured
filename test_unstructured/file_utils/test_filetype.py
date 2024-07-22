@@ -443,11 +443,6 @@ def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified(
         detect_filetype()
 
 
-def test_FileType_is_ordererd_by_name():
-    """FileType is a total order on name, e.g. FileType.A < FileType.B."""
-    assert FileType.EML < FileType.HTML < FileType.XML
-
-
 @pytest.mark.parametrize(
     ("content", "expected_value"),
     [

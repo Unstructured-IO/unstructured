@@ -10,6 +10,12 @@ from unstructured.file_utils.model import FileType
 class DescribeFileType:
     """Unit-test suite for `unstructured.file_utils.model.Filetype`."""
 
+    # -- .__lt__() ----------------------------------------------
+
+    def it_is_a_collection_ordered_by_name_and_can_be_sorted(self):
+        """FileType is a total order on name, e.g. FileType.A < FileType.B."""
+        assert FileType.EML < FileType.HTML < FileType.XML
+
     # -- .from_extension() --------------------------------------
 
     @pytest.mark.parametrize(
