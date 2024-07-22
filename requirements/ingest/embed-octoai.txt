@@ -47,7 +47,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.35.13
+openai==1.37.0
     # via -r ./ingest/embed-octoai.in
 pydantic==2.8.2
     # via openai
