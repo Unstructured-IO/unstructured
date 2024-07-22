@@ -581,13 +581,13 @@ class _ZipFileDifferentiator:
             # .docx/.xlsx file by looking for expected filenames within the zip file.
             filenames = [f.filename for f in zip.filelist]
 
-            if all(f in filenames for f in ("docProps/core.xml", "word/document.xml")):
+            if all(f in filenames for f in ("word/document.xml",)):
                 return FileType.DOCX
 
             if all(f in filenames for f in ("xl/workbook.xml",)):
                 return FileType.XLSX
 
-            if all(f in filenames for f in ("docProps/core.xml", "ppt/presentation.xml")):
+            if all(f in filenames for f in ("ppt/presentation.xml",)):
                 return FileType.PPTX
 
         return FileType.ZIP

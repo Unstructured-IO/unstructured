@@ -62,28 +62,6 @@ class DescribeFileType:
     ):
         assert FileType.from_mime_type(mime_type) is None
 
-    # -- .importable_package_dependencies -----------------------
-
-    @pytest.mark.parametrize(
-        ("file_type", "expected_value"),
-        [
-            (FileType.BMP, ("unstructured_inference",)),
-            (FileType.CSV, ("pandas",)),
-            (FileType.DOC, ("docx",)),
-            (FileType.EMPTY, ()),
-            (FileType.HTML, ()),
-            (FileType.ODT, ("docx", "pypandoc")),
-            (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
-            (FileType.UNK, ()),
-            (FileType.WAV, ()),
-            (FileType.ZIP, ()),
-        ],
-    )
-    def it_knows_which_importable_packages_its_partitioner_depends_on(
-        self, file_type: FileType, expected_value: tuple[str, ...]
-    ):
-        assert file_type.importable_package_dependencies == expected_value
-
     # -- .extra_name --------------------------------------------
 
     @pytest.mark.parametrize(
@@ -106,6 +84,28 @@ class DescribeFileType:
         self, file_type: FileType, expected_value: str | None
     ):
         assert file_type.extra_name == expected_value
+
+    # -- .importable_package_dependencies -----------------------
+
+    @pytest.mark.parametrize(
+        ("file_type", "expected_value"),
+        [
+            (FileType.BMP, ("unstructured_inference",)),
+            (FileType.CSV, ("pandas",)),
+            (FileType.DOC, ("docx",)),
+            (FileType.EMPTY, ()),
+            (FileType.HTML, ()),
+            (FileType.ODT, ("docx", "pypandoc")),
+            (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
+            (FileType.UNK, ()),
+            (FileType.WAV, ()),
+            (FileType.ZIP, ()),
+        ],
+    )
+    def it_knows_which_importable_packages_its_partitioner_depends_on(
+        self, file_type: FileType, expected_value: tuple[str, ...]
+    ):
+        assert file_type.importable_package_dependencies == expected_value
 
     # -- .is_partitionable --------------------------------------
 
