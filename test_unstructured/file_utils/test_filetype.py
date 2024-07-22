@@ -163,6 +163,151 @@ def test_it_detects_correct_file_type_from_file_no_name_with_correct_asserted_co
 
 
 @pytest.mark.parametrize(
+    ("expected_value", "file_name", "mime_type"),
+    [
+        (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
+        (FileType.CSV, "stanley-cups.csv", "text/csv"),
+        (FileType.CSV, "stanley-cups.csv", "application/csv"),
+        (FileType.CSV, "stanley-cups.csv", "application/x-csv"),
+        (FileType.DOC, "simple.doc", "application/msword"),
+        (
+            FileType.DOCX,
+            "simple.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ),
+        (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
+        (FileType.EPUB, "winter-sports.epub", "application/epub"),
+        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
+        (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
+        (FileType.HTML, "example-10k-1p.html", "text/html"),
+        (FileType.JPG, "img/example.jpg", "image/jpeg"),
+        (FileType.JSON, "spring-weather.html.json", "application/json"),
+        (FileType.MD, "README.md", "text/markdown"),
+        (FileType.MD, "README.md", "text/x-markdown"),
+        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
+        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
+        (FileType.ORG, "README.org", "text/org"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
+        (FileType.PNG, "img/DA-1p.png", "image/png"),
+        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
+        (
+            FileType.PPTX,
+            "fake-power-point.pptx",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ),
+        (FileType.RST, "README.rst", "text/x-rst"),
+        (FileType.RTF, "fake-doc.rtf", "text/rtf"),
+        (FileType.RTF, "fake-doc.rtf", "application/rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff", "image/tiff"),
+        (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
+        (FileType.TXT, "norwich-city.txt", "text/plain"),
+        (FileType.TXT, "simple.yaml", "text/yaml"),
+        (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
+        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
+        (
+            FileType.XLSX,
+            "stanley-cups.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ),
+        (FileType.XML, "factbook.xml", "application/xml"),
+        (FileType.XML, "factbook.xml", "text/xml"),
+        (FileType.ZIP, "simple.zip", "application/zip"),
+    ],
+)
+def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_recognized_mime_type(
+    file_name: str, mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- libmagic guesses a MIME-type mapped to a `FileType` --
+    ctx_mime_type_.return_value = mime_type
+    # -- disable strategy #3 (filename extension) by not providing filename --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    # -- disable strategy #1 by not asserting a content_type in the call --
+    file_type = detect_filetype(file=file)
+
+    # -- ctx.mime_type may be referenced multiple times, but at least once --
+    ctx_mime_type_.assert_called()
+    assert file_type is expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.BMP, "img/bmp_24.bmp"),
+        (FileType.CSV, "stanley-cups.csv"),
+        (FileType.DOCX, "simple.docx"),
+        (FileType.EML, "eml/fake-email.eml"),
+        (FileType.EPUB, "winter-sports.epub"),
+        (FileType.HEIC, "img/DA-1p.heic"),
+        (FileType.HTML, "ideas-page.html"),
+        (FileType.JPG, "img/example.jpg"),
+        (FileType.JSON, "spring-weather.html.json"),
+        (FileType.ODT, "simple.odt"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
+        (FileType.PNG, "img/DA-1p.png"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.RTF, "fake-doc.rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
+        (FileType.TXT, "norwich-city.txt"),
+        (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+        (FileType.XML, "factbook.xml"),
+        (FileType.ZIP, "simple.zip"),
+    ],
+)
+def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_type_for_itself(
+    file_name: str, expected_value: FileType
+):
+    """Does not work for all types, in particular:
+
+    TODOs:
+    - DOC is misidentified as MSG, TODO on that below.
+    - MSG is misidentified as UNK, but only on CI.
+    - PPT is misidentified as MSG, same fix as DOC.
+    - TSV is identified as TXT, maybe need an `.is_tsv` predicate in `_TextFileDifferentiator`
+    - XLS is misidentified as MSG, same fix as DOC.
+
+    NOCANDOs: w/o an extension I think these are the best we can do.
+    - MD is identified as TXT
+    - ORG is identified as TXT
+    - RST is identified as TXT
+    """
+    # -- disable strategy #1 by not asserting a content_type in the call --
+    # -- disable strategy #3 (extension) by passing file-like object with no `.name` attribute --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    assert detect_filetype(file=file) is expected_value
+
+
+# NOTE(scanny): magic gets this wrong ("application/x-ole-storage") but filetype lib gets it right
+# ("application/msword"). Need a differentiator for "application/x-ole-storage".
+@pytest.mark.xfail(reason="TODO: FIX", raises=AssertionError, strict=True)
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.DOC, "simple.doc"),
+        (FileType.PPT, "fake-power-point.ppt"),
+        (FileType.XLS, "tests-example.xls"),
+        # -- only fails on CI, maybe different libmagic version or "magic-files" --
+        # (FileType.MSG, "fake-email.msg"),
+    ],
+)
+def test_it_detects_MS_Office_file_types_using_strategy_2_when_libmagic_guesses_mime_type(
+    file_name: str, expected_value: FileType
+):
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+    assert detect_filetype(file=file) is expected_value
+
+
+# ================================================================================================
+#
+# ================================================================================================
+
+
+@pytest.mark.parametrize(
     ("file_name", "expected_value"),
     [
         ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
@@ -257,26 +402,6 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
     assert "WARNING" in caplog.text
 
 
-def test_detect_XML_from_application_xml_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/xml"
-    file_path = example_doc_path("factbook.xml")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.XML
-
-
-def test_detect_CSV_from_text_csv_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "text/csv"
-    file_path = example_doc_path("stanley-cups.csv")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.CSV
-
-
 def test_detect_TXT_from_text_x_script_python_file_path(magic_from_file_: Mock):
     magic_from_file_.return_value = "text/x-script.python"
     file_path = example_doc_path("logger.py")
@@ -311,26 +436,6 @@ def test_detect_TXT_from_text_go_file(magic_from_buffer_: Mock):
 
     magic_from_buffer_.assert_called_once_with(head, mime=True)
     assert filetype == FileType.TXT
-
-
-def test_detect_RTF_from_application_rtf_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/rtf"
-    file_path = example_doc_path("fake-doc.rtf")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.RTF
-
-
-def test_detect_XML_from_text_xml_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "text/xml"
-    file_path = example_doc_path("factbook.xml")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.XML
 
 
 def test_detect_HTML_from_application_xml_file_path_with_html_extension(magic_from_file_: Mock):
@@ -382,46 +487,6 @@ def test_detect_DOCX_from_application_zip_file_path(magic_from_file_: Mock):
 
     magic_from_file_.assert_called_once_with(file_path, mime=True)
     assert filetype == FileType.DOCX
-
-
-def test_detect_ZIP_from_application_zip_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/zip"
-    file_path = example_doc_path("simple.zip")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.ZIP
-
-
-def test_detect_DOC_from_application_msword_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/msword"
-    file_path = example_doc_path("fake.doc")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.DOC
-
-
-def test_detect_PPT_from_application_vnd_ms_powerpoint_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/vnd.ms-powerpoint"
-    file_path = example_doc_path("fake-power-point.ppt")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.PPT
-
-
-def test_detect_XLS_from_application_vnd_ms_excel_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/vnd.ms-excel"
-    file_path = example_doc_path("tests-example.xls")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.XLS
 
 
 def test_detect_XLSX_from_application_octet_stream_file_no_extension(magic_from_buffer_: Mock):
@@ -489,32 +554,6 @@ def test_detect_TXT_from_application_zip_not_a_zip_file(magic_from_buffer_: Mock
     assert filetype == FileType.TXT
 
 
-def test_detect_DOCX_from_docx_mime_type_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-    with open(example_doc_path("simple.docx"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.DOCX
-
-
-def test_detect_XLSX_from_xlsx_mime_type_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    with open(example_doc_path("stanley-cups.xlsx"), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    filetype = detect_filetype(file=file)
-
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
-    assert filetype == FileType.XLSX
-
-
 def test_detect_TXT_from_unknown_text_subtype_file_no_extension(magic_from_buffer_: Mock):
     magic_from_buffer_.return_value = "text/new-type"
     with open(example_doc_path("fake-text.txt"), "rb") as f:
@@ -524,16 +563,6 @@ def test_detect_TXT_from_unknown_text_subtype_file_no_extension(magic_from_buffe
 
     magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
     assert filetype == FileType.TXT
-
-
-def test_detect_BMP_from_file_path():
-    assert detect_filetype(example_doc_path("img/bmp_24.bmp")) == FileType.BMP
-
-
-def test_detect_BMP_from_file_no_extension():
-    with open(example_doc_path("img/bmp_24.bmp"), "rb") as f:
-        file = io.BytesIO(f.read())
-    assert detect_filetype(file=file) == FileType.BMP
 
 
 def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified():
@@ -556,31 +585,6 @@ def test_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     assert detect_filetype(filename=file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
-
-
-def test_detect_WAV_from_filename():
-    assert detect_filetype(example_doc_path("CantinaBand3.wav")) == FileType.WAV
-
-
-def test_detect_wav_from_file():
-    with open(example_doc_path("CantinaBand3.wav"), "rb") as f:
-        assert detect_filetype(file=f) == FileType.WAV
-
-
-def test_detect_TXT_from_file_path_to_yaml():
-    assert detect_filetype(example_doc_path("simple.yaml")) == FileType.TXT
-
-
-def test_detect_TXT_from_yaml_file(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "text/yaml"
-
-    with open(example_doc_path("simple.yaml"), "rb") as f:
-        head = f.read(4096)
-        f.seek(0)
-        file_type = detect_filetype(file=f)
-
-    magic_from_buffer_.assert_called_once_with(head, mime=True)
-    assert file_type == FileType.TXT
 
 
 # ================================================================================================
