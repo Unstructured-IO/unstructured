@@ -7,7 +7,6 @@ from __future__ import annotations
 import io
 import os
 
-import magic
 import pytest
 
 from test_unstructured.unit_utils import (
@@ -15,7 +14,6 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
-    method_mock,
     patch,
     property_mock,
 )
@@ -512,14 +510,14 @@ def test_it_detects_TXT_for_source_code_files(mime_type: str, file_name: str, ct
     assert file_type is FileType.TXT
 
 
-def test_detect_TXT_from_unknown_text_subtype_file_no_extension(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "text/new-type"
+def test_detects_TXT_from_an_unknown_guessed_text_subtype(ctx_mime_type_: Mock):
+    ctx_mime_type_.return_value = "text/new-type"
     with open(example_doc_path("fake-text.txt"), "rb") as f:
         file = io.BytesIO(f.read())
 
     filetype = detect_filetype(file=file)
 
-    magic_from_buffer_.assert_called_once_with(file.getvalue()[:4096], mime=True)
+    ctx_mime_type_.assert_called_with()
     assert filetype == FileType.TXT
 
 
@@ -528,19 +526,19 @@ def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified(
         detect_filetype()
 
 
-def test_detect_EMPTY_from_file_path_to_empty_file():
+def test_it_detects_EMPTY_from_file_path_to_empty_file():
     assert detect_filetype(example_doc_path("empty.txt")) == FileType.EMPTY
 
 
-def test_detect_EMPTY_from_file_that_is_empty():
+def test_it_detects_EMPTY_from_empty_file_like_object():
     with open(example_doc_path("empty.txt"), "rb") as f:
         assert detect_filetype(file=f) == FileType.EMPTY
 
 
-def test_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
+def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
     file_path = example_doc_path("csv-with-escaped-commas.csv")
 
-    assert detect_filetype(filename=file_path) == FileType.CSV
+    assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
 
@@ -559,13 +557,6 @@ def LIBMAGIC_AVAILABLE_False():
 @pytest.fixture()
 def ctx_mime_type_(request: FixtureRequest):
     return property_mock(request, _FileTypeDetectionContext, "mime_type")
-
-
-# -- `from_buffer()` and `from_file()` are not "methods" on `magic` per-se (`magic` is a module)
-# -- but they behave like methods for mocking purposes.
-@pytest.fixture()
-def magic_from_buffer_(request: FixtureRequest):
-    return method_mock(request, magic, "from_buffer")
 
 
 # ================================================================================================
