@@ -443,6 +443,22 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 # ================================================================================================
 
 
+@pytest.mark.parametrize("mime_type", ["application/xml", "text/xml"])
+@pytest.mark.parametrize("extension", [".html", ".htm"])
+def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extension(
+    mime_type: str, extension: str, ctx_mime_type_: Mock
+):
+    ctx_mime_type_.return_value = mime_type
+    with open(example_doc_path("example-10k-1p.html"), "rb") as f:
+        file = io.BytesIO(f.read())
+        file.name = f"a/b/page{extension}"
+
+    file_type = detect_filetype(file=file)
+
+    ctx_mime_type_.assert_called_with()
+    assert file_type is FileType.HTML
+
+
 def test_detect_TXT_from_text_x_script_python_file_path(magic_from_file_: Mock):
     magic_from_file_.return_value = "text/x-script.python"
     file_path = example_doc_path("logger.py")
@@ -477,26 +493,6 @@ def test_detect_TXT_from_text_go_file(magic_from_buffer_: Mock):
 
     magic_from_buffer_.assert_called_once_with(head, mime=True)
     assert filetype == FileType.TXT
-
-
-def test_detect_HTML_from_application_xml_file_path_with_html_extension(magic_from_file_: Mock):
-    magic_from_file_.return_value = "application/xml"
-    file_path = example_doc_path("fake-html.html")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.HTML
-
-
-def test_detect_HTML_from_text_xml_file_path_with_html_extension(magic_from_file_: Mock):
-    magic_from_file_.return_value = "text/xml"
-    file_path = example_doc_path("fake-html.html")
-
-    filetype = detect_filetype(file_path)
-
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.HTML
 
 
 def test_detect_DOCX_from_application_octet_stream_file_no_extension(magic_from_buffer_: Mock):
