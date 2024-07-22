@@ -114,7 +114,7 @@ langchain-core==0.2.22
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.6
+langchain-google-vertexai==1.0.7
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain

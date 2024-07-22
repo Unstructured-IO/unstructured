@@ -21,8 +21,10 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==43.0.0
-    # via boxsdk
+cryptography==42.0.8
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   boxsdk
 fsspec==2024.5.0
     # via
     #   -c ./ingest/../deps/constraints.txt
