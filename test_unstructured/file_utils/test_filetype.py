@@ -14,13 +14,11 @@ from test_unstructured.unit_utils import (
     FixtureRequest,
     LogCaptureFixture,
     Mock,
-    MonkeyPatch,
     example_doc_path,
     method_mock,
     patch,
     property_mock,
 )
-from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
     _TextFileDifferentiator,
@@ -302,6 +300,72 @@ def test_it_detects_MS_Office_file_types_using_strategy_2_when_libmagic_guesses_
     assert detect_filetype(file=file) is expected_value
 
 
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        # -- `filetype` lib recognizes all these binary file-types --
+        (FileType.BMP, "img/bmp_24.bmp"),
+        (FileType.DOC, "simple.doc"),
+        (FileType.DOCX, "simple.docx"),
+        (FileType.EPUB, "winter-sports.epub"),
+        (FileType.HEIC, "img/DA-1p.heic"),
+        (FileType.JPG, "img/example.jpg"),
+        (FileType.ODT, "simple.odt"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
+        (FileType.PNG, "img/DA-1p.png"),
+        (FileType.PPT, "fake-power-point.ppt"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.RTF, "fake-doc.rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
+        (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.XLS, "tests-example.xls"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+        (FileType.ZIP, "simple.zip"),
+        # -- but it doesn't recognize textual file-types at all --
+        (FileType.UNK, "stanley-cups.csv"),
+        (FileType.UNK, "eml/fake-email.eml"),
+        (FileType.UNK, "example-10k-1p.html"),
+        (FileType.UNK, "spring-weather.html.json"),
+        (FileType.UNK, "README.md"),
+        (FileType.UNK, "README.org"),
+        (FileType.UNK, "README.rst"),
+        (FileType.UNK, "stanley-cups.tsv"),
+        (FileType.UNK, "norwich-city.txt"),
+        (FileType.UNK, "factbook.xml"),
+        # -- and it doesn't recognize MSG files --
+        (FileType.UNK, "fake-email.msg"),
+    ],
+)
+def test_strategy_2_can_detect_only_binary_file_types_when_libmagic_is_unavailable(
+    file_name: str, expected_value: FileType, LIBMAGIC_AVAILABLE_False: bool
+):
+    """File-type is detected using `filetype` library when libmagic is not available.
+
+    `filetype.guess_mime()` does a good job on binary file types (PDF, images, legacy MS-Office),
+    but doesn't even try to guess textual file-types.
+    """
+    # -- disable strategy #3 (extension) by passing file-like object with no `.name` attribute --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+    # -- simulate libmagic is not available --
+    assert LIBMAGIC_AVAILABLE_False is False
+
+    # -- disable strategy #1 by not asserting a content_type in the call --
+    file_type = detect_filetype(file=file)
+
+    assert file_type is expected_value
+
+
+def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
+    caplog: LogCaptureFixture, LIBMAGIC_AVAILABLE_False: bool
+):
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
+        detect_filetype(file=f)
+
+    assert "WARNING" in caplog.text
+    assert "libmagic is unavailable but assists in filetype detection. Please cons" in caplog.text
+
+
 # ================================================================================================
 # STRATEGY #3 - MAP FILENAME EXTENSION TO FILETYPE
 # ================================================================================================
@@ -368,56 +432,15 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 ):
     ctx_mime_type_.return_value = mime_type
 
-    filetype = detect_filetype(example_doc_path(file_name))
+    file_type = detect_filetype(example_doc_path(file_name))
 
     ctx_mime_type_.assert_called_with()
-    assert filetype is expected_value
+    assert file_type is expected_value
 
 
 # ================================================================================================
 # SPECIAL CASES
 # ================================================================================================
-
-
-@pytest.mark.parametrize(
-    ("file_name", "expected_value"),
-    [
-        ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
-        ("fake.docx", FileType.DOCX),
-        ("img/example.jpg", FileType.JPG),
-        ("fake-text.txt", FileType.TXT),
-        ("eml/fake-email.eml", FileType.EML),
-        ("factbook.xml", FileType.XML),
-        ("example-10k.html", FileType.HTML),
-        ("fake-html.html", FileType.HTML),
-        ("stanley-cups.xlsx", FileType.XLSX),
-        ("stanley-cups.csv", FileType.CSV),
-        ("stanley-cups.tsv", FileType.TSV),
-        ("fake-power-point.pptx", FileType.PPTX),
-        ("winter-sports.epub", FileType.EPUB),
-        ("fake-doc.rtf", FileType.RTF),
-        ("spring-weather.html.json", FileType.JSON),
-        ("fake.odt", FileType.ODT),
-        ("fake-incomplete-json.txt", FileType.TXT),
-    ],
-)
-def test_detect_filetype_from_filename_when_libmagic_not_available(
-    file_name: str, expected_value: FileType, monkeypatch: MonkeyPatch
-):
-    """File-type is detected using `filetype` library when libmagic is not available."""
-    # -- when libmagic is not available --
-    monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
-    assert detect_filetype(example_doc_path(file_name)) == expected_value
-
-
-def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
-    monkeypatch: MonkeyPatch, caplog: LogCaptureFixture
-):
-    monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
-    with open(example_doc_path("fake-text.txt"), "rb") as f:
-        detect_filetype(file=f)
-
-    assert "WARNING" in caplog.text
 
 
 def test_detect_TXT_from_text_x_script_python_file_path(magic_from_file_: Mock):
@@ -608,6 +631,12 @@ def test_detect_CSV_from_path_and_file_when_content_contains_escaped_commas():
 # ================================================================================================
 # MODULE-LEVEL FIXTURES
 # ================================================================================================
+
+
+@pytest.fixture()
+def LIBMAGIC_AVAILABLE_False():
+    with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", False) as m:
+        yield m
 
 
 @pytest.fixture()
