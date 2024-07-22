@@ -227,7 +227,7 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
     file_type = detect_filetype(file=file)
 
     # -- ctx.mime_type may be referenced multiple times, but at least once --
-    ctx_mime_type_.assert_called()
+    ctx_mime_type_.assert_called_with()
     assert file_type is expected_value
 
 
@@ -303,36 +303,80 @@ def test_it_detects_MS_Office_file_types_using_strategy_2_when_libmagic_guesses_
 
 
 # ================================================================================================
-#
+# STRATEGY #3 - MAP FILENAME EXTENSION TO FILETYPE
 # ================================================================================================
 
 
 @pytest.mark.parametrize(
-    ("file_name", "expected_value"),
+    ("expected_value", "file_name"),
     [
-        ("pdf/layout-parser-paper-fast.pdf", FileType.PDF),
-        ("fake.docx", FileType.DOCX),
-        ("img/example.jpg", FileType.JPG),
-        ("fake-text.txt", FileType.TXT),
-        ("eml/fake-email.eml", FileType.EML),
-        ("factbook.xml", FileType.XML),
-        ("example-10k.html", FileType.HTML),
-        ("fake-html.html", FileType.HTML),
-        ("stanley-cups.xlsx", FileType.XLSX),
-        ("stanley-cups.csv", FileType.CSV),
-        ("stanley-cups.tsv", FileType.TSV),
-        ("fake-power-point.pptx", FileType.PPTX),
-        ("winter-sports.epub", FileType.EPUB),
-        ("spring-weather.html.json", FileType.JSON),
-        ("README.org", FileType.ORG),
-        ("README.rst", FileType.RST),
-        ("README.md", FileType.MD),
-        ("fake.odt", FileType.ODT),
-        ("fake-incomplete-json.txt", FileType.TXT),
+        (FileType.BMP, "img/bmp_24.bmp"),
+        (FileType.CSV, "stanley-cups.csv"),
+        (FileType.DOC, "simple.doc"),
+        (FileType.DOCX, "simple.docx"),
+        (FileType.EML, "eml/fake-email.eml"),
+        (FileType.EPUB, "winter-sports.epub"),
+        (FileType.HEIC, "img/DA-1p.heic"),
+        (FileType.HTML, "example-10k-1p.html"),
+        (FileType.JPG, "img/example.jpg"),
+        (FileType.JSON, "spring-weather.html.json"),
+        (FileType.MD, "README.md"),
+        (FileType.MSG, "fake-email.msg"),
+        (FileType.ODT, "simple.odt"),
+        (FileType.ORG, "README.org"),
+        (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
+        (FileType.PNG, "img/DA-1p.png"),
+        (FileType.PPT, "fake-power-point.ppt"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.RST, "README.rst"),
+        (FileType.RTF, "fake-doc.rtf"),
+        (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
+        (FileType.TSV, "stanley-cups.tsv"),
+        (FileType.TXT, "norwich-city.txt"),
+        (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.XLS, "tests-example.xls"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+        (FileType.XML, "factbook.xml"),
+        (FileType.ZIP, "simple.zip"),
     ],
 )
-def test_detect_filetype_from_filename(file_name: str, expected_value: FileType):
-    assert detect_filetype(example_doc_path(file_name)) == expected_value
+def test_it_detects_correct_file_type_from_strategy_3_when_extension_maps_to_file_type(
+    file_name: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- disable strategy #2 by making libmagic always guess `None` --
+    ctx_mime_type_.return_value = None
+
+    # -- disable strategy #1 by not asserting a content_type in the call --
+    # -- enable strategy #3 by passing filename as source for extension --
+    file_type = detect_filetype(example_doc_path(file_name))
+
+    # -- ctx.mime_type may be referenced multiple times, but at least once --
+    ctx_mime_type_.assert_called_with()
+    assert file_type is expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name", "mime_type"),
+    [
+        (FileType.BMP, "img/bmp_24.bmp", "application/zip"),
+        (FileType.DOC, "simple.doc", None),
+        (FileType.MSG, "fake-email.msg", "application/octet-stream"),
+    ],
+)
+def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
+    file_name: str, mime_type: str | None, expected_value: FileType, ctx_mime_type_: Mock
+):
+    ctx_mime_type_.return_value = mime_type
+
+    filetype = detect_filetype(example_doc_path(file_name))
+
+    ctx_mime_type_.assert_called_with()
+    assert filetype is expected_value
+
+
+# ================================================================================================
+# SPECIAL CASES
+# ================================================================================================
 
 
 @pytest.mark.parametrize(
@@ -364,32 +408,6 @@ def test_detect_filetype_from_filename_when_libmagic_not_available(
     # -- when libmagic is not available --
     monkeypatch.setattr(filetype, "LIBMAGIC_AVAILABLE", False)
     assert detect_filetype(example_doc_path(file_name)) == expected_value
-
-
-@pytest.mark.parametrize(
-    ("file_name", "expected_value"),
-    [
-        ("pdf/layout-parser-paper-fast.pdf", [FileType.PDF]),
-        ("fake.docx", [FileType.DOCX]),
-        ("img/example.jpg", [FileType.JPG]),
-        ("fake-text.txt", [FileType.TXT]),
-        ("eml/fake-email.eml", [FileType.EML]),
-        ("factbook.xml", [FileType.XML]),
-        # NOTE(robinson]) - For the document, some operating systems return
-        # */xml and some return */html. Either could be acceptable depending on the OS
-        ("example-10k.html", [FileType.HTML, FileType.XML]),
-        ("fake-html.html", [FileType.HTML]),
-        ("stanley-cups.xlsx", [FileType.XLSX]),
-        ("stanley-cups.csv", [FileType.CSV]),
-        ("stanley-cups.tsv", [FileType.TSV]),
-        ("fake-power-point.pptx", [FileType.PPTX]),
-        ("winter-sports.epub", [FileType.EPUB]),
-        ("fake-incomplete-json.txt", [FileType.TXT]),
-    ],
-)
-def test_detect_filetype_from_file(file_name: str, expected_value: list[FileType]):
-    with open(example_doc_path(file_name), "rb") as f:
-        assert detect_filetype(file=f) in expected_value
 
 
 def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
