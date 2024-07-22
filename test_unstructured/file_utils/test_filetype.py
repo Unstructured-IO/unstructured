@@ -492,40 +492,24 @@ def test_it_differentiates_files_when_libmagic_guesses_octet_stream_zip_or_moder
     assert file_type is expected_value
 
 
-def test_detect_TXT_from_text_x_script_python_file_path(magic_from_file_: Mock):
-    magic_from_file_.return_value = "text/x-script.python"
-    file_path = example_doc_path("logger.py")
+@pytest.mark.parametrize(
+    ("mime_type", "file_name"),
+    [
+        ("text/x-script.python", "logger.py"),
+        ("text/x-go", "fake.go"),
+        ("application/x-javascript", "fake-text.txt"),
+    ],
+)
+def test_it_detects_TXT_for_source_code_files(mime_type: str, file_name: str, ctx_mime_type_: Mock):
+    ctx_mime_type_.return_value = mime_type
+    # -- disable extension-based strategy #3 --
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
 
-    filetype = detect_filetype(file_path)
+    file_type = detect_filetype(file=file)
 
-    magic_from_file_.assert_called_once_with(file_path, mime=True)
-    assert filetype == FileType.TXT
-
-
-def test_detect_TXT_from_text_x_script_python_file(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "text/x-script.python"
-    file_path = example_doc_path("logger.py")
-
-    with open(file_path, "rb") as f:
-        head = f.read(4096)
-        f.seek(0)
-        filetype = detect_filetype(file=f)
-
-    magic_from_buffer_.assert_called_once_with(head, mime=True)
-    assert filetype == FileType.TXT
-
-
-def test_detect_TXT_from_text_go_file(magic_from_buffer_: Mock):
-    magic_from_buffer_.return_value = "text/x-go"
-    file_path = example_doc_path("fake.go")
-
-    with open(file_path, "rb") as f:
-        head = f.read(4096)
-        f.seek(0)
-        filetype = detect_filetype(file=f)
-
-    magic_from_buffer_.assert_called_once_with(head, mime=True)
-    assert filetype == FileType.TXT
+    ctx_mime_type_.assert_called_with()
+    assert file_type is FileType.TXT
 
 
 def test_detect_TXT_from_unknown_text_subtype_file_no_extension(magic_from_buffer_: Mock):
@@ -582,11 +566,6 @@ def ctx_mime_type_(request: FixtureRequest):
 @pytest.fixture()
 def magic_from_buffer_(request: FixtureRequest):
     return method_mock(request, magic, "from_buffer")
-
-
-@pytest.fixture()
-def magic_from_file_(request: FixtureRequest):
-    return method_mock(request, magic, "from_file")
 
 
 # ================================================================================================
