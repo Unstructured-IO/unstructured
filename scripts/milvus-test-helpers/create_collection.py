@@ -2,13 +2,14 @@
 import sys
 
 import click
-from pymilvus import (
-    CollectionSchema,
-    DataType,
-    FieldSchema,
-    MilvusClient,
-)
-from pymilvus.milvus_client import IndexParams
+
+# from pymilvus import (
+#     CollectionSchema,
+#     DataType,
+#     FieldSchema,
+#     MilvusClient,
+# )
+# from pymilvus.milvus_client import IndexParams
 
 print("within python script")
 print(sys.executable)
