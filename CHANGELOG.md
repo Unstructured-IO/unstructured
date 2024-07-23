@@ -1,10 +1,12 @@
-## 0.15.1-dev0
+## 0.15.1-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
 
 ## 0.15.0
 

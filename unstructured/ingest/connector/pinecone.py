@@ -92,12 +92,12 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
-        import pinecone.core.client.exceptions
+        import pinecone.exceptions
 
         index = self.pinecone_index
         try:
             response = index.upsert(batch)
-        except pinecone.core.client.exceptions.ApiException as api_error:
+        except pinecone.exceptions.PineconeApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
