@@ -1,8 +1,10 @@
-## 0.15.1-dev0
+## 0.15.1-dev1
 
 ### Enhancements
 
 ### Features
+
+* **Add `max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
 
 ### Fixes
 
@@ -10,7 +12,7 @@
 
 ### Enhancements
 
-* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.   
+* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.
 * **Bump unstructured.paddleocr to 2.8.0.1.**
 * **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
 * **Install rewritten HTML parser to fix 12 existing bugs and provide headroom for refinement and growth.** A rewritten HTML parser resolves a collection of outstanding bugs with HTML partitioning and provides a firm foundation for further elaborating that important partitioner.
