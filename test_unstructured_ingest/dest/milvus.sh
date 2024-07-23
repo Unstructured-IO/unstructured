@@ -33,12 +33,15 @@ PORT=19530
 MILVUS_URI="http://${HOST}:${PORT}"
 COLLECTION_NAME="ingest_test"
 
-# check for pymilvus
-pip freeze
 # Create milvus instance
 echo "Creating milvus instance"
 # shellcheck source=/dev/null
 docker compose -f scripts/milvus-test-helpers/docker-compose.yml up -d --wait-timeout 60
+
+# check for pymilvus
+pip freeze
+which python
+which python3
 python scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \

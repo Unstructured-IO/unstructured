@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 
 import click
 from pymilvus import (
@@ -8,6 +9,9 @@ from pymilvus import (
     MilvusClient,
 )
 from pymilvus.milvus_client import IndexParams
+
+print("within python script")
+print(sys.executable)
 
 
 def get_schema() -> CollectionSchema:
