@@ -184,11 +184,11 @@ def partition(
                 "The headers kwarg will be ignored.",
             )
         file_type = detect_filetype(
-            filename=filename,
+            file_path=filename,
             file=file,
-            file_filename=metadata_filename,
-            content_type=content_type,
             encoding=encoding,
+            content_type=content_type,
+            metadata_file_path=metadata_filename,
         )
 
     if file is not None:
@@ -471,12 +471,13 @@ def file_and_type_from_url(
     response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
-    content_type = (
-        content_type or response.headers.get("Content-Type", "").split(";")[0].strip().lower()
-    )
-    encoding = response.headers.get("Content-Encoding", "utf-8")
+    if content_type := content_type or response.headers.get("Content-Type", None):
+        content_type = content_type.split(";")[0].strip().lower()
 
-    filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
+    # -- non-None when response is textual --
+    encoding = response.encoding
+
+    filetype = detect_filetype(file=file, encoding=encoding, content_type=content_type)
     return file, filetype
 
 
