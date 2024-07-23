@@ -97,7 +97,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
         index = self.pinecone_index
         try:
             response = index.upsert(batch)
-        except pinecone.exceptions.ApiException as api_error:
+        except pinecone.exceptions.PineconeApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
