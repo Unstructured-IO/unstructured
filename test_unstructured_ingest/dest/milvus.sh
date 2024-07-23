@@ -43,7 +43,7 @@ pip install "pymilvus[model]"
 pip freeze
 which python
 which python3
-python scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
+PYTHONPATH=. ./scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
