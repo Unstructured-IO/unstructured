@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import pprint, sys
+import pprint
+import sys
+
 pprint.pprint(sys.modules)
 
 import click
