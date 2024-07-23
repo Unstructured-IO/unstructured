@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Update import of Pinecone exception**
+* **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
 
 ## 0.15.0
 
