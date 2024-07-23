@@ -36,8 +36,8 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
-from unstructured.file_utils.model import FileType
+from unstructured.errors import PdfMaxPagesExceededError
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -506,6 +506,33 @@ def _process_pdfminer_pages(
     return elements
 
 
+def _get_PDF_page_number(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+) -> int:
+    from pypdf import PdfReader
+
+    if file:
+        number_of_pages = PdfReader(file).get_num_pages()
+        file.seek(0)
+    elif filename:
+        number_of_pages = PdfReader(filename).get_num_pages()
+    else:
+        ValueError("Either 'file' or 'filename' must be provided.")
+    return number_of_pages
+
+
+def _is_max_pages_exceeded(
+    filename: str = "", file: Optional[bytes | IO[bytes]] = None, max_pages: int = None
+) -> bool:
+    """Checks whether PDF exceeds max_pages limit."""
+    if max_pages:
+        number_of_pages = _get_PDF_page_number(filename=filename, file=file)
+        if number_of_pages > max_pages:
+            return True
+    return False
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -530,6 +557,7 @@ def _partition_pdf_or_image_local(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    max_pages: int = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -543,6 +571,12 @@ def _partition_pdf_or_image_local(
         process_data_with_pdfminer,
         process_file_with_pdfminer,
     )
+
+    if _is_max_pages_exceeded(filename=filename, file=file, max_pages=max_pages):
+        raise PdfMaxPagesExceededError(
+            f"Maximum number of PDF file pages exceeded - "
+            f"pages={_get_PDF_page_number(filename=filename, file=file)}, maximum={max_pages}."
+        )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
