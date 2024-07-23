@@ -10,7 +10,9 @@ certifi==2024.7.4
     #   -c ./ingest/../deps/constraints.txt
     #   pinecone-client
 pinecone-client==4.1.2
-    # via -r ./ingest/pinecone.in
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/pinecone.in
 pinecone-plugin-interface==0.0.7
     # via pinecone-client
 tqdm==4.66.4

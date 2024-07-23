@@ -8,7 +8,7 @@ azure-common==1.1.28
     # via azure-search-documents
 azure-core==1.30.2
     # via azure-search-documents
-azure-search-documents==11.4.0
+azure-search-documents==11.5.0
     # via -r ./ingest/azure-cognitive-search.in
 certifi==2024.7.4
     # via
@@ -38,6 +38,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
+    #   azure-search-documents
 urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt

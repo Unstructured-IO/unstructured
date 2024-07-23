@@ -32,7 +32,7 @@ def detect_filetype(
     file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
-) -> Optional[FileType]:
+) -> FileType:
     """Use libmagic to determine a file's type.
 
     Helps determine which partition brick to use for a given file. A return value of None indicates
@@ -122,7 +122,7 @@ def detect_filetype(
             ".tsv",
             ".json",
         ]:
-            return FileType.from_extension(extension)
+            return FileType.from_extension(extension) or FileType.TXT
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
         # installed on the Unstructured docker image, .json files resolve to "text/plain"

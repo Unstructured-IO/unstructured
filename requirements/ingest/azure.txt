@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/azure.in
 #
-adlfs==2024.4.1
+adlfs==2024.7.0
     # via -r ./ingest/azure.in
 aiohttp==3.9.5
     # via adlfs
@@ -23,7 +23,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.17.1
     # via adlfs
-azure-storage-blob==12.20.0
+azure-storage-blob==12.21.0
     # via adlfs
 certifi==2024.7.4
     # via
@@ -40,6 +40,7 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==42.0.8
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   azure-identity
     #   azure-storage-blob
     #   msal
@@ -60,7 +61,7 @@ idna==3.7
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.29.0
+msal==1.30.0
     # via
     #   azure-datalake-store
     #   azure-identity

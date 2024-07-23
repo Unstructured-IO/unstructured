@@ -72,20 +72,20 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.7
+langchain==0.2.10
     # via langchain-community
-langchain-community==0.2.7
+langchain-community==0.2.9
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-openai.in
-langchain-core==0.2.18
+langchain-core==0.2.22
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.85
+langsmith==0.1.93
     # via
     #   langchain
     #   langchain-community
@@ -107,7 +107,7 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   langchain
     #   langchain-community
-openai==1.35.13
+openai==1.37.0
     # via -r ./ingest/embed-openai.in
 orjson==3.10.6
     # via langsmith

@@ -82,7 +82,7 @@ packaging==23.2
     #   unstructured-client
 psutil==6.0.0
     # via -r ./base.in
-pypdf==4.3.0
+pypdf==4.3.1
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
