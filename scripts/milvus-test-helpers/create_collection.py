@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import pprint
 import sys
 
 import click
@@ -13,6 +14,7 @@ import click
 
 print("within python script")
 print(sys.executable)
+pprint.pprint(sys.modules)
 
 if 1 == 1:
     from pymilvus import (
