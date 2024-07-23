@@ -3,8 +3,6 @@
 import pprint
 import sys
 
-pprint.pprint(sys.modules)
-
 import click
 from pymilvus import (
     CollectionSchema,
@@ -13,6 +11,8 @@ from pymilvus import (
     MilvusClient,
 )
 from pymilvus.milvus_client import IndexParams
+
+pprint.pprint(sys.modules)
 
 
 def get_schema() -> CollectionSchema:
