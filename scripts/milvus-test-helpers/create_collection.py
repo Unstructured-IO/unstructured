@@ -14,6 +14,15 @@ import click
 print("within python script")
 print(sys.executable)
 
+if 1 == 1:
+    from pymilvus import (
+        CollectionSchema,
+        DataType,
+        FieldSchema,
+        MilvusClient,
+    )
+    from pymilvus.milvus_client import IndexParams
+
 
 def get_schema() -> CollectionSchema:
     id_field = FieldSchema(
