@@ -15,6 +15,7 @@ import click
 print("within python script")
 print(sys.executable)
 pprint.pprint(sys.modules)
+help("modules")
 
 if 1 == 1:
     from pymilvus import (
