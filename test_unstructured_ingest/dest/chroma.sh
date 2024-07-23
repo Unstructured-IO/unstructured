@@ -36,7 +36,7 @@ trap cleanup EXIT
 # Run chroma from different script so it can be forced into background
 scripts/chroma-test-helpers/create-and-check-chroma.sh "$DESTINATION_PATH"
 wait
-sleep 10
+sleep 5
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
