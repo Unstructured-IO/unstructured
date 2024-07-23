@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import pprint, sys
+pprint.pprint(sys.modules)
+
 import click
 from pymilvus import (
     CollectionSchema,
