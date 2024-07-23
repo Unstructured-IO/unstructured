@@ -29,6 +29,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import PdfMaxPagesExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
@@ -1362,3 +1363,27 @@ def test_analysis_artifacts_saved():
         for el in expected_layouts:
             for page in expected_pages:
                 assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
+
+
+@pytest.mark.parametrize(
+    ("max_pages", "expected_result"),
+    [
+        (3, "expected_successful"),
+        (2, "expected_error"),
+    ],
+)
+def test_max_pages_argument(max_pages, expected_result):
+    if expected_result == "expected_successful":
+        pdf.partition_pdf_or_image(
+            filename=example_doc_path("pdf/reliance.pdf"),
+            strategy=PartitionStrategy.HI_RES,
+            max_pages=max_pages,
+        )
+
+    elif expected_result == "expected_error":
+        with pytest.raises(PdfMaxPagesExceededError):
+            pdf.partition_pdf_or_image(
+                filename=example_doc_path("pdf/reliance.pdf"),
+                strategy=PartitionStrategy.HI_RES,
+                max_pages=max_pages,
+            )
