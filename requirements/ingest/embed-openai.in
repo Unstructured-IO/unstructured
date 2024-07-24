@@ -1,5 +1,4 @@
 -c ../deps/constraints.txt
 -c ../base.txt
-langchain-community
-tiktoken
-openai
+
+langchain-openai
