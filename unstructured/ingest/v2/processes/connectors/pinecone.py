@@ -129,7 +129,7 @@ class PineconeUploader(Uploader):
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
-        from pinecone.core.client.exceptions import PineconeApiException
+        from pinecone.exceptions import PineconeApiException
 
         try:
             index = self.connection_config.get_index()

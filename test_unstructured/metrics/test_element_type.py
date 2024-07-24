@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import pytest
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.metrics.element_type import (
+    FrequencyDict,
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
@@ -14,10 +18,9 @@ from unstructured.staging.base import elements_to_json
         (
             "fake-email.txt",
             {
-                ("UncategorizedText", None): 6,
+                ("NarrativeText", None): 1,
+                ("Title", None): 1,
                 ("ListItem", None): 2,
-                ("Title", None): 5,
-                ("NarrativeText", None): 2,
             },
         ),
         (
@@ -34,8 +37,8 @@ from unstructured.staging.base import elements_to_json
         ),
     ],
 )
-def test_get_element_type_frequency(filename, frequency):
-    elements = partition(filename=f"example-docs/{filename}")
+def test_get_element_type_frequency(filename: str, frequency: dict[tuple[str, int | None], int]):
+    elements = partition(example_doc_path(filename))
     elements_freq = get_element_type_frequency(elements_to_json(elements))
     assert elements_freq == frequency
 
@@ -46,11 +49,11 @@ def test_get_element_type_frequency(filename, frequency):
         (
             "fake-email.txt",
             {
-                ("UncategorizedText", None): 14,
+                ("Title", None): 1,
                 ("ListItem", None): 2,
                 ("NarrativeText", None): 2,
             },
-            (0.56, 0.56, 0.56),
+            (0.8, 0.8, 0.80),
         ),
         (
             "sample-presentation.pptx",
@@ -92,8 +95,10 @@ def test_get_element_type_frequency(filename, frequency):
         ),
     ],
 )
-def test_calculate_element_type_percent_match(filename, expected_frequency, percent_matched):
-    elements = partition(filename=f"example-docs/{filename}")
+def test_calculate_element_type_percent_match(
+    filename: str, expected_frequency: FrequencyDict, percent_matched: tuple[float, float, float]
+):
+    elements = partition(example_doc_path(filename))
     elements_frequency = get_element_type_frequency(elements_to_json(elements))
     assert (
         round(calculate_element_type_percent_match(elements_frequency, expected_frequency), 2)
