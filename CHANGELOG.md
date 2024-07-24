@@ -12,6 +12,7 @@
 * **EML files specified as a file-path are detected correctly.** Resolved a bug where an EML file submitted to `partition()` as a file-path was identified as TXT and partitioned using `partition_text()`. EML files specified by path are now identified and processed correctly, including processing any attachments.
 * **A DOCX, PPTX, or XLSX file specified by path and ambiguously identified as MIME-type "application/octet-stream" is identified correctly.** Resolves a shortcoming where a file specified by path immediately fell back to filename-extension based identification when misidentified as "application/octet-stream", either by asserted content type or a mis-guess by libmagic. An MS Office file misidentified in this way is now correctly identified regardless of its filename and whether it is specified by path or file-like object.
 * **Textual content retrieved from a URL with gzip transport compression now partitions correctly.** Resolves a bug where a textual file-type (such as Markdown) retrieved by passing a URL to `partition()` would raise when `gzip` compression was used for transport by the server.
+* **A DOCX, PPTX, or XLSX content-type asserted on partition is confirmed or fixed.** Resolves a bug where calling `partition()` with a swapped MS-Office `content_type` would cause the file-type to be misidentified. A DOCX, PPTX, or XLSX MIME-type received by `partition()` is now checked for accuracy and corrected if the file is for a different MS-Office 2007+ type.
 
 ## 0.15.0
 
