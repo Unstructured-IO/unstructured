@@ -65,10 +65,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return elements
 
     @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["langchain_openai", "openai", "tiktoken"],
-        extras="openai",
-    )
+    @requires_dependencies(["langchain_openai"], extras="openai")
     def create_client(self) -> "OpenAIEmbeddings":
         """Creates a langchain OpenAI python client to embed elements."""
         from langchain_openai import OpenAIEmbeddings
