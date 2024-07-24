@@ -58,6 +58,13 @@ class EmbedderConfig(EnhancedDataClassJsonMixin):
             )
 
             return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
+        elif self.embedding_provider == "langchain-voyageai":
+            from unstructured.embed.voyageai import (
+                VoyageAIEmbeddingConfig,
+                VoyageAIEmbeddingEncoder,
+            )
+
+            return VoyageAIEmbeddingEncoder(config=VoyageAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.embedding_provider} not a recognized encoder")
 
