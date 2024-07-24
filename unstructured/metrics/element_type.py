@@ -1,10 +1,23 @@
+from __future__ import annotations
+
 import json
-from typing import Dict, Optional, Tuple, Union
+
+from typing_extensions import TypeAlias
+
+FrequencyDict: TypeAlias = "dict[tuple[str, int | None], int]"
+"""Like:
+    {
+        ("ListItem", 0): 2,
+        ("NarrativeText", None): 2,
+        ("Title", 0): 5,
+        ("UncategorizedText", None): 6,
+    }
+"""
 
 
 def get_element_type_frequency(
     elements: str,
-) -> Union[Dict[Tuple[str, Optional[int]], int], Dict]:
+) -> FrequencyDict:
     """
     Calculate the frequency of Element Types from a list of elements.
 
@@ -13,7 +26,7 @@ def get_element_type_frequency(
     Returns:
         Element type and its frequency in dictionary format.
     """
-    frequency: Dict = {}
+    frequency: dict[tuple[str, int | None], int] = {}
     if len(elements) == 0:
         return frequency
     for element in json.loads(elements):
@@ -28,14 +41,14 @@ def get_element_type_frequency(
 
 
 def calculate_element_type_percent_match(
-    output: Dict,
-    source: Dict,
+    output: FrequencyDict,
+    source: FrequencyDict,
     category_depth_weight: float = 0.5,
 ) -> float:
-    """
-    Calculate the percent match between two frequency dictionary. Intended to use with
-    `get_element_type_frequency` function. The function counts the absolute exact match
-    (type and depth), and counts the weighted match (correct type but different depth),
+    """Calculate the percent match between two frequency dictionary.
+
+    Intended to use with `get_element_type_frequency` function. The function counts the absolute
+    exact match (type and depth), and counts the weighted match (correct type but different depth),
     then normalized with source's total elements.
     """
     if len(output) == 0 or len(source) == 0:
@@ -46,8 +59,8 @@ def calculate_element_type_percent_match(
     total_source_element_count = 0
     total_match_element_count = 0
 
-    unmatched_depth_output = {}
-    unmatched_depth_source = {}
+    unmatched_depth_output: dict[str, int] = {}
+    unmatched_depth_source: dict[str, int] = {}
 
     # loop through the output list to find match with source
     for k, _ in output_copy.items():
@@ -80,12 +93,12 @@ def calculate_element_type_percent_match(
     return min(max(total_match_element_count / total_source_element_count, 0.0), 1.0)
 
 
-def _convert_to_frequency_without_depth(d: Dict) -> Dict:
+def _convert_to_frequency_without_depth(d: FrequencyDict) -> dict[str, int]:
     """
     Takes in element frequency with depth of format (type, depth): value
     and converts to dictionary without depth of format type: value
     """
-    res = {}
+    res: dict[str, int] = {}
     for k, v in d.items():
         element_type = k[0]
         if element_type not in res:
