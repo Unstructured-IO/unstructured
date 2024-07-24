@@ -17,6 +17,7 @@ from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
 from pillow_heif import register_heif_opener
+from pypdf import PdfReader
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -507,12 +508,10 @@ def _process_pdfminer_pages(
     return elements
 
 
-def _get_PDF_page_number(
+def _get_pdf_page_number(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
 ) -> int:
-    from pypdf import PdfReader
-
     if file:
         number_of_pages = PdfReader(file).get_num_pages()
         file.seek(0)
@@ -523,15 +522,19 @@ def _get_PDF_page_number(
     return number_of_pages
 
 
-def _is_max_pages_exceeded(
-    filename: str = "", file: Optional[bytes | IO[bytes]] = None, max_pages: int = None
-) -> bool:
+def check_max_pages_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    max_pages: int = None,
+) -> None:
     """Checks whether PDF exceeds max_pages limit."""
     if max_pages:
-        number_of_pages = _get_PDF_page_number(filename=filename, file=file)
-        if number_of_pages > max_pages:
-            return True
-    return False
+        page_number = _get_pdf_page_number(filename=filename, file=file)
+        if page_number > max_pages:
+            raise PdfMaxPagesExceededError(
+                f"Maximum number of PDF file pages exceeded - "
+                f"pages={page_number}, maximum={max_pages}."
+            )
 
 
 @requires_dependencies("unstructured_inference")
@@ -558,7 +561,7 @@ def _partition_pdf_or_image_local(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
-    max_pages: int = None,
+    max_pages: Optional[int] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -573,11 +576,7 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    if _is_max_pages_exceeded(filename=filename, file=file, max_pages=max_pages):
-        raise PdfMaxPagesExceededError(
-            f"Maximum number of PDF file pages exceeded - "
-            f"pages={_get_PDF_page_number(filename=filename, file=file)}, maximum={max_pages}."
-        )
+    check_max_pages_exceeded(filename=filename, file=file, max_pages=max_pages)
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:

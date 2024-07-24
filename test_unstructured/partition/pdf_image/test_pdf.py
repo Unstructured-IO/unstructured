@@ -1366,24 +1366,26 @@ def test_analysis_artifacts_saved():
 
 
 @pytest.mark.parametrize(
-    ("max_pages", "expected_result"),
+    ("filename", "max_pages", "expected_error"),
     [
-        (3, "expected_successful"),
-        (2, "expected_error"),
+        ("pdf/layout-parser-paper-with-empty-pages.pdf", None, False),
+        ("pdf/layout-parser-paper-with-empty-pages.pdf", 3, True),
+        ("pdf/reliance.pdf", 3, False),
+        ("pdf/reliance.pdf", 2, True),
     ],
 )
-def test_max_pages_argument(max_pages, expected_result):
-    if expected_result == "expected_successful":
+def test_max_pages_argument(filename, max_pages, expected_error):
+    if not expected_error:
         pdf.partition_pdf_or_image(
-            filename=example_doc_path("pdf/reliance.pdf"),
+            filename=example_doc_path(filename),
             strategy=PartitionStrategy.HI_RES,
             max_pages=max_pages,
         )
 
-    elif expected_result == "expected_error":
+    else:
         with pytest.raises(PdfMaxPagesExceededError):
             pdf.partition_pdf_or_image(
-                filename=example_doc_path("pdf/reliance.pdf"),
+                filename=example_doc_path(filename),
                 strategy=PartitionStrategy.HI_RES,
                 max_pages=max_pages,
             )
