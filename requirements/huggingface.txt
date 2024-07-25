@@ -85,7 +85,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.13.0
+sympy==1.13.1
     # via torch
 tokenizers==0.19.1
     # via transformers
