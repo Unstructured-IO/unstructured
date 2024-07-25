@@ -18,7 +18,9 @@ charset-normalizer==3.3.2
     #   -c ./ingest/../base.txt
     #   requests
 cryptography==42.0.8
-    # via pyjwt
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   pyjwt
 idna==3.7
     # via
     #   -c ./ingest/../base.txt

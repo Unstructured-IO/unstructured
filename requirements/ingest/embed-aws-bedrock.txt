@@ -68,7 +68,7 @@ langchain-core==0.2.23
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.85
+langsmith==0.1.93
     # via
     #   langchain
     #   langchain-community

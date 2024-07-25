@@ -53,7 +53,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.85
+langsmith==0.1.93
     # via
     #   langchain
     #   langchain-core
