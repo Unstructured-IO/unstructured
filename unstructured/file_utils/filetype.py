@@ -161,6 +161,10 @@ class _FileTypeDetector:
         if not content_type:
             return None
 
+        # -- MS-Office 2007+ (OpenXML) content_type value is sometimes unreliable --
+        if differentiator := _ZipFileDifferentiator.applies(self._ctx, content_type):
+            return differentiator.file_type
+
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
         return FileType.from_mime_type(content_type)
 
@@ -307,7 +311,7 @@ class _FileTypeDetectionContext:
     def file_head(self) -> bytes:
         """The initial bytes of the file to be recognized, for use with libmagic detection."""
         with self.open() as file:
-            return file.read(4096)
+            return file.read(8192)
 
     @lazyproperty
     def file_path(self) -> str | None:
