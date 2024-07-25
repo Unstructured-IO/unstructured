@@ -12,7 +12,7 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from langchain_community.embeddings import OpenAIEmbeddings
+    from langchain_openai.embeddings import OpenAIEmbeddings
 
 
 @dataclass
@@ -65,13 +65,10 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return elements
 
     @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["langchain_community", "openai", "tiktoken"],
-        extras="openai",
-    )
+    @requires_dependencies(["langchain_openai"], extras="openai")
     def create_client(self) -> "OpenAIEmbeddings":
         """Creates a langchain OpenAI python client to embed elements."""
-        from langchain_community.embeddings import OpenAIEmbeddings
+        from langchain_openai import OpenAIEmbeddings
 
         openai_client = OpenAIEmbeddings(
             openai_api_key=self.config.api_key,

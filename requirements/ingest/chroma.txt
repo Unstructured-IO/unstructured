@@ -37,9 +37,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-chroma-hnswlib==0.7.5
+chroma-hnswlib==0.7.6
     # via chromadb
-chromadb==0.5.4
+chromadb==0.5.5
     # via -r ./ingest/chroma.in
 click==8.1.7
     # via
@@ -89,7 +89,7 @@ httpx==0.27.0
     # via
     #   -c ./ingest/../base.txt
     #   chromadb
-huggingface-hub==0.23.4
+huggingface-hub==0.24.1
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
