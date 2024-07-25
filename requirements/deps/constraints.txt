@@ -61,11 +61,3 @@ langchain-community>=0.2.5
 # NOTE(robinson): choma was pinned to importlib-metadata>=7.1.0 but 7.1.0 was installed
 # instead of 7.2.0. Need to investigate
 importlib-metadata==7.1.0
-
-# NOTE(robinson) - due to failure in this job
-# https://github.com/Unstructured-IO/unstructured/actions/runs/10044201938/job/27762303563?pr=3427
-cryptography<43.0.0
-
-# NOTE - robinson) - due to failure in this job
-# https://github.com/Unstructured-IO/unstructured/actions/runs/10045984678/job/27768160933?pr=3427
-pinecone-client<5.0.0

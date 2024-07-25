@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-cachetools==5.4.0
+cachetools==5.3.3
     # via google-auth
 certifi==2024.7.4
     # via
@@ -83,7 +83,7 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.65.1
+grpcio==1.64.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -100,25 +100,25 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.10
+langchain==0.2.7
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.9
+langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.22
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.7
+langchain-google-vertexai==1.0.6
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.93
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community

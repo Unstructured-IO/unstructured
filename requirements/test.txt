@@ -47,7 +47,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.1
+grpcio==1.64.1
     # via -r ./test.in
 idna==3.7
     # via
@@ -75,7 +75,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.11.0
+mypy==1.10.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -110,7 +110,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.3.1
+pytest==8.2.2
     # via
     #   pytest-cov
     #   pytest-mock

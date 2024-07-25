@@ -37,13 +37,7 @@ COLLECTION_NAME="ingest_test"
 echo "Creating milvus instance"
 # shellcheck source=/dev/null
 docker compose -f scripts/milvus-test-helpers/docker-compose.yml up -d --wait-timeout 60
-pip install "pymilvus[model]"
-
-# check for pymilvus
-pip freeze
-which python
-which python3
-PYTHONPATH=. ./scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
+scripts/milvus-test-helpers/create_collection.py --db-name $DB_NAME
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \

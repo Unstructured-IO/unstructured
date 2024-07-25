@@ -55,20 +55,20 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.10
+langchain==0.2.7
     # via langchain-community
-langchain-community==0.2.9
+langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.22
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.93
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community

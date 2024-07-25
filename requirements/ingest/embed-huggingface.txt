@@ -47,7 +47,7 @@ fsspec==2024.5.0
     #   torch
 huggingface==0.0.1
     # via -r ./ingest/embed-huggingface.in
-huggingface-hub==0.24.0
+huggingface-hub==0.23.4
     # via
     #   sentence-transformers
     #   tokenizers
@@ -67,20 +67,20 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.10
+langchain==0.2.7
     # via langchain-community
-langchain-community==0.2.9
+langchain-community==0.2.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-huggingface.in
-langchain-core==0.2.22
+langchain-core==0.2.18
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.93
+langsmith==0.1.85
     # via
     #   langchain
     #   langchain-community
@@ -165,7 +165,7 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-sympy==1.13.1
+sympy==1.13.0
     # via torch
 tenacity==8.5.0
     # via

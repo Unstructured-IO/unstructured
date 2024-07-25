@@ -37,8 +37,6 @@ trap cleanup EXIT
 scripts/chroma-test-helpers/create-and-check-chroma.sh "$DESTINATION_PATH"
 wait
 
-sleep 10
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
   --num-processes "$max_processes" \

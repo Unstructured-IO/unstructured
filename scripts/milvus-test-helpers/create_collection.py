@@ -1,28 +1,13 @@
 #!/usr/bin/env python3
-import sys
 
 import click
-
-# from pymilvus import (
-#     CollectionSchema,
-#     DataType,
-#     FieldSchema,
-#     MilvusClient,
-# )
-# from pymilvus.milvus_client import IndexParams
-
-print("within python script")
-print(sys.executable)
-help("modules")
-
-if 1 == 1:
-    from pymilvus import (
-        CollectionSchema,
-        DataType,
-        FieldSchema,
-        MilvusClient,
-    )
-    from pymilvus.milvus_client import IndexParams
+from pymilvus import (
+    CollectionSchema,
+    DataType,
+    FieldSchema,
+    MilvusClient,
+)
+from pymilvus.milvus_client import IndexParams
 
 
 def get_schema() -> CollectionSchema:
@@ -83,8 +68,7 @@ def create_collection(client: MilvusClient, collection_name: str) -> None:
 @click.command("milvus-init")
 @click.option("--host", type=str, default="localhost")
 @click.option("--port", type=int, default=19530)
-# @click.option("--db-name", type=str, default="milvus")
-@click.option("--db-name", type=str, default="ingest_test_db")
+@click.option("--db-name", type=str, default="milvus")
 def create(host: str, port: int, db_name: str):
     client = MilvusClient(uri=f"http://{host}:{port}")
     create_database(client=client, db_name=db_name)

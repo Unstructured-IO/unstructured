@@ -18,7 +18,7 @@ beautifulsoup4==4.12.3
     #   bs4
 bs4==0.0.2
     # via -r ./ingest/gcs.in
-cachetools==5.4.0
+cachetools==5.3.3
     # via google-auth
 certifi==2024.7.4
     # via
