@@ -29,7 +29,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PdfMaxPagesExceededError
+from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
@@ -1383,7 +1383,7 @@ def test_max_pages_argument(filename, max_pages, expected_error):
         )
 
     else:
-        with pytest.raises(PdfMaxPagesExceededError):
+        with pytest.raises(PageCountExceededError):
             pdf.partition_pdf_or_image(
                 filename=example_doc_path(filename),
                 strategy=PartitionStrategy.HI_RES,

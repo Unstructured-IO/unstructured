@@ -37,7 +37,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.errors import PdfMaxPagesExceededError
+from unstructured.errors import PageCountExceededError
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
@@ -529,12 +529,9 @@ def check_max_pages_exceeded(
 ) -> None:
     """Checks whether PDF exceeds max_pages limit."""
     if max_pages:
-        page_number = _get_pdf_page_number(filename=filename, file=file)
-        if page_number > max_pages:
-            raise PdfMaxPagesExceededError(
-                f"Maximum number of PDF file pages exceeded - "
-                f"pages={page_number}, maximum={max_pages}."
-            )
+        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        if document_pages > max_pages:
+            raise PageCountExceededError(document_pages=document_pages, max_pages=max_pages)
 
 
 @requires_dependencies("unstructured_inference")
