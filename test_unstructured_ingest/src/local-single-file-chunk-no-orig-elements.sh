@@ -21,7 +21,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 # -- use absolute path of input file to verify passing an absolute path --
-ABS_INPUT_PATH="$SCRIPT_DIR/../example-docs/$EXAMPLE_DOC"
+ABS_INPUT_PATH="$SCRIPT_DIR/../example-docs/pdf/$EXAMPLE_DOC"
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091

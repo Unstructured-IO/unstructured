@@ -40,7 +40,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   --embedding-provider "langchain-huggingface" \
   sql \

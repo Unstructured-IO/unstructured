@@ -21,6 +21,7 @@ from unstructured.partition.lang import (
     check_language_args,
     detect_languages,
     prepare_languages_for_tesseract,
+    tesseract_to_paddle_language,
 )
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -82,6 +83,39 @@ def test_prepare_languages_for_tesseract_no_valid_languages(caplog):
     languages = [""]
     assert prepare_languages_for_tesseract(languages) == "eng"
     assert "Failed to find any valid standard language code from languages" in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("tesseract_lang", "expected_lang"),
+    [
+        ("eng", "en"),
+        ("chi_sim", "ch"),
+        ("chi_tra", "chinese_cht"),
+        ("deu", "german"),
+        ("jpn", "japan"),
+        ("kor", "korean"),
+    ],
+)
+def test_tesseract_to_paddle_language_valid_codes(tesseract_lang, expected_lang):
+    assert expected_lang == tesseract_to_paddle_language(tesseract_lang)
+
+
+def test_tesseract_to_paddle_language_invalid_codes(caplog):
+    tesseract_lang = "unsupported_lang"
+    assert tesseract_to_paddle_language(tesseract_lang) == "en"
+    assert "unsupported_lang is not a language code supported by PaddleOCR," in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("tesseract_lang", "expected_lang"),
+    [
+        ("ENG", "en"),
+        ("Fra", "fr"),
+        ("DEU", "german"),
+    ],
+)
+def test_tesseract_to_paddle_language_case_sensitivity(tesseract_lang, expected_lang):
+    assert expected_lang == tesseract_to_paddle_language(tesseract_lang)
 
 
 def test_detect_languages_english_auto():

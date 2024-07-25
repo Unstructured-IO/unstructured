@@ -75,7 +75,7 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.8
     # via virtualenv
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -185,7 +185,7 @@ jupyter-events==0.10.0
     # via jupyter-server
 jupyter-lsp==2.2.5
     # via jupyterlab
-jupyter-server==2.14.1
+jupyter-server==2.14.2
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -194,11 +194,11 @@ jupyter-server==2.14.1
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.3
+jupyterlab==4.2.4
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
-jupyterlab-server==2.27.2
+jupyterlab-server==2.27.3
     # via
     #   jupyterlab
     #   notebook
@@ -284,7 +284,7 @@ ptyprocess==0.7.0
     # via
     #   pexpect
     #   terminado
-pure-eval==0.2.2
+pure-eval==0.2.3
     # via stack-data
 pycparser==2.22
     # via cffi

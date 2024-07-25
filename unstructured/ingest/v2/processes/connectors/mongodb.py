@@ -19,7 +19,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -129,13 +128,10 @@ class MongoDBUploader(Uploader):
             collection.insert_many(chunk)
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=MongoDBConnectionConfig,
-        uploader=MongoDBUploader,
-        uploader_config=MongoDBUploaderConfig,
-        upload_stager=MongoDBUploadStager,
-        upload_stager_config=MongoDBUploadStagerConfig,
-    ),
+mongodb_destination_entry = DestinationRegistryEntry(
+    connection_config=MongoDBConnectionConfig,
+    uploader=MongoDBUploader,
+    uploader_config=MongoDBUploaderConfig,
+    upload_stager=MongoDBUploadStager,
+    upload_stager_config=MongoDBUploadStagerConfig,
 )

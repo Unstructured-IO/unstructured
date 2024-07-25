@@ -14,7 +14,8 @@
         "version": "67356979305728150851855820427694668063",
         "record_locator": {
           "protocol": "dropbox",
-          "remote_file_path": "dropbox://test-input/"
+          "remote_file_path": "dropbox://test-input/",
+          "file_id": "id:De4ZYtDd-JoAAAAAAAAACw"
         }
       }
     }

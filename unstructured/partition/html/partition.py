@@ -11,9 +11,9 @@ from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.html.parser import Flow, html_parser
 from unstructured.partition.lang import apply_lang_metadata
@@ -100,11 +100,9 @@ def partition_html(
         detection_origin=detection_origin,
     )
 
-    document = HTMLDocument.load(opts)
-
     elements = list(
         apply_lang_metadata(
-            document.elements,
+            _HtmlPartitioner.iter_elements(opts),
             languages=languages,
             detect_language_per_element=detect_language_per_element,
         )
@@ -212,7 +210,7 @@ class HtmlPartitionerOptions:
         return self._skip_headers_and_footers
 
 
-class _HtmlPartitioner:  # pyright: ignore[reportUnusedClass]
+class _HtmlPartitioner:
     """Partition HTML document into document-elements."""
 
     def __init__(self, opts: HtmlPartitionerOptions):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import fnmatch
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -179,16 +180,25 @@ class FsspecIndexer(Indexer):
             pass
 
         version = self.fs.checksum(path)
+        metadata: dict[str, str] = {}
+        with contextlib.suppress(AttributeError):
+            metadata = self.fs.metadata(path)
+        record_locator = {
+            "protocol": self.index_config.protocol,
+            "remote_file_path": self.index_config.remote_url,
+        }
+        file_stat = self.fs.stat(path=path)
+        if file_id := file_stat.get("id"):
+            record_locator["file_id"] = file_id
+        if metadata:
+            record_locator["metadata"] = metadata
         return DataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
             version=str(version),
             url=f"{self.index_config.protocol}://{path}",
-            record_locator={
-                "protocol": self.index_config.protocol,
-                "remote_file_path": self.index_config.remote_url,
-            },
+            record_locator=record_locator,
         )
 
     def sterilize_info(self, path) -> dict:

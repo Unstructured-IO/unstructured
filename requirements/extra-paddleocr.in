@@ -1,6 +1,4 @@
 -c ./deps/constraints.txt
 -c base.txt
 
-unstructured.paddlepaddle; platform_machine == "arm64"
-paddlepaddle; platform_machine != "arm64"
-unstructured.paddleocr==2.8.0
+unstructured.paddleocr==2.8.0.1

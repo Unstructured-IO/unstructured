@@ -3,6 +3,7 @@ from unittest import mock
 import numpy as np
 import pytest
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.metrics.table.table_alignment import TableAlignment
 from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.table_structure import (
@@ -14,8 +15,8 @@ from unstructured.metrics.table_structure import (
 @pytest.mark.parametrize(
     "filename",
     [
-        "example-docs/table-multi-row-column-cells.png",
-        "example-docs/table-multi-row-column-cells.pdf",
+        example_doc_path("img/table-multi-row-column-cells.png"),
+        example_doc_path("pdf/table-multi-row-column-cells.pdf"),
     ],
 )
 def test_image_or_pdf_to_dataframe(filename):
@@ -25,8 +26,8 @@ def test_image_or_pdf_to_dataframe(filename):
 
 def test_eval_table_transformer_for_file():
     score = eval_table_transformer_for_file(
-        "example-docs/table-multi-row-column-cells.png",
-        "example-docs/table-multi-row-column-cells-actual.csv",
+        example_doc_path("img/table-multi-row-column-cells.png"),
+        example_doc_path("table-multi-row-column-cells-actual.csv"),
     )
     # avoid severe degradation of performance
     assert 0.8 < score < 1
