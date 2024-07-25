@@ -275,3 +275,8 @@ def test_partition_csv_header():
 def test_partition_csv_detects_the_right_csv_delimiter():
     # -- Issue #2643: previously raised `_csv.Error: Could not determine delimiter` on this file --
     assert get_delimiter("example-docs/csv-with-long-lines.csv") == ","
+
+
+def test_partition_csv_ignores_missing_delimiter_for_single_column_csv():
+    # --- Issue #2616: `_csv.Error: Could not determine delimiter` raise on single column csvs --
+    assert get_delimiter("example-docs/csv-with-long-lines-single-column.csv") is None

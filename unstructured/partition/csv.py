@@ -75,20 +75,27 @@ def partition_csv(
     """
     exactly_one(filename=filename, file=file)
 
+    filepath_or_buffer = None
     header = 0 if include_header else None
+    last_modification_date = ""
 
     if filename:
-        delimiter = get_delimiter(file_path=filename)
-        table = pd.read_csv(filename, header=header, sep=delimiter)
+        filepath_or_buffer = filename
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
+        filepath_or_buffer = spooled_to_bytes_io_if_needed(file)
         last_modification_date = (
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
-        f = spooled_to_bytes_io_if_needed(file)
-        delimiter = get_delimiter(file=f)
-        table = pd.read_csv(f, header=header, sep=delimiter)
+
+    if not filepath_or_buffer:
+        raise ValueError("one of `filename` or `file` must be provided.")
+
+    if delimiter := get_delimiter(file_path=filepath_or_buffer) is not None:
+        table = pd.read_csv(filepath_or_buffer, header=header, sep=delimiter)
+    else:
+        table = pd.read_csv(filepath_or_buffer, header=header)
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = cast(str, soupparser_fromstring(html_text).text_content())
@@ -131,4 +138,9 @@ def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
     else:
         raise ValueError("either `file_path` or `file` argument must be provided")
 
-    return sniffer.sniff(data, delimiters=",;").delimiter
+    try:
+        return sniffer.sniff(data, delimiters=",;").delimiter
+
+    # Sniffing will fail on single-column csv as no default can be assumed.
+    except csv.Error:
+        return None
