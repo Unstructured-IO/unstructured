@@ -17,8 +17,6 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
         normalized,
         encoding_format,
         truncation_strategy,
-        dimensions,
-        prompt,
         request_options,
         input,
     ):

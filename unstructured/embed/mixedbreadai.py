@@ -10,12 +10,16 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 USER_AGENT = "@mixedbread-ai/unstructured"
-MAX_BATCH_SIZE = 256
+BATCH_SIZE = 128
+TIMEOUT = 60
+MAX_RETRIES = 3
+ENCODING_FORMAT = "float"
+TRUNCATION_STRATEGY = "end"
+
 
 if TYPE_CHECKING:
     from mixedbread_ai.client import MixedbreadAI
     from mixedbread_ai.core import RequestOptions
-    from mixedbread_ai.types import EncodingFormat, TruncationStrategy
 
 
 @dataclass
@@ -25,34 +29,16 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
 
     Attributes:
         api_key (str): API key for accessing Mixedbread AI.
-        base_url (Optional[str]): Base URL for the API.
-        timeout (Optional[int]): Timeout for API requests in seconds.
-        max_retries (Optional[int]): Maximum number of retries for API requests.
-        batch_size (Optional[int]): Batch size of API requests.
         model_name (str): Name of the model to use for embeddings.
-        normalized (bool): Whether to normalize the embeddings.
-        encoding_format (Optional[EncodingFormat]): Format of the encoding.
-        truncation_strategy (Optional[TruncationStrategy]): Strategy for truncating text.
-        dimensions (Optional[int]): Number of dimensions for the embeddings.
-        prompt (Optional[str]): Optional prompt for embedding generation.
     """
 
     api_key: str = field(
         default_factory=lambda: os.environ.get("MXBAI_API_KEY", None),
     )
-    base_url: Optional[str] = field(default=None)
-    timeout: Optional[int] = field(default=60)
-    max_retries: Optional[int] = field(default=3)
-    batch_size: Optional[int] = field(default=128)
 
     model_name: str = field(
         default="mixedbread-ai/mxbai-embed-large-v1",
     )
-    normalized: bool = field(default=True)
-    encoding_format: Optional["EncodingFormat"] = field(default="float")
-    truncation_strategy: Optional["TruncationStrategy"] = field(default="start")
-    dimensions: Optional[int] = field(default=None)
-    prompt: Optional[str] = field(default=None)
 
 
 @dataclass
@@ -92,24 +78,11 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
                 + "or via the 'MXBAI_API_KEY' environment variable."
             )
 
-        if self.config.timeout is not None and self.config.timeout <= 0:
-            raise ValueError("The timeout parameter must be greater than 0.")
-        if self.config.max_retries is not None and self.config.max_retries < 0:
-            raise ValueError("The max_retries parameter must be greater than or equal to 0.")
-
-        if self.config.batch_size is not None and (
-            self.config.batch_size <= 0 or self.config.batch_size > MAX_BATCH_SIZE
-        ):
-            raise ValueError(
-                f"The batch_size parameter "
-                f"must be greater than 0 and smaller than or equal to {MAX_BATCH_SIZE}."
-            )
-
         from mixedbread_ai.core import RequestOptions
 
         self._request_options = RequestOptions(
-            max_retries=self.config.max_retries,
-            timeout_in_seconds=self.config.timeout,
+            max_retries=MAX_RETRIES,
+            timeout_in_seconds=TIMEOUT,
             additional_headers={"User-Agent": USER_AGENT},
         )
 
@@ -133,7 +106,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         Returns:
             List[List[float]]: List of embeddings.
         """
-        batch_size = self.config.batch_size or len(texts)
+        batch_size = BATCH_SIZE
         batch_itr = range(0, len(texts), batch_size)
 
         responses = []
@@ -142,11 +115,9 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
             batch = texts[i : i + batch_size]
             response = self.client.embeddings(
                 model=self.config.model_name,
-                normalized=self.config.normalized,
-                encoding_format=self.config.encoding_format,
-                truncation_strategy=self.config.truncation_strategy,
-                dimensions=self.config.dimensions,
-                prompt=self.config.prompt,
+                normalized=True,
+                encoding_format=ENCODING_FORMAT,
+                truncation_strategy=TRUNCATION_STRATEGY,
                 request_options=self._request_options,
                 input=batch,
             )
@@ -213,5 +184,4 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
         return MixedbreadAI(
             api_key=self.config.api_key,
-            base_url=self.config.base_url,
         )
