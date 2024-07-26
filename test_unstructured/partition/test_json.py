@@ -9,8 +9,9 @@ import tempfile
 import pytest
 from pytest_mock import MockFixture
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import CompositeElement
-from unstructured.file_utils.filetype import FileType, detect_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
@@ -42,9 +43,9 @@ def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -71,9 +72,9 @@ def test_partition_json_from_filename(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_with_metadata_filename(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -96,9 +97,9 @@ def test_partition_json_from_filename_with_metadata_filename(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -125,9 +126,9 @@ def test_partition_json_from_file(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_with_metadata_filename(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -149,9 +150,9 @@ def test_partition_json_from_file_with_metadata_filename(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -191,9 +192,9 @@ def test_partition_json_works_with_empty_list():
 
 
 def test_partition_json_raises_with_too_many_specified():
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
+    path = example_doc_path("fake-text.txt")
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -224,9 +225,9 @@ def test_partition_json_raises_with_too_many_specified():
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_exclude_metadata(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -248,9 +249,9 @@ def test_partition_json_from_filename_exclude_metadata(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_exclude_metadata(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -273,9 +274,9 @@ def test_partition_json_from_file_exclude_metadata(filename: str):
 
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text_exclude_metadata(filename: str):
-    path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
+    path = example_doc_path(filename)
     elements = []
-    filetype = detect_filetype(filename=path)
+    filetype = FileType.from_extension(os.path.splitext(path)[1])
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:

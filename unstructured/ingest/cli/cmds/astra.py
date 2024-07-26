@@ -32,31 +32,16 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 ["--collection-name"],
                 required=False,
                 type=str,
-                help="The name of the Astra DB collection to write into. "
+                help="The name of the Astra DB collection. "
                 "Note that the collection name must only include letters, "
                 "numbers, and underscores.",
-            ),
-            click.Option(
-                ["--embedding-dimension"],
-                required=True,
-                default=384,
-                type=int,
-                help="The dimensionality of the embeddings",
             ),
             click.Option(
                 ["--namespace"],
                 required=False,
                 default=None,
                 type=str,
-                help="The Astra DB namespace to write into.",
-            ),
-            click.Option(
-                ["--requested-indexing-policy"],
-                required=False,
-                default=None,
-                type=Dict(),
-                help="The indexing policy to use for the collection."
-                'example: \'{"deny": ["metadata"]}\' ',
+                help="The Astra DB connection namespace.",
             ),
         ]
         return options
@@ -67,6 +52,21 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
+            click.Option(
+                ["--embedding-dimension"],
+                required=True,
+                default=384,
+                type=int,
+                help="The dimensionality of the embeddings",
+            ),
+            click.Option(
+                ["--requested-indexing-policy"],
+                required=False,
+                default=None,
+                type=Dict(),
+                help="The indexing policy to use for the collection."
+                'example: \'{"deny": ["metadata"]}\' ',
+            ),
             click.Option(
                 ["--batch-size"],
                 default=20,

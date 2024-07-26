@@ -22,7 +22,7 @@ TEST_DATA_1 = {
             "date_modified": "2023-10-25 10:05:44.976775",
             "date_processed": "2023-12-14T17:06:33.074057",
             "permissions_data": [{"mode": 33188}],
-            "url": "example-docs/fake-memo.pdf",
+            "url": "example-docs/pdf/fake-memo.pdf",
         },
         "file_directory": "example-docs",
         "filename": "fake-memo.pdf",
@@ -105,7 +105,7 @@ def test_conform_dict_1():
         "date_modified": datetime.datetime(2023, 10, 25, 10, 5, 44, 976775),
         "date_processed": datetime.datetime(2023, 12, 14, 17, 6, 33, 74057),
         "permissions_data": '[{"mode": 33188}]',
-        "url": "example-docs/fake-memo.pdf",
+        "url": "example-docs/pdf/fake-memo.pdf",
         "layout_height": 792,
         "layout_width": 612,
         "points": "[[72.0, 72.69200000000001], [72.0, 83.69200000000001],"

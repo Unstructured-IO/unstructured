@@ -374,8 +374,8 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
-        example_doc_path("layout-parser-paper-fast.pdf"),
-        example_doc_path("layout-parser-paper-fast.jpg"),
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        example_doc_path("img/layout-parser-paper-fast.jpg"),
     ]
     with pytest.raises(ValueError):
         partition_multiple_via_api(

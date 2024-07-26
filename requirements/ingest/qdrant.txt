@@ -17,11 +17,11 @@ certifi==2024.7.4
     #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.0
+grpcio==1.65.1
     # via
     #   grpcio-tools
     #   qdrant-client
@@ -54,7 +54,7 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   qdrant-client
-portalocker==2.10.0
+portalocker==2.10.1
     # via qdrant-client
 protobuf==4.23.4
     # via

@@ -40,9 +40,7 @@ class AstraAccessConfig(AccessConfig):
 class SimpleAstraConfig(BaseConnectorConfig):
     access_config: AstraAccessConfig
     collection_name: str
-    embedding_dimension: int
     namespace: t.Optional[str] = None
-    requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
 
 
 @dataclass
@@ -155,6 +153,8 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
 @dataclass
 class AstraWriteConfig(WriteConfig):
+    embedding_dimension: int
+    requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
     batch_size: int = 20
 
 
@@ -185,15 +185,13 @@ class AstraDestinationConnector(BaseDestinationConnector):
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
-            # Get the collection_name and embedding dimension
             collection_name = self.connector_config.collection_name
-            embedding_dimension = self.connector_config.embedding_dimension
-            requested_indexing_policy = self.connector_config.requested_indexing_policy
+            embedding_dimension = self.write_config.embedding_dimension
 
             # If the user has requested an indexing policy, pass it to the AstraDB
+            requested_indexing_policy = self.write_config.requested_indexing_policy
             options = {"indexing": requested_indexing_policy} if requested_indexing_policy else None
 
-            # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
             self._astra_db = AstraDB(
                 api_endpoint=self.connector_config.access_config.api_endpoint,

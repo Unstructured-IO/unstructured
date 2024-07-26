@@ -14,7 +14,8 @@
         "version": "113813498010717860141768546590661839404",
         "record_locator": {
           "protocol": "gs",
-          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+          "remote_file_path": "gs://utic-test-ingest-fixtures/",
+          "file_id": "utic-test-ingest-fixtures/nested-2/nested/ideas-page.html/1687304904584421"
         },
         "date_created": "1687304904.586",
         "date_modified": "1687304904.586"
