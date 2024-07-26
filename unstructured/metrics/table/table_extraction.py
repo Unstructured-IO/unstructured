@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
 from unstructured_inference.models.tables import cells_to_html
+
+# get unstructured logger
+logger = logging.getLogger("unstructured.eval")
+
 
 EMPTY_CELL = {
     "row_index": "",
@@ -200,6 +205,7 @@ def extract_and_convert_tables_from_prediction(
     predicted_table_data = []
     for element in file_elements:
         if element.get("type") == "Table":
+            logger.warning(f"Table element found in prediction: {element}")
             extracted_cells = extract_cells_fn(element)
             if not extracted_cells:
                 extracted_cells = fallback_extract_cells_fn(element)

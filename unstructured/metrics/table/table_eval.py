@@ -22,6 +22,7 @@ python table_eval.py  \
 
 import difflib
 import json
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -34,6 +35,8 @@ from unstructured.metrics.table.table_extraction import (
     extract_and_convert_tables_from_ground_truth,
     extract_and_convert_tables_from_prediction,
 )
+
+logger = logging.getLogger("unstructured.eval")
 
 
 @dataclass
@@ -214,6 +217,7 @@ class TableEvalProcessor:
         """
         with open(prediction_file) as f:
             prediction = json.load(f)
+        logger.warning(f"{prediction=}")
         with open(ground_truth_file) as f:
             ground_truth = json.load(f)
         if cutoff is not None:
@@ -239,6 +243,7 @@ class TableEvalProcessor:
         predicted_table_data = extract_and_convert_tables_from_prediction(
             file_elements=self.prediction, source_type=self.source_type
         )
+        logger.warning(f"{predicted_table_data=}")
         is_table_in_gt = bool(ground_truth_table_data)
         is_table_predicted = bool(predicted_table_data)
         if not is_table_in_gt:

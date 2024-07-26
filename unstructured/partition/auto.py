@@ -458,6 +458,11 @@ def partition(
         else:
             element.metadata.filetype = file_type.mime_type
 
+    logger.warning(f"Partitioning output for {filename} - (tables)")
+    for element in elements:
+        if element.category == 'Table':
+            logger.warning(f"{element.text=}")
+
     return elements
 
 

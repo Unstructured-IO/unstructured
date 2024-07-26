@@ -798,6 +798,10 @@ def _partition_pdf_or_image_local(
             json_layout_dumper.add_layout_dumper(od_model_layout_dumper)
         json_layout_dumper.process()
 
+    for element in out_elements:
+        if element.category == 'Table':
+            logger.warning(f"{element.text=}")
+
     return out_elements
 
 
