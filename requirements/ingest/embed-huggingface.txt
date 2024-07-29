@@ -110,7 +110,9 @@ sentence-transformers==3.0.1
 sympy==1.13.1
     # via torch
 tenacity==8.5.0
-    # via langchain-core
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   langchain-core
 threadpoolctl==3.5.0
     # via scikit-learn
 tokenizers==0.19.1

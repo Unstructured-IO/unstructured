@@ -212,6 +212,7 @@ sqlalchemy==2.0.31
     #   langchain-community
 tenacity==8.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core

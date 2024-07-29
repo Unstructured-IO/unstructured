@@ -240,8 +240,10 @@ starlette==0.37.2
     # via fastapi
 sympy==1.13.1
     # via onnxruntime
-tenacity==9.0.0
-    # via chromadb
+tenacity==8.5.0
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   chromadb
 tokenizers==0.19.1
     # via chromadb
 tomli==2.0.1
