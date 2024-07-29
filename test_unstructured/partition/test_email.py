@@ -76,7 +76,7 @@ RECEIVED_HEADER_OUTPUT = [
     ),
     MetaData(name="MIME-Version", text="1.0"),
     MetaData(name="Date", text="Fri, 16 Dec 2022 17:04:16 -0500"),
-    MetaData(name="Bcc", text="Hello <hello@unstructured.io>"),
+    Recipient(name="Hello", text="hello@unstructured.io"),
     MetaData(
         name="Message-ID",
         text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
@@ -84,7 +84,7 @@ RECEIVED_HEADER_OUTPUT = [
     Subject(text="Test Email"),
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
-    MetaData(name="Cc", text="John Jennings <john-ctr@unstructured.io>"),
+    Recipient(name="John Jennings", text="john-ctr@unstructured.io"),
     MetaData(
         name="Content-Type",
         text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
@@ -348,8 +348,14 @@ def test_partition_email_processes_fake_email_with_header():
     elements = partition_email(filename=example_doc_path("eml/fake-email-header.eml"))
 
     assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename == "fake-email-header.eml"
+    assert all(element.metadata.filename == "fake-email-header.eml" for element in elements)
+    assert all(
+        element.metadata.bcc_recipient == ["Hello <hello@unstructured.io>"] for element in elements
+    )
+    assert all(
+        element.metadata.cc_recipient == ["John Jennings <john-ctr@unstructured.io>"]
+        for element in elements
+    )
 
 
 @pytest.mark.parametrize(

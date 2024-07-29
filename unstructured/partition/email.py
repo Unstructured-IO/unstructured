@@ -83,6 +83,21 @@ def _parse_received_data(data: str) -> list[Element]:
 
 
 def _parse_email_address(data: str) -> tuple[str, str]:
+    """Extract and return the name and email address from the given email header.
+
+    This function assumes that the email address is enclosed in angle brackets and follows
+    the format specified by the PATTERN regex.
+
+    Parameters:
+    data: The email header string containing the name and email address.
+
+    Returns:
+    tuple: A tuple containing the name (str) and the email address (str).
+
+    Example:
+    >>> _parse_email_address("John Doe <john.doe@example.com>")
+    ('John Doe', 'john.doe@example.com')
+    """
     email_address = extract_email_address(data)
 
     PATTERN = r"<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
@@ -94,7 +109,7 @@ def _parse_email_address(data: str) -> tuple[str, str]:
 def partition_email_header(msg: Message) -> list[Element]:
     elements: list[Element] = []
     for item in msg.raw_items():
-        if item[0] == "To":
+        if item[0] == "To" or item[0] == "Bcc" or item[0] == "Cc":
             text = _parse_email_address(item[1])
             elements.append(Recipient(name=text[0], text=text[1]))
         elif item[0] == "From":
@@ -132,21 +147,25 @@ def build_email_metadata(
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     signature = find_signature(msg)
-
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
+
+    def parse_recipients(header_value: Optional[str]) -> Optional[list[str]]:
+        if header_value is not None:
+            return [recipient.strip() for recipient in header_value.split(",")]
+        return None
+
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)
 
-    sent_from = header_dict.get("From")
-    if sent_from is not None:
-        sent_from = [sender.strip() for sender in sent_from.split(",")]
-
-    sent_to = header_dict.get("To")
-    if sent_to is not None:
-        sent_to = [recipient.strip() for recipient in sent_to.split(",")]
+    sent_from = parse_recipients(header_dict.get("From"))
+    sent_to = parse_recipients(header_dict.get("To"))
+    bcc_recipient = parse_recipients(header_dict.get("Bcc"))
+    cc_recipient = parse_recipients(header_dict.get("Cc"))
 
     element_metadata = ElementMetadata(
+        bcc_recipient=bcc_recipient,
+        cc_recipient=cc_recipient,
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),

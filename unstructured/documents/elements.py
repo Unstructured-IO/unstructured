@@ -206,6 +206,8 @@ class ElementMetadata:
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
 
     # -- e-mail specific metadata fields --
+    bcc_recipient: Optional[list[str]]
+    cc_recipient: Optional[list[str]]
     sent_from: Optional[list[str]]
     sent_to: Optional[list[str]]
     subject: Optional[str]
@@ -224,7 +226,9 @@ class ElementMetadata:
     def __init__(
         self,
         attached_to_filename: Optional[str] = None,
+        bcc_recipient: Optional[list[str]] = None,
         category_depth: Optional[int] = None,
+        cc_recipient: Optional[list[str]] = None,
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
@@ -258,7 +262,9 @@ class ElementMetadata:
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
+        self.bcc_recipient = bcc_recipient
         self.category_depth = category_depth
+        self.cc_recipient = cc_recipient
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
@@ -481,6 +487,8 @@ class ConsolidationStrategy(enum.Enum):
         """
         return {
             "attached_to_filename": cls.FIRST,
+            "cc_recipient": cls.FIRST,
+            "bcc_recipient": cls.FIRST,
             "category_depth": cls.DROP,
             "coordinates": cls.DROP,
             "data_source": cls.FIRST,
