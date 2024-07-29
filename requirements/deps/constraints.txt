@@ -65,3 +65,7 @@ importlib-metadata==7.1.0
 # NOTE(robinson) - due to failure in this job
 # https://github.com/Unstructured-IO/unstructured/actions/runs/10044201938/job/27762303563?pr=3427
 cryptography<43.0.0
+
+# NOTE(robinson) - due to failure on this job
+# https://github.com/Unstructured-IO/unstructured/actions/runs/10146450049/job/28054516205?pr=3442
+tenacity<9.0.0

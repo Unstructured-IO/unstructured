@@ -66,7 +66,7 @@ grpcio==1.65.1
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.24.1
+huggingface-hub==0.24.3
     # via
     #   timm
     #   tokenizers
@@ -166,7 +166,7 @@ pillow==10.4.0
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.17.0
+pillow-heif==0.18.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.1
     # via iopath
@@ -224,11 +224,11 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.4
+rapidfuzz==3.9.5
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./base.txt
     #   transformers
@@ -256,20 +256,20 @@ sympy==1.13.1
     # via
     #   onnxruntime
     #   torch
-timm==1.0.7
+timm==1.0.8
     # via
     #   effdet
     #   unstructured-inference
 tokenizers==0.19.1
     # via transformers
-torch==2.3.1
+torch==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.18.1
+torchvision==0.19.0
     # via
     #   effdet
     #   timm
@@ -279,7 +279,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.43.1
+transformers==4.43.3
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

@@ -47,13 +47,13 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.37.0
+openai==1.37.1
     # via -r ./ingest/embed-octoai.in
 pydantic==2.8.2
     # via openai
 pydantic-core==2.20.1
     # via pydantic
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken

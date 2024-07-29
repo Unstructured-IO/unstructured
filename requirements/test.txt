@@ -110,7 +110,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.3.1
+pytest==8.3.2
     # via
     #   pytest-cov
     #   pytest-mock
@@ -132,7 +132,7 @@ requests==2.32.3
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-rpds-py==0.19.0
+rpds-py==0.19.1
     # via
     #   jsonschema
     #   referencing

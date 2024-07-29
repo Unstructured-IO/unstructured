@@ -34,7 +34,7 @@ pyjwt==2.8.0
     # via singlestoredb
 pyproject-hooks==1.1.0
     # via build
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   parsimonious
