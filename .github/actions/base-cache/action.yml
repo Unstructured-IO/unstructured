@@ -35,7 +35,7 @@ runs:
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
           python -m ensurepip --upgrade
-          python -m pip install --upgrade setuptools
+          python -m pip install --no-build-isolation "setuptools<72.0.0"
         fi
         make install-ci
     - name: Save Cache
