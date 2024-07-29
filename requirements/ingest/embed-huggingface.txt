@@ -25,7 +25,7 @@ fsspec==2024.5.0
     #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.1
+huggingface-hub==0.24.3
     # via
     #   langchain-huggingface
     #   sentence-transformers
@@ -45,7 +45,7 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.23
+langchain-core==0.2.24
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
@@ -86,7 +86,7 @@ pyyaml==6.0.1
     #   huggingface-hub
     #   langchain-core
     #   transformers
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   transformers
@@ -117,7 +117,7 @@ tokenizers==0.19.1
     # via
     #   langchain-huggingface
     #   transformers
-torch==2.3.1
+torch==2.4.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   sentence-transformers
@@ -127,7 +127,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.43.1
+transformers==4.43.3
     # via
     #   langchain-huggingface
     #   sentence-transformers

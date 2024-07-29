@@ -51,13 +51,13 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.23
+langchain-core==0.2.24
     # via langchain-openai
-langchain-openai==0.1.17
+langchain-openai==0.1.19
     # via -r ./ingest/embed-openai.in
 langsmith==0.1.93
     # via langchain-core
-openai==1.37.0
+openai==1.37.1
     # via langchain-openai
 orjson==3.10.6
     # via langsmith
@@ -75,7 +75,7 @@ pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via langchain-core
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken

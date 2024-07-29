@@ -27,7 +27,7 @@ fsspec==2024.5.0
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.1
+huggingface-hub==0.24.3
     # via
     #   tokenizers
     #   transformers
@@ -65,7 +65,7 @@ pyyaml==6.0.1
     # via
     #   huggingface-hub
     #   transformers
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -89,7 +89,7 @@ sympy==1.13.1
     # via torch
 tokenizers==0.19.1
     # via transformers
-torch==2.3.1
+torch==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./huggingface.in
@@ -99,7 +99,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.43.1
+transformers==4.43.3
     # via -r ./huggingface.in
 typing-extensions==4.12.2
     # via

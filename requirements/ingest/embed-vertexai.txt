@@ -54,7 +54,7 @@ google-auth==2.32.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.59.0
+google-cloud-aiplatform==1.60.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -108,7 +108,7 @@ langchain-community==0.2.10
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.23
+langchain-core==0.2.24
     # via
     #   langchain
     #   langchain-community

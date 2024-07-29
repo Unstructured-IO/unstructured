@@ -118,7 +118,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.1
     # via unstructured-paddleocr
-rapidfuzz==3.9.4
+rapidfuzz==3.9.5
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -146,7 +146,7 @@ six==1.16.0
     #   attrdict
     #   imgaug
     #   python-dateutil
-tifffile==2024.7.21
+tifffile==2024.7.24
     # via scikit-image
 tqdm==4.66.4
     # via

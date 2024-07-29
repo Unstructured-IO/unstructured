@@ -93,7 +93,7 @@ urllib3==1.26.19
     #   requests
 validators==0.33.0
     # via weaviate-client
-weaviate-client==4.6.7
+weaviate-client==4.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in

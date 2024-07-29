@@ -52,6 +52,7 @@ deprecated==1.2.14
     # via
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
+    #   opentelemetry-semantic-conventions
 exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
@@ -89,7 +90,7 @@ httpx==0.27.0
     # via
     #   -c ./ingest/../base.txt
     #   chromadb
-huggingface-hub==0.24.1
+huggingface-hub==0.24.3
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -127,7 +128,7 @@ oauthlib==3.2.2
     #   requests-oauthlib
 onnxruntime==1.18.1
     # via chromadb
-opentelemetry-api==1.25.0
+opentelemetry-api==1.26.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -136,32 +137,32 @@ opentelemetry-api==1.25.0
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-exporter-otlp-proto-common==1.25.0
+opentelemetry-exporter-otlp-proto-common==1.26.0
     # via opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-exporter-otlp-proto-grpc==1.25.0
+opentelemetry-exporter-otlp-proto-grpc==1.26.0
     # via chromadb
-opentelemetry-instrumentation==0.46b0
+opentelemetry-instrumentation==0.47b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-asgi==0.46b0
+opentelemetry-instrumentation-asgi==0.47b0
     # via opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-fastapi==0.46b0
+opentelemetry-instrumentation-fastapi==0.47b0
     # via chromadb
-opentelemetry-proto==1.25.0
+opentelemetry-proto==1.26.0
     # via
     #   opentelemetry-exporter-otlp-proto-common
     #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-sdk==1.25.0
+opentelemetry-sdk==1.26.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-semantic-conventions==0.46b0
+opentelemetry-semantic-conventions==0.47b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-sdk
-opentelemetry-util-http==0.46b0
+opentelemetry-util-http==0.47b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
@@ -239,7 +240,7 @@ starlette==0.37.2
     # via fastapi
 sympy==1.13.1
     # via onnxruntime
-tenacity==8.5.0
+tenacity==9.0.0
     # via chromadb
 tokenizers==0.19.1
     # via chromadb
