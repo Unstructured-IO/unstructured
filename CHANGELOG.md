@@ -1,10 +1,12 @@
-## 0.15.1-dev6
+## 0.15.1-dev7
 
 ### Enhancements
 
 ### Features
 
 * **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
+
+* **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
 
 ### Fixes
 
