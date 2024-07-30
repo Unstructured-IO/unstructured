@@ -34,6 +34,7 @@ def process_file_with_pdfminer(
 
 
 def extract_text_recursively(item: LTItem) -> str:
+    """Recursively extracts text from a pdfminer layout object"""
     if hasattr(item, "get_text"):
         return item.get_text()
 
