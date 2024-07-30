@@ -4,6 +4,7 @@
     "element_id": "6f168cd430b41fc0d66a3691ef3caa0f",
     "text": "Hey Sean. Testing email parsing here. Type: email Just testing the email system _____________________________________________________________________ Powered by Salesforce http://www.salesforce.com/",
     "metadata": {
+      "message_id": "<CuWky000000000000000000000000000000000000000000000RZP1VO00MaLK8OmEQm2Bw-c3ek6uNg@sfdc.net>",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
       ],

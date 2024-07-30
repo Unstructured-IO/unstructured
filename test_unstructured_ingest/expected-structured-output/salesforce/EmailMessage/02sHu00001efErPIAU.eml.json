@@ -4,6 +4,7 @@
     "element_id": "4196fe41da19e8657761ecffcafd3d2f",
     "text": "Jane. This is a test of sending you an email from Salesforce! _____________________________________________________________________ Powered by Salesforce http://www.salesforce.com/",
     "metadata": {
+      "message_id": "<KhIK4000000000000000000000000000000000000000000000RZP1T400CmuP1P5wTm2m679gi-mnIg@sfdc.net>",
       "sent_from": [
         "devops+salesforce-connector@unstructured.io"
       ],
