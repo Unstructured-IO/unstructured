@@ -379,6 +379,13 @@ class DescribeMsgPartitionerOptions:
         assert opts.msg_metadata.sent_to == ["mrobinson@unstructured.io"]
         assert opts.msg_metadata.subject == "Test Email"
 
+    def it_captures_cc_and_bcc_element_metadata(self, opts_args: dict[str, Any]):
+        opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        assert opts.msg_metadata.cc_recipient == ["steve@unstructured.io"]
+        assert opts.msg_metadata.bcc_recipient == ["hello@unstructured.io"]
+
     # -- .partition_attachments ------------------
 
     @pytest.mark.parametrize("partition_attachments", [True, False])

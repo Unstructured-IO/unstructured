@@ -188,6 +188,12 @@ class MsgPartitionerOptions:
         email_date = sent_date.isoformat() if (sent_date := msg.sent_date) else None
         sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
         sent_to = [r.email_address for r in msg.recipients] or None
+        bcc_recipient = (
+            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
+        )
+        cc_recipient = (
+            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
+        )
 
         element_metadata = ElementMetadata(
             filename=self.metadata_file_path,
@@ -195,6 +201,8 @@ class MsgPartitionerOptions:
             sent_from=sent_from,
             sent_to=sent_to,
             subject=msg.subject or None,
+            bcc_recipient=bcc_recipient,
+            cc_recipient=cc_recipient,
         )
         element_metadata.detection_origin = "msg"
 
