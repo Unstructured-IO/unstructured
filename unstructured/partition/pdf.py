@@ -531,7 +531,9 @@ def check_pdf_hi_res_max_pages_exceeded(
     if pdf_hi_res_max_pages:
         document_pages = _get_pdf_page_number(filename=filename, file=file)
         if document_pages > pdf_hi_res_max_pages:
-            raise PageCountExceededError(document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages)
+            raise PageCountExceededError(
+                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            )
 
 
 @requires_dependencies("unstructured_inference")
@@ -573,7 +575,9 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    check_pdf_hi_res_max_pages_exceeded(filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages)
+    check_pdf_hi_res_max_pages_exceeded(
+        filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+    )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
