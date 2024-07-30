@@ -385,6 +385,17 @@ class DescribeMsgPartitionerOptions:
 
         assert opts.msg_metadata.cc_recipient == ["steve@unstructured.io"]
         assert opts.msg_metadata.bcc_recipient == ["hello@unstructured.io"]
+        assert opts.msg_metadata.sent_to == [
+            "john-ctr@unstructured.io",
+            "steve@unstructured.io",
+            "hello@unstructured.io",
+        ]
+
+    def it_captures_message_id_element_metadata(self, opts_args: dict[str, Any]):
+        opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
+        opts = MsgPartitionerOptions(**opts_args)
+
+        assert opts.msg_metadata.message_id is not None
 
     # -- .partition_attachments ------------------
 

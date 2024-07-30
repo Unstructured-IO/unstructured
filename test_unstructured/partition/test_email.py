@@ -356,6 +356,7 @@ def test_partition_email_processes_fake_email_with_header():
         element.metadata.cc_recipient == ["John Jennings <john-ctr@unstructured.io>"]
         for element in elements
     )
+    assert all(element.metadata.message_id is not None for element in elements)
 
 
 @pytest.mark.parametrize(

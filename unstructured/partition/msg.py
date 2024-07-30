@@ -194,6 +194,7 @@ class MsgPartitionerOptions:
         cc_recipient = (
             [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
         )
+        message_id = msg.message_headers.get("Message-Id")
 
         element_metadata = ElementMetadata(
             filename=self.metadata_file_path,
@@ -203,6 +204,7 @@ class MsgPartitionerOptions:
             subject=msg.subject or None,
             bcc_recipient=bcc_recipient,
             cc_recipient=cc_recipient,
+            message_id=message_id,
         )
         element_metadata.detection_origin = "msg"
 
