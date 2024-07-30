@@ -79,7 +79,7 @@ RECEIVED_HEADER_OUTPUT = [
     Recipient(name="Hello", text="hello@unstructured.io"),
     MetaData(
         name="Message-ID",
-        text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
+        text="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
     ),
     Subject(text="Test Email"),
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
@@ -96,7 +96,7 @@ HEADER_EXPECTED_OUTPUT = [
     MetaData(name="Date", text="Fri, 16 Dec 2022 17:04:16 -0500"),
     MetaData(
         name="Message-ID",
-        text="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
+        text="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
     ),
     Subject(text="Test Email"),
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
@@ -472,7 +472,7 @@ def test_partition_email_from_filename_has_metadata():
             filetype="message/rfc822",
             parent_id=parent_id,
             languages=["eng"],
-            message_id="<CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com>",
+            message_id="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")

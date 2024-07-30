@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import re
 import tempfile
 from typing import IO, Any, Iterator, Optional
 
@@ -194,7 +195,8 @@ class MsgPartitionerOptions:
         cc_recipient = (
             [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
         )
-        message_id = msg.message_headers.get("Message-Id")
+        if message_id := msg.message_headers.get("Message-Id"):
+            message_id = re.sub(r"^<|>$", "", message_id)  # Strip angle brackets
 
         element_metadata = ElementMetadata(
             filename=self.metadata_file_path,

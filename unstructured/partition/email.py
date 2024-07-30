@@ -106,6 +106,23 @@ def _parse_email_address(data: str) -> tuple[str, str]:
     return name, email_address[0]
 
 
+def _strip_angle_brackets(data: str) -> str:
+    """Remove angle brackets from the beginning and end of the string if they exist.
+
+    Returns:
+    str: The string with surrounding angle brackets removed.
+
+    Example:
+    >>> _strip_angle_brackets("<example>")
+    'example'
+    >>> _strip_angle_brackets("<another>test>")
+    'another>test'
+    >>> _strip_angle_brackets("<<edge>>")
+    '<edge>'
+    """
+    return re.sub(r"^<|>$", "", data)
+
+
 def partition_email_header(msg: Message) -> list[Element]:
     elements: list[Element] = []
     for item in msg.raw_items():
@@ -119,6 +136,8 @@ def partition_email_header(msg: Message) -> list[Element]:
             elements.append(Subject(text=item[1]))
         elif item[0] == "Received":
             elements += _parse_received_data(item[1])
+        elif item[0] == "Message-ID":
+            elements.append(MetaData(name=item[0], text=_strip_angle_brackets(item[1])))
         else:
             elements.append(MetaData(name=item[0], text=item[1]))
 
@@ -163,6 +182,8 @@ def build_email_metadata(
     bcc_recipient = parse_recipients(header_dict.get("Bcc"))
     cc_recipient = parse_recipients(header_dict.get("Cc"))
     message_id = header_dict.get("Message-ID")
+    if message_id:
+        message_id = _strip_angle_brackets(message_id)
 
     element_metadata = ElementMetadata(
         bcc_recipient=bcc_recipient,
