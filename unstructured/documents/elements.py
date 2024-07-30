@@ -208,7 +208,7 @@ class ElementMetadata:
     # -- e-mail specific metadata fields --
     bcc_recipient: Optional[list[str]]
     cc_recipient: Optional[list[str]]
-    message_id: Optional[str]
+    email_message_id: Optional[str]
     sent_from: Optional[list[str]]
     sent_to: Optional[list[str]]
     subject: Optional[str]
@@ -249,7 +249,7 @@ class ElementMetadata:
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
         links: Optional[list[Link]] = None,
-        message_id: Optional[str] = None,
+        email_message_id: Optional[str] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
@@ -294,7 +294,7 @@ class ElementMetadata:
         self.link_urls = link_urls
         self.link_start_indexes = link_start_indexes
         self.links = links
-        self.message_id = message_id
+        self.email_message_id = email_message_id
         self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
@@ -513,7 +513,7 @@ class ConsolidationStrategy(enum.Enum):
             "link_urls": cls.LIST_CONCATENATE,
             "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
-            "message_id": cls.FIRST,
+            "email_message_id": cls.FIRST,
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,

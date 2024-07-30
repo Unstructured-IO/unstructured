@@ -350,7 +350,7 @@ def test_partition_email_processes_fake_email_with_header():
         element.metadata.cc_recipient == ["John Jennings <john-ctr@unstructured.io>"]
         for element in elements
     )
-    assert all(element.metadata.message_id is not None for element in elements)
+    assert all(element.metadata.email_message_id is not None for element in elements)
 
 
 @pytest.mark.parametrize(
@@ -472,7 +472,7 @@ def test_partition_email_from_filename_has_metadata():
             filetype="message/rfc822",
             parent_id=parent_id,
             languages=["eng"],
-            message_id="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
+            email_message_id="CADc-_xaLB2FeVQ7mNsoX+NJb_7hAJhBKa_zet-rtgPGenj0uVw@mail.gmail.com",
         ).to_dict()
     )
     expected_dt = datetime.datetime.fromisoformat("2022-12-16T17:04:16-05:00")

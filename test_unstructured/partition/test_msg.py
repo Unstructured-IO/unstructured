@@ -391,11 +391,13 @@ class DescribeMsgPartitionerOptions:
             "hello@unstructured.io",
         ]
 
-    def it_captures_message_id_element_metadata(self, opts_args: dict[str, Any]):
+    def it_captures_email_message_id_element_metadata(self, opts_args: dict[str, Any]):
         opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
         opts = MsgPartitionerOptions(**opts_args)
 
-        assert opts.msg_metadata.message_id == "14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com"
+        assert (
+            opts.msg_metadata.email_message_id == "14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com"
+        )
 
     # -- .partition_attachments ------------------
 

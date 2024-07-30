@@ -181,14 +181,14 @@ def build_email_metadata(
     sent_to = parse_recipients(header_dict.get("To"))
     bcc_recipient = parse_recipients(header_dict.get("Bcc"))
     cc_recipient = parse_recipients(header_dict.get("Cc"))
-    message_id = header_dict.get("Message-ID")
-    if message_id:
-        message_id = _strip_angle_brackets(message_id)
+    email_message_id = header_dict.get("Message-ID")
+    if email_message_id:
+        email_message_id = _strip_angle_brackets(email_message_id)
 
     element_metadata = ElementMetadata(
         bcc_recipient=bcc_recipient,
         cc_recipient=cc_recipient,
-        message_id=message_id,
+        email_message_id=email_message_id,
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
