@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
+from pdfminer.layout import LTContainer, LTItem
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
@@ -32,6 +33,19 @@ def process_file_with_pdfminer(
         return extracted_layout
 
 
+def extract_text_recursively(item: LTItem) -> str:
+    if hasattr(item, "get_text"):
+        return item.get_text()
+
+    elif isinstance(item, LTContainer):
+        text = ""
+        for child in item:
+            text += extract_text_recursively(child)
+        return text
+
+    return ""
+
+
 @requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -61,10 +75,10 @@ def process_data_with_pdfminer(
             else:
                 embedded_images = get_images_from_pdf_element(obj)
                 if len(embedded_images) > 0:
-                    _text = None
                     element_class = ImageTextRegion  # type: ignore
                 else:
                     continue
+                _text = extract_text_recursively(obj)
 
             text_region = element_class.from_coords(
                 x1 * coef,
