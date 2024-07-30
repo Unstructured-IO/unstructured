@@ -10,7 +10,7 @@ def get_client(token, api_endpoint, collection_name) -> AstraDB:
     return astra_db, astra_db_collection
 
 
-@click.group(name="astra-ingest")
+@click.group(name="astradb-ingest")
 @click.option("--token", type=str)
 @click.option("--api-endpoint", type=str)
 @click.option("--collection-name", type=str, default="collection_test")

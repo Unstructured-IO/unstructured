@@ -129,7 +129,7 @@ setup(
         "xlsx": xlsx_reqs,
         # Extra requirements for data connectors
         "airtable": load_requirements("requirements/ingest/airtable.in"),
-        "astra": load_requirements("requirements/ingest/astra.in"),
+        "astradb": load_requirements("requirements/ingest/astradb.in"),
         "azure": load_requirements("requirements/ingest/azure.in"),
         "azure-cognitive-search": load_requirements(
             "requirements/ingest/azure-cognitive-search.in",
