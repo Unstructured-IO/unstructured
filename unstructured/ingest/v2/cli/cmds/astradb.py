@@ -5,7 +5,7 @@ import click
 from unstructured.ingest.v2.cli.base import DestCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import Dict
-from unstructured.ingest.v2.processes.connectors.astra import CONNECTOR_TYPE
+from unstructured.ingest.v2.processes.connectors.astradb import CONNECTOR_TYPE
 
 
 @dataclass
