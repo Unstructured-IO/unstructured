@@ -522,16 +522,16 @@ def _get_pdf_page_number(
     return number_of_pages
 
 
-def check_max_pages_exceeded(
+def check_pdf_hi_res_max_pages_exceeded(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
-    max_pages: int = None,
+    pdf_hi_res_max_pages: int = None,
 ) -> None:
-    """Checks whether PDF exceeds max_pages limit."""
-    if max_pages:
+    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
+    if pdf_hi_res_max_pages:
         document_pages = _get_pdf_page_number(filename=filename, file=file)
-        if document_pages > max_pages:
-            raise PageCountExceededError(document_pages=document_pages, max_pages=max_pages)
+        if document_pages > pdf_hi_res_max_pages:
+            raise PageCountExceededError(document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages)
 
 
 @requires_dependencies("unstructured_inference")
@@ -558,7 +558,7 @@ def _partition_pdf_or_image_local(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
-    max_pages: Optional[int] = None,
+    pdf_hi_res_max_pages: Optional[int] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -573,7 +573,7 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    check_max_pages_exceeded(filename=filename, file=file, max_pages=max_pages)
+    check_pdf_hi_res_max_pages_exceeded(filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages)
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:

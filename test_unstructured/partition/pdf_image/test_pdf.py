@@ -1366,7 +1366,7 @@ def test_analysis_artifacts_saved():
 
 
 @pytest.mark.parametrize(
-    ("filename", "max_pages", "expected_error"),
+    ("filename", "pdf_hi_res_max_pages", "expected_error"),
     [
         ("pdf/layout-parser-paper-with-empty-pages.pdf", None, False),
         ("pdf/layout-parser-paper-with-empty-pages.pdf", 3, True),
@@ -1374,12 +1374,12 @@ def test_analysis_artifacts_saved():
         ("pdf/reliance.pdf", 2, True),
     ],
 )
-def test_max_pages_argument(filename, max_pages, expected_error):
+def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_error):
     if not expected_error:
         pdf.partition_pdf_or_image(
             filename=example_doc_path(filename),
             strategy=PartitionStrategy.HI_RES,
-            max_pages=max_pages,
+            pdf_hi_res_max_pages=pdf_hi_res_max_pages,
         )
 
     else:
@@ -1387,5 +1387,5 @@ def test_max_pages_argument(filename, max_pages, expected_error):
             pdf.partition_pdf_or_image(
                 filename=example_doc_path(filename),
                 strategy=PartitionStrategy.HI_RES,
-                max_pages=max_pages,
+                pdf_hi_res_max_pages=pdf_hi_res_max_pages,
             )
