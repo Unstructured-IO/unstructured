@@ -395,7 +395,7 @@ class DescribeMsgPartitionerOptions:
         opts_args["file_path"] = example_doc_path("fake-email-with-cc-and-bcc.msg")
         opts = MsgPartitionerOptions(**opts_args)
 
-        assert opts.msg_metadata.message_id is not None
+        assert opts.msg_metadata.message_id == "<14DDEF33-2BA7-4CDD-A4D8-E7C5873B37F2@gmail.com>"
 
     # -- .partition_attachments ------------------
 
