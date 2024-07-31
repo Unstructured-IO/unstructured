@@ -5,7 +5,9 @@ from __future__ import annotations
 import html
 import io
 import itertools
+import os
 import tempfile
+import zipfile
 from typing import IO, Any, Iterator, Optional, Protocol, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
@@ -43,7 +45,8 @@ from unstructured.documents.elements import (
     Title,
     process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -155,7 +158,7 @@ def partition_docx(
         Assign this number to the first page of this document and increment the page number from
         there.
     """
-    opts = DocxPartitionerOptions(
+    opts = DocxPartitionerOptions.load(
         date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
@@ -213,6 +216,11 @@ class DocxPartitionerOptions:
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
+
+    @classmethod
+    def load(cls, **kwargs: Any) -> DocxPartitionerOptions:
+        """Construct and validate an instance."""
+        return cls(**kwargs)._validate()
 
     @classmethod
     def register_picture_partitioner(cls, picture_partitioner: PicturePartitionerT):
@@ -358,12 +366,26 @@ class DocxPartitionerOptions:
             self._file.seek(0)
             return io.BytesIO(self._file.read())
 
-        if self._file:
-            return self._file
+        assert self._file is not None  # -- assured by `._validate()` --
+        return self._file
 
-        raise ValueError(
-            "No DOCX document specified, either `filename` or `file` argument must be provided"
-        )
+    def _validate(self) -> DocxPartitionerOptions:
+        """Raise on first invalide option, return self otherwise."""
+        # -- provide distinguished error between "file-not-found" and "not-a-DOCX-file" --
+        if self._file_path:
+            if not os.path.isfile(self._file_path):
+                raise FileNotFoundError(f"no such file or directory: {repr(self._file_path)}")
+            if not zipfile.is_zipfile(self._file_path):
+                raise ValueError(f"not a ZIP archive (so not a DOCX file): {repr(self._file_path)}")
+        elif self._file:
+            if not zipfile.is_zipfile(self._file):
+                raise ValueError(f"not a ZIP archive (so not a DOCX file): {repr(self._file)}")
+        else:
+            raise ValueError(
+                "no DOCX document specified, either `filename` or `file` argument must be provided"
+            )
+
+        return self
 
 
 class _DocxPartitioner:

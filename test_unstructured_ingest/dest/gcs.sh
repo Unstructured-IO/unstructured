@@ -47,7 +47,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   gcs \
   --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \

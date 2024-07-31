@@ -25,7 +25,8 @@ from unstructured.documents.elements import (
     Title,
     process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -206,11 +207,7 @@ def partition_xlsx(
                     subtable_parser.iter_trailing_single_cell_rows_texts(),
                 ):
                     element = _create_element(str(content))
-                    r = (
-                        subtable_parser.top_left_coordinate[0]
-                        + row_index
-                        + include_header
-                    )
+                    r = subtable_parser.top_left_coordinate[0] + row_index + include_header
                     c: int = subtable_parser._subtable.iloc[row_index].notna().idxmax()
                     element.metadata = _get_metadata(
                         sheet_name,

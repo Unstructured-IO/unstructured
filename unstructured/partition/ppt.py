@@ -6,7 +6,8 @@ from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import (
     convert_office_doc,
     exactly_one,
@@ -14,6 +15,7 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.utils.constants import PartitionStrategy
 
 
 @process_metadata()
@@ -33,6 +35,7 @@ def partition_ppt(
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -113,6 +116,7 @@ def partition_ppt(
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             starting_page_number=starting_page_number,
+            strategy=strategy,
         )
 
     # remove tmp.name from filename if parsing file

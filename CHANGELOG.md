@@ -1,4 +1,95 @@
-## 0.14.7-dev6
+## 0.15.1-dev7
+
+### Enhancements
+
+### Features
+
+* **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
+
+* **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
+
+* **Add row-column coordinate to partition-xlsx** Adds row-column coordinate to the metadata of the elements returned when partitioning an Excel file. It both returns the coordinate as a python tuple (0-based), and in Excel format (e.g. "A1").
+
+### Fixes
+
+* **Update `HuggingFaceEmbeddingEncoder` to use `HuggingFaceEmbeddings` from `langchain_huggingface` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
+* **Update `OpenAIEmbeddingEncoder` to use `OpenAIEmbeddings` from `langchain-openai` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
+* **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
+* **File-type detection catches non-existent file-path.** `detect_filetype()` no longer silently falls back to detecting a file-type based on the extension when no file exists at the path provided. Instead `FileNotFoundError` is raised. This provides consistent user notification of a mis-typed path rather than an unpredictable exception from a file-type specific partitioner when the file cannot be opened.
+* **EML files specified as a file-path are detected correctly.** Resolved a bug where an EML file submitted to `partition()` as a file-path was identified as TXT and partitioned using `partition_text()`. EML files specified by path are now identified and processed correctly, including processing any attachments.
+* **A DOCX, PPTX, or XLSX file specified by path and ambiguously identified as MIME-type "application/octet-stream" is identified correctly.** Resolves a shortcoming where a file specified by path immediately fell back to filename-extension based identification when misidentified as "application/octet-stream", either by asserted content type or a mis-guess by libmagic. An MS Office file misidentified in this way is now correctly identified regardless of its filename and whether it is specified by path or file-like object.
+* **Textual content retrieved from a URL with gzip transport compression now partitions correctly.** Resolves a bug where a textual file-type (such as Markdown) retrieved by passing a URL to `partition()` would raise when `gzip` compression was used for transport by the server.
+* **A DOCX, PPTX, or XLSX content-type asserted on partition is confirmed or fixed.** Resolves a bug where calling `partition()` with a swapped MS-Office `content_type` would cause the file-type to be misidentified. A DOCX, PPTX, or XLSX MIME-type received by `partition()` is now checked for accuracy and corrected if the file is for a different MS-Office 2007+ type.
+* **DOC, PPT, XLS, and MSG files are now auto-detected correctly.** Resolves a bug where DOC, PPT, and XLS files were auto-detected as MSG files under certain circumstances.
+
+## 0.15.0
+
+### Enhancements
+
+* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.
+* **Bump unstructured.paddleocr to 2.8.0.1.**
+* **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
+* **Install rewritten HTML parser to fix 12 existing bugs and provide headroom for refinement and growth.** A rewritten HTML parser resolves a collection of outstanding bugs with HTML partitioning and provides a firm foundation for further elaborating that important partitioner.
+* **CI check for dependency licenses** Adds a CI check to ensure dependencies are appropriately licensed.
+
+### Features
+
+* **Add support for specifying OCR language to `partition_pdf()`.** Extend language specification capability to `PaddleOCR` in addition to `TesseractOCR`. Users can now specify OCR languages for both OCR engines when using `partition_pdf()`.
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
+
+### Fixes
+
+* **Remedy error on Windows when `nltk` binaries are downloaded.** Work around a quirk in the Windows implementation of `tempfile.NamedTemporaryFile` where accessing the temporary file by name raises `PermissionError`.
+* **Move Astra embedded_dimension to write config**
+
+## 0.14.10
+
+### Enhancements
+
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to greater than min version and updated tests that were failing given the update.
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* **Add table detection metrics: recall, precision and f1.**
+* **Remove unused _with_spans metrics.**
+
+### Features
+
+**Add Object Detection Metrics to CI** Add object detection metrics (average precision, precision, recall and f1-score) implementations.
+
+### Fixes
+
+* **Fix counting false negatives and false positives in table structure evaluation.**
+* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
+
+## 0.14.9
+
+### Enhancements
+
+* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used to visualize the result of the OD model and dump the result to a file. Additionally, the visualization of bounding boxes of each layout source is rendered and saved for each page.
+* **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
+
+### Features
+
+### Fixes
+
+* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
+
+## 0.14.8
+
+### Enhancements
+
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+* **Fix missing sensitive field markers** for embedders
+
+## 0.14.7
 
 ### Enhancements
 
@@ -8,9 +99,6 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
-* **Add row-column coordinate to partition-xlsx** Adds row-column coordinate to the metadata of the elements returned when partitioning an Excel file. It both returns the coordinate as a python tuple (and 0-based), and in Excel format (e.g. "A1").
-* **Change behaviour of `starting_page_number` in partition-xlsx** Makes this parameter skip any sheet before its value. Previously, it would name the first sheet as in this
-value. Now the first sheet is always sheet 1.
 
 ### Fixes
 

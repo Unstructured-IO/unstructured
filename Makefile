@@ -169,6 +169,10 @@ install-ingest-reddit:
 install-ingest-slack:
 	pip install -r requirements/ingest/slack.txt
 
+.PHONY: install-ingest-kafka
+install-ingest-kafka:
+	python3 -m pip install -r requirements/ingest/kafka.txt
+
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest/wikipedia.txt
@@ -192,6 +196,10 @@ install-ingest-airtable:
 .PHONY: install-ingest-sharepoint
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest/sharepoint.txt
+
+.PHONY: install-ingest-singlestore
+install-ingest-singlestore:
+	python3 -m pip install -r requirements/ingest/singlestore.txt
 
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
@@ -317,7 +325,7 @@ test-no-extras:
 		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
-		test_${PACKAGE_NAME}/partition/test_html.py \
+		test_${PACKAGE_NAME}/partition/html/test_partition.py \
 		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
@@ -386,6 +394,10 @@ check-black:
 .PHONY: check-flake8
 check-flake8:
 	flake8 .
+
+.PHONY: check-licenses
+check-licenses:
+	@scripts/check-licenses.sh
 
 # Check for print statements in ingest since anything going to console should be using the ingest logger
 # as it has a built in filter to redact sensitive information

@@ -2,22 +2,28 @@ from typing import List, Tuple
 from unittest.mock import patch
 
 import nltk
+import pytest
 
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
 from unstructured.nlp import tokenize
 
 
+def test_error_raised_on_nltk_download():
+    with pytest.raises(ValueError):
+        tokenize.nltk.download("tokenizers/punkt")
+
+
 def test_nltk_packages_download_if_not_present():
     with patch.object(nltk, "find", side_effect=LookupError):
-        with patch.object(nltk, "download") as mock_download:
-            tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
+        with patch.object(tokenize, "download_nltk_packages") as mock_download:
+            tokenize._download_nltk_packages_if_not_present()
 
-    mock_download.assert_called_with("fake_package")
+    mock_download.assert_called_once()
 
 
 def test_nltk_packages_do_not_download_if():
     with patch.object(nltk, "find"), patch.object(nltk, "download") as mock_download:
-        tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
+        tokenize._download_nltk_packages_if_not_present()
 
     mock_download.assert_not_called()
 

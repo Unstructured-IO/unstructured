@@ -25,48 +25,45 @@ class OCRAgent(ABC):
     """Defines the interface for an Optical Character Recognition (OCR) service."""
 
     @classmethod
-    def get_agent(cls) -> OCRAgent:
+    def get_agent(cls, language: str) -> OCRAgent:
         """Get the configured OCRAgent instance.
 
         The OCR package used by the agent is determined by the `OCR_AGENT` environment variable.
         """
         ocr_agent_cls_qname = cls._get_ocr_agent_cls_qname()
-        try:
-            return cls.get_instance(ocr_agent_cls_qname)
-        except (ImportError, AttributeError):
-            raise ValueError(
-                f"Environment variable OCR_AGENT must be set to an existing OCR agent module,"
-                f" not {ocr_agent_cls_qname}."
-            )
+        return cls.get_instance(ocr_agent_cls_qname, language)
 
     @staticmethod
     @functools.lru_cache(maxsize=None)
-    def get_instance(ocr_agent_module: str) -> "OCRAgent":
+    def get_instance(ocr_agent_module: str, language: str) -> "OCRAgent":
         module_name, class_name = ocr_agent_module.rsplit(".", 1)
-        if module_name in OCR_AGENT_MODULES_WHITELIST:
+        if module_name not in OCR_AGENT_MODULES_WHITELIST:
+            raise ValueError(
+                f"Environment variable OCR_AGENT module name {module_name} must be set to a "
+                f"whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}."
+            )
+
+        try:
             module = importlib.import_module(module_name)
             loaded_class = getattr(module, class_name)
-            return loaded_class()
-        else:
-            raise ValueError(
-                f"Environment variable OCR_AGENT module name {module_name}, must be set to a"
-                f" whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
+            return loaded_class(language)
+        except (ImportError, AttributeError) as e:
+            logger.error(f"Failed to get OCRAgent instance: {e}")
+            raise RuntimeError(
+                "Could not get the OCRAgent instance. Please check the OCR package and the "
+                "OCR_AGENT environment variable."
             )
 
     @abstractmethod
-    def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[LayoutElement]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
         pass
 
     @abstractmethod
-    def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
         pass
 
     @abstractmethod
-    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+    def get_text_from_image(self, image: PILImage.Image) -> str:
         pass
 
     @abstractmethod

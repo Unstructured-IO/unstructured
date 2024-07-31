@@ -19,6 +19,7 @@ export OMP_THREAD_LIMIT=1
 all_tests=(
   's3.sh'
   's3-minio.sh'
+  'astra.sh'
   'azure.sh'
   'biomed-api.sh'
   'biomed-path.sh'
@@ -33,9 +34,10 @@ all_tests=(
   'google-drive.sh'
   'wikipedia.sh'
   'local.sh'
-  'slack.sh'
+  # 'slack.sh'
   'against-api.sh'
   'gcs.sh'
+  'kafka-local.sh'
   'onedrive.sh'
   'outlook.sh'
   'elasticsearch.sh'
@@ -52,8 +54,8 @@ all_tests=(
   'notion.sh'
   'delta-table.sh'
   'jira.sh'
-  'sharepoint.sh'
-  'sharepoint-with-permissions.sh'
+  # 'sharepoint.sh'
+  # 'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
   'local-embed-bedrock.sh'
@@ -66,7 +68,7 @@ all_tests=(
 )
 
 full_python_matrix_tests=(
-  'sharepoint.sh'
+  #  'sharepoint.sh'
   'local.sh'
   'local-single-file.sh'
   'local-single-file-with-encoding.sh'

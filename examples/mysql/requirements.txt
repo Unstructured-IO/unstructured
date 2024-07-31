@@ -1,4 +1,0 @@
-unstructured[local-inference]
-pandas
-sqlalchemy
-jupyter

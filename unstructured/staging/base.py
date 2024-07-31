@@ -133,10 +133,12 @@ def elements_to_json(
     filename: Optional[str] = None,
     indent: int = 4,
     encoding: str = "utf-8",
-) -> Optional[str]:
-    """Saves a list of elements to a JSON file if filename is specified.
+) -> str:
+    """Serialize `elements` to a JSON array.
 
-    Otherwise, return the list of elements as a string.
+    Also writes the JSON to `filename` if it is provided, encoded using `encoding`.
+
+    The JSON is returned as a string.
     """
     # -- serialize `elements` as a JSON array (str) --
     precision_adjusted_elements = _fix_metadata_field_precision(elements)
@@ -146,7 +148,6 @@ def elements_to_json(
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
             f.write(json_str)
-        return None
 
     return json_str
 

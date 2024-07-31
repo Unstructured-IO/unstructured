@@ -12,7 +12,9 @@
       },
       "embeddings": {
          "type": "dense_vector",
-         "dims": 384
+         "dims": 384,
+         "index": "true",
+         "similarity": "cosine"
       },
       "metadata": {
          "type": "object",

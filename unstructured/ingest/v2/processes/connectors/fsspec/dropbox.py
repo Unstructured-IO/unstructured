@@ -9,8 +9,6 @@ from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, Upload
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
-    add_destination_entry,
-    add_source_entry,
 )
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
@@ -99,7 +97,8 @@ class DropboxUploaderConfig(FsspecUploaderConfig):
 
 
 @dataclass
-class DropboxUpload(FsspecUploader):
+class DropboxUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: DropboxConnectionConfig
     upload_config: DropboxUploaderConfig = field(default=None)
 
@@ -116,22 +115,16 @@ class DropboxUpload(FsspecUploader):
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
-add_source_entry(
-    source_type=CONNECTOR_TYPE,
-    entry=SourceRegistryEntry(
-        indexer=DropboxIndexer,
-        indexer_config=DropboxIndexerConfig,
-        downloader=DropboxDownloader,
-        downloader_config=DropboxDownloaderConfig,
-        connection_config=DropboxConnectionConfig,
-    ),
+dropbox_source_entry = SourceRegistryEntry(
+    indexer=DropboxIndexer,
+    indexer_config=DropboxIndexerConfig,
+    downloader=DropboxDownloader,
+    downloader_config=DropboxDownloaderConfig,
+    connection_config=DropboxConnectionConfig,
 )
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        uploader=DropboxUpload,
-        uploader_config=DropboxUploaderConfig,
-        connection_config=DropboxConnectionConfig,
-    ),
+dropbox_destination_entry = DestinationRegistryEntry(
+    uploader=DropboxUploader,
+    uploader_config=DropboxUploaderConfig,
+    connection_config=DropboxConnectionConfig,
 )

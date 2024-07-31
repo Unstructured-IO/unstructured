@@ -18,7 +18,7 @@ autoflake==2.3.1
     # via -r ./test.in
 black==24.4.2
     # via -r ./test.in
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -31,12 +31,14 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.5.3
+coverage[toml]==7.6.0
     # via
     #   -r ./test.in
     #   pytest-cov
-exceptiongroup==1.2.1
-    # via pytest
+exceptiongroup==1.2.2
+    # via
+    #   -c ./base.txt
+    #   pytest
 flake8==7.1.0
     # via
     #   -r ./test.in
@@ -45,7 +47,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.64.1
+grpcio==1.65.1
     # via -r ./test.in
 idna==3.7
     # via
@@ -54,7 +56,7 @@ idna==3.7
     #   yarl
 iniconfig==2.0.0
     # via pytest
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via label-studio-sdk
 jsonschema-specifications==2023.12.1
     # via jsonschema
@@ -62,6 +64,8 @@ label-studio-sdk==0.0.34
     # via -r ./test.in
 label-studio-tools==0.0.4
     # via label-studio-sdk
+liccheck==0.9.2
+    # via -r ./test.in
 lxml==5.2.2
     # via
     #   -c ./base.txt
@@ -71,7 +75,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.10.0
+mypy==1.11.0
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -96,17 +100,17 @@ pycodestyle==2.12.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.7.4
+pydantic==2.8.2
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.2.2
+pytest==8.3.1
     # via
     #   pytest-cov
     #   pytest-mock
@@ -128,16 +132,20 @@ requests==2.32.3
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-rpds-py==0.18.1
+rpds-py==0.19.0
     # via
     #   jsonschema
     #   referencing
-ruff==0.4.9
+ruff==0.4.10
     # via -r ./test.in
+semantic-version==2.10.0
+    # via liccheck
 six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
+toml==0.10.2
+    # via liccheck
 tomli==2.0.1
     # via
     #   autoflake
@@ -162,7 +170,7 @@ typing-extensions==4.12.2
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

@@ -204,3 +204,6 @@ examples/**/output/
 
 outputdiff.txt
 metricsdiff.txt
+
+# analysis
+annotated/

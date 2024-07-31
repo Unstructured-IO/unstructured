@@ -2,7 +2,6 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -76,12 +75,6 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         self.ext = Path(self.file_name).suffix
         if not self.ext:
             raise ValueError("Unsupported file without extension.")
-
-        if self.ext not in EXT_TO_FILETYPE:
-            raise ValueError(
-                f"Extension not supported. "
-                f"Value MUST be one of {', '.join([k for k in EXT_TO_FILETYPE if k is not None])}.",
-            )
 
         self.server_relative_path = self.file_path + "/" + self.file_name
         self._set_download_paths()

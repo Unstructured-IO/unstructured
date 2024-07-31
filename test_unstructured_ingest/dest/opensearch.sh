@@ -41,7 +41,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/fake-memo.pdf \
+  --input-path example-docs/pdf/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   --embedding-provider "langchain-huggingface" \
   opensearch \
@@ -51,6 +51,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --password "admin" \
   --use-ssl \
   --batch-size-bytes 150 \
-  --num-processes "$max_processes"
+  --num-threads "$max_processes"
 
 scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py

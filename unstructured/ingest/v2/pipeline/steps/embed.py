@@ -34,7 +34,7 @@ class EmbedStep(PipelineStep):
             if self.process.config
             else None
         )
-        logger.info(f"Starting {self.identifier} with configs: {config}")
+        logger.info(f"Created {self.identifier} with configs: {config}")
 
     def should_embed(self, filepath: Path, file_data: FileData) -> bool:
         if self.context.reprocess or file_data.reprocess:

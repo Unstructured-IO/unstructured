@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/sharepoint.in
 #
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -17,13 +17,14 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==42.0.8
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   msal
     #   pyjwt
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-msal==1.28.1
+msal==1.30.0
     # via
     #   -r ./ingest/sharepoint.in
     #   office365-rest-python-client
@@ -42,7 +43,7 @@ requests==2.32.3
     #   -c ./ingest/../base.txt
     #   msal
     #   office365-rest-python-client
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

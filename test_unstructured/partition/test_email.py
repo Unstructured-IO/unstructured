@@ -2,6 +2,7 @@ import datetime
 import email
 import os
 import pathlib
+import tempfile
 
 import pytest
 
@@ -228,6 +229,17 @@ def test_partition_email_from_file_rb_default_encoding(filename, expected_output
         assert elements == expected_output
     for element in elements:
         assert element.metadata.filename is None
+
+
+def test_partition_email_from_spooled_temp_file():
+    filename = example_doc_path("eml/family-day.eml")
+    with open(filename, "rb") as test_file:
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
+        spooled_temp_file.write(test_file.read())
+        spooled_temp_file.seek(0)
+        elements = partition_email(file=spooled_temp_file)
+        assert len(elements) == 9
+        assert elements[3].text == "Make sure to RSVP!"
 
 
 def test_partition_email_from_text_file():
@@ -650,7 +662,7 @@ def test_partition_eml_respects_detect_language_per_element():
     elements = partition_email(filename=filename, detect_language_per_element=True)
     # languages other than English and Spanish are detected by this partitioner,
     # so this test is slightly different from the other partition tests
-    langs = {element.metadata.languages[0] for element in elements}
+    langs = {e.metadata.languages[0] for e in elements if e.metadata.languages is not None}
     assert "eng" in langs
     assert "spa" in langs
 
