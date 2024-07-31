@@ -7,6 +7,9 @@ import email
 import os
 import pathlib
 import tempfile
+from email import policy
+from email.message import EmailMessage
+from typing import cast
 
 import pytest
 from pytest_mock import MockFixture
@@ -84,7 +87,8 @@ RECEIVED_HEADER_OUTPUT = [
     Subject(text="Test Email"),
     Sender(name="Matthew Robinson", text="mrobinson@unstructured.io"),
     Recipient(name="Matthew Robinson", text="mrobinson@unstructured.io"),
-    Recipient(name="John Jennings", text="john-ctr@unstructured.io"),
+    Recipient(name="Fake Email", text="fake-email@unstructured.io"),
+    Recipient(name="test", text="test@unstructured.io"),
     MetaData(
         name="Content-Type",
         text='multipart/alternative; boundary="00000000000095c9b205eff92630"',
@@ -305,8 +309,9 @@ def test_partition_email_from_filename_with_embedded_image():
 
 def test_partition_email_from_file_with_header():
     with open(example_doc_path("eml/fake-email-header.eml")) as f:
-        msg = email.message_from_file(f)
+        msg = email.message_from_file(f, policy=policy.default)
 
+    msg = cast(EmailMessage, msg)
     elements = partition_email_header(msg)
 
     assert len(elements) > 0
@@ -347,7 +352,8 @@ def test_partition_email_processes_fake_email_with_header():
         element.metadata.bcc_recipient == ["Hello <hello@unstructured.io>"] for element in elements
     )
     assert all(
-        element.metadata.cc_recipient == ["John Jennings <john-ctr@unstructured.io>"]
+        element.metadata.cc_recipient
+        == ["Fake Email <fake-email@unstructured.io>", "test@unstructured.io"]
         for element in elements
     )
     assert all(element.metadata.email_message_id is not None for element in elements)
@@ -550,7 +556,8 @@ def test_partition_eml_add_signature_to_metadata():
 
 def test_extract_attachment_info():
     with open(example_doc_path("eml/fake-email-attachment.eml")) as f:
-        msg = email.message_from_file(f)
+        msg = email.message_from_file(f, policy=policy.default)
+        msg = cast(EmailMessage, msg)
     attachment_info = extract_attachment_info(msg)
 
     assert len(attachment_info) > 0
@@ -572,7 +579,8 @@ def test_partition_email_can_process_attachments(tmp_path: pathlib.Path):
     output_dir.mkdir()
     filename = example_doc_path("eml/fake-email-attachment.eml")
     with open(filename) as f:
-        msg = email.message_from_file(f)
+        msg = email.message_from_file(f, policy=policy.default)
+        msg = cast(EmailMessage, msg)
     extract_attachment_info(msg, output_dir=str(output_dir))
 
     attachment_filename = os.path.join(
@@ -616,7 +624,8 @@ def test_partition_email_can_process_min_max_with_attachments(tmp_path: pathlib.
     output_dir.mkdir()
     filename = example_doc_path("eml/fake-email-attachment.eml")
     with open(filename) as f:
-        msg = email.message_from_file(f)
+        msg = email.message_from_file(f, policy=policy.default)
+        msg = cast(EmailMessage, msg)
     extract_attachment_info(msg, output_dir=str(output_dir))
 
     attachment_filename = str(

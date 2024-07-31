@@ -6,16 +6,16 @@ import email
 import os
 import re
 from email import policy
+from email.headerregistry import AddressHeader
 from email.message import EmailMessage
 from functools import partial
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import IO, Any, Callable, Final, Optional, cast
+from typing import IO, Any, Callable, Final, Optional, Type, cast
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
-    extract_email_address,
     extract_ip_address,
     extract_ip_address_name,
     extract_mapi_id,
@@ -83,30 +83,6 @@ def _parse_received_data(data: str) -> list[Element]:
     return elements
 
 
-def _parse_email_address(data: str) -> tuple[str, str]:
-    """Extract and return the name and email address from the given email header.
-
-    This function assumes that the email address is enclosed in angle brackets and follows
-    the format specified by the PATTERN regex.
-
-    Parameters:
-    data: The email header string containing the name and email address.
-
-    Returns:
-    tuple: A tuple containing the name (str) and the email address (str).
-
-    Example:
-    >>> _parse_email_address("John Doe <john.doe@example.com>")
-    ('John Doe', 'john.doe@example.com')
-    """
-    email_address = extract_email_address(data)
-
-    PATTERN = r"<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
-    name = re.split(PATTERN, data.lower())[0].title().strip()
-
-    return name, email_address[0]
-
-
 def _strip_angle_brackets(data: str) -> str:
     """Remove angle brackets from the beginning and end of the string if they exist.
 
@@ -125,22 +101,30 @@ def _strip_angle_brackets(data: str) -> str:
 
 
 def partition_email_header(msg: EmailMessage) -> list[Element]:
+
+    def append_address_header_elements(header: AddressHeader, element_type: Type[Element]):
+        for addr in header.addresses:
+            elements.append(
+                element_type(
+                    name=addr.display_name or addr.username, text=addr.addr_spec  # type: ignore
+                )
+            )
+
     elements: list[Element] = []
-    for item in msg.raw_items():
-        if item[0] == "To" or item[0] == "Bcc" or item[0] == "Cc":
-            text = _parse_email_address(item[1])
-            elements.append(Recipient(name=text[0], text=text[1]))
-        elif item[0] == "From":
-            text = _parse_email_address(item[1])
-            elements.append(Sender(name=text[0], text=text[1]))
-        elif item[0] == "Subject":
-            elements.append(Subject(text=item[1]))
-        elif item[0] == "Received":
-            elements += _parse_received_data(item[1])
-        elif item[0] == "Message-ID":
-            elements.append(MetaData(name=item[0], text=_strip_angle_brackets(item[1])))
+
+    for msg_field, msg_value in msg.items():
+        if msg_field in {"To", "Bcc", "Cc"}:
+            append_address_header_elements(msg_value, Recipient)
+        elif msg_field == "From":
+            append_address_header_elements(msg_value, Sender)
+        elif msg_field == "Subject":
+            elements.append(Subject(text=msg_value))
+        elif msg_field == "Received":
+            elements += _parse_received_data(msg_value)
+        elif msg_field == "Message-ID":
+            elements.append(MetaData(name=msg_field, text=_strip_angle_brackets(str(msg_value))))
         else:
-            elements.append(MetaData(name=item[0], text=item[1]))
+            elements.append(MetaData(name=msg_field, text=msg_value))
 
     return elements
 
@@ -179,21 +163,17 @@ def build_email_metadata(
     if email_date is not None:
         email_date = convert_to_iso_8601(email_date)
 
-    sent_from = parse_recipients(header_dict.get("From"))
-    sent_to = parse_recipients(header_dict.get("To"))
-    bcc_recipient = parse_recipients(header_dict.get("Bcc"))
-    cc_recipient = parse_recipients(header_dict.get("Cc"))
     email_message_id = header_dict.get("Message-ID")
     if email_message_id:
         email_message_id = _strip_angle_brackets(email_message_id)
 
     element_metadata = ElementMetadata(
-        bcc_recipient=bcc_recipient,
-        cc_recipient=cc_recipient,
+        bcc_recipient=parse_recipients(header_dict.get("Bcc")),
+        cc_recipient=parse_recipients(header_dict.get("Cc")),
         email_message_id=email_message_id,
-        sent_to=sent_to,
-        sent_from=sent_from,
-        subject=header_dict.get("Subject"),
+        sent_to=parse_recipients(header_dict.get("To")),
+        sent_from=parse_recipients(header_dict.get("From")),
+        subject=msg.get("Subject"),
         signature=signature,
         last_modified=metadata_last_modified or email_date or last_modification_date,
         filename=filename,
@@ -500,7 +480,6 @@ def partition_email(
                             break
                         except (UnicodeDecodeError, UnicodeError):
                             continue
-
     elif content_source == "text/plain":
         elements = partition_text(
             text=content,
@@ -510,6 +489,11 @@ def partition_email(
             languages=[""],
             include_metadata=False,  # metadata is overwritten later, so no need to compute it here
             detection_origin="email",
+        )
+    else:
+        raise ValueError(
+            f"Invalid content source: {content_source}. "
+            f"Valid content sources are: {VALID_CONTENT_SOURCES}",
         )
 
     for idx, element in enumerate(elements):
