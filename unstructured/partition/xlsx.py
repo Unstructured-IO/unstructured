@@ -148,13 +148,16 @@ def partition_xlsx(
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component)
-                c = subtable_parser.top_left_coordinate[1]
 
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
                 for row_index, content in zip(
                     subtable_parser.leading_single_cell_row_indices,
                     subtable_parser.iter_leading_single_cell_rows_texts(),
                 ):
+
+                    # find column (usually it will be top_left_column but not necessarily)
+                    c: int = subtable_parser._subtable.iloc[row_index].notna().idxmax()
+
                     element = _create_element(str(content))
                     r = subtable_parser.top_left_coordinate[0] + row_index + include_header
                     element.metadata = _get_metadata(
@@ -162,7 +165,6 @@ def partition_xlsx(
                         page_number,
                         opts,
                         rc=(r, c),
-                        header_included=include_header,
                     )
                     elements.append(element)
 
@@ -184,12 +186,12 @@ def partition_xlsx(
                         + subtable_parser.core_table_start
                         + include_header
                     )
+                    c = subtable_parser.top_left_coordinate[1]
                     element.metadata = _get_metadata(
                         sheet_name,
                         page_number,
                         opts,
                         rc=(r, c),
-                        header_included=include_header,
                     )
                     element.metadata.text_as_html = (
                         html_text if opts.infer_table_structure else None
@@ -206,12 +208,15 @@ def partition_xlsx(
                     element = _create_element(str(content))
                     r = (
                         subtable_parser.top_left_coordinate[0]
-                        + len(component.subtable)
                         + row_index
                         + include_header
                     )
+                    c: int = subtable_parser._subtable.iloc[row_index].notna().idxmax()
                     element.metadata = _get_metadata(
-                        sheet_name, page_number, opts, rc=(r, c), header_included=include_header
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
                     )
                     elements.append(element)
 
@@ -589,10 +594,9 @@ def _get_metadata(
     page_number: int,
     opts: _XlsxPartitionerOptions,
     rc: Optional[_CellCoordinate] = None,
-    header_included: bool = False,
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
-    excel_rc = _turn_coordinate_to_excel_format(rc, header_included=header_included)
+    excel_rc = _turn_coordinate_to_excel_format(rc)
     return (
         ElementMetadata(
             page_name=sheet_name,
@@ -606,10 +610,7 @@ def _get_metadata(
     )
 
 
-def _turn_coordinate_to_excel_format(
-    rc: _CellCoordinate | None,
-    header_included: bool = False,
-) -> None | str:
+def _turn_coordinate_to_excel_format(rc: _CellCoordinate | None) -> None | str:
     """
     Converts a tuple of row and column indices to Excel-like cell coordinate.
     Takes into account that
@@ -620,16 +621,13 @@ def _turn_coordinate_to_excel_format(
         return None
     row, col = rc
 
-    # Adjust column index to be 1-based
+    # Adjust row and column index to be 1-based
     col += 1
+    row += 1
 
     col_letters = ""
     while col > 0:
         col, remainder = divmod(col - 1, 26)
         col_letters = chr(remainder + 65) + col_letters
-
-    # Adjust row index if header is included
-    if header_included:
-        row += 1
 
     return f"{col_letters}{row}"
