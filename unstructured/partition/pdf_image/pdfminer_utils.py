@@ -2,7 +2,7 @@ import tempfile
 from typing import Any, BinaryIO, List, Tuple
 
 from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTContainer, LTImage
+from pdfminer.layout import LAParams, LTComponent, LTContainer, LTImage
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PSSyntaxError
@@ -18,6 +18,31 @@ def init_pdfminer():
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
     return device, interpreter
+
+
+def extract_text_and_image_objects(parent_object) -> List[LTComponent]:
+    """
+    Recursively extract text and image objects from a given parent object in a PDF document.
+
+    This function navigates through the PDF's layout tree and collects objects that contain text
+    (objects with a 'get_text' method) or are images (instances of LTImage).
+
+    Args:
+        parent_object: The root object from which to start the extraction. This could be an
+                       instance of LTContainer, LTText, LTImage, or any other pdfminer layout object.
+
+    Returns:
+        A list of LTComponent objects which are either text-containing objects or images.
+    """
+    objects = []
+
+    if hasattr(parent_object, "get_text") or isinstance(parent_object, LTImage):
+        objects.append(parent_object)
+    elif isinstance(parent_object, LTContainer):
+        for child in parent_object:
+            objects.extend(extract_text_and_image_objects(child))
+
+    return objects
 
 
 def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:

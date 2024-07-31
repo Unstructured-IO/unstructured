@@ -5,7 +5,7 @@ from pdfminer.utils import open_filename
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
-    get_images_from_pdf_element,
+    extract_text_and_image_objects,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -53,30 +53,28 @@ def process_data_with_pdfminer(
 
         layout: List["TextRegion"] = []
         for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            inner_objects = extract_text_and_image_objects(obj)
+            for inner_obj in inner_objects:
+                x1, y1, x2, y2 = rect_to_bbox(inner_obj.bbox, height)
 
-            if hasattr(obj, "get_text"):
-                _text = obj.get_text()
-                element_class = EmbeddedTextRegion  # type: ignore
-            else:
-                embedded_images = get_images_from_pdf_element(obj)
-                if len(embedded_images) > 0:
-                    _text = None
-                    element_class = ImageTextRegion  # type: ignore
+                if hasattr(inner_obj, "get_text"):
+                    _text = inner_obj.get_text()
+                    element_class = EmbeddedTextRegion  # type: ignore
                 else:
-                    continue
+                    _text = None
+                    element_class = ImageTextRegion
 
-            text_region = element_class.from_coords(
-                x1 * coef,
-                y1 * coef,
-                x2 * coef,
-                y2 * coef,
-                text=_text,
-                source=Source.PDFMINER,
-            )
+                text_region = element_class.from_coords(
+                    x1 * coef,
+                    y1 * coef,
+                    x2 * coef,
+                    y2 * coef,
+                    text=_text,
+                    source=Source.PDFMINER,
+                )
 
-            if text_region.bbox is not None and text_region.bbox.area > 0:
-                layout.append(text_region)
+                if text_region.bbox is not None and text_region.bbox.area > 0:
+                    layout.append(text_region)
 
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
