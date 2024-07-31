@@ -5,7 +5,8 @@ import datetime
 import email
 import os
 import re
-from email.message import Message
+from email import policy
+from email.message import EmailMessage
 from functools import partial
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import IO, Any, Callable, Final, Optional, cast
@@ -123,7 +124,7 @@ def _strip_angle_brackets(data: str) -> str:
     return re.sub(r"^<|>$", "", data)
 
 
-def partition_email_header(msg: Message) -> list[Element]:
+def partition_email_header(msg: EmailMessage) -> list[Element]:
     elements: list[Element] = []
     for item in msg.raw_items():
         if item[0] == "To" or item[0] == "Bcc" or item[0] == "Cc":
@@ -144,13 +145,13 @@ def partition_email_header(msg: Message) -> list[Element]:
     return elements
 
 
-def find_signature(msg: Message) -> Optional[str]:
+def find_signature(msg: EmailMessage) -> Optional[str]:
     """Extracts the signature from an email message, if it's available."""
     payload: Any = msg.get_payload()
     if not isinstance(payload, list):
         return None
 
-    payload = cast(list[Message], payload)
+    payload = cast(list[EmailMessage], payload)
     for item in payload:
         if item.get_content_type().endswith("signature"):
             return item.get_payload()
@@ -159,13 +160,14 @@ def find_signature(msg: Message) -> Optional[str]:
 
 
 def build_email_metadata(
-    msg: Message,
+    msg: EmailMessage,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
     last_modification_date: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     signature = find_signature(msg)
+
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
 
@@ -217,7 +219,7 @@ def convert_to_iso_8601(time: str) -> Optional[str]:
 
 
 def extract_attachment_info(
-    message: Message,
+    message: EmailMessage,
     output_dir: Optional[str] = None,
 ) -> list[dict[str, str]]:
     list_attachments: list[Any] = []
@@ -278,13 +280,13 @@ def find_embedded_image(
 
 def parse_email(
     filename: Optional[str] = None, file: Optional[IO[bytes]] = None
-) -> tuple[Optional[str], Message]:
+) -> tuple[Optional[str], EmailMessage]:
     if filename is not None:
         with open(filename, "rb") as f:
-            msg = email.message_from_binary_file(f)
+            msg = email.message_from_binary_file(f, policy=policy.default)
     elif file is not None:
         f_bytes = convert_to_bytes(file)
-        msg = email.message_from_bytes(f_bytes)
+        msg = email.message_from_bytes(f_bytes, policy=policy.default)
     else:
         raise ValueError("Either 'filename' or 'file' must be provided.")
 
@@ -296,7 +298,7 @@ def parse_email(
             break
 
     formatted_encoding = format_encoding_str(encoding) if encoding else None
-
+    msg = cast(EmailMessage, msg)
     return formatted_encoding, msg
 
 
@@ -385,21 +387,22 @@ def partition_email(
                 filename=filename,
                 encoding=encoding,
             )
-            msg = email.message_from_string(file_text)
+            msg = email.message_from_string(file_text, policy=policy.default)
     elif file is not None:
         extracted_encoding, msg = parse_email(file=file)
         if extracted_encoding:
             detected_encoding = extracted_encoding
         else:
             detected_encoding, file_text = read_txt_file(file=file, encoding=encoding)
-            msg = email.message_from_string(file_text)
+            msg = email.message_from_string(file_text, policy=policy.default)
     elif text is not None:
         _text: str = str(text)
-        msg = email.message_from_string(_text)
+        msg = email.message_from_string(_text, policy=policy.default)
     else:
         return []
     if not encoding:
         encoding = detected_encoding
+    msg = cast(EmailMessage, msg)
 
     is_encrypted = False
     content_map: dict[str, str] = {}
