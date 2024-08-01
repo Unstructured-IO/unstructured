@@ -109,10 +109,9 @@ def partition_xlsx(
     )
 
     elements: list[Element] = []
-    # Excel counts sheets 1-based
-    for page_number, (sheet_name, sheet) in enumerate(opts.sheets.items(), start=1):
-        if page_number < starting_page_number:
-            continue
+    for page_number, (sheet_name, sheet) in enumerate(
+        opts.sheets.items(), start=starting_page_number
+    ):
         if not opts.find_subtable:
             html_text = (
                 sheet.to_html(  # pyright: ignore[reportUnknownMemberType]

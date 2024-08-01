@@ -100,11 +100,12 @@
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
 
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
+
 ### Fixes
 
 * **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
 * **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
-
 
 ## 0.14.6
 
