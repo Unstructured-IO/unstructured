@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
+
 ### Features
 
 * **Update partition_eml and partition_msg to capture cc, bcc, and message_id fields** Cc, bcc, and message_id information is captured in element metadata for both msg and email partitioning and `Recipient` elements are generated for cc and bcc when `include_headers=True` for email partitioning.
