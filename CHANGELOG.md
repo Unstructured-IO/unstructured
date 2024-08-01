@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
+
 ### Features
 
 * **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
