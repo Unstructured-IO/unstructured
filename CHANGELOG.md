@@ -1,6 +1,8 @@
-## 0.15.1-dev7
+## 0.15.1-dev8
 
 ### Enhancements
+
+* **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
 
 ### Features
 
