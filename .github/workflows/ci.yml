@@ -555,7 +555,7 @@ jobs:
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
       - name: Scan image
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v4
         with:
           image: "unstructured:dev"
           severity-cutoff: critical
