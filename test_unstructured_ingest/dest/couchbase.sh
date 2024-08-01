@@ -89,6 +89,8 @@ python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --collection "$DESTINATION_CB_COLLECTION" \
   check --expected-docs 1
 
+stage_file=$(ls -1 "$WORK_DIR"/upload_stage | head -n 1)
+
 python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --connection-string "$CB_CONN_STR" \
   --username "$CB_USERNAME" \
@@ -97,4 +99,4 @@ python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --scope "$DESTINATION_CB_SCOPE" \
   --collection "$DESTINATION_CB_COLLECTION" \
   check-vector \
-  --output-json "$OUTPUT_DIR"/book-war-and-peace-1p.txt.json
+  --output-json "$WORK_DIR"/upload_stage/"$stage_file"

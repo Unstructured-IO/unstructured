@@ -10,6 +10,8 @@ from .astra import CONNECTOR_TYPE as ASTRA_CONNECTOR_TYPE
 from .astra import astra_destination_entry
 from .chroma import CONNECTOR_TYPE as CHROMA_CONNECTOR_TYPE
 from .chroma import chroma_destination_entry
+from .couchbase import CONNECTOR_TYPE as COUCHBASE_CONNECTOR_TYPE
+from .couchbase import couchbase_destination_entry
 from .databricks_volumes import CONNECTOR_TYPE as DATABRICKS_VOLUMES_CONNECTOR_TYPE
 from .databricks_volumes import databricks_volumes_destination_entry
 from .elasticsearch import CONNECTOR_TYPE as ELASTICSEARCH_CONNECTOR_TYPE
@@ -69,6 +71,7 @@ add_destination_entry(
 add_destination_entry(destination_type=SQL_CONNECTOR_TYPE, entry=sql_destination_entry)
 
 add_destination_entry(destination_type=MONGODB_CONNECTOR_TYPE, entry=mongodb_destination_entry)
+add_destination_entry(destination_type=COUCHBASE_CONNECTOR_TYPE, entry=couchbase_destination_entry)
 add_destination_entry(destination_type=PINECONE_CONNECTOR_TYPE, entry=pinecone_destination_entry)
 add_source_entry(source_type=SHAREPOINT_CONNECTOR_TYPE, entry=sharepoint_source_entry)
 add_destination_entry(
