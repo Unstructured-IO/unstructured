@@ -470,13 +470,10 @@ class _DocxPartitioner:
 
         metadata = self._paragraph_metadata(paragraph)
 
-        # NOTE(scanny) - a list-item gets some special treatment, mutating the text to remove a
-        # bullet-character if present.
         if self._is_list_item(paragraph):
-            clean_text = text.strip()
-            if clean_text:
+            if text:
                 yield ListItem(
-                    text=clean_text,
+                    text=text,
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
