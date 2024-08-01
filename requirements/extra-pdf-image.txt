@@ -10,14 +10,14 @@ cachetools==5.4.0
     # via google-auth
 certifi==2024.7.4
     # via
-    #   -c ././deps/constraints.txt
-    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
+    #   -c base.txt
     #   requests
 cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   pdfminer-six
     #   requests
 coloredlogs==15.0.1
@@ -26,26 +26,27 @@ contourpy==1.2.1
     # via matplotlib
 cryptography==42.0.8
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
 deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch
     #   transformers
+    #   triton
 flatbuffers==24.3.25
     # via onnxruntime
 fonttools==4.53.1
     # via matplotlib
 fsspec==2024.5.0
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   huggingface-hub
     #   torch
 google-api-core[grpc]==2.19.1
@@ -55,7 +56,7 @@ google-auth==2.32.0
     #   google-api-core
     #   google-cloud-vision
 google-cloud-vision==3.7.3
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 googleapis-common-protos==1.63.2
     # via
     #   google-api-core
@@ -76,7 +77,7 @@ humanfriendly==10.0
     # via coloredlogs
 idna==3.7
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   requests
 importlib-resources==6.4.0
     # via matplotlib
@@ -90,13 +91,13 @@ layoutparser==0.3.4
     # via unstructured-inference
 lxml==5.2.2
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   pikepdf
 markupsafe==2.1.5
     # via jinja2
 matplotlib==3.7.2
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   pycocotools
     #   unstructured-inference
 mpmath==1.3.0
@@ -105,7 +106,7 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   contourpy
     #   layoutparser
     #   matplotlib
@@ -117,23 +118,54 @@ numpy==1.26.4
     #   scipy
     #   torchvision
     #   transformers
+nvidia-cublas-cu12==12.1.3.1
+    # via
+    #   nvidia-cudnn-cu12
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-cuda-cupti-cu12==12.1.105
+    # via torch
+nvidia-cuda-nvrtc-cu12==12.1.105
+    # via torch
+nvidia-cuda-runtime-cu12==12.1.105
+    # via torch
+nvidia-cudnn-cu12==8.9.2.26
+    # via torch
+nvidia-cufft-cu12==11.0.2.54
+    # via torch
+nvidia-curand-cu12==10.3.2.106
+    # via torch
+nvidia-cusolver-cu12==11.4.5.107
+    # via torch
+nvidia-cusparse-cu12==12.1.0.106
+    # via
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-nccl-cu12==2.20.5
+    # via torch
+nvidia-nvjitlink-cu12==12.5.82
+    # via
+    #   nvidia-cusolver-cu12
+    #   nvidia-cusparse-cu12
+nvidia-nvtx-cu12==12.1.105
+    # via torch
 omegaconf==2.3.0
     # via effdet
 onnx==1.16.1
     # via
-    #   -r ./extra-pdf-image.in
+    #   -r extra-pdf-image.in
     #   unstructured-inference
 onnxruntime==1.18.1
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   layoutparser
     #   unstructured-inference
 packaging==23.2
     # via
-    #   -c ././deps/constraints.txt
-    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
+    #   -c base.txt
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
@@ -145,16 +177,16 @@ pandas==2.2.2
     # via layoutparser
 pdf2image==1.17.0
     # via
-    #   -r ./extra-pdf-image.in
+    #   -r extra-pdf-image.in
     #   layoutparser
 pdfminer-six==20231228
     # via
-    #   -r ./extra-pdf-image.in
+    #   -r extra-pdf-image.in
     #   pdfplumber
 pdfplumber==0.11.2
     # via layoutparser
 pikepdf==9.1.0
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 pillow==10.4.0
     # via
     #   layoutparser
@@ -167,7 +199,7 @@ pillow==10.4.0
     #   torchvision
     #   unstructured-pytesseract
 pillow-heif==0.17.0
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 portalocker==2.10.1
     # via iopath
 proto-plus==1.24.0
@@ -176,7 +208,7 @@ proto-plus==1.24.0
     #   google-cloud-vision
 protobuf==4.23.4
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   google-api-core
     #   google-cloud-vision
     #   googleapis-common-protos
@@ -192,25 +224,25 @@ pyasn1-modules==0.4.0
     # via google-auth
 pycocotools==2.0.8
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   effdet
 pycparser==2.22
     # via cffi
 pyparsing==3.0.9
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   matplotlib
 pypdf==4.3.1
     # via
-    #   -c ./base.txt
-    #   -r ./extra-pdf-image.in
+    #   -c base.txt
+    #   -r extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
 pytesseract==0.3.10
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   matplotlib
     #   pandas
 python-multipart==0.0.9
@@ -224,17 +256,17 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.4
+rapidfuzz==3.9.5
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   unstructured-inference
 regex==2024.5.15
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   transformers
 requests==2.32.3
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   google-api-core
     #   huggingface-hub
     #   transformers
@@ -246,11 +278,11 @@ safetensors==0.4.3
     #   transformers
 scipy==1.11.3
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   layoutparser
 six==1.16.0
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   python-dateutil
 sympy==1.13.1
     # via
@@ -264,7 +296,7 @@ tokenizers==0.19.1
     # via transformers
 torch==2.3.1
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
@@ -275,15 +307,17 @@ torchvision==0.18.1
     #   timm
 tqdm==4.66.4
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   iopath
     #   transformers
 transformers==4.43.1
     # via unstructured-inference
+triton==2.3.1
+    # via torch
 typing-extensions==4.12.2
     # via
-    #   -c ./base.txt
+    #   -c base.txt
     #   huggingface-hub
     #   iopath
     #   pypdf
@@ -291,20 +325,20 @@ typing-extensions==4.12.2
 tzdata==2024.1
     # via pandas
 unstructured-inference==0.7.36
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
-    #   -c ././deps/constraints.txt
-    #   -r ./extra-pdf-image.in
+    #   -c ./deps/constraints.txt
+    #   -r extra-pdf-image.in
 urllib3==1.26.19
     # via
-    #   -c ././deps/constraints.txt
-    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
+    #   -c base.txt
     #   requests
 wrapt==1.16.0
     # via
-    #   -c ././deps/constraints.txt
-    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
+    #   -c base.txt
     #   deprecated
 zipp==3.19.2
     # via importlib-resources
