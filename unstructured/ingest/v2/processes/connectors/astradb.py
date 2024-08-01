@@ -26,30 +26,30 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from astrapy.db import AstraDBCollection
 
-CONNECTOR_TYPE = "astra"
+CONNECTOR_TYPE = "astradb"
 
 
 @dataclass
-class AstraAccessConfig(AccessConfig):
+class AstraDBAccessConfig(AccessConfig):
     token: str
     api_endpoint: str
 
 
 @dataclass
-class AstraConnectionConfig(ConnectionConfig):
+class AstraDBConnectionConfig(ConnectionConfig):
     connection_type: str = CONNECTOR_TYPE
-    access_config: AstraAccessConfig = enhanced_field(sensitive=True)
+    access_config: AstraDBAccessConfig = enhanced_field(sensitive=True)
 
 
 @dataclass
-class AstraUploadStagerConfig(UploadStagerConfig):
+class AstraDBUploadStagerConfig(UploadStagerConfig):
     pass
 
 
 @dataclass
-class AstraUploadStager(UploadStager):
-    upload_stager_config: AstraUploadStagerConfig = field(
-        default_factory=lambda: AstraUploadStagerConfig()
+class AstraDBUploadStager(UploadStager):
+    upload_stager_config: AstraDBUploadStagerConfig = field(
+        default_factory=lambda: AstraDBUploadStagerConfig()
     )
 
     def conform_dict(self, element_dict: dict) -> dict:
@@ -79,7 +79,7 @@ class AstraUploadStager(UploadStager):
 
 
 @dataclass
-class AstraUploaderConfig(UploaderConfig):
+class AstraDBUploaderConfig(UploaderConfig):
     collection_name: str
     embedding_dimension: int
     namespace: Optional[str] = None
@@ -88,12 +88,12 @@ class AstraUploaderConfig(UploaderConfig):
 
 
 @dataclass
-class AstraUploader(Uploader):
-    connection_config: AstraConnectionConfig
-    upload_config: AstraUploaderConfig
+class AstraDBUploader(Uploader):
+    connection_config: AstraDBConnectionConfig
+    upload_config: AstraDBUploaderConfig
     connector_type: str = CONNECTOR_TYPE
 
-    @requires_dependencies(["astrapy"], extras="astra")
+    @requires_dependencies(["astrapy"], extras="astradb")
     def get_collection(self) -> "AstraDBCollection":
         from astrapy.db import AstraDB
 
@@ -102,11 +102,11 @@ class AstraUploader(Uploader):
         embedding_dimension = self.upload_config.embedding_dimension
         requested_indexing_policy = self.upload_config.requested_indexing_policy
 
-        # If the user has requested an indexing policy, pass it to the AstraDB
+        # If the user has requested an indexing policy, pass it to the Astra DB
         options = {"indexing": requested_indexing_policy} if requested_indexing_policy else None
 
         # Build the Astra DB object.
-        # caller_name/version for AstraDB tracking
+        # caller_name/version for Astra DB tracking
         astra_db = AstraDB(
             api_endpoint=self.connection_config.access_config.api_endpoint,
             token=self.connection_config.access_config.token,
@@ -142,10 +142,10 @@ class AstraUploader(Uploader):
             collection.insert_many(chunk)
 
 
-astra_destination_entry = DestinationRegistryEntry(
-    connection_config=AstraConnectionConfig,
-    upload_stager_config=AstraUploadStagerConfig,
-    upload_stager=AstraUploadStager,
-    uploader_config=AstraUploaderConfig,
-    uploader=AstraUploader,
+astradb_destination_entry = DestinationRegistryEntry(
+    connection_config=AstraDBConnectionConfig,
+    upload_stager_config=AstraDBUploadStagerConfig,
+    upload_stager=AstraDBUploadStager,
+    uploader_config=AstraDBUploaderConfig,
+    uploader=AstraDBUploader,
 )
