@@ -2,136 +2,28 @@
 
 from __future__ import annotations
 
+import importlib
 import io
 from typing import IO, Any, Callable, Literal, Optional
 
 import requests
+from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import (
-    FILETYPE_TO_MIMETYPE,
-    STR_TO_FILETYPE,
-    FileType,
-    detect_filetype,
-    is_json_processable,
-)
+from unstructured.file_utils.filetype import detect_filetype, is_json_processable
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
-from unstructured.partition.email import partition_email
-from unstructured.partition.html import partition_html
-from unstructured.partition.json import partition_json
 from unstructured.partition.lang import check_language_args
-from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
-PARTITION_WITH_EXTRAS_MAP: dict[str, Callable[..., list[Element]]] = {}
-
-if dependency_exists("pandas"):
-    from unstructured.partition.csv import partition_csv
-    from unstructured.partition.tsv import partition_tsv
-
-    PARTITION_WITH_EXTRAS_MAP["csv"] = partition_csv
-    PARTITION_WITH_EXTRAS_MAP["tsv"] = partition_tsv
-
-
-if dependency_exists("docx"):
-    from unstructured.partition.doc import partition_doc
-    from unstructured.partition.docx import partition_docx
-
-    PARTITION_WITH_EXTRAS_MAP["doc"] = partition_doc
-    PARTITION_WITH_EXTRAS_MAP["docx"] = partition_docx
-
-
-if dependency_exists("docx") and dependency_exists("pypandoc"):
-    from unstructured.partition.odt import partition_odt
-
-    PARTITION_WITH_EXTRAS_MAP["odt"] = partition_odt
-
-
-if dependency_exists("pypandoc"):
-    from unstructured.partition.epub import partition_epub
-
-    PARTITION_WITH_EXTRAS_MAP["epub"] = partition_epub
-
-
-if dependency_exists("pypandoc"):
-    from unstructured.partition.org import partition_org
-    from unstructured.partition.rst import partition_rst
-    from unstructured.partition.rtf import partition_rtf
-
-    PARTITION_WITH_EXTRAS_MAP["org"] = partition_org
-    PARTITION_WITH_EXTRAS_MAP["rst"] = partition_rst
-    PARTITION_WITH_EXTRAS_MAP["rtf"] = partition_rtf
-
-
-if dependency_exists("markdown"):
-    from unstructured.partition.md import partition_md
-
-    PARTITION_WITH_EXTRAS_MAP["md"] = partition_md
-
-
-if dependency_exists("oxmsg"):
-    from unstructured.partition.msg import partition_msg
-
-    PARTITION_WITH_EXTRAS_MAP["msg"] = partition_msg
-
-
-pdf_imports = ["pdf2image", "pdfminer", "PIL"]
-if all(dependency_exists(dep) for dep in pdf_imports):
-    from unstructured.partition.pdf import partition_pdf
-
-    PARTITION_WITH_EXTRAS_MAP["pdf"] = partition_pdf
-
-
-if dependency_exists("unstructured_inference"):
-    from unstructured.partition.image import partition_image
-
-    PARTITION_WITH_EXTRAS_MAP["image"] = partition_image
-
-
-if dependency_exists("pptx"):
-    from unstructured.partition.ppt import partition_ppt
-    from unstructured.partition.pptx import partition_pptx
-
-    PARTITION_WITH_EXTRAS_MAP["ppt"] = partition_ppt
-    PARTITION_WITH_EXTRAS_MAP["pptx"] = partition_pptx
-
-
-if dependency_exists("pandas") and dependency_exists("openpyxl"):
-    from unstructured.partition.xlsx import partition_xlsx
-
-    PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
-
-
-IMAGE_FILETYPES = [
-    FileType.HEIC,
-    FileType.PNG,
-    FileType.JPG,
-    FileType.TIFF,
-    FileType.BMP,
-]
-
-
-def _get_partition_with_extras(
-    doc_type: str,
-    partition_with_extras_map: Optional[dict[str, Callable[..., list[Element]]]] = None,
-):
-    if partition_with_extras_map is None:
-        partition_with_extras_map = PARTITION_WITH_EXTRAS_MAP
-    _partition_func = partition_with_extras_map.get(doc_type)
-    if _partition_func is None:
-        raise ImportError(
-            f"partition_{doc_type} is not available. "
-            f"Install the {doc_type} dependencies with "
-            f'pip install "unstructured[{doc_type}]"',
-        )
-    return _partition_func
+Partitioner: TypeAlias = Callable[..., list[Element]]
 
 
 def partition(
     filename: Optional[str] = None,
+    *,
     content_type: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
@@ -161,10 +53,11 @@ def partition(
     starting_page_number: int = 1,
     **kwargs: Any,
 ):
-    """Partitions a document into its constituent elements. Will use libmagic to determine
-    the file's type and route it to the appropriate partitioning function. Applies the default
-    parameters for each partitioning function. Use the document-type specific partitioning
-    functions if you need access to additional kwarg options.
+    """Partitions a document into its constituent elements.
+
+    Uses libmagic to determine the file's type and route it to the appropriate partitioning
+    function. Applies the default parameters for each partitioning function. Use the document-type
+    specific partitioning functions if you need access to additional kwarg options.
 
     Parameters
     ----------
@@ -277,7 +170,7 @@ def partition(
     languages = check_language_args(languages or [], ocr_languages)
 
     if url is not None:
-        file, filetype = file_and_type_from_url(
+        file, file_type = file_and_type_from_url(
             url=url,
             content_type=content_type,
             headers=headers,
@@ -290,26 +183,38 @@ def partition(
                 "The headers kwarg is set but the url kwarg is not. "
                 "The headers kwarg will be ignored.",
             )
-        filetype = detect_filetype(
-            filename=filename,
+        file_type = detect_filetype(
+            file_path=filename,
             file=file,
-            file_filename=metadata_filename,
-            content_type=content_type,
             encoding=encoding,
+            content_type=content_type,
+            metadata_file_path=metadata_filename,
         )
 
     if file is not None:
         file.seek(0)
 
     infer_table_structure = decide_table_extraction(
-        filetype,
+        file_type,
         skip_infer_table_types,
         pdf_infer_table_structure,
     )
 
-    if filetype == FileType.DOC:
-        _partition_doc = _get_partition_with_extras("doc")
-        elements = _partition_doc(
+    partitioner_loader = _PartitionerLoader()
+
+    if file_type == FileType.CSV:
+        partition_csv = partitioner_loader.get(file_type)
+        elements = partition_csv(
+            filename=filename,
+            file=file,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.DOC:
+        partition_doc = partitioner_loader.get(file_type)
+        elements = partition_doc(
             filename=filename,
             file=file,
             infer_table_structure=infer_table_structure,
@@ -319,9 +224,9 @@ def partition(
             strategy=strategy,
             **kwargs,
         )
-    elif filetype == FileType.DOCX:
-        _partition_docx = _get_partition_with_extras("docx")
-        elements = _partition_docx(
+    elif file_type == FileType.DOCX:
+        partition_docx = partitioner_loader.get(file_type)
+        elements = partition_docx(
             filename=filename,
             file=file,
             infer_table_structure=infer_table_structure,
@@ -331,19 +236,8 @@ def partition(
             strategy=strategy,
             **kwargs,
         )
-    elif filetype == FileType.ODT:
-        _partition_odt = _get_partition_with_extras("odt")
-        elements = _partition_odt(
-            filename=filename,
-            file=file,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-            strategy=strategy,
-            **kwargs,
-        )
-    elif filetype == FileType.EML:
+    elif file_type == FileType.EML:
+        partition_email = partitioner_loader.get(file_type)
         elements = partition_email(
             filename=filename,
             file=file,
@@ -352,16 +246,19 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.MSG:
-        _partition_msg = _get_partition_with_extras("msg")
-        elements = _partition_msg(
+    elif file_type == FileType.EPUB:
+        partition_epub = partitioner_loader.get(file_type)
+        elements = partition_epub(
             filename=filename,
             file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.HTML:
+    elif file_type == FileType.HTML:
+        partition_html = partitioner_loader.get(file_type)
         elements = partition_html(
             filename=filename,
             file=file,
@@ -371,62 +268,9 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.XML:
-        elements = partition_xml(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            xml_keep_tags=xml_keep_tags,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.EPUB:
-        _partition_epub = _get_partition_with_extras("epub")
-        elements = _partition_epub(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.ORG:
-        _partition_org = _get_partition_with_extras("org")
-        elements = _partition_org(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.RST:
-        _partition_rst = _get_partition_with_extras("rst")
-        elements = _partition_rst(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.MD:
-        _partition_md = _get_partition_with_extras("md")
-        elements = _partition_md(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.PDF:
-        _partition_pdf = _get_partition_with_extras("pdf")
-        elements = _partition_pdf(
+    elif file_type.partitioner_shortname == "image":
+        partition_image = partitioner_loader.get(file_type)
+        elements = partition_image(
             filename=filename,
             file=file,
             url=None,
@@ -442,9 +286,59 @@ def partition(
             starting_page_number=starting_page_number,
             **kwargs,
         )
-    elif filetype in IMAGE_FILETYPES:
-        _partition_image = _get_partition_with_extras("image")
-        elements = _partition_image(
+    elif file_type == FileType.JSON:
+        if not is_json_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected a JSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
+        partition_json = partitioner_loader.get(file_type)
+        elements = partition_json(filename=filename, file=file, **kwargs)
+    elif file_type == FileType.MD:
+        partition_md = partitioner_loader.get(file_type)
+        elements = partition_md(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.MSG:
+        partition_msg = partitioner_loader.get(file_type)
+        elements = partition_msg(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.ODT:
+        partition_odt = partitioner_loader.get(file_type)
+        elements = partition_odt(
+            filename=filename,
+            file=file,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
+            strategy=strategy,
+            **kwargs,
+        )
+    elif file_type == FileType.ORG:
+        partition_org = partitioner_loader.get(file_type)
+        elements = partition_org(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.PDF:
+        partition_pdf = partitioner_loader.get(file_type)
+        elements = partition_pdf(
             filename=filename,
             file=file,
             url=None,
@@ -460,7 +354,64 @@ def partition(
             starting_page_number=starting_page_number,
             **kwargs,
         )
-    elif filetype == FileType.TXT:
+    elif file_type == FileType.PPT:
+        partition_ppt = partitioner_loader.get(file_type)
+        elements = partition_ppt(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            strategy=strategy,
+            **kwargs,
+        )
+    elif file_type == FileType.PPTX:
+        partition_pptx = partitioner_loader.get(file_type)
+        elements = partition_pptx(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
+            strategy=strategy,
+            **kwargs,
+        )
+    elif file_type == FileType.RST:
+        partition_rst = partitioner_loader.get(file_type)
+        elements = partition_rst(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.RTF:
+        partition_rtf = partitioner_loader.get(file_type)
+        elements = partition_rtf(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.TSV:
+        partition_tsv = partitioner_loader.get(file_type)
+        elements = partition_tsv(
+            filename=filename,
+            file=file,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif file_type == FileType.TXT:
+        partition_text = partitioner_loader.get(file_type)
         elements = partition_text(
             filename=filename,
             file=file,
@@ -470,52 +421,9 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.RTF:
-        _partition_rtf = _get_partition_with_extras("rtf")
-        elements = _partition_rtf(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.PPT:
-        _partition_ppt = _get_partition_with_extras("ppt")
-        elements = _partition_ppt(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            strategy=strategy,
-            **kwargs,
-        )
-    elif filetype == FileType.PPTX:
-        _partition_pptx = _get_partition_with_extras("pptx")
-        elements = _partition_pptx(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-            strategy=strategy,
-            **kwargs,
-        )
-    elif filetype == FileType.JSON:
-        if not is_json_processable(filename=filename, file=file):
-            raise ValueError(
-                "Detected a JSON file that does not conform to the Unstructured schema. "
-                "partition_json currently only processes serialized Unstructured output.",
-            )
-        elements = partition_json(filename=filename, file=file, **kwargs)
-    elif (filetype == FileType.XLSX) or (filetype == FileType.XLS):
-        _partition_xlsx = _get_partition_with_extras("xlsx")
-        elements = _partition_xlsx(
+    elif file_type in (FileType.XLS, FileType.XLSX):
+        partition_xlsx = partitioner_loader.get(file_type)
+        elements = partition_xlsx(
             filename=filename,
             file=file,
             infer_table_structure=infer_table_structure,
@@ -524,41 +432,31 @@ def partition(
             starting_page_number=starting_page_number,
             **kwargs,
         )
-    elif filetype == FileType.CSV:
-        _partition_csv = _get_partition_with_extras("csv")
-        elements = _partition_csv(
+    elif file_type == FileType.XML:
+        partition_xml = partitioner_loader.get(file_type)
+        elements = partition_xml(
             filename=filename,
             file=file,
-            infer_table_structure=infer_table_structure,
+            encoding=encoding,
+            xml_keep_tags=xml_keep_tags,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif filetype == FileType.TSV:
-        _partition_tsv = _get_partition_with_extras("tsv")
-        elements = _partition_tsv(
-            filename=filename,
-            file=file,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif filetype == FileType.EMPTY:
+    elif file_type == FileType.EMPTY:
         elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise ValueError(f"{msg}. The {filetype} file type is not supported in partition.")
+        raise ValueError(f"{msg}. The {file_type} file type is not supported in partition.")
 
     for element in elements:
         element.metadata.url = url
         element.metadata.data_source = data_source_metadata
         if content_type is not None:
-            out_filetype = STR_TO_FILETYPE.get(content_type)
-            element.metadata.filetype = (
-                FILETYPE_TO_MIMETYPE[out_filetype] if out_filetype is not None else None
-            )
+            out_filetype = FileType.from_mime_type(content_type)
+            element.metadata.filetype = out_filetype.mime_type if out_filetype is not None else None
         else:
-            element.metadata.filetype = FILETYPE_TO_MIMETYPE[filetype]
+            element.metadata.filetype = file_type.mime_type
 
     return elements
 
@@ -569,16 +467,17 @@ def file_and_type_from_url(
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
-) -> tuple[io.BytesIO, Optional[FileType]]:
+) -> tuple[io.BytesIO, FileType]:
     response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
-    content_type = (
-        content_type or response.headers.get("Content-Type", "").split(";")[0].strip().lower()
-    )
-    encoding = response.headers.get("Content-Encoding", "utf-8")
+    if content_type := content_type or response.headers.get("Content-Type", None):
+        content_type = content_type.split(";")[0].strip().lower()
 
-    filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
+    # -- non-None when response is textual --
+    encoding = response.encoding
+
+    filetype = detect_filetype(file=file, encoding=encoding, content_type=content_type)
     return file, filetype
 
 
@@ -597,3 +496,51 @@ def decide_table_extraction(
         return pdf_infer_table_structure or doc_type not in skip_infer_table_types
 
     return doc_type not in skip_infer_table_types
+
+
+class _PartitionerLoader:
+    """Provides uniform helpful error when a partitioner dependency is not installed.
+
+    Used by `partition()` to encapsulate coping with the possibility the Python
+    environment it is executing in may not have all dependencies installed for a
+    particular partitioner.
+
+    Provides `.get()` to access partitioners by file-type, which raises when one or
+    more dependencies for that partitioner are not installed.
+
+    The error message indicates what extra needs to be installed to enable that
+    partitioner. This avoids an inconsistent variety of possibly puzzling exceptions
+    arising from much deeper in the partitioner when access to the missing dependency is
+    first attempted.
+    """
+
+    # -- module-lifetime cache for partitioners once loaded --
+    _partitioners: dict[FileType, Partitioner] = {}
+
+    def get(self, file_type: FileType) -> Partitioner:
+        """Return partitioner for `file_type`.
+
+        Raises when one or more package dependencies for that file-type have not been
+        installed.
+        """
+        if file_type not in self._partitioners:
+            self._partitioners[file_type] = self._load_partitioner(file_type)
+
+        return self._partitioners[file_type]
+
+    def _load_partitioner(self, file_type: FileType) -> Partitioner:
+        """Load the partitioner for `file_type` after verifying dependencies."""
+        # -- verify all package dependencies are installed --
+        for pkg_name in file_type.importable_package_dependencies:
+            if not dependency_exists(pkg_name):
+                raise ImportError(
+                    f"{file_type.partitioner_function_name}() is not available because one or"
+                    f" more dependencies are not installed. Use:"
+                    f' pip install "unstructured[{file_type.extra_name}]" (including quotes)'
+                    f" to install the required dependencies",
+                )
+
+        # -- load the partitioner and return it --
+        assert file_type.is_partitionable  # -- would be a programming error if this failed --
+        partitioner_module = importlib.import_module(file_type.partitioner_module_qname)
+        return getattr(partitioner_module, file_type.partitioner_function_name)

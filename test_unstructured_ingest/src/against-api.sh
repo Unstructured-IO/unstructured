@@ -40,7 +40,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
   --num-processes "$max_processes" \
-  --input-path "example-docs/$TEST_FILE_NAME" \
+  --input-path "example-docs/pdf/$TEST_FILE_NAME" \
   --work-dir "$WORK_DIR"
 
 RESULT_FILE_PATH="$OUTPUT_DIR/$TEST_FILE_NAME.json"

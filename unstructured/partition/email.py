@@ -5,31 +5,10 @@ import datetime
 import email
 import os
 import re
-import sys
 from email.message import Message
 from functools import partial
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import IO, Any, Callable, Optional
-
-from unstructured.file_utils.encoding import (
-    COMMON_ENCODINGS,
-    format_encoding_str,
-    read_txt_file,
-    validate_encoding,
-)
-from unstructured.logger import logger
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
+from typing import IO, Any, Callable, Final, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
@@ -56,9 +35,24 @@ from unstructured.documents.email_elements import (
     Sender,
     Subject,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.encoding import (
+    COMMON_ENCODINGS,
+    format_encoding_str,
+    read_txt_file,
+    validate_encoding,
+)
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
+from unstructured.partition.common import (
+    convert_to_bytes,
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.html import partition_html
+from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
@@ -422,8 +416,8 @@ def partition_email(
         #    <li>Item 1</li>=
         #    <li>Item 2<li>=
         # </ul>
-        list_content = content.split("=\n")
-        content = "".join(list_content)
+
+        content = content.replace("=\n", "").replace("=\r\n", "")
         elements = partition_html(
             text=content,
             include_metadata=False,

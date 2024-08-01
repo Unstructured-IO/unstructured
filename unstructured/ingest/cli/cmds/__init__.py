@@ -8,6 +8,7 @@ from unstructured.ingest.cli.cmds.fsspec.sftp import get_base_src_cmd as sftp_ba
 
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .astra import get_base_dest_cmd as astra_base_dest_cmd
+from .astra import get_base_src_cmd as astra_base_src_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
@@ -64,6 +65,7 @@ if t.TYPE_CHECKING:
 
 base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     airtable_base_src_cmd,
+    astra_base_src_cmd,
     azure_base_src_cmd,
     biomed_base_src_cmd,
     box_base_src_cmd,

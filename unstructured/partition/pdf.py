@@ -17,6 +17,7 @@ from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
 from pillow_heif import register_heif_opener
+from pypdf import PdfReader
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -36,7 +37,9 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.errors import PageCountExceededError
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -45,7 +48,11 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.lang import (
+    check_language_args,
+    prepare_languages_for_tesseract,
+    tesseract_to_paddle_language,
+)
 from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
     AnalysisDrawer,
     FinalLayoutDrawer,
@@ -77,6 +84,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -197,7 +205,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
+    languages = check_language_args(languages or [], ocr_languages)
 
     return partition_pdf_or_image(
         filename=filename,
@@ -227,7 +235,6 @@ def partition_pdf_or_image(
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
@@ -246,6 +253,9 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    if languages is None:
+        languages = ["eng"]
 
     # init ability to process .heic files
     register_heif_opener()
@@ -291,6 +301,10 @@ def partition_pdf_or_image(
     if file is not None:
         file.seek(0)
 
+    ocr_languages = prepare_languages_for_tesseract(languages)
+    if env_config.OCR_AGENT == OCR_AGENT_PADDLE:
+        ocr_languages = tesseract_to_paddle_language(ocr_languages)
+
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
@@ -302,6 +316,7 @@ def partition_pdf_or_image(
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 hi_res_model_name=hi_res_model_name,
                 pdf_text_extractable=pdf_text_extractable,
@@ -333,6 +348,7 @@ def partition_pdf_or_image(
                 file=file,
                 include_page_breaks=include_page_breaks,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 starting_page_number=starting_page_number,
@@ -492,6 +508,34 @@ def _process_pdfminer_pages(
     return elements
 
 
+def _get_pdf_page_number(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+) -> int:
+    if file:
+        number_of_pages = PdfReader(file).get_num_pages()
+        file.seek(0)
+    elif filename:
+        number_of_pages = PdfReader(filename).get_num_pages()
+    else:
+        ValueError("Either 'file' or 'filename' must be provided.")
+    return number_of_pages
+
+
+def check_pdf_hi_res_max_pages_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    pdf_hi_res_max_pages: int = None,
+) -> None:
+    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
+    if pdf_hi_res_max_pages:
+        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        if document_pages > pdf_hi_res_max_pages:
+            raise PageCountExceededError(
+                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            )
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -500,6 +544,7 @@ def _partition_pdf_or_image_local(
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
     languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
     hi_res_model_name: Optional[str] = None,
@@ -515,6 +560,7 @@ def _partition_pdf_or_image_local(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    pdf_hi_res_max_pages: Optional[int] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -529,10 +575,9 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    if languages is None:
-        languages = ["eng"]
-
-    ocr_languages = prepare_languages_for_tesseract(languages)
+    check_pdf_hi_res_max_pages_exceeded(
+        filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+    )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
@@ -819,7 +864,8 @@ def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     include_page_breaks: bool = False,
-    languages: Optional[list[str]] = ["eng"],
+    languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
@@ -838,6 +884,7 @@ def _partition_pdf_or_image_with_ocr(
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
@@ -851,6 +898,7 @@ def _partition_pdf_or_image_with_ocr(
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
+                ocr_languages=ocr_languages,
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
@@ -864,6 +912,7 @@ def _partition_pdf_or_image_with_ocr(
 def _partition_pdf_or_image_with_ocr_from_image(
     image: PILImage.Image,
     languages: Optional[list[str]] = None,
+    ocr_languages: Optional[str] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
@@ -874,17 +923,13 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
-    ocr_agent = OCRAgent.get_agent()
-    ocr_languages = prepare_languages_for_tesseract(languages)
+    ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
-    ocr_data = ocr_agent.get_layout_elements_from_image(
-        image=image,
-        ocr_languages=ocr_languages,
-    )
+    ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
     metadata = ElementMetadata(
         last_modified=metadata_last_modified,

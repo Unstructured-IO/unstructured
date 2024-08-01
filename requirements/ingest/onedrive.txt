@@ -23,13 +23,14 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==42.0.8
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   msal
     #   pyjwt
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-msal==1.29.0
+msal==1.30.0
     # via
     #   -r ./ingest/onedrive.in
     #   office365-rest-python-client

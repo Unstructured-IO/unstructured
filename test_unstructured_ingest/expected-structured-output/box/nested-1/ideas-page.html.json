@@ -14,7 +14,8 @@
         "version": "77943175838335685751163845636763163681",
         "record_locator": {
           "protocol": "box",
-          "remote_file_path": "box://utic-test-ingest-fixtures"
+          "remote_file_path": "box://utic-test-ingest-fixtures",
+          "file_id": "1255892530552"
         },
         "date_created": "1688874401.0",
         "date_modified": "1688874401.0"

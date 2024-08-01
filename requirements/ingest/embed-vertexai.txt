@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-cachetools==5.3.3
+cachetools==5.4.0
     # via google-auth
 certifi==2024.7.4
     # via
@@ -46,7 +46,7 @@ google-api-core[grpc]==2.19.1
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-auth==2.31.0
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-cloud-aiplatform
@@ -54,7 +54,7 @@ google-auth==2.31.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.58.0
+google-cloud-aiplatform==1.59.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -62,9 +62,9 @@ google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-resource-manager==1.12.3
+google-cloud-resource-manager==1.12.4
     # via google-cloud-aiplatform
-google-cloud-storage==2.17.0
+google-cloud-storage==2.18.0
     # via
     #   google-cloud-aiplatform
     #   langchain-google-vertexai
@@ -83,7 +83,7 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.64.1
+grpcio==1.65.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -100,25 +100,25 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.6
+langchain==0.2.11
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.6
+langchain-community==0.2.10
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.11
+langchain-core==0.2.23
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.6
+langchain-google-vertexai==1.0.7
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.84
+langsmith==0.1.93
     # via
     #   langchain
     #   langchain-community
@@ -200,7 +200,7 @@ requests==2.32.3
     #   langsmith
 rsa==4.9
     # via google-auth
-shapely==2.0.4
+shapely==2.0.5
     # via google-cloud-aiplatform
 six==1.16.0
     # via

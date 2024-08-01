@@ -42,7 +42,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/layout-parser-paper.pdf \
+  --input-path example-docs/pdf/layout-parser-paper.pdf \
   --work-dir "$WORK_DIR" \
   --chunking-strategy basic \
   --chunk-combine-text-under-n-chars 200 \
