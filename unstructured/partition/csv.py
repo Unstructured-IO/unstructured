@@ -16,12 +16,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed,
-)
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.utils import is_temp_file_path, lazyproperty
 
@@ -37,11 +32,10 @@ def partition_csv(
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     include_header: bool = False,
-    include_metadata: bool = True,
     infer_table_structure: bool = True,
     languages: list[str] | None = ["auto"],
-    # NOTE (jennings) partition_csv generates a single TableElement
-    # so detect_language_per_element is not included as a param
+    # NOTE (jennings) partition_csv generates a single TableElement so detect_language_per_element
+    # is not included as a param
     date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
@@ -75,44 +69,34 @@ def partition_csv(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     """
-    exactly_one(filename=filename, file=file)
 
-    header = 0 if include_header else None
-
-    if filename:
-        delimiter = get_delimiter(file_path=filename)
-        table = pd.read_csv(filename, header=header, sep=delimiter)
-        last_modification_date = get_last_modified_date(filename)
-
-    else:
-        assert file is not None
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-        f = spooled_to_bytes_io_if_needed(file)
-        delimiter = get_delimiter(file=f)
-        table = pd.read_csv(f, header=header, sep=delimiter)
-
-    html_text = table.to_html(index=False, header=include_header, na_rep="")
-    text = soupparser_fromstring(html_text).text_content()
-
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
-        )
-        if infer_table_structure:
-            metadata.text_as_html = html_text
-    else:
-        metadata = ElementMetadata()
-
-    elements = apply_lang_metadata(
-        [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)],
-        languages=languages,
+    ctx = _CsvPartitioningContext(
+        file_path=filename,
+        file=file,
+        metadata_file_path=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        include_header=include_header,
+        infer_table_structure=infer_table_structure,
+        date_from_file_object=date_from_file_object,
     )
 
-    return list(elements)
+    with ctx.open() as file:
+        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter)
+
+    html_text = dataframe.to_html(index=False, header=include_header, na_rep="")
+    text = soupparser_fromstring(html_text).text_content()
+
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=ctx.last_modified,
+        languages=languages,
+        text_as_html=html_text if infer_table_structure else None,
+    )
+
+    # -- a CSV file becomes a single `Table` element --
+    elements = [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+    return list(apply_lang_metadata(elements, languages=languages))
 
 
 class _CsvPartitioningContext:
@@ -238,25 +222,3 @@ class _CsvPartitioningContext:
         if self._file_path is None and self._file is None:
             raise ValueError("either file-path or file-like object must be provided")
         return self
-
-
-def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
-    """Use the standard csv sniffer to determine the delimiter.
-
-    Reads just a small portion in case the file is large.
-    """
-    sniffer = csv.Sniffer()
-    num_bytes = 65536
-
-    # -- read whole lines, sniffer can be confused by a trailing partial line --
-    if file:
-        lines = file.readlines(num_bytes)
-        file.seek(0)
-        data = "\n".join(ln.decode("utf-8") for ln in lines)
-    elif file_path is not None:
-        with open(file_path) as f:
-            data = "\n".join(f.readlines(num_bytes))
-    else:
-        raise ValueError("either `file_path` or `file` argument must be provided")
-
-    return sniffer.sniff(data, delimiters=",;").delimiter

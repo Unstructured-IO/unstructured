@@ -27,7 +27,7 @@ from test_unstructured.unit_utils import (
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
-from unstructured.partition.csv import _CsvPartitioningContext, get_delimiter, partition_csv
+from unstructured.partition.csv import _CsvPartitioningContext, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
@@ -263,11 +263,6 @@ def test_partition_csv_header():
     )
     assert table.metadata.text_as_html is not None
     assert "<thead>" in table.metadata.text_as_html
-
-
-def test_partition_csv_detects_the_right_csv_delimiter():
-    # -- Issue #2643: previously raised `_csv.Error: Could not determine delimiter` on this file --
-    assert get_delimiter("example-docs/csv-with-long-lines.csv") == ","
 
 
 # ================================================================================================
