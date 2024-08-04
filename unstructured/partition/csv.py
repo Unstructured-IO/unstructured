@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from typing import IO, Any, Optional, cast
+from typing import IO, Any
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -30,14 +30,14 @@ DETECTION_ORIGIN: str = "csv"
 @add_metadata_with_filetype(FileType.CSV)
 @add_chunking_strategy
 def partition_csv(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
+    filename: str | None = None,
+    file: IO[bytes] | None = None,
+    metadata_filename: str | None = None,
+    metadata_last_modified: str | None = None,
     include_header: bool = False,
     include_metadata: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
+    languages: list[str] | None = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
@@ -82,7 +82,8 @@ def partition_csv(
         table = pd.read_csv(filename, header=header, sep=delimiter)
         last_modification_date = get_last_modified_date(filename)
 
-    elif file:
+    else:
+        assert file is not None
         last_modification_date = (
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
@@ -91,7 +92,7 @@ def partition_csv(
         table = pd.read_csv(f, header=header, sep=delimiter)
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
-    text = cast(str, soupparser_fromstring(html_text).text_content())
+    text = soupparser_fromstring(html_text).text_content()
 
     if include_metadata:
         metadata = ElementMetadata(
