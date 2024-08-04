@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ._element import _Element
+from ._element import _Attrib, _Element
 
 class ElementBase(_Element):
     """The public Element class
@@ -49,6 +49,8 @@ class ElementBase(_Element):
         **_extra: str,
     ) -> None: ...
     def _init(self) -> None: ...
+    @property
+    def attrib(self) -> _Attrib: ...
 
 class ElementClassLookup:
     """Superclass of Element class lookups"""
