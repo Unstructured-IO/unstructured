@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from tempfile import SpooledTemporaryFile
 
 import pytest
@@ -16,11 +17,17 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_WITH_EMOJI,
     EXPECTED_TEXT_XLSX,
 )
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
-from unstructured.partition.csv import get_delimiter, partition_csv
+from unstructured.partition.csv import _CsvPartitioningContext, get_delimiter, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
@@ -261,3 +268,148 @@ def test_partition_csv_header():
 def test_partition_csv_detects_the_right_csv_delimiter():
     # -- Issue #2643: previously raised `_csv.Error: Could not determine delimiter` on this file --
     assert get_delimiter("example-docs/csv-with-long-lines.csv") == ","
+
+
+# ================================================================================================
+# UNIT-TESTS
+# ================================================================================================
+
+
+class Describe_CsvPartitioningContext:
+    """Unit-test suite for `unstructured.partition.csv._CsvPartitioningContext`."""
+
+    # -- .load() ------------------------------------------------
+
+    def it_provides_a_validating_alternate_constructor(self):
+        ctx = _CsvPartitioningContext.load(
+            file_path=example_doc_path("stanley-cups.csv"),
+            file=None,
+            metadata_file_path=None,
+            metadata_last_modified=None,
+            include_header=True,
+            infer_table_structure=True,
+            date_from_file_object=False,
+        )
+        assert isinstance(ctx, _CsvPartitioningContext)
+
+    def and_the_validating_constructor_raises_on_an_invalid_context(self):
+        with pytest.raises(ValueError, match="either file-path or file-like object must be prov"):
+            _CsvPartitioningContext.load(
+                file_path=None,
+                file=None,
+                metadata_file_path=None,
+                metadata_last_modified=None,
+                include_header=True,
+                infer_table_structure=True,
+                date_from_file_object=False,
+            )
+
+    # -- .delimiter ---------------------------------------------
+
+    @pytest.mark.parametrize(
+        "file_name",
+        [
+            "stanley-cups.csv",
+            # -- Issue #2643: previously raised `_csv.Error: Could not determine delimiter` on
+            # -- this file
+            "csv-with-long-lines.csv",
+        ],
+    )
+    def it_auto_detects_the_delimiter_for_a_comma_delimited_CSV_file(self, file_name: str):
+        ctx = _CsvPartitioningContext(example_doc_path(file_name))
+        assert ctx.delimiter == ","
+
+    def and_it_auto_detects_the_delimiter_for_a_semicolon_delimited_CSV_file(self):
+        ctx = _CsvPartitioningContext(example_doc_path("semicolon-delimited.csv"))
+        assert ctx.delimiter == ";"
+
+    def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
+        ctx = _CsvPartitioningContext(example_doc_path("single-column.csv"))
+        assert ctx.delimiter is None
+
+    # -- .header ------------------------------------------------
+
+    @pytest.mark.parametrize(("include_header", "expected_value"), [(False, None), (True, 0)])
+    def it_identifies_the_header_row_based_on_include_header_arg(
+        self, include_header: bool, expected_value: int | None
+    ):
+        assert _CsvPartitioningContext(include_header=include_header).header == expected_value
+
+    # -- .last_modified --------------------------
+
+    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(self):
+        ctx = _CsvPartitioningContext(metadata_last_modified="2024-08-04T13:12:35")
+        assert ctx.last_modified == "2024-08-04T13:12:35"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+        self, get_last_modified_date_: Mock
+    ):
+        get_last_modified_date_.return_value = "2024-08-04T02:23:53"
+        ctx = _CsvPartitioningContext(file_path="a/b/document.csv")
+
+        last_modified = ctx.last_modified
+
+        get_last_modified_date_.assert_called_once_with("a/b/document.csv")
+        assert last_modified == "2024-08-04T02:23:53"
+
+    def and_it_falls_back_to_last_modified_date_of_file_when_a_file_like_object_is_provided(
+        self, get_last_modified_date_from_file_: Mock
+    ):
+        get_last_modified_date_from_file_.return_value = "2024-08-04T13:17:47"
+        file = io.BytesIO(b"abcdefg")
+        ctx = _CsvPartitioningContext(file=file, date_from_file_object=True)
+
+        last_modified = ctx.last_modified
+
+        get_last_modified_date_from_file_.assert_called_once_with(file)
+        assert last_modified == "2024-08-04T13:17:47"
+
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
+        self, get_last_modified_date_from_file_: Mock
+    ):
+        get_last_modified_date_from_file_.return_value = "2024-08-04T13:18:57"
+        file = io.BytesIO(b"abcdefg")
+        ctx = _CsvPartitioningContext(file=file, date_from_file_object=False)
+
+        last_modified = ctx.last_modified
+
+        get_last_modified_date_from_file_.assert_not_called()
+        assert last_modified is None
+
+    # -- .open() ------------------------------------------------
+
+    def it_provides_transparent_access_to_the_source_file_when_it_is_a_file_like_object(self):
+        with open(example_doc_path("stanley-cups.csv"), "rb") as f:
+            # -- read so file cursor is at end of file --
+            f.read()
+            ctx = _CsvPartitioningContext(file=f)
+            with ctx.open() as file:
+                assert file is f
+                # -- read cursor is reset to 0 on .open() context entry --
+                assert f.tell() == 0
+                assert file.read(14) == b"Stanley Cups,,"
+                assert f.tell() == 14
+
+            # -- and read cursor is reset to 0 on .open() context exit --
+            assert f.tell() == 0
+
+    def it_provides_transparent_access_to_the_source_file_when_it_is_a_file_path(self):
+        ctx = _CsvPartitioningContext(example_doc_path("stanley-cups.csv"))
+        with ctx.open() as file:
+            assert file.read(14) == b"Stanley Cups,,"
+
+    # -- .validate() --------------------------------------------
+
+    def it_raises_when_neither_file_path_nor_file_is_provided(self):
+        with pytest.raises(ValueError, match="either file-path or file-like object must be prov"):
+            _CsvPartitioningContext()._validate()
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
+        return function_mock(request, "unstructured.partition.csv.get_last_modified_date")
+
+    @pytest.fixture()
+    def get_last_modified_date_from_file_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.partition.csv.get_last_modified_date_from_file")

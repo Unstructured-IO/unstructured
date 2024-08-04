@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import csv
-from typing import IO, Any
+from typing import IO, Any, Iterator
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -22,6 +23,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import apply_lang_metadata
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
 
@@ -111,6 +113,131 @@ def partition_csv(
     )
 
     return list(elements)
+
+
+class _CsvPartitioningContext:
+    """Encapsulates the partitioning-run details.
+
+    Provides access to argument values and especially encapsulates computation of values derived
+    from those values so they don't obscure the core partitioning logic.
+    """
+
+    def __init__(
+        self,
+        file_path: str | None = None,
+        file: IO[bytes] | None = None,
+        metadata_file_path: str | None = None,
+        metadata_last_modified: str | None = None,
+        include_header: bool = False,
+        infer_table_structure: bool = True,
+        date_from_file_object: bool = False,
+    ):
+        self._file_path = file_path
+        self._file = file
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+        self._include_header = include_header
+        self._infer_table_structure = infer_table_structure
+        self._date_from_file_object = date_from_file_object
+
+    @classmethod
+    def load(
+        cls,
+        file_path: str | None,
+        file: IO[bytes] | None,
+        metadata_file_path: str | None,
+        metadata_last_modified: str | None,
+        include_header: bool,
+        infer_table_structure: bool,
+        date_from_file_object: bool = False,
+    ) -> _CsvPartitioningContext:
+        return cls(
+            file_path=file_path,
+            file=file,
+            metadata_file_path=metadata_file_path,
+            metadata_last_modified=metadata_last_modified,
+            include_header=include_header,
+            infer_table_structure=infer_table_structure,
+            date_from_file_object=date_from_file_object,
+        )._validate()
+
+    @lazyproperty
+    def delimiter(self) -> str | None:
+        """The CSV delimiter, nominally a comma ",".
+
+        `None` for a single-column CSV file which naturally has no delimiter.
+        """
+        sniffer = csv.Sniffer()
+        num_bytes = 65536
+
+        with self.open() as file:
+            # -- read whole lines, sniffer can be confused by a trailing partial line --
+            data = "\n".join(ln.decode("utf-8") for ln in file.readlines(num_bytes))
+
+        try:
+            return sniffer.sniff(data, delimiters=",;").delimiter
+        except csv.Error:
+            # -- sniffing will fail on single-column csv as no default can be assumed --
+            return None
+
+    @lazyproperty
+    def header(self) -> int | None:
+        """Identifies the header row, if any, to Pandas, by idx."""
+        return 0 if self._include_header else None
+
+    @lazyproperty
+    def last_modified(self) -> str | None:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return (
+                None
+                if is_temp_file_path(self._file_path)
+                else get_last_modified_date(self._file_path)
+            )
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @contextlib.contextmanager
+    def open(self) -> Iterator[IO[bytes]]:
+        """Encapsulates complexity of dealing with file-path or file-like-object.
+
+        Provides an `IO[bytes]` object as the "common-denominator" document source.
+
+        Must be used as a context manager using a `with` statement:
+
+            with self._file as file:
+                do things with file
+
+        File is guaranteed to be at read position 0 when called.
+        """
+        if self._file_path:
+            with open(self._file_path, "rb") as f:
+                yield f
+        else:
+            file = self._file
+            assert file is not None  # -- guaranteed by `._validate()` --
+            # -- Be polite on principle. Reset file-pointer both before and after use --
+            file.seek(0)
+            yield file
+            file.seek(0)
+
+    def _validate(self) -> _CsvPartitioningContext:
+        """Raise on invalid argument values."""
+        if self._file_path is None and self._file is None:
+            raise ValueError("either file-path or file-like object must be provided")
+        return self
 
 
 def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
