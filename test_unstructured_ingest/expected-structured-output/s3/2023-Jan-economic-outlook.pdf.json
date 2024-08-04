@@ -401,83 +401,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2951e1eb514a453e5813bc6889f759f5",
-    "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle\u2014such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks\u2019 communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago.",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "ea9e70213dbb306bbfc411301593a01f",
-    "text": "Median country Brazil",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "a37a878930b52526b96231dcbcb9b3f4",
-    "text": "United States",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "cdd95d6fc1603d1c87d82ef501854019",
-    "text": "Euro area",
+    "element_id": "f52a71bae56180a24fd5470ae65ca1c1",
+    "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle\u2014such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks\u2019 communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago. Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year) United States Median country Brazil Euro area 18 16 14 12 10 8 6 4 2 0 \u20132 1. Headline Inflation Jul. 21 Jan. 21 Jul. 20 Jan. 20 Jan. 22 Jan. 2019 Jul. 19 16 14 12 10 8 6 4 2 0 2. Core Inflation \u20132 Jan. 22 Jan. 20 Jan. 2019 Jul. 20 Jan. 21 Jul. 21 Jul. 19 Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies. Jul. 22 Jul. 22",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -501,7 +426,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f37bd3b81db4c6ef56f199b5d899aebd",
+    "element_id": "d906412dddfc68aa1bfac57c45860dad",
     "text": "Winter comes to Europe. European economic growth in 2022 was more resilient than expected in the face of the large negative terms-of-trade shock from the war in Ukraine. This resilience\u2013\u2013which is",
     "metadata": {
       "filetype": "application/pdf",
@@ -526,7 +451,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "23cc5e8cc806e807c2d2a5070bd07b1c",
+    "element_id": "af41e1c0036cfb848f7feb0c6028dca9",
     "text": "2 International Monetary Fund | January 2023",
     "metadata": {
       "filetype": "application/pdf",
@@ -551,7 +476,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "43f5a5eb2707a8a8f8d7fd26a78f9dca",
+    "element_id": "45a62fed3d029346b0e9fbffeb66d4b9",
     "text": "Nov. \u00ab22",
     "metadata": {
       "filetype": "application/pdf",
@@ -576,7 +501,7 @@
   },
   {
     "type": "Title",
-    "element_id": "010f24c0d9604698a0a97e91efcf2ae6",
+    "element_id": "a1bf0eaf2fc11aa55f9d7e5ea8834cf0",
     "text": "Nov.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2751,8 +2676,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f787afd6d27e6bfdc89bd82044a417a6",
-    "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. While many central banks in advanced economies have stepped down the size of hikes, they have also explicitly stated they will need to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess their outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked.",
+    "element_id": "f036b8aeda4afc9bdda9ed831691227a",
+    "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. While many central banks in advanced economies have stepped down the size of hikes, they have also explicitly stated they will need to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess their outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked. Sources: Bloomberg Finance L.P.; and IMF staff calculations. Note: GFSR = Global Financial Stability Report.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

@@ -375,30 +375,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "31ed39cf3f959ddf86d3eba65cb79a01",
-    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture\u2019s depiction of radiation has played a role in ensuring that this discrepancy has remained, be it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation from nuclear power plants causing three-eyed fish, something that has been firmly rejected as unscientific.",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "e690f37ef36368a509d150f373a0bbe0",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
-        },
-        "date_created": "1676196572.0",
-        "date_modified": "1676196572.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "a66214340855880a5393384d1363511c",
-    "text": "Rank Order Laypersons",
+    "element_id": "b37cdfe1a0751dc216677446cc2ac6fd",
+    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture\u2019s depiction of radiation has played a role in ensuring that this discrepancy has remained, be it Godzilla, The Incredible Hulk, or The Simpsons, which regularly plays on the notion of radiation from nuclear power plants causing three-eyed fish, something that has been firmly rejected as unscientific. Rank Order Laypersons Experts 1 20 Nuclear power Motor vehicles 2 1 4 3 Handguns 2 4 Smoking Electric power (non-nuclear) 9 17 22 7 X-rays 25 30 Vaccinations Figure 1. Ordering of perceived risks for 30 activities and technologies1,iii",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -419,7 +397,7 @@
   },
   {
     "type": "Table",
-    "element_id": "9512f477364e1da1fa60dbd237c41f85",
+    "element_id": "f64b05aeb1df33461c5708719091d625",
     "text": "Experts 1 20 Nuclear power Motor vehicles 2 1 4 3 Handguns 2 4 Smoking Electric power (non-nuclear) 9 17 22 7 X-rays 25 30 Vaccinations",
     "metadata": {
       "filetype": "application/pdf",
@@ -441,7 +419,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "3ff36869cefb14183f0955094a908fc5",
+    "element_id": "1800d6b6736fe45e2b0be947a71f04b3",
     "text": "In reality, radiation is a natural part of life; indeed, we are all exposed to radiation every day, on average receiving 2-3 millisieverts (mSv) per year. Most of this radiation is naturally occurring, with radon gas from the ground being the main source of exposure. The nuclear industry is responsible for a very small part of radiation exposure to the public, as seen in Figure 2. To put this into perspective, eating 10 bananas or two Brazil nuts results in the same radiation dose as living nearby a nuclear power plant for a year. Humans are also naturally radioactive, and the radiation dose from sleeping next to someone else each night for a year is ten times higher than the exposure from living nearby a nuclear power plant for the same time span.",
     "metadata": {
       "filetype": "application/pdf",
@@ -463,7 +441,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "773667f6d4fbe19cc347ace06ca3664e",
+    "element_id": "9e7b2b77a8ceccb5c8814974356b85cc",
     "text": "In fact, scientific consensus is that when it comes to preventing exposure to radiation, nuclear power is much better than other electricity generators. A 2016 reportiii from the United Nations Scientific Committee on the Effects of Atomic Radiation (UNSCEAR) found that coal-generated electricity is responsible for more than half of the total global radiation exposure arising from electricity generation, while nuclear power contributed less than a fifth. Coal miners received high occupational exposure and workers in solar and wind farms received the highest occupational exposure associated with plant construction for the same amount of installed capacity.",
     "metadata": {
       "filetype": "application/pdf",
@@ -485,7 +463,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6dab7cb99fa308838e8c0413caccb7f1",
+    "element_id": "c4247952057a08c1213817652b62f9bf",
     "text": "1 The original study was published in 1978, but its findings have been confirmed by numerous studies since.",
     "metadata": {
       "filetype": "application/pdf",

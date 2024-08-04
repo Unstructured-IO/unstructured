@@ -331,8 +331,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ab8cefbb53c308302ee0e3c0c7ecfd25",
-    "text": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel. We also use the usual learned linear transfor- mation and softmax function to convert the decoder output to predicted next-token probabilities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax dmodel. linear transformation, similar to [30]. In the embedding layers, we multiply those weights by",
+    "element_id": "4bb11ade7d10b779a09fedb26b718206",
+    "text": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel. We also use the usual learned linear transfor- mation and softmax function to convert the decoder output to predicted next-token probabilities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax dmodel. linear transformation, similar to [30]. In the embedding layers, we multiply those weights by \u221a",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

@@ -390,7 +390,7 @@
     "type": "Title"
   },
   {
-    "element_id": "3f75ae21ef4d8973948ca41f0329efb9",
+    "element_id": "7afa2b8a28637fb38f693e49052005fd",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -399,11 +399,11 @@
       ],
       "page_number": 2
     },
-    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number ‘RN-8–1500-01.dat’, for is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net.",
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number ‘RN-8–1500-01.dat’, for is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net. ‘ðm; nÞ’, the size, respectively. For example, the problem instance,",
     "type": "NarrativeText"
   },
   {
-    "element_id": "950af9be0340541a956f6ffad3ecb178",
+    "element_id": "69846bd4868d367cb68cc92a78b42398",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -412,24 +412,11 @@
       ],
       "page_number": 2
     },
-    "text": "For each problem instance, the following information is provided: The number of depots mð The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip i A 1; 2; …; n, a start time, ts",
+    "text": "For each problem instance, the following information is provided: The number of depots mð The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip i A 1; 2; …; n, a start time, ts Þ,",
     "type": "NarrativeText"
   },
   {
-    "element_id": "320f6d28582c354d35673c2a4119851f",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "Þ,",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "38269e29d1bd6e68141cb8e14afb50e5",
+    "element_id": "e4ef1e020fe8e823c55d5d2010c4e756",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -442,7 +429,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "9dd8b3854d974abcb78d8980939f6df7",
+    "element_id": "1b5f48aa4ecaee84fc25a538433d7ef0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -455,7 +442,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "8d5157e6f596a6e1f4f9c031b8fedb5e",
+    "element_id": "41933d82c08a769364d6e117d288b5e2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -468,7 +455,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "376bb2fb8e9604649d5074748810bb10",
+    "element_id": "941c14120677a71072966dd6751f203d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -481,7 +468,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "223fae9ea1c1eb30d7676d252e4a65da",
+    "element_id": "ddfe4f255efa0be2df608b892c14b681",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -572,7 +559,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3d57bb91b2a5543faae14c6309327eda",
+    "element_id": "4246dbb628a2206e8867af8b90dbc35a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -581,7 +568,7 @@
       ],
       "page_number": 3
     },
-    "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; …; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; …; l",
+    "text": "The description of the file for each problem instance is presented in Table 2. The first line in the file provides the number of depots (m), the number of trips, (n), and the number of locations (I), in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, ie{1,...,n}, and provides the start location, the start time, the end location, and the end time of trip i. The next | lines present the travel times between any two locations, i,j e {1, wal}.",
     "type": "NarrativeText"
   },
   {
