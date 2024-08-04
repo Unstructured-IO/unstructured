@@ -1,6 +1,11 @@
+# pyright: reportPrivateUsage=false
+
+from __future__ import annotations
+
 from tempfile import SpooledTemporaryFile
 
 import pytest
+from pytest_mock import MockFixture
 
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
@@ -33,7 +38,7 @@ EXPECTED_FILETYPE = "text/csv"
         ),
     ],
 )
-def test_partition_csv_from_filename(filename, expected_text, expected_table):
+def test_partition_csv_from_filename(filename: str, expected_text: str, expected_table: str):
     f_path = f"example-docs/{filename}"
     elements = partition_csv(filename=f_path)
 
@@ -43,14 +48,8 @@ def test_partition_csv_from_filename(filename, expected_text, expected_table):
     assert elements[0].metadata.filename == filename
 
 
-@pytest.mark.parametrize(
-    "infer_table_structure",
-    [
-        True,
-        False,
-    ],
-)
-def test_partition_csv_from_filename_infer_table_structure(infer_table_structure):
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_csv_from_filename_infer_table_structure(infer_table_structure: bool):
     f_path = "example-docs/stanley-cups.csv"
     elements = partition_csv(filename=f_path, infer_table_structure=infer_table_structure)
 
@@ -61,10 +60,8 @@ def test_partition_csv_from_filename_infer_table_structure(infer_table_structure
     assert table_element_has_text_as_html_field == infer_table_structure
 
 
-def test_partition_csv_from_filename_with_metadata_filename(
-    filename="example-docs/stanley-cups.csv",
-):
-    elements = partition_csv(filename=filename, metadata_filename="test")
+def test_partition_csv_from_filename_with_metadata_filename():
+    elements = partition_csv(example_doc_path("stanley-cups.csv"), metadata_filename="test")
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
@@ -77,7 +74,7 @@ def test_partition_csv_from_filename_with_metadata_filename(
         ("stanley-cups-with-emoji.csv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
     ],
 )
-def test_partition_csv_from_file(filename, expected_text, expected_table):
+def test_partition_csv_from_file(filename: str, expected_text: str, expected_table: str):
     f_path = f"example-docs/{filename}"
     with open(f_path, "rb") as f:
         elements = partition_csv(file=f)
@@ -90,16 +87,16 @@ def test_partition_csv_from_file(filename, expected_text, expected_table):
         assert {element.metadata.detection_origin for element in elements} == {"csv"}
 
 
-def test_partition_csv_from_file_with_metadata_filename(filename="example-docs/stanley-cups.csv"):
-    with open(filename, "rb") as f:
+def test_partition_csv_from_file_with_metadata_filename():
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         elements = partition_csv(file=f, metadata_filename="test")
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
 
 
-def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.csv"):
-    elements = partition_csv(filename=filename, include_metadata=False)
+def test_partition_csv_can_exclude_metadata():
+    elements = partition_csv(example_doc_path("stanley-cups.csv"), include_metadata=False)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
@@ -108,23 +105,21 @@ def test_partition_csv_can_exclude_metadata(filename="example-docs/stanley-cups.
     assert elements[0].metadata.filename is None
 
 
-def test_partition_csv_metadata_date(mocker, filename="example-docs/stanley-cups.csv"):
+def test_partition_csv_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.csv.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
-    elements = partition_csv(filename=filename)
+
+    elements = partition_csv(example_doc_path("stanley-cups.csv"))
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
-def test_partition_csv_custom_metadata_date(
-    mocker,
-    filename="example-docs/stanley-cups.csv",
-):
+def test_partition_csv_custom_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
 
@@ -134,7 +129,7 @@ def test_partition_csv_custom_metadata_date(
     )
 
     elements = partition_csv(
-        filename=filename,
+        example_doc_path("stanley-cups.csv"),
         metadata_last_modified=expected_last_modification_date,
         include_header=False,
     )
@@ -144,10 +139,7 @@ def test_partition_csv_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_csv_from_file_metadata_date(
-    mocker,
-    filename="example-docs/stanley-cups.csv",
-):
+def test_partition_csv_from_file_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
@@ -155,7 +147,7 @@ def test_partition_csv_from_file_metadata_date(
         return_value=mocked_last_modification_date,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         elements = partition_csv(file=f, include_header=False)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
@@ -163,10 +155,7 @@ def test_partition_csv_from_file_metadata_date(
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_csv_from_file_explicit_get_metadata_date(
-    mocker,
-    filename="example-docs/stanley-cups.csv",
-):
+def test_partition_csv_from_file_explicit_get_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
     mocker.patch(
@@ -174,7 +163,7 @@ def test_partition_csv_from_file_explicit_get_metadata_date(
         return_value=mocked_last_modification_date,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         elements = partition_csv(file=f, include_header=False, date_from_file_object=True)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
@@ -182,10 +171,7 @@ def test_partition_csv_from_file_explicit_get_metadata_date(
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
-def test_partition_csv_from_file_custom_metadata_date(
-    mocker,
-    filename="example-docs/stanley-cups.csv",
-):
+def test_partition_csv_from_file_custom_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
 
@@ -194,7 +180,7 @@ def test_partition_csv_from_file_custom_metadata_date(
         return_value=mocked_last_modification_date,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         elements = partition_csv(
             file=f,
             metadata_last_modified=expected_last_modification_date,
@@ -207,13 +193,10 @@ def test_partition_csv_from_file_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_csv_from_file_without_metadata(
-    mocker,
-    filename="example-docs/stanley-cups.csv",
-):
+def test_partition_csv_from_file_without_metadata(mocker: MockFixture):
     """Test partition_csv() with file that are not possible to get last modified date"""
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
@@ -263,13 +246,16 @@ def test_partition_csv_respects_languages_arg():
 
 
 def test_partition_csv_header():
-    filename = "example-docs/stanley-cups.csv"
-    elements = partition_csv(filename=filename, strategy="fast", include_header=True)
-    assert (
-        clean_extra_whitespace(elements[0].text)
-        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    elements = partition_csv(
+        example_doc_path("stanley-cups.csv"), strategy="fast", include_header=True
     )
-    assert "<thead>" in elements[0].metadata.text_as_html
+
+    table = elements[0]
+    assert clean_extra_whitespace(table.text) == (
+        "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    )
+    assert table.metadata.text_as_html is not None
+    assert "<thead>" in table.metadata.text_as_html
 
 
 def test_partition_csv_detects_the_right_csv_delimiter():
