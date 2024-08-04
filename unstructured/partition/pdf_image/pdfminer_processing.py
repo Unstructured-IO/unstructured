@@ -1,8 +1,10 @@
-from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
+from copy import deepcopy
+from typing import TYPE_CHECKING, BinaryIO, Optional, Union, cast
 
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
+from unstructured.partition.pdf_image.inference_utils import merge_embedded_overlapping_regions
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
@@ -22,7 +24,7 @@ if TYPE_CHECKING:
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
-) -> List[List["TextRegion"]]:
+) -> list[list["TextRegion"]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout = process_data_with_pdfminer(
@@ -36,7 +38,7 @@ def process_file_with_pdfminer(
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-) -> List[List["TextRegion"]]:
+) -> list[list["TextRegion"]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
@@ -99,7 +101,7 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
 @requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
-    extracted_layout: List[List["TextRegion"]],
+    extracted_layout: list[list["TextRegion"]],
     hi_res_model_name: str,
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
@@ -132,16 +134,19 @@ def merge_inferred_with_extracted_layout(
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
 
+        _extracted_page_layout = deepcopy(extracted_page_layout)
+        _extracted_page_layout = merge_embedded_overlapping_regions(_extracted_page_layout)
+
         merged_layout = merge_inferred_with_extracted_page(
             inferred_layout=inferred_layout,
-            extracted_layout=extracted_page_layout,
+            extracted_layout=_extracted_page_layout,
             page_image_size=image_size,
             **threshold_kwargs,
         )
 
         if order_elements:
             merged_layout = sort_text_regions(
-                cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC
+                cast(list["TextRegion"], merged_layout), SORT_MODE_BASIC
             )
 
         elements = []

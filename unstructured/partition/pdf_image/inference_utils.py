@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from unstructured_inference.constants import Source
-from unstructured_inference.inference.elements import TextRegion
+from unstructured_inference.inference.elements import TextRegion, ImageTextRegion
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
@@ -103,3 +103,30 @@ def merge_text_regions(regions: list[TextRegion]) -> TextRegion:
     source = sources[0] if all(s == sources[0] for s in sources) else None
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
+
+
+def merge_embedded_overlapping_regions(regions: list[TextRegion]) -> list[TextRegion]:
+    merged_regions = []
+    while regions:
+        current = regions.pop(0)
+        if isinstance(current, ImageTextRegion):
+            merged_regions.append(current)
+            continue
+
+        overlapped = False
+        for idx, other in enumerate(merged_regions):
+            if current.bbox.is_almost_subregion_of(
+                other.bbox, 0.99
+            ) or other.bbox.is_almost_subregion_of(current.bbox, 0.99):
+                # Merge logic: adjust bbox to cover both and combine texts
+                new_text = (other.text or "") + (current.text or "")
+                other.bbox.x1 = min(current.bbox.x1, other.bbox.x1)
+                other.bbox.x2 = max(current.bbox.x2, other.bbox.x2)
+                other.bbox.y1 = min(current.bbox.y1, other.bbox.y1)
+                other.bbox.y2 = max(current.bbox.y2, other.bbox.y2)
+                other.text = new_text
+                overlapped = True
+                break
+        if not overlapped:
+            merged_regions.append(current)
+    return merged_regions
