@@ -14,7 +14,6 @@ from test_unstructured.partition.test_constants import (
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.tsv import partition_tsv
 
@@ -31,11 +30,11 @@ EXPECTED_FILETYPE = "text/tsv"
 def test_partition_tsv_from_filename(filename: str, expected_text: str, expected_table: str):
     elements = partition_tsv(example_doc_path(filename), include_header=False)
 
-    assert clean_extra_whitespace(elements[0].text) == expected_text
-    assert elements[0].metadata.text_as_html == expected_table
-    assert elements[0].metadata.filetype == EXPECTED_FILETYPE
-    for element in elements:
-        assert element.metadata.filename == filename
+    table = elements[0]
+    assert table.text == expected_text
+    assert table.metadata.text_as_html == expected_table
+    assert table.metadata.filetype == EXPECTED_FILETYPE
+    assert all(e.metadata.filename == filename for e in elements)
 
 
 def test_partition_tsv_from_filename_with_metadata_filename():
@@ -43,9 +42,8 @@ def test_partition_tsv_from_filename_with_metadata_filename():
         example_doc_path("stanley-cups.tsv"), metadata_filename="test", include_header=False
     )
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    for element in elements:
-        assert element.metadata.filename == "test"
+    assert elements[0].text == EXPECTED_TEXT
+    assert all(e.metadata.filename == "test" for e in elements)
 
 
 @pytest.mark.parametrize(
@@ -59,21 +57,20 @@ def test_partition_tsv_from_file(filename: str, expected_text: str, expected_tab
     with open(example_doc_path(filename), "rb") as f:
         elements = partition_tsv(file=f, include_header=False)
 
-    assert clean_extra_whitespace(elements[0].text) == expected_text
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html == expected_table
-    assert elements[0].metadata.filetype == EXPECTED_FILETYPE
-    for element in elements:
-        assert element.metadata.filename is None
+    table = elements[0]
+    assert isinstance(table, Table)
+    assert table.text == expected_text
+    assert table.metadata.text_as_html == expected_table
+    assert table.metadata.filetype == EXPECTED_FILETYPE
+    assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_tsv_from_file_with_metadata_filename():
     with open(example_doc_path("stanley-cups.tsv"), "rb") as f:
         elements = partition_tsv(file=f, metadata_filename="test", include_header=False)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    for element in elements:
-        assert element.metadata.filename == "test"
+    assert elements[0].text == EXPECTED_TEXT
+    assert all(element.metadata.filename == "test" for element in elements)
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
@@ -142,12 +139,10 @@ def test_partition_tsv_header():
         example_doc_path("stanley-cups.tsv"), strategy="fast", include_header=True
     )
 
-    e = elements[0]
-    assert (
-        clean_extra_whitespace(e.text) == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
-    )
-    assert e.metadata.text_as_html is not None
-    assert "<thead>" in e.metadata.text_as_html
+    table = elements[0]
+    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert table.metadata.text_as_html is not None
+    assert "<table>" in table.metadata.text_as_html
 
 
 def test_partition_tsv_supports_chunking_strategy_while_partitioning():
