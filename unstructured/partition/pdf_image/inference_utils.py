@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from unstructured_inference.constants import Source
-from unstructured_inference.inference.elements import TextRegion, ImageTextRegion
+from unstructured_inference.inference.elements import ImageTextRegion, TextRegion
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
