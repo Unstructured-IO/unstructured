@@ -1,7 +1,8 @@
-## 0.15.1-dev9
+## 0.15.1
 
 ### Enhancements
 
+* **Improve the process of merging `inferred` and `embedded` layouts by effectively handling overlapping text regions in the embedded layout.** It adjusts bounding boxes and combines text content of overlapping regions, resulting in more precise and coherent text extraction from complex document structures.
 * **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
 
 ### Features
