@@ -40,9 +40,9 @@ class CouchbaseConnectionConfig(ConnectionConfig):
     access_config: CouchbaseAccessConfig = enhanced_field(
         sensitive=True, default_factory=CouchbaseAccessConfig
     )
-    bucket_name: Optional[str] = None
-    scope_name: Optional[str] = None
-    collection_name: Optional[str] = None
+    bucket: Optional[str] = None
+    scope: Optional[str] = None
+    collection: Optional[str] = None
     batch_size: int = 50
     connector_type: str = CONNECTOR_TYPE
 
@@ -122,18 +122,30 @@ class CouchbaseUploader(Uploader):
         for content in contents:
             with open(content.path) as elements_file:
                 elements = json.load(elements_file)
-                elements_dict.extend(elements)
+                # Modify the elements to match the expected couchbase format
+                for element in elements:
+                    new_doc = {
+                        element.pop("element_id", None): {
+                            "embedding": element.pop("embeddings", None),
+                            "text": element.pop("text", None),
+                            "metadata": element.pop("metadata", None),
+                            "type": element.pop("type", None),
+                        }
+                    }
+                    elements_dict.append(new_doc)
 
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
-            f"bucket, {self.connection_config.bucket_name} "
+            f"bucket, {self.connection_config.bucket} "
             f"at {self.connection_config.access_config.connection_string}",
         )
-        bucket = self.cluster.bucket(self.connection_config.bucket_name)
-        scope = bucket.scope(self.connection_config.scope_name)
-        collection = scope.collection(self.connection_config.collection_name)
+
+        bucket = self.cluster.bucket(self.connection_config.bucket)
+        scope = bucket.scope(self.connection_config.scope)
+        collection = scope.collection(self.connection_config.collection)
+
         for chunk in batch_generator(elements_dict, self.upload_config.batch_size):
-            collection.upsert_multi(chunk)
+            collection.upsert_multi({doc_id: doc for doc in chunk for doc_id, doc in doc.items()})
 
 
 couchbase_destination_entry = DestinationRegistryEntry(

@@ -16,7 +16,7 @@ echo "Cluster is live."
 echo "Initializing Couchbase cluster"
 docker exec -it couchbase-db couchbase-cli cluster-init -c $CB_CONN_STR \
         --cluster-username $CB_USERNAME --cluster-password $CB_PASSWORD --cluster-ramsize 512 \
-        --cluster-index-ramsize 512 --services data,index,query,fts \
+        --cluster-index-ramsize 512 --cluster-fts-ramsize 512 --services data,index,query,fts \
 && \
 docker exec -it couchbase-db couchbase-cli bucket-create -c $CB_CONN_STR \
     --username $CB_USERNAME --password $CB_PASSWORD \

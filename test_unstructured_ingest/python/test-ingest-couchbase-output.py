@@ -1,5 +1,6 @@
 import json
 import math
+import time
 from datetime import timedelta
 
 import click
@@ -85,7 +86,7 @@ def check_vector(ctx, output_json):
     exact_embedding = json_content[0]["embeddings"]
     exact_text = json_content[0]["text"]
 
-    print("exact embedding:", exact_embedding)
+    print("exact embedding:", len(exact_embedding), exact_embedding)
 
     cluster: Cluster = ctx.obj["cluster"]
     bucket_name = ctx.parent.params["bucket"]
@@ -98,17 +99,29 @@ def check_vector(ctx, output_json):
     bucket = cluster.bucket(bucket_name)
     scope = bucket.scope(scope_name)
 
-    search_iter = scope.search(
-        index_name,
-        search_req,
-        SearchOptions(
-            limit=2,
-            fields=["text"],
-        ),
-    )
+    attempts = 0
+    max_attempts = 10
+    rows = None
+    while attempts < max_attempts:
+        try:
+            search_iter = scope.search(
+                index_name,
+                search_req,
+                SearchOptions(
+                    limit=2,
+                    fields=["text"],
+                ),
+            )
 
-    rows = list(search_iter.rows())
-    print("rows are", rows)
+            rows = list(search_iter.rows())
+            if rows:
+                break
+        except Exception as e:
+            print(f"Attempts: ({attempts}/{max_attempts}), Error while performing search:{e}")
+        finally:
+            attempts += 1
+            time.sleep(5)
+
     assert 2 >= len(rows) >= 1  # only 1 or 2 length list
 
     assert math.isclose(rows[0].score, 1.0, abs_tol=1e-4)

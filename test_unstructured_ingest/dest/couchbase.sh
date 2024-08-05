@@ -87,7 +87,7 @@ python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
   --bucket "$CB_BUCKET" \
   --scope "$DESTINATION_CB_SCOPE" \
   --collection "$DESTINATION_CB_COLLECTION" \
-  check --expected-docs 1
+  check --expected-docs 3
 
 stage_file=$(ls -1 "$WORK_DIR"/upload_stage | head -n 1)
 
