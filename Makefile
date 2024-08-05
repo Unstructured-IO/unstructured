@@ -281,7 +281,6 @@ install-pandoc:
 install-paddleocr:
 	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
-## Refer to the "Adding a new Dependency Group" notes in Notion for more info about the execution flow of this make command.
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
