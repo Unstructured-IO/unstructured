@@ -76,12 +76,14 @@ class FileType(enum.Enum):
         return None
 
     @classmethod
-    def from_mime_type(cls, mime_type: str) -> FileType | None:
+    def from_mime_type(cls, mime_type: str | None) -> FileType | None:
         """Select a FileType member based on a MIME-type.
 
         Returns `None` when `mime_type` is `None` or does not map to the canonical MIME-type of a
         `FileType` member or one of its alias MIME-types.
         """
+        if mime_type is None:
+            return None
         # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
         # -- limitations on defining a class variable on an Enum.
         for m in cls.__members__.values():
@@ -284,7 +286,7 @@ class FileType(enum.Enum):
         "msg",
         [".msg"],
         "application/vnd.ms-outlook",
-        ["application/x-ole-storage"],
+        cast(list[str], []),
     )
     ODT = (
         "odt",
@@ -434,6 +436,3 @@ class FileType(enum.Enum):
         "inode/x-empty",
         cast(list[str], []),
     )
-
-
-PLAIN_TEXT_EXTENSIONS = ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .text .tsv .txt".split()

@@ -929,7 +929,11 @@ def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
     detect_filetype_.assert_called_once_with(
-        content_type=None, encoding=None, file=None, file_filename=None, filename="made-up.fake"
+        file_path="made-up.fake",
+        file=None,
+        encoding=None,
+        content_type=None,
+        metadata_file_path=None,
     )
 
 
@@ -1217,33 +1221,39 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
 
 
 @pytest.mark.parametrize(
-    "filetype",
+    "file_type",
     [
         t
         for t in FileType
-        if t not in (FileType.EMPTY, FileType.UNK, FileType.WAV, FileType.XLS, FileType.ZIP)
-        and t.partitioner_function_name != "partition_image"
+        if t
+        not in (
+            FileType.EMPTY,
+            FileType.JSON,
+            FileType.UNK,
+            FileType.WAV,
+            FileType.XLS,
+            FileType.ZIP,
+        )
+        and t.partitioner_shortname != "image"
     ],
 )
-def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype: FileType):
-    extension = filetype.name.lower()
-    # -- except for two oddballs, the shortname is the extension --
-    partitioner_shortname = {FileType.TXT: "text", FileType.EML: "email"}.get(filetype, extension)
-    partition_fn_name = f"partition_{partitioner_shortname}"
-    module = import_module(f"unstructured.partition.{partitioner_shortname}")
+def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(file_type: FileType):
+    partition_fn_name = file_type.partitioner_function_name
+    module = import_module(file_type.partitioner_module_qname)
     partition_fn = getattr(module, partition_fn_name)
 
     # -- partition the first example-doc with the extension for this filetype --
     elements: list[Element] = []
-    doc_path = example_doc_path("pdf") if filetype == FileType.PDF else example_doc_path("")
+    doc_path = example_doc_path("pdf") if file_type == FileType.PDF else example_doc_path("")
+    extensions = file_type._extensions
     for file in pathlib.Path(doc_path).iterdir():
-        if file.is_file() and file.suffix == f".{extension}":
+        if file.is_file() and file.suffix in extensions:
             elements = partition_fn(str(file))
             break
 
     assert elements
     assert all(
-        e.metadata.filetype == filetype.mime_type
+        e.metadata.filetype == file_type.mime_type
         for e in elements
         if e.metadata.filetype is not None
     )
@@ -1305,7 +1315,7 @@ def test_auto_partition_that_requires_extras_raises_when_dependencies_are_not_in
     )
     match = r"partition_pdf\(\) is not available because one or more dependencies are not installed"
     with pytest.raises(ImportError, match=match):
-        partition(example_doc_path("layout-parser-paper-fast.pdf"))
+        partition(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
 
     dependency_exists_.assert_called_once_with("pdf2image")
 

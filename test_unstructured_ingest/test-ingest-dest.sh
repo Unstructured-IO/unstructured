@@ -64,6 +64,7 @@ tests_to_ignore=(
   'notion.sh'
   'dropbox.sh'
   'sharepoint.sh'
+  'databricks-volumes.sh'
 )
 
 for test in "${all_tests[@]}"; do

@@ -10,6 +10,14 @@ from unstructured.file_utils.model import FileType
 class DescribeFileType:
     """Unit-test suite for `unstructured.file_utils.model.Filetype`."""
 
+    # -- .__lt__() ----------------------------------------------
+
+    def it_is_a_collection_ordered_by_name_and_can_be_sorted(self):
+        """FileType is a total order on name, e.g. FileType.A < FileType.B."""
+        assert FileType.EML < FileType.HTML < FileType.XML
+
+    # -- .from_extension() --------------------------------------
+
     @pytest.mark.parametrize(
         ("ext", "file_type"),
         [
@@ -23,9 +31,11 @@ class DescribeFileType:
     def it_can_recognize_a_file_type_from_an_extension(self, ext: str, file_type: FileType | None):
         assert FileType.from_extension(ext) is file_type
 
-    @pytest.mark.parametrize("ext", [".foobar", ".xyz", ".mdx", "", "."])
-    def but_not_when_that_extension_is_empty_or_not_registered(self, ext: str):
+    @pytest.mark.parametrize("ext", [".foobar", ".xyz", ".mdx", "", ".", None])
+    def but_not_when_that_extension_is_empty_or_None_or_not_registered(self, ext: str | None):
         assert FileType.from_extension(ext) is None
+
+    # -- .from_mime_type() --------------------------------------
 
     @pytest.mark.parametrize(
         ("mime_type", "file_type"),
@@ -46,29 +56,13 @@ class DescribeFileType:
     ):
         assert FileType.from_mime_type(mime_type) is file_type
 
-    @pytest.mark.parametrize("mime_type", ["text/css", "image/gif", "audio/mpeg", "foo/bar"])
-    def but_not_when_that_mime_type_is_not_registered_by_a_file_type(self, mime_type: str):
+    @pytest.mark.parametrize("mime_type", ["text/css", "image/gif", "audio/mpeg", "foo/bar", None])
+    def but_not_when_that_mime_type_is_not_registered_by_a_file_type_or_None(
+        self, mime_type: str | None
+    ):
         assert FileType.from_mime_type(mime_type) is None
 
-    @pytest.mark.parametrize(
-        ("file_type", "expected_value"),
-        [
-            (FileType.BMP, ("unstructured_inference",)),
-            (FileType.CSV, ("pandas",)),
-            (FileType.DOC, ("docx",)),
-            (FileType.EMPTY, ()),
-            (FileType.HTML, ()),
-            (FileType.ODT, ("docx", "pypandoc")),
-            (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
-            (FileType.UNK, ()),
-            (FileType.WAV, ()),
-            (FileType.ZIP, ()),
-        ],
-    )
-    def it_knows_which_importable_packages_its_partitioner_depends_on(
-        self, file_type: FileType, expected_value: tuple[str, ...]
-    ):
-        assert file_type.importable_package_dependencies == expected_value
+    # -- .extra_name --------------------------------------------
 
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
@@ -91,6 +85,30 @@ class DescribeFileType:
     ):
         assert file_type.extra_name == expected_value
 
+    # -- .importable_package_dependencies -----------------------
+
+    @pytest.mark.parametrize(
+        ("file_type", "expected_value"),
+        [
+            (FileType.BMP, ("unstructured_inference",)),
+            (FileType.CSV, ("pandas",)),
+            (FileType.DOC, ("docx",)),
+            (FileType.EMPTY, ()),
+            (FileType.HTML, ()),
+            (FileType.ODT, ("docx", "pypandoc")),
+            (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
+            (FileType.UNK, ()),
+            (FileType.WAV, ()),
+            (FileType.ZIP, ()),
+        ],
+    )
+    def it_knows_which_importable_packages_its_partitioner_depends_on(
+        self, file_type: FileType, expected_value: tuple[str, ...]
+    ):
+        assert file_type.importable_package_dependencies == expected_value
+
+    # -- .is_partitionable --------------------------------------
+
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
         [
@@ -112,6 +130,8 @@ class DescribeFileType:
     ):
         assert file_type.is_partitionable is expected_value
 
+    # -- .mime_type ---------------------------------------------
+
     @pytest.mark.parametrize(
         ("file_type", "mime_type"),
         [
@@ -130,6 +150,8 @@ class DescribeFileType:
     )
     def it_knows_its_canonical_MIME_type(self, file_type: FileType, mime_type: str):
         assert file_type.mime_type == mime_type
+
+    # -- .partitioner_function_name -----------------------------
 
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
@@ -154,6 +176,8 @@ class DescribeFileType:
     ):
         with pytest.raises(ValueError, match="`.partitioner_function_name` is undefined because "):
             file_type.partitioner_function_name
+
+    # -- .partitioner_module_qname ------------------------------
 
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),
@@ -180,6 +204,8 @@ class DescribeFileType:
     ):
         with pytest.raises(ValueError, match="`.partitioner_module_qname` is undefined because "):
             file_type.partitioner_module_qname
+
+    # -- .partitioner_shortname ---------------------------------
 
     @pytest.mark.parametrize(
         ("file_type", "expected_value"),

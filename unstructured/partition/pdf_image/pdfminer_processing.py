@@ -5,7 +5,7 @@ from pdfminer.utils import open_filename
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
-    get_images_from_pdf_element,
+    extract_image_objects,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -51,32 +51,26 @@ def process_data_with_pdfminer(
     for page, page_layout in open_pdfminer_pages_generator(file):
         height = page_layout.height
 
-        layout: List["TextRegion"] = []
+        layout: list["TextRegion"] = []
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
 
             if hasattr(obj, "get_text"):
                 _text = obj.get_text()
-                element_class = EmbeddedTextRegion  # type: ignore
+                text_region = _create_text_region(
+                    x1, y1, x2, y2, coef, _text, Source.PDFMINER, EmbeddedTextRegion
+                )
+                if text_region.bbox is not None and text_region.bbox.area > 0:
+                    layout.append(text_region)
             else:
-                embedded_images = get_images_from_pdf_element(obj)
-                if len(embedded_images) > 0:
-                    _text = None
-                    element_class = ImageTextRegion  # type: ignore
-                else:
-                    continue
-
-            text_region = element_class.from_coords(
-                x1 * coef,
-                y1 * coef,
-                x2 * coef,
-                y2 * coef,
-                text=_text,
-                source=Source.PDFMINER,
-            )
-
-            if text_region.bbox is not None and text_region.bbox.area > 0:
-                layout.append(text_region)
+                inner_image_objects = extract_image_objects(obj)
+                for img_obj in inner_image_objects:
+                    new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(img_obj.bbox, height)
+                    text_region = _create_text_region(
+                        new_x1, new_y1, new_x2, new_y2, coef, None, Source.PDFMINER, ImageTextRegion
+                    )
+                    if text_region.bbox is not None and text_region.bbox.area > 0:
+                        layout.append(text_region)
 
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
@@ -88,6 +82,18 @@ def process_data_with_pdfminer(
         layouts.append(layout)
 
     return layouts
+
+
+def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
+    """Creates a text region of the specified class with scaled coordinates."""
+    return region_class.from_coords(
+        x1 * coef,
+        y1 * coef,
+        x2 * coef,
+        y2 * coef,
+        text=text,
+        source=source,
+    )
 
 
 @requires_dependencies("unstructured_inference")
