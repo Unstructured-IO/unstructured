@@ -4,7 +4,9 @@
 #
 #    pip-compile ./ingest/embed-voyageai.in
 #
-aiohttp==3.9.5
+aiohappyeyeballs==2.3.4
+    # via aiohttp
+aiohttp==3.10.1
     # via
     #   langchain
     #   voyageai
@@ -18,7 +20,7 @@ async-timeout==4.0.3
     # via
     #   aiohttp
     #   langchain
-attrs==23.2.0
+attrs==24.1.0
     # via aiohttp
 certifi==2024.7.4
     # via
@@ -42,9 +44,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.11
+langchain==0.2.12
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.23
+langchain-core==0.2.28
     # via
     #   langchain
     #   langchain-text-splitters
@@ -53,7 +55,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.93
+langsmith==0.1.96
     # via
     #   langchain
     #   langchain-core
@@ -100,6 +102,7 @@ tenacity==8.5.0
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   langchain-core
     #   pydantic
     #   pydantic-core
     #   sqlalchemy

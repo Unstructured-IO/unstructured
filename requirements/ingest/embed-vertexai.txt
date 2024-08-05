@@ -4,7 +4,9 @@
 #
 #    pip-compile ./ingest/embed-vertexai.in
 #
-aiohttp==3.9.5
+aiohappyeyeballs==2.3.4
+    # via aiohttp
+aiohttp==3.10.1
     # via
     #   langchain
     #   langchain-community
@@ -16,7 +18,7 @@ async-timeout==4.0.3
     # via
     #   aiohttp
     #   langchain
-attrs==23.2.0
+attrs==24.1.0
     # via aiohttp
 cachetools==5.4.0
     # via google-auth
@@ -54,7 +56,7 @@ google-auth==2.32.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.59.0
+google-cloud-aiplatform==1.60.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -62,7 +64,7 @@ google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-resource-manager==1.12.4
+google-cloud-resource-manager==1.12.5
     # via google-cloud-aiplatform
 google-cloud-storage==2.18.0
     # via
@@ -83,7 +85,7 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.65.1
+grpcio==1.65.4
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -100,25 +102,25 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.11
+langchain==0.2.12
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.10
+langchain-community==0.2.11
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.23
+langchain-core==0.2.28
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.7
+langchain-google-vertexai==1.0.8
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.93
+langsmith==0.1.96
     # via
     #   langchain
     #   langchain-community
@@ -218,6 +220,7 @@ tenacity==8.5.0
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   langchain-core
     #   pydantic
     #   pydantic-core
     #   sqlalchemy

@@ -26,15 +26,13 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.8
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   authlib
+cryptography==43.0.0
+    # via authlib
 exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.1
+grpcio==1.65.4
     # via
     #   grpcio-health-checking
     #   grpcio-tools
@@ -93,7 +91,7 @@ urllib3==1.26.19
     #   requests
 validators==0.33.0
     # via weaviate-client
-weaviate-client==4.6.7
+weaviate-client==4.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in

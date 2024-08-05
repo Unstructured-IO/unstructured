@@ -17,7 +17,7 @@ def pkey_to_str(key) -> str:
 
 
 def rsa_private_key() -> str:
-    return pkey_to_str(rsa.generate_private_key(0x10001, 512))
+    return pkey_to_str(rsa.generate_private_key(0x10001, 1024))
 
 
 def brainpoolp512r1_private_key() -> str:
