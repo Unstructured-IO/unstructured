@@ -1,7 +1,8 @@
 ####################################################################################################
 # This file can house global constraints that aren't *direct* requirements of the package or any
 # extras. Putting a dependency here will only affect dependency sets that contain them -- in other
-# words, if something does not require a constraint, it will not be installed.
+# words, if something does not require a constraint, it will not be installed. Refer to the "Adding
+# a new Dependency Group" notes in Notion for more info about managing requirements.
 ####################################################################################################
 # consistency with local-inference-pin
 protobuf<4.24
