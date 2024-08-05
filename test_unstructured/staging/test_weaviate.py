@@ -58,4 +58,12 @@ def test_weaviate_schema_is_valid():
     unstructured_class = create_unstructured_weaviate_class()
     schema = {"classes": [unstructured_class]}
     client = Client(embedded_options=EmbeddedOptions())
-    client.schema.create(schema)
+    # Fetch existing schema
+    existing_schema = client.schema.get()
+
+    # Check if the class already exists
+    class_names = [cls["class"] for cls in existing_schema["classes"]]
+    if unstructured_class["class"] not in class_names:
+        client.schema.create(schema)
+    else:
+        print(f'Class "{unstructured_class["class"]}" already exists. Skipping creation.')
