@@ -1,4 +1,4 @@
-## 0.15.1-dev9
+## 0.15.1-dev10
 
 ### Enhancements
 
@@ -21,6 +21,7 @@
 * **Textual content retrieved from a URL with gzip transport compression now partitions correctly.** Resolves a bug where a textual file-type (such as Markdown) retrieved by passing a URL to `partition()` would raise when `gzip` compression was used for transport by the server.
 * **A DOCX, PPTX, or XLSX content-type asserted on partition is confirmed or fixed.** Resolves a bug where calling `partition()` with a swapped MS-Office `content_type` would cause the file-type to be misidentified. A DOCX, PPTX, or XLSX MIME-type received by `partition()` is now checked for accuracy and corrected if the file is for a different MS-Office 2007+ type.
 * **DOC, PPT, XLS, and MSG files are now auto-detected correctly.** Resolves a bug where DOC, PPT, and XLS files were auto-detected as MSG files under certain circumstances.
+* **Renames Astra to AstraDB** Conforms with DataStax internal naming conventions.
 
 ## 0.15.0
 
