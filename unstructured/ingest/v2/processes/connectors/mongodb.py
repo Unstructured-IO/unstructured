@@ -109,7 +109,7 @@ class MongoDBUploader(Uploader):
                 server_api=ServerApi(version=SERVER_API_VERSION),
             )
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: Any) -> None:
         elements_dict = []
         for content in contents:
             with open(content.path) as elements_file:

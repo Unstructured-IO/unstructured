@@ -345,7 +345,7 @@ class ElasticsearchUploader(Uploader):
 
         return parallel_bulk
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    def run_batch(self, contents: list[UploadContent], **kwargs: Any) -> None:
         parallel_bulk = self.load_parallel_bulk()
         elements_dict = []
         for content in contents:

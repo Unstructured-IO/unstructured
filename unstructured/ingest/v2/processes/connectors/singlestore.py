@@ -15,7 +15,6 @@ from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
     FileData,
-    UploadContent,
     Uploader,
     UploaderConfig,
     UploadStager,
@@ -124,8 +123,11 @@ class SingleStoreUploader(Uploader):
     upload_config: SingleStoreUploaderConfig
     connector_type: str = CONNECTOR_TYPE
 
-    def upload_csv(self, content: UploadContent) -> None:
-        df = pd.read_csv(content.path)
+    def is_batch(self) -> bool:
+        return False
+
+    def upload_csv(self, path: Path) -> None:
+        df = pd.read_csv(path)
         logger.debug(
             f"uploading {len(df)} entries to {self.connection_config.database} "
             f"db in table {self.upload_config.table_name}"
@@ -146,9 +148,8 @@ class SingleStoreUploader(Uploader):
                     cur.executemany(stmt, chunk)
                     conn.commit()
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        for content in contents:
-            self.upload_csv(content=content)
+    def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+        self.upload_csv(path=path)
 
 
 singlestore_destination_entry = DestinationRegistryEntry(
