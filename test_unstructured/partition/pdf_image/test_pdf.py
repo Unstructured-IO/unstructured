@@ -1372,14 +1372,18 @@ def test_analysis_artifacts_saved():
         ("pdf/layout-parser-paper-with-empty-pages.pdf", 3, True),
         ("pdf/reliance.pdf", 3, False),
         ("pdf/reliance.pdf", 2, True),
+        ("img/DA-1p.jpg", None, False),
+        ("img/DA-1p.jpg", 2, False),
     ],
 )
 def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_error):
+    is_image = not Path(filename).suffix.endswith("pdf")
     if not expected_error:
         pdf.partition_pdf_or_image(
             filename=example_doc_path(filename),
             strategy=PartitionStrategy.HI_RES,
             pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+            is_image=is_image,
         )
 
     else:
@@ -1388,4 +1392,5 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
                 filename=example_doc_path(filename),
                 strategy=PartitionStrategy.HI_RES,
                 pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+                is_image=is_image,
             )

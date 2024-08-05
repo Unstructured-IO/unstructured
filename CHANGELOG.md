@@ -1,4 +1,4 @@
-## 0.15.1-dev8
+## 0.15.1
 
 ### Enhancements
 
@@ -6,8 +6,8 @@
 
 ### Features
 
+* **Update partition_eml and partition_msg to capture cc, bcc, and message_id fields** Cc, bcc, and message_id information is captured in element metadata for both msg and email partitioning and `Recipient` elements are generated for cc and bcc when `include_headers=True` for email partitioning.
 * **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
-
 * **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
 
 ### Fixes
