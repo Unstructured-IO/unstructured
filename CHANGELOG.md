@@ -1,3 +1,14 @@
+## 0.15.2-dev0
+
+### Enhancements
+
+### Features
+
+
+### Fixes
+
+* **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
+
 ## 0.15.1
 
 ### Enhancements
