@@ -261,6 +261,10 @@ install-ingest-astra:
 install-ingest-clarifai:
 	python3 -m pip install -r requirements/ingest/clarifai.txt
 
+.PHONY: install-ingest-couchbase
+install-ingest-couchbase:
+	python3 -m pip install -r requirements/ingest/couchbase.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
