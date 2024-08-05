@@ -518,7 +518,7 @@ def _get_pdf_page_number(
     elif filename:
         number_of_pages = PdfReader(filename).get_num_pages()
     else:
-        ValueError("Either 'file' or 'filename' must be provided.")
+        raise ValueError("Either 'file' or 'filename' must be provided.")
     return number_of_pages
 
 
@@ -575,9 +575,10 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    check_pdf_hi_res_max_pages_exceeded(
-        filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
-    )
+    if not is_image:
+        check_pdf_hi_res_max_pages_exceeded(
+            filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+        )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
