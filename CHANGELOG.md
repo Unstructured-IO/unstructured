@@ -1,13 +1,13 @@
-## 0.15.2-dev0
+## 0.15.2-dev1
 
 ### Enhancements
 
 ### Features
 
-
 ### Fixes
 
 * **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
+* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
 
 ## 0.15.1
 
