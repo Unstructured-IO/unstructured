@@ -186,7 +186,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   google-cloud-bigquery
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   langchain
     #   langchain-community

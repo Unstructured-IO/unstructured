@@ -208,7 +208,7 @@ python-dateutil==2.9.0.post0
     #   posthog
 python-dotenv==1.0.1
     # via uvicorn
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   chromadb
     #   huggingface-hub

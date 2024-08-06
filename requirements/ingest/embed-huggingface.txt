@@ -81,7 +81,7 @@ pydantic==2.8.2
     #   langsmith
 pydantic-core==2.20.1
     # via pydantic
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   langchain-core

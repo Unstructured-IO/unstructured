@@ -306,7 +306,7 @@ python-dateutil==2.9.0.post0
     #   jupyter-client
 python-json-logger==2.0.7
     # via jupyter-events
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -c ./test.txt
     #   jupyter-events

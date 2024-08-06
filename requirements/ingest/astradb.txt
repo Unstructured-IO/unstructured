@@ -9,10 +9,8 @@ anyio==3.7.1
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-astrapy==1.4.0
+astrapy==1.4.1
     # via -r ./ingest/astradb.in
-bson==0.5.10
-    # via astrapy
 cassandra-driver==3.29.1
     # via cassio
 cassio==0.1.8
