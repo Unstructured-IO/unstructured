@@ -68,10 +68,14 @@ class BaseMetricsCalculator(ABC):
 
         # -- auto-discover all files in the directories --
         self._document_paths = [
-            path.relative_to(self.documents_dir) for path in self.documents_dir.rglob("*")
+            path.relative_to(self.documents_dir)
+            for path in self.documents_dir.glob("*")
+            if path.is_file()
         ]
         self._ground_truth_paths = [
-            path.relative_to(self.ground_truths_dir) for path in self.ground_truths_dir.rglob("*")
+            path.relative_to(self.ground_truths_dir)
+            for path in self.ground_truths_dir.glob("*")
+            if path.is_file()
         ]
 
     @property
@@ -336,6 +340,17 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
                 "Specified file type under `documents_dir` or `output_list` should be one of "
                 f"`json` or `txt`. The given file type is {self.document_type}, exiting."
             )
+        for path in self._document_paths:
+            try:
+                path.suffixes[-1]
+            except IndexError:
+                logger.error(f"File {path} does not have a suffix, skipping")
+                continue
+            if path.suffixes[-1] != f".{self.document_type}":
+                logger.warning(
+                    "The directory contains file type inconsistent with the given input. "
+                    "Please note that some files will be skipped."
+                )
         if not all(path.suffixes[-1] == f".{self.document_type}" for path in self._document_paths):
             logger.warning(
                 "The directory contains file type inconsistent with the given input. "
@@ -613,6 +628,7 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         self._document_paths = [
             path.relative_to(self.documents_dir)
             for path in self.documents_dir.rglob("analysis/*/layout_dump/object_detection.json")
+            if path.is_file()
         ]
 
     @property

@@ -27,7 +27,6 @@ class ObjectDetectionEvaluation:
 
 
 class ObjectDetectionEvalProcessor:
-
     iou_thresholds = IOU_THRESHOLDS
     score_threshold = SCORE_THRESHOLD
     recall_thresholds = RECALL_THRESHOLDS
@@ -85,17 +84,30 @@ class ObjectDetectionEvalProcessor:
         with open(ground_truth_file_path) as f:
             ground_truth_data = json.load(f)
 
-        assert (
-            predictions_data["object_detection_classes"]
-            == ground_truth_data["object_detection_classes"]
+        assert sorted(predictions_data["object_detection_classes"]) == sorted(
+            ground_truth_data["object_detection_classes"]
         ), "Classes in predictions and ground truth do not match."
         assert len(predictions_data["pages"]) == len(
             ground_truth_data["pages"]
         ), "Pages number in predictions and ground truth do not match."
-        for pred_page, gt_page in zip(predictions_data["pages"], ground_truth_data["pages"]):
-            assert (
-                pred_page["size"] == gt_page["size"]
-            ), "Page sizes in predictions and ground truth do not match."
+        for pred_page, gt_page in zip(
+            sorted(predictions_data["pages"], key=lambda p: p["number"]),
+            sorted(ground_truth_data["pages"], key=lambda p: p["number"]),
+        ):
+            assert pred_page["number"] == gt_page["number"], (
+                f"Page numbers in predictions {prediction_file_path.name} "
+                f"({pred_page['number']}) and ground truth {ground_truth_file_path.name} "
+                f"({gt_page['number']}) do not match."
+            )
+            page_num = pred_page["number"]
+
+            # TODO: translate the bboxes instead of raising error
+            assert pred_page["size"] == gt_page["size"], (
+                f"Page sizes in predictions {prediction_file_path.name} "
+                f"({pred_page['size'][0]} x {pred_page['size'][1]}) "
+                f"and ground truth {ground_truth_file_path.name} ({gt_page['size'][0]} x "
+                f"{gt_page['size'][1]}) do not match for page {page_num}."
+            )
 
         class_labels = predictions_data["object_detection_classes"]
         document_preds = cls._process_data(predictions_data, class_labels, prediction=True)
