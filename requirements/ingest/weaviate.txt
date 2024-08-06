@@ -20,7 +20,7 @@ certifi==2024.7.4
     #   httpcore
     #   httpx
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via
@@ -37,9 +37,9 @@ grpcio==1.65.4
     #   grpcio-health-checking
     #   grpcio-tools
     #   weaviate-client
-grpcio-health-checking==1.62.2
+grpcio-health-checking==1.62.3
     # via weaviate-client
-grpcio-tools==1.62.2
+grpcio-tools==1.62.3
     # via weaviate-client
 h11==0.14.0
     # via

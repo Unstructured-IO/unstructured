@@ -20,7 +20,7 @@ async-timeout==4.0.3
     # via
     #   aiohttp
     #   langchain
-attrs==24.1.0
+attrs==24.2.0
     # via aiohttp
 certifi==2024.7.4
     # via
@@ -55,7 +55,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.96
+langsmith==0.1.98
     # via
     #   langchain
     #   langchain-core
@@ -92,7 +92,7 @@ requests==2.32.3
     #   langchain
     #   langsmith
     #   voyageai
-sqlalchemy==2.0.31
+sqlalchemy==2.0.32
     # via langchain
 tenacity==8.5.0
     # via

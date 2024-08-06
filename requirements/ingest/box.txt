@@ -4,18 +4,18 @@
 #
 #    pip-compile ./ingest/box.in
 #
-attrs==24.1.0
+attrs==24.2.0
     # via boxsdk
 boxfs==0.3.0
     # via -r ./ingest/box.in
-boxsdk[jwt]==3.11.0
+boxsdk[jwt]==3.12.0
     # via boxfs
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via

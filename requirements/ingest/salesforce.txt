@@ -4,14 +4,14 @@
 #
 #    pip-compile ./ingest/salesforce.in
 #
-attrs==24.1.0
+attrs==24.2.0
     # via zeep
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via

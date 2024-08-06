@@ -6,7 +6,7 @@
 #
 bcrypt==4.2.0
     # via paramiko
-cffi==1.16.0
+cffi==1.17.0
     # via
     #   cryptography
     #   pynacl

@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via
     #   label-studio-sdk
     #   label-studio-tools
-attrs==24.1.0
+attrs==24.2.0
     # via
     #   jsonschema
     #   referencing
@@ -132,7 +132,7 @@ requests==2.32.3
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-rpds-py==0.19.1
+rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing

@@ -24,7 +24,7 @@ asttokens==2.4.1
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
-attrs==24.1.0
+attrs==24.2.0
     # via
     #   -c ./test.txt
     #   jsonschema
@@ -49,7 +49,7 @@ certifi==2024.7.4
     #   httpcore
     #   httpx
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via argon2-cffi-bindings
 cfgv==3.4.0
     # via pre-commit
@@ -67,7 +67,7 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.8.3
+debugpy==1.8.5
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -341,7 +341,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.19.1
+rpds-py==0.20.0
     # via
     #   -c ./test.txt
     #   jsonschema
