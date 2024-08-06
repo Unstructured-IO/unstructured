@@ -8,7 +8,7 @@ lxml==5.2.2
     # via python-pptx
 pillow==10.4.0
     # via python-pptx
-python-pptx==0.6.23
+python-pptx==1.0.1
     # via -r ./extra-pptx.in
 xlsxwriter==3.2.0
     # via python-pptx
