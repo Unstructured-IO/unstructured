@@ -15,6 +15,8 @@ _VT_co = TypeVar("_VT_co", covariant=True)
 
 _AttrName: TypeAlias = str
 
+_AttrVal: TypeAlias = _TextArg
+
 _ElemPathArg: TypeAlias = str | QName
 
 _ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
@@ -22,6 +24,9 @@ _ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
 _TagName: TypeAlias = str
 
 _TagSelector: TypeAlias = _TagName | Callable[..., _Element]
+
+# String argument also support QName in various places
+_TextArg: TypeAlias = str | bytes | QName
 
 _XPathObject = Any
 
