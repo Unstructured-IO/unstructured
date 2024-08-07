@@ -17,13 +17,32 @@ RECALL_THRESHOLDS = torch.arange(0, 1.01, 0.01)
 
 
 @dataclass
-class ObjectDetectionEvaluation:
-    """Class representing a gathered table metrics."""
+class ObjectDetectionAggregatedEvaluation:
+    """Class representing a gathered class-aggregated object detection metrics"""
 
     f1_score: float
     precision: float
     recall: float
     m_ap: float
+
+
+@dataclass
+class ObjectDetectionPerClassEvaluation:
+    """Class representing a gathered object detection metrics per-class"""
+
+    f1_score: dict[str, float]
+    precision: dict[str, float]
+    recall: dict[str, float]
+    m_ap: dict[str, float]
+
+    @classmethod
+    def from_tensors(cls, ap, precision, recall, f1, class_labels):
+        f1_score = {class_labels[i]: f1[i] for i in range(len(class_labels))}
+        precision = {class_labels[i]: precision[i] for i in range(len(class_labels))}
+        recall = {class_labels[i]: recall[i] for i in range(len(class_labels))}
+        m_ap = {class_labels[i]: ap[i] for i in range(len(class_labels))}
+
+        return cls(f1_score, precision, recall, m_ap)
 
 
 class ObjectDetectionEvalProcessor:
@@ -61,7 +80,7 @@ class ObjectDetectionEvalProcessor:
         self.document_targets = [target.to(device) for target in document_targets]
         self.pages_height = pages_height
         self.pages_width = pages_width
-        self.num_cls = len(class_labels)
+        self.class_labels = class_labels
 
     @classmethod
     def from_json_files(
@@ -115,6 +134,98 @@ class ObjectDetectionEvalProcessor:
         pages_height, pages_width = cls._parse_page_dimensions(predictions_data)
 
         return cls(document_preds, document_targets, pages_height, pages_width, class_labels)
+
+    def get_metrics(
+        self,
+    ) -> tuple[ObjectDetectionAggregatedEvaluation, ObjectDetectionPerClassEvaluation]:
+        """Get per document OD metrics.
+
+        Returns:
+            tuple: Tuple of ObjectDetectionAggregatedEvaluation and
+                ObjectDetectionPerClassEvaluation
+        """
+        document_matchings = []
+        for preds, targets, height, width in zip(
+            self.document_preds, self.document_targets, self.pages_height, self.pages_width
+        ):
+            # iterate over each page
+            page_matching_tensors = self._compute_page_detection_matching(
+                preds=preds,
+                targets=targets,
+                height=height,
+                width=width,
+            )
+            document_matchings.append(page_matching_tensors)
+
+        # compute metrics for all detections and targets
+        mean_ap, mean_precision, mean_recall, mean_f1 = (
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0,
+        )
+
+        num_cls = len(self.class_labels)
+        mean_ap_per_class = np.full(num_cls, np.nan)
+        mean_precision_per_class = np.full(num_cls, np.nan)
+        mean_recall_per_class = np.full(num_cls, np.nan)
+        mean_f1_per_class = np.full(num_cls, np.nan)
+
+        if len(document_matchings):
+            matching_info_tensors = [torch.cat(x, 0) for x in list(zip(*document_matchings))]
+
+            # shape (n_class, nb_iou_thresh)
+            (
+                ap_per_present_classes,
+                precision_per_present_classes,
+                recall_per_present_classes,
+                f1_per_present_classes,
+                present_classes,
+            ) = self._compute_detection_metrics(
+                *matching_info_tensors,
+            )
+
+            # Precision, recall and f1 are computed for IoU threshold range, averaged over classes
+            # results before version 3.0.4 (Dec 11 2022) were computed only for smallest value
+            # (i.e IoU 0.5 if metric is @0.5:0.95)
+            mean_precision, mean_recall, mean_f1 = (
+                precision_per_present_classes.mean(),
+                recall_per_present_classes.mean(),
+                f1_per_present_classes.mean(),
+            )
+
+            # MaP is averaged over IoU thresholds and over classes
+            mean_ap = ap_per_present_classes.mean()
+
+            # Fill array of per-class AP scores with values for classes that were present in the
+            # dataset
+            ap_per_class = ap_per_present_classes.mean(1)
+            precision_per_class = precision_per_present_classes.mean(1)
+            recall_per_class = recall_per_present_classes.mean(1)
+            f1_per_class = f1_per_present_classes.mean(1)
+            for i, class_index in enumerate(present_classes):
+                mean_ap_per_class[class_index] = float(ap_per_class[i])
+
+                mean_precision_per_class[class_index] = float(precision_per_class[i])
+                mean_recall_per_class[class_index] = float(recall_per_class[i])
+                mean_f1_per_class[class_index] = float(f1_per_class[i])
+
+        od_per_class_evaluation = ObjectDetectionPerClassEvaluation.from_tensors(
+            ap=mean_ap_per_class,
+            precision=mean_precision_per_class,
+            recall=mean_recall_per_class,
+            f1=mean_f1_per_class,
+            class_labels=self.class_labels,
+        )
+
+        od_evaluation = ObjectDetectionAggregatedEvaluation(
+            f1_score=float(mean_f1),
+            precision=float(mean_precision),
+            recall=float(mean_recall),
+            m_ap=float(mean_ap),
+        )
+
+        return od_evaluation, od_per_class_evaluation
 
     @staticmethod
     def _parse_page_dimensions(data: dict) -> tuple[list, list]:
@@ -585,86 +696,6 @@ class ObjectDetectionEvalProcessor:
 
         return ap, precision, recall
 
-    def get_metrics(self) -> ObjectDetectionEvaluation:
-        """Get per document OD metrics.
-
-        Returns:
-            output_dict: dict with OD metrics
-        """
-        document_matchings = []
-        for preds, targets, height, width in zip(
-            self.document_preds, self.document_targets, self.pages_height, self.pages_width
-        ):
-            # iterate over each page
-            page_matching_tensors = self._compute_page_detection_matching(
-                preds=preds,
-                targets=targets,
-                height=height,
-                width=width,
-            )
-            document_matchings.append(page_matching_tensors)
-
-        # compute metrics for all detections and targets
-        mean_ap, mean_precision, mean_recall, mean_f1 = (
-            -1.0,
-            -1.0,
-            -1.0,
-            -1.0,
-        )
-        mean_ap_per_class = np.zeros(self.num_cls)
-
-        mean_precision_per_class = np.zeros(self.num_cls)
-        mean_recall_per_class = np.zeros(self.num_cls)
-        mean_f1_per_class = np.zeros(self.num_cls)
-
-        if len(document_matchings):
-            matching_info_tensors = [torch.cat(x, 0) for x in list(zip(*document_matchings))]
-
-            # shape (n_class, nb_iou_thresh)
-            (
-                ap_per_present_classes,
-                precision_per_present_classes,
-                recall_per_present_classes,
-                f1_per_present_classes,
-                present_classes,
-            ) = self._compute_detection_metrics(
-                *matching_info_tensors,
-            )
-
-            # Precision, recall and f1 are computed for IoU threshold range, averaged over classes
-            # results before version 3.0.4 (Dec 11 2022) were computed only for smallest value
-            # (i.e IoU 0.5 if metric is @0.5:0.95)
-            mean_precision, mean_recall, mean_f1 = (
-                precision_per_present_classes.mean(),
-                recall_per_present_classes.mean(),
-                f1_per_present_classes.mean(),
-            )
-
-            # MaP is averaged over IoU thresholds and over classes
-            mean_ap = ap_per_present_classes.mean()
-
-            # Fill array of per-class AP scores with values for classes that were present in the
-            # dataset
-            ap_per_class = ap_per_present_classes.mean(1)
-            precision_per_class = precision_per_present_classes.mean(1)
-            recall_per_class = recall_per_present_classes.mean(1)
-            f1_per_class = f1_per_present_classes.mean(1)
-            for i, class_index in enumerate(present_classes):
-                mean_ap_per_class[class_index] = float(ap_per_class[i])
-
-                mean_precision_per_class[class_index] = float(precision_per_class[i])
-                mean_recall_per_class[class_index] = float(recall_per_class[i])
-                mean_f1_per_class[class_index] = float(f1_per_class[i])
-
-        od_evaluation = ObjectDetectionEvaluation(
-            f1_score=float(mean_f1),
-            precision=float(mean_precision),
-            recall=float(mean_recall),
-            m_ap=float(mean_ap),
-        )
-
-        return od_evaluation
-
 
 if __name__ == "__main__":
     from dataclasses import asdict
@@ -683,5 +714,6 @@ if __name__ == "__main__":
             prediction_file_path, ground_truth_file_path
         )
 
-        metrics: ObjectDetectionEvaluation = eval_processor.get_metrics()
+        metrics, per_class_metrics = eval_processor.get_metrics()
         print(f"Metrics for {ground_truth_file_path.name}:\n{asdict(metrics)}")
+        print(f"Per class Metrics for {ground_truth_file_path.name}:\n{asdict(per_class_metrics)}")

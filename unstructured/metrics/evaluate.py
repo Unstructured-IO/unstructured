@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import concurrent.futures
+import json
 import logging
 import os
 import sys
@@ -18,7 +19,9 @@ from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
-from unstructured.metrics.object_detection import ObjectDetectionEvalProcessor
+from unstructured.metrics.object_detection import (
+    ObjectDetectionEvalProcessor,
+)
 from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
@@ -151,7 +154,13 @@ class BaseMetricsCalculator(ABC):
     def _default_executor(cls):
         max_processors = int(os.environ.get("MAX_PROCESSES", os.cpu_count()))
         logger.info(f"Configuring a pool of {max_processors} processors for parallel processing.")
-        return concurrent.futures.ProcessPoolExecutor(max_workers=max_processors)
+        return cls._get_executor_class()(max_workers=max_processors)
+
+    @classmethod
+    def _get_executor_class(
+        cls,
+    ) -> type[concurrent.futures.ThreadPoolExecutor] | type[concurrent.futures.ProcessPoolExecutor]:
+        return concurrent.futures.ProcessPoolExecutor
 
     def _process_all_documents(
         self, executor: concurrent.futures.Executor, visualize_progress: bool
@@ -613,7 +622,7 @@ def filter_metrics(
 
 
 @dataclass
-class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
+class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
     """
     Calculates object detection metrics for each document:
     - f1 score
@@ -659,8 +668,9 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
                 return path
         return None
 
-    def _process_document(self, doc: Path) -> Optional[list]:
-        """Calculate metrics for a single document.
+    def _get_paths(self, doc: Path) -> tuple(str, Path, Path):
+        """Resolves ground doctype, prediction file path and ground truth path.
+
         As OD dump directory structure differes from other simple outputs, it needs
         a specific processing to match the output OD dump file with corresponding
         OD GT file.
@@ -683,7 +693,7 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
             doc (Path): path to the OD dump file
 
         Returns:
-            list: a list of metrics (representing a single row) for a single document
+            tuple: doctype, prediction file path, ground truth path
         """
         od_dump_path = Path(doc)
         file_stem = od_dump_path.parts[-3]  # we take the `document_name` - so the filename stem
@@ -691,31 +701,21 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         src_gt_filename = self._find_file_in_ground_truth(file_stem)
 
         if src_gt_filename not in self._ground_truth_paths:
-            return None
+            raise ValueError(f"Ground truth file {src_gt_filename} not found in list of GT files")
 
         doctype = Path(src_gt_filename.stem).suffix[1:]
 
         prediction_file = self.documents_dir / doc
         if not prediction_file.exists():
             logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
-            return None
+            raise ValueError(f"Prediction file {prediction_file} does not exist")
 
         ground_truth_file = self.ground_truths_dir / src_gt_filename
         if not ground_truth_file.exists():
             logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
-            return None
+            raise ValueError(f"Ground truth file {ground_truth_file} does not exist")
 
-        processor = ObjectDetectionEvalProcessor.from_json_files(
-            prediction_file_path=prediction_file,
-            ground_truth_file_path=ground_truth_file,
-        )
-        metrics = processor.get_metrics()
-
-        return [
-            src_gt_filename.stem,
-            doctype,
-            None,  # connector
-        ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
+        return doctype, prediction_file, ground_truth_file
 
     def _generate_dataframes(self, rows) -> tuple[pd.DataFrame, pd.DataFrame]:
         headers = ["filename", "doctype", "connector"] + self.supported_metric_names
@@ -738,3 +738,122 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         agg_df.columns = AGG_HEADERS
 
         return df, agg_df
+
+
+class ObjectDetectionPerClassMetricsCalculator(ObjectDetectionMetricsCalculatorBase):
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.per_class_metric_names: list[str] | None = None
+        self._set_supported_metrics()
+
+    @property
+    def supported_metric_names(self):
+        if self.per_class_metric_names:
+            return self.per_class_metric_names
+        else:
+            raise ValueError("per_class_metrics not initialized - cannot get class names")
+
+    @property
+    def default_tsv_name(self):
+        return "all-docs-object-detection-metrics-per-class.tsv"
+
+    @property
+    def default_agg_tsv_name(self):
+        return "aggregate-object-detection-metrics-per-class.tsv"
+
+    def _process_document(self, doc: Path) -> Optional[list]:
+        """Calculate both class-aggregated and per-class metrics for a single document.
+
+        Args:
+            doc (Path): path to the OD dump file
+
+        Returns:
+            tuple: a tuple of aggregated and per-class metrics for a single document
+        """
+        try:
+            doctype, prediction_file, ground_truth_file = self._get_paths(doc)
+        except ValueError as e:
+            logger.error(f"Failed to process document {doc}: {e}")
+            return None
+
+        processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file_path=prediction_file,
+            ground_truth_file_path=ground_truth_file,
+        )
+        _, per_class_metrics = processor.get_metrics()
+
+        per_class_metrics_row = [
+            ground_truth_file.stem,
+            doctype,
+            None,  # connector
+        ]
+
+        for combined_metric_name in self.supported_metric_names:
+            metric = "_".join(combined_metric_name.split("_")[:-1])
+            class_name = combined_metric_name.split("_")[-1]
+            class_metrics = getattr(per_class_metrics, metric)
+            per_class_metrics_row.append(class_metrics[class_name])
+        return per_class_metrics_row
+
+    def _set_supported_metrics(self):
+        """Sets the supported metrics based on the classes found in the ground truth files.
+        The difference between per class and aggregated calculator is that the list of classes
+        (so the metrics) bases on the contents of the GT / prediction files.
+        """
+        metrics = ["f1_score", "precision", "recall", "m_ap"]
+        classes = set()
+        for gt_file in self._ground_truth_paths:
+            gt_file_path = self.ground_truths_dir / gt_file
+            with open(gt_file_path) as f:
+                gt = json.load(f)
+                gt_classes = gt["object_detection_classes"]
+                classes.update(gt_classes)
+        per_class_metric_names = []
+        for metric in metrics:
+            for class_name in classes:
+                per_class_metric_names.append(f"{metric}_{class_name}")
+        self.per_class_metric_names = sorted(per_class_metric_names)
+
+
+class ObjectDetectionAggregatedMetricsCalculator(ObjectDetectionMetricsCalculatorBase):
+    """Calculates object detection metrics for each document and aggregates by all classes"""
+
+    @property
+    def supported_metric_names(self):
+        return ["f1_score", "precision", "recall", "m_ap"]
+
+    @property
+    def default_tsv_name(self):
+        return "all-docs-object-detection-metrics.tsv"
+
+    @property
+    def default_agg_tsv_name(self):
+        return "aggregate-object-detection-metrics.tsv"
+
+    def _process_document(self, doc: Path) -> Optional[list]:
+        """Calculate both class-aggregated and per-class metrics for a single document.
+
+        Args:
+            doc (Path): path to the OD dump file
+
+        Returns:
+            list: a list of aggregated metrics for a single document
+        """
+        try:
+            doctype, prediction_file, ground_truth_file = self._get_paths(doc)
+        except ValueError as e:
+            logger.error(f"Failed to process document {doc}: {e}")
+            return None
+
+        processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file_path=prediction_file,
+            ground_truth_file_path=ground_truth_file,
+        )
+        metrics, _ = processor.get_metrics()
+
+        return [
+            ground_truth_file.stem,
+            doctype,
+            None,  # connector
+        ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
