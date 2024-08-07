@@ -48,7 +48,7 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.32.0
+google-auth==2.33.0
     # via
     #   google-api-core
     #   google-cloud-vision

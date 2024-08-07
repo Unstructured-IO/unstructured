@@ -19,10 +19,8 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-importlib-metadata==7.1.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   build
+importlib-metadata==8.2.0
+    # via build
 packaging==23.2
     # via
     #   -c ./ingest/../base.txt

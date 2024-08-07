@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-vertexai.in
 #
-aiohappyeyeballs==2.3.4
+aiohappyeyeballs==2.3.5
     # via aiohttp
 aiohttp==3.10.1
     # via
@@ -48,7 +48,7 @@ google-api-core[grpc]==2.19.1
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-auth==2.32.0
+google-auth==2.33.0
     # via
     #   google-api-core
     #   google-cloud-aiplatform
@@ -66,7 +66,7 @@ google-cloud-core==2.4.1
     #   google-cloud-storage
 google-cloud-resource-manager==1.12.5
     # via google-cloud-aiplatform
-google-cloud-storage==2.18.0
+google-cloud-storage==2.18.1
     # via
     #   google-cloud-aiplatform
     #   langchain-google-vertexai
