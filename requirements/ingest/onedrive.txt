@@ -33,10 +33,8 @@ msal==1.30.0
     # via
     #   -r ./ingest/onedrive.in
     #   office365-rest-python-client
-office365-rest-python-client==2.4.2
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/onedrive.in
+office365-rest-python-client==2.5.11
+    # via -r ./ingest/onedrive.in
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.9.0
@@ -52,6 +50,10 @@ soupsieve==2.5
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
+typing-extensions==4.12.2
+    # via
+    #   -c ./ingest/../base.txt
+    #   office365-rest-python-client
 urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt

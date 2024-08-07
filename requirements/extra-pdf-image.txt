@@ -149,7 +149,7 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.2
+pdfplumber==0.11.3
     # via layoutparser
 pikepdf==9.1.0
     # via -r ./extra-pdf-image.in
