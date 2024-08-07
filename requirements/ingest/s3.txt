@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/s3.in
 #
-aiobotocore==2.12.3
+aiobotocore==2.13.1
     # via s3fs
 aiohappyeyeballs==2.3.5
     # via aiohttp
@@ -20,7 +20,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==24.2.0
     # via aiohttp
-botocore==1.34.51
+botocore==1.34.131
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   aiobotocore
