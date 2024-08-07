@@ -27,10 +27,8 @@ msal==1.30.0
     # via
     #   -r ./ingest/sharepoint.in
     #   office365-rest-python-client
-office365-rest-python-client==2.4.2
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/sharepoint.in
+office365-rest-python-client==2.5.11
+    # via -r ./ingest/sharepoint.in
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.9.0
@@ -41,6 +39,10 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   msal
+    #   office365-rest-python-client
+typing-extensions==4.12.2
+    # via
+    #   -c ./ingest/../base.txt
     #   office365-rest-python-client
 urllib3==1.26.19
     # via
