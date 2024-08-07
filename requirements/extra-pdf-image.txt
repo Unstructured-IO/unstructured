@@ -222,7 +222,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.5
+rapidfuzz==3.9.6
     # via
     #   -c ./base.txt
     #   unstructured-inference

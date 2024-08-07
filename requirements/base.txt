@@ -90,7 +90,7 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.5
+rapidfuzz==3.9.6
     # via -r ./base.in
 regex==2024.7.24
     # via nltk
@@ -129,7 +129,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.25.3
+unstructured-client==0.25.4
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in
