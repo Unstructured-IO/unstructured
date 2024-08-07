@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
-import pytest
 import pytesseract
+import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
