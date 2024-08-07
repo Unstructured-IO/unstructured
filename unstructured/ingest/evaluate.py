@@ -6,7 +6,8 @@ import click
 
 from unstructured.metrics.evaluate import (
     ElementTypeMetricsCalculator,
-    ObjectDetectionMetricsCalculator,
+    ObjectDetectionAggregatedMetricsCalculator,
+    ObjectDetectionPerClassMetricsCalculator,
     TableStructureMetricsCalculator,
     TextExtractionMetricsCalculator,
     filter_metrics,
@@ -291,14 +292,23 @@ def measure_object_detection_metrics_command(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
 ):
-    return (
-        ObjectDetectionMetricsCalculator(
+    aggregated_df = (
+        ObjectDetectionAggregatedMetricsCalculator(
             documents_dir=output_dir,
             ground_truths_dir=source_dir,
         )
         .on_files(document_paths=output_list, ground_truth_paths=source_list)
         .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
+    per_class_df = (
+        ObjectDetectionPerClassMetricsCalculator(
+            documents_dir=output_dir,
+            ground_truths_dir=source_dir,
+        )
+        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
+    )
+    return aggregated_df, per_class_df
 
 
 @main.command()
