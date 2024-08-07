@@ -25,7 +25,7 @@ fsspec==2024.5.0
     #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.1
+huggingface-hub==0.24.5
     # via
     #   langchain-huggingface
     #   sentence-transformers
@@ -45,11 +45,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.23
+langchain-core==0.2.28
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.93
+langsmith==0.1.98
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -81,12 +81,12 @@ pydantic==2.8.2
     #   langsmith
 pydantic-core==2.20.1
     # via pydantic
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   langchain-core
     #   transformers
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   transformers
@@ -96,7 +96,7 @@ requests==2.32.3
     #   huggingface-hub
     #   langsmith
     #   transformers
-safetensors==0.4.3
+safetensors==0.4.4
     # via transformers
 scikit-learn==1.5.1
     # via sentence-transformers
@@ -117,17 +117,17 @@ tokenizers==0.19.1
     # via
     #   langchain-huggingface
     #   transformers
-torch==2.3.1
+torch==2.4.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   sentence-transformers
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.43.1
+transformers==4.44.0
     # via
     #   langchain-huggingface
     #   sentence-transformers
@@ -135,6 +135,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub
+    #   langchain-core
     #   pydantic
     #   pydantic-core
     #   torch

@@ -21,11 +21,11 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.1
+grpcio==1.65.4
     # via
     #   grpcio-tools
     #   qdrant-client
-grpcio-tools==1.62.2
+grpcio-tools==1.62.3
     # via qdrant-client
 h11==0.14.0
     # via
