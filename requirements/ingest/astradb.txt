@@ -4,10 +4,9 @@
 #
 #    pip-compile ./ingest/astradb.in
 #
-anyio==3.7.1
+anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpx
 astrapy==1.4.1
     # via -r ./ingest/astradb.in
@@ -90,6 +89,10 @@ sniffio==1.3.1
     #   httpx
 toml==0.10.2
     # via astrapy
+typing-extensions==4.12.2
+    # via
+    #   -c ./ingest/../base.txt
+    #   anyio
 urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
