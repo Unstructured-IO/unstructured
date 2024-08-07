@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/elasticsearch.in
 #
-aiohappyeyeballs==2.3.4
+aiohappyeyeballs==2.3.5
     # via aiohttp
 aiohttp==3.10.1
     # via elasticsearch

@@ -110,9 +110,8 @@ idna==3.7
     #   httpx
     #   jsonschema
     #   requests
-importlib-metadata==7.1.0
+importlib-metadata==8.2.0
     # via
-    #   -c ././deps/constraints.txt
     #   build
     #   jupyter-client
     #   jupyter-lsp

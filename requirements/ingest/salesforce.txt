@@ -29,7 +29,7 @@ lxml==5.2.2
     # via
     #   -c ./ingest/../base.txt
     #   zeep
-more-itertools==10.3.0
+more-itertools==10.4.0
     # via simple-salesforce
 platformdirs==3.10.0
     # via

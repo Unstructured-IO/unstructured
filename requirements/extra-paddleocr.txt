@@ -58,7 +58,7 @@ matplotlib==3.7.2
     # via
     #   -c ././deps/constraints.txt
     #   imgaug
-more-itertools==10.3.0
+more-itertools==10.4.0
     # via cssutils
 networkx==3.2.1
     # via scikit-image

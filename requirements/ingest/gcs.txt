@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/gcs.in
 #
-aiohappyeyeballs==2.3.4
+aiohappyeyeballs==2.3.5
     # via aiohttp
 aiohttp==3.10.1
     # via gcsfs
@@ -48,7 +48,7 @@ google-api-core==2.19.1
     # via
     #   google-cloud-core
     #   google-cloud-storage
-google-auth==2.32.0
+google-auth==2.33.0
     # via
     #   gcsfs
     #   google-api-core
@@ -59,7 +59,7 @@ google-auth-oauthlib==1.2.1
     # via gcsfs
 google-cloud-core==2.4.1
     # via google-cloud-storage
-google-cloud-storage==2.18.0
+google-cloud-storage==2.18.1
     # via gcsfs
 google-crc32c==1.5.0
     # via
