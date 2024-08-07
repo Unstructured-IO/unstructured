@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.3.5
     # via aiohttp
-aiohttp==3.10.2
+aiohttp==3.10.3
     # via
     #   langchain
     #   langchain-community
@@ -120,7 +120,7 @@ langchain-google-vertexai==1.0.8
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.98
+langsmith==0.1.99
     # via
     #   langchain
     #   langchain-community

@@ -6,10 +6,9 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==3.7.1
+anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpx
     #   starlette
     #   watchfiles
@@ -194,7 +193,7 @@ sniffio==1.3.1
     #   httpx
 starlette==0.37.2
     # via fastapi
-sympy==1.13.1
+sympy==1.13.2
     # via onnxruntime
 tenacity==8.5.0
     # via
@@ -216,6 +215,7 @@ typer==0.9.0
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   anyio
     #   chromadb
     #   fastapi
     #   huggingface-hub
@@ -247,7 +247,7 @@ wrapt==1.16.0
     #   -c ./ingest/../deps/constraints.txt
     #   deprecated
     #   opentelemetry-instrumentation
-zipp==3.19.2
+zipp==3.20.0
     # via
     #   importlib-metadata
     #   importlib-resources

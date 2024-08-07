@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.3.5
     # via aiohttp
-aiohttp==3.10.2
+aiohttp==3.10.3
     # via
     #   langchain
     #   langchain-community
@@ -70,7 +70,7 @@ langchain-core==0.2.29
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.98
+langsmith==0.1.99
     # via
     #   langchain
     #   langchain-community

@@ -49,7 +49,7 @@ langchain-core==0.2.29
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.98
+langsmith==0.1.99
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -107,7 +107,7 @@ scipy==1.11.3
     #   sentence-transformers
 sentence-transformers==3.0.1
     # via langchain-huggingface
-sympy==1.13.1
+sympy==1.13.2
     # via torch
 tenacity==8.5.0
     # via langchain-core
