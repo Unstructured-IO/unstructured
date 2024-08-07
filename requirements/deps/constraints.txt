@@ -22,8 +22,6 @@ IPython<8.13
 # use the known compatible version of weaviate and unstructured.pytesseract
 unstructured.pytesseract>=0.3.12
 weaviate-client>3.25.0
-# Note(yuming) - pining to avoid conflict with paddle install
-matplotlib==3.7.2
 # langchain limits anyio to below 4.0
 anyio<4.0
 # NOTE(crag): earlier versions fail in compilation step when pip installing the package
