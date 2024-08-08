@@ -26,7 +26,7 @@ class DestCmd(BaseCmd):
         source_options: dict = ctx.parent.params if ctx.parent else {}
         conform_click_options(options)
         try:
-            pipeline = self.get_pipline(
+            pipeline = self.get_pipeline(
                 src=source_cmd,
                 source_options=source_options,
                 dest=self.cmd_name,
