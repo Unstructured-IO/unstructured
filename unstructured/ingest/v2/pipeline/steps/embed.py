@@ -39,7 +39,7 @@ class EmbedStep(PipelineStep):
     def should_embed(self, filepath: Path, file_data: FileData) -> bool:
         if self.context.reprocess or file_data.reprocess:
             return True
-        return bool(not filepath.exists())
+        return not filepath.exists()
 
     def get_output_filepath(self, filename: Path) -> Path:
         hashed_output_file = f"{self.get_hash(extras=[filename.name])}.json"
