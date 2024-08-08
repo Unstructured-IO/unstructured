@@ -19,10 +19,8 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-importlib-metadata==7.1.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   build
+importlib-metadata==8.2.0
+    # via build
 packaging==23.2
     # via
     #   -c ./ingest/../base.txt
@@ -30,11 +28,11 @@ packaging==23.2
     #   build
 parsimonious==0.10.0
     # via singlestoredb
-pyjwt==2.8.0
+pyjwt==2.9.0
     # via singlestoredb
 pyproject-hooks==1.1.0
     # via build
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   parsimonious
@@ -42,7 +40,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   singlestoredb
-singlestoredb==1.5.0
+singlestoredb==1.6.1
     # via -r ./ingest/singlestore.in
 sqlparams==6.0.1
     # via singlestoredb
@@ -55,7 +53,7 @@ urllib3==1.26.19
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-wheel==0.43.0
+wheel==0.44.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   singlestoredb

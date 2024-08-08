@@ -24,7 +24,7 @@ asttokens==2.4.1
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   -c ./test.txt
     #   jsonschema
@@ -49,7 +49,7 @@ certifi==2024.7.4
     #   httpcore
     #   httpx
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via argon2-cffi-bindings
 cfgv==3.4.0
     # via pre-commit
@@ -67,7 +67,7 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.8.2
+debugpy==1.8.5
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -110,9 +110,8 @@ idna==3.7
     #   httpx
     #   jsonschema
     #   requests
-importlib-metadata==7.1.0
+importlib-metadata==8.2.0
     # via
-    #   -c ././deps/constraints.txt
     #   build
     #   jupyter-client
     #   jupyter-lsp
@@ -268,7 +267,7 @@ platformdirs==3.10.0
     #   -c ./test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.7.1
+pre-commit==3.8.0
     # via -r ./dev.in
 prometheus-client==0.20.0
     # via jupyter-server
@@ -306,12 +305,12 @@ python-dateutil==2.9.0.post0
     #   jupyter-client
 python-json-logger==2.0.7
     # via jupyter-events
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -c ./test.txt
     #   jupyter-events
     #   pre-commit
-pyzmq==26.0.3
+pyzmq==26.1.0
     # via
     #   ipykernel
     #   jupyter-client
@@ -341,7 +340,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.19.0
+rpds-py==0.20.0
     # via
     #   -c ./test.txt
     #   jsonschema
@@ -432,7 +431,7 @@ webencodings==0.5.1
     #   tinycss2
 websocket-client==1.8.0
     # via jupyter-server
-wheel==0.43.0
+wheel==0.44.0
     # via
     #   -c ././deps/constraints.txt
     #   pip-tools

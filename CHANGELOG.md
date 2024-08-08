@@ -1,8 +1,10 @@
-## 0.15.2-dev2
+## 0.15.2-dev3
 
 ### Enhancements
 
 ### Features
+
+* **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
 
 ### Fixes
 
@@ -10,6 +12,7 @@
 * **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
 * **EML File Partitioning** EML parts with Content Disposition type of `inline` are now included in content map when creating elements
+* **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
 
 ## 0.15.1
 
