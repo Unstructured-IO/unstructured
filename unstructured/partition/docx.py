@@ -27,7 +27,6 @@ from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -471,13 +470,10 @@ class _DocxPartitioner:
 
         metadata = self._paragraph_metadata(paragraph)
 
-        # NOTE(scanny) - a list-item gets some special treatment, mutating the text to remove a
-        # bullet-character if present.
         if self._is_list_item(paragraph):
-            clean_text = clean_bullets(text).strip()
-            if clean_text:
+            if text:
                 yield ListItem(
-                    text=clean_text,
+                    text=text,
                     metadata=metadata,
                     detection_origin=DETECTION_ORIGIN,
                 )
