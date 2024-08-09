@@ -139,6 +139,7 @@ setup(
         "chroma": load_requirements("requirements/ingest/chroma.in"),
         "clarifai": load_requirements("requirements/ingest/clarifai.in"),
         "confluence": load_requirements("requirements/ingest/confluence.in"),
+        "couchbase": load_requirements("requirements/ingest/couchbase.in"),
         "delta-table": load_requirements("requirements/ingest/delta-table.in"),
         "discord": load_requirements("requirements/ingest/discord.in"),
         "dropbox": load_requirements("requirements/ingest/dropbox.in"),

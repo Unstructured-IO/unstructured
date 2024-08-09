@@ -21,6 +21,7 @@ all_tests=(
   'box.sh'
   'chroma.sh'
   'clarifai.sh'
+  'couchbase.sh'
   'delta-table.sh'
   'dropbox.sh'
   'elasticsearch.sh'
