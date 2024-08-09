@@ -1,4 +1,4 @@
-## 0.15.2-dev6
+## 0.15.2-dev7
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
 * **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
 * **Removes dependency on unstructured.pytesseract** Unstructured forked pytesseract while waiting for code to be upstreamed. Now that the new version has been released, this fork can be removed.
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
 
 ## 0.15.1
 
