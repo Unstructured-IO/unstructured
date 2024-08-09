@@ -89,10 +89,10 @@ class OnedriveIndexer(Indexer):
 
     def list_objects(self, folder, recursive) -> list["DriveItem"]:
         drive_items = folder.children.get().execute_query()
-        files = [d for d in drive_items if d.is_file]
+        files = [d for d in drive_items if d.file is not None]
         if not recursive:
             return files
-        folders = [d for d in drive_items if d.is_folder]
+        folders = [d for d in drive_items if d.is_folder is not None]
         for f in folders:
             files.extend(self.list_objects(f, recursive))
         return files
@@ -123,12 +123,12 @@ class OnedriveIndexer(Indexer):
         server_path = file_path + "/" + filename
         rel_path = server_path.replace(self.index_config.path, "").lstrip("/")
         date_modified_dt = (
-            parser.parse(drive_item.last_modified_datetime)
+            parser.parse(str(drive_item.last_modified_datetime))
             if drive_item.last_modified_datetime
             else None
         )
         date_created_at = (
-            parser.parse(drive_item.created_datetime) if drive_item.created_datetime else None
+            parser.parse(str(drive_item.created_datetime)) if drive_item.created_datetime else None
         )
         return FileData(
             identifier=drive_item.id,
