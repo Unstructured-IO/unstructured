@@ -9,7 +9,7 @@ from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 import regex
 from typing_extensions import Self, TypeAlias
 
-from unstructured.common.html_table import HtmlCell
+from unstructured.common.html_table import HtmlCell, HtmlRow
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -959,6 +959,50 @@ class _CellAccumulator:  # pyright: ignore[reportUnusedClass]
         # -- 24 is `len("<table><tr></tr></table>")`, the overhead in addition to `<td>`
         # -- HTML fragments
         return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
+
+
+class _RowAccumulator:  # pyright: ignore[reportUnusedClass]
+    """Maybe `SubtableAccumulator`.
+
+    Accumulate rows until chunking window is filled, then generate the text and HTML for the
+    subtable composed of all those rows that fit in the window.
+    """
+
+    def __init__(self, maxlen: int):
+        self._maxlen = maxlen
+        self._rows: list[HtmlRow] = []
+
+    def add_row(self, row: HtmlRow) -> None:
+        """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
+        self._rows.append(row)
+
+    def flush(self) -> Iterator[TextAndHtml]:
+        """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
+        if not self._rows:
+            return
+        text = " ".join(self._iter_cell_texts())
+        trs_str = "".join(r.html for r in self._rows)
+        html = f"<table>{trs_str}</table>"
+        self._rows.clear()
+        yield text, html
+
+    def will_fit(self, row: HtmlRow) -> bool:
+        """True when `row` will fit within remaining space left by accummulated rows."""
+        return self._remaining_space >= len(row.html)
+
+    def _iter_cell_texts(self) -> Iterator[str]:
+        """Generate contents of each row cell as a separate string.
+
+        A cell that is empty or contains only whitespace does not generate a string.
+        """
+        for r in self._rows:
+            yield from r.iter_cell_texts()
+
+    @property
+    def _remaining_space(self) -> int:
+        """Number of characters remaining when accumulated rows are formed into HTML."""
+        # -- 15 is `len("<table></table>")`, the overhead in addition to `<tr>` HTML fragments --
+        return self._maxlen - 15 - sum(len(r.html) for r in self._rows)
 
 
 # ================================================================================================
