@@ -15,9 +15,6 @@ certifi>=2023.7.22
 pyparsing<3.1.0
 scipy<1.11.4
 IPython<8.13
-# NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
-# AttributeError: 'ResourcePath' object has no attribute 'collection'
-Office365-REST-Python-Client<2.4.3
 # NOTE(trevor) `unstructured-inference` is set in extra-pdf-image.in to allow
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458

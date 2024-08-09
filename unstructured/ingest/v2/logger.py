@@ -22,8 +22,8 @@ def default_is_data_sensitive(k: str, v: Any) -> bool:
 
 
 def hide_sensitive_fields(
-    data: dict, is_sensitive_fn: Callable[[str, Any], bool] = default_is_data_sensitive
-) -> dict:
+    data: dict[str, Any], is_sensitive_fn: Callable[[str, Any], bool] = default_is_data_sensitive
+) -> dict[str, Any]:
     """
     Will recursively look through every k, v pair in this dict and any nested ones and run
     is_sensitive_fn to dynamically redact the value of the k, v pair. Will also check if
@@ -62,8 +62,7 @@ def redact_jsons(s: str) -> str:
     if "{" not in chars:
         return s
     i = 0
-    jsons = []
-    i = 0
+    jsons: list[str] = []
     while i < len(chars):
         char = chars[i]
         if char == "{":
