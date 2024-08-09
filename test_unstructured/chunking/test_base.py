@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 import pytest
+from lxml.html import fragment_fromstring
 
 from unstructured.chunking.base import (
     ChunkingOptions,
@@ -16,10 +17,12 @@ from unstructured.chunking.base import (
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
+    _CellAccumulator,
     _TextSplitter,
     is_on_next_page,
     is_title,
 )
+from unstructured.common.html_table import HtmlCell
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
@@ -1197,6 +1200,96 @@ class Describe_TextSplitter:
 
         assert s == "Lorem ipsum dolor amet consectetur adipiscing."
         assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
+
+
+class Describe_CellAccumulator:
+    """Unit-test suite for `unstructured.chunking.base._CellAccumulator`."""
+
+    def it_is_empty_on_construction(self):
+        accum = _CellAccumulator(maxlen=100)
+
+        assert accum._cells == []
+
+    def it_accumulates_elements_added_to_it(self):
+        td = fragment_fromstring("<td>foobar</td>")
+        cell = HtmlCell(td)
+        accum = _CellAccumulator(maxlen=100)
+
+        accum.add_cell(cell)
+
+        assert accum._cells == [cell]
+
+    @pytest.mark.parametrize(
+        ("cell_html", "expected_value"),
+        [
+            ("<td/>", True),
+            ("<td>Lorem Ipsum.</td>", True),
+            ("<td>Lorem Ipsum dolor sit.</td>", True),
+            ("<td>Lorem Ipsum dolor sit amet.</td>", False),
+        ],
+    )
+    def it_will_fit_a_cell_with_text_shorter_than_maxlen_minus_33_when_empty(
+        self, cell_html: str, expected_value: bool
+    ):
+        """Cell text must be 22-chars or shorter to fit in 55-char window.
+
+        `<table><tr><td>...</td></tr></table>` overhead is 33 characters.
+        """
+        accum = _CellAccumulator(maxlen=55)
+        cell = HtmlCell(fragment_fromstring(cell_html))
+
+        assert accum.will_fit(cell) is expected_value
+
+    @pytest.mark.parametrize(
+        ("cell_html", "expected_value"),
+        [
+            ("<td/>", True),  # -- 0 --
+            ("<td>Lorem Ipsum.</td>", True),  # -- 12 --
+            ("<td>Lorem Ipsum amet.</td>", True),  # -- 17 --
+            ("<td>Lorem Ipsum dolor.</td>", False),  # -- 18 --
+            ("<td>Lorem Ipsum dolor sit amet.</td>", False),  # -- 27 --
+        ],
+    )
+    def and_it_will_fit_a_cell_with_text_shorter_than_remaining_space_minus_9_when_not_empty(
+        self, cell_html: str, expected_value: bool
+    ):
+        """Cell text must be 9-chars shorter than remaining space to fit with accumulated cells.
+
+        `<td>...</td>` overhead is 9 characters.
+        """
+        accum = _CellAccumulator(maxlen=85)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcdefghijklmnopqrstuvwxyz</td>")))
+        # -- remaining space is 85 - 26 -33 = 26; max new cell text len is 17 --
+        cell = HtmlCell(fragment_fromstring(cell_html))
+
+        assert accum.will_fit(cell) is expected_value
+
+    def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
+        accum = _CellAccumulator(maxlen=100)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcde fghij klmno</td>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno"
+        assert html == "<table><tr><td>abcde fghij klmno</td></tr></table>"
+        assert accum._cells == []
+
+    def and_the_HTML_contains_as_many_cells_as_were_accumulated(self):
+        accum = _CellAccumulator(maxlen=100)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcde fghij klmno</td>")))
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>pqrst uvwxy z</td>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno pqrst uvwxy z"
+        assert html == "<table><tr><td>abcde fghij klmno</td><td>pqrst uvwxy z</td></tr></table>"
+        assert accum._cells == []
+
+    def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
+        accum = _CellAccumulator(maxlen=100)
+
+        with pytest.raises(StopIteration):
+            next(accum.flush())
 
 
 # ================================================================================================
