@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
 from typing_extensions import Self, TypeAlias
@@ -28,7 +28,7 @@ CHUNK_MAX_CHARS_DEFAULT: int = 500
 
 Provided for reference only, for example so the ingest CLI can advertise the default value in its
 UI. External chunking-related functions (e.g. in ingest or decorators) should use
-`max_characters: Optional[int] = None` and not apply this default themselves. Only
+`max_characters: int | None = None` and not apply this default themselves. Only
 `ChunkingOptions.max_characters` should apply a default value.
 """
 
@@ -966,7 +966,7 @@ class TextPreChunkAccumulator:
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunk: Optional[TextPreChunk] = None
+        self._pre_chunk: TextPreChunk | None = None
 
     def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""

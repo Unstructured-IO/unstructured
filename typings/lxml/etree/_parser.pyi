@@ -1,8 +1,16 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
+from typing import Generic
+
+from .._types import _ET_co
 from ._classlookup import ElementClassLookup
 
-class HTMLParser:
+# Includes most stuff in _BaseParser
+class _FeedParser(Generic[_ET_co]): ...
+
+class HTMLParser(_FeedParser[_ET_co]):
     def __init__(
         self,
         *,
@@ -20,7 +28,7 @@ class HTMLParser:
     ) -> None: ...
     def set_element_class_lookup(self, lookup: ElementClassLookup | None = None) -> None: ...
 
-class XMLParser:
+class XMLParser(_FeedParser[_ET_co]):
     def __init__(
         self,
         *,

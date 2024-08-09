@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional, Sequence
+from typing import Any, Sequence
 
 import pytest
 
@@ -65,7 +65,7 @@ class DescribeChunkingOptions:
         ("combine_text_under_n_chars", "expected_value"), [(None, 0), (42, 42)]
     )
     def it_accepts_combine_text_under_n_chars_in_constructor_but_defaults_to_no_combining(
-        self, combine_text_under_n_chars: Optional[int], expected_value: int
+        self, combine_text_under_n_chars: int | None, expected_value: int
     ):
         """Subclasses can store `combine_text_under_n_chars` but must validate and enable it.
 
