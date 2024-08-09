@@ -1,0 +1,47 @@
+msip_labels:
+ MSIP_Label_5b083577-197b-450c-831d-519cf3f56cd2_ActionId=e50e55f0-3ca8-4485-cd8a-f13d1558cae5;
+Received: Thu, 1 Feb 2024 00:00:00 +1000
+From: Example User <Example.User@someorg.com>
+To: "Example.User2@someorg.com" <Example.User2@someorg.com>
+Subject: Project Proposal
+Date: Thu, 1 Feb 2024 00:00:00 +1000
+MIME-Version: 1.0
+Content-type: Multipart/mixed; charset=us-ascii;
+ boundary="B614747692556E4F8C3F55D8444354BC-2432FD0F_message_boundary"
+Content-Description: Multipart message
+
+
+--B614747692556E4F8C3F55D8444354BC-2432FD0F_message_boundary
+Content-type: Multipart/related; charset=ISO-8859-1;
+ boundary="A32785A2178ABE448C898C485850D5DD-2432FD0F_message_boundary"
+Content-Description: Multipart message
+
+
+--A32785A2178ABE448C898C485850D5DD-2432FD0F_message_boundary
+Content-type: Multipart/alternative; charset=ISO-8859-1;
+ boundary="EF8ECD0282019B449D4B1EBC186DDD07-2432FD0F_message_boundary"
+Content-Description: Multipart message
+
+
+--EF8ECD0282019B449D4B1EBC186DDD07-2432FD0F_message_boundary
+Content-type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: Quoted-printable
+Content-Disposition: inline
+Content-Description: Message text
+
+Hi
+
+=20
+
+Please find attached a project proposal.
+
+Please let us know if you have any questions or would like to discuss=
+ anything at this stage.
+
+=20
+
+Kind regards
+
+User
+
+=20

@@ -679,3 +679,13 @@ def test_partition_eml_respects_detect_language_per_element():
 
     assert "eng" in langs
     assert "spa" in langs
+
+def test_partition_reads_message_part_with_inline_content_disposition():
+    elements = partition_email(
+        example_doc_path("eml/text-part-marked-inline.eml"), process_attachments=False
+    )
+
+    assert len(elements) == 1
+    e = elements[0]
+    assert e.text.startswith("Hi   Please find attached a project proposal.")
+    assert e.text.endswith("Kind regards User  ")
