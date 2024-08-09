@@ -9,15 +9,14 @@ certifi==2024.7.4
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.8
+cryptography==43.0.0
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   msal
     #   pyjwt
 idna==3.7
@@ -34,7 +33,7 @@ office365-rest-python-client==2.4.2
     #   -r ./ingest/sharepoint.in
 pycparser==2.22
     # via cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via msal
 pytz==2024.1
     # via office365-rest-python-client

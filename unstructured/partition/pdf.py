@@ -17,6 +17,7 @@ from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
 from pillow_heif import register_heif_opener
+from pypdf import PdfReader
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -36,6 +37,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
+from unstructured.errors import PageCountExceededError
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
@@ -506,6 +508,34 @@ def _process_pdfminer_pages(
     return elements
 
 
+def _get_pdf_page_number(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+) -> int:
+    if file:
+        number_of_pages = PdfReader(file).get_num_pages()
+        file.seek(0)
+    elif filename:
+        number_of_pages = PdfReader(filename).get_num_pages()
+    else:
+        raise ValueError("Either 'file' or 'filename' must be provided.")
+    return number_of_pages
+
+
+def check_pdf_hi_res_max_pages_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    pdf_hi_res_max_pages: int = None,
+) -> None:
+    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
+    if pdf_hi_res_max_pages:
+        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        if document_pages > pdf_hi_res_max_pages:
+            raise PageCountExceededError(
+                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            )
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -530,6 +560,7 @@ def _partition_pdf_or_image_local(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    pdf_hi_res_max_pages: Optional[int] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -543,6 +574,11 @@ def _partition_pdf_or_image_local(
         process_data_with_pdfminer,
         process_file_with_pdfminer,
     )
+
+    if not is_image:
+        check_pdf_hi_res_max_pages_exceeded(
+            filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+        )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
@@ -890,7 +926,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
-    # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
+    # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 

@@ -13,7 +13,7 @@ certifi==2024.7.4
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via
@@ -24,10 +24,8 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.2.1
     # via matplotlib
-cryptography==42.0.8
-    # via
-    #   -c ././deps/constraints.txt
-    #   pdfminer-six
+cryptography==43.0.0
+    # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
 deprecated==1.2.14
@@ -50,23 +48,23 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.32.0
+google-auth==2.33.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.7.3
+google-cloud-vision==3.7.4
     # via -r ./extra-pdf-image.in
 googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.65.1
+grpcio==1.65.4
     # via
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.62.2
+grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.24.1
+huggingface-hub==0.24.5
     # via
     #   timm
     #   tokenizers
@@ -119,7 +117,7 @@ numpy==1.26.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnx==1.16.1
+onnx==1.16.2
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
@@ -140,7 +138,6 @@ packaging==23.2
     #   pikepdf
     #   pytesseract
     #   transformers
-    #   unstructured-pytesseract
 pandas==2.2.2
     # via layoutparser
 pdf2image==1.17.0
@@ -165,8 +162,7 @@ pillow==10.4.0
     #   pillow-heif
     #   pytesseract
     #   torchvision
-    #   unstructured-pytesseract
-pillow-heif==0.17.0
+pillow-heif==0.18.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.1
     # via iopath
@@ -206,8 +202,10 @@ pypdf==4.3.1
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
-pytesseract==0.3.10
-    # via -r ./extra-pdf-image.in
+pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./extra-pdf-image.in
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
@@ -217,18 +215,18 @@ python-multipart==0.0.9
     # via unstructured-inference
 pytz==2024.1
     # via pandas
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   layoutparser
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.4
+rapidfuzz==3.9.6
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./base.txt
     #   transformers
@@ -240,7 +238,7 @@ requests==2.32.3
     #   transformers
 rsa==4.9
     # via google-auth
-safetensors==0.4.3
+safetensors==0.4.4
     # via
     #   timm
     #   transformers
@@ -256,30 +254,30 @@ sympy==1.13.1
     # via
     #   onnxruntime
     #   torch
-timm==1.0.7
+timm==1.0.8
     # via
     #   effdet
     #   unstructured-inference
 tokenizers==0.19.1
     # via transformers
-torch==2.3.1
+torch==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.18.1
+torchvision==0.19.0
     # via
     #   effdet
     #   timm
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   -c ./base.txt
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.43.1
+transformers==4.44.0
     # via unstructured-inference
 typing-extensions==4.12.2
     # via
@@ -292,10 +290,6 @@ tzdata==2024.1
     # via pandas
 unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
-unstructured-pytesseract==0.3.12
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./extra-pdf-image.in
 urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt

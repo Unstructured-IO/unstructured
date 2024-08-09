@@ -47,17 +47,19 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
+jiter==0.5.0
+    # via openai
 jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.23
+langchain-core==0.2.29
     # via langchain-openai
-langchain-openai==0.1.17
+langchain-openai==0.1.20
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.93
+langsmith==0.1.98
     # via langchain-core
-openai==1.37.0
+openai==1.40.1
     # via langchain-openai
 orjson==3.10.6
     # via langsmith
@@ -73,9 +75,9 @@ pydantic==2.8.2
     #   openai
 pydantic-core==2.20.1
     # via pydantic
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via langchain-core
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
@@ -94,13 +96,14 @@ tenacity==8.5.0
     # via langchain-core
 tiktoken==0.7.0
     # via langchain-openai
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   -c ./ingest/../base.txt
     #   openai
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   langchain-core
     #   openai
     #   pydantic
     #   pydantic-core

@@ -112,12 +112,12 @@ def is_json_processable(
     file is JSON.
     """
     exactly_one(filename=filename, file=file, file_text=file_text)
+
     if file_text is None:
-        file_text = _read_file_start_for_type_check(
-            file=file,
-            filename=filename,
-            encoding=encoding,
-        )
+        file_text = _FileTypeDetectionContext.new(
+            file_path=filename, file=file, encoding=encoding
+        ).text_head
+
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
 
 
@@ -161,6 +161,11 @@ class _FileTypeDetector:
         if not content_type:
             return None
 
+        # -- OLE-based file-format content_type values are sometimes unreliable. These are
+        # -- DOC, PPT, XLS, and MSG.
+        if differentiator := _OleFileDifferentiator.applies(self._ctx, content_type):
+            return differentiator.file_type
+
         # -- MS-Office 2007+ (OpenXML) content_type value is sometimes unreliable --
         if differentiator := _ZipFileDifferentiator.applies(self._ctx, content_type):
             return differentiator.file_type
@@ -185,9 +190,8 @@ class _FileTypeDetector:
         if mime_type is None:
             return None
 
-        # NOTE(Crag): older magic lib does not differentiate between xls and doc
-        if mime_type == "application/msword" and extension == ".xls":
-            return FileType.XLS
+        if differentiator := _OleFileDifferentiator.applies(self._ctx, mime_type):
+            return differentiator.file_type
 
         if mime_type.endswith("xml"):
             return FileType.HTML if extension in (".html", ".htm") else FileType.XML
@@ -248,7 +252,7 @@ class _FileTypeDetectionContext:
         content_type: str | None = None,
         metadata_file_path: str | None = None,
     ):
-        self._file_path = file_path
+        self._file_path_arg = file_path
         self._file_arg = file
         self._encoding_arg = encoding
         self._content_type = content_type
@@ -261,9 +265,9 @@ class _FileTypeDetectionContext:
         file_path: str | None,
         file: IO[bytes] | None,
         encoding: str | None,
-        content_type: str | None,
-        metadata_file_path: str | None,
-    ):
+        content_type: str | None = None,
+        metadata_file_path: str | None = None,
+    ) -> _FileTypeDetectionContext:
         self = cls(
             file_path=file_path,
             file=file,
@@ -320,7 +324,10 @@ class _FileTypeDetectionContext:
         None when the caller specified the source as a file-like object instead. Useful for user
         feedback on an error, but users of context should have little use for it otherwise.
         """
-        return self._file_path
+        if (file_path := self._file_path_arg) is None:
+            return None
+
+        return os.path.realpath(file_path) if os.path.islink(file_path) else file_path
 
     @lazyproperty
     def is_zipfile(self) -> bool:
@@ -351,19 +358,19 @@ class _FileTypeDetectionContext:
 
         A `str` return value is always in lower-case.
         """
+        file_path = self.file_path
+
         if LIBMAGIC_AVAILABLE:
             import magic
 
             mime_type = (
-                magic.from_file(_resolve_symlink(self._file_path), mime=True)
-                if self._file_path
+                magic.from_file(file_path, mime=True)
+                if file_path
                 else magic.from_buffer(self.file_head, mime=True)
             )
             return mime_type.lower() if mime_type else None
 
-        mime_type = (
-            ft.guess_mime(self._file_path) if self._file_path else ft.guess_mime(self.file_head)
-        )
+        mime_type = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
 
         if mime_type is None:
             logger.warning(
@@ -387,8 +394,8 @@ class _FileTypeDetectionContext:
 
         File is guaranteed to be at read position 0 when called.
         """
-        if self._file_path:
-            with open(self._file_path, "rb") as f:
+        if self.file_path:
+            with open(self.file_path, "rb") as f:
                 yield f
         else:
             file = self._file_arg
@@ -416,7 +423,7 @@ class _FileTypeDetectionContext:
                 else content.decode(encoding=self.encoding, errors="ignore")
             )
 
-        file_path = self._file_path
+        file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
 
         try:
@@ -429,10 +436,59 @@ class _FileTypeDetectionContext:
 
     def _validate(self) -> None:
         """Raise if the context is invalid."""
-        if self._file_path and not os.path.isfile(self._file_path):
-            raise FileNotFoundError(f"no such file {self._file_path}")
-        if not self._file_path and not self._file_arg:
+        if self.file_path and not os.path.isfile(self.file_path):
+            raise FileNotFoundError(f"no such file {self._file_path_arg}")
+        if not self.file_path and not self._file_arg:
             raise ValueError("either `file_path` or `file` argument must be provided")
+
+
+class _OleFileDifferentiator:
+    """Refine an OLE-storage package (CFBF) file-type that may not be as specific as it could be.
+
+    Compound File Binary Format (CFBF), aka. OLE file, is use by Microsoft for legacy MS Office
+    files (DOC, PPT, XLS) as well as for Outlook MSG files. `libmagic` tends to identify these as
+    `"application/x-ole-storage"` which is true but too not specific enough for partitioning
+    purposes.
+    """
+
+    def __init__(self, ctx: _FileTypeDetectionContext):
+        self._ctx = ctx
+
+    @classmethod
+    def applies(
+        cls, ctx: _FileTypeDetectionContext, mime_type: str
+    ) -> _OleFileDifferentiator | None:
+        """Constructs an instance, but only if this differentiator applies for `mime_type`."""
+        return cls(ctx) if cls._is_ole_file(ctx) else None
+
+    @property
+    def file_type(self) -> FileType | None:
+        """Differentiated file-type for Microsoft Compound File Binary Format (CFBF).
+
+        Returns one of:
+        - `FileType.DOC`
+        - `FileType.PPT`
+        - `FileType.XLS`
+        - `FileType.MSG`
+        """
+        # -- if this is not a CFBF file then whatever MIME-type was guessed is wrong, so return
+        # -- `None` to trigger fall-back to next strategy.
+        if not self._is_ole_file(self._ctx):
+            return None
+
+        # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so rely on it to
+        # -- differentiate those. Note it doesn't detect MSG type though, so we assume any OLE file
+        # -- that is not a legacy MS-Office type to be a MSG file.
+        with self._ctx.open() as file:
+            mime_type = ft.guess_mime(file)
+
+        return FileType.from_mime_type(mime_type or "application/vnd.ms-outlook")
+
+    @staticmethod
+    def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:
+        """True when file has CFBF magic first 8 bytes."""
+        with ctx.open() as file:
+            return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
 
 
 class _TextFileDifferentiator:
@@ -595,45 +651,6 @@ class _ZipFileDifferentiator:
                 return FileType.PPTX
 
         return FileType.ZIP
-
-
-def _read_file_start_for_type_check(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    encoding: Optional[str] = "utf-8",
-) -> str:
-    """Reads the start of the file and returns the text content."""
-    exactly_one(filename=filename, file=file)
-
-    if file is not None:
-        file.seek(0)
-        file_content = file.read(4096)
-        if isinstance(file_content, str):
-            file_text = file_content
-        else:
-            file_text = file_content.decode(errors="ignore")
-        file.seek(0)
-        return file_text
-
-    # -- guaranteed by `exactly_one()` call --
-    assert filename is not None
-
-    try:
-        with open(filename, encoding=encoding) as f:
-            file_text = f.read(4096)
-    except UnicodeDecodeError:
-        formatted_encoding, _ = detect_file_encoding(filename=filename)
-        with open(filename, encoding=formatted_encoding) as f:
-            file_text = f.read(4096)
-
-    return file_text
-
-
-def _resolve_symlink(file_path: str) -> str:
-    """Resolve `file_path` containing symlink to the actual file path."""
-    if os.path.islink(file_path):
-        file_path = os.path.realpath(file_path)
-    return file_path
 
 
 _P = ParamSpec("_P")

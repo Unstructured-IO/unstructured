@@ -286,7 +286,7 @@ class FileType(enum.Enum):
         "msg",
         [".msg"],
         "application/vnd.ms-outlook",
-        ["application/x-ole-storage"],
+        cast(list[str], []),
     )
     ODT = (
         "odt",

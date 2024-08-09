@@ -106,16 +106,7 @@ def test_auto_partition_doc_from_filename(
 
 
 @pytest.mark.skipif(is_in_docker, reason="Passes in CI but not Docker. Remove skip on #3364 fix.")
-@pytest.mark.xfail(sys.platform == "darwin", reason="#3364", raises=KeyError, strict=True)
 def test_auto_partition_doc_from_file(expected_docx_elements: list[Element]):
-    # -- NOTE(scanny): https://github.com/Unstructured-IO/unstructured/issues/3364
-    # -- detect_filetype() identifies .doc as `application/x-ole-storage` which is true but not
-    # -- specific enough. The `FileType.MSG` file-type is assigned (which is also an OLE file)
-    # -- and `partition()` routes the document to `partition_msg` which is where the `KeyError`
-    # -- comes from.
-    # -- For some reason, this xfail problem only occurs locally, not in CI, possibly because we
-    # -- use two different `libmagic` sourcs (`libmagic` on CI and `libmagic1` on Mac). Doesn't
-    # -- matter much though because when we add disambiguation they'll both get it right.
     with open(example_doc_path("simple.doc"), "rb") as f:
         elements = partition(file=f)
 
@@ -1221,33 +1212,39 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
 
 
 @pytest.mark.parametrize(
-    "filetype",
+    "file_type",
     [
         t
         for t in FileType
-        if t not in (FileType.EMPTY, FileType.UNK, FileType.WAV, FileType.XLS, FileType.ZIP)
-        and t.partitioner_function_name != "partition_image"
+        if t
+        not in (
+            FileType.EMPTY,
+            FileType.JSON,
+            FileType.UNK,
+            FileType.WAV,
+            FileType.XLS,
+            FileType.ZIP,
+        )
+        and t.partitioner_shortname != "image"
     ],
 )
-def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(filetype: FileType):
-    extension = filetype.name.lower()
-    # -- except for two oddballs, the shortname is the extension --
-    partitioner_shortname = {FileType.TXT: "text", FileType.EML: "email"}.get(filetype, extension)
-    partition_fn_name = f"partition_{partitioner_shortname}"
-    module = import_module(f"unstructured.partition.{partitioner_shortname}")
+def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(file_type: FileType):
+    partition_fn_name = file_type.partitioner_function_name
+    module = import_module(file_type.partitioner_module_qname)
     partition_fn = getattr(module, partition_fn_name)
 
     # -- partition the first example-doc with the extension for this filetype --
     elements: list[Element] = []
-    doc_path = example_doc_path("pdf") if filetype == FileType.PDF else example_doc_path("")
+    doc_path = example_doc_path("pdf") if file_type == FileType.PDF else example_doc_path("")
+    extensions = file_type._extensions
     for file in pathlib.Path(doc_path).iterdir():
-        if file.is_file() and file.suffix == f".{extension}":
+        if file.is_file() and file.suffix in extensions:
             elements = partition_fn(str(file))
             break
 
     assert elements
     assert all(
-        e.metadata.filetype == filetype.mime_type
+        e.metadata.filetype == file_type.mime_type
         for e in elements
         if e.metadata.filetype is not None
     )

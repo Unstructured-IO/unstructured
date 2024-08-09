@@ -19,9 +19,11 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
+    _OleFileDifferentiator,
     _TextFileDifferentiator,
     _ZipFileDifferentiator,
     detect_filetype,
+    is_json_processable,
 )
 from unstructured.file_utils.model import FileType
 
@@ -185,6 +187,46 @@ def test_it_detects_correct_file_type_from_file_no_name_with_swapped_ms_office_c
     assert file_type is expected_value
 
 
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.DOC, "simple.doc"),
+        (FileType.PPT, "fake-power-point.ppt"),
+        (FileType.XLS, "tests-example.xls"),
+        (FileType.MSG, "fake-email-multiple-attachments.msg"),
+    ],
+)
+@pytest.mark.parametrize(
+    "content_type",
+    [
+        "application/msword",
+        "application/vnd.ms-outlook",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.ms-excel",
+        "anything/else",
+    ],
+)
+def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_content_type(
+    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    """Fixes wrong XLS asserted as DOC, PPT, etc.
+
+    Asserted content-type can be anything except `None` and differentiator will fix it if the file
+    is DOC, PPT, XLS, or MSG type.
+    """
+    # -- disable strategies 2 & 3, content-type strategy should get this on its own --
+    ctx_mime_type_.return_value = None
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file, content_type=content_type)
+
+    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
+    # -- fall-back to strategy 2 for any of these test cases.
+    ctx_mime_type_.assert_not_called()
+    assert file_type is expected_value
+
+
 # ================================================================================================
 # STRATEGY #2 - GUESS MIME-TYPE WITH LIBMAGIC
 # ================================================================================================
@@ -264,6 +306,7 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
     [
         (FileType.BMP, "img/bmp_24.bmp"),
         (FileType.CSV, "stanley-cups.csv"),
+        (FileType.DOC, "simple.doc"),
         (FileType.DOCX, "simple.docx"),
         (FileType.EML, "eml/fake-email.eml"),
         (FileType.EPUB, "winter-sports.epub"),
@@ -271,14 +314,17 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
         (FileType.HTML, "ideas-page.html"),
         (FileType.JPG, "img/example.jpg"),
         (FileType.JSON, "spring-weather.html.json"),
+        (FileType.MSG, "fake-email.msg"),
         (FileType.ODT, "simple.odt"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
         (FileType.PNG, "img/DA-1p.png"),
+        (FileType.PPT, "fake-power-point.ppt"),
         (FileType.PPTX, "fake-power-point.pptx"),
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
+        (FileType.XLS, "tests-example.xls"),
         (FileType.XLSX, "stanley-cups.xlsx"),
         (FileType.XML, "factbook.xml"),
         (FileType.ZIP, "simple.zip"),
@@ -290,11 +336,7 @@ def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_
     """Does not work for all types, in particular:
 
     TODOs:
-    - DOC is misidentified as MSG, TODO on that below.
-    - MSG is misidentified as UNK, but only on CI.
-    - PPT is misidentified as MSG, same fix as DOC.
     - TSV is identified as TXT, maybe need an `.is_tsv` predicate in `_TextFileDifferentiator`
-    - XLS is misidentified as MSG, same fix as DOC.
 
     NOCANDOs: w/o an extension I think these are the best we can do.
     - MD is identified as TXT
@@ -309,25 +351,44 @@ def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_
     assert detect_filetype(file=file) is expected_value
 
 
-# NOTE(scanny): magic gets this wrong ("application/x-ole-storage") but filetype lib gets it right
-# ("application/msword"). Need a differentiator for "application/x-ole-storage".
-@pytest.mark.xfail(reason="TODO: FIX", raises=AssertionError, strict=True)
 @pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
         (FileType.DOC, "simple.doc"),
         (FileType.PPT, "fake-power-point.ppt"),
         (FileType.XLS, "tests-example.xls"),
-        # -- only fails on CI, maybe different libmagic version or "magic-files" --
-        # (FileType.MSG, "fake-email.msg"),
+        (FileType.MSG, "fake-email-multiple-attachments.msg"),
     ],
 )
-def test_it_detects_MS_Office_file_types_using_strategy_2_when_libmagic_guesses_mime_type(
-    file_name: str, expected_value: FileType
+@pytest.mark.parametrize(
+    "guessed_mime_type",
+    [
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-outlook",
+        "application/vnd.ms-powerpoint",
+        "application/x-ole-storage",
+        "anything/else",
+    ],
+)
+def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_guessed_mime_type(
+    file_name: str, guessed_mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
 ):
+    """Fixes XLS wrongly-guessed as DOC, PPT, "application/x-ole-storage" etc.
+
+    It's better than that actually, the OLE differentiator will get the right file-type for any DOC,
+    PPT, XLS, or MSG file, regardless of guessed MIME-type.
+    """
+    ctx_mime_type_.return_value = guessed_mime_type
+    # -- disable strategy 3 by not providing a file-name source --
     with open(example_doc_path(file_name), "rb") as f:
         file = io.BytesIO(f.read())
-    assert detect_filetype(file=file) is expected_value
+
+    # -- disable strategy 1 by not asserting a content-type --
+    file_type = detect_filetype(file=file)
+
+    ctx_mime_type_.assert_called_with()
+    assert file_type is expected_value
 
 
 @pytest.mark.parametrize(
@@ -454,6 +515,7 @@ def test_it_detects_correct_file_type_from_strategy_3_when_extension_maps_to_fil
     [
         (FileType.BMP, "img/bmp_24.bmp", "application/zip"),
         (FileType.DOC, "simple.doc", None),
+        (FileType.EPUB, "winter-sports.epub", "application/x-ole-storage"),
         (FileType.MSG, "fake-email.msg", "application/octet-stream"),
     ],
 )
@@ -573,6 +635,41 @@ def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas()
     assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+# ================================================================================================
+# Describe `is_json_processable()`
+# ================================================================================================
+
+
+def it_affirms_JSON_is_array_of_objects_from_a_file_path():
+    assert is_json_processable(example_doc_path("simple.json")) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_a_file_path():
+    assert is_json_processable(example_doc_path("not-unstructured-payload.json")) is False
+
+
+def it_affirms_JSON_is_array_of_objects_from_a_file_like_object_open_for_reading_bytes():
+    with open(example_doc_path("simple.json"), "rb") as f:
+        assert is_json_processable(file=f) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_a_file_like_object_open_for_reading_bytes():
+    with open(example_doc_path("not-unstructured-payload.json"), "rb") as f:
+        assert is_json_processable(file=f) is False
+
+
+def it_affirms_JSON_is_array_of_objects_from_text():
+    with open(example_doc_path("simple.json")) as f:
+        text = f.read()
+    assert is_json_processable(file_text=text) is True
+
+
+def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_text():
+    with open(example_doc_path("not-unstructured-payload.json")) as f:
+        text = f.read()
+    assert is_json_processable(file_text=text) is False
 
 
 # ================================================================================================
@@ -889,6 +986,52 @@ class Describe_FileTypeDetectionContext:
     @pytest.fixture
     def mime_type_prop_(self, request: FixtureRequest):
         return property_mock(request, _FileTypeDetectionContext, "mime_type")
+
+
+class Describe_OleFileDifferentiator:
+    """Unit-test suite for `unstructured.file_utils.filetype._OleFileDifferentiator`."""
+
+    # -- .applies() ---------------------------------------------
+
+    def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
+        """The constructor determines whether this differentiator is applicable.
+
+        It returns an instance only when differentiating a CFBF file-type is required, which it
+        judges by inspecting the initial bytes of the file for the CFBF magic-bytes.
+        """
+        ctx = _FileTypeDetectionContext(example_doc_path("simple.doc"))
+
+        differentiator = _OleFileDifferentiator.applies(ctx, "foo/bar")
+
+        assert differentiator is not None
+        assert isinstance(differentiator, _OleFileDifferentiator)
+
+    def and_it_returns_None_when_ole_differentiation_is_not_applicable_to_the_mime_type(self):
+        ctx = _FileTypeDetectionContext(example_doc_path("winter-sports.epub"))
+        assert _OleFileDifferentiator.applies(ctx, "application/epub") is None
+
+    # -- .file_type ---------------------------------------------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [
+            ("simple.doc", FileType.DOC),
+            ("fake-power-point.ppt", FileType.PPT),
+            ("tests-example.xls", FileType.XLS),
+            ("fake-email.msg", FileType.MSG),
+            ("README.org", None),
+        ],
+    )
+    def it_distinguishes_the_file_type_of_applicable_zip_files(
+        self, file_name: str, expected_value: FileType | None
+    ):
+        # -- no file-name available, just to make sure we're not relying on an extension --
+        with open(example_doc_path(file_name), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+        differentiator = _OleFileDifferentiator(ctx)
+
+        assert differentiator.file_type is expected_value
 
 
 class Describe_TextFileDifferentiator:

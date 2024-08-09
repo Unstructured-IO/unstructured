@@ -57,7 +57,7 @@ class BaseCmd(ABC):
                 raise ValueError(f"failed to set configs from {config.__name__}: {e}")
         return cmd
 
-    def get_pipline(
+    def get_pipeline(
         self,
         src: str,
         source_options: dict[str, Any],

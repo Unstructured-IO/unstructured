@@ -4,7 +4,9 @@
 #
 #    pip-compile ./ingest/embed-aws-bedrock.in
 #
-aiohttp==3.9.5
+aiohappyeyeballs==2.3.5
+    # via aiohttp
+aiohttp==3.10.1
     # via
     #   langchain
     #   langchain-community
@@ -16,11 +18,11 @@ async-timeout==4.0.3
     # via
     #   aiohttp
     #   langchain
-attrs==23.2.0
+attrs==24.2.0
     # via aiohttp
-boto3==1.34.51
+boto3==1.34.131
     # via -r ./ingest/embed-aws-bedrock.in
-botocore==1.34.51
+botocore==1.34.131
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   boto3
@@ -55,20 +57,20 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.11
+langchain==0.2.12
     # via langchain-community
-langchain-community==0.2.10
+langchain-community==0.2.11
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.23
+langchain-core==0.2.29
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.93
+langsmith==0.1.98
     # via
     #   langchain
     #   langchain-community
@@ -109,7 +111,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   botocore
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   langchain
     #   langchain-community
@@ -126,7 +128,7 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   python-dateutil
-sqlalchemy==2.0.31
+sqlalchemy==2.0.32
     # via
     #   langchain
     #   langchain-community
@@ -138,6 +140,7 @@ tenacity==8.5.0
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   langchain-core
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
