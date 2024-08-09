@@ -277,10 +277,6 @@ install-local-inference: install install-all-docs
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
-.PHONY: install-paddleocr
-install-paddleocr:
-	ARCH=${ARCH} ./scripts/install-paddleocr.sh
-
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:
