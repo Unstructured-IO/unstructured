@@ -70,6 +70,8 @@ def partition_csv(
         infer last_modified metadata from bytes, otherwise set it to None.
     """
 
+    # TODO: remove all unnecessary whitespace from HTML.
+
     ctx = _CsvPartitioningContext(
         file_path=filename,
         file=file,
@@ -84,6 +86,18 @@ def partition_csv(
         dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter)
 
     html_text = dataframe.to_html(index=False, header=include_header, na_rep="")
+    html_element = soupparser_fromstring(html_text)
+    table_element = html_element[0]
+    table_element.attrib.clear()
+
+    # print(f"{type(table_element).__name__=}")
+    # print(f"{table_element[0].tag=}")
+    # from lxml.etree import tostring
+    # table_element_str = tostring(table_element, encoding=str)
+    # table_element_str = table_element_str.replace("\n", "")
+    # print(f"table_element_str = {table_element_str}")
+    # assert False
+
     text = soupparser_fromstring(html_text).text_content()
 
     metadata = ElementMetadata(
