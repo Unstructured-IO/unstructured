@@ -39,9 +39,7 @@ class ChunkStep(PipelineStep):
     def should_chunk(self, filepath: Path, file_data: FileData) -> bool:
         if self.context.reprocess or file_data.reprocess:
             return True
-        if not filepath.exists():
-            return True
-        return False
+        return not filepath.exists()
 
     def get_output_filepath(self, filename: Path) -> Path:
         hashed_output_file = f"{self.get_hash(extras=[filename.name])}.json"

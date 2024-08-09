@@ -138,7 +138,6 @@ packaging==23.2
     #   pikepdf
     #   pytesseract
     #   transformers
-    #   unstructured-pytesseract
 pandas==2.2.2
     # via layoutparser
 pdf2image==1.17.0
@@ -163,7 +162,6 @@ pillow==10.4.0
     #   pillow-heif
     #   pytesseract
     #   torchvision
-    #   unstructured-pytesseract
 pillow-heif==0.18.0
     # via -r ./extra-pdf-image.in
 portalocker==2.10.1
@@ -204,8 +202,10 @@ pypdf==4.3.1
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
-pytesseract==0.3.10
-    # via -r ./extra-pdf-image.in
+pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./extra-pdf-image.in
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
@@ -290,10 +290,6 @@ tzdata==2024.1
     # via pandas
 unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
-unstructured-pytesseract==0.3.12
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./extra-pdf-image.in
 urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
