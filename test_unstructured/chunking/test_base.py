@@ -346,16 +346,21 @@ class DescribePreChunkBuilder:
         builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
         pre_chunk = list(builder.flush())[0]
 
+        assert isinstance(pre_chunk, TextPreChunk)
         assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
 
         builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
         pre_chunk = list(builder.flush())[0]
 
-        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._text_with_overlap == (
+            "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+        )
 
         builder.add_element(Text("Donec semper facilisis metus finibus."))
         pre_chunk = list(builder.flush())[0]
 
+        assert isinstance(pre_chunk, TextPreChunk)
         assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
@@ -391,7 +396,7 @@ class DescribeTablePreChunk:
             "</tbody>\n"
             "</table>"
         )
-        text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
+        text_table = "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="ctus porta volutpat.",
@@ -406,13 +411,9 @@ class DescribeTablePreChunk:
             "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
         )
         assert chunk.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>adipiscing</td></tr>"
             "</table>"
         )
         with pytest.raises(StopIteration):
@@ -442,21 +443,18 @@ class DescribeTablePreChunk:
         assert chunk.metadata.orig_elements is None
 
     def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
-        # fixed-overhead = 8+8+9+8+9+8 = 50
-        # per-row overhead = 27
-        html_table = (
-            "<table>\n"  # 8
-            "<thead>\n"  # 8
-            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"  # 9
-            "<tbody>\n"  # 8
-            "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
-            "<tr><td>Consectetur    </td><td>adipiscing elit</td></tr>\n"
-            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
-            "<tr><td>Vivamus quis   </td><td>nunc ipsum donec ac fermentum</td></tr>\n"
-            "</tbody>\n"  # 9
-            "</table>"  # 8
-        )
+        html_table = """\
+            <table>
+            <thead>
+            <tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
+            <tr><td>Consectetur    </td><td>adipiscing elit</td></tr>
+            <tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>
+            </tbody>
+            </table>
+        """
         text_table = (
             "Header Col 1   Header Col 2\n"
             "Lorem ipsum    dolor sit amet\n"
@@ -474,48 +472,33 @@ class DescribeTablePreChunk:
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == (
-            "Header Col 1   Header Col 2\n"
-            "Lorem ipsum    dolor sit amet\n"
-            "Consectetur    adipiscing elit"
-        )
+        assert chunk.text == "Header Col 1 Header Col 2"
         assert chunk.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lo"
+            "<table><tr><td>Header Col 1</td><td>Header Col 2</td></tr></table>"
         )
-        assert not chunk.metadata.is_continuation
+        assert chunk.metadata.is_continuation is None
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == (
-            "Nunc aliquam   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
-        )
+        assert chunk.text == "Lorem ipsum A Link example"
         assert chunk.metadata.text_as_html == (
-            "rem ipsum    </td><td>A Link example</td></tr>\n"
-            "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
-        )
-        assert chunk.metadata.is_continuation
-        # -- note that text runs out but HTML continues because it's significantly longer. So two
-        # -- of these chunks have HTML but no text.
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == ""
-        assert chunk.metadata.text_as_html == (
-            "/tr>\n"
-            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
-            "<tr><td>Vivamus quis   </td><td>"
+            "<table><tr><td>Lorem ipsum</td><td>A Link example</td></tr></table>"
         )
         assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == ""
+        assert chunk.text == "Consectetur adipiscing elit"
         assert chunk.metadata.text_as_html == (
-            "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
+            "<table><tr><td>Consectetur</td><td>adipiscing elit</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Nunc aliquam id enim nec molestie"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Nunc aliquam</td><td>id enim nec molestie</td></tr></table>"
         )
         assert chunk.metadata.is_continuation
         # --
@@ -550,8 +533,8 @@ class DescribeTablePreChunk:
         [
             # -- normally it splits exactly on overlap size  |------- 20 -------|
             ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
-            # -- but it strips leading and trailing whitespace when the tail includes it --
-            ("In rhoncus ipsum sed lectus   porta volutpat.  ", "porta volutpat."),
+            # -- but it strips leading whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus     porta volutpat.", "porta volutpat."),
         ],
     )
     def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
@@ -583,7 +566,7 @@ class DescribeTablePreChunk:
         pre_chunk = TablePreChunk(
             Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
         )
-        assert pre_chunk._text == expected_value
+        assert pre_chunk._text_with_overlap == expected_value
 
     def it_computes_metadata_for_each_chunk_to_help(self):
         table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
