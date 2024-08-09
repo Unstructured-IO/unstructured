@@ -1,0 +1,192 @@
+[
+  {
+    "element_id": "e767a8445458cee20fc6799e79846f5a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "LOCAIR",
+    "type": "Title"
+  },
+  {
+    "element_id": "09080f862f10caed5d535eeed5556796",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  },
+  {
+    "element_id": "bbf873437818466147ccf758d1785c5a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline_10748",
+    "type": "Title"
+  },
+  {
+    "element_id": "76067f2f6898c5c64b02c6efdcdd9361",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "inventory",
+    "type": "Title"
+  },
+  {
+    "element_id": "b01f254bc54e1c914a1b193b0262d381",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "United States",
+    "type": "Title"
+  },
+  {
+    "element_id": "ffb3516cb74d1e5bd16121c954b5a726",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "ZQ",
+    "type": "Title"
+  },
+  {
+    "element_id": "7c0eec95394b34797f82f62ec7a6d96e",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "LOC",
+    "type": "Title"
+  },
+  {
+    "element_id": "7c8a4bdf5655f592ec52b52f7d2d7d7b",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "10748",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "6c75d9598d22d942d02d8580b73fce6f",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Locair",
+    "type": "Title"
+  },
+  {
+    "element_id": "e9eab070293b65be9fd00fd09d09d29a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_10748",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_10748.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  }
+]

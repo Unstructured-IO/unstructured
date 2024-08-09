@@ -14,6 +14,8 @@ from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
 from .clarifai import get_base_dest_cmd as clarifai_base_dest_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
+from .couchbase import get_base_dest_cmd as couchbase_base_dest_cmd
+from .couchbase import get_base_src_cmd as couchbase_base_src_cmd
 from .databricks_volumes import get_base_dest_cmd as databricks_volumes_dest_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
@@ -68,6 +70,7 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     biomed_base_src_cmd,
     box_base_src_cmd,
     confluence_base_src_cmd,
+    couchbase_base_src_cmd,
     delta_table_base_src_cmd,
     discord_base_src_cmd,
     dropbox_base_src_cmd,
@@ -111,6 +114,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     box_base_dest_cmd,
     chroma_base_dest_cmd,
     clarifai_base_dest_cmd,
+    couchbase_base_dest_cmd,
     databricks_volumes_dest_cmd,
     dropbox_base_dest_cmd,
     elasticsearch_base_dest_cmd,

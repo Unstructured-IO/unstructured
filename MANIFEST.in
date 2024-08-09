@@ -24,6 +24,7 @@ include requirements/ingest/biomed.in
 include requirements/ingest/box.in
 include requirements/ingest/chroma.in
 include requirements/ingest/confluence.in
+include requirements/ingest/couchbase.in
 include requirements/ingest/databricks-volumes.in
 include requirements/ingest/delta-table.in
 include requirements/ingest/discord.in

@@ -1,0 +1,192 @@
+[
+  {
+    "element_id": "9db6e6f6ba786161fd4c51d70c96cdef",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "CHAUTAUQUA",
+    "type": "Title"
+  },
+  {
+    "element_id": "7e704f14df9ae147db4ec84830813298",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  },
+  {
+    "element_id": "631c71f79d3ded0d1d638fc91d437258",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline_1739",
+    "type": "Title"
+  },
+  {
+    "element_id": "f8224d68db4edb65de46fa8d4754c5df",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "inventory",
+    "type": "Title"
+  },
+  {
+    "element_id": "2804ac7d641fa0cd5c554efbe7da5730",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "United States",
+    "type": "Title"
+  },
+  {
+    "element_id": "169b2f57a57d4a34230aac490cc63577",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "RP",
+    "type": "Title"
+  },
+  {
+    "element_id": "c1defd1e4acbdc6c48b08cb9d5967a65",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "CHQ",
+    "type": "Title"
+  },
+  {
+    "element_id": "fceb1933df8744df706eeb832f7e0500",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "1739",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "f6f48a0a12c047a3153eac91aba39b66",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Chautauqua Airlines",
+    "type": "Title"
+  },
+  {
+    "element_id": "0aa4a50e0960b09d1749a520375520ab",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "collection": "_default",
+          "document_id": "airline_1739",
+          "host": "couchbase://localhost"
+        }
+      },
+      "filename": "airline_1739.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "airline",
+    "type": "Title"
+  }
+]
