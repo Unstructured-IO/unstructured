@@ -10,9 +10,7 @@ anyio==4.4.0
     #   httpx
     #   jupyter-server
 appnope==0.1.4
-    # via
-    #   ipykernel
-    #   ipython
+    # via ipykernel
 argon2-cffi==23.1.0
     # via jupyter-server
 argon2-cffi-bindings==21.2.0
@@ -30,8 +28,6 @@ attrs==24.2.0
     #   referencing
 babel==2.16.0
     # via jupyterlab-server
-backcall==0.2.0
-    # via ipython
 beautifulsoup4==4.12.3
     # via
     #   -c ./base.txt
@@ -79,6 +75,7 @@ exceptiongroup==1.2.2
     #   -c ./base.txt
     #   -c ./test.txt
     #   anyio
+    #   ipython
 executing==2.0.1
     # via stack-data
 fastjsonschema==2.20.0
@@ -123,9 +120,8 @@ ipykernel==6.29.5
     #   jupyter-console
     #   jupyterlab
     #   qtconsole
-ipython==8.12.3
+ipython==8.18.1
     # via
-    #   -c ././deps/constraints.txt
     #   -r ./dev.in
     #   ipykernel
     #   ipywidgets
@@ -255,8 +251,6 @@ pandocfilters==1.5.1
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
-    # via ipython
-pickleshare==0.7.5
     # via ipython
 pip-tools==7.4.1
     # via -r ./dev.in
