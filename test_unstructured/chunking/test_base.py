@@ -18,11 +18,12 @@ from unstructured.chunking.base import (
     TextPreChunk,
     TextPreChunkAccumulator,
     _CellAccumulator,
+    _RowAccumulator,
     _TextSplitter,
     is_on_next_page,
     is_title,
 )
-from unstructured.common.html_table import HtmlCell
+from unstructured.common.html_table import HtmlCell, HtmlRow
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
@@ -1287,6 +1288,102 @@ class Describe_CellAccumulator:
 
     def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
         accum = _CellAccumulator(maxlen=100)
+
+        with pytest.raises(StopIteration):
+            next(accum.flush())
+
+
+class Describe_RowAccumulator:
+    """Unit-test suite for `unstructured.chunking.base._RowAccumulator`."""
+
+    def it_is_empty_on_construction(self):
+        accum = _RowAccumulator(maxlen=100)
+
+        assert accum._rows == []
+
+    def it_accumulates_rows_added_to_it(self):
+        accum = _RowAccumulator(maxlen=100)
+        row = HtmlRow(fragment_fromstring("<tr><td>foo</td><td>bar</td></tr>"))
+
+        accum.add_row(row)
+
+        assert accum._rows == [row]
+
+    @pytest.mark.parametrize(
+        ("row_html", "expected_value"),
+        [
+            ("<tr/>", True),  # -- 5 --
+            ("<tr><td/></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum.</td></tr>", True),  # -- 30 --
+            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem Ipsum dolor sit amet.</td></tr>", False),  # -- 45 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+        ],
+    )
+    def it_will_fit_a_row_with_HTML_shorter_than_maxlen_minus_15_when_empty(
+        self, row_html: str, expected_value: bool
+    ):
+        """Row HTML must be 40-chars or shorter to fit in 55-char chunking window.
+
+        `<table>...</table>` overhead is 15 characters.
+        """
+        accum = _RowAccumulator(maxlen=55)
+        row = HtmlRow(fragment_fromstring(row_html))
+
+        assert accum.will_fit(row) is expected_value
+
+    @pytest.mark.parametrize(
+        ("row_html", "expected_value"),
+        [
+            ("<tr/>", True),  # -- 5 --
+            ("<tr><td/></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum dolor sit</td></tr>", True),  # -- 39 --
+            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet.</td></tr>", False),  # -- 41 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+        ],
+    )
+    def and_it_will_fit_a_row_with_HTML_shorter_than_remaining_space_when_not_empty(
+        self, row_html: str, expected_value: bool
+    ):
+        """There is no overhead beyond row HTML for additional rows."""
+        accum = _RowAccumulator(maxlen=99)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>")))
+        # -- remaining space is 85 - 26 - 33 = 26; max new row HTML len is 40 --
+        row = HtmlRow(fragment_fromstring(row_html))
+
+        assert accum.will_fit(row) is expected_value
+
+    def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
+        accum = _RowAccumulator(maxlen=100)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno"
+        assert html == "<table><tr><td>abcde fghij klmno</td></tr></table>"
+        assert accum._rows == []
+
+    def and_the_HTML_contains_as_many_rows_as_were_accumulated(self):
+        accum = _RowAccumulator(maxlen=100)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno pqrst uvwxy z"
+        assert html == (
+            "<table>"
+            "<tr><td>abcde fghij klmno</td></tr>"
+            "<tr><td>pqrst uvwxy z</td></tr>"
+            "</table>"
+        )
+        assert accum._rows == []
+
+    def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
+        accum = _RowAccumulator(maxlen=100)
 
         with pytest.raises(StopIteration):
             next(accum.flush())
