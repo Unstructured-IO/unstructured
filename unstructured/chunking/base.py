@@ -21,7 +21,9 @@ from unstructured.documents.elements import (
 )
 from unstructured.utils import lazyproperty
 
-# -- CONSTANTS -----------------------------------
+# ================================================================================================
+# MODEL
+# ================================================================================================
 
 CHUNK_MAX_CHARS_DEFAULT: int = 500
 """Hard-max chunk-length when no explicit value specified in `max_characters` argument.
@@ -37,9 +39,6 @@ CHUNK_MULTI_PAGE_DEFAULT: bool = True
 
 Only operative for "by_title" chunking strategy.
 """
-
-
-# -- TYPES ---------------------------------------
 
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
@@ -310,6 +309,121 @@ class PreChunker:
         # -- Using `any()` would short-circuit on first True.
         semantic_boundaries = [pred(element) for pred in self._boundary_predicates]
         return any(semantic_boundaries)
+
+
+class PreChunkBuilder:
+    """An element accumulator suitable for incrementally forming a pre-chunk.
+
+    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
+    the next element in the element stream.
+
+    `.flush()` is used to build a PreChunk object from the accumulated elements. This method
+    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
+    used like so:
+
+        yield from builder.flush()
+
+    If no elements have been accumulated, no `PreChunk` instance is generated. Flushing the builder
+    clears the elements it contains so it is ready to build the next pre-chunk.
+    """
+
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
+        self._separator_len = len(opts.text_separator)
+        self._elements: list[Element] = []
+
+        # -- overlap is only between pre-chunks so starts empty --
+        self._overlap_prefix: str = ""
+        # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
+        self._text_segments: list[str] = []
+        # -- combined length of text-segments, not including separators --
+        self._text_len: int = 0
+
+    def add_element(self, element: Element) -> None:
+        """Add `element` to this section."""
+        self._elements.append(element)
+        if element.text:
+            self._text_segments.append(element.text)
+            self._text_len += len(element.text)
+
+    def flush(self) -> Iterator[PreChunk]:
+        """Generate zero-or-one `PreChunk` object and clear the accumulator.
+
+        Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
+        boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
+        stream.
+        """
+        if not self._elements:
+            return
+
+        pre_chunk = (
+            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
+            if isinstance(self._elements[0], Table)
+            # -- copy list, don't use original or it may change contents as builder proceeds --
+            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
+        )
+        # -- clear builder before yield so we're not sensitive to the timing of how/when this
+        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
+        self._reset_state(pre_chunk.overlap_tail)
+        yield pre_chunk
+
+    def will_fit(self, element: Element) -> bool:
+        """True when `element` can be added to this prechunk without violating its limits.
+
+        There are several limits:
+        - A `Table` element will never fit with any other element. It will only fit in an empty
+          pre-chunk.
+        - No element will fit in a pre-chunk that already contains a `Table` element.
+        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
+          (aka. new_after_n_chars).
+        - A text-element will not fit when together with the elements already present it would
+          exceed the hard-max (aka. max_characters).
+        """
+        # -- an empty pre-chunk will accept any element (including an oversized-element) --
+        if len(self._elements) == 0:
+            return True
+        # -- a `Table` will not fit in a non-empty pre-chunk --
+        if isinstance(element, Table):
+            return False
+        # -- no element will fit in a pre-chunk that already contains a `Table` element --
+        if isinstance(self._elements[0], Table):
+            return False
+        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
+        if self._text_length > self._opts.soft_max:
+            return False
+        # -- don't add an element if it would increase total size beyond the hard-max --
+        return not self._remaining_space < len(element.text)
+
+    @property
+    def _remaining_space(self) -> int:
+        """Maximum text-length of an element that can be added without exceeding maxlen."""
+        # -- include length of trailing separator that will go before next element text --
+        separators_len = self._separator_len * len(self._text_segments)
+        return self._opts.hard_max - self._text_len - separators_len
+
+    def _reset_state(self, overlap_prefix: str) -> None:
+        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._overlap_prefix = overlap_prefix
+        self._elements.clear()
+        self._text_segments = [overlap_prefix] if overlap_prefix else []
+        self._text_len = len(overlap_prefix)
+
+    @property
+    def _text_length(self) -> int:
+        """Length of the text in this pre-chunk.
+
+        This value represents the chunk-size that would result if this pre-chunk was flushed in its
+        current state. In particular, it does not include the length of a trailing separator (since
+        that would only appear if an additional element was added).
+
+        Not suitable for judging remaining space, use `.remaining_space` for that value.
+        """
+        # -- number of text separators present in joined text of elements. This includes only
+        # -- separators *between* text segments, not one at the end. Note there are zero separators
+        # -- for both 0 and 1 text-segments.
+        n = len(self._text_segments)
+        separator_count = n - 1 if n else 0
+        return self._text_len + (separator_count * self._separator_len)
 
 
 # ================================================================================================
@@ -798,126 +912,8 @@ class _TextSplitter:
 
 
 # ================================================================================================
-# PRE-CHUNKING ACCUMULATORS
-# ------------------------------------------------------------------------------------------------
-# Accumulators encapsulate the work of grouping elements and later pre-chunks to form the larger
-# pre-chunk and combined-pre-chunk items central to unstructured chunking.
+# PRE-CHUNK COMBINER
 # ================================================================================================
-
-
-class PreChunkBuilder:
-    """An element accumulator suitable for incrementally forming a pre-chunk.
-
-    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
-    the next element in the element stream.
-
-    `.flush()` is used to build a PreChunk object from the accumulated elements. This method
-    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
-    used like so:
-
-        yield from builder.flush()
-
-    If no elements have been accumulated, no `PreChunk` instance is generated. Flushing the builder
-    clears the elements it contains so it is ready to build the next pre-chunk.
-    """
-
-    def __init__(self, opts: ChunkingOptions) -> None:
-        self._opts = opts
-        self._separator_len = len(opts.text_separator)
-        self._elements: list[Element] = []
-
-        # -- overlap is only between pre-chunks so starts empty --
-        self._overlap_prefix: str = ""
-        # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
-        self._text_segments: list[str] = []
-        # -- combined length of text-segments, not including separators --
-        self._text_len: int = 0
-
-    def add_element(self, element: Element) -> None:
-        """Add `element` to this section."""
-        self._elements.append(element)
-        if element.text:
-            self._text_segments.append(element.text)
-            self._text_len += len(element.text)
-
-    def flush(self) -> Iterator[PreChunk]:
-        """Generate zero-or-one `PreChunk` object and clear the accumulator.
-
-        Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
-        boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
-        stream.
-        """
-        if not self._elements:
-            return
-
-        pre_chunk = (
-            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
-            if isinstance(self._elements[0], Table)
-            # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
-        )
-        # -- clear builder before yield so we're not sensitive to the timing of how/when this
-        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state(pre_chunk.overlap_tail)
-        yield pre_chunk
-
-    def will_fit(self, element: Element) -> bool:
-        """True when `element` can be added to this prechunk without violating its limits.
-
-        There are several limits:
-        - A `Table` element will never fit with any other element. It will only fit in an empty
-          pre-chunk.
-        - No element will fit in a pre-chunk that already contains a `Table` element.
-        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
-          (aka. new_after_n_chars).
-        - A text-element will not fit when together with the elements already present it would
-          exceed the hard-max (aka. max_characters).
-        """
-        # -- an empty pre-chunk will accept any element (including an oversized-element) --
-        if len(self._elements) == 0:
-            return True
-        # -- a `Table` will not fit in a non-empty pre-chunk --
-        if isinstance(element, Table):
-            return False
-        # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if isinstance(self._elements[0], Table):
-            return False
-        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
-        if self._text_length > self._opts.soft_max:
-            return False
-        # -- don't add an element if it would increase total size beyond the hard-max --
-        return not self._remaining_space < len(element.text)
-
-    @property
-    def _remaining_space(self) -> int:
-        """Maximum text-length of an element that can be added without exceeding maxlen."""
-        # -- include length of trailing separator that will go before next element text --
-        separators_len = self._separator_len * len(self._text_segments)
-        return self._opts.hard_max - self._text_len - separators_len
-
-    def _reset_state(self, overlap_prefix: str) -> None:
-        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
-        self._overlap_prefix = overlap_prefix
-        self._elements.clear()
-        self._text_segments = [overlap_prefix] if overlap_prefix else []
-        self._text_len = len(overlap_prefix)
-
-    @property
-    def _text_length(self) -> int:
-        """Length of the text in this pre-chunk.
-
-        This value represents the chunk-size that would result if this pre-chunk was flushed in its
-        current state. In particular, it does not include the length of a trailing separator (since
-        that would only appear if an additional element was added).
-
-        Not suitable for judging remaining space, use `.remaining_space` for that value.
-        """
-        # -- number of text separators present in joined text of elements. This includes only
-        # -- separators *between* text segments, not one at the end. Note there are zero separators
-        # -- for both 0 and 1 text-segments.
-        n = len(self._text_segments)
-        separator_count = n - 1 if n else 0
-        return self._text_len + (separator_count * self._separator_len)
 
 
 class PreChunkCombiner:
