@@ -926,7 +926,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
-    # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
+    # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 

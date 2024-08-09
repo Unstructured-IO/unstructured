@@ -7,12 +7,9 @@ pdfminer.six
 pikepdf
 pillow_heif
 pypdf
-pytesseract
 google-cloud-vision
 effdet
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
 unstructured-inference==0.7.36
-# unstructured fork of pytesseract that provides an interface to allow for multiple output formats
-# from one tesseract call
-unstructured.pytesseract>=0.3.12
+pytesseract>=0.3.12

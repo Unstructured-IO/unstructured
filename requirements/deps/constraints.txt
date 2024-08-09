@@ -22,8 +22,8 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
 # unstructured-inference
-# use the known compatible version of weaviate and unstructured.pytesseract
-unstructured.pytesseract>=0.3.12
+# use the known compatible version of weaviate and pytesseract
+pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
 weaviate-client>3.25.0
 # Note(yuming) - pining to avoid conflict with paddle install
 matplotlib==3.7.2

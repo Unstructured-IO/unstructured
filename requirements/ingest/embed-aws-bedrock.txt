@@ -63,7 +63,7 @@ langchain-community==0.2.11
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.28
+langchain-core==0.2.29
     # via
     #   langchain
     #   langchain-community

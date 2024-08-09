@@ -978,15 +978,15 @@ def test_partition_hi_res_model_name_default_to_None():
     [
         (
             PartitionStrategy.HI_RES,
-            "unstructured_pytesseract.image_to_data",
+            "pytesseract.image_to_data",
         ),
         (
             PartitionStrategy.OCR_ONLY,
-            "unstructured_pytesseract.image_to_data",
+            "pytesseract.image_to_data",
         ),
         (
             PartitionStrategy.OCR_ONLY,
-            "unstructured_pytesseract.image_to_string",
+            "pytesseract.image_to_string",
         ),
     ],
 )

@@ -1,4 +1,4 @@
-## 0.15.2-dev4
+## 0.15.2-dev5
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 * **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
 * **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
+* **Removes dependency on unstructured.pytesseract** Unstructured forked pytesseract while waiting for code to be upstreamed. Now that the new version has been released, this fork can be removed.
 
 ## 0.15.1
 
