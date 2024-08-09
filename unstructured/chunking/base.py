@@ -9,6 +9,7 @@ from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 import regex
 from typing_extensions import Self, TypeAlias
 
+from unstructured.common.html_table import HtmlCell
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -45,6 +46,8 @@ BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
 """The kind of object produced by a pre-chunker."""
+
+TextAndHtml: TypeAlias = tuple[str, str]
 
 
 # ================================================================================================
@@ -909,6 +912,53 @@ class _TextSplitter:
         tail = fragment[-tail_len:].lstrip()
         overlapped_remainder = tail + separator + raw_remainder
         return fragment, overlapped_remainder
+
+
+class _CellAccumulator:  # pyright: ignore[reportUnusedClass]
+    """Incrementally build `<table>` fragment cell-by-cell to maximally fill chunking window.
+
+    Accumulate cells until chunking window is filled, then generate the text and HTML for the
+    subtable composed of all those rows that fit in the window.
+    """
+
+    def __init__(self, maxlen: int):
+        self._maxlen = maxlen
+        self._cells: list[HtmlCell] = []
+
+    def add_cell(self, cell: HtmlCell) -> None:
+        """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
+        self._cells.append(cell)
+
+    def flush(self) -> Iterator[TextAndHtml]:
+        """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
+        if not self._cells:
+            return
+        text = " ".join(self._iter_cell_texts())
+        tds_str = "".join(c.html for c in self._cells)
+        html = f"<table><tr>{tds_str}</tr></table>"
+        self._cells.clear()
+        yield text, html
+
+    def will_fit(self, cell: HtmlCell) -> bool:
+        """True when `cell` will fit within remaining space left by accummulated cells."""
+        return self._remaining_space >= len(cell.html)
+
+    def _iter_cell_texts(self) -> Iterator[str]:
+        """Generate contents of each accumulated cell as a separate string.
+
+        A cell that is empty or contains only whitespace does not generate a string.
+        """
+        for cell in self._cells:
+            if not (text := cell.text):
+                continue
+            yield text
+
+    @property
+    def _remaining_space(self) -> int:
+        """Number of characters remaining when accumulated cells are formed into HTML."""
+        # -- 24 is `len("<table><tr></tr></table>")`, the overhead in addition to `<td>`
+        # -- HTML fragments
+        return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
 
 
 # ================================================================================================
