@@ -19,11 +19,12 @@ from unstructured.chunking.base import (
     TextPreChunkAccumulator,
     _CellAccumulator,
     _RowAccumulator,
+    _TableSplitter,
     _TextSplitter,
     is_on_next_page,
     is_title,
 )
-from unstructured.common.html_table import HtmlCell, HtmlRow
+from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
@@ -1100,6 +1101,168 @@ class DescribeTextPreChunk:
 # ================================================================================================
 # PRE-CHUNK SPLITTERS
 # ================================================================================================
+
+
+class Describe_TableSplitter:
+    """Unit-test suite for `unstructured.chunking.base._TableSplitter`."""
+
+    def it_splits_an_HTML_table_on_even_rows_when_possible(self):
+        opts = ChunkingOptions(max_characters=(150))
+        html_table = HtmlTable.from_html_text(
+            """
+            <table border="1" class="dataframe">
+              <tbody>
+                <tr>
+                  <td>Stanley
+              Cups</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Team</td>
+                  <td>Location</td>
+                  <td>Stanley Cups</td>
+                </tr>
+                <tr>
+                  <td>Blues</td>
+                  <td>STL</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <td>Flyers</td>
+                  <td>PHI</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>Maple Leafs</td>
+                  <td>TOR</td>
+                  <td>13</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Stanley Cups Team Location Stanley Cups",
+                "<table>"
+                "<tr><td>Stanley Cups</td><td/><td/></tr>"
+                "<tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr>"
+                "</table>",
+            ),
+            (
+                "Blues STL 1 Flyers PHI 2",
+                "<table>"
+                "<tr><td>Blues</td><td>STL</td><td>1</td></tr>"
+                "<tr><td>Flyers</td><td>PHI</td><td>2</td></tr>"
+                "</table>",
+            ),
+            (
+                "Maple Leafs TOR 13",
+                "<table>" "<tr><td>Maple Leafs</td><td>TOR</td><td>13</td></tr>" "</table>",
+            ),
+        ]
+
+    def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
+        opts = ChunkingOptions(max_characters=(100))
+        html_table = HtmlTable.from_html_text(
+            """
+            <html><body><table>
+              <tr>
+                <td>Lorem ipsum dolor sit amet.</td>
+                <td>   Consectetur    adipiscing     elit.   </td>
+                <td>
+                  Laboris nisi ut
+                  aliquip ex ea commodo.
+                </td>
+              </tr>
+              <tr>
+                <td>Duis</td>
+                <td>Dolor</td>
+              </tr>
+              <tr>
+                <td>Duis</td>
+                <td>Cillum</td>
+              </tr>
+            </table></body></html>
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Lorem ipsum dolor sit amet. Consectetur adipiscing elit.",
+                "<table><tr>"
+                "<td>Lorem ipsum dolor sit amet.</td>"
+                "<td>Consectetur adipiscing elit.</td>"
+                "</tr></table>",
+            ),
+            (
+                "Laboris nisi ut aliquip ex ea commodo.",
+                "<table><tr><td>Laboris nisi ut aliquip ex ea commodo.</td></tr></table>",
+            ),
+            (
+                "Duis Dolor Duis Cillum",
+                "<table>"
+                "<tr><td>Duis</td><td>Dolor</td></tr>"
+                "<tr><td>Duis</td><td>Cillum</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_splits_an_oversized_cell_on_an_even_word_boundary(self):
+        opts = ChunkingOptions(max_characters=(100))
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <thead>
+                <tr>
+                  <td>
+                    Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit.
+                    Sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                  </td>
+                  <td> Ut enim ad minim veniam.           </td>
+                  <td> Quis nostrud exercitation ullamco. </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Duis aute irure dolor</td></tr>
+                <tr><td>In reprehenderit voluptate.</td></tr>
+              </tbody>
+            </table
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do",
+                "<table>"
+                "<tr><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do</td></tr>"
+                "</table>",
+            ),
+            (
+                "eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "<table>"
+                "<tr><td>eiusmod tempor incididunt ut labore et dolore magna aliqua.</td></tr>"
+                "</table>",
+            ),
+            (
+                "Ut enim ad minim veniam. Quis nostrud exercitation ullamco.",
+                "<table><tr>"
+                "<td>Ut enim ad minim veniam.</td>"
+                "<td>Quis nostrud exercitation ullamco.</td>"
+                "</tr></table>",
+            ),
+            (
+                "Duis aute irure dolor In reprehenderit voluptate.",
+                "<table>"
+                "<tr><td>Duis aute irure dolor</td></tr>"
+                "<tr><td>In reprehenderit voluptate.</td></tr>"
+                "</table>",
+            ),
+        ]
 
 
 class Describe_TextSplitter:

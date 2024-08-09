@@ -9,7 +9,7 @@ from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 import regex
 from typing_extensions import Self, TypeAlias
 
-from unstructured.common.html_table import HtmlCell, HtmlRow
+from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -798,6 +798,82 @@ class TextPreChunk:
 # ================================================================================================
 
 
+class _TableSplitter:  # pyright: ignore[reportUnusedClass]
+    """Produces (text, html) pairs for a `<table>` HtmlElement.
+
+    Each chunk contains a whole number of rows whenever possible. An oversized row is split on an
+    even cell boundary and a single cell that is by itself too big to fit in the chunking window
+    is divided by text-splitting.
+
+    The returned `html` value is always a parseable HTML `<table>` subtree.
+    """
+
+    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):
+        self._table_element = table_element
+        self._opts = opts
+
+    @classmethod
+    def iter_subtables(
+        cls, table_element: HtmlTable, opts: ChunkingOptions
+    ) -> Iterator[TextAndHtml]:
+        """Generate (text, html) pair for each split of this table pre-chunk.
+
+        Each split is on an even row boundary whenever possible, falling back to even cell and even
+        word boundaries when a row or cell is by itself oversized, respectively.
+        """
+        return cls(table_element, opts)._iter_subtables()
+
+    def _iter_subtables(self) -> Iterator[TextAndHtml]:
+        """Generate (text, html) pairs containing as many whole rows as will fit in window.
+
+        Falls back to splitting rows into whole cells when a single row is by itself too big to
+        fit in the chunking window.
+        """
+        accum = _RowAccumulator(maxlen=self._opts.hard_max)
+
+        for row in self._table_element.iter_rows():
+            # -- if row won't fit, any WIP chunk is done, send it on its way --
+            if not accum.will_fit(row):
+                yield from accum.flush()
+            # -- if row fits, add it to accumulator --
+            if accum.will_fit(row):
+                accum.add_row(row)
+            else:  # -- otherwise, single row is bigger than chunking window --
+                yield from self._iter_row_splits(row)
+
+        yield from accum.flush()
+
+    def _iter_row_splits(self, row: HtmlRow) -> Iterator[TextAndHtml]:
+        """Split oversized row into (text, html) pairs containing as many cells as will fit."""
+        accum = _CellAccumulator(maxlen=self._opts.hard_max)
+
+        for cell in row.iter_cells():
+            # -- if cell won't fit, flush and check again --
+            if not accum.will_fit(cell):
+                yield from accum.flush()
+            # -- if cell fits, add it to accumulator --
+            if accum.will_fit(cell):
+                accum.add_cell(cell)
+            else:  # -- otherwise, single cell is bigger than chunking window --
+                yield from self._iter_cell_splits(cell)
+
+        yield from accum.flush()
+
+    def _iter_cell_splits(self, cell: HtmlCell) -> Iterator[TextAndHtml]:
+        """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
+        # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
+        opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
+        split = _TextSplitter(opts)
+
+        text, remainder = split(cell.text)
+        yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+        # -- an oversized cell will have a remainder, split that up into additional chunks.
+        while remainder:
+            text, remainder = split(remainder)
+            yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+
 class _TextSplitter:
     """Provides a text-splitting function configured on construction.
 
@@ -914,7 +990,7 @@ class _TextSplitter:
         return fragment, overlapped_remainder
 
 
-class _CellAccumulator:  # pyright: ignore[reportUnusedClass]
+class _CellAccumulator:
     """Incrementally build `<table>` fragment cell-by-cell to maximally fill chunking window.
 
     Accumulate cells until chunking window is filled, then generate the text and HTML for the
@@ -961,7 +1037,7 @@ class _CellAccumulator:  # pyright: ignore[reportUnusedClass]
         return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
 
 
-class _RowAccumulator:  # pyright: ignore[reportUnusedClass]
+class _RowAccumulator:
     """Maybe `SubtableAccumulator`.
 
     Accumulate rows until chunking window is filled, then generate the text and HTML for the
