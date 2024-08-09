@@ -29,7 +29,7 @@ attrs==24.2.0
     #   -c ./test.txt
     #   jsonschema
     #   referencing
-babel==2.15.0
+babel==2.16.0
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython

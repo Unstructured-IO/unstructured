@@ -25,8 +25,8 @@ Office365-REST-Python-Client<2.4.3
 # use the known compatible version of weaviate and pytesseract
 pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
 weaviate-client>3.25.0
-# Note(yuming) - pining to avoid conflict with paddle install
-matplotlib==3.7.2
+# TODO: Pinned in transformers package, remove when that gets updated
+tokenizers>=0.19,<0.20
 # langchain limits anyio to below 4.0
 anyio<4.0
 # NOTE(crag): earlier versions fail in compilation step when pip installing the package

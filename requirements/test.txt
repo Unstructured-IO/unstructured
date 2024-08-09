@@ -7,7 +7,9 @@
 annotated-types==0.7.0
     # via pydantic
 appdirs==1.4.4
-    # via label-studio-tools
+    # via
+    #   label-studio-sdk
+    #   label-studio-tools
 attrs==24.2.0
     # via
     #   jsonschema
