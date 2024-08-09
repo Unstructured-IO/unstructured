@@ -64,7 +64,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-orjson==3.10.6
+orjson==3.10.7
     # via langsmith
 packaging==23.2
     # via
@@ -115,6 +115,7 @@ threadpoolctl==3.5.0
     # via scikit-learn
 tokenizers==0.19.1
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain-huggingface
     #   transformers
 torch==2.4.0

@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.3.5
     # via aiohttp
-aiohttp==3.10.1
+aiohttp==3.10.2
     # via gcsfs
 aiosignal==1.3.1
     # via aiohttp
@@ -59,13 +59,13 @@ google-auth-oauthlib==1.2.1
     # via gcsfs
 google-cloud-core==2.4.1
     # via google-cloud-storage
-google-cloud-storage==2.18.1
+google-cloud-storage==2.18.2
     # via gcsfs
 google-crc32c==1.5.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.7.1
+google-resumable-media==2.7.2
     # via google-cloud-storage
 googleapis-common-protos==1.63.2
     # via google-api-core

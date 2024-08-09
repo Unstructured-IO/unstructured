@@ -201,7 +201,9 @@ tenacity==8.5.0
     #   -r ./ingest/chroma.in
     #   chromadb
 tokenizers==0.19.1
-    # via chromadb
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   chromadb
 tqdm==4.66.5
     # via
     #   -c ./ingest/../base.txt
