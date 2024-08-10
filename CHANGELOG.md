@@ -1,4 +1,4 @@
-## 0.15.8-dev1
+## 0.15.8-dev2
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Fix NLTK data download path to prevent nested directories**. Resolved an issue where a nested "nltk_data" directory was created within the parent "nltk_data" directory when it already existed. This fix prevents errors in checking for existing downloads and loading models from NLTK data.
+* **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
 
 ## 0.15.6
 
