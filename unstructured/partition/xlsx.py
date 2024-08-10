@@ -9,11 +9,11 @@ from typing import IO, Any, Iterator, Optional
 import networkx as nx
 import numpy as np
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -109,23 +109,21 @@ def partition_xlsx(
         opts.sheets.items(), start=starting_page_number
     ):
         if not opts.find_subtable:
-            html_text = sheet.to_html(index=False, header=opts.include_header, na_rep="")
-            text = soupparser_fromstring(html_text).text_content()
+            html_table = HtmlTable.from_html_text(
+                sheet.to_html(index=False, header=opts.include_header, na_rep="")
+            )
 
-            if opts.include_metadata:
-                metadata = ElementMetadata(
-                    text_as_html=html_text if infer_table_structure else None,
-                    page_name=sheet_name,
-                    page_number=page_number,
-                    filename=opts.metadata_file_path,
-                    last_modified=opts.last_modified,
-                )
-                metadata.detection_origin = DETECTION_ORIGIN
-            else:
-                metadata = ElementMetadata()
+            metadata = ElementMetadata(
+                text_as_html=html_table.html if infer_table_structure else None,
+                page_name=sheet_name,
+                page_number=page_number,
+                filename=opts.metadata_file_path,
+                last_modified=opts.last_modified,
+            )
+            metadata.detection_origin = DETECTION_ORIGIN
 
-            table = Table(text=text, metadata=metadata)
-            elements.append(table)
+            elements.append(Table(text=html_table.text, metadata=metadata))
+
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
@@ -139,14 +137,13 @@ def partition_xlsx(
                 # -- emit core-table (if it exists) as a `Table` element --
                 core_table = subtable_parser.core_table
                 if core_table is not None:
-                    html_text = core_table.to_html(
-                        index=False, header=opts.include_header, na_rep=""
+                    html_table = HtmlTable.from_html_text(
+                        core_table.to_html(index=False, header=opts.include_header, na_rep="")
                     )
-                    text = soupparser_fromstring(html_text).text_content()
-                    element = Table(text=text)
+                    element = Table(text=html_table.text)
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     element.metadata.text_as_html = (
-                        html_text if opts.infer_table_structure else None
+                        html_table.html if opts.infer_table_structure else None
                     )
                     elements.append(element)
 

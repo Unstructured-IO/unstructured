@@ -107,15 +107,12 @@ def test_partition_xlsx_infer_table_structure(infer_table_structure: bool):
 
 def test_partition_xlsx_from_filename_with_header():
     elements = partition_xlsx("example-docs/stanley-cups.xlsx", include_header=True)
-    assert sum(isinstance(element, Table) for element in elements) == 2
+
     assert len(elements) == 2
-    assert (
-        clean_extra_whitespace(elements[0].text)
-        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
-    )
-    text_as_html = elements[0].metadata.text_as_html
-    assert text_as_html is not None
-    assert "<thead>" in text_as_html
+    assert all(isinstance(e, Table) for e in elements)
+    e = elements[0]
+    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert e.metadata.text_as_html is not None
 
 
 def test_partition_xlsx_from_file():
@@ -163,15 +160,11 @@ def test_partition_xlsx_from_file_with_header():
     with open("example-docs/stanley-cups.xlsx", "rb") as f:
         elements = partition_xlsx(file=f, include_header=True)
 
-    assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 2
-    assert (
-        clean_extra_whitespace(elements[0].text)
-        == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
-    )
-    text_as_html = elements[0].metadata.text_as_html
-    assert text_as_html is not None
-    assert "<thead>" in text_as_html
+    assert all(isinstance(e, Table) for e in elements)
+    e = elements[0]
+    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert e.metadata.text_as_html is not None
 
 
 def test_partition_xlsx_filename_exclude_metadata():
@@ -295,38 +288,38 @@ def test_partition_xlsx_metadata_language_from_filename():
 
 def test_partition_xlsx_subtables():
     assert partition_xlsx("example-docs/xlsx-subtable-cases.xlsx") == [
-        Table("\n\n\na\nb\n\n\n\n\nc\nd\n\ne\n\n\n"),
+        Table("a b c d e"),
         ListItem("f"),
         Title("a"),
-        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Table("b c d e"),
         Title("a"),
         Title("b"),
-        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
-        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        Table("c d e f"),
+        Table("a b c d"),
         ListItem("2. e"),
-        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        Table("a b c d"),
         Title("e"),
         Title("f"),
         Title("a"),
-        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Table("b c d e"),
         Title("f"),
         Title("a"),
         Title("b"),
-        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Table("c d e f"),
         Title("g"),
         Title("a"),
-        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Table("b c d e"),
         Title("f"),
         Title("g"),
         Title("a"),
         Title("b"),
-        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Table("c d e f"),
         Title("g"),
         Title("h"),
-        Table("\n\n\na\nb\nc\n\n\n"),
+        Table("a b c"),
         Title("a"),
-        Table("\n\n\nb\nc\nd\n\n\n"),
-        Table("\n\n\na\nb\nc\n\n\n"),
+        Table("b c d"),
+        Table("a b c"),
         Title("d"),
         Title("e"),
     ]
@@ -365,14 +358,14 @@ def test_partition_xlsx_with_more_than_1k_cells():
 
 
 def test_partition_xlsx_with_find_subtables_False_emits_one_Table_element_per_worksheet():
-    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
+    elements = partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False)
+    assert elements == [
         Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+            "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
         ),
         Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+            "Stanley Cups Since 67 Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple"
+            " Leafs TOR 0"
         ),
     ]
 
@@ -381,15 +374,13 @@ def test_partition_xlsx_with_find_subtables_False_and_infer_table_structure_Fals
     elements = partition_xlsx(
         "example-docs/stanley-cups.xlsx", find_subtable=False, infer_table_structure=False
     )
-
     assert elements == [
         Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+            "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
         ),
         Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+            "Stanley Cups Since 67 Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple"
+            " Leafs TOR 0"
         ),
     ]
     assert all(e.metadata.text_as_html is None for e in elements)
@@ -405,12 +396,11 @@ def test_partition_xlsx_with_include_metadata_False_produces_no_text_as_html():
 
     assert elements == [
         Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+            "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
         ),
         Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+            "Stanley Cups Since 67 Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple"
+            " Leafs TOR 0"
         ),
     ]
     assert all(e.metadata.text_as_html is None for e in elements)
