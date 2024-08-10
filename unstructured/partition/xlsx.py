@@ -9,11 +9,11 @@ from typing import IO, Any, Iterator, Optional
 import networkx as nx
 import numpy as np
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -58,6 +58,10 @@ def partition_xlsx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    find_subtable
+        Detect "subtables" on each worksheet and partition each of those as a separate `Table`
+        element. When `False`, each worksheet is partitioned as a single `Table` element. A
+        subtable is a contiguous block of cells with more than two cells in each row.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -80,11 +84,12 @@ def partition_xlsx(
         opts.sheets.items(), start=starting_page_number
     ):
         if not opts.find_subtable:
-            html_text = sheet.to_html(index=False, header=opts.include_header, na_rep="")
-            text = soupparser_fromstring(html_text).text_content()
+            html_table = HtmlTable.from_html_text(
+                sheet.to_html(index=False, header=opts.include_header, na_rep="")
+            )
 
             metadata = ElementMetadata(
-                text_as_html=html_text if infer_table_structure else None,
+                text_as_html=html_table.html if infer_table_structure else None,
                 page_name=sheet_name,
                 page_number=page_number,
                 filename=opts.metadata_file_path,
@@ -92,8 +97,8 @@ def partition_xlsx(
             )
             metadata.detection_origin = DETECTION_ORIGIN
 
-            table = Table(text=text, metadata=metadata)
-            elements.append(table)
+            elements.append(Table(text=html_table.text, metadata=metadata))
+
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
@@ -107,14 +112,13 @@ def partition_xlsx(
                 # -- emit core-table (if it exists) as a `Table` element --
                 core_table = subtable_parser.core_table
                 if core_table is not None:
-                    html_text = core_table.to_html(
-                        index=False, header=opts.include_header, na_rep=""
+                    html_table = HtmlTable.from_html_text(
+                        core_table.to_html(index=False, header=opts.include_header, na_rep="")
                     )
-                    text = soupparser_fromstring(html_text).text_content()
-                    element = Table(text=text)
+                    element = Table(text=html_table.text)
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     element.metadata.text_as_html = (
-                        html_text if opts.infer_table_structure else None
+                        html_table.html if opts.infer_table_structure else None
                     )
                     elements.append(element)
 
