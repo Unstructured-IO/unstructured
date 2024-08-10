@@ -310,6 +310,27 @@ def test_partition_xlsx_with_more_than_1k_cells():
         sys.setrecursionlimit(old_recursion_limit)
 
 
+# ================================================================================================
+# OTHER ARGS
+# ================================================================================================
+
+
+# -- `find_subtable` -----------------------------------------------------------------------------
+
+
+def test_partition_xlsx_with_find_subtables_False_emits_one_Table_element_per_worksheet():
+    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
