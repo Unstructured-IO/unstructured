@@ -64,38 +64,6 @@ def test_partition_xlsx_from_filename():
     assert elements[1].metadata.filename == "stanley-cups.xlsx"
 
 
-def test_partition_xlsx_from_filename_no_subtables():
-    """Partition to a single `Table` element per worksheet."""
-    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
-        Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
-        ),
-        Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
-        ),
-    ]
-
-
-def test_partition_xlsx_from_filename_no_subtables_no_metadata():
-    elements = partition_xlsx(
-        "example-docs/stanley-cups.xlsx", find_subtable=False, include_metadata=False
-    )
-
-    assert elements == [
-        Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
-        ),
-        Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
-        ),
-    ]
-    assert all(e.metadata.text_as_html is None for e in elements)
-
-
 def test_partition_xlsx_from_SpooledTemporaryFile_with_emoji():
     f = tempfile.SpooledTemporaryFile()
     with open("example-docs/emoji.xlsx", "rb") as g:
@@ -386,6 +354,48 @@ def test_partition_xlsx_with_more_than_1k_cells():
         partition_xlsx("example-docs/more-than-1k-cells.xlsx")
     finally:
         sys.setrecursionlimit(old_recursion_limit)
+
+
+# ================================================================================================
+# OTHER ARGS
+# ================================================================================================
+
+
+# -- `find_subtable` -----------------------------------------------------------------------------
+
+
+def test_partition_xlsx_with_find_subtables_False_emits_one_Table_element_per_worksheet():
+    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+
+
+# -- `include_medatata` --------------------------------------------------------------------------
+
+
+def test_partition_xlsx_with_include_metadata_False_produces_no_text_as_html():
+    elements = partition_xlsx(
+        "example-docs/stanley-cups.xlsx", find_subtable=False, include_metadata=False
+    )
+
+    assert elements == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+    assert all(e.metadata.text_as_html is None for e in elements)
 
 
 # ------------------------------------------------------------------------------------------------
