@@ -109,17 +109,12 @@ def partition_xlsx(
         opts.sheets.items(), start=starting_page_number
     ):
         if not opts.find_subtable:
-            html_text = (
-                sheet.to_html(index=False, header=opts.include_header, na_rep="")
-                if opts.infer_table_structure
-                else None
-            )
-            # XXX: `html_text` can be `None`. What happens on this call in that case?
+            html_text = sheet.to_html(index=False, header=opts.include_header, na_rep="")
             text = soupparser_fromstring(html_text).text_content()
 
             if opts.include_metadata:
                 metadata = ElementMetadata(
-                    text_as_html=html_text,
+                    text_as_html=html_text if infer_table_structure else None,
                     page_name=sheet_name,
                     page_number=page_number,
                     filename=opts.metadata_file_path,

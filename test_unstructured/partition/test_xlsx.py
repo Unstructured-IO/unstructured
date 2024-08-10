@@ -377,6 +377,24 @@ def test_partition_xlsx_with_find_subtables_False_emits_one_Table_element_per_wo
     ]
 
 
+def test_partition_xlsx_with_find_subtables_False_and_infer_table_structure_False_works():
+    elements = partition_xlsx(
+        "example-docs/stanley-cups.xlsx", find_subtable=False, infer_table_structure=False
+    )
+
+    assert elements == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+    assert all(e.metadata.text_as_html is None for e in elements)
+
+
 # -- `include_medatata` --------------------------------------------------------------------------
 
 
