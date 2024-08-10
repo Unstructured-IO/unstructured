@@ -1119,7 +1119,7 @@ class DescribeTextPreChunk:
 class Describe_TableSplitter:
     """Unit-test suite for `unstructured.chunking.base._TableSplitter`."""
 
-    def it_splits_an_HTML_table_on_even_rows_when_possible(self):
+    def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(150))
         html_table = HtmlTable.from_html_text(
             """
