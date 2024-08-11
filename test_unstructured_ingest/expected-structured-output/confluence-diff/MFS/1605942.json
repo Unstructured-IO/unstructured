@@ -118,7 +118,7 @@
       "languages": [
         "eng"
       ],
-      "text_as_html": "<table><tr><td>Notes</td><td></td></tr><tr><td>Important Links</td><td></td></tr></table>"
+      "text_as_html": "<table><tr><td>Notes</td><td/></tr><tr><td>Important Links</td><td/></tr></table>"
     },
     "text": "Notes Important Links",
     "type": "Table"
