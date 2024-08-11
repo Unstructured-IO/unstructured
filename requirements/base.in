@@ -4,7 +4,6 @@ filetype
 python-magic
 lxml
 nltk
-tabulate
 requests
 beautifulsoup4
 emoji
