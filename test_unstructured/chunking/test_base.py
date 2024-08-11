@@ -153,107 +153,6 @@ class DescribeChunkingOptions:
         assert ChunkingOptions().text_separator == "\n\n"
 
 
-class Describe_TextSplitter:
-    """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
-
-    def it_splits_on_a_preferred_separator_when_it_can(self):
-        opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = (
-            "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
-            "In rhoncus ipsum sed lectus porta."
-        )
-
-        s, remainder = split(text)
-
-        # -- trailing whitespace is stripped from split --
-        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
-        # -- leading whitespace is stripped from remainder
-        # -- overlap is separated by single space
-        # -- overlap-prefix is computed on arbitrary character boundary
-        # -- overlap-prefix len includes space separator (text portion is one less than specified)
-        assert remainder == "ipiscing. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "ipiscing. In rhoncus ipsum sed lectus porta."
-        assert remainder == ""
-
-    def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
-        opts = ChunkingOptions(max_characters=40, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = (
-            "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
-            " volutpat."
-        )
-
-        s, remainder = split(text)
-        assert s == "Lorem ipsum dolor amet consectetur"
-        assert remainder == "nsectetur adipiscing. In rhoncus ipsum sed lectus porta volutpat."
-        # --
-        s, remainder = split(remainder)
-        assert s == "nsectetur adipiscing. In rhoncus ipsum"
-        assert remainder == "cus ipsum sed lectus porta volutpat."
-        # --
-        s, remainder = split(remainder)
-        assert s == "cus ipsum sed lectus porta volutpat."
-        assert remainder == ""
-
-    def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
-        opts = ChunkingOptions(max_characters=30, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-
-        s, remainder = split(text)
-        assert s == "Loremipsumdolorametconsectetur"
-        assert remainder == "onsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "onsecteturadipiscingelit. In"
-        assert remainder == "gelit. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "gelit. In rhoncus ipsum sed"
-        assert remainder == "ipsum sed lectus porta."
-
-    @pytest.mark.parametrize(
-        "text",
-        [
-            "Lorem ipsum dolor amet consectetur adipiscing.",  # 46-chars
-            "Lorem ipsum dolor.",  # 18-chars
-        ],
-    )
-    def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
-        opts = ChunkingOptions(max_characters=46, overlap=10)
-        split = _TextSplitter(opts)
-
-        s, remainder = split(text)
-
-        assert s == text
-        assert remainder == ""
-
-    def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
-        opts = ChunkingOptions(max_characters=38, overlap=10)
-        split = _TextSplitter(opts)
-        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-
-        s, _ = split(text)
-
-        assert s == "Loremipsumdolorametconsecteturadipisci"
-        assert len(s) == 38
-
-    @pytest.mark.parametrize("separators", [("\n", " "), (" ",)])
-    def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
-        opts = ChunkingOptions(max_characters=50, text_splitting_separators=separators, overlap=10)
-        split = _TextSplitter(opts)
-        text = "Lorem ipsum dolor amet consectetur adipiscing.   \n\n In rhoncus ipsum sed lectus."
-        #       |-------------------------------------------------^  50-chars
-
-        s, remainder = split(text)
-
-        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
-        assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
-
-
 # ================================================================================================
 # PRE-CHUNKER
 # ================================================================================================
@@ -1029,6 +928,112 @@ class DescribeTextPreChunk:
         """
         pre_chunk = TextPreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
+
+
+# ================================================================================================
+# PRE-CHUNK SPLITTERS
+# ================================================================================================
+
+
+class Describe_TextSplitter:
+    """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
+
+    def it_splits_on_a_preferred_separator_when_it_can(self):
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
+            "In rhoncus ipsum sed lectus porta."
+        )
+
+        s, remainder = split(text)
+
+        # -- trailing whitespace is stripped from split --
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        # -- leading whitespace is stripped from remainder
+        # -- overlap is separated by single space
+        # -- overlap-prefix is computed on arbitrary character boundary
+        # -- overlap-prefix len includes space separator (text portion is one less than specified)
+        assert remainder == "ipiscing. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "ipiscing. In rhoncus ipsum sed lectus porta."
+        assert remainder == ""
+
+    def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
+        opts = ChunkingOptions(max_characters=40, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
+            " volutpat."
+        )
+
+        s, remainder = split(text)
+        assert s == "Lorem ipsum dolor amet consectetur"
+        assert remainder == "nsectetur adipiscing. In rhoncus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "nsectetur adipiscing. In rhoncus ipsum"
+        assert remainder == "cus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "cus ipsum sed lectus porta volutpat."
+        assert remainder == ""
+
+    def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
+        opts = ChunkingOptions(max_characters=30, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+
+        s, remainder = split(text)
+        assert s == "Loremipsumdolorametconsectetur"
+        assert remainder == "onsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "onsecteturadipiscingelit. In"
+        assert remainder == "gelit. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "gelit. In rhoncus ipsum sed"
+        assert remainder == "ipsum sed lectus porta."
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Lorem ipsum dolor amet consectetur adipiscing.",  # 46-chars
+            "Lorem ipsum dolor.",  # 18-chars
+        ],
+    )
+    def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
+        opts = ChunkingOptions(max_characters=46, overlap=10)
+        split = _TextSplitter(opts)
+
+        s, remainder = split(text)
+
+        assert s == text
+        assert remainder == ""
+
+    def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
+        opts = ChunkingOptions(max_characters=38, overlap=10)
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+
+        s, _ = split(text)
+
+        assert s == "Loremipsumdolorametconsecteturadipisci"
+        assert len(s) == 38
+
+    @pytest.mark.parametrize("separators", [("\n", " "), (" ",)])
+    def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=separators, overlap=10)
+        split = _TextSplitter(opts)
+        text = "Lorem ipsum dolor amet consectetur adipiscing.   \n\n In rhoncus ipsum sed lectus."
+        #       |-------------------------------------------------^  50-chars
+
+        s, remainder = split(text)
+
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
 
 
 # ================================================================================================
