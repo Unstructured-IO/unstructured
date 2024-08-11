@@ -33,7 +33,9 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             s = html.escape(s)
             # -- substitute <br/> elements for line-feeds in the text --
             s = "<br/>".join(s.split("\n"))
-            # -- strip leading and trailing whitespace, wrap it up and go --
-            yield f"<td>{s.strip()}</td>"
+            # -- normalize whitespace in cell --
+            cell_text = " ".join(s.split())
+            # -- emit void `<td/>` when cell text is empty string --
+            yield f"<td>{cell_text}</td>" if cell_text else "<td/>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""

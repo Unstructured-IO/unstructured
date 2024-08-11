@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Unit-test suite for the `unstructured.common.html_table` module."""
 
 from __future__ import annotations
@@ -11,8 +13,8 @@ class Describe_htmlify_matrix_of_cell_texts:
     def test_htmlify_matrix_handles_empty_cells(self):
         assert htmlify_matrix_of_cell_texts([["cell1", "", "cell3"], ["", "cell5", ""]]) == (
             "<table>"
-            "<tr><td>cell1</td><td></td><td>cell3</td></tr>"
-            "<tr><td></td><td>cell5</td><td></td></tr>"
+            "<tr><td>cell1</td><td/><td>cell3</td></tr>"
+            "<tr><td/><td>cell5</td><td/></tr>"
             "</table>"
         )
 
