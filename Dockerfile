@@ -17,7 +17,6 @@ RUN chown -R notebook-user:notebook-user /app && \
 USER notebook-user
 
 RUN find requirements/ -type f -name "*.txt" -exec pip3.11 install --no-cache-dir --user -r '{}' ';' && \
-  pip3.11 install unstructured.paddlepaddle && \
   python3.11 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()" && \
   python3.11 -c "from unstructured.partition.model_init import initialize; initialize()" && \
   python3.11 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
