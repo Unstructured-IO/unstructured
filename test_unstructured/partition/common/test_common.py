@@ -388,17 +388,6 @@ def test_convert_office_docs_respects_wait_timeout():
     assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) < 3
 
 
-class MockDocxEmptyTable:
-    def __init__(self):
-        self.rows = []
-
-
-def test_convert_ms_office_table_to_text_works_with_empty_tables():
-    table = MockDocxEmptyTable()
-    assert common.convert_ms_office_table_to_text(table, as_html=True) == ""
-    assert common.convert_ms_office_table_to_text(table, as_html=False) == ""
-
-
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

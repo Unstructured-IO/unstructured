@@ -1,4 +1,4 @@
-## 0.16.1-dev3
+## 0.16.1-dev4
 
 ### Enhancements
 
@@ -8,10 +8,11 @@
 
 * **Remove unsupported chipper model**
 * **Rewrite of `partition.email` module and tests.** Use modern Python stdlib `email` module interface to parse email messages and attachments. This change shortens and simplifies the code, and makes it more robust and maintainable. Several historical problems were remedied in the process.
-* **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+* **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count while preserving all text.
 * **Fall back to filename extension-based file-type detection for unidentified OLE files.** Resolves a problem where a DOC file that could not be detected as such by `filetype` was incorrectly identified as a MSG file.
-* **Minify text_as_html from XLSX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
-* **Minify text_as_html from CSV.** Previously `.metadata.text_as_html` for CSV tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+* **Minify text_as_html from XLSX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count while preserving all text.
+* **Minify text_as_html from CSV.** Previously `.metadata.text_as_html` for CSV tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count while preserving all text.
+* **Minify text_as_html from PPTX.** Previously `.metadata.text_as_html` for PPTX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count while preserving all text and structure.
 
 ## 0.16.0
 
