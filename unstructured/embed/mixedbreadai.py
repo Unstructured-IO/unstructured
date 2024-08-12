@@ -28,7 +28,7 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
     Configuration class for Mixedbread AI Embedding Encoder.
 
     Attributes:
-        api_key (str): API key for accessing Mixedbread AI..
+        api_key (str): API key for accessing Mixedbread AI.
         model_name (str): Name of the model to use for embeddings.
     """
 
