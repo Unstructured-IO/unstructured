@@ -296,6 +296,7 @@ jobs:
       - name: Test Ingest (unit)
         run: |
           source .venv/bin/activate
+          make install-nltk-models
           PYTHONPATH=. pytest test_unstructured_ingest/unit
 
 

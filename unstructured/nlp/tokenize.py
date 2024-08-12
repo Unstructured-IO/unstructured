@@ -18,7 +18,7 @@ CACHE_MAX_SIZE: Final[int] = 128
 
 NLTK_DATA_FILENAME = "nltk_data_3.8.2.tar.gz"
 NLTK_DATA_URL = f"https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
-NLTK_DATA_SHA256 = "bd819bc707599c0cc84617f02375dfeaf65e54a4ed05ba8e44a8de25ed169805"
+NLTK_DATA_SHA256 = "ba2ca627c8fb1f1458c15d5a476377a5b664c19deeb99fd088ebf83e140c1663"
 
 
 # NOTE(robinson) - mimic default dir logic from NLTK
@@ -114,7 +114,7 @@ def _download_nltk_packages_if_not_present():
 
     tagger_available = check_for_nltk_package(
         package_category="taggers",
-        package_name="averaged_perceptron_tagger",
+        package_name="averaged_perceptron_tagger_eng",
     )
     tokenizer_available = check_for_nltk_package(
         package_category="tokenizers", package_name="punkt_tab"
