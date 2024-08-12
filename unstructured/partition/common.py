@@ -348,7 +348,7 @@ def add_element_metadata(
     return element
 
 
-def remove_element_metadata(layout_elements) -> list[Element]:
+def remove_element_metadata(layout_elements: list[Element]) -> list[Element]:
     """Removes document metadata from the document element.
 
     Document metadata includes information like the filename, source url, and page number.

@@ -45,7 +45,7 @@
 #    --strategy fast \
 #    --verbose \
 #    --reprocess \
-#    --input-path example-docs/fake-memo.pdf \
+#    --input-path example-docs/pdf/fake-memo.pdf \
 #    --work-dir "$WORK_DIR" \
 #    box \
 #    --box-app-config "$BOX_APP_CONFIG_PATH" \

@@ -34,7 +34,8 @@ from unstructured.documents.elements import (
     Title,
     process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common import (
     convert_ms_office_table_to_text,
     get_last_modified_date,

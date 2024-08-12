@@ -144,6 +144,63 @@ PYTESSERACT_LANG_CODES = [
     "yor",
 ]
 
+PYTESSERACT_TO_PADDLE_LANG_CODE_MAP = {
+    "afr": "af",  # Afrikaans
+    "ara": "ar",  # Arabic
+    "aze": "az",  # Azerbaijani
+    "bel": "be",  # Belarusian
+    "bos": "bs",  # Bosnian
+    "bul": "bg",  # Bulgarian
+    "ces": "cs",  # Czech
+    "chi_sim": "ch",  # Simplified Chinese
+    "chi_tra": "chinese_cht",  # Traditional Chinese
+    "cym": "cy",  # Welsh
+    "dan": "da",  # Danish
+    "deu": "german",  # German
+    "eng": "en",  # English
+    "est": "et",  # Estonian
+    "fas": "fa",  # Persian
+    "fra": "fr",  # French
+    "gle": "ga",  # Irish
+    "hin": "hi",  # Hindi
+    "hrv": "hr",  # Croatian
+    "hun": "hu",  # Hungarian
+    "ind": "id",  # Indonesian
+    "isl": "is",  # Icelandic
+    "ita": "it",  # Italian
+    "jpn": "japan",  # Japanese
+    "kor": "korean",  # Korean
+    "kmr": "ku",  # Kurdish
+    "lat": "rs_latin",  # Latin
+    "lav": "lv",  # Latvian
+    "lit": "lt",  # Lithuanian
+    "mar": "mr",  # Marathi
+    "mlt": "mt",  # Maltese
+    "msa": "ms",  # Malay
+    "nep": "ne",  # Nepali
+    "nld": "nl",  # Dutch
+    "nor": "no",  # Norwegian
+    "pol": "pl",  # Polish
+    "por": "pt",  # Portuguese
+    "ron": "ro",  # Romanian
+    "rus": "ru",  # Russian
+    "slk": "sk",  # Slovak
+    "slv": "sl",  # Slovenian
+    "spa": "es",  # Spanish
+    "sqi": "sq",  # Albanian
+    "srp": "rs_cyrillic",  # Serbian
+    "swa": "sw",  # Swahili
+    "swe": "sv",  # Swedish
+    "tam": "ta",  # Tamil
+    "tel": "te",  # Telugu
+    "tur": "tr",  # Turkish
+    "uig": "ug",  # Uyghur
+    "ukr": "uk",  # Ukrainian
+    "urd": "ur",  # Urdu
+    "uzb": "uz",  # Uzbek
+    "vie": "vi",  # Vietnamese
+}
+
 
 def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) -> str:
     """
@@ -167,6 +224,25 @@ def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) ->
         return "eng"
 
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
+
+
+def tesseract_to_paddle_language(tesseract_language: str) -> str:
+    """
+    Convert TesseractOCR language code to PaddleOCR language code.
+
+    :param tesseract_language: str, language code used in TesseractOCR
+    :return: str, corresponding language code for PaddleOCR or None if not found
+    """
+
+    lang = PYTESSERACT_TO_PADDLE_LANG_CODE_MAP.get(tesseract_language.lower())
+    if not lang:
+        logger.warning(
+            f"{tesseract_language} is not a language code supported by PaddleOCR, "
+            f"proceeding with `en` instead."
+        )
+        return "en"
+
+    return lang
 
 
 def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> Optional[list[str]]:

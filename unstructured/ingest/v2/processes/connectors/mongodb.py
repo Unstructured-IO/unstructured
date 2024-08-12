@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.__version__ import __version__ as unstructured_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -19,7 +19,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.utils import requires_dependencies
 
@@ -125,17 +124,14 @@ class MongoDBUploader(Uploader):
         )
         db = self.client[self.connection_config.database]
         collection = db[self.connection_config.collection]
-        for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
+        for chunk in batch_generator(elements_dict, self.upload_config.batch_size):
             collection.insert_many(chunk)
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=MongoDBConnectionConfig,
-        uploader=MongoDBUploader,
-        uploader_config=MongoDBUploaderConfig,
-        upload_stager=MongoDBUploadStager,
-        upload_stager_config=MongoDBUploadStagerConfig,
-    ),
+mongodb_destination_entry = DestinationRegistryEntry(
+    connection_config=MongoDBConnectionConfig,
+    uploader=MongoDBUploader,
+    uploader_config=MongoDBUploaderConfig,
+    upload_stager=MongoDBUploadStager,
+    upload_stager_config=MongoDBUploadStagerConfig,
 )

@@ -6,9 +6,9 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-cachetools==5.3.3
+cachetools==5.4.0
     # via google-auth
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -25,7 +25,9 @@ coloredlogs==15.0.1
 contourpy==1.2.1
     # via matplotlib
 cryptography==42.0.8
-    # via pdfminer-six
+    # via
+    #   -c ././deps/constraints.txt
+    #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
 deprecated==1.2.14
@@ -39,7 +41,7 @@ filelock==3.15.4
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.53.0
+fonttools==4.53.1
     # via matplotlib
 fsspec==2024.5.0
     # via
@@ -48,23 +50,23 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.1
     # via google-cloud-vision
-google-auth==2.31.0
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.7.2
+google-cloud-vision==3.7.3
     # via -r ./extra-pdf-image.in
 googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.64.1
+grpcio==1.65.1
     # via
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.4
+huggingface-hub==0.24.1
     # via
     #   timm
     #   tokenizers
@@ -149,9 +151,9 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.1
+pdfplumber==0.11.2
     # via layoutparser
-pikepdf==9.0.0
+pikepdf==9.1.0
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -166,7 +168,7 @@ pillow==10.4.0
     #   unstructured-pytesseract
 pillow-heif==0.17.0
     # via -r ./extra-pdf-image.in
-portalocker==2.10.0
+portalocker==2.10.1
     # via iopath
 proto-plus==1.24.0
     # via
@@ -198,7 +200,7 @@ pyparsing==3.0.9
     # via
     #   -c ././deps/constraints.txt
     #   matplotlib
-pypdf==4.2.0
+pypdf==4.3.1
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -222,7 +224,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -250,7 +252,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.12.1
+sympy==1.13.1
     # via
     #   onnxruntime
     #   torch
@@ -277,7 +279,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.42.3
+transformers==4.43.1
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

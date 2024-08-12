@@ -1,3 +1,8 @@
+# Ingest
+![Project unmaintained](https://img.shields.io/badge/project-unmaintained-red.svg)
+
+Project has been moved to: [Unstructured Ingest](https://github.com/Unstructured-IO/unstructured-ingest)
+
 # Batch Processing Documents [DEPRECATED]
 For the latest approach, go to: [v2](./v2)
 

@@ -1,7 +1,6 @@
-import os
-
 import pytest
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import Text
 from unstructured.partition import pdf, strategies
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -43,7 +42,7 @@ def test_validate_strategy_raises_for_bad_strategy():
     ],
 )
 def test_is_pdf_text_extractable(filename, from_file, expected):
-    filename = os.path.join("example-docs", filename)
+    filename = example_doc_path(f"pdf/{filename}")
 
     if from_file:
         with open(filename, "rb") as f:

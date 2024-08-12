@@ -16,7 +16,6 @@ from unstructured.ingest.v2.interfaces import (
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
-    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
@@ -130,15 +129,15 @@ class GoogleDriveIndexer(Indexer):
     def map_file_data(f: dict) -> FileData:
         file_id = f["id"]
         filename = f.pop("name")
-        url = f.pop("webContentLink")
+        url = f.pop("webContentLink", None)
         version = f.pop("version", None)
         permissions = f.pop("permissions", None)
-        date_created_str = f.pop("createdTime")
-        date_created_dt = parser.parse(date_created_str)
-        date_modified_str = f.pop("modifiedTime")
+        date_created_str = f.pop("createdTime", None)
+        date_created_dt = parser.parse(date_created_str) if date_created_str else None
+        date_modified_str = f.pop("modifiedTime", None)
         parent_path = f.pop("parent_path", None)
         parent_root_path = f.pop("parent_root_path", None)
-        date_modified_dt = parser.parse(date_modified_str)
+        date_modified_dt = parser.parse(date_modified_str) if date_modified_str else None
         if (
             parent_path
             and isinstance(parent_path, str)
@@ -285,30 +284,13 @@ class GoogleDriveDownloader(Downloader):
             _, downloaded = downloader.next_chunk()
         return downloaded
 
-    @staticmethod
-    def is_float(value: str):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
-
     def _write_file(self, file_data: FileData, file_contents: io.BytesIO):
         download_path = self.get_download_path(file_data=file_data)
         download_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
         with open(download_path, "wb") as handler:
             handler.write(file_contents.getbuffer())
-        if (
-            file_data.metadata.date_modified
-            and self.is_float(file_data.metadata.date_modified)
-            and file_data.metadata.date_created
-            and self.is_float(file_data.metadata.date_created)
-        ):
-            date_modified = float(file_data.metadata.date_modified)
-            date_created = float(file_data.metadata.date_created)
-            os.utime(download_path, times=(date_created, date_modified))
-        return DownloadResponse(file_data=file_data, path=download_path)
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:

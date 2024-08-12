@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import statistics
+from pathlib import Path
 from typing import List, Optional, Union
 
 import click
@@ -98,7 +99,7 @@ def _display(df):
 
 
 def _write_to_file(
-    dir: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = True
+    directory: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = True
 ):
     """
     Save the metrics report to tsv file. The function allows an option 1) to choose `mode`
@@ -106,15 +107,17 @@ def _write_to_file(
     """
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
-    if dir and not os.path.exists(dir):
-        os.makedirs(dir)
+    if directory:
+        Path(directory).mkdir(exist_ok=True)
     if "count" in df.columns:
         df["count"] = df["count"].astype(int)
     if "filename" in df.columns and "connector" in df.columns:
         df.sort_values(by=["connector", "filename"], inplace=True)
     if not overwrite:
-        filename = _get_non_duplicated_filename(dir, filename)
-    df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
+        filename = _get_non_duplicated_filename(directory, filename)
+    df.to_csv(
+        os.path.join(directory, filename), sep="\t", mode=mode, index=False, header=(mode == "w")
+    )
 
 
 def _sorting_key(filename):

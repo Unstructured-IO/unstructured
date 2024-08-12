@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import re
 import tempfile
 from typing import IO, Any, Iterator, Optional
 
@@ -10,7 +11,8 @@ from oxmsg.attachment import Attachment
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import (
     get_last_modified_date,
@@ -98,14 +100,12 @@ class MsgPartitionerOptions:
         """True when message is encrypted."""
         # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted content
         # is multipart/encrypted (ref: https://www.ietf.org/rfc/rfc2015.txt)
-        if "encrypted" in self.msg.message_headers.get("Content-Type", ""):
-            return True
-        # -- pretty sure we're going to want to dig deeper to discover messages that are encrypted
-        # -- with something other than PGP.
-        #    - might be able to distinguish based on PID_MESSAGE_CLASS = 'IPM.Note.Signed'
-        #    - Content-Type header might include "application/pkcs7-mime" for Microsoft S/MIME
-        #      encryption.
-        return False
+        # NOTE(scanny) - pretty sure we're going to want to dig deeper to discover messages that are
+        # encrypted with something other than PGP.
+        #   - might be able to distinguish based on PID_MESSAGE_CLASS = 'IPM.Note.Signed'
+        #   - Content-Type header might include "application/pkcs7-mime" for Microsoft S/MIME
+        #     encryption.
+        return "encrypted" in self.msg.message_headers.get("Content-Type", "")
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
@@ -189,6 +189,14 @@ class MsgPartitionerOptions:
         email_date = sent_date.isoformat() if (sent_date := msg.sent_date) else None
         sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
         sent_to = [r.email_address for r in msg.recipients] or None
+        bcc_recipient = (
+            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
+        )
+        cc_recipient = (
+            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
+        )
+        if email_message_id := msg.message_headers.get("Message-Id"):
+            email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
 
         element_metadata = ElementMetadata(
             filename=self.metadata_file_path,
@@ -196,6 +204,9 @@ class MsgPartitionerOptions:
             sent_from=sent_from,
             sent_to=sent_to,
             subject=msg.subject or None,
+            bcc_recipient=bcc_recipient,
+            cc_recipient=cc_recipient,
+            email_message_id=email_message_id,
         )
         element_metadata.detection_origin = "msg"
 

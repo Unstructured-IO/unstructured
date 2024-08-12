@@ -1,18 +1,65 @@
-## 0.14.10-dev6
+## 0.15.1-dev9
 
 ### Enhancements
-* **Update unstructured-client dependency** Change unstructured-client dependency pin back to
-  greater than min version and updated tests that were failing given the update.
 
-* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
-* Improved the make check script to support lint checks on MacOS. On MacOS, gsed (installed via brew) replaces the default sed. The script includes platform checks to use gsed on MacOS and sed on Linux. Additionally, awk is used for version extraction. Preliminary tests indicate the script works correctly on both Linux and MacOS.
+* **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
 
 ### Features
 
-### Fixes
-- Fix counting false negatives and false positives in table structure evaluation
+* **Update partition_eml and partition_msg to capture cc, bcc, and message_id fields** Cc, bcc, and message_id information is captured in element metadata for both msg and email partitioning and `Recipient` elements are generated for cc and bcc when `include_headers=True` for email partitioning.
+* **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
+* **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
 
+### Fixes
+
+* **Update `HuggingFaceEmbeddingEncoder` to use `HuggingFaceEmbeddings` from `langchain_huggingface` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
+* **Update `OpenAIEmbeddingEncoder` to use `OpenAIEmbeddings` from `langchain-openai` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
+* **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
+* **File-type detection catches non-existent file-path.** `detect_filetype()` no longer silently falls back to detecting a file-type based on the extension when no file exists at the path provided. Instead `FileNotFoundError` is raised. This provides consistent user notification of a mis-typed path rather than an unpredictable exception from a file-type specific partitioner when the file cannot be opened.
+* **EML files specified as a file-path are detected correctly.** Resolved a bug where an EML file submitted to `partition()` as a file-path was identified as TXT and partitioned using `partition_text()`. EML files specified by path are now identified and processed correctly, including processing any attachments.
+* **A DOCX, PPTX, or XLSX file specified by path and ambiguously identified as MIME-type "application/octet-stream" is identified correctly.** Resolves a shortcoming where a file specified by path immediately fell back to filename-extension based identification when misidentified as "application/octet-stream", either by asserted content type or a mis-guess by libmagic. An MS Office file misidentified in this way is now correctly identified regardless of its filename and whether it is specified by path or file-like object.
+* **Textual content retrieved from a URL with gzip transport compression now partitions correctly.** Resolves a bug where a textual file-type (such as Markdown) retrieved by passing a URL to `partition()` would raise when `gzip` compression was used for transport by the server.
+* **A DOCX, PPTX, or XLSX content-type asserted on partition is confirmed or fixed.** Resolves a bug where calling `partition()` with a swapped MS-Office `content_type` would cause the file-type to be misidentified. A DOCX, PPTX, or XLSX MIME-type received by `partition()` is now checked for accuracy and corrected if the file is for a different MS-Office 2007+ type.
+* **DOC, PPT, XLS, and MSG files are now auto-detected correctly.** Resolves a bug where DOC, PPT, and XLS files were auto-detected as MSG files under certain circumstances.
+
+## 0.15.0
+
+### Enhancements
+
+* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.
+* **Bump unstructured.paddleocr to 2.8.0.1.**
+* **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
+* **Install rewritten HTML parser to fix 12 existing bugs and provide headroom for refinement and growth.** A rewritten HTML parser resolves a collection of outstanding bugs with HTML partitioning and provides a firm foundation for further elaborating that important partitioner.
+* **CI check for dependency licenses** Adds a CI check to ensure dependencies are appropriately licensed.
+
+### Features
+
+* **Add support for specifying OCR language to `partition_pdf()`.** Extend language specification capability to `PaddleOCR` in addition to `TesseractOCR`. Users can now specify OCR languages for both OCR engines when using `partition_pdf()`.
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
+
+### Fixes
+
+* **Remedy error on Windows when `nltk` binaries are downloaded.** Work around a quirk in the Windows implementation of `tempfile.NamedTemporaryFile` where accessing the temporary file by name raises `PermissionError`.
+* **Move Astra embedded_dimension to write config**
+
+## 0.14.10
+
+### Enhancements
+
+* **Update unstructured-client dependency** Change unstructured-client dependency pin back to greater than min version and updated tests that were failing given the update.
+* **`.doc` files are now supported in the `arm64` image.**. `libreoffice24` is added to the `arm64` image, meaning `.doc` files are now supported. We have follow on work planned to investigate adding `.ppt` support for `arm64` as well.
+* **Add table detection metrics: recall, precision and f1.**
+* **Remove unused _with_spans metrics.**
+
+### Features
+
+**Add Object Detection Metrics to CI** Add object detection metrics (average precision, precision, recall and f1-score) implementations.
+
+### Fixes
+
+* **Fix counting false negatives and false positives in table structure evaluation.**
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+* **Remove NLTK download** Removes `nltk.download` in favor of downloading from an S3 bucket we host to mitigate CVE-2024-39705
 
 ## 0.14.9
 
@@ -48,7 +95,6 @@
 
 * **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
 * **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
-* **Compatibility Issue with Chinese Text in Document Parsing**
 
 ### Features
 

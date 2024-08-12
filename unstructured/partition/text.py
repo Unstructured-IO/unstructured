@@ -25,7 +25,8 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.file_utils.model import FileType
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import (

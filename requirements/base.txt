@@ -12,7 +12,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
     #   httpcore
@@ -35,7 +35,7 @@ deepdiff==7.0.1
     # via unstructured-client
 emoji==2.12.1
     # via -r ./base.in
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via anyio
 filetype==1.2.0
     # via -r ./base.in
@@ -82,7 +82,7 @@ packaging==23.2
     #   unstructured-client
 psutil==6.0.0
     # via -r ./base.in
-pypdf==4.2.0
+pypdf==4.3.1
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
@@ -90,7 +90,7 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.3
+rapidfuzz==3.9.4
     # via -r ./base.in
 regex==2024.5.15
     # via nltk
@@ -129,7 +129,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.23.8
+unstructured-client==0.24.1
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in

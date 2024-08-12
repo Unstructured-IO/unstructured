@@ -3,7 +3,9 @@ from collections import Counter
 import click
 
 from .astra import astra_dest_cmd
+from .azure_cognitive_search import azure_cognitive_search_dest_cmd
 from .chroma import chroma_dest_cmd
+from .databricks_volumes import databricks_volumes_dest_cmd
 from .elasticsearch import elasticsearch_dest_cmd, elasticsearch_src_cmd
 from .fsspec.azure import azure_dest_cmd, azure_src_cmd
 from .fsspec.box import box_dest_cmd, box_src_cmd
@@ -17,6 +19,10 @@ from .mongodb import mongodb_dest_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
+from .salesforce import salesforce_src_cmd
+from .sharepoint import sharepoint_drive_src_cmd
+from .singlestore import singlestore_dest_cmd
+from .sql import sql_dest_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -30,6 +36,8 @@ src_cmds = [
     onedrive_drive_src_cmd,
     opensearch_src_cmd,
     s3_src_cmd,
+    salesforce_src_cmd,
+    sharepoint_drive_src_cmd,
     sftp_src_cmd,
 ]
 duplicate_src_names = [
@@ -44,6 +52,7 @@ if duplicate_src_names:
 
 dest_cmds = [
     astra_dest_cmd,
+    azure_cognitive_search_dest_cmd,
     azure_dest_cmd,
     box_dest_cmd,
     chroma_dest_cmd,
@@ -55,8 +64,11 @@ dest_cmds = [
     pinecone_dest_cmd,
     s3_dest_cmd,
     sftp_dest_cmd,
+    singlestore_dest_cmd,
     weaviate_dest_cmd,
     mongodb_dest_cmd,
+    databricks_volumes_dest_cmd,
+    sql_dest_cmd,
 ]
 
 duplicate_dest_names = [

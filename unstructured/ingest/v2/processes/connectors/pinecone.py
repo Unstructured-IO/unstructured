@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -20,7 +20,6 @@ from unstructured.ingest.v2.interfaces import (
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
-    add_destination_entry,
 )
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
@@ -130,7 +129,7 @@ class PineconeUploader(Uploader):
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
-        from pinecone.core.client.exceptions import PineconeApiException
+        from pinecone.exceptions import PineconeApiException
 
         try:
             index = self.connection_config.get_index()
@@ -158,25 +157,22 @@ class PineconeUploader(Uploader):
         pinecone_batch_size = self.upload_config.batch_size
 
         if self.upload_config.num_of_processes == 1:
-            for chunk in chunk_generator(elements_dict, pinecone_batch_size):
-                self.upsert_batch(chunk)  # noqa: E203
+            for batch in batch_generator(elements_dict, pinecone_batch_size):
+                self.upsert_batch(batch)  # noqa: E203
 
         else:
             with mp.Pool(
                 processes=self.upload_config.num_of_processes,
             ) as pool:
                 pool.map(
-                    self.upsert_batch, list(chunk_generator(elements_dict, pinecone_batch_size))
+                    self.upsert_batch, list(batch_generator(elements_dict, pinecone_batch_size))
                 )
 
 
-add_destination_entry(
-    destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(
-        connection_config=PineconeConnectionConfig,
-        uploader=PineconeUploader,
-        uploader_config=PineconeUploaderConfig,
-        upload_stager=PineconeUploadStager,
-        upload_stager_config=PineconeUploadStagerConfig,
-    ),
+pinecone_destination_entry = DestinationRegistryEntry(
+    connection_config=PineconeConnectionConfig,
+    uploader=PineconeUploader,
+    uploader_config=PineconeUploaderConfig,
+    upload_stager=PineconeUploadStager,
+    upload_stager_config=PineconeUploadStagerConfig,
 )
