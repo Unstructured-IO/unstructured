@@ -1,7 +1,3 @@
-import os
-
-import pytest
-
 from unstructured.documents.elements import Text
 from unstructured.embed.mixedbreadai import (
     MixedbreadAIEmbeddingConfig,

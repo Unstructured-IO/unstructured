@@ -125,7 +125,9 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return [item.embedding for response in responses for item in response.data]
 
     @staticmethod
-    def _add_embeddings_to_elements(elements: List[Element], embeddings: List[List[float]]) -> List[Element]:
+    def _add_embeddings_to_elements(
+        elements: List[Element], embeddings: List[List[float]]
+    ) -> List[Element]:
         """
         Add embeddings to elements.
 
