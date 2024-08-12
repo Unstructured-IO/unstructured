@@ -161,7 +161,6 @@ jobs:
         python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
       UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
@@ -194,8 +193,6 @@ jobs:
       matrix:
         python-version: ["3.10"]
     runs-on: ubuntu-latest
-    # env:
-    #   NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
@@ -278,8 +275,6 @@ jobs:
       matrix:
         python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [ setup_ingest, lint ]
     steps:
       # actions/checkout MUST come before auth
@@ -307,8 +302,6 @@ jobs:
       matrix:
         python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
@@ -395,8 +388,6 @@ jobs:
       matrix:
         python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
