@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Collection, Generic, Iterator, TypeVar, overload
+from typing import Collection, Generic, Iterable, Iterator, TypeVar, overload
 
 from typing_extensions import Self
 
 from .. import _types as _t
+from ._module_misc import CDATA, QName
 
 _T = TypeVar("_T")
 
@@ -23,6 +24,12 @@ class _Element:
     def get(self, key: _t._AttrName) -> str | None: ...
     @overload
     def get(self, key: _t._AttrName, default: _T) -> str | _T: ...
+    @overload
+    def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
+    @overload
+    def iter(
+        self, *, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
+    ) -> Iterator[Self]: ...
     def iterancestors(
         self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
@@ -39,8 +46,12 @@ class _Element:
     def tag(self) -> str: ...
     @property
     def tail(self) -> str | None: ...
+    @tail.setter
+    def tail(self, value: str | CDATA | None) -> None: ...
     @property
     def text(self) -> str | None: ...
+    @text.setter
+    def text(self, value: str | QName | CDATA | None) -> None: ...
     def xpath(
         self,
         _path: str,
