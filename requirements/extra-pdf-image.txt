@@ -86,7 +86,7 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser==0.3.4
     # via unstructured-inference
-lxml==5.2.2
+lxml==5.3.0
     # via
     #   -c ./base.txt
     #   pikepdf
@@ -249,7 +249,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.13.1
+sympy==1.13.2
     # via
     #   onnxruntime
     #   torch
@@ -301,5 +301,5 @@ wrapt==1.16.0
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-resources
