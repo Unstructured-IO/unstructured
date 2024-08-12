@@ -7,7 +7,7 @@ import tarfile
 import tempfile
 import urllib.request
 from functools import lru_cache
-from typing import Any, Final, List, Tuple
+from typing import Final, List, Tuple
 
 import nltk
 from nltk import pos_tag as _pos_tag
