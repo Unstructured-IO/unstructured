@@ -194,8 +194,8 @@ jobs:
       matrix:
         python-version: ["3.10"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    # env:
+    #   NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
