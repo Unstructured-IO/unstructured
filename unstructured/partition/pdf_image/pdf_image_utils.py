@@ -144,7 +144,9 @@ def save_elements(
             output_dir_path = str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
         else:
             output_dir_path = str(Path.cwd() / "figures")
-    os.makedirs(output_dir_path, exist_ok=True)
+
+    if not extract_image_block_to_payload:
+        os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         if is_image:
@@ -193,11 +195,6 @@ def save_elements(
 
             figure_number += 1
             try:
-                basename = "table" if el.category == ElementType.TABLE else "figure"
-                output_f_path = os.path.join(
-                    output_dir_path,
-                    f"{basename}-{metadata_page_number}-{figure_number}.jpg",
-                )
                 image_path = image_paths[page_index]
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
@@ -209,6 +206,11 @@ def save_elements(
                     el.metadata.image_base64 = img_base64_str
                     el.metadata.image_mime_type = "image/jpeg"
                 else:
+                    basename = "table" if el.category == ElementType.TABLE else "figure"
+                    output_f_path = os.path.join(
+                        output_dir_path,
+                        f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                    )
                     write_image(cropped_image, output_f_path)
                     # add image path to element metadata
                     el.metadata.image_path = output_f_path
