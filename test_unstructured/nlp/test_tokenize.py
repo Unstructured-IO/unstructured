@@ -8,11 +8,6 @@ from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokeni
 from unstructured.nlp import tokenize
 
 
-def test_error_raised_on_nltk_download():
-    with pytest.raises(ValueError):
-        tokenize.nltk.download("tokenizers/punkt")
-
-
 def test_nltk_packages_download_if_not_present():
     with patch.object(nltk, "find", side_effect=LookupError):
         with patch.object(tokenize, "download_nltk_packages") as mock_download:
