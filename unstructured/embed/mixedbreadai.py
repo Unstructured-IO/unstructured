@@ -33,7 +33,7 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
     """
 
     api_key: str = field(
-        default_factory=lambda: os.environ.get("MXBAI_API_KEY", None),
+        default_factory=lambda: os.environ.get("MXBAI_API_KEY"),
     )
 
     model_name: str = field(
@@ -138,7 +138,6 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         Returns:
             List[Element]: Elements with embeddings added.
         """
-        breakpoint()
         assert len(elements) == len(embeddings)
         elements_w_embedding = []
         for i, element in enumerate(elements):
