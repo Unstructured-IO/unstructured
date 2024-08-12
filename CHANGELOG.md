@@ -1,4 +1,4 @@
-## 0.15.2-dev6
+## 0.15.2
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* **Updates NLTK data file for compatibility with `nltk>=3.8.2`**. The NLTK data file now container `punkt_tab`, making it possible to upgrade to `nltk>=3.8.2`. The `nltk==3.8.2` patches CVE-2024-39705.
 * **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
 * **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
