@@ -16,8 +16,8 @@ from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
-NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
+NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data_3.8.2.tar.gz"
+NLTK_DATA_SHA256 = "bd819bc707599c0cc84617f02375dfeaf65e54a4ed05ba8e44a8de25ed169805"
 
 
 def _raise_on_nltk_download(*args: Any, **kwargs: Any):
@@ -123,7 +123,7 @@ def _download_nltk_packages_if_not_present():
         package_name="averaged_perceptron_tagger",
     )
     tokenizer_available = check_for_nltk_package(
-        package_category="tokenizers", package_name="punkt"
+        package_category="tokenizers", package_name="punkt_tab"
     )
 
     if not (tokenizer_available and tagger_available):
