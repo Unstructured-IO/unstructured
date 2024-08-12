@@ -16,8 +16,8 @@ from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-NLTK_DATA_FILENAME = "nltk_data.3.8.2.tar.gz"
-NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
+NLTK_DATA_FILENAME = "nltk_data_3.8.2.tar.gz"
+NLTK_DATA_URL = f"https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
 NLTK_DATA_SHA256 = "bd819bc707599c0cc84617f02375dfeaf65e54a4ed05ba8e44a8de25ed169805"
 
 
