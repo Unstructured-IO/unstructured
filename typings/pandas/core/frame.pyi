@@ -1,9 +1,29 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
+from typing import Any, Hashable, Iterable
+
+from pandas.core.indexing import _iLocIndexer
+from pandas.core.series import Series
+
 class DataFrame:
+    def __getitem__(self, key: Iterable[Hashable] | slice) -> DataFrame: ...
+    def __len__(self) -> int: ...
+    @property
+    def T(self) -> DataFrame: ...
+    @property
+    def iloc(self) -> _iLocIndexerFrame: ...
+    def isna(self) -> DataFrame: ...
+    def iterrows(self) -> Iterable[tuple[Hashable, Series[Any]]]: ...
+    @property
+    def shape(self) -> tuple[int, int]: ...
     def to_html(
         self,
         index: bool = ...,
         header: bool = ...,
         na_rep: str = ...,
     ) -> str: ...
+
+class _iLocIndexerFrame(_iLocIndexer):
+    def __getitem__(self, idx: Any) -> DataFrame: ...
