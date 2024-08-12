@@ -179,6 +179,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         make install-pandoc install-test
@@ -211,6 +212,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -374,6 +376,7 @@ jobs:
         CI: "true"
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -446,6 +449,7 @@ jobs:
         CI: "true"
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
