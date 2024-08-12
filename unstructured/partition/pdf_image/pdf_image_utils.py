@@ -139,13 +139,14 @@ def save_elements(
     a specified directory or embedded into the element's payload as a base64-encoded string.
     """
 
-    if not output_dir_path:
-        if env_config.GLOBAL_WORKING_DIR_ENABLED:
-            output_dir_path = str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
-        else:
-            output_dir_path = str(Path.cwd() / "figures")
-
+    # Determine the output directory path
     if not extract_image_block_to_payload:
+        output_dir_path = output_dir_path or (
+            str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
+            if env_config.GLOBAL_WORKING_DIR_ENABLED
+            else str(Path.cwd() / "figures")
+        )
+
         os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
