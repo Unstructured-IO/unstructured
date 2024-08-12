@@ -125,7 +125,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return [item.embedding for response in responses for item in response.data]
 
     @staticmethod
-    def _add_embeddings_to_elements(elements, embeddings) -> List[Element]:
+    def _add_embeddings_to_elements(elements: List[Element], embeddings: List[List[float]]) -> List[Element]:
         """
         Add embeddings to elements.
 
@@ -136,6 +136,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         Returns:
             List[Element]: Elements with embeddings added.
         """
+        breakpoint()
         assert len(elements) == len(embeddings)
         elements_w_embedding = []
         for i, element in enumerate(elements):

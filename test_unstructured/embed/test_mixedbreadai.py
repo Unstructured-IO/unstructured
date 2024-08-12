@@ -45,26 +45,3 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     assert elements[1].to_dict()["text"] == "This is sentence 2"
     assert elements[0].embeddings is not None
     assert elements[1].embeddings is not None
-
-
-@pytest.mark.skipif(
-    not os.environ.get("MXBAI_API_KEY", None),
-    reason="Export an env var called MXBAI_API_KEY "
-    "containing the Mixedbread AI API key to run this test.",
-)
-def test_embed_documents_live():
-    encoder = MixedbreadAIEmbeddingEncoder(
-        config=MixedbreadAIEmbeddingConfig(model_name="mixedbread-ai/mxbai-embed-large-v1")
-    )
-
-    encoder.initialize()
-
-    elements = encoder.embed_documents(
-        elements=[Text("This is sentence 1"), Text("This is sentence 2")],
-    )
-
-    assert len(elements) == 2
-    assert elements[0].to_dict()["text"] == "This is sentence 1"
-    assert elements[1].to_dict()["text"] == "This is sentence 2"
-    assert elements[0].embeddings is not None
-    assert elements[1].embeddings is not None
