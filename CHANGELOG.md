@@ -1,11 +1,10 @@
-## 0.15.2-dev6
+## 0.15.2-dev7
 
 ### Enhancements
 
 ### Features
 
 * **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
-
 * **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
 
 ### Fixes
