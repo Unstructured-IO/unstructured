@@ -65,19 +65,19 @@ local-working-dir
   - 36caa9b04378.json
 ```
 
-(Note that the index and partition file names are deterministic and based on the BLABLABLA) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a `.json` extension since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a source file, the output will be based on a hash of BLABLABLA.
+(Note that the index and partition file names are deterministic and based on the hash of the current step along with the previous hash.) In the case of the local source connector, it won't *download* files because they are already local. But for other source connectors there will be a `download` folder. Also note that the final file is named based on the original file with a `.json` extension since it has been partitioned. Not all output files will be named the same as the input file. An example is a table as a source file, the output will be based on a hash of BLABLABLA.
 
 You can see the source/destination connector file that it runs here:
 
 https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2/processes/connectors/local.py
 
-If you look through the file you will notice these Classes (actually @dataclasses because BLABLABLA) and functions
+If you look through the file you will notice these interfaces and functions
 
 * LocalAccessConfig - This usually holds passwords, tokens, etc. This data gets hidden in all logs (and encrypted in our platform solution)
 
 * LocalConnectionConfig - Username, host, port, etc. Anything needed for connecting to the service. It also imports the AccessConfig 
 
-* LocalIndexerConfig - Holds arguments that allow Indexer to connect to the service and what kind of documents to filter for.
+* LocalIndexerConfig - Holds attributes that allow Indexer to connect to the service and what kind of documents to filter for.
 
 * LocalIndexer - Does the actual file listing and filtering. Note that it yields a FileData object
 
@@ -194,7 +194,7 @@ https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2
 
 * chroma_destination_entry - Registers the Chroma destination connector with the pipeline. (!!! LINK `unstructured/ingest/v2/processes/connectors/__init__.py`)
 
-Note that the `chroma.py` file imports the official Chroma python package when it *creates* the client and not at the top of the file. This is so that BLABLABLA
+Note that the `chroma.py` file imports the official Chroma python package when it *creates* the client and not at the top of the file. This allows the classes to be *instantiated* without error,They will raise a runtime error though if the imports are missing.
 
 Let's take a quick look at the `upload_stage` in  working directory:
 ```
@@ -247,14 +247,14 @@ If you can run the integration test successfully then most of the files should b
 
 ## Building a Source Connector
 
-The Source Connector example we will use is `onedrive.py`. The S3 connector might be a simpler example, but it relies on the incredibly useful fsspec package.
+The Source Connector example we will use is `onedrive.py`. The S3 connector might be a simpler example, but it relies on the incredibly useful fsspec package, so it is not a good general example.
 https://filesystem-spec.readthedocs.io/en/latest/ 
-If your source connector can take advantage of fsspec, then S3 might be a good example.
+If your source connector can take advantage of fsspec, then S3 might be one to check out.
 
 
 The Source Connector is similar to the Destination Connector instructions above.
 
-But the key difference is the Indexer. The Indexer essentially gets a list of the documents/artifacts in the Source service. (in the case of a local connector it would be like a bash `ls` command). It then creates individual files for each artifact that need to be downloaded.This is so that the next phase, the Downloader phase, can be scaled out with multiple workers. The Indexer phase needs to return pointers to those artifacts in the shape of the FileData object, which it then downloads as `.json` files.
+But the key difference is the Indexer. The Indexer essentially gets a list of the documents/artifacts in the Source service. (in the case of a local connector it would be like a bash `ls` command). It then creates individual files for each artifact that need to be downloaded. This is so that the next phase, the Downloader phase, can be scaled out with multiple workers. The Indexer phase needs to return pointers to those artifacts in the shape of the FileData object, which it then downloads as `.json` files.
 
 The Downloader then uses the `.json` files that the Indexer created and downloads the raw files (in the case of a blob type file, .pdf, .txt) or as individual rows in a table, or any other needed format.
 
@@ -307,11 +307,35 @@ if __name__ == "__main__":
 ```
 To run this would require service credentials for Onedrive. And we can't run a Docker container locally. So we will skip that part. But this still gives a good example of the kind of file you need to iterate with.
 
+Let's look at the python file in the Unstructured repo
 
+https://github.com/Unstructured-IO/unstructured-ingest/blob/main/unstructured_ingest/v2/processes/connectors/onedrive.py
 
+If you look through the file you will notice these interfaces and functions
 
+* OnedriveAccessConfig - Holds client credentials. This data gets hidden in all logs (and encrypted in our platform solution)
 
+* OnedriveConnectionConfig - Client id, etc. Anything needed for connecting to the service. It also imports the AccessConfig. Notice the `@requires_dependencies` decorator which imports the microsoft `msal` package for that method.
 
+* OnedriveIndexerConfig - Holds attributes that allow Indexer to connect to the service. Since Onedrive has a folder structure we allow `recursive` indexing. It will go down into all the folders of the `path`.
+
+* OnedriveIndexer - Does the actual file listing. Note that it yields a FileData object
+
+* OnedriveDownloaderConfig - In this case it doesn't need anything that the OndriveIndexerConfig already provides.
+
+* OnedriveDownloader - Does the actual downloading of the raw files.
+
+And those are the basics of a Source Connector. Each connector will have its specific problems to sort out. 
+
+### Intrgration Test
+
+We need a test to run in the CI/CD. See the Chroma integration test section above.
+
+## Conclusion
+
+Building a connector is relatively straightforward, especially if there is an existing connector that closely matches the new one. For example, most of the vector destinations are quite similar. The difference was mostly how to prep the data to be uploaded in the necessary schema.
+
+If you have any questions post in the public Slack channel `ask-for-help-open-source-library`
 
 
 
