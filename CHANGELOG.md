@@ -1,6 +1,8 @@
-## 0.15.2-dev7
+## 0.15.2-dev8
 
 ### Enhancements
+
+* **Improve directory handling when extracting image blocks**. The `figures` directory is no longer created when the `extract_image_block_to_payload` parameter is set to `True`.
 
 ### Features
 
