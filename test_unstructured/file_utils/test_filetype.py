@@ -14,6 +14,7 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
+    function_mock,
     patch,
     property_mock,
 )
@@ -52,7 +53,6 @@ is_in_docker = os.path.exists("/.dockerenv")
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
-        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
         (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -111,7 +111,6 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
-        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
         (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -193,7 +192,6 @@ def test_it_detects_correct_file_type_from_file_no_name_with_swapped_ms_office_c
         (FileType.DOC, "simple.doc"),
         (FileType.PPT, "fake-power-point.ppt"),
         (FileType.XLS, "tests-example.xls"),
-        (FileType.MSG, "fake-email-multiple-attachments.msg"),
     ],
 )
 @pytest.mark.parametrize(
@@ -212,7 +210,7 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_
     """Fixes wrong XLS asserted as DOC, PPT, etc.
 
     Asserted content-type can be anything except `None` and differentiator will fix it if the file
-    is DOC, PPT, XLS, or MSG type.
+    is DOC, PPT, or XLS type.
     """
     # -- disable strategies 2 & 3, content-type strategy should get this on its own --
     ctx_mime_type_.return_value = None
@@ -254,7 +252,6 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.MD, "README.md", "text/x-markdown"),
-        (FileType.MSG, "fake-email.msg", "application/vnd.ms-outlook"),
         (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -314,7 +311,6 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
         (FileType.HTML, "ideas-page.html"),
         (FileType.JPG, "img/example.jpg"),
         (FileType.JSON, "spring-weather.html.json"),
-        (FileType.MSG, "fake-email.msg"),
         (FileType.ODT, "simple.odt"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
         (FileType.PNG, "img/DA-1p.png"),
@@ -357,7 +353,6 @@ def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_
         (FileType.DOC, "simple.doc"),
         (FileType.PPT, "fake-power-point.ppt"),
         (FileType.XLS, "tests-example.xls"),
-        (FileType.MSG, "fake-email-multiple-attachments.msg"),
     ],
 )
 @pytest.mark.parametrize(
@@ -533,6 +528,21 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 # ================================================================================================
 # SPECIAL CASES
 # ================================================================================================
+
+
+@pytest.mark.parametrize(
+    ("metadata_file_path", "expected_value"),
+    [
+        ("fake-email.msg", FileType.MSG),
+        ("fake-email.msg.outlook", FileType.UNK),
+    ],
+)
+def test_it_can_only_detect_MSG_format_by_extension(
+    metadata_file_path: str, expected_value: FileType
+):
+    with open(example_doc_path("fake-email.msg"), "rb") as f:
+        file = io.BytesIO(f.read())
+    assert detect_filetype(file=file, metadata_file_path=metadata_file_path) == expected_value
 
 
 @pytest.mark.parametrize("mime_type", ["application/xml", "text/xml"])
@@ -1018,11 +1028,11 @@ class Describe_OleFileDifferentiator:
             ("simple.doc", FileType.DOC),
             ("fake-power-point.ppt", FileType.PPT),
             ("tests-example.xls", FileType.XLS),
-            ("fake-email.msg", FileType.MSG),
+            ("fake-email.msg", None),
             ("README.org", None),
         ],
     )
-    def it_distinguishes_the_file_type_of_applicable_zip_files(
+    def it_distinguishes_the_file_type_of_applicable_OLE_files(
         self, file_name: str, expected_value: FileType | None
     ):
         # -- no file-name available, just to make sure we're not relying on an extension --
@@ -1032,6 +1042,27 @@ class Describe_OleFileDifferentiator:
         differentiator = _OleFileDifferentiator(ctx)
 
         assert differentiator.file_type is expected_value
+
+    def but_it_returns_None_to_engage_fallback_when_filetype_cannot_guess_mime(
+        self, guess_mime_: Mock
+    ):
+        guess_mime_.return_value = None
+        # -- no file-name available, just to make sure we're not relying on an extension --
+        with open(example_doc_path("fake-email.msg"), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+        differentiator = _OleFileDifferentiator(ctx)
+
+        file_type = differentiator.file_type
+
+        guess_mime_.assert_called_once_with(file)
+        assert file_type is None
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def guess_mime_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.file_utils.filetype.ft.guess_mime")
 
 
 class Describe_TextFileDifferentiator:
