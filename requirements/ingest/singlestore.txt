@@ -57,7 +57,7 @@ wheel==0.44.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   singlestoredb
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
