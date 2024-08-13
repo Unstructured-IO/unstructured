@@ -419,6 +419,19 @@ class DescribeTablePreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
+    def but_not_when_the_table_is_is_empty_or_contains_only_whitespace(self):
+        html_table = "<table><tr><td/><td>  \t  \n   </td></tr></table>"
+        pre_chunk = TablePreChunk(
+            Table("  \t  \n  ", metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="volutpat.",
+            opts=ChunkingOptions(max_characters=175),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
     def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
         table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
         opts = ChunkingOptions(include_orig_elements=True)
@@ -647,6 +660,10 @@ class DescribeTextPreChunk:
 
         assert (pre_chunk == other_pre_chunk) is expected_value
 
+    def and_it_knows_it_is_not_equal_to_an_object_that_is_not_a_TextPreChunk(self):
+        pre_chunk = TextPreChunk([], overlap_prefix="", opts=ChunkingOptions())
+        assert pre_chunk != 42
+
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
         [
@@ -820,6 +837,19 @@ class DescribeTextPreChunk:
         chunk_iter = pre_chunk.iter_chunks()
 
         assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
+
+    def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
+        metadata = ElementMetadata()
+        pre_chunk = TextPreChunk(
+            [PageBreak("", metadata=metadata)],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),

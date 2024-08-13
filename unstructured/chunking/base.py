@@ -503,7 +503,7 @@ class TablePreChunk:
             return None
 
         text_as_html = text_as_html.strip()
-        if not text_as_html:
+        if not text_as_html:  # pragma: no cover
             return None
 
         return HtmlTable.from_html_text(text_as_html)
@@ -513,7 +513,7 @@ class TablePreChunk:
 
         `.metadata.text_as_html` for each chunk is a parsable `<table>` HTML fragment.
         """
-        if (html_table := self._html_table) is None:
+        if (html_table := self._html_table) is None:  # pragma: no cover
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
         is_continuation = False
