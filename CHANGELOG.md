@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Improve directory handling when extracting image blocks**. The `figures` directory is no longer created when the `extract_image_block_to_payload` parameter is set to `True`.
+
 ### Features
 
 * **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
