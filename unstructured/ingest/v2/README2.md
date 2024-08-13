@@ -1,6 +1,6 @@
 # Developing V2 Connectors
 ## Intro
-The Unstructured open source repo processes documents (artifacts) in a pipeline. The Source and Destination connectors sit at the front and back of the pipeline. For more details see below (COMING SOON).
+The Unstructured open source repo processes documents (artifacts) in a pipeline. The Source and Destination connectors sit at the front and back of the pipeline. For a visual example see the flow diagram at the bottom (link to bottom).
 
 ## Simplest Example of a Pipeline
 The simplest example of a pipeline would start with a local source connector, followed by a partioner, and then end with a local destination connector. Here is what the code to run this would look like:
@@ -337,7 +337,11 @@ Building a connector is relatively straightforward, especially if there is an ex
 
 If you have any questions post in the public Slack channel `ask-for-help-open-source-library`
 
+### Sequence Diagram
 
+Yellow (without the Uncompressing) represents the steps in a Source Connector. Orange represents a Destination Connector.
+
+![unstructured ingest diagram](assets/pipeline.png)
 
 
 
