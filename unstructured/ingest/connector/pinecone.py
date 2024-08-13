@@ -35,6 +35,7 @@ class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     index_name: str
     environment: str
     access_config: PineconeAccessConfig
+    namespace: str
 
 
 @dataclass
