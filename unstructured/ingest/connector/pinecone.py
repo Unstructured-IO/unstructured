@@ -35,13 +35,13 @@ class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     index_name: str
     environment: str
     access_config: PineconeAccessConfig
-    namespace: str
 
 
 @dataclass
 class PineconeWriteConfig(WriteConfig):
     batch_size: int = 50
     num_processes: int = 1
+    namespace: Optional[str] = None
 
 
 @dataclass
@@ -97,7 +97,11 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
 
         index = self.pinecone_index
         try:
-            response = index.upsert(batch)
+            namespace = self.write_config.namespace
+            if namespace is None:
+                response = index.upsert(batch)
+            else:
+                response = index.upsert(batch, namespace=namespace)
         except pinecone.exceptions.PineconeApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")

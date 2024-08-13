@@ -67,6 +67,7 @@ class PineconeUploadStagerConfig(UploadStagerConfig):
 class PineconeUploaderConfig(UploaderConfig):
     batch_size: int = 100
     num_of_processes: int = 4
+    namespace: Optional[str] = None
 
 
 @dataclass
@@ -133,7 +134,11 @@ class PineconeUploader(Uploader):
 
         try:
             index = self.connection_config.get_index()
-            response = index.upsert(batch)
+            namespace = self.upload_config.namespace
+            if namespace is None:
+                response = index.upsert(batch)
+            else:
+                response = index.upsert(batch, namespace=namespace)
         except PineconeApiException as api_error:
             raise DestinationConnectionError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
@@ -152,6 +157,7 @@ class PineconeUploader(Uploader):
             f" environment named {self.connection_config.environment}"
             f" with batch size {self.upload_config.batch_size}"
             f" with {self.upload_config.num_of_processes} (number of) processes"
+            if namespace not None: f" in namespace {self.upload_config.namespace}"
         )
 
         pinecone_batch_size = self.upload_config.batch_size

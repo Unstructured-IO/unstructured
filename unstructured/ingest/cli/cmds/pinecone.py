@@ -55,6 +55,13 @@ class PineconeCliWriteConfig(PineconeWriteConfig, CliConfig):
                 type=int,
                 help="Number of parallel processes with which to upload elements",
             ),
+            click.Option(
+                ["--namespace"],
+                default=None,
+                type=str,
+                required=False,
+                help="The namespace where the vectors will be upserted in the index",
+            )
         ]
         return options
 
