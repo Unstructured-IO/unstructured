@@ -1,3 +1,13 @@
+## 0.15.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Remove the custom index URL from `extra-paddleocr.in` to resolve the error in the `setup.py` configuration.**
+
 ## 0.15.2
 
 ### Enhancements
