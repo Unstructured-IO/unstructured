@@ -1,3 +1,9 @@
+## 0.15.2-dev1
+
+### Enhancements
+
+* Fix Compatibility Issue with Chinese Text in Document Parsing
+
 ## 0.15.2
 
 ### Enhancements
