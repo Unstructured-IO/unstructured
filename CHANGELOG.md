@@ -1,3 +1,13 @@
+## 0.15.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**  
+
 ## 0.15.3
 
 ### Enhancements
