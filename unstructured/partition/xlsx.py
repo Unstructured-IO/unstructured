@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, Optional, cast
+from typing import IO, Any, Iterator, Optional
 
 import networkx as nx
 import numpy as np
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring  # pyright: ignore
+from lxml.html.soupparser import fromstring as soupparser_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -110,19 +110,12 @@ def partition_xlsx(
     ):
         if not opts.find_subtable:
             html_text = (
-                sheet.to_html(  # pyright: ignore[reportUnknownMemberType]
-                    index=False, header=opts.include_header, na_rep=""
-                )
+                sheet.to_html(index=False, header=opts.include_header, na_rep="")
                 if opts.infer_table_structure
                 else None
             )
             # XXX: `html_text` can be `None`. What happens on this call in that case?
-            text = cast(
-                str,
-                soupparser_fromstring(  # pyright: ignore[reportUnknownMemberType]
-                    html_text
-                ).text_content(),
-            )
+            text = soupparser_fromstring(html_text).text_content()
 
             if opts.include_metadata:
                 metadata = ElementMetadata(
@@ -151,15 +144,10 @@ def partition_xlsx(
                 # -- emit core-table (if it exists) as a `Table` element --
                 core_table = subtable_parser.core_table
                 if core_table is not None:
-                    html_text = core_table.to_html(  # pyright: ignore[reportUnknownMemberType]
+                    html_text = core_table.to_html(
                         index=False, header=opts.include_header, na_rep=""
                     )
-                    text = cast(
-                        str,
-                        soupparser_fromstring(  # pyright: ignore[reportUnknownMemberType]
-                            html_text
-                        ).text_content(),
-                    )
+                    text = soupparser_fromstring(html_text).text_content()
                     element = Table(text=text)
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     element.metadata.text_as_html = (
@@ -285,17 +273,13 @@ class _XlsxPartitionerOptions:
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
         if file_path := self._file_path:
-            return pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
-                file_path, sheet_name=None, header=self.header_row_idx
-            )
+            return pd.read_excel(file_path, sheet_name=None, header=self.header_row_idx)
 
         if f := self._file:
             if isinstance(f, SpooledTemporaryFile):
                 f.seek(0)
                 f = io.BytesIO(f.read())
-            return pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
-                f, sheet_name=None, header=self.header_row_idx
-            )
+            return pd.read_excel(f, sheet_name=None, header=self.header_row_idx)
 
         raise ValueError("Either 'filename' or 'file' argument must be specified.")
 
@@ -383,7 +367,7 @@ class _ConnectedComponents:
         max_row, max_col = self._worksheet_df.shape
         node_array = np.indices((max_row, max_col)).T
         empty_cells = self._worksheet_df.isna().T
-        nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
+        nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]  # pyright: ignore
 
         graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
         graph.remove_nodes_from(nodes_to_remove)  # pyright: ignore
@@ -499,7 +483,7 @@ class _SubtableParser:
         """Index of each single-cell row in subtable, in top-down order."""
 
         def iter_single_cell_row_idxs() -> Iterator[int]:
-            for idx, (_, row) in enumerate(self._subtable.iterrows()):  # pyright: ignore
+            for idx, (_, row) in enumerate(self._subtable.iterrows()):
                 if row.count() != 1:
                     continue
                 yield idx

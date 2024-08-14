@@ -4,11 +4,9 @@
 #
 #    pip-compile ./extra-markdown.in
 #
-importlib-metadata==7.1.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   markdown
+importlib-metadata==8.2.0
+    # via markdown
 markdown==3.6
     # via -r ./extra-markdown.in
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-metadata

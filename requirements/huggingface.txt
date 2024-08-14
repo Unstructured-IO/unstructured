@@ -27,7 +27,7 @@ fsspec==2024.5.0
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.1
+huggingface-hub==0.24.5
     # via
     #   tokenizers
     #   transformers
@@ -61,11 +61,11 @@ packaging==23.2
     #   -c ./base.txt
     #   huggingface-hub
     #   transformers
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   transformers
-regex==2024.5.15
+regex==2024.7.24
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -77,7 +77,7 @@ requests==2.32.3
     #   transformers
 sacremoses==0.1.1
     # via -r ./huggingface.in
-safetensors==0.4.3
+safetensors==0.4.4
     # via transformers
 sentencepiece==0.2.0
     # via -r ./huggingface.in
@@ -85,21 +85,23 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.13.1
+sympy==1.13.2
     # via torch
 tokenizers==0.19.1
-    # via transformers
-torch==2.3.1
+    # via
+    #   -c ././deps/constraints.txt
+    #   transformers
+torch==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./huggingface.in
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   -c ./base.txt
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.43.1
+transformers==4.44.0
     # via -r ./huggingface.in
 typing-extensions==4.12.2
     # via

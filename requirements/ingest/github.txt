@@ -9,7 +9,7 @@ certifi==2024.7.4
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via
     #   cryptography
     #   pynacl
@@ -17,10 +17,8 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.8
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   pyjwt
+cryptography==43.0.0
+    # via pyjwt
 deprecated==1.2.14
     # via pygithub
 idna==3.7
@@ -31,7 +29,7 @@ pycparser==2.22
     # via cffi
 pygithub==2.3.0
     # via -r ./ingest/github.in
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub

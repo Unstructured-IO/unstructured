@@ -106,16 +106,7 @@ def test_auto_partition_doc_from_filename(
 
 
 @pytest.mark.skipif(is_in_docker, reason="Passes in CI but not Docker. Remove skip on #3364 fix.")
-@pytest.mark.xfail(sys.platform == "darwin", reason="#3364", raises=KeyError, strict=True)
 def test_auto_partition_doc_from_file(expected_docx_elements: list[Element]):
-    # -- NOTE(scanny): https://github.com/Unstructured-IO/unstructured/issues/3364
-    # -- detect_filetype() identifies .doc as `application/x-ole-storage` which is true but not
-    # -- specific enough. The `FileType.MSG` file-type is assigned (which is also an OLE file)
-    # -- and `partition()` routes the document to `partition_msg` which is where the `KeyError`
-    # -- comes from.
-    # -- For some reason, this xfail problem only occurs locally, not in CI, possibly because we
-    # -- use two different `libmagic` sourcs (`libmagic` on CI and `libmagic1` on Mac). Doesn't
-    # -- matter much though because when we add disambiguation they'll both get it right.
     with open(example_doc_path("simple.doc"), "rb") as f:
         elements = partition(file=f)
 

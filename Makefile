@@ -38,15 +38,14 @@ install-huggingface:
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	python3 -c "import nltk; nltk.download('punkt')"
-	python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+	python3 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 .PHONY: install-test
 install-test:
 	python3 -m pip install -r requirements/test.txt
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
-	python3 -m pip install unstructured.pytesseract -c requirements/deps/constraints.txt
+	python3 -m pip install pytesseract -c requirements/deps/constraints.txt
 	# python3 -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
@@ -253,9 +252,9 @@ install-ingest-mongodb:
 install-ingest-databricks-volumes:
 	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
 
-.PHONY: install-ingest-astra
-install-ingest-astra:
-	python3 -m pip install -r requirements/ingest/astra.txt
+.PHONY: install-ingest-astradb
+install-ingest-astradb:
+	python3 -m pip install -r requirements/ingest/astradb.txt
 
 .PHONY: install-ingest-clarifai
 install-ingest-clarifai:
@@ -276,10 +275,6 @@ install-local-inference: install install-all-docs
 .PHONY: install-pandoc
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
-
-.PHONY: install-paddleocr
-install-paddleocr:
-	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile

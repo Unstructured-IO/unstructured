@@ -83,6 +83,7 @@ from lxml import etree
 from typing_extensions import TypeAlias
 
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -101,7 +102,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
+from unstructured.utils import lazyproperty
 
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL

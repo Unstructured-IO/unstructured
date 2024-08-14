@@ -5,7 +5,7 @@ set -e
 SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=astra-dest
+OUTPUT_FOLDER_NAME=astradb-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
@@ -21,7 +21,7 @@ if [ -z "$ASTRA_DB_API_ENDPOINT" ]; then
 fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
-COLLECTION_NAME="astra_test_output_$RANDOM_SUFFIX"
+COLLECTION_NAME="astradb_test_output_$RANDOM_SUFFIX"
 EMBEDDING_DIMENSION=384
 
 # shellcheck disable=SC1091
@@ -31,7 +31,7 @@ function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 
-  python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+  python "$SCRIPT_DIR"/python/test-ingest-astradb-output.py \
     --token "$ASTRA_DB_APPLICATION_TOKEN" \
     --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
     --collection-name "$COLLECTION_NAME" down
@@ -51,14 +51,14 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --chunk-max-characters 1500 \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
-  astra \
+  astradb \
   --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \
   --embedding-dimension "$EMBEDDING_DIMENSION" \
   --requested-indexing-policy '{"deny": ["metadata"]}'
 
-python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+python "$SCRIPT_DIR"/python/test-ingest-astradb-output.py \
   --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" check

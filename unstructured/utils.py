@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import functools
-import html
 import importlib
 import inspect
 import json
@@ -23,7 +22,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Sequence,
     Tuple,
     TypeVar,
     cast,
@@ -60,36 +58,6 @@ def get_call_args_applying_defaults(
         if arg.name not in call_args and arg.default is not arg.empty:
             call_args[arg.name] = arg.default
     return call_args
-
-
-def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
-    """Form an HTML table from "rows" and "columns" of `matrix`.
-
-    Character overhead is minimized:
-    - No whitespace padding is added for human readability
-    - No newlines ("\n") are added
-    - No `<thead>`, `<tbody>`, or `<tfoot>` elements are used; we can't tell where those might be
-      semantically appropriate anyway so at best they would consume unnecessary space and at worst
-      would be misleading.
-    """
-
-    def iter_trs(rows_of_cell_strs: Sequence[Sequence[str]]) -> Iterator[str]:
-        for row_cell_strs in rows_of_cell_strs:
-            # -- suppress emission of rows with no cells --
-            if not row_cell_strs:
-                continue
-            yield f"<tr>{''.join(iter_tds(row_cell_strs))}</tr>"
-
-    def iter_tds(row_cell_strs: Sequence[str]) -> Iterator[str]:
-        for s in row_cell_strs:
-            # -- take care of things like '<' and '>' in the text --
-            s = html.escape(s)
-            # -- substitute <br/> elements for line-feeds in the text --
-            s = "<br/>".join(s.split("\n"))
-            # -- strip leading and trailing whitespace, wrap it up and go --
-            yield f"<td>{s.strip()}</td>"
-
-    return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
 
 
 def is_temp_file_path(file_path: str) -> bool:
@@ -458,12 +426,10 @@ def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bo
         and (child_target[2] <= parent_targets[2] and child_target[3] <= parent_targets[3])
     ):
         return True
-    if len(child_target) == 2 and (
+    return len(child_target) == 2 and (
         parent_targets[0] <= child_target[0] <= parent_targets[2]
         and parent_targets[1] <= child_target[1] <= parent_targets[3]
-    ):
-        return True
-    return False
+    )
 
 
 def calculate_overlap_percentage(

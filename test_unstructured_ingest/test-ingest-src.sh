@@ -19,7 +19,7 @@ export OMP_THREAD_LIMIT=1
 all_tests=(
   's3.sh'
   's3-minio.sh'
-  'astra.sh'
+  'astradb.sh'
   'azure.sh'
   'biomed-api.sh'
   'biomed-path.sh'

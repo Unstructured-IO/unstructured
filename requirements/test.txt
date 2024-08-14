@@ -10,13 +10,13 @@ appdirs==1.4.4
     # via
     #   label-studio-sdk
     #   label-studio-tools
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   jsonschema
     #   referencing
 autoflake==2.3.1
     # via -r ./test.in
-black==24.4.2
+black==24.8.0
     # via -r ./test.in
 certifi==2024.7.4
     # via
@@ -31,7 +31,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.6.0
+coverage[toml]==7.6.1
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -39,7 +39,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   pytest
-flake8==7.1.0
+flake8==7.1.1
     # via
     #   -r ./test.in
     #   flake8-print
@@ -47,7 +47,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.1
+grpcio==1.65.4
     # via -r ./test.in
 idna==3.7
     # via
@@ -66,7 +66,7 @@ label-studio-tools==0.0.4
     # via label-studio-sdk
 liccheck==0.9.2
     # via -r ./test.in
-lxml==5.2.2
+lxml==5.3.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
@@ -75,7 +75,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.11.0
+mypy==1.11.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -96,7 +96,7 @@ platformdirs==3.10.0
     #   black
 pluggy==1.5.0
     # via pytest
-pycodestyle==2.12.0
+pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
@@ -110,7 +110,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.3.1
+pytest==8.3.2
     # via
     #   pytest-cov
     #   pytest-mock
@@ -122,7 +122,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via vcrpy
 referencing==0.35.1
     # via
@@ -132,7 +132,7 @@ requests==2.32.3
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-rpds-py==0.19.0
+rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing

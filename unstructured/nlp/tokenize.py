@@ -7,7 +7,7 @@ import tarfile
 import tempfile
 import urllib.request
 from functools import lru_cache
-from typing import Any, Final, List, Tuple
+from typing import Final, List, Tuple
 
 import nltk
 from nltk import pos_tag as _pos_tag
@@ -16,15 +16,9 @@ from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-NLTK_DATA_URL = "https://utic-public-cf.s3.amazonaws.com/nltk_data.tgz"
-NLTK_DATA_SHA256 = "126faf671cd255a062c436b3d0f2d311dfeefcd92ffa43f7c3ab677309404d61"
-
-
-def _raise_on_nltk_download(*args: Any, **kwargs: Any):
-    raise ValueError("NLTK download disabled. See CVE-2024-39705")
-
-
-nltk.download = _raise_on_nltk_download
+NLTK_DATA_FILENAME = "nltk_data_3.8.2.tar.gz"
+NLTK_DATA_URL = f"https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
+NLTK_DATA_SHA256 = "ba2ca627c8fb1f1458c15d5a476377a5b664c19deeb99fd088ebf83e140c1663"
 
 
 # NOTE(robinson) - mimic default dir logic from NLTK
@@ -84,7 +78,7 @@ def download_nltk_packages():
         return sha256.hexdigest()
 
     with tempfile.TemporaryDirectory() as temp_dir_path:
-        tgz_file_path = os.path.join(temp_dir_path, "nltk_data.tgz")
+        tgz_file_path = os.path.join(temp_dir_path, NLTK_DATA_FILENAME)
         urllib.request.urlretrieve(NLTK_DATA_URL, tgz_file_path)
 
         file_hash = sha256_checksum(tgz_file_path)
@@ -120,10 +114,10 @@ def _download_nltk_packages_if_not_present():
 
     tagger_available = check_for_nltk_package(
         package_category="taggers",
-        package_name="averaged_perceptron_tagger",
+        package_name="averaged_perceptron_tagger_eng",
     )
     tokenizer_available = check_for_nltk_package(
-        package_category="tokenizers", package_name="punkt"
+        package_category="tokenizers", package_name="punkt_tab"
     )
 
     if not (tokenizer_available and tagger_available):

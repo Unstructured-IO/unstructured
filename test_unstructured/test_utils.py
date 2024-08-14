@@ -339,30 +339,6 @@ def test_validate_date_args_raises_for_invalid_formats(date):
         assert utils.validate_date_args(date)
 
 
-def test_htmlify_matrix_handles_empty_cells():
-    assert utils.htmlify_matrix_of_cell_texts([["cell1", "", "cell3"], ["", "cell5", ""]]) == (
-        "<table><tr><td>cell1</td><td></td><td>cell3</td></tr>"
-        "<tr><td></td><td>cell5</td><td></td></tr></table>"
-    )
-
-
-def test_htmlify_matrix_handles_special_characters():
-    assert utils.htmlify_matrix_of_cell_texts([['<>&"', "newline\n"]]) == (
-        "<table><tr><td>&lt;&gt;&amp;&quot;</td><td>newline<br/></td></tr></table>"
-    )
-
-
-def test_htmlify_matrix_handles_multiple_rows_and_cells():
-    assert utils.htmlify_matrix_of_cell_texts([["cell1", "cell2"], ["cell3", "cell4"]]) == (
-        "<table><tr><td>cell1</td><td>cell2</td></tr>"
-        "<tr><td>cell3</td><td>cell4</td></tr></table>"
-    )
-
-
-def test_htmlify_matrix_handles_empty_matrix():
-    assert utils.htmlify_matrix_of_cell_texts([]) == ""
-
-
 def test_only_returns_singleton_iterable():
     singleton_iterable = [42]
     result = utils.only(singleton_iterable)

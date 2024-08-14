@@ -22,11 +22,11 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
 # unstructured-inference
-# use the known compatible version of weaviate and unstructured.pytesseract
-unstructured.pytesseract>=0.3.12
+# use the known compatible version of weaviate and pytesseract
+pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
 weaviate-client>3.25.0
-# Note(yuming) - pining to avoid conflict with paddle install
-matplotlib==3.7.2
+# TODO: Pinned in transformers package, remove when that gets updated
+tokenizers>=0.19,<0.20
 # langchain limits anyio to below 4.0
 anyio<4.0
 # NOTE(crag): earlier versions fail in compilation step when pip installing the package
@@ -46,7 +46,7 @@ packaging<24.0
 urllib3<1.27
 
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
-botocore<1.34.52
+botocore<1.34.132
 
 # NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
 unstructured-client>=0.15.1
@@ -57,11 +57,3 @@ fsspec==2024.5.0
 wrapt>=1.14.0
 
 langchain-community>=0.2.5
-
-# NOTE(robinson): choma was pinned to importlib-metadata>=7.1.0 but 7.1.0 was installed
-# instead of 7.2.0. Need to investigate
-importlib-metadata==7.1.0
-
-# NOTE(robinson) - due to failure in this job
-# https://github.com/Unstructured-IO/unstructured/actions/runs/10044201938/job/27762303563?pr=3427
-cryptography<43.0.0

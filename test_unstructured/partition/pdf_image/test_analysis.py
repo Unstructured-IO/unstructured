@@ -147,7 +147,7 @@ def test_od_document_layout_dump():
     }
     od_layout_dump = ObjectDetectionLayoutDumper(od_document_layout).dump()
 
-    assert {"pages": od_layout_dump.get("pages")} == expected_dump
+    assert expected_dump == {"pages": od_layout_dump.get("pages")}
 
     # check OD model classes are attached but do not depend on a specific model instance
     assert "object_detection_classes" in od_layout_dump

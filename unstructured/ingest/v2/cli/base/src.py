@@ -37,7 +37,7 @@ class SrcCmd(BaseCmd):
         conform_click_options(options)
         logger.setLevel(logging.DEBUG if options.get("verbose", False) else logging.INFO)
         try:
-            pipeline = self.get_pipline(src=self.cmd_name, source_options=options)
+            pipeline = self.get_pipeline(src=self.cmd_name, source_options=options)
             pipeline.run()
         except Exception as e:
             logger.error(f"failed to run source command {self.cmd_name}: {e}", exc_info=True)
