@@ -1,9 +1,14 @@
+## 0.15.1-dev10
+
+### Enhancements
+
+* Fix Compatibility Issue with Chinese Text in Document Parsing
+
 ## 0.15.1-dev9
 
 ### Enhancements
 
 * **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
-* Fix Compatibility Issue with Chinese Text in Document Parsing
 
 ### Features
 
