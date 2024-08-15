@@ -14,7 +14,7 @@ from test_unstructured.unit_utils import (
     function_mock,
 )
 from unstructured.chunking.basic import chunk_elements
-from unstructured.documents.elements import CompositeElement, Table, TableChunk, Title
+from unstructured.documents.elements import CompositeElement, NarrativeText, Table, TableChunk
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.odt import partition_odt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
@@ -32,9 +32,9 @@ def test_partition_odt_matches_partition_docx():
 
 def test_partition_odt_from_filename():
     elements = partition_odt(example_doc_path("fake.odt"))
-
+    # Lorem ipsum dolor sit amet. look like not English, and not a Title.
     assert elements == [
-        Title("Lorem ipsum dolor sit amet."),
+        NarrativeText("Lorem ipsum dolor sit amet."),
         Table(
             "Header row Mon Wed Fri"
             " Color Blue Red Green"
@@ -53,7 +53,8 @@ def test_partition_odt_from_file():
         elements = partition_odt(file=f)
 
     assert elements == [
-        Title("Lorem ipsum dolor sit amet."),
+        # Lorem ipsum dolor sit amet. look like not English, and not a Title.
+        NarrativeText("Lorem ipsum dolor sit amet."),
         Table(
             "Header row Mon Wed Fri"
             " Color Blue Red Green"

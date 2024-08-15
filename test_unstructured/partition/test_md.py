@@ -323,3 +323,27 @@ def test_partition_md_parse_table():
     elements = partition_md(filename=filename)
     assert len(elements) > 0
     assert elements[0].category == ElementType.TABLE
+
+
+def test_partition_zh_md() -> None:
+    """
+    Fix the issue of erroneously recognizing NarrativeText as Title when splitting
+    Chinese DOCX documents
+    """
+    filename = example_doc_path("zho_md_partition.md")
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    # 进行断言检查
+    assert any("春节放假通知" in element.text for element in elements)
+    assert any("春节放假从大年 30 开始" in element.text for element in elements)
+    assert any("标题 2" in element.text for element in elements)
+    assert any("标题 3" in element.text for element in elements)
+    assert any("Another Title 2" in element.text for element in elements)
+    assert any("正文开始" in element.text for element in elements)
+    assert any("一组1" in element.text for element in elements)
+    assert any("一组2" in element.text for element in elements)
+    assert any("一组3" in element.text for element in elements)
+    assert any("正文结束" in element.text for element in elements)
+    assert list(filter(lambda x: "正文开始" in x.text, elements))[0].category == "NarrativeText"
+    assert list(filter(lambda x: "一组" in x.text, elements))[0].category == "ListItem"
+    assert list(filter(lambda x: "正文结束" in x.text, elements))[0].category == "NarrativeText"
