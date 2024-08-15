@@ -1,8 +1,22 @@
-## 0.15.2-dev1
+## 0.15.4
 
 ### Enhancements
 
-* Fix Compatibility Issue with Chinese Text in Document Parsing
+### Features
+
+### Fixes
+
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**  
+
+## 0.15.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Remove the custom index URL from `extra-paddleocr.in` to resolve the error in the `setup.py` configuration.**
 
 ## 0.15.2
 

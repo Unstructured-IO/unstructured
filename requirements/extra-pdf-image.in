@@ -12,4 +12,6 @@ effdet
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
 unstructured-inference==0.7.36
-pytesseract>=0.3.12
+# NOTE(christine): Pinned to a specific version of pytesseract from the GitHub repository.
+# Remove this pin and switch to the latest version from PyPI once version 0.3.13 or newer is officially released.
+pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
