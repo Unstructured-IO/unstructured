@@ -1,3 +1,13 @@
+## 0.15.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
+
 ## 0.15.4
 
 ### Enhancements
@@ -6,7 +16,7 @@
 
 ### Fixes
 
-* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**  
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**
 
 ## 0.15.3
 
