@@ -41,7 +41,7 @@ class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 class PineconeWriteConfig(WriteConfig):
     batch_size: int = 50
     num_processes: int = 1
-    namespace: Optional[str] = None
+    namespace: t.Optional[str] = None
 
 
 @dataclass
