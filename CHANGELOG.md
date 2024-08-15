@@ -9,7 +9,6 @@
 * **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
 * **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
 
-
 ## 0.15.4
 
 ### Enhancements
