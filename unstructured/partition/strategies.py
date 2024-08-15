@@ -31,7 +31,7 @@ def determine_pdf_or_image_strategy(
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
-    pytesseract_installed = dependency_exists("pytesseract")
+    pytesseract_installed = dependency_exists("unstructured_pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if strategy == PartitionStrategy.AUTO:
