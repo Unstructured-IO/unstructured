@@ -157,7 +157,7 @@ class PineconeUploader(Uploader):
             f" environment named {self.connection_config.environment}"
             f" with batch size {self.upload_config.batch_size}"
             f" with {self.upload_config.num_of_processes} (number of) processes"
-            if namespace not None: f" in namespace {self.upload_config.namespace}"
+            f" in namespace {self.upload_config.namespace}"
         )
 
         pinecone_batch_size = self.upload_config.batch_size
