@@ -1,3 +1,14 @@
+## 0.15.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
+
+
 ## 0.15.4
 
 ### Enhancements
