@@ -35,8 +35,6 @@ jobs:
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest]
     steps:
       # actions/checkout MUST come before auth
