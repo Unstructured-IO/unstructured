@@ -6,7 +6,10 @@
 
 ### Fixes
 
+* **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
 * **Fix Compatibility Issue with Chinese Text in Document Parsing**
+
+
 
 ## 0.15.5
 
