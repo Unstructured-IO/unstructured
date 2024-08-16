@@ -98,6 +98,7 @@ def partition_html(
         metadata_last_modified=metadata_last_modified,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
+        languages=languages,
     )
 
     elements = list(
@@ -128,6 +129,7 @@ class HtmlPartitionerOptions:
         metadata_last_modified: str | None,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
+        **kwargs: Any,
     ):
         self._file_path = file_path
         self._file = file
@@ -140,6 +142,12 @@ class HtmlPartitionerOptions:
         self._metadata_last_modified = metadata_last_modified
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
+        self._languages = kwargs.get("languages")
+
+    @property
+    def languages(self) -> list[str]:
+        """Languages to use for language detection."""
+        return self._languages if self._languages and self._languages != [""] else ["auto"]
 
     @lazyproperty
     def detection_origin(self) -> str | None:
