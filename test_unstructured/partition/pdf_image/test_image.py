@@ -7,8 +7,8 @@ from unittest import mock
 
 import pytest
 from PIL import Image
-from unstructured_pytesseract import TesseractError
 from unstructured_inference.inference import layout
+from unstructured_pytesseract import TesseractError
 
 from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
