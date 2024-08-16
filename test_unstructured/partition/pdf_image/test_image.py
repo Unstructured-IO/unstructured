@@ -7,7 +7,7 @@ from unittest import mock
 
 import pytest
 from PIL import Image
-from pytesseract import TesseractError
+from unstructured_pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
 from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
