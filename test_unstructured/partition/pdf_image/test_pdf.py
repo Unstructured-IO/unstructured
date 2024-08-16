@@ -384,7 +384,7 @@ def test_partition_pdf_falls_back_to_fast(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -406,7 +406,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -432,7 +432,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -584,7 +584,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -978,15 +978,15 @@ def test_partition_hi_res_model_name_default_to_None():
     [
         (
             PartitionStrategy.HI_RES,
-            "pytesseract.image_to_data",
+            "unstructured_pytesseract.image_to_data",
         ),
         (
             PartitionStrategy.OCR_ONLY,
-            "pytesseract.image_to_data",
+            "unstructured_pytesseract.image_to_data",
         ),
         (
             PartitionStrategy.OCR_ONLY,
-            "pytesseract.image_to_string",
+            "unstructured_pytesseract.image_to_string",
         ),
     ],
 )
