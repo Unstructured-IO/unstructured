@@ -16,7 +16,7 @@ fsspec==2024.5.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/sftp.in
-paramiko==3.4.0
+paramiko==3.4.1
     # via -r ./ingest/sftp.in
 pycparser==2.22
     # via cffi

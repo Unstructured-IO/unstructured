@@ -4,11 +4,11 @@
 #
 #    pip-compile ./ingest/s3.in
 #
-aiobotocore==2.13.1
+aiobotocore==2.13.2
     # via s3fs
 aiohappyeyeballs==2.3.5
     # via aiohttp
-aiohttp==3.10.2
+aiohttp==3.10.3
     # via
     #   aiobotocore
     #   s3fs

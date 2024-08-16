@@ -423,7 +423,7 @@ virtualenv==20.26.3
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
-webcolors==24.6.0
+webcolors==24.8.0
     # via jsonschema
 webencodings==0.5.1
     # via
@@ -437,7 +437,7 @@ wheel==0.44.0
     #   pip-tools
 widgetsnbextension==4.0.11
     # via ipywidgets
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

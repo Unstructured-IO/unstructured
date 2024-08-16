@@ -1,14 +1,48 @@
-## 0.15.2-dev7
+## 0.15.5-dev2
+
+### Enhancements
+
+### Features
+* **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
+
+### Fixes
+
+* **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
+* **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
+
+## 0.15.4
 
 ### Enhancements
 
 ### Features
 
-* **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
-* **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
+### Fixes
+
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**
+
+## 0.15.3
+
+### Enhancements
+
+### Features
 
 ### Fixes
 
+* **Remove the custom index URL from `extra-paddleocr.in` to resolve the error in the `setup.py` configuration.**
+
+## 0.15.2
+
+### Enhancements
+
+* **Improve directory handling when extracting image blocks**. The `figures` directory is no longer created when the `extract_image_block_to_payload` parameter is set to `True`.
+
+### Features
+
+* **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
+
+### Fixes
+
+* **Updates NLTK data file for compatibility with `nltk>=3.8.2`**. The NLTK data file now container `punkt_tab`, making it possible to upgrade to `nltk>=3.8.2`. The `nltk==3.8.2` patches CVE-2024-39705.
 * **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
 * **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.

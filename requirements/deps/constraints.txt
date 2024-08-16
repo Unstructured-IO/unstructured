@@ -22,8 +22,7 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
 # unstructured-inference
-# use the known compatible version of weaviate and pytesseract
-pytesseract @ git+https://github.com/madmaze/pytesseract.git@v0.3.13
+# use the known compatible version of weaviate
 weaviate-client>3.25.0
 # TODO: Pinned in transformers package, remove when that gets updated
 tokenizers>=0.19,<0.20
