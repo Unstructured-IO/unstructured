@@ -9,15 +9,15 @@ from unstructured.nlp import tokenize
 
 def test_nltk_packages_download_if_not_present():
     with patch.object(nltk, "find", side_effect=LookupError):
-        with patch.object(tokenize, "download_nltk_packages") as mock_download:
-            tokenize._download_nltk_packages_if_not_present()
+        with patch.object(nltk, "download") as mock_download:
+            tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
 
-    mock_download.assert_called_once()
+    mock_download.assert_called_with("fake_package")
 
 
 def test_nltk_packages_do_not_download_if():
     with patch.object(nltk, "find"), patch.object(nltk, "download") as mock_download:
-        tokenize._download_nltk_packages_if_not_present()
+        tokenize._download_nltk_package_if_not_present("fake_package", "tokenizers")
 
     mock_download.assert_not_called()
 
