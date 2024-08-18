@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/gcs.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.3.7
     # via aiohttp
-aiohttp==3.10.3
+aiohttp==3.10.4
     # via gcsfs
 aiosignal==1.3.1
     # via aiohttp
@@ -20,7 +20,7 @@ beautifulsoup4==4.12.3
     #   bs4
 bs4==0.0.2
     # via -r ./ingest/gcs.in
-cachetools==5.4.0
+cachetools==5.5.0
     # via google-auth
 certifi==2024.7.4
     # via
@@ -105,7 +105,7 @@ requests-oauthlib==2.0.0
     # via google-auth-oauthlib
 rsa==4.9
     # via google-auth
-soupsieve==2.5
+soupsieve==2.6
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4

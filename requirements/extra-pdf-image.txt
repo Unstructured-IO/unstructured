@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-cachetools==5.4.0
+cachetools==5.5.0
     # via google-auth
 certifi==2024.7.4
     # via
@@ -58,8 +58,9 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.65.4
+grpcio==1.65.5
     # via
+    #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.3
@@ -76,7 +77,7 @@ idna==3.7
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.4.0
+importlib-resources==6.4.3
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -92,7 +93,7 @@ lxml==5.3.0
     #   pikepdf
 markupsafe==2.1.5
     # via jinja2
-matplotlib==3.9.1.post1
+matplotlib==3.9.2
     # via
     #   pycocotools
     #   unstructured-inference
@@ -120,7 +121,7 @@ onnx==1.16.2
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.18.1
+onnxruntime==1.19.0
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via

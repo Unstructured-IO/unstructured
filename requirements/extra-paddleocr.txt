@@ -13,7 +13,7 @@ astor==0.8.1
     # via paddlepaddle
 attrdict==2.0.1
     # via unstructured-paddleocr
-cachetools==5.4.0
+cachetools==5.5.0
     # via premailer
 certifi==2024.7.4
     # via
@@ -64,13 +64,13 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-imageio==2.34.2
+imageio==2.35.0
     # via
     #   imgaug
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-resources==6.4.0
+importlib-resources==6.4.3
     # via matplotlib
 kiwisolver==1.4.5
     # via matplotlib
@@ -83,7 +83,7 @@ lxml==5.3.0
     #   -c ./base.txt
     #   premailer
     #   unstructured-paddleocr
-matplotlib==3.9.1.post1
+matplotlib==3.9.2
     # via imgaug
 more-itertools==10.4.0
     # via cssutils
