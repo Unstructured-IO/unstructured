@@ -192,10 +192,8 @@ pycocotools==2.0.8
     #   effdet
 pycparser==2.22
     # via cffi
-pyparsing==3.0.9
-    # via
-    #   -c ././deps/constraints.txt
-    #   matplotlib
+pyparsing==3.1.2
+    # via matplotlib
 pypdf==4.3.1
     # via
     #   -c ./base.txt

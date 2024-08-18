@@ -11,8 +11,6 @@ wheel>=0.38.1
 # NOTE(robinson) - The following pins are to address
 # vulnerabilities in dependency scans
 certifi>=2023.7.22
-# From pycocotools in local-inference
-pyparsing<3.1.0
 scipy<1.11.4
 IPython<8.13
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
