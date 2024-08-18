@@ -50,10 +50,8 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pyparsing==3.0.9
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   httplib2
+pyparsing==3.1.2
+    # via httplib2
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
