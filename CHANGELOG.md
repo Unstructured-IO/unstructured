@@ -1,4 +1,4 @@
-## 0.15.5-dev2
+## 0.15.6-dev2
 
 ### Enhancements
 
@@ -7,6 +7,19 @@
 
 ### Fixes
 
+* **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
+
+
+## 0.15.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Revert to using `unstructured.pytesseract` fork**. Due to the unavailability of some recent release versions of `pytesseract` on PyPI, the project now uses the `unstructured.pytesseract` fork to ensure stability and continued support.
 * **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
 * **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
 

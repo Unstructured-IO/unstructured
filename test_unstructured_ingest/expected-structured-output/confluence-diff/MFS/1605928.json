@@ -100,7 +100,7 @@
       "languages": [
         "eng"
       ],
-      "text_as_html": "<table><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr></table>"
+      "text_as_html": "<table><tr><td>Time</td><td>Item</td><td>Presenter</td><td>Notes</td></tr><tr><td/><td/><td/><td/></tr><tr><td/><td/><td/><td/></tr></table>"
     },
     "text": "Time Item Presenter Notes",
     "type": "Table"
