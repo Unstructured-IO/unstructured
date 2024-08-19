@@ -48,7 +48,7 @@ requests==2.32.3
     #   -c ./ingest/../base.txt
     #   msal
     #   office365-rest-python-client
-soupsieve==2.5
+soupsieve==2.6
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4

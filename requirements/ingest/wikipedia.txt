@@ -25,7 +25,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   wikipedia
-soupsieve==2.5
+soupsieve==2.6
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4

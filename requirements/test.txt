@@ -7,9 +7,7 @@
 annotated-types==0.7.0
     # via pydantic
 appdirs==1.4.4
-    # via
-    #   label-studio-sdk
-    #   label-studio-tools
+    # via label-studio-tools
 attrs==24.2.0
     # via
     #   jsonschema
@@ -47,8 +45,10 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.4
-    # via -r ./test.in
+grpcio==1.64.3
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./test.in
 idna==3.7
     # via
     #   -c ./base.txt
@@ -61,7 +61,9 @@ jsonschema==4.23.0
 jsonschema-specifications==2023.12.1
     # via jsonschema
 label-studio-sdk==0.0.34
-    # via -r ./test.in
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./test.in
 label-studio-tools==0.0.4
     # via label-studio-sdk
 liccheck==0.9.2

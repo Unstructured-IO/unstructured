@@ -53,13 +53,13 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.29
+langchain-core==0.2.33
     # via langchain-openai
-langchain-openai==0.1.21
+langchain-openai==0.1.22
     # via -r ./ingest/embed-openai.in
 langsmith==0.1.99
     # via langchain-core
-openai==1.40.3
+openai==1.41.0
     # via langchain-openai
 orjson==3.10.7
     # via langsmith
