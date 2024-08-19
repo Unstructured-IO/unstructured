@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
 from typing_extensions import Self, TypeAlias
@@ -21,14 +21,16 @@ from unstructured.documents.elements import (
 )
 from unstructured.utils import lazyproperty
 
-# -- CONSTANTS -----------------------------------
+# ================================================================================================
+# MODEL
+# ================================================================================================
 
 CHUNK_MAX_CHARS_DEFAULT: int = 500
 """Hard-max chunk-length when no explicit value specified in `max_characters` argument.
 
 Provided for reference only, for example so the ingest CLI can advertise the default value in its
 UI. External chunking-related functions (e.g. in ingest or decorators) should use
-`max_characters: Optional[int] = None` and not apply this default themselves. Only
+`max_characters: int | None = None` and not apply this default themselves. Only
 `ChunkingOptions.max_characters` should apply a default value.
 """
 
@@ -37,9 +39,6 @@ CHUNK_MULTI_PAGE_DEFAULT: bool = True
 
 Only operative for "by_title" chunking strategy.
 """
-
-
-# -- TYPES ---------------------------------------
 
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
@@ -237,122 +236,6 @@ class ChunkingOptions:
             )
 
 
-class _TextSplitter:
-    """Provides a text-splitting function configured on construction.
-
-    Text is split on the best-available separator, falling-back from the preferred separator
-    through a sequence of alternate separators.
-
-    - The separator is removed by splitting so only whitespace strings are suitable separators.
-    - A "blank-line" ("\n\n") is unlikely to occur in an element as it would have been used as an
-      element boundary during partitioning.
-
-    This is a *callable* object. Constructing it essentially produces a function:
-
-        split = _TextSplitter(opts)
-        fragment, remainder = split(s)
-
-    This allows it to be configured with length-options etc. on construction and used throughout a
-    chunking operation on a given element-stream.
-    """
-
-    def __init__(self, opts: ChunkingOptions):
-        self._opts = opts
-
-    def __call__(self, s: str) -> tuple[str, str]:
-        """Return pair of strings split from `s` on the best match of configured patterns.
-
-        The first string is the split, the second is the remainder of the string. The split string
-        will never be longer than `maxlen`. The separators are tried in order until a match is
-        found. The last separator is "" which matches between any two characters so there will
-        always be a split.
-
-        The separator is removed and does not appear in the split or remainder.
-
-        An `s` that is already less than the maximum length is returned unchanged with no remainder.
-        This allows this function to be called repeatedly with the remainder until it is consumed
-        and returns a remainder of "".
-        """
-        maxlen = self._opts.hard_max
-
-        if len(s) <= maxlen:
-            return s, ""
-
-        for p, sep_len in self._patterns:
-            # -- length of separator must be added to include that separator when it happens to be
-            # -- located exactly at maxlen. Otherwise the search-from-end regex won't find it.
-            fragment, remainder = self._split_from_maxlen(p, sep_len, s)
-            if (
-                # -- no available split with this separator --
-                not fragment
-                # -- split did not progress, consuming part of the string --
-                or len(remainder) >= len(s)
-            ):
-                continue
-            return fragment.rstrip(), remainder.lstrip()
-
-        # -- the terminal "" pattern is not actually executed via regex since its implementation is
-        # -- trivial and provides a hard back-stop here in this method. No separator is used between
-        # -- tail and remainder on arb-char split.
-        return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
-
-    @lazyproperty
-    def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
-        """Sequence of (pattern, len) pairs to match against.
-
-        Patterns appear in order of preference, those following are "fall-back" patterns to be used
-        if no match of a prior pattern is found.
-
-        NOTE these regexes search *from the end of the string*, which is what the "(?r)" bit
-        specifies. This is much more efficient than starting at the beginning of the string which
-        could result in hundreds of matches before the desired one.
-        """
-        separators = self._opts.text_splitting_separators
-        return tuple((regex.compile(f"(?r){sep}"), len(sep)) for sep in separators)
-
-    def _split_from_maxlen(
-        self, pattern: regex.Pattern[str], sep_len: int, s: str
-    ) -> tuple[str, str]:
-        """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
-
-        Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
-        separator produces a split shorter than the required overlap (which would produce an
-        infinite loop).
-
-        `split` will never be longer than `maxlen` and there is no longer split available using
-        `pattern`.
-
-        The separator is removed and does not appear in either the split or remainder.
-        """
-        maxlen, overlap = self._opts.hard_max, self._opts.overlap
-
-        # -- A split not longer than overlap will not progress (infinite loop). On the right side,
-        # -- need to extend search range to include a separator located exactly at maxlen.
-        match = pattern.search(s, pos=overlap + 1, endpos=maxlen + sep_len)
-        if match is None:
-            return "", s
-
-        # -- characterize match location
-        match_start, match_end = match.span()
-        # -- matched separator is replaced by single-space in overlap string --
-        separator = " "
-
-        # -- in multi-space situation, fragment may have trailing whitespace because match is from
-        # -- right to left
-        fragment = s[:match_start].rstrip()
-        # -- remainder can have leading space when match is on "\n" followed by spaces --
-        raw_remainder = s[match_end:].lstrip()
-
-        if overlap <= len(separator):
-            return fragment, raw_remainder
-
-        # -- compute overlap --
-        tail_len = overlap - len(separator)
-        tail = fragment[-tail_len:].lstrip()
-        overlapped_remainder = tail + separator + raw_remainder
-        return fragment, overlapped_remainder
-
-
 # ================================================================================================
 # PRE-CHUNKER
 # ================================================================================================
@@ -426,6 +309,121 @@ class PreChunker:
         # -- Using `any()` would short-circuit on first True.
         semantic_boundaries = [pred(element) for pred in self._boundary_predicates]
         return any(semantic_boundaries)
+
+
+class PreChunkBuilder:
+    """An element accumulator suitable for incrementally forming a pre-chunk.
+
+    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
+    the next element in the element stream.
+
+    `.flush()` is used to build a PreChunk object from the accumulated elements. This method
+    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
+    used like so:
+
+        yield from builder.flush()
+
+    If no elements have been accumulated, no `PreChunk` instance is generated. Flushing the builder
+    clears the elements it contains so it is ready to build the next pre-chunk.
+    """
+
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
+        self._separator_len = len(opts.text_separator)
+        self._elements: list[Element] = []
+
+        # -- overlap is only between pre-chunks so starts empty --
+        self._overlap_prefix: str = ""
+        # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
+        self._text_segments: list[str] = []
+        # -- combined length of text-segments, not including separators --
+        self._text_len: int = 0
+
+    def add_element(self, element: Element) -> None:
+        """Add `element` to this section."""
+        self._elements.append(element)
+        if element.text:
+            self._text_segments.append(element.text)
+            self._text_len += len(element.text)
+
+    def flush(self) -> Iterator[PreChunk]:
+        """Generate zero-or-one `PreChunk` object and clear the accumulator.
+
+        Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
+        boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
+        stream.
+        """
+        if not self._elements:
+            return
+
+        pre_chunk = (
+            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
+            if isinstance(self._elements[0], Table)
+            # -- copy list, don't use original or it may change contents as builder proceeds --
+            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
+        )
+        # -- clear builder before yield so we're not sensitive to the timing of how/when this
+        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
+        self._reset_state(pre_chunk.overlap_tail)
+        yield pre_chunk
+
+    def will_fit(self, element: Element) -> bool:
+        """True when `element` can be added to this prechunk without violating its limits.
+
+        There are several limits:
+        - A `Table` element will never fit with any other element. It will only fit in an empty
+          pre-chunk.
+        - No element will fit in a pre-chunk that already contains a `Table` element.
+        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
+          (aka. new_after_n_chars).
+        - A text-element will not fit when together with the elements already present it would
+          exceed the hard-max (aka. max_characters).
+        """
+        # -- an empty pre-chunk will accept any element (including an oversized-element) --
+        if len(self._elements) == 0:
+            return True
+        # -- a `Table` will not fit in a non-empty pre-chunk --
+        if isinstance(element, Table):
+            return False
+        # -- no element will fit in a pre-chunk that already contains a `Table` element --
+        if isinstance(self._elements[0], Table):
+            return False
+        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
+        if self._text_length > self._opts.soft_max:
+            return False
+        # -- don't add an element if it would increase total size beyond the hard-max --
+        return not self._remaining_space < len(element.text)
+
+    @property
+    def _remaining_space(self) -> int:
+        """Maximum text-length of an element that can be added without exceeding maxlen."""
+        # -- include length of trailing separator that will go before next element text --
+        separators_len = self._separator_len * len(self._text_segments)
+        return self._opts.hard_max - self._text_len - separators_len
+
+    def _reset_state(self, overlap_prefix: str) -> None:
+        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._overlap_prefix = overlap_prefix
+        self._elements.clear()
+        self._text_segments = [overlap_prefix] if overlap_prefix else []
+        self._text_len = len(overlap_prefix)
+
+    @property
+    def _text_length(self) -> int:
+        """Length of the text in this pre-chunk.
+
+        This value represents the chunk-size that would result if this pre-chunk was flushed in its
+        current state. In particular, it does not include the length of a trailing separator (since
+        that would only appear if an additional element was added).
+
+        Not suitable for judging remaining space, use `.remaining_space` for that value.
+        """
+        # -- number of text separators present in joined text of elements. This includes only
+        # -- separators *between* text segments, not one at the end. Note there are zero separators
+        # -- for both 0 and 1 text-segments.
+        n = len(self._text_segments)
+        separator_count = n - 1 if n else 0
+        return self._text_len + (separator_count * self._separator_len)
 
 
 # ================================================================================================
@@ -793,128 +791,129 @@ class TextPreChunk:
 
 
 # ================================================================================================
-# PRE-CHUNKING ACCUMULATORS
-# ------------------------------------------------------------------------------------------------
-# Accumulators encapsulate the work of grouping elements and later pre-chunks to form the larger
-# pre-chunk and combined-pre-chunk items central to unstructured chunking.
+# PRE-CHUNK SPLITTERS
 # ================================================================================================
 
 
-class PreChunkBuilder:
-    """An element accumulator suitable for incrementally forming a pre-chunk.
+class _TextSplitter:
+    """Provides a text-splitting function configured on construction.
 
-    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
-    the next element in the element stream.
+    Text is split on the best-available separator, falling-back from the preferred separator
+    through a sequence of alternate separators.
 
-    `.flush()` is used to build a PreChunk object from the accumulated elements. This method
-    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
-    used like so:
+    - The separator is removed by splitting so only whitespace strings are suitable separators.
+    - A "blank-line" ("\n\n") is unlikely to occur in an element as it would have been used as an
+      element boundary during partitioning.
 
-        yield from builder.flush()
+    This is a *callable* object. Constructing it essentially produces a function:
 
-    If no elements have been accumulated, no `PreChunk` instance is generated. Flushing the builder
-    clears the elements it contains so it is ready to build the next pre-chunk.
+        split = _TextSplitter(opts)
+        fragment, remainder = split(s)
+
+    This allows it to be configured with length-options etc. on construction and used throughout a
+    chunking operation on a given element-stream.
     """
 
-    def __init__(self, opts: ChunkingOptions) -> None:
+    def __init__(self, opts: ChunkingOptions):
         self._opts = opts
-        self._separator_len = len(opts.text_separator)
-        self._elements: list[Element] = []
 
-        # -- overlap is only between pre-chunks so starts empty --
-        self._overlap_prefix: str = ""
-        # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
-        self._text_segments: list[str] = []
-        # -- combined length of text-segments, not including separators --
-        self._text_len: int = 0
+    def __call__(self, s: str) -> tuple[str, str]:
+        """Return pair of strings split from `s` on the best match of configured patterns.
 
-    def add_element(self, element: Element) -> None:
-        """Add `element` to this section."""
-        self._elements.append(element)
-        if element.text:
-            self._text_segments.append(element.text)
-            self._text_len += len(element.text)
+        The first string is the split, the second is the remainder of the string. The split string
+        will never be longer than `maxlen`. The separators are tried in order until a match is
+        found. The last separator is "" which matches between any two characters so there will
+        always be a split.
 
-    def flush(self) -> Iterator[PreChunk]:
-        """Generate zero-or-one `PreChunk` object and clear the accumulator.
+        The separator is removed and does not appear in the split or remainder.
 
-        Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
-        boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
-        stream.
+        An `s` that is already less than the maximum length is returned unchanged with no remainder.
+        This allows this function to be called repeatedly with the remainder until it is consumed
+        and returns a remainder of "".
         """
-        if not self._elements:
-            return
+        maxlen = self._opts.hard_max
 
-        pre_chunk = (
-            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
-            if isinstance(self._elements[0], Table)
-            # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
-        )
-        # -- clear builder before yield so we're not sensitive to the timing of how/when this
-        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state(pre_chunk.overlap_tail)
-        yield pre_chunk
+        if len(s) <= maxlen:
+            return s, ""
 
-    def will_fit(self, element: Element) -> bool:
-        """True when `element` can be added to this prechunk without violating its limits.
+        for p, sep_len in self._patterns:
+            # -- length of separator must be added to include that separator when it happens to be
+            # -- located exactly at maxlen. Otherwise the search-from-end regex won't find it.
+            fragment, remainder = self._split_from_maxlen(p, sep_len, s)
+            if (
+                # -- no available split with this separator --
+                not fragment
+                # -- split did not progress, consuming part of the string --
+                or len(remainder) >= len(s)
+            ):
+                continue
+            return fragment.rstrip(), remainder.lstrip()
 
-        There are several limits:
-        - A `Table` element will never fit with any other element. It will only fit in an empty
-          pre-chunk.
-        - No element will fit in a pre-chunk that already contains a `Table` element.
-        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
-          (aka. new_after_n_chars).
-        - A text-element will not fit when together with the elements already present it would
-          exceed the hard-max (aka. max_characters).
+        # -- the terminal "" pattern is not actually executed via regex since its implementation is
+        # -- trivial and provides a hard back-stop here in this method. No separator is used between
+        # -- tail and remainder on arb-char split.
+        return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
+
+    @lazyproperty
+    def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
+        """Sequence of (pattern, len) pairs to match against.
+
+        Patterns appear in order of preference, those following are "fall-back" patterns to be used
+        if no match of a prior pattern is found.
+
+        NOTE these regexes search *from the end of the string*, which is what the "(?r)" bit
+        specifies. This is much more efficient than starting at the beginning of the string which
+        could result in hundreds of matches before the desired one.
         """
-        # -- an empty pre-chunk will accept any element (including an oversized-element) --
-        if len(self._elements) == 0:
-            return True
-        # -- a `Table` will not fit in a non-empty pre-chunk --
-        if isinstance(element, Table):
-            return False
-        # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if isinstance(self._elements[0], Table):
-            return False
-        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
-        if self._text_length > self._opts.soft_max:
-            return False
-        # -- don't add an element if it would increase total size beyond the hard-max --
-        if self._remaining_space < len(element.text):
-            return False
-        return True
+        separators = self._opts.text_splitting_separators
+        return tuple((regex.compile(f"(?r){sep}"), len(sep)) for sep in separators)
 
-    @property
-    def _remaining_space(self) -> int:
-        """Maximum text-length of an element that can be added without exceeding maxlen."""
-        # -- include length of trailing separator that will go before next element text --
-        separators_len = self._separator_len * len(self._text_segments)
-        return self._opts.hard_max - self._text_len - separators_len
+    def _split_from_maxlen(
+        self, pattern: regex.Pattern[str], sep_len: int, s: str
+    ) -> tuple[str, str]:
+        """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
 
-    def _reset_state(self, overlap_prefix: str) -> None:
-        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
-        self._overlap_prefix = overlap_prefix
-        self._elements.clear()
-        self._text_segments = [overlap_prefix] if overlap_prefix else []
-        self._text_len = len(overlap_prefix)
+        Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
+        separator produces a split shorter than the required overlap (which would produce an
+        infinite loop).
 
-    @property
-    def _text_length(self) -> int:
-        """Length of the text in this pre-chunk.
+        `split` will never be longer than `maxlen` and there is no longer split available using
+        `pattern`.
 
-        This value represents the chunk-size that would result if this pre-chunk was flushed in its
-        current state. In particular, it does not include the length of a trailing separator (since
-        that would only appear if an additional element was added).
-
-        Not suitable for judging remaining space, use `.remaining_space` for that value.
+        The separator is removed and does not appear in either the split or remainder.
         """
-        # -- number of text separators present in joined text of elements. This includes only
-        # -- separators *between* text segments, not one at the end. Note there are zero separators
-        # -- for both 0 and 1 text-segments.
-        n = len(self._text_segments)
-        separator_count = n - 1 if n else 0
-        return self._text_len + (separator_count * self._separator_len)
+        maxlen, overlap = self._opts.hard_max, self._opts.overlap
+
+        # -- A split not longer than overlap will not progress (infinite loop). On the right side,
+        # -- need to extend search range to include a separator located exactly at maxlen.
+        match = pattern.search(s, pos=overlap + 1, endpos=maxlen + sep_len)
+        if match is None:
+            return "", s
+
+        # -- characterize match location
+        match_start, match_end = match.span()
+        # -- matched separator is replaced by single-space in overlap string --
+        separator = " "
+
+        # -- in multi-space situation, fragment may have trailing whitespace because match is from
+        # -- right to left
+        fragment = s[:match_start].rstrip()
+        # -- remainder can have leading space when match is on "\n" followed by spaces --
+        raw_remainder = s[match_end:].lstrip()
+
+        if overlap <= len(separator):
+            return fragment, raw_remainder
+
+        # -- compute overlap --
+        tail_len = overlap - len(separator)
+        tail = fragment[-tail_len:].lstrip()
+        overlapped_remainder = tail + separator + raw_remainder
+        return fragment, overlapped_remainder
+
+
+# ================================================================================================
+# PRE-CHUNK COMBINER
+# ================================================================================================
 
 
 class PreChunkCombiner:
@@ -968,7 +967,7 @@ class TextPreChunkAccumulator:
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunk: Optional[TextPreChunk] = None
+        self._pre_chunk: TextPreChunk | None = None
 
     def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""

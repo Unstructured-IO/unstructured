@@ -36,7 +36,7 @@ trap cleanup EXIT
 
 # NOTE(robinson) - per pymongo docs, pymongo ships with its own version of the bson library,
 # which is incompatible with the bson installed from pypi. bson is installed as part of the
-# astra dependencies.
+# astradb dependencies.
 # ref: https://pymongo.readthedocs.io/en/stable/installation.html
 pip uninstall -y bson pymongo
 make install-ingest-mongodb

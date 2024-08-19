@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import csv
-from typing import IO, Any, Optional, cast
+from typing import IO, Any, Iterator
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -15,13 +16,9 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed,
-)
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.lang import apply_lang_metadata
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
 
@@ -30,16 +27,15 @@ DETECTION_ORIGIN: str = "csv"
 @add_metadata_with_filetype(FileType.CSV)
 @add_chunking_strategy
 def partition_csv(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
+    filename: str | None = None,
+    file: IO[bytes] | None = None,
+    metadata_filename: str | None = None,
+    metadata_last_modified: str | None = None,
     include_header: bool = False,
-    include_metadata: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    # NOTE (jennings) partition_csv generates a single TableElement
-    # so detect_language_per_element is not included as a param
+    languages: list[str] | None = ["auto"],
+    # NOTE (jennings) partition_csv generates a single TableElement so detect_language_per_element
+    # is not included as a param
     date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
@@ -73,62 +69,156 @@ def partition_csv(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     """
-    exactly_one(filename=filename, file=file)
 
-    header = 0 if include_header else None
-
-    if filename:
-        delimiter = get_delimiter(file_path=filename)
-        table = pd.read_csv(filename, header=header, sep=delimiter)
-        last_modification_date = get_last_modified_date(filename)
-
-    elif file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-        f = spooled_to_bytes_io_if_needed(file)
-        delimiter = get_delimiter(file=f)
-        table = pd.read_csv(f, header=header, sep=delimiter)
-
-    html_text = table.to_html(index=False, header=include_header, na_rep="")
-    text = cast(str, soupparser_fromstring(html_text).text_content())
-
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
-        )
-        if infer_table_structure:
-            metadata.text_as_html = html_text
-    else:
-        metadata = ElementMetadata()
-
-    elements = apply_lang_metadata(
-        [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)],
-        languages=languages,
+    ctx = _CsvPartitioningContext(
+        file_path=filename,
+        file=file,
+        metadata_file_path=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+        include_header=include_header,
+        infer_table_structure=infer_table_structure,
+        date_from_file_object=date_from_file_object,
     )
 
-    return list(elements)
+    with ctx.open() as file:
+        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter)
+
+    html_text = dataframe.to_html(index=False, header=include_header, na_rep="")
+    text = soupparser_fromstring(html_text).text_content()
+
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=ctx.last_modified,
+        languages=languages,
+        text_as_html=html_text if infer_table_structure else None,
+    )
+
+    # -- a CSV file becomes a single `Table` element --
+    elements = [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+    return list(apply_lang_metadata(elements, languages=languages))
 
 
-def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
-    """Use the standard csv sniffer to determine the delimiter.
+class _CsvPartitioningContext:
+    """Encapsulates the partitioning-run details.
 
-    Reads just a small portion in case the file is large.
+    Provides access to argument values and especially encapsulates computation of values derived
+    from those values so they don't obscure the core partitioning logic.
     """
-    sniffer = csv.Sniffer()
-    num_bytes = 65536
 
-    # -- read whole lines, sniffer can be confused by a trailing partial line --
-    if file:
-        lines = file.readlines(num_bytes)
-        file.seek(0)
-        data = "\n".join(ln.decode("utf-8") for ln in lines)
-    elif file_path is not None:
-        with open(file_path) as f:
-            data = "\n".join(f.readlines(num_bytes))
-    else:
-        raise ValueError("either `file_path` or `file` argument must be provided")
+    def __init__(
+        self,
+        file_path: str | None = None,
+        file: IO[bytes] | None = None,
+        metadata_file_path: str | None = None,
+        metadata_last_modified: str | None = None,
+        include_header: bool = False,
+        infer_table_structure: bool = True,
+        date_from_file_object: bool = False,
+    ):
+        self._file_path = file_path
+        self._file = file
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+        self._include_header = include_header
+        self._infer_table_structure = infer_table_structure
+        self._date_from_file_object = date_from_file_object
 
-    return sniffer.sniff(data, delimiters=",;").delimiter
+    @classmethod
+    def load(
+        cls,
+        file_path: str | None,
+        file: IO[bytes] | None,
+        metadata_file_path: str | None,
+        metadata_last_modified: str | None,
+        include_header: bool,
+        infer_table_structure: bool,
+        date_from_file_object: bool = False,
+    ) -> _CsvPartitioningContext:
+        return cls(
+            file_path=file_path,
+            file=file,
+            metadata_file_path=metadata_file_path,
+            metadata_last_modified=metadata_last_modified,
+            include_header=include_header,
+            infer_table_structure=infer_table_structure,
+            date_from_file_object=date_from_file_object,
+        )._validate()
+
+    @lazyproperty
+    def delimiter(self) -> str | None:
+        """The CSV delimiter, nominally a comma ",".
+
+        `None` for a single-column CSV file which naturally has no delimiter.
+        """
+        sniffer = csv.Sniffer()
+        num_bytes = 65536
+
+        with self.open() as file:
+            # -- read whole lines, sniffer can be confused by a trailing partial line --
+            data = "\n".join(ln.decode("utf-8") for ln in file.readlines(num_bytes))
+
+        try:
+            return sniffer.sniff(data, delimiters=",;").delimiter
+        except csv.Error:
+            # -- sniffing will fail on single-column csv as no default can be assumed --
+            return None
+
+    @lazyproperty
+    def header(self) -> int | None:
+        """Identifies the header row, if any, to Pandas, by idx."""
+        return 0 if self._include_header else None
+
+    @lazyproperty
+    def last_modified(self) -> str | None:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return (
+                None
+                if is_temp_file_path(self._file_path)
+                else get_last_modified_date(self._file_path)
+            )
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @contextlib.contextmanager
+    def open(self) -> Iterator[IO[bytes]]:
+        """Encapsulates complexity of dealing with file-path or file-like-object.
+
+        Provides an `IO[bytes]` object as the "common-denominator" document source.
+
+        Must be used as a context manager using a `with` statement:
+
+            with self._file as file:
+                do things with file
+
+        File is guaranteed to be at read position 0 when called.
+        """
+        if self._file_path:
+            with open(self._file_path, "rb") as f:
+                yield f
+        else:
+            file = self._file
+            assert file is not None  # -- guaranteed by `._validate()` --
+            # -- Be polite on principle. Reset file-pointer both before and after use --
+            file.seek(0)
+            yield file
+            file.seek(0)
+
+    def _validate(self) -> _CsvPartitioningContext:
+        """Raise on invalid argument values."""
+        if self._file_path is None and self._file is None:
+            raise ValueError("either file-path or file-like object must be provided")
+        return self

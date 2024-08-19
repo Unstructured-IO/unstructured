@@ -393,9 +393,7 @@ def is_page_url(client: Client, url: str):
     if not page_uuid:
         return False
     check_resp = client.pages.retrieve_status(page_id=page_uuid)
-    if check_resp == 200:
-        return True
-    return False
+    return check_resp == 200
 
 
 def is_database_url(client: Client, url: str):
@@ -407,9 +405,7 @@ def is_database_url(client: Client, url: str):
     if not database_uuid:
         return False
     check_resp = client.databases.retrieve_status(database_id=database_uuid)
-    if check_resp == 200:
-        return True
-    return False
+    return check_resp == 200
 
 
 @dataclass

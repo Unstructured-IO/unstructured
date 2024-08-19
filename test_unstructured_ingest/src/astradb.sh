@@ -5,7 +5,7 @@ set -e
 SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=astra
+OUTPUT_FOLDER_NAME=astradb
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
@@ -23,7 +23,7 @@ fi
 COLLECTION_NAME="ingest_test_src"
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  astra \
+  astradb \
   --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \

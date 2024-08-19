@@ -1,4 +1,4 @@
-## 0.15.1-dev3
+## 0.15.6-dev0
 
 ### Enhancements
 
@@ -6,6 +6,76 @@
 
 ### Fixes
 
+* **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
+
+
+## 0.15.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Revert to using `unstructured.pytesseract` fork**. Due to the unavailability of some recent release versions of `pytesseract` on PyPI, the project now uses the `unstructured.pytesseract` fork to ensure stability and continued support.
+* **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
+* **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
+
+## 0.15.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**
+
+## 0.15.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Remove the custom index URL from `extra-paddleocr.in` to resolve the error in the `setup.py` configuration.**
+
+## 0.15.2
+
+### Enhancements
+
+* **Improve directory handling when extracting image blocks**. The `figures` directory is no longer created when the `extract_image_block_to_payload` parameter is set to `True`.
+
+### Features
+
+* **Added per-class Object Detection metrics in the evaluation**. The metrics include average precision, precision, recall, and f1-score for each class in the dataset.
+
+### Fixes
+
+* **Updates NLTK data file for compatibility with `nltk>=3.8.2`**. The NLTK data file now container `punkt_tab`, making it possible to upgrade to `nltk>=3.8.2`. The `nltk==3.8.2` patches CVE-2024-39705.
+* **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
+* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
+* **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
+* **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
+* **Removes dependency on unstructured.pytesseract** Unstructured forked pytesseract while waiting for code to be upstreamed. Now that the new version has been released, this fork can be removed.
+
+## 0.15.1
+
+### Enhancements
+
+* **Improve `pdfminer` embedded `image` extraction to exclude text elements and produce more accurate bounding boxes.** This results in cleaner, more precise element extraction in `pdf` partitioning.
+
+### Features
+
+* **Update partition_eml and partition_msg to capture cc, bcc, and message_id fields** Cc, bcc, and message_id information is captured in element metadata for both msg and email partitioning and `Recipient` elements are generated for cc and bcc when `include_headers=True` for email partitioning.
+* **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
+* **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
+
+### Fixes
+
+* **Update `HuggingFaceEmbeddingEncoder` to use `HuggingFaceEmbeddings` from `langchain_huggingface` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
+* **Update `OpenAIEmbeddingEncoder` to use `OpenAIEmbeddings` from `langchain-openai` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
 * **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
 * **File-type detection catches non-existent file-path.** `detect_filetype()` no longer silently falls back to detecting a file-type based on the extension when no file exists at the path provided. Instead `FileNotFoundError` is raised. This provides consistent user notification of a mis-typed path rather than an unpredictable exception from a file-type specific partitioner when the file cannot be opened.
 * **EML files specified as a file-path are detected correctly.** Resolved a bug where an EML file submitted to `partition()` as a file-path was identified as TXT and partitioned using `partition_text()`. EML files specified by path are now identified and processed correctly, including processing any attachments.
@@ -17,7 +87,7 @@
 
 ### Enhancements
 
-* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.   
+* **Improve text clearing process in email partitioning.** Updated the email partitioner to remove both `=\n` and `=\r\n` characters during the clearing process. Previously, only `=\n` characters were removed.
 * **Bump unstructured.paddleocr to 2.8.0.1.**
 * **Refine HTML parser to accommodate block element nested in phrasing.** HTML parser no longer raises on a block element (e.g. `<p>`, `<div>`) nested inside a phrasing element (e.g. `<strong>` or `<cite>`). Instead it breaks the phrasing run (and therefore element) at the block-item start and begins a new phrasing run after the block-item. This is consistent with how the browser determines element boundaries in this situation.
 * **Install rewritten HTML parser to fix 12 existing bugs and provide headroom for refinement and growth.** A rewritten HTML parser resolves a collection of outstanding bugs with HTML partitioning and provides a firm foundation for further elaborating that important partitioner.

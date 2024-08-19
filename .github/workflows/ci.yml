@@ -72,7 +72,6 @@ jobs:
       - name: Install all doc and test dependencies
         run: |
           make install-ci
-          make install-paddleocr
           make install-all-ingest
           make check-licenses
 
@@ -121,8 +120,6 @@ jobs:
       matrix:
         python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
@@ -162,7 +159,6 @@ jobs:
         python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
       UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
@@ -180,6 +176,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         make install-pandoc install-test
@@ -194,8 +191,6 @@ jobs:
       matrix:
         python-version: ["3.10"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
@@ -212,6 +207,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -277,8 +273,6 @@ jobs:
       matrix:
         python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [ setup_ingest, lint ]
     steps:
       # actions/checkout MUST come before auth
@@ -297,6 +291,7 @@ jobs:
       - name: Test Ingest (unit)
         run: |
           source .venv/bin/activate
+          make install-nltk-models
           PYTHONPATH=. pytest test_unstructured_ingest/unit
 
 
@@ -305,8 +300,6 @@ jobs:
       matrix:
         python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
@@ -374,6 +367,7 @@ jobs:
         CI: "true"
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -392,8 +386,6 @@ jobs:
       matrix:
         python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
@@ -446,6 +438,7 @@ jobs:
         CI: "true"
       run: |
         source .venv/bin/activate
+        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc

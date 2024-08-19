@@ -8,7 +8,7 @@ import hashlib
 import io
 import pathlib
 import tempfile
-from typing import Any, Iterator
+from typing import Any, Iterator, cast
 
 import pptx
 import pytest
@@ -36,6 +36,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.pptx import (
     PptxPartitionerOptions,
+    _PptxPartitioner,
     partition_pptx,
     register_picture_partitioner,
 )
@@ -85,8 +86,7 @@ def test_partition_pptx_from_file():
     with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
         elements = partition_pptx(file=f)
     assert elements == EXPECTED_PPTX_OUTPUT
-    for element in elements:
-        assert element.metadata.filename is None
+    assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_pptx_from_file_with_metadata_filename():
@@ -105,6 +105,18 @@ def test_partition_pptx_raises_with_neither():
 def test_partition_pptx_recurses_into_group_shapes():
     elements = partition_pptx(example_doc_path("group-shapes-nested.pptx"))
     assert [e.text for e in elements] == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
+
+def test_it_loads_a_PPTX_with_a_JPEG_misidentified_as_image_jpg(opts_args: dict[str, Any]):
+    opts_args["file_path"] = example_doc_path("test-image-jpg-mime.pptx")
+    opts = PptxPartitionerOptions(**opts_args)
+    prs = _PptxPartitioner(opts)._presentation
+    picture = cast(Picture, prs.slides[0].shapes[0])
+
+    try:
+        picture.image
+    except AttributeError:
+        raise AssertionError("JPEG image not recognized, needs `python-pptx>=1.0.1`")
 
 
 # == page-break behaviors ========================================================================
@@ -540,6 +552,31 @@ def test_partition_pptx_hierarchy_sample_document():
 
 
 # ================================================================================================
+# MODULE-LEVEL FIXTURES
+# ================================================================================================
+
+
+@pytest.fixture()
+def opts_args() -> dict[str, Any]:
+    """All default arguments for `_XlsxPartitionerOptions`.
+
+    Individual argument values can be changed to suit each test. Makes construction of opts more
+    compact for testing purposes.
+    """
+    return {
+        "date_from_file_object": False,
+        "file": None,
+        "file_path": None,
+        "include_page_breaks": True,
+        "include_slide_notes": False,
+        "infer_table_structure": True,
+        "metadata_file_path": None,
+        "metadata_last_modified": None,
+        "strategy": "fast",
+    }
+
+
+# ================================================================================================
 # ISOLATED UNIT TESTS
 # ================================================================================================
 # These test components used by `partition_pptx()` in isolation such that all edge cases can be
@@ -817,22 +854,3 @@ class DescribePptxPartitionerOptions:
         return function_mock(
             request, "unstructured.partition.pptx.get_last_modified_date_from_file"
         )
-
-    @pytest.fixture()
-    def opts_args(self) -> dict[str, Any]:
-        """All default arguments for `_XlsxPartitionerOptions`.
-
-        Individual argument values can be changed to suit each test. Makes construction of opts more
-        compact for testing purposes.
-        """
-        return {
-            "date_from_file_object": False,
-            "file": None,
-            "file_path": None,
-            "include_page_breaks": True,
-            "include_slide_notes": False,
-            "infer_table_structure": True,
-            "metadata_file_path": None,
-            "metadata_last_modified": None,
-            "strategy": "fast",
-        }

@@ -1,16 +1,17 @@
-import typing as t
 from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig, Dict
-from unstructured.ingest.connector.astra import AstraWriteConfig, SimpleAstraConfig
+from unstructured.ingest.v2.cli.base import DestCmd
+from unstructured.ingest.v2.cli.interfaces import CliConfig
+from unstructured.ingest.v2.cli.utils import Dict
+from unstructured.ingest.v2.processes.connectors.astradb import CONNECTOR_TYPE
 
 
 @dataclass
-class AstraCliConfig(SimpleAstraConfig, CliConfig):
+class AstraDBCliConnectionConfig(CliConfig):
     @staticmethod
-    def get_cli_options() -> t.List[click.Option]:
+    def get_cli_options() -> list[click.Option]:
         options = [
             click.Option(
                 ["--token"],
@@ -28,6 +29,15 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 envvar="ASTRA_DB_API_ENDPOINT",
                 show_envvar=True,
             ),
+        ]
+        return options
+
+
+@dataclass
+class AstraDBCliUploaderConfig(CliConfig):
+    @staticmethod
+    def get_cli_options() -> list[click.Option]:
+        options = [
             click.Option(
                 ["--collection-name"],
                 required=False,
@@ -37,27 +47,18 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 "numbers, and underscores.",
             ),
             click.Option(
-                ["--namespace"],
-                required=False,
-                default=None,
-                type=str,
-                help="The Astra DB connection namespace.",
-            ),
-        ]
-        return options
-
-
-@dataclass
-class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
-    @staticmethod
-    def get_cli_options() -> t.List[click.Option]:
-        options = [
-            click.Option(
                 ["--embedding-dimension"],
                 required=True,
                 default=384,
                 type=int,
                 help="The dimensionality of the embeddings",
+            ),
+            click.Option(
+                ["--namespace"],
+                required=False,
+                default=None,
+                type=str,
+                help="The Astra DB connection namespace.",
             ),
             click.Option(
                 ["--requested-indexing-policy"],
@@ -77,23 +78,8 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
         return options
 
 
-def get_base_src_cmd():
-    from unstructured.ingest.cli.base.src import BaseSrcCmd
-
-    cmd_cls = BaseSrcCmd(
-        cmd_name="astra",
-        cli_config=AstraCliConfig,
-    )
-    return cmd_cls
-
-
-def get_base_dest_cmd():
-    from unstructured.ingest.cli.base.dest import BaseDestCmd
-
-    cmd_cls = BaseDestCmd(
-        cmd_name="astra",
-        cli_config=AstraCliConfig,
-        additional_cli_options=[AstraCliWriteConfig],
-        write_config=AstraWriteConfig,
-    )
-    return cmd_cls
+astradb_dest_cmd = DestCmd(
+    cmd_name=CONNECTOR_TYPE,
+    connection_config=AstraDBCliConnectionConfig,
+    uploader_config=AstraDBCliUploaderConfig,
+)

@@ -4,34 +4,32 @@
 #
 #    pip-compile ./ingest/salesforce.in
 #
-attrs==23.2.0
+attrs==24.2.0
     # via zeep
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.8
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   pyjwt
+cryptography==43.0.0
+    # via pyjwt
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
 isodate==0.6.1
     # via zeep
-lxml==5.2.2
+lxml==5.3.0
     # via
     #   -c ./ingest/../base.txt
     #   zeep
-more-itertools==10.3.0
+more-itertools==10.4.0
     # via simple-salesforce
 platformdirs==3.10.0
     # via
@@ -39,7 +37,7 @@ platformdirs==3.10.0
     #   zeep
 pycparser==2.22
     # via cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via simple-salesforce
 pytz==2024.1
     # via zeep

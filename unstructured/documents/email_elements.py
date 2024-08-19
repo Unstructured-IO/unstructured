@@ -40,7 +40,7 @@ class Name(EmailElement):
     def __str__(self):
         return f"{self.name}: {self.text}"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if self.has_datestamp():
             return (
                 self.name == other.name

@@ -4,11 +4,13 @@
 #
 #    pip-compile ./extra-pptx.in
 #
-lxml==5.2.2
+lxml==5.3.0
     # via python-pptx
 pillow==10.4.0
     # via python-pptx
-python-pptx==0.6.23
+python-pptx==1.0.2
     # via -r ./extra-pptx.in
+typing-extensions==4.12.2
+    # via python-pptx
 xlsxwriter==3.2.0
     # via python-pptx

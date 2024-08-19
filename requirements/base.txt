@@ -57,7 +57,7 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.2.2
+lxml==5.3.0
     # via -r ./base.in
 marshmallow==3.21.3
     # via
@@ -90,9 +90,9 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.9.4
+rapidfuzz==3.9.6
     # via -r ./base.in
-regex==2024.5.15
+regex==2024.7.24
     # via nltk
 requests==2.32.3
     # via
@@ -114,7 +114,7 @@ soupsieve==2.5
     # via beautifulsoup4
 tabulate==0.9.0
     # via -r ./base.in
-tqdm==4.66.4
+tqdm==4.66.5
     # via
     #   -r ./base.in
     #   nltk
@@ -129,7 +129,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.24.1
+unstructured-client==0.25.4
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in

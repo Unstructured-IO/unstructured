@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import re
 import tempfile
 from typing import IO, Any, Iterator, Optional
 
@@ -188,6 +189,14 @@ class MsgPartitionerOptions:
         email_date = sent_date.isoformat() if (sent_date := msg.sent_date) else None
         sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
         sent_to = [r.email_address for r in msg.recipients] or None
+        bcc_recipient = (
+            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
+        )
+        cc_recipient = (
+            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
+        )
+        if email_message_id := msg.message_headers.get("Message-Id"):
+            email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
 
         element_metadata = ElementMetadata(
             filename=self.metadata_file_path,
@@ -195,6 +204,9 @@ class MsgPartitionerOptions:
             sent_from=sent_from,
             sent_to=sent_to,
             subject=msg.subject or None,
+            bcc_recipient=bcc_recipient,
+            cc_recipient=cc_recipient,
+            email_message_id=email_message_id,
         )
         element_metadata.detection_origin = "msg"
 

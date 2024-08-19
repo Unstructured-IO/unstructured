@@ -206,6 +206,9 @@ class ElementMetadata:
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
 
     # -- e-mail specific metadata fields --
+    bcc_recipient: Optional[list[str]]
+    cc_recipient: Optional[list[str]]
+    email_message_id: Optional[str]
     sent_from: Optional[list[str]]
     sent_to: Optional[list[str]]
     subject: Optional[str]
@@ -224,7 +227,9 @@ class ElementMetadata:
     def __init__(
         self,
         attached_to_filename: Optional[str] = None,
+        bcc_recipient: Optional[list[str]] = None,
         category_depth: Optional[int] = None,
+        cc_recipient: Optional[list[str]] = None,
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
@@ -244,6 +249,7 @@ class ElementMetadata:
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
         links: Optional[list[Link]] = None,
+        email_message_id: Optional[str] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
@@ -258,7 +264,9 @@ class ElementMetadata:
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
+        self.bcc_recipient = bcc_recipient
         self.category_depth = category_depth
+        self.cc_recipient = cc_recipient
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
@@ -286,6 +294,7 @@ class ElementMetadata:
         self.link_urls = link_urls
         self.link_start_indexes = link_start_indexes
         self.links = links
+        self.email_message_id = email_message_id
         self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
@@ -481,6 +490,8 @@ class ConsolidationStrategy(enum.Enum):
         """
         return {
             "attached_to_filename": cls.FIRST,
+            "cc_recipient": cls.FIRST,
+            "bcc_recipient": cls.FIRST,
             "category_depth": cls.DROP,
             "coordinates": cls.DROP,
             "data_source": cls.FIRST,
@@ -502,6 +513,7 @@ class ConsolidationStrategy(enum.Enum):
             "link_urls": cls.LIST_CONCATENATE,
             "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
+            "email_message_id": cls.FIRST,
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,

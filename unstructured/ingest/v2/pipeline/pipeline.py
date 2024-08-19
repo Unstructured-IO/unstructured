@@ -132,7 +132,7 @@ class Pipeline:
 
     def _run(self):
         logger.info(
-            f"Running local pipline: {self} with configs: "
+            f"Running local pipeline: {self} with configs: "
             f"{sterilize_dict(self.context.to_dict(redact_sensitive=True))}"
         )
         if self.context.mp_supported:

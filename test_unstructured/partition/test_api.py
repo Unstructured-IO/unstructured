@@ -18,7 +18,7 @@ from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-skip_outside_ci = os.getenv("CI", "").lower() in {"", "false", "f", "0"}
+is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
 
@@ -102,7 +102,7 @@ def test_partition_via_api_raises_with_bad_response(request: FixtureRequest):
     partition_mock_.assert_called_once()
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
     elements_no_strategy = partition_via_api(
@@ -129,7 +129,7 @@ def test_partition_via_api_with_no_strategy():
     assert elements_no_strategy[3].text != elements_hi_res[3].text
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     # coordinates not included by default to limit payload size
@@ -145,7 +145,7 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     assert elements[0].metadata.coordinates is not None
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_valid_request_data_kwargs():
     elements = partition_via_api(
@@ -159,7 +159,7 @@ def test_partition_via_api_valid_request_data_kwargs():
     assert isinstance(elements, list)
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_image_block_extraction():
     elements = partition_via_api(
@@ -353,7 +353,7 @@ def get_api_key():
     return api_key
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
@@ -371,7 +371,7 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
     assert isinstance(elements, list)
 
 
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
         example_doc_path("pdf/layout-parser-paper-fast.pdf"),

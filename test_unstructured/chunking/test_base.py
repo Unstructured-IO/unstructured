@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional, Sequence
+from typing import Any, Sequence
 
 import pytest
 
@@ -65,7 +65,7 @@ class DescribeChunkingOptions:
         ("combine_text_under_n_chars", "expected_value"), [(None, 0), (42, 42)]
     )
     def it_accepts_combine_text_under_n_chars_in_constructor_but_defaults_to_no_combining(
-        self, combine_text_under_n_chars: Optional[int], expected_value: int
+        self, combine_text_under_n_chars: int | None, expected_value: int
     ):
         """Subclasses can store `combine_text_under_n_chars` but must validate and enable it.
 
@@ -153,107 +153,6 @@ class DescribeChunkingOptions:
         assert ChunkingOptions().text_separator == "\n\n"
 
 
-class Describe_TextSplitter:
-    """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
-
-    def it_splits_on_a_preferred_separator_when_it_can(self):
-        opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = (
-            "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
-            "In rhoncus ipsum sed lectus porta."
-        )
-
-        s, remainder = split(text)
-
-        # -- trailing whitespace is stripped from split --
-        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
-        # -- leading whitespace is stripped from remainder
-        # -- overlap is separated by single space
-        # -- overlap-prefix is computed on arbitrary character boundary
-        # -- overlap-prefix len includes space separator (text portion is one less than specified)
-        assert remainder == "ipiscing. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "ipiscing. In rhoncus ipsum sed lectus porta."
-        assert remainder == ""
-
-    def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
-        opts = ChunkingOptions(max_characters=40, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = (
-            "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
-            " volutpat."
-        )
-
-        s, remainder = split(text)
-        assert s == "Lorem ipsum dolor amet consectetur"
-        assert remainder == "nsectetur adipiscing. In rhoncus ipsum sed lectus porta volutpat."
-        # --
-        s, remainder = split(remainder)
-        assert s == "nsectetur adipiscing. In rhoncus ipsum"
-        assert remainder == "cus ipsum sed lectus porta volutpat."
-        # --
-        s, remainder = split(remainder)
-        assert s == "cus ipsum sed lectus porta volutpat."
-        assert remainder == ""
-
-    def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
-        opts = ChunkingOptions(max_characters=30, text_splitting_separators=("\n", " "), overlap=10)
-        split = _TextSplitter(opts)
-        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-
-        s, remainder = split(text)
-        assert s == "Loremipsumdolorametconsectetur"
-        assert remainder == "onsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "onsecteturadipiscingelit. In"
-        assert remainder == "gelit. In rhoncus ipsum sed lectus porta."
-        # --
-        s, remainder = split(remainder)
-        assert s == "gelit. In rhoncus ipsum sed"
-        assert remainder == "ipsum sed lectus porta."
-
-    @pytest.mark.parametrize(
-        "text",
-        [
-            "Lorem ipsum dolor amet consectetur adipiscing.",  # 46-chars
-            "Lorem ipsum dolor.",  # 18-chars
-        ],
-    )
-    def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
-        opts = ChunkingOptions(max_characters=46, overlap=10)
-        split = _TextSplitter(opts)
-
-        s, remainder = split(text)
-
-        assert s == text
-        assert remainder == ""
-
-    def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
-        opts = ChunkingOptions(max_characters=38, overlap=10)
-        split = _TextSplitter(opts)
-        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
-
-        s, _ = split(text)
-
-        assert s == "Loremipsumdolorametconsecteturadipisci"
-        assert len(s) == 38
-
-    @pytest.mark.parametrize("separators", [("\n", " "), (" ",)])
-    def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
-        opts = ChunkingOptions(max_characters=50, text_splitting_separators=separators, overlap=10)
-        split = _TextSplitter(opts)
-        text = "Lorem ipsum dolor amet consectetur adipiscing.   \n\n In rhoncus ipsum sed lectus."
-        #       |-------------------------------------------------^  50-chars
-
-        s, remainder = split(text)
-
-        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
-        assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
-
-
 # ================================================================================================
 # PRE-CHUNKER
 # ================================================================================================
@@ -303,6 +202,169 @@ class DescribePreChunker:
         # --
         with pytest.raises(StopIteration):
             next(pre_chunk_iter)
+
+
+class DescribePreChunkBuilder:
+    """Unit-test suite for `unstructured.chunking.base.PreChunkBuilder`."""
+
+    def it_is_empty_on_construction(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
+
+        assert builder._text_length == 0
+        assert builder._remaining_space == 50
+
+    def it_accumulates_elements_added_to_it(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
+
+        builder.add_element(Title("Introduction"))
+        assert builder._text_length == 12
+        assert builder._remaining_space == 136
+
+        builder.add_element(
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        )
+        assert builder._text_length == 112
+        assert builder._remaining_space == 36
+
+    @pytest.mark.parametrize("element", [Table("Heading\nCell text"), Text("abcd " * 200)])
+    def it_will_fit_a_Table_or_oversized_element_when_empty(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        assert builder.will_fit(element)
+
+    @pytest.mark.parametrize(
+        ("existing_element", "next_element"),
+        [
+            (Text("abcd"), Table("Fruits\nMango")),
+            (Text("abcd"), Text("abcd " * 200)),
+            (Table("Heading\nCell text"), Table("Fruits\nMango")),
+            (Table("Heading\nCell text"), Text("abcd " * 200)),
+        ],
+    )
+    def but_not_when_it_already_contains_an_element_of_any_kind(
+        self, existing_element: Element, next_element: Element
+    ):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        builder.add_element(existing_element)
+
+        assert not builder.will_fit(next_element)
+
+    @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
+    def it_will_not_fit_any_element_when_it_already_contains_a_table(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        builder.add_element(Table("Heading\nCell text"))
+
+        assert not builder.will_fit(element)
+
+    def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100, new_after_n_chars=50))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        assert not builder.will_fit(Text("In rhoncus ipsum."))
+
+    def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 44 == 101 --
+        assert not builder.will_fit(
+            Text("In rhoncus ipsum sed lectus portos volutpat.")  # 44-chars
+        )
+
+    def but_it_will_fit_an_element_that_fits(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 43 == 100 --
+        assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
+
+    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
+        builder.add_element(Title("Introduction"))
+        builder.add_element(
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        )
+
+        pre_chunk = next(builder.flush())
+
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                "lectus porta volutpat.",
+            ),
+        ]
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+
+    def and_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
+        builder.add_element(Table("Heading\nCell text"))
+
+        pre_chunk = next(builder.flush())
+
+        # -- pre-chunk builder was reset before the yield, such that the iterator does not need to
+        # -- be exhausted before clearing out the old elements and a new pre-chunk can be
+        # -- accumulated immediately (first `next()` call is required however, to advance to the
+        # -- yield statement).
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+        # -- pre-chunk is a `TablePreChunk` --
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._table == Table("Heading\nCell text")
+
+    def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
+
+        pre_chunks = list(builder.flush())
+
+        assert pre_chunks == []
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+
+    def it_computes_overlap_from_each_pre_chunk_and_applies_it_to_the_next(self):
+        opts = ChunkingOptions(overlap=15, overlap_all=True)
+        builder = PreChunkBuilder(opts=opts)
+
+        builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+
+        builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+
+        builder.add_element(Text("Donec semper facilisis metus finibus."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
+
+    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
+        builder.add_element(Text("abcde"))
+        builder.add_element(Text("fghij"))
+
+        # -- ._text_length includes a separator ("\n\n", len==2) between each text-segment,
+        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
+        assert builder._text_length == 12
+        # -- ._remaining_space is reduced by the length (2) of the trailing separator which would
+        # -- go between the current text and that of the next element if one was added.
+        # -- So 50 - 12 - 2 = 36 here, not 50 - 12 = 38
+        assert builder._remaining_space == 36
 
 
 # ================================================================================================
@@ -1032,171 +1094,114 @@ class DescribeTextPreChunk:
 
 
 # ================================================================================================
-# PRE-CHUNKING ACCUMULATORS
+# PRE-CHUNK SPLITTERS
 # ================================================================================================
 
 
-class DescribePreChunkBuilder:
-    """Unit-test suite for `unstructured.chunking.base.PreChunkBuilder`."""
+class Describe_TextSplitter:
+    """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
 
-    def it_is_empty_on_construction(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
-
-        assert builder._text_length == 0
-        assert builder._remaining_space == 50
-
-    def it_accumulates_elements_added_to_it(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
-
-        builder.add_element(Title("Introduction"))
-        assert builder._text_length == 12
-        assert builder._remaining_space == 136
-
-        builder.add_element(
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat.",
-            ),
+    def it_splits_on_a_preferred_separator_when_it_can(self):
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
+            "In rhoncus ipsum sed lectus porta."
         )
-        assert builder._text_length == 112
-        assert builder._remaining_space == 36
 
-    @pytest.mark.parametrize("element", [Table("Heading\nCell text"), Text("abcd " * 200)])
-    def it_will_fit_a_Table_or_oversized_element_when_empty(self, element: Element):
-        builder = PreChunkBuilder(opts=ChunkingOptions())
-        assert builder.will_fit(element)
+        s, remainder = split(text)
+
+        # -- trailing whitespace is stripped from split --
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        # -- leading whitespace is stripped from remainder
+        # -- overlap is separated by single space
+        # -- overlap-prefix is computed on arbitrary character boundary
+        # -- overlap-prefix len includes space separator (text portion is one less than specified)
+        assert remainder == "ipiscing. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "ipiscing. In rhoncus ipsum sed lectus porta."
+        assert remainder == ""
+
+    def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
+        opts = ChunkingOptions(max_characters=40, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
+            " volutpat."
+        )
+
+        s, remainder = split(text)
+        assert s == "Lorem ipsum dolor amet consectetur"
+        assert remainder == "nsectetur adipiscing. In rhoncus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "nsectetur adipiscing. In rhoncus ipsum"
+        assert remainder == "cus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "cus ipsum sed lectus porta volutpat."
+        assert remainder == ""
+
+    def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
+        opts = ChunkingOptions(max_characters=30, text_splitting_separators=("\n", " "), overlap=10)
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+
+        s, remainder = split(text)
+        assert s == "Loremipsumdolorametconsectetur"
+        assert remainder == "onsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "onsecteturadipiscingelit. In"
+        assert remainder == "gelit. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "gelit. In rhoncus ipsum sed"
+        assert remainder == "ipsum sed lectus porta."
 
     @pytest.mark.parametrize(
-        ("existing_element", "next_element"),
+        "text",
         [
-            (Text("abcd"), Table("Fruits\nMango")),
-            (Text("abcd"), Text("abcd " * 200)),
-            (Table("Heading\nCell text"), Table("Fruits\nMango")),
-            (Table("Heading\nCell text"), Text("abcd " * 200)),
+            "Lorem ipsum dolor amet consectetur adipiscing.",  # 46-chars
+            "Lorem ipsum dolor.",  # 18-chars
         ],
     )
-    def but_not_when_it_already_contains_an_element_of_any_kind(
-        self, existing_element: Element, next_element: Element
-    ):
-        builder = PreChunkBuilder(opts=ChunkingOptions())
-        builder.add_element(existing_element)
+    def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
+        opts = ChunkingOptions(max_characters=46, overlap=10)
+        split = _TextSplitter(opts)
 
-        assert not builder.will_fit(next_element)
+        s, remainder = split(text)
 
-    @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
-    def it_will_not_fit_any_element_when_it_already_contains_a_table(self, element: Element):
-        builder = PreChunkBuilder(opts=ChunkingOptions())
-        builder.add_element(Table("Heading\nCell text"))
+        assert s == text
+        assert remainder == ""
 
-        assert not builder.will_fit(element)
+    def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
+        opts = ChunkingOptions(max_characters=38, overlap=10)
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
 
-    def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100, new_after_n_chars=50))
-        builder.add_element(
-            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
-        )
+        s, _ = split(text)
 
-        assert not builder.will_fit(Text("In rhoncus ipsum."))
+        assert s == "Loremipsumdolorametconsecteturadipisci"
+        assert len(s) == 38
 
-    def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
-        builder.add_element(
-            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
-        )
+    @pytest.mark.parametrize("separators", [("\n", " "), (" ",)])
+    def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=separators, overlap=10)
+        split = _TextSplitter(opts)
+        text = "Lorem ipsum dolor amet consectetur adipiscing.   \n\n In rhoncus ipsum sed lectus."
+        #       |-------------------------------------------------^  50-chars
 
-        # -- 55 + 2 (separator) + 44 == 101 --
-        assert not builder.will_fit(
-            Text("In rhoncus ipsum sed lectus portos volutpat.")  # 44-chars
-        )
+        s, remainder = split(text)
 
-    def but_it_will_fit_an_element_that_fits(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
-        builder.add_element(
-            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
-        )
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
 
-        # -- 55 + 2 (separator) + 43 == 100 --
-        assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
 
-    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
-        builder.add_element(Title("Introduction"))
-        builder.add_element(
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat.",
-            ),
-        )
-
-        pre_chunk = next(builder.flush())
-
-        assert isinstance(pre_chunk, TextPreChunk)
-        assert pre_chunk._elements == [
-            Title("Introduction"),
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat.",
-            ),
-        ]
-        assert builder._text_length == 0
-        assert builder._remaining_space == 150
-
-    def and_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
-        builder.add_element(Table("Heading\nCell text"))
-
-        pre_chunk = next(builder.flush())
-
-        # -- pre-chunk builder was reset before the yield, such that the iterator does not need to
-        # -- be exhausted before clearing out the old elements and a new pre-chunk can be
-        # -- accumulated immediately (first `next()` call is required however, to advance to the
-        # -- yield statement).
-        assert builder._text_length == 0
-        assert builder._remaining_space == 150
-        # -- pre-chunk is a `TablePreChunk` --
-        assert isinstance(pre_chunk, TablePreChunk)
-        assert pre_chunk._table == Table("Heading\nCell text")
-
-    def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
-
-        pre_chunks = list(builder.flush())
-
-        assert pre_chunks == []
-        assert builder._text_length == 0
-        assert builder._remaining_space == 150
-
-    def it_computes_overlap_from_each_pre_chunk_and_applies_it_to_the_next(self):
-        opts = ChunkingOptions(overlap=15, overlap_all=True)
-        builder = PreChunkBuilder(opts=opts)
-
-        builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
-        pre_chunk = list(builder.flush())[0]
-
-        assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
-
-        builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
-        pre_chunk = list(builder.flush())[0]
-
-        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
-
-        builder.add_element(Text("Donec semper facilisis metus finibus."))
-        pre_chunk = list(builder.flush())[0]
-
-        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
-
-    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
-        builder.add_element(Text("abcde"))
-        builder.add_element(Text("fghij"))
-
-        # -- ._text_length includes a separator ("\n\n", len==2) between each text-segment,
-        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
-        assert builder._text_length == 12
-        # -- ._remaining_space is reduced by the length (2) of the trailing separator which would
-        # -- go between the current text and that of the next element if one was added.
-        # -- So 50 - 12 - 2 = 36 here, not 50 - 12 = 38
-        assert builder._remaining_space == 36
+# ================================================================================================
+# PRE-CHUNK COMBINER
+# ================================================================================================
 
 
 class DescribePreChunkCombiner:

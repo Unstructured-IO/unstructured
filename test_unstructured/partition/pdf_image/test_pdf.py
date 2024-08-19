@@ -29,6 +29,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
@@ -383,7 +384,7 @@ def test_partition_pdf_falls_back_to_fast(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -405,7 +406,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -431,7 +432,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -583,7 +584,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(
     filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
 ):
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -1362,3 +1363,34 @@ def test_analysis_artifacts_saved():
         for el in expected_layouts:
             for page in expected_pages:
                 assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
+
+
+@pytest.mark.parametrize(
+    ("filename", "pdf_hi_res_max_pages", "expected_error"),
+    [
+        ("pdf/layout-parser-paper-with-empty-pages.pdf", None, False),
+        ("pdf/layout-parser-paper-with-empty-pages.pdf", 3, True),
+        ("pdf/reliance.pdf", 3, False),
+        ("pdf/reliance.pdf", 2, True),
+        ("img/DA-1p.jpg", None, False),
+        ("img/DA-1p.jpg", 2, False),
+    ],
+)
+def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_error):
+    is_image = not Path(filename).suffix.endswith("pdf")
+    if not expected_error:
+        pdf.partition_pdf_or_image(
+            filename=example_doc_path(filename),
+            strategy=PartitionStrategy.HI_RES,
+            pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+            is_image=is_image,
+        )
+
+    else:
+        with pytest.raises(PageCountExceededError):
+            pdf.partition_pdf_or_image(
+                filename=example_doc_path(filename),
+                strategy=PartitionStrategy.HI_RES,
+                pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+                is_image=is_image,
+            )
