@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 import pytest
+from lxml.html import fragment_fromstring
 
 from unstructured.chunking.base import (
     ChunkingOptions,
@@ -16,10 +17,14 @@ from unstructured.chunking.base import (
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
+    _CellAccumulator,
+    _RowAccumulator,
+    _TableSplitter,
     _TextSplitter,
     is_on_next_page,
     is_title,
 )
+from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
     CompositeElement,
@@ -341,16 +346,21 @@ class DescribePreChunkBuilder:
         builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
         pre_chunk = list(builder.flush())[0]
 
+        assert isinstance(pre_chunk, TextPreChunk)
         assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
 
         builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
         pre_chunk = list(builder.flush())[0]
 
-        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._text_with_overlap == (
+            "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+        )
 
         builder.add_element(Text("Donec semper facilisis metus finibus."))
         pre_chunk = list(builder.flush())[0]
 
+        assert isinstance(pre_chunk, TextPreChunk)
         assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
@@ -386,7 +396,7 @@ class DescribeTablePreChunk:
             "</tbody>\n"
             "</table>"
         )
-        text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
+        text_table = "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="ctus porta volutpat.",
@@ -401,15 +411,24 @@ class DescribeTablePreChunk:
             "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
         )
         assert chunk.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>adipiscing</td></tr>"
             "</table>"
         )
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_the_table_is_is_empty_or_contains_only_whitespace(self):
+        html_table = "<table><tr><td/><td>  \t  \n   </td></tr></table>"
+        pre_chunk = TablePreChunk(
+            Table("  \t  \n  ", metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="volutpat.",
+            opts=ChunkingOptions(max_characters=175),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
@@ -437,21 +456,18 @@ class DescribeTablePreChunk:
         assert chunk.metadata.orig_elements is None
 
     def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
-        # fixed-overhead = 8+8+9+8+9+8 = 50
-        # per-row overhead = 27
-        html_table = (
-            "<table>\n"  # 8
-            "<thead>\n"  # 8
-            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"  # 9
-            "<tbody>\n"  # 8
-            "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
-            "<tr><td>Consectetur    </td><td>adipiscing elit</td></tr>\n"
-            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
-            "<tr><td>Vivamus quis   </td><td>nunc ipsum donec ac fermentum</td></tr>\n"
-            "</tbody>\n"  # 9
-            "</table>"  # 8
-        )
+        html_table = """\
+            <table>
+            <thead>
+            <tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
+            <tr><td>Consectetur    </td><td>adipiscing elit</td></tr>
+            <tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>
+            </tbody>
+            </table>
+        """
         text_table = (
             "Header Col 1   Header Col 2\n"
             "Lorem ipsum    dolor sit amet\n"
@@ -469,48 +485,33 @@ class DescribeTablePreChunk:
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == (
-            "Header Col 1   Header Col 2\n"
-            "Lorem ipsum    dolor sit amet\n"
-            "Consectetur    adipiscing elit"
-        )
+        assert chunk.text == "Header Col 1 Header Col 2"
         assert chunk.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lo"
+            "<table><tr><td>Header Col 1</td><td>Header Col 2</td></tr></table>"
         )
-        assert not chunk.metadata.is_continuation
+        assert chunk.metadata.is_continuation is None
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == (
-            "Nunc aliquam   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
-        )
+        assert chunk.text == "Lorem ipsum A Link example"
         assert chunk.metadata.text_as_html == (
-            "rem ipsum    </td><td>A Link example</td></tr>\n"
-            "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
-        )
-        assert chunk.metadata.is_continuation
-        # -- note that text runs out but HTML continues because it's significantly longer. So two
-        # -- of these chunks have HTML but no text.
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == ""
-        assert chunk.metadata.text_as_html == (
-            "/tr>\n"
-            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
-            "<tr><td>Vivamus quis   </td><td>"
+            "<table><tr><td>Lorem ipsum</td><td>A Link example</td></tr></table>"
         )
         assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == ""
+        assert chunk.text == "Consectetur adipiscing elit"
         assert chunk.metadata.text_as_html == (
-            "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
+            "<table><tr><td>Consectetur</td><td>adipiscing elit</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Nunc aliquam id enim nec molestie"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Nunc aliquam</td><td>id enim nec molestie</td></tr></table>"
         )
         assert chunk.metadata.is_continuation
         # --
@@ -545,8 +546,8 @@ class DescribeTablePreChunk:
         [
             # -- normally it splits exactly on overlap size  |------- 20 -------|
             ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
-            # -- but it strips leading and trailing whitespace when the tail includes it --
-            ("In rhoncus ipsum sed lectus   porta volutpat.  ", "porta volutpat."),
+            # -- but it strips leading whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus     porta volutpat.", "porta volutpat."),
         ],
     )
     def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
@@ -578,7 +579,7 @@ class DescribeTablePreChunk:
         pre_chunk = TablePreChunk(
             Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
         )
-        assert pre_chunk._text == expected_value
+        assert pre_chunk._text_with_overlap == expected_value
 
     def it_computes_metadata_for_each_chunk_to_help(self):
         table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
@@ -658,6 +659,10 @@ class DescribeTextPreChunk:
         )
 
         assert (pre_chunk == other_pre_chunk) is expected_value
+
+    def and_it_knows_it_is_not_equal_to_an_object_that_is_not_a_TextPreChunk(self):
+        pre_chunk = TextPreChunk([], overlap_prefix="", opts=ChunkingOptions())
+        assert pre_chunk != 42
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
@@ -832,6 +837,19 @@ class DescribeTextPreChunk:
         chunk_iter = pre_chunk.iter_chunks()
 
         assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
+
+    def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
+        metadata = ElementMetadata()
+        pre_chunk = TextPreChunk(
+            [PageBreak("", metadata=metadata)],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
@@ -1098,6 +1116,168 @@ class DescribeTextPreChunk:
 # ================================================================================================
 
 
+class Describe_TableSplitter:
+    """Unit-test suite for `unstructured.chunking.base._TableSplitter`."""
+
+    def it_splits_an_HTML_table_on_even_rows_when_possible(self):
+        opts = ChunkingOptions(max_characters=(150))
+        html_table = HtmlTable.from_html_text(
+            """
+            <table border="1" class="dataframe">
+              <tbody>
+                <tr>
+                  <td>Stanley
+              Cups</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Team</td>
+                  <td>Location</td>
+                  <td>Stanley Cups</td>
+                </tr>
+                <tr>
+                  <td>Blues</td>
+                  <td>STL</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <td>Flyers</td>
+                  <td>PHI</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>Maple Leafs</td>
+                  <td>TOR</td>
+                  <td>13</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Stanley Cups Team Location Stanley Cups",
+                "<table>"
+                "<tr><td>Stanley Cups</td><td/><td/></tr>"
+                "<tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr>"
+                "</table>",
+            ),
+            (
+                "Blues STL 1 Flyers PHI 2",
+                "<table>"
+                "<tr><td>Blues</td><td>STL</td><td>1</td></tr>"
+                "<tr><td>Flyers</td><td>PHI</td><td>2</td></tr>"
+                "</table>",
+            ),
+            (
+                "Maple Leafs TOR 13",
+                "<table>" "<tr><td>Maple Leafs</td><td>TOR</td><td>13</td></tr>" "</table>",
+            ),
+        ]
+
+    def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
+        opts = ChunkingOptions(max_characters=(100))
+        html_table = HtmlTable.from_html_text(
+            """
+            <html><body><table>
+              <tr>
+                <td>Lorem ipsum dolor sit amet.</td>
+                <td>   Consectetur    adipiscing     elit.   </td>
+                <td>
+                  Laboris nisi ut
+                  aliquip ex ea commodo.
+                </td>
+              </tr>
+              <tr>
+                <td>Duis</td>
+                <td>Dolor</td>
+              </tr>
+              <tr>
+                <td>Duis</td>
+                <td>Cillum</td>
+              </tr>
+            </table></body></html>
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Lorem ipsum dolor sit amet. Consectetur adipiscing elit.",
+                "<table><tr>"
+                "<td>Lorem ipsum dolor sit amet.</td>"
+                "<td>Consectetur adipiscing elit.</td>"
+                "</tr></table>",
+            ),
+            (
+                "Laboris nisi ut aliquip ex ea commodo.",
+                "<table><tr><td>Laboris nisi ut aliquip ex ea commodo.</td></tr></table>",
+            ),
+            (
+                "Duis Dolor Duis Cillum",
+                "<table>"
+                "<tr><td>Duis</td><td>Dolor</td></tr>"
+                "<tr><td>Duis</td><td>Cillum</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_splits_an_oversized_cell_on_an_even_word_boundary(self):
+        opts = ChunkingOptions(max_characters=(100))
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <thead>
+                <tr>
+                  <td>
+                    Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit.
+                    Sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                  </td>
+                  <td> Ut enim ad minim veniam.           </td>
+                  <td> Quis nostrud exercitation ullamco. </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Duis aute irure dolor</td></tr>
+                <tr><td>In reprehenderit voluptate.</td></tr>
+              </tbody>
+            </table
+            """
+        )
+
+        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do",
+                "<table>"
+                "<tr><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do</td></tr>"
+                "</table>",
+            ),
+            (
+                "eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "<table>"
+                "<tr><td>eiusmod tempor incididunt ut labore et dolore magna aliqua.</td></tr>"
+                "</table>",
+            ),
+            (
+                "Ut enim ad minim veniam. Quis nostrud exercitation ullamco.",
+                "<table><tr>"
+                "<td>Ut enim ad minim veniam.</td>"
+                "<td>Quis nostrud exercitation ullamco.</td>"
+                "</tr></table>",
+            ),
+            (
+                "Duis aute irure dolor In reprehenderit voluptate.",
+                "<table>"
+                "<tr><td>Duis aute irure dolor</td></tr>"
+                "<tr><td>In reprehenderit voluptate.</td></tr>"
+                "</table>",
+            ),
+        ]
+
+
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
 
@@ -1197,6 +1377,192 @@ class Describe_TextSplitter:
 
         assert s == "Lorem ipsum dolor amet consectetur adipiscing."
         assert remainder == "ipiscing. In rhoncus ipsum sed lectus."
+
+
+class Describe_CellAccumulator:
+    """Unit-test suite for `unstructured.chunking.base._CellAccumulator`."""
+
+    def it_is_empty_on_construction(self):
+        accum = _CellAccumulator(maxlen=100)
+
+        assert accum._cells == []
+
+    def it_accumulates_elements_added_to_it(self):
+        td = fragment_fromstring("<td>foobar</td>")
+        cell = HtmlCell(td)
+        accum = _CellAccumulator(maxlen=100)
+
+        accum.add_cell(cell)
+
+        assert accum._cells == [cell]
+
+    @pytest.mark.parametrize(
+        ("cell_html", "expected_value"),
+        [
+            ("<td/>", True),
+            ("<td>Lorem Ipsum.</td>", True),
+            ("<td>Lorem Ipsum dolor sit.</td>", True),
+            ("<td>Lorem Ipsum dolor sit amet.</td>", False),
+        ],
+    )
+    def it_will_fit_a_cell_with_text_shorter_than_maxlen_minus_33_when_empty(
+        self, cell_html: str, expected_value: bool
+    ):
+        """Cell text must be 22-chars or shorter to fit in 55-char window.
+
+        `<table><tr><td>...</td></tr></table>` overhead is 33 characters.
+        """
+        accum = _CellAccumulator(maxlen=55)
+        cell = HtmlCell(fragment_fromstring(cell_html))
+
+        assert accum.will_fit(cell) is expected_value
+
+    @pytest.mark.parametrize(
+        ("cell_html", "expected_value"),
+        [
+            ("<td/>", True),  # -- 0 --
+            ("<td>Lorem Ipsum.</td>", True),  # -- 12 --
+            ("<td>Lorem Ipsum amet.</td>", True),  # -- 17 --
+            ("<td>Lorem Ipsum dolor.</td>", False),  # -- 18 --
+            ("<td>Lorem Ipsum dolor sit amet.</td>", False),  # -- 27 --
+        ],
+    )
+    def and_it_will_fit_a_cell_with_text_shorter_than_remaining_space_minus_9_when_not_empty(
+        self, cell_html: str, expected_value: bool
+    ):
+        """Cell text must be 9-chars shorter than remaining space to fit with accumulated cells.
+
+        `<td>...</td>` overhead is 9 characters.
+        """
+        accum = _CellAccumulator(maxlen=85)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcdefghijklmnopqrstuvwxyz</td>")))
+        # -- remaining space is 85 - 26 -33 = 26; max new cell text len is 17 --
+        cell = HtmlCell(fragment_fromstring(cell_html))
+
+        assert accum.will_fit(cell) is expected_value
+
+    def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
+        accum = _CellAccumulator(maxlen=100)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcde fghij klmno</td>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno"
+        assert html == "<table><tr><td>abcde fghij klmno</td></tr></table>"
+        assert accum._cells == []
+
+    def and_the_HTML_contains_as_many_cells_as_were_accumulated(self):
+        accum = _CellAccumulator(maxlen=100)
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>abcde fghij klmno</td>")))
+        accum.add_cell(HtmlCell(fragment_fromstring("<td>pqrst uvwxy z</td>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno pqrst uvwxy z"
+        assert html == "<table><tr><td>abcde fghij klmno</td><td>pqrst uvwxy z</td></tr></table>"
+        assert accum._cells == []
+
+    def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
+        accum = _CellAccumulator(maxlen=100)
+
+        with pytest.raises(StopIteration):
+            next(accum.flush())
+
+
+class Describe_RowAccumulator:
+    """Unit-test suite for `unstructured.chunking.base._RowAccumulator`."""
+
+    def it_is_empty_on_construction(self):
+        accum = _RowAccumulator(maxlen=100)
+
+        assert accum._rows == []
+
+    def it_accumulates_rows_added_to_it(self):
+        accum = _RowAccumulator(maxlen=100)
+        row = HtmlRow(fragment_fromstring("<tr><td>foo</td><td>bar</td></tr>"))
+
+        accum.add_row(row)
+
+        assert accum._rows == [row]
+
+    @pytest.mark.parametrize(
+        ("row_html", "expected_value"),
+        [
+            ("<tr/>", True),  # -- 5 --
+            ("<tr><td/></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum.</td></tr>", True),  # -- 30 --
+            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem Ipsum dolor sit amet.</td></tr>", False),  # -- 45 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+        ],
+    )
+    def it_will_fit_a_row_with_HTML_shorter_than_maxlen_minus_15_when_empty(
+        self, row_html: str, expected_value: bool
+    ):
+        """Row HTML must be 40-chars or shorter to fit in 55-char chunking window.
+
+        `<table>...</table>` overhead is 15 characters.
+        """
+        accum = _RowAccumulator(maxlen=55)
+        row = HtmlRow(fragment_fromstring(row_html))
+
+        assert accum.will_fit(row) is expected_value
+
+    @pytest.mark.parametrize(
+        ("row_html", "expected_value"),
+        [
+            ("<tr/>", True),  # -- 5 --
+            ("<tr><td/></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum dolor sit</td></tr>", True),  # -- 39 --
+            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
+            ("<tr><td>Lorem</td><td>Sit amet.</td></tr>", False),  # -- 41 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+        ],
+    )
+    def and_it_will_fit_a_row_with_HTML_shorter_than_remaining_space_when_not_empty(
+        self, row_html: str, expected_value: bool
+    ):
+        """There is no overhead beyond row HTML for additional rows."""
+        accum = _RowAccumulator(maxlen=99)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>")))
+        # -- remaining space is 85 - 26 - 33 = 26; max new row HTML len is 40 --
+        row = HtmlRow(fragment_fromstring(row_html))
+
+        assert accum.will_fit(row) is expected_value
+
+    def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
+        accum = _RowAccumulator(maxlen=100)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno"
+        assert html == "<table><tr><td>abcde fghij klmno</td></tr></table>"
+        assert accum._rows == []
+
+    def and_the_HTML_contains_as_many_rows_as_were_accumulated(self):
+        accum = _RowAccumulator(maxlen=100)
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>")))
+
+        text, html = next(accum.flush())
+
+        assert text == "abcde fghij klmno pqrst uvwxy z"
+        assert html == (
+            "<table>"
+            "<tr><td>abcde fghij klmno</td></tr>"
+            "<tr><td>pqrst uvwxy z</td></tr>"
+            "</table>"
+        )
+        assert accum._rows == []
+
+    def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
+        accum = _RowAccumulator(maxlen=100)
+
+        with pytest.raises(StopIteration):
+            next(accum.flush())
 
 
 # ================================================================================================
