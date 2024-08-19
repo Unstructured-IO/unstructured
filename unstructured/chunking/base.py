@@ -9,6 +9,7 @@ from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 import regex
 from typing_extensions import Self, TypeAlias
 
+from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -45,6 +46,8 @@ BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
 """The kind of object produced by a pre-chunker."""
+
+TextAndHtml: TypeAlias = tuple[str, str]
 
 
 # ================================================================================================
@@ -441,37 +444,31 @@ class TablePreChunk:
 
     def iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
-        maxlen = self._opts.hard_max
-        text_remainder = self._text
-        html_remainder = self._table.metadata.text_as_html or ""
-
-        # -- only text-split a table when it's longer than the chunking window --
-        if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
-            # -- but the overlap-prefix must be added to its text --
-            yield Table(text=text_remainder, metadata=self._metadata)
+        # -- A table with no non-whitespace text produces no chunks --
+        if not self._table_text:
             return
 
-        split = self._opts.split
-        is_continuation = False
-
-        while text_remainder or html_remainder:
-            # -- split off the next chunk-worth of characters into a TableChunk --
-            chunk_text, text_remainder = split(text_remainder)
+        # -- only text-split a table when it's longer than the chunking window --
+        maxlen = self._opts.hard_max
+        if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
+            # -- use the compactified html for .text_as_html, even though we're not splitting --
             metadata = self._metadata
+            metadata.text_as_html = self._html or None
+            # -- note the overlap-prefix is prepended to its text --
+            yield Table(text=self._text_with_overlap, metadata=metadata)
+            return
 
-            # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
-            # -- HTML elements that *correspond* to the TextChunk.text fragment.
-            if html_remainder:
-                chunk_html, html_remainder = html_remainder[:maxlen], html_remainder[maxlen:]
-                metadata.text_as_html = chunk_html
+        # -- When there's no HTML, split it like a normal element. Also fall back to text-only
+        # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
+        # -- for a chunking window that small because the 33 characterss of HTML overhead for each
+        # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
+        # -- very small chunks.
+        if not self._html or self._opts.hard_max < 50:
+            yield from self._iter_text_only_table_chunks()
+            return
 
-            # -- mark second and later chunks as a continuation --
-            if is_continuation:
-                metadata.is_continuation = True
-
-            yield TableChunk(text=chunk_text, metadata=metadata)
-
-            is_continuation = True
+        # -- otherwise, form splits with "synchronized" text and html --
+        yield from self._iter_text_and_html_table_chunks()
 
     @lazyproperty
     def overlap_tail(self) -> str:
@@ -482,18 +479,80 @@ class TablePreChunk:
         trailing whitespace.
         """
         overlap = self._opts.inter_chunk_overlap
-        return self._text[-overlap:].strip() if overlap else ""
+        return self._text_with_overlap[-overlap:].strip() if overlap else ""
+
+    @lazyproperty
+    def _html(self) -> str:
+        """The compactified HTML for this table when it has text-as-HTML.
+
+        The empty string when table-structure has not been captured, perhaps because
+        `infer_table_structure` was set `False` in the partitioning call.
+        """
+        if not (html_table := self._html_table):
+            return ""
+
+        return html_table.html
+
+    @lazyproperty
+    def _html_table(self) -> HtmlTable | None:
+        """The `lxml` HTML element object for this table.
+
+        `None` when the `Table` element has no `.metadata.text_as_html`.
+        """
+        if (text_as_html := self._table.metadata.text_as_html) is None:
+            return None
+
+        text_as_html = text_as_html.strip()
+        if not text_as_html:  # pragma: no cover
+            return None
+
+        return HtmlTable.from_html_text(text_as_html)
+
+    def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
+        """Split table into chunks where HTML corresponds exactly to text.
+
+        `.metadata.text_as_html` for each chunk is a parsable `<table>` HTML fragment.
+        """
+        if (html_table := self._html_table) is None:  # pragma: no cover
+            raise ValueError("this method is undefined for a table having no .text_as_html")
+
+        is_continuation = False
+
+        for text, html in _TableSplitter.iter_subtables(html_table, self._opts):
+            metadata = self._metadata
+            metadata.text_as_html = html
+            # -- second and later chunks get `.metadata.is_continuation = True` --
+            metadata.is_continuation = is_continuation or None
+            is_continuation = True
+
+            yield TableChunk(text=text, metadata=metadata)
+
+    def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
+        """Split oversized text-only table (no text-as-html) into chunks."""
+        text_remainder = self._text_with_overlap
+        split = self._opts.split
+        is_continuation = False
+
+        while text_remainder:
+            # -- split off the next chunk-worth of characters into a TableChunk --
+            chunk_text, text_remainder = split(text_remainder)
+            metadata = self._metadata
+            # -- second and later chunks get `.metadata.is_continuation = True` --
+            metadata.is_continuation = is_continuation or None
+            is_continuation = True
+
+            yield TableChunk(text=chunk_text, metadata=metadata)
 
     @property
     def _metadata(self) -> ElementMetadata:
         """The base `.metadata` value for chunks formed from this pre-chunk.
 
-        The term "base" here means that other metadata fields will be added, depending on the chunk.
-        In particular, `.metadata.text_as_html` will be different for each text-split chunk and
-        `.metadata.is_continuation` must be added for second-and-later text-split chunks.
+        The term "base" here means that other metadata fields will be added, depending on the
+        chunk. In particular, `.metadata.text_as_html` will be different for each text-split chunk
+        and `.metadata.is_continuation` must be added for second-and-later text-split chunks.
 
         Note this is a fresh copy of the metadata on each call since it will need to be mutated
-        differently for each chunk formed from from this pre-chunk.
+        differently for each chunk formed from this pre-chunk.
         """
         CS = ConsolidationStrategy
         metadata = copy.deepcopy(self._table.metadata)
@@ -528,10 +587,15 @@ class TablePreChunk:
         return [orig_table]
 
     @lazyproperty
-    def _text(self) -> str:
+    def _table_text(self) -> str:
+        """The text in this table, not including any overlap-prefix or extra whitespace."""
+        return " ".join(self._table.text.split())
+
+    @lazyproperty
+    def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
-        table_text = self._table.text
+        table_text = self._table.text.strip()
         # -- use row-separator between overlap and table-text --
         return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
@@ -795,6 +859,82 @@ class TextPreChunk:
 # ================================================================================================
 
 
+class _TableSplitter:
+    """Produces (text, html) pairs for a `<table>` HtmlElement.
+
+    Each chunk contains a whole number of rows whenever possible. An oversized row is split on an
+    even cell boundary and a single cell that is by itself too big to fit in the chunking window
+    is divided by text-splitting.
+
+    The returned `html` value is always a parseable HTML `<table>` subtree.
+    """
+
+    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):
+        self._table_element = table_element
+        self._opts = opts
+
+    @classmethod
+    def iter_subtables(
+        cls, table_element: HtmlTable, opts: ChunkingOptions
+    ) -> Iterator[TextAndHtml]:
+        """Generate (text, html) pair for each split of this table pre-chunk.
+
+        Each split is on an even row boundary whenever possible, falling back to even cell and even
+        word boundaries when a row or cell is by itself oversized, respectively.
+        """
+        return cls(table_element, opts)._iter_subtables()
+
+    def _iter_subtables(self) -> Iterator[TextAndHtml]:
+        """Generate (text, html) pairs containing as many whole rows as will fit in window.
+
+        Falls back to splitting rows into whole cells when a single row is by itself too big to
+        fit in the chunking window.
+        """
+        accum = _RowAccumulator(maxlen=self._opts.hard_max)
+
+        for row in self._table_element.iter_rows():
+            # -- if row won't fit, any WIP chunk is done, send it on its way --
+            if not accum.will_fit(row):
+                yield from accum.flush()
+            # -- if row fits, add it to accumulator --
+            if accum.will_fit(row):
+                accum.add_row(row)
+            else:  # -- otherwise, single row is bigger than chunking window --
+                yield from self._iter_row_splits(row)
+
+        yield from accum.flush()
+
+    def _iter_row_splits(self, row: HtmlRow) -> Iterator[TextAndHtml]:
+        """Split oversized row into (text, html) pairs containing as many cells as will fit."""
+        accum = _CellAccumulator(maxlen=self._opts.hard_max)
+
+        for cell in row.iter_cells():
+            # -- if cell won't fit, flush and check again --
+            if not accum.will_fit(cell):
+                yield from accum.flush()
+            # -- if cell fits, add it to accumulator --
+            if accum.will_fit(cell):
+                accum.add_cell(cell)
+            else:  # -- otherwise, single cell is bigger than chunking window --
+                yield from self._iter_cell_splits(cell)
+
+        yield from accum.flush()
+
+    def _iter_cell_splits(self, cell: HtmlCell) -> Iterator[TextAndHtml]:
+        """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
+        # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
+        opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
+        split = _TextSplitter(opts)
+
+        text, remainder = split(cell.text)
+        yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+        # -- an oversized cell will have a remainder, split that up into additional chunks.
+        while remainder:
+            text, remainder = split(remainder)
+            yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+
 class _TextSplitter:
     """Provides a text-splitting function configured on construction.
 
@@ -909,6 +1049,97 @@ class _TextSplitter:
         tail = fragment[-tail_len:].lstrip()
         overlapped_remainder = tail + separator + raw_remainder
         return fragment, overlapped_remainder
+
+
+class _CellAccumulator:
+    """Incrementally build `<table>` fragment cell-by-cell to maximally fill chunking window.
+
+    Accumulate cells until chunking window is filled, then generate the text and HTML for the
+    subtable composed of all those rows that fit in the window.
+    """
+
+    def __init__(self, maxlen: int):
+        self._maxlen = maxlen
+        self._cells: list[HtmlCell] = []
+
+    def add_cell(self, cell: HtmlCell) -> None:
+        """Add `cell` to this accumulation. Caller is responsible for ensuring it will fit."""
+        self._cells.append(cell)
+
+    def flush(self) -> Iterator[TextAndHtml]:
+        """Generate zero-or-one (text, html) pairs for accumulated sub-sub-table."""
+        if not self._cells:
+            return
+        text = " ".join(self._iter_cell_texts())
+        tds_str = "".join(c.html for c in self._cells)
+        html = f"<table><tr>{tds_str}</tr></table>"
+        self._cells.clear()
+        yield text, html
+
+    def will_fit(self, cell: HtmlCell) -> bool:
+        """True when `cell` will fit within remaining space left by accummulated cells."""
+        return self._remaining_space >= len(cell.html)
+
+    def _iter_cell_texts(self) -> Iterator[str]:
+        """Generate contents of each accumulated cell as a separate string.
+
+        A cell that is empty or contains only whitespace does not generate a string.
+        """
+        for cell in self._cells:
+            if not (text := cell.text):
+                continue
+            yield text
+
+    @property
+    def _remaining_space(self) -> int:
+        """Number of characters remaining when accumulated cells are formed into HTML."""
+        # -- 24 is `len("<table><tr></tr></table>")`, the overhead in addition to `<td>`
+        # -- HTML fragments
+        return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
+
+
+class _RowAccumulator:
+    """Maybe `SubtableAccumulator`.
+
+    Accumulate rows until chunking window is filled, then generate the text and HTML for the
+    subtable composed of all those rows that fit in the window.
+    """
+
+    def __init__(self, maxlen: int):
+        self._maxlen = maxlen
+        self._rows: list[HtmlRow] = []
+
+    def add_row(self, row: HtmlRow) -> None:
+        """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
+        self._rows.append(row)
+
+    def flush(self) -> Iterator[TextAndHtml]:
+        """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
+        if not self._rows:
+            return
+        text = " ".join(self._iter_cell_texts())
+        trs_str = "".join(r.html for r in self._rows)
+        html = f"<table>{trs_str}</table>"
+        self._rows.clear()
+        yield text, html
+
+    def will_fit(self, row: HtmlRow) -> bool:
+        """True when `row` will fit within remaining space left by accummulated rows."""
+        return self._remaining_space >= len(row.html)
+
+    def _iter_cell_texts(self) -> Iterator[str]:
+        """Generate contents of each row cell as a separate string.
+
+        A cell that is empty or contains only whitespace does not generate a string.
+        """
+        for r in self._rows:
+            yield from r.iter_cell_texts()
+
+    @property
+    def _remaining_space(self) -> int:
+        """Number of characters remaining when accumulated rows are formed into HTML."""
+        # -- 15 is `len("<table></table>")`, the overhead in addition to `<tr>` HTML fragments --
+        return self._maxlen - 15 - sum(len(r.html) for r in self._rows)
 
 
 # ================================================================================================

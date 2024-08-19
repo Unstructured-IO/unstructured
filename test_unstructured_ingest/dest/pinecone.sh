@@ -110,7 +110,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 # to give it that time process the writes. Will timeout after checking for a minute.
 num_of_vectors_remote=0
 attempt=1
-sleep_amount=8
+sleep_amount=30
 while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   echo "attempt $attempt: sleeping $sleep_amount seconds to let index finish catching up after writes"
   sleep $sleep_amount
