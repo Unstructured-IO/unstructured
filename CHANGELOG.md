@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Bump NLTK version to 3.9 and revert to using `nltk.download()`.**
+* **Bump NLTK version to 3.9.1 and revert to using `nltk.download()`.**
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
 
 
