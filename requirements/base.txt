@@ -69,10 +69,8 @@ mypy-extensions==1.0.0
     #   unstructured-client
 nest-asyncio==1.6.0
     # via unstructured-client
-nltk==3.8.1
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+nltk==3.9.1
+    # via -r ./base.in
 numpy==1.26.4
     # via -r ./base.in
 ordered-set==4.1.0
