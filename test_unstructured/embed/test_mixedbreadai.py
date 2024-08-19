@@ -24,14 +24,13 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
 
     # Mock create_client to return our mock_client
     mocker.patch.object(MixedbreadAIEmbeddingEncoder, "create_client", return_value=mock_client)
+    breakpoint()
 
     encoder = MixedbreadAIEmbeddingEncoder(
         config=MixedbreadAIEmbeddingConfig(
             api_key="api_key", model_name="mixedbread-ai/mxbai-embed-large-v1"
         )
     )
-
-    encoder.initialize()
 
     elements = encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
