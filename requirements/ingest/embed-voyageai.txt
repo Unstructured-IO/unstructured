@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/embed-voyageai.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.3.7
     # via aiohttp
-aiohttp==3.10.3
+aiohttp==3.10.4
     # via
     #   langchain
     #   voyageai
@@ -44,9 +44,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.12
+langchain==0.2.14
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.29
+langchain-core==0.2.33
     # via
     #   langchain
     #   langchain-text-splitters

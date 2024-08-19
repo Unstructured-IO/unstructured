@@ -25,7 +25,7 @@ fsspec==2024.5.0
     #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.5
+huggingface-hub==0.24.6
     # via
     #   langchain-huggingface
     #   sentence-transformers
@@ -45,7 +45,7 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.29
+langchain-core==0.2.33
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
