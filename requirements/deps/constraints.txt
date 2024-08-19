@@ -59,3 +59,4 @@ langchain-community>=0.2.5
 
 grpcio==1.64.3
 label-studio-sdk==0.0.34
+nltk==3.8.1
