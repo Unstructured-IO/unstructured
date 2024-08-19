@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
 * **Add VoyageAI to V2 embedders**
 
 

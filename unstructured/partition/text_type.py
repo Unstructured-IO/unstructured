@@ -4,13 +4,7 @@ from __future__ import annotations
 
 import os
 import re
-import sys
-from typing import List, Optional
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final  # pragma: nocover
-else:
-    from typing import Final
+from typing import Final, List, Optional
 
 from unstructured.cleaners.core import remove_punctuation
 from unstructured.logger import trace_logger

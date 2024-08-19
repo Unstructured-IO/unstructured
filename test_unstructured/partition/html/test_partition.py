@@ -504,7 +504,7 @@ def test_partition_html_accommodates_tds_with_child_elements():
     )
     assert element.metadata.text_as_html == (
         "<table>"
-        "<tr><td></td><td></td></tr>"
+        "<tr><td/><td/></tr>"
         "<tr><td>☒</td><td>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES"
         " EXCHANGE ACT OF 1934</td></tr>"
         "</table>"
