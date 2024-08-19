@@ -120,7 +120,7 @@ def _download_nltk_packages_if_not_present():
         package_category="tokenizers", package_name="punkt_tab"
     )
 
-    if not (tokenizer_available or tagger_available):
+    if (not tokenizer_available) or (not tagger_available):
         download_nltk_packages()
 
 
