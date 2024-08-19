@@ -1,4 +1,4 @@
-## 0.15.6-dev0
+## 0.15.6-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* **Bump to NLTK 3.9.x** Bumps to the latest `nltk` version to resolve CVE.
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
 
 

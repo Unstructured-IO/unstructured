@@ -42,7 +42,7 @@ requests==2.32.3
     #   singlestoredb
 singlestoredb==1.6.2
     # via -r ./ingest/singlestore.in
-sqlparams==6.0.1
+sqlparams==6.1.0
     # via singlestoredb
 tomli==2.0.1
     # via
