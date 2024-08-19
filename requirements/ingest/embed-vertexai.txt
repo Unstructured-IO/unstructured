@@ -85,8 +85,9 @@ googleapis-common-protos[grpc]==1.63.2
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.65.5
+grpcio==1.64.3
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   google-api-core
     #   googleapis-common-protos
     #   grpc-google-iam-v1

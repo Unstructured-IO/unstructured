@@ -22,7 +22,9 @@ contextlib2==21.6.0
 googleapis-common-protos==1.63.2
     # via clarifai-grpc
 grpcio==1.64.3
-    # via clarifai-grpc
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   clarifai-grpc
 idna==3.7
     # via
     #   -c ./ingest/../base.txt

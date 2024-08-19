@@ -65,8 +65,9 @@ google-auth==2.34.0
     # via kubernetes
 googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.65.5
+grpcio==1.64.3
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
 h11==0.14.0
@@ -76,7 +77,7 @@ h11==0.14.0
     #   uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.24.5
+huggingface-hub==0.24.6
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs

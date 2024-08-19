@@ -25,7 +25,7 @@ fsspec==2024.5.0
     #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.5
+huggingface-hub==0.24.6
     # via
     #   langchain-huggingface
     #   sentence-transformers

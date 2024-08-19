@@ -52,8 +52,10 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.5
-    # via -r ./test.in
+grpcio==1.64.3
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./test.in
 h11==0.14.0
     # via
     #   -c ./base.txt

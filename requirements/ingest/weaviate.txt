@@ -32,8 +32,9 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.5
+grpcio==1.64.3
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   grpcio-health-checking
     #   grpcio-tools
     #   weaviate-client

@@ -56,3 +56,5 @@ fsspec==2024.5.0
 wrapt>=1.14.0
 
 langchain-community>=0.2.5
+
+grpcio==1.64.3
