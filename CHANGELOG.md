@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Fix NLTK data download path**. Modified the NLTK data download process to use the parent directory when the current path ends with "nltk_data". This change prevents redundant directory creation and ensures proper data storage location.
+* **Fix NLTK data download path to prevent nested directories**. Resolved an issue where a nested "nltk_data" directory was created within the parent "nltk_data" directory when it already existed. This fix prevents errors in checking for existing downloads and loading models from NLTK data.
 
 ## 0.15.6
 
