@@ -4,9 +4,8 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==3.7.1
+anyio==4.4.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   httpx
 astor==0.8.1
@@ -198,6 +197,7 @@ tqdm==4.66.5
 typing-extensions==4.12.2
     # via
     #   -c ./base.txt
+    #   anyio
     #   paddlepaddle
 unstructured-paddleocr==2.8.0.1
     # via -r ./extra-paddleocr.in
