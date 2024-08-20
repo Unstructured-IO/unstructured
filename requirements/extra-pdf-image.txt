@@ -58,7 +58,7 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.64.3
+grpcio==1.65.5
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -273,7 +273,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.44.0
+transformers==4.44.1
     # via unstructured-inference
 typing-extensions==4.12.2
     # via
