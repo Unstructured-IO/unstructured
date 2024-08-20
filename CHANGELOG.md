@@ -1,3 +1,13 @@
+## 0.15.7
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix NLTK data download path**. Modified the NLTK data download process to use the parent directory when the current path ends with "nltk_data". This change prevents redundant directory creation and ensures proper data storage location.
+
 ## 0.15.6
 
 ### Enhancements
@@ -9,7 +19,6 @@
 * **Bump to NLTK 3.9.x** Bumps to the latest `nltk` version to resolve CVE.
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
 * **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
-
 
 ## 0.15.5
 
