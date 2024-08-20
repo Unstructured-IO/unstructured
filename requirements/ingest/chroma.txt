@@ -65,7 +65,7 @@ google-auth==2.34.0
     # via kubernetes
 googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.64.3
+grpcio==1.65.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   chromadb
@@ -87,7 +87,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==8.2.0
+importlib-metadata==8.4.0
     # via -r ./ingest/chroma.in
 importlib-resources==6.4.3
     # via chromadb
@@ -240,7 +240,7 @@ watchfiles==0.23.0
     # via uvicorn
 websocket-client==1.8.0
     # via kubernetes
-websockets==12.0
+websockets==13.0
     # via uvicorn
 wrapt==1.16.0
     # via

@@ -21,7 +21,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.64.3
+grpcio==1.65.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
