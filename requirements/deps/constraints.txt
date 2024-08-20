@@ -12,7 +12,6 @@ wheel>=0.38.1
 # vulnerabilities in dependency scans
 certifi>=2023.7.22
 scipy<1.11.4
-IPython<8.13
 grpcio>=1.65.5
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
