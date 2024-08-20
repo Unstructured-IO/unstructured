@@ -6,9 +6,8 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==3.7.1
+anyio==4.4.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   httpx
 appdirs==1.4.4
@@ -214,6 +213,7 @@ types-urllib3==1.26.25.14
 typing-extensions==4.12.2
     # via
     #   -c ./base.txt
+    #   anyio
     #   black
     #   label-studio-sdk
     #   mypy

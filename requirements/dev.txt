@@ -4,9 +4,8 @@
 #
 #    pip-compile ./dev.in
 #
-anyio==3.7.1
+anyio==4.4.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   -c ./test.txt
     #   jupyter-server
@@ -344,6 +343,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt
+    #   anyio
     #   ipython
 virtualenv==20.26.3
     # via pre-commit

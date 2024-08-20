@@ -4,10 +4,8 @@
 #
 #    pip-compile ./base.in
 #
-anyio==3.7.1
-    # via
-    #   -c ././deps/constraints.txt
-    #   httpx
+anyio==4.4.0
+    # via httpx
 backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
@@ -121,6 +119,7 @@ tqdm==4.66.5
 typing-extensions==4.12.2
     # via
     #   -r ./base.in
+    #   anyio
     #   emoji
     #   pypdf
     #   typing-inspect
