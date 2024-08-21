@@ -168,9 +168,8 @@ scikit-image==0.24.0
     # via
     #   imgaug
     #   unstructured-paddleocr
-scipy==1.11.3
+scipy==1.13.1
     # via
-    #   -c ././deps/constraints.txt
     #   imgaug
     #   scikit-image
 shapely==2.0.6

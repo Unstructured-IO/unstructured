@@ -59,7 +59,7 @@ langchain-openai==0.1.22
     # via -r ./ingest/embed-openai.in
 langsmith==0.1.100
     # via langchain-core
-openai==1.41.1
+openai==1.42.0
     # via langchain-openai
 orjson==3.10.7
     # via langsmith

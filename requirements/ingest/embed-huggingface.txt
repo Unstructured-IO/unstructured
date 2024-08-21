@@ -124,9 +124,8 @@ safetensors==0.4.4
     # via transformers
 scikit-learn==1.5.1
     # via sentence-transformers
-scipy==1.11.3
+scipy==1.13.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   scikit-learn
     #   sentence-transformers
 sentence-transformers==3.0.1
