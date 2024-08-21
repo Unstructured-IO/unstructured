@@ -61,7 +61,7 @@ class PineconeCliWriteConfig(PineconeWriteConfig, CliConfig):
                 type=str,
                 required=False,
                 help="The namespace where the vectors will be upserted in the index",
-            )
+            ),
         ]
         return options
 
