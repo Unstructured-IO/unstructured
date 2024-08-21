@@ -11,10 +11,8 @@ wheel>=0.38.1
 # NOTE(robinson) - The following pins are to address
 # vulnerabilities in dependency scans
 certifi>=2023.7.22
-# From pycocotools in local-inference
-pyparsing<3.1.0
 scipy<1.11.4
-IPython<8.13
+grpcio>=1.65.5
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
 Office365-REST-Python-Client<2.4.3
@@ -26,8 +24,6 @@ Office365-REST-Python-Client<2.4.3
 weaviate-client>3.25.0
 # TODO: Pinned in transformers package, remove when that gets updated
 tokenizers>=0.19,<0.20
-# langchain limits anyio to below 4.0
-anyio<4.0
 # NOTE(crag): earlier versions fail in compilation step when pip installing the package
 pycocotools>=2.0.7
 # NOTE(crag): python3.8-python3.11 compat (if it ends up being required)
@@ -56,6 +52,3 @@ fsspec==2024.5.0
 wrapt>=1.14.0
 
 langchain-community>=0.2.5
-
-grpcio==1.64.3
-label-studio-sdk==0.0.34
