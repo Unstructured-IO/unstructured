@@ -70,6 +70,10 @@ def download_nltk_packages():
     if nltk_data_dir is None:
         raise OSError("NLTK data directory does not exist or is not writable.")
 
+    # Check if the path ends with "nltk_data" and remove it if it does
+    if nltk_data_dir.endswith("nltk_data"):
+        nltk_data_dir = os.path.dirname(nltk_data_dir)
+
     def sha256_checksum(filename: str, block_size: int = 65536):
         sha256 = hashlib.sha256()
         with open(filename, "rb") as f:
@@ -120,7 +124,7 @@ def _download_nltk_packages_if_not_present():
         package_category="tokenizers", package_name="punkt_tab"
     )
 
-    if not (tokenizer_available and tagger_available):
+    if (not tokenizer_available) or (not tagger_available):
         download_nltk_packages()
 
 

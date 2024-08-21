@@ -1,3 +1,47 @@
+## 0.15.8-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix NLTK data download path to prevent nested directories**. Resolved an issue where a nested "nltk_data" directory was created within the parent "nltk_data" directory when it already existed. This fix prevents errors in checking for existing downloads and loading models from NLTK data.
+
+## 0.15.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Bump to NLTK 3.9.x** Bumps to the latest `nltk` version to resolve CVE.
+* **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
+
+## 0.15.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Revert to using `unstructured.pytesseract` fork**. Due to the unavailability of some recent release versions of `pytesseract` on PyPI, the project now uses the `unstructured.pytesseract` fork to ensure stability and continued support.
+* **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
+* **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
+
+## 0.15.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Resolve an installation error with `pytesseract>=0.3.12` that occurred during `pip install unstructured[pdf]==0.15.3`.**
+
 ## 0.15.3
 
 ### Enhancements

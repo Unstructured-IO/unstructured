@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/embed-aws-bedrock.in
 #
-aiohappyeyeballs==2.3.5
+aiohappyeyeballs==2.4.0
     # via aiohttp
-aiohttp==3.10.3
+aiohttp==3.10.5
     # via
     #   langchain
     #   langchain-community
@@ -14,6 +14,10 @@ aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
+anyio==4.4.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   httpx
 async-timeout==4.0.3
     # via
     #   aiohttp
@@ -31,6 +35,8 @@ certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
+    #   httpcore
+    #   httpx
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -40,13 +46,31 @@ dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
+exceptiongroup==1.2.2
+    # via
+    #   -c ./ingest/../base.txt
+    #   anyio
 frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
+h11==0.14.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   httpcore
+httpcore==1.0.5
+    # via
+    #   -c ./ingest/../base.txt
+    #   httpx
+httpx==0.27.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   langsmith
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
+    #   anyio
+    #   httpx
     #   requests
     #   yarl
 jmespath==1.0.1
@@ -57,25 +81,25 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.12
+langchain==0.2.14
     # via langchain-community
-langchain-community==0.2.11
+langchain-community==0.2.12
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.29
+langchain-core==0.2.33
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.99
+langsmith==0.1.100
     # via
     #   langchain
     #   langchain-community
     #   langchain-core
-marshmallow==3.21.3
+marshmallow==3.22.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
@@ -94,10 +118,9 @@ numpy==1.26.4
     #   langchain-community
 orjson==3.10.7
     # via langsmith
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
 pydantic==2.8.2
@@ -128,6 +151,11 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   python-dateutil
+sniffio==1.3.1
+    # via
+    #   -c ./ingest/../base.txt
+    #   anyio
+    #   httpx
 sqlalchemy==2.0.32
     # via
     #   langchain
@@ -140,6 +168,7 @@ tenacity==8.5.0
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
+    #   anyio
     #   langchain-core
     #   pydantic
     #   pydantic-core

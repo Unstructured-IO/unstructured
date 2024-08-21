@@ -19,12 +19,11 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-importlib-metadata==8.2.0
+importlib-metadata==8.4.0
     # via build
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   build
 parsimonious==0.10.0
     # via singlestoredb
@@ -42,7 +41,7 @@ requests==2.32.3
     #   singlestoredb
 singlestoredb==1.6.2
     # via -r ./ingest/singlestore.in
-sqlparams==6.0.1
+sqlparams==6.1.0
     # via singlestoredb
 tomli==2.0.1
     # via

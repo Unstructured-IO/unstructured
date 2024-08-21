@@ -26,8 +26,7 @@ RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 
-RUN python3.10 -c "import nltk; nltk.download('punkt')" && \
-  python3.10 -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+RUN python3.10 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 FROM deps as code
 
