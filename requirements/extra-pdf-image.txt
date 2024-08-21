@@ -41,9 +41,8 @@ flatbuffers==24.3.25
     # via onnxruntime
 fonttools==4.53.1
     # via matplotlib
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
 google-api-core[grpc]==2.19.1
@@ -149,7 +148,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.4
     # via layoutparser
-pikepdf==9.1.1
+pikepdf==9.1.2
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via

@@ -39,10 +39,8 @@ urllib3<1.27
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
 botocore<1.34.132
 
-# NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
+# NOTE(jennings): pinned due to older versions not supporting api_key_auth in UnstructuredClient
 unstructured-client>=0.15.1
-
-fsspec==2024.5.0
 
 # python 3.12 support
 wrapt>=1.14.0

@@ -23,9 +23,8 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==43.0.0
     # via boxsdk
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/box.in
     #   boxfs
 idna==3.7
