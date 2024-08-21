@@ -30,9 +30,8 @@ filelock==3.15.4
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
 h11==0.14.0

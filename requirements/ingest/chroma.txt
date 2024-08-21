@@ -56,10 +56,8 @@ filelock==3.15.4
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
-fsspec==2024.5.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   huggingface-hub
+fsspec==2024.6.1
+    # via huggingface-hub
 google-auth==2.34.0
     # via kubernetes
 googleapis-common-protos==1.63.2
