@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import html
 import io
 import itertools
 import os
@@ -23,11 +22,11 @@ from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -498,7 +497,7 @@ class _DocxPartitioner:
         # NOTE(scanny) - if all that fails we give it the default `Text` element-type
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
-    def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
+    def _convert_table_to_html(self, table: DocxTable) -> str:
         """HTML string version of `table`.
 
         Example:
@@ -520,44 +519,38 @@ class _DocxPartitioner:
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
 
-            A table nested in `cell` is converted to HTML and emitted as that string.
+            A table nested in `cell` is converted to the normalized text it contains.
             """
             for block_item in cell.iter_inner_content():
-                if isinstance(block_item, Paragraph):
+                if isinstance(paragraph := block_item, Paragraph):
                     # -- all docx content is ultimately in a paragraph; a nested table contributes
                     # -- structure only
-                    yield f"{html.escape(block_item.text)}"
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield self._convert_table_to_html(block_item, is_nested=True)
+                    yield paragraph.text
+                elif isinstance(table := block_item, DocxTable):
+                    for row in table.rows:
+                        yield from iter_row_cells_as_text(row)
 
         def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
-            """Generate the text of each cell in `row` as a separate string.
+            """Generate the normalized text of each cell in `row` as a separate string.
 
-            The text of each paragraph within a cell is separated from the next by a newline
-            (`"\n"`). A table nested in a cell is first converted to HTML and then included as a
-            string, also separated by a newline.
+            The text of each paragraph within a cell is not separated. A table nested in a cell is
+            converted to a normalized string of its contents and combined with the text of the
+            cell that contains the table.
             """
-            # -- each omitted cell at the start of the row (pretty rare) gets the empty string --
+            # -- Each omitted cell at the start of the row (pretty rare) gets the empty string.
+            # -- This preserves column alignment when one or more initial cells are omitted.
             for _ in range(row.grid_cols_before):
                 yield ""
 
             for cell in row.cells:
-                yield "\n".join(iter_cell_block_items(cell))
+                cell_text = " ".join(iter_cell_block_items(cell))
+                yield " ".join(cell_text.split())
 
-            # -- each omitted cell at the end of the row (also rare) gets the empty string --
+            # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
                 yield ""
 
-        return tabulate(
-            [list(iter_row_cells_as_text(row)) for row in table.rows],
-            headers=[] if is_nested else "firstrow",
-            # -- tabulate isn't really designed for recursive tables so we have to do any
-            # -- HTML-escaping for ourselves. `unsafehtml` disables tabulate html-escaping of cell
-            # -- contents.
-            tablefmt="unsafehtml",
-        )
+        return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
 
     @lazyproperty
     def _document(self) -> Document:
