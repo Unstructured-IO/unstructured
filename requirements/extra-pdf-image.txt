@@ -58,7 +58,7 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.64.3
+grpcio==1.65.5
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -192,10 +192,8 @@ pycocotools==2.0.8
     #   effdet
 pycparser==2.22
     # via cffi
-pyparsing==3.0.9
-    # via
-    #   -c ././deps/constraints.txt
-    #   matplotlib
+pyparsing==3.1.2
+    # via matplotlib
 pypdf==4.3.1
     # via
     #   -c ./base.txt
@@ -275,7 +273,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.44.0
+transformers==4.44.1
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

@@ -15,13 +15,13 @@ charset-normalizer==3.3.2
     #   requests
 clarifai==10.7.0
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.7.2
+clarifai-grpc==10.7.1
     # via clarifai
 contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.63.2
     # via clarifai-grpc
-grpcio==1.64.3
+grpcio==1.65.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc

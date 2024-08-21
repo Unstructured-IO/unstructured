@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     #   requests
 google-api-core==2.19.1
     # via google-api-python-client
-google-api-python-client==2.141.0
+google-api-python-client==2.142.0
     # via -r ./ingest/google-drive.in
 google-auth==2.34.0
     # via
@@ -50,10 +50,8 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pyparsing==3.0.9
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   httplib2
+pyparsing==3.1.2
+    # via httplib2
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
