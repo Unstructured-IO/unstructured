@@ -63,10 +63,9 @@ openai==1.42.0
     # via langchain-openai
 orjson==3.10.7
     # via langsmith
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
 pydantic==2.8.2
     # via

@@ -67,10 +67,9 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   cassio
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   deprecation
 pymongo==4.8.0
     # via astrapy

@@ -128,9 +128,8 @@ opencv-python==4.8.0.76
     #   -c ././deps/constraints.txt
     #   layoutparser
     #   unstructured-inference
-packaging==23.2
+packaging==24.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   huggingface-hub
     #   matplotlib

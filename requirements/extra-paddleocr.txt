@@ -119,9 +119,8 @@ openpyxl==3.1.5
     # via unstructured-paddleocr
 opt-einsum==3.3.0
     # via paddlepaddle
-packaging==23.2
+packaging==24.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   lazy-loader
     #   matplotlib

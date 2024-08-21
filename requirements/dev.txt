@@ -184,9 +184,8 @@ notebook-shim==0.2.4
     #   notebook
 overrides==7.7.0
     # via jupyter-server
-packaging==23.2
+packaging==24.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   -c ./test.txt
     #   build

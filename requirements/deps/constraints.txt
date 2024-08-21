@@ -32,9 +32,6 @@ opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
 platformdirs==3.10.0
 
-# TODO: Constraint due to langchain, remove when that gets updated:
-packaging<24.0
-
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
 # updated or we drop support for 3.9
 urllib3<1.27

@@ -90,10 +90,9 @@ numpy==1.26.4
     #   transformers
 orjson==3.10.7
     # via langsmith
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   langchain-core
     #   transformers
