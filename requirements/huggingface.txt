@@ -55,9 +55,8 @@ numpy==1.26.4
     # via
     #   -c ./base.txt
     #   transformers
-packaging==23.2
+packaging==24.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   huggingface-hub
     #   transformers

@@ -90,10 +90,9 @@ numpy==1.26.4
     #   transformers
 orjson==3.10.7
     # via langsmith
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   langchain-core
     #   transformers
@@ -124,9 +123,8 @@ safetensors==0.4.4
     # via transformers
 scikit-learn==1.5.1
     # via sentence-transformers
-scipy==1.11.3
+scipy==1.13.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   scikit-learn
     #   sentence-transformers
 sentence-transformers==3.0.1

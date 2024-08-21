@@ -21,10 +21,9 @@ idna==3.7
     #   requests
 importlib-metadata==8.4.0
     # via build
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   build
 parsimonious==0.10.0
     # via singlestoredb

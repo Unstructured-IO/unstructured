@@ -125,10 +125,9 @@ opentelemetry-semantic-conventions==0.37b0
     # via opentelemetry-sdk
 overrides==7.7.0
     # via chromadb
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   build
     #   huggingface-hub
     #   onnxruntime
