@@ -25,12 +25,12 @@
   },
   {
     "type": "Table",
-    "element_id": "8d70ea477d9db14ed01ff1d39a118a42",
-    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n",
+    "element_id": "259d8a8f4c2a333beff68f08c5fbf43f",
+    "text": "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13",
     "metadata": {
       "page_name": "Stanley Cups",
       "page_number": 1,
-      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>",
+      "text_as_html": "<table><tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr><tr><td>Blues</td><td>STL</td><td>1</td></tr><tr><td>Flyers</td><td>PHI</td><td>2</td></tr><tr><td>Maple Leafs</td><td>TOR</td><td>13</td></tr></table>",
       "languages": [
         "eng"
       ],
@@ -74,12 +74,12 @@
   },
   {
     "type": "Table",
-    "element_id": "310cd42767ffd563f6639210df793c5b",
-    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n",
+    "element_id": "00c1e0e7211ccb6dffedf7c9091d8798",
+    "text": "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 0",
     "metadata": {
       "page_name": "Stanley Cups Since 67",
       "page_number": 2,
-      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>0</td>\n    </tr>\n  </tbody>\n</table>",
+      "text_as_html": "<table><tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr><tr><td>Blues</td><td>STL</td><td>1</td></tr><tr><td>Flyers</td><td>PHI</td><td>2</td></tr><tr><td>Maple Leafs</td><td>TOR</td><td>0</td></tr></table>",
       "languages": [
         "eng"
       ],

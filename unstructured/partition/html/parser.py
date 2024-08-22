@@ -7,8 +7,8 @@ The names "flow" and "phrasing" derive from the language of the HTML Standard.
 PRINCIPLES
 
 - _Elements are paragraphs._ Each paragraph in the HTML document should become a distinct element.
-  In particular, a paragraph should not be split into two elements and an element should not contain
-  more than one paragraph.
+  In particular, a paragraph should not be split into two elements and an element should not
+  contain more than one paragraph.
 
 - _An empty paragraph is not an Element._ A paragraph which contains no text or contains only
   whitespace does not give rise to an Element (is skipped).
@@ -29,12 +29,12 @@ PRINCIPLES
   _phrasing content_ (aka. _inline content_).
   - As an example, a `<p>` element is a block item and a `<b>` element is phrasing.
   - A block item starts a new paragraph and so represents an Element boundary.
-  - A phrasing item affects the appearance of a run of text within a paragraph, like
-    making it bold or making it into a link.
-  - Some elements can take either role, depending upon there ancestors and descendants.
-  - The final authority for whether a particular element is displayed as a block or as
-    inline "formatting" is the CSS. We do not attempt to interpret the CSS and assume
-    the default role for each element.
+  - A phrasing item affects the appearance of a run of text within a paragraph, like making it
+    bold or making it into a link.
+  - Some elements can take either role, depending upon their ancestors and descendants.
+  - The final authority for whether a particular element is displayed as a block or as inline
+    "formatting" is the CSS. We do not attempt to interpret the CSS and assume the default role
+    for each element.
 
 Other background
 
@@ -44,9 +44,9 @@ Other background
   there may be ambiguity.
 
 - The parser is primarily composed of `lxml` Custom Element Classes. The gist is you write a class
-  like `Anchor` and then tell the `lxml` parser that all `<a>` elements should be instantiated using
-  the `Anchor` class. We also provide a default class for any elements that we haven't called out
-  explicitly.
+  like `Anchor` and then tell the `lxml` parser that all `<a>` elements should be instantiated
+  using the `Anchor` class. We also provide a default class for any elements that we haven't
+  called out explicitly.
 
 - _Anatomy of an HTML element._ Some basic terms are important to know to understand the domain
   language of the parser code. Consider this example:
