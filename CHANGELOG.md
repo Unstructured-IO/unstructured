@@ -1,6 +1,8 @@
-## 0.15.8-dev3
+## 0.15.8-dev4
 
 ### Enhancements
+
+* **Bump unstructured.paddleocr to 2.8.1.0.**
 
 ### Features
 
