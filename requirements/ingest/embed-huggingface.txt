@@ -52,7 +52,7 @@ huggingface-hub==0.24.6
     #   sentence-transformers
     #   tokenizers
     #   transformers
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -68,11 +68,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.33
+langchain-core==0.2.34
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.100
+langsmith==0.1.104
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -154,7 +154,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.44.1
+transformers==4.44.2
     # via
     #   langchain-huggingface
     #   sentence-transformers

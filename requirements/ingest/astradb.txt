@@ -57,7 +57,7 @@ httpx[http2]==0.27.0
     #   astrapy
 hyperframe==6.0.1
     # via h2
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio

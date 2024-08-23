@@ -10,10 +10,6 @@ anyio==4.4.0
     #   httpx
 astor==0.8.1
     # via paddlepaddle
-attrdict==2.0.1
-    # via unstructured-paddleocr
-cachetools==5.5.0
-    # via premailer
 certifi==2024.7.4
     # via
     #   -c ././deps/constraints.txt
@@ -27,18 +23,12 @@ charset-normalizer==3.3.2
     #   requests
 contourpy==1.2.1
     # via matplotlib
-cssselect==1.2.0
-    # via premailer
-cssutils==2.11.1
-    # via premailer
 cycler==0.12.1
     # via matplotlib
 cython==3.0.11
     # via unstructured-paddleocr
 decorator==5.1.1
     # via paddlepaddle
-et-xmlfile==1.1.0
-    # via openpyxl
 exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
@@ -57,7 +47,7 @@ httpx==0.27.0
     # via
     #   -c ./base.txt
     #   paddlepaddle
-idna==3.7
+idna==3.8
     # via
     #   -c ./base.txt
     #   anyio
@@ -69,23 +59,14 @@ imageio==2.35.1
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-resources==6.4.3
+importlib-resources==6.4.4
     # via matplotlib
 kiwisolver==1.4.5
     # via matplotlib
-lanms-neo==1.0.2
-    # via unstructured-paddleocr
 lazy-loader==0.4
     # via scikit-image
-lxml==5.3.0
-    # via
-    #   -c ./base.txt
-    #   premailer
-    #   unstructured-paddleocr
 matplotlib==3.9.2
     # via imgaug
-more-itertools==10.4.0
-    # via cssutils
 networkx==3.2.1
     # via
     #   paddlepaddle
@@ -106,17 +87,12 @@ numpy==1.26.4
     #   shapely
     #   tifffile
     #   unstructured-paddleocr
-opencv-contrib-python==4.8.0.76
+opencv-contrib-python==4.10.0.84
+    # via unstructured-paddleocr
+opencv-python==4.10.0.84
     # via
-    #   -c ././deps/constraints.txt
-    #   unstructured-paddleocr
-opencv-python==4.8.0.76
-    # via
-    #   -c ././deps/constraints.txt
     #   imgaug
     #   unstructured-paddleocr
-openpyxl==3.1.5
-    # via unstructured-paddleocr
 opt-einsum==3.3.0
     # via paddlepaddle
 packaging==24.1
@@ -138,8 +114,6 @@ pillow==10.4.0
     #   pdf2image
     #   scikit-image
     #   unstructured-paddleocr
-premailer==3.10.0
-    # via unstructured-paddleocr
 protobuf==4.23.4
     # via
     #   -c ././deps/constraints.txt
@@ -161,7 +135,6 @@ rapidfuzz==3.9.6
 requests==2.32.3
     # via
     #   -c ./base.txt
-    #   premailer
     #   unstructured-paddleocr
 scikit-image==0.24.0
     # via
@@ -178,7 +151,6 @@ shapely==2.0.6
 six==1.16.0
     # via
     #   -c ./base.txt
-    #   attrdict
     #   imgaug
     #   python-dateutil
 sniffio==1.3.1
@@ -197,7 +169,7 @@ typing-extensions==4.12.2
     #   -c ./base.txt
     #   anyio
     #   paddlepaddle
-unstructured-paddleocr==2.8.0.1
+unstructured-paddleocr==2.8.1.0
     # via -r ./extra-paddleocr.in
 urllib3==1.26.19
     # via

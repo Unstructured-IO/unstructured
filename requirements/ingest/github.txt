@@ -21,7 +21,7 @@ cryptography==43.0.0
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

@@ -25,7 +25,7 @@ cryptography==43.0.0
     # via
     #   msal
     #   pyjwt
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
