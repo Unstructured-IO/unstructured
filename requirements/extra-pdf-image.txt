@@ -57,7 +57,7 @@ googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -72,11 +72,11 @@ huggingface-hub==0.24.6
     #   unstructured-inference
 humanfriendly==10.0
     # via coloredlogs
-idna==3.7
+idna==3.8
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.4.3
+importlib-resources==6.4.4
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -122,9 +122,8 @@ onnx==1.16.2
     #   unstructured-inference
 onnxruntime==1.19.0
     # via unstructured-inference
-opencv-python==4.8.0.76
+opencv-python==4.10.0.84
     # via
-    #   -c ././deps/constraints.txt
     #   layoutparser
     #   unstructured-inference
 packaging==24.1
@@ -269,7 +268,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.44.1
+transformers==4.44.2
     # via unstructured-inference
 typing-extensions==4.12.2
     # via

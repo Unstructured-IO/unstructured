@@ -27,9 +27,6 @@ tokenizers>=0.19,<0.20
 pycocotools>=2.0.7
 # NOTE(crag): python3.8-python3.11 compat (if it ends up being required)
 torch>2
-# pinned in unstructured paddleocr
-opencv-python==4.8.0.76
-opencv-contrib-python==4.8.0.76
 platformdirs==3.10.0
 
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets

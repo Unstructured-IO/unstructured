@@ -20,7 +20,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
@@ -45,7 +45,7 @@ httpx[http2]==0.27.0
     #   qdrant-client
 hyperframe==6.0.1
     # via h2
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio

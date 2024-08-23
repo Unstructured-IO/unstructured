@@ -68,7 +68,7 @@ google-resumable-media==2.7.2
     # via google-cloud-storage
 googleapis-common-protos==1.63.2
     # via google-api-core
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

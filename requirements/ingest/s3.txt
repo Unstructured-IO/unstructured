@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/s3.in
 #
-aiobotocore==2.13.2
+aiobotocore==2.13.3
     # via s3fs
 aiohappyeyeballs==2.4.0
     # via aiohttp
@@ -32,7 +32,7 @@ fsspec==2024.6.1
     # via
     #   -r ./ingest/s3.in
     #   s3fs
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   yarl
