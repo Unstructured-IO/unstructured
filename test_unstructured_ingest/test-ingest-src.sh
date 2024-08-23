@@ -62,6 +62,7 @@ all_tests=(
   'local-embed-octoai.sh'
   'local-embed-vertexai.sh'
   'local-embed-voyageai.sh'
+  'local-embed-nvidia.sh'
   'sftp.sh'
   'opensearch.sh'
   'mongodb.sh'

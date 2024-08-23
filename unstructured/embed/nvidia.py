@@ -67,7 +67,7 @@ class NVIDIAAIEmbeddingEncoder(BaseEmbeddingEncoder):
         return elements
 
     @EmbeddingEncoderConnectionError.wrap
-    # @requires_dependencies(["langchain-nvidia-ai-endpoints"])
+    @requires_dependencies(["langchain-nvidia-ai-endpoints"])
     def create_client(self) -> "NVIDIAEmbeddings":
         """Creates a langchain NVIDIA python client to embed elements."""
         from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings

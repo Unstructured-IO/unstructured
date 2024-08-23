@@ -241,6 +241,14 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return VoyageAIEmbeddingEncoder(config=VoyageAIEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-nvidia-ai-endpoints":
+            from unstructured.embed.nvidia import (
+                NVIDIAEmbeddingConfig,
+                NVIDIAAIEmbeddingEncoder,
+            )
+
+            return NVIDIAAIEmbeddingEncoder(config=NVIDIAEmbeddingConfig(**kwargs))        
+
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
