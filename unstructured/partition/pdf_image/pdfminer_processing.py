@@ -8,6 +8,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
     open_pdfminer_pages_generator,
     rect_to_bbox,
+    extract_text_objects,
 )
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, Source
@@ -56,6 +57,7 @@ def process_data_with_pdfminer(
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
 
             if hasattr(obj, "get_text"):
+                inner_text_objects = extract_text_objects(obj)
                 _text = obj.get_text()
                 text_region = _create_text_region(
                     x1, y1, x2, y2, coef, _text, Source.PDFMINER, EmbeddedTextRegion
