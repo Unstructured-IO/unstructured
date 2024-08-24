@@ -1,8 +1,9 @@
-## 0.15.8-dev4
+## 0.15.8-dev5
 
 ### Enhancements
 
 * **Bump unstructured.paddleocr to 2.8.1.0.**
+* **Add support for encoding parameter in partition_csv**
 
 ### Features
 

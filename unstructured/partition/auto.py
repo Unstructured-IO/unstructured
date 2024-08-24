@@ -207,6 +207,7 @@ def partition(
         elements = partition_csv(
             filename=filename,
             file=file,
+            encoding=encoding,
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
