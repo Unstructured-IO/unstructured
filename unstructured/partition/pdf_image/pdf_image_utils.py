@@ -6,7 +6,7 @@ import re
 import tempfile
 import unicodedata
 from copy import deepcopy
-from io import BytesIO
+from io import BufferedReader, BytesIO
 from pathlib import Path, PurePath
 from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
@@ -125,7 +125,7 @@ def save_elements(
     element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO]] = None,
+    file: Optional[Union[bytes, BinaryIO, BufferedReader]] = None,
     is_image: bool = False,
     extract_image_block_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
@@ -154,12 +154,17 @@ def save_elements(
             if file is None:
                 image_paths = [filename]
             else:
-                if hasattr(file, "seek"):
+                if isinstance(file, (BinaryIO, BufferedReader)):
                     file.seek(0)
-                temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir)
-                temp_file.write(file.read() if hasattr(file, "read") else file)
-                temp_file.flush()
-                image_paths = [temp_file.name]
+                    file_data = file.read()
+                else:
+                    # -- isinstance(file, bytes)
+                    file_data = file
+
+                tmp_file_path = os.path.join(temp_dir, "tmp_file")
+                with open(tmp_file_path, "wb") as tmp_file:
+                    tmp_file.write(file_data)
+                image_paths = [tmp_file_path]
         else:
             _image_paths = convert_pdf_to_image(
                 filename,
@@ -191,6 +196,7 @@ def save_elements(
             # The page number in the metadata may have been offset
             # by starting_page_number. Make sure we use the right
             # value for indexing!
+            assert el.metadata.page_number
             metadata_page_number = el.metadata.page_number
             page_index = metadata_page_number - starting_page_number
 
@@ -208,6 +214,7 @@ def save_elements(
                     el.metadata.image_mime_type = "image/jpeg"
                 else:
                     basename = "table" if el.category == ElementType.TABLE else "figure"
+                    assert output_dir_path
                     output_f_path = os.path.join(
                         output_dir_path,
                         f"{basename}-{metadata_page_number}-{figure_number}.jpg",
