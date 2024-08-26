@@ -1,3 +1,13 @@
+## 0.15.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix disk space leaks and Windows errors when accessing file.name on a NamedTemporaryFile** Uses of `NamedTemporaryFile(..., delete=False)` and/or uses of `file.name` of NamedTemporaryFiles have been replaced with TemporaryFileDirectory to avoid a known issue: https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile
+
 ## 0.15.8
 
 ### Enhancements
