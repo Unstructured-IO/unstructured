@@ -57,7 +57,7 @@ httpx==0.27.0
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -70,7 +70,7 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.14
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.33
+langchain-core==0.2.34
     # via
     #   langchain
     #   langchain-text-splitters
@@ -79,7 +79,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.100
+langsmith==0.1.104
     # via
     #   langchain
     #   langchain-core
@@ -94,10 +94,9 @@ numpy==1.26.4
     #   voyageai
 orjson==3.10.7
     # via langsmith
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
 pydantic==2.8.2
     # via

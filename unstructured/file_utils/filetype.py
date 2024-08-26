@@ -476,13 +476,14 @@ class _OleFileDifferentiator:
         if not self._is_ole_file(self._ctx):
             return None
 
-        # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so rely on it to
-        # -- differentiate those. Note it doesn't detect MSG type though, so we assume any OLE file
-        # -- that is not a legacy MS-Office type to be a MSG file.
+        # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so we rely on it
+        # -- to differentiate those. Note `filetype` doesn't detect MSG type and won't always
+        # -- detect DOC, PPT, or XLS, returning `None` instead. We let those fall through and we
+        # -- rely on filename-extension to identify those.
         with self._ctx.open() as file:
             mime_type = ft.guess_mime(file)
 
-        return FileType.from_mime_type(mime_type or "application/vnd.ms-outlook")
+        return FileType.from_mime_type(mime_type) if mime_type else None
 
     @staticmethod
     def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:

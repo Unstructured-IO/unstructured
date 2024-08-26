@@ -19,7 +19,7 @@ databricks-sdk==0.30.0
     # via -r ./ingest/databricks-volumes.in
 google-auth==2.34.0
     # via databricks-sdk
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

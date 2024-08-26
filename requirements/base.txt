@@ -43,7 +43,7 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via unstructured-client
-idna==3.7
+idna==3.8
     # via
     #   anyio
     #   httpx
@@ -73,9 +73,8 @@ numpy==1.26.4
     # via -r ./base.in
 ordered-set==4.1.0
     # via deepdiff
-packaging==23.2
+packaging==24.1
     # via
-    #   -c ././deps/constraints.txt
     #   marshmallow
     #   unstructured-client
 psutil==6.0.0

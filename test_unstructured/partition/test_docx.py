@@ -140,13 +140,9 @@ def test_partition_docx_processes_table():
     assert isinstance(elements[0], Table)
     assert elements[0].text == ("Header Col 1 Header Col 2 Lorem ipsum A Link example")
     assert elements[0].metadata.text_as_html == (
-        "<table>\n"
-        "<thead>\n"
-        "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-        "</thead>\n"
-        "<tbody>\n"
-        "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
-        "</tbody>\n"
+        "<table>"
+        "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>A Link example</td></tr>"
         "</table>"
     )
     assert elements[0].metadata.filename == "fake_table.docx"
@@ -1086,13 +1082,9 @@ class Describe_DocxPartitioner:
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
 
         assert _DocxPartitioner(opts)._convert_table_to_html(table) == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>A link example</td></tr>"
             "</table>"
         )
 
@@ -1118,25 +1110,13 @@ class Describe_DocxPartitioner:
         # -- re.sub() strips out the extra padding inserted by tabulate --
         html = re.sub(r" +<", "<", _DocxPartitioner(opts)._convert_table_to_html(table))
 
-        expected_lines = [
-            "<table>",
-            "<thead>",
-            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
-            "</thead>",
-            "<tbody>",
-            "<tr><td>d</td><td><table>",
-            "<tbody>",
-            "<tr><td>e</td><td>f</td></tr>",
-            "<tr><td>g&amp;t</td><td>h</td></tr>",
-            "</tbody>",
-            "</table></td><td>i</td></tr>",
-            "<tr><td>j</td><td>k</td><td>l</td></tr>",
-            "</tbody>",
-            "</table>",
-        ]
-        actual_lines = html.splitlines()
-        for expected, actual in zip(expected_lines, actual_lines):
-            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
+        assert html == (
+            "<table>"
+            "<tr><td>a</td><td>&gt;b&lt;</td><td>c</td></tr>"
+            "<tr><td>d</td><td>e f g&amp;t h</td><td>i</td></tr>"
+            "<tr><td>j</td><td>k</td><td>l</td></tr>"
+            "</table>"
+        )
 
     def it_can_convert_a_table_to_plain_text(self, opts_args: dict[str, Any]):
         opts = DocxPartitionerOptions(**opts_args)
@@ -1216,10 +1196,7 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
-            "</table>"
+            "<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table>"
         )
         # --
         # ┌───┐
@@ -1231,10 +1208,7 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
-            "</table>"
+            "<table><tr><td>a</td><td/></tr><tr><td>b</td><td>c</td></tr></table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
         # ┌───────┐
@@ -1246,9 +1220,9 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>a</td><td/></tr>"
+            "<tr><td>b</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1261,9 +1235,9 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>b</td><td/></tr>"
+            "<tr><td>a</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # -- late-start, early-end, and >2 rows vertical span --
@@ -1280,14 +1254,11 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d e f", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
-            "</thead>\n<tbody>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>a</td><td>b</td><td>c</td></tr>"
+            "<tr><td/><td>d</td><td>d</td><td/></tr>"
+            "<tr><td>e</td><td>d</td><td>d</td><td>f</td></tr>"
+            "<tr><td/><td>d</td><td>d</td><td/></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1296,19 +1267,15 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
-            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
-            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
-            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td/><td>More</td><td/></tr>"
+            "<tr><td>Dato</td><td/></tr>"
+            "<tr><td>WTF?</td><td>WTF?</td><td/></tr>"
+            "<tr><td>Strange</td><td>Strange</td><td/></tr>"
+            "<tr><td/><td>Format</td><td>Format</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
 

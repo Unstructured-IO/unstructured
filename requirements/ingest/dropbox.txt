@@ -17,12 +17,11 @@ dropbox==12.0.2
     # via dropboxdrivefs
 dropboxdrivefs==1.4.1
     # via -r ./ingest/dropbox.in
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/dropbox.in
     #   dropboxdrivefs
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

@@ -12,10 +12,8 @@ cffi==1.17.0
     #   pynacl
 cryptography==43.0.0
     # via paramiko
-fsspec==2024.5.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/sftp.in
+fsspec==2024.6.1
+    # via -r ./ingest/sftp.in
 paramiko==3.4.1
     # via -r ./ingest/sftp.in
 pycparser==2.22

@@ -37,12 +37,11 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/gcs.in
     #   gcsfs
-gcsfs==2024.5.0
+gcsfs==2024.6.1
     # via -r ./ingest/gcs.in
 google-api-core==2.19.1
     # via
@@ -69,7 +68,7 @@ google-resumable-media==2.7.2
     # via google-cloud-storage
 googleapis-common-protos==1.63.2
     # via google-api-core
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

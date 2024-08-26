@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/s3.in
 #
-aiobotocore==2.13.2
+aiobotocore==2.13.3
     # via s3fs
 aiohappyeyeballs==2.4.0
     # via aiohttp
@@ -28,12 +28,11 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.5.0
+fsspec==2024.6.1
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/s3.in
     #   s3fs
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   yarl
@@ -47,7 +46,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   botocore
-s3fs==2024.5.0
+s3fs==2024.6.1
     # via -r ./ingest/s3.in
 six==1.16.0
     # via

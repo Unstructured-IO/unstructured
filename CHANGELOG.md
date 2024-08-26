@@ -1,10 +1,23 @@
-## 0.15.8-dev1
+## 0.15.8-dev5
 
 ### Enhancements
+
+* **Bump unstructured.paddleocr to 2.8.1.0.**
 
 ### Features
 
 * **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
+
+### Fixes
+
+* **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+* **Fall back to filename extension-based file-type detection for unidentified OLE files.** Resolves a problem where a DOC file that could not be detected as such by `filetype` was incorrectly identified as a MSG file.
+
+## 0.15.7
+
+### Enhancements
+
+### Features
 
 ### Fixes
 

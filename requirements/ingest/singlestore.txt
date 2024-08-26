@@ -15,16 +15,15 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
 importlib-metadata==8.4.0
     # via build
-packaging==23.2
+packaging==24.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   build
 parsimonious==0.10.0
     # via singlestoredb

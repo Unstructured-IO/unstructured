@@ -16,11 +16,11 @@ charset-normalizer==3.3.2
     #   requests
 events==0.5
     # via opensearch-py
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
-opensearch-py==2.7.0
+opensearch-py==2.7.1
     # via -r ./ingest/opensearch.in
 python-dateutil==2.9.0.post0
     # via
