@@ -94,7 +94,6 @@ jobs:
           AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
-          TABLE_OCR: "tesseract"
           OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
