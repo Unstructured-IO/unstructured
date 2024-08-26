@@ -147,7 +147,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.4
     # via layoutparser
-pikepdf==9.1.2
+pikepdf==9.2.0
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -189,7 +189,7 @@ pycocotools==2.0.8
     #   effdet
 pycparser==2.22
     # via cffi
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via matplotlib
 pypdf==4.3.1
     # via
@@ -243,7 +243,7 @@ sympy==1.13.2
     # via
     #   onnxruntime
     #   torch
-timm==1.0.8
+timm==1.0.9
     # via
     #   effdet
     #   unstructured-inference

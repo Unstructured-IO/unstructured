@@ -50,7 +50,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-fastapi==0.112.1
+fastapi==0.112.2
     # via chromadb
 filelock==3.15.4
     # via huggingface-hub
