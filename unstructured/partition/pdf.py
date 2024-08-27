@@ -15,8 +15,8 @@ from pdfminer import psparser
 from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
-from PIL import Image as PILImage
 from pi_heif import register_heif_opener
+from PIL import Image as PILImage
 from pypdf import PdfReader
 
 from unstructured.chunking import add_chunking_strategy
