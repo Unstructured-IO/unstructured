@@ -41,7 +41,7 @@ h11==0.14.0
     # via httpcore
 httpcore==1.0.5
     # via httpx
-httpx==0.27.0
+httpx==0.27.2
     # via unstructured-client
 idna==3.8
     # via

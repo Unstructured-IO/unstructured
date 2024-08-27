@@ -5,7 +5,7 @@ onnx
 pdf2image
 pdfminer.six
 pikepdf
-pillow_heif
+pi_heif
 pypdf
 google-cloud-vision
 effdet
