@@ -31,6 +31,7 @@ include requirements/ingest/dropbox.in
 include requirements/ingest/elasticsearch.in
 include requirements/ingest/embed-aws-bedrock.in
 include requirements/ingest/embed-huggingface.in
+include requirements/ingest/embed-mixedbreadai.in
 include requirements/ingest/embed-openai.in
 include requirements/ingest/gcs.in
 include requirements/ingest/github.in
