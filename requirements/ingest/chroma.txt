@@ -60,7 +60,7 @@ fsspec==2024.6.1
     # via huggingface-hub
 google-auth==2.34.0
     # via kubernetes
-googleapis-common-protos==1.64.0
+googleapis-common-protos==1.65.0
     # via opentelemetry-exporter-otlp-proto-grpc
 grpcio==1.66.0
     # via
