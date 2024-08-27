@@ -88,7 +88,7 @@ google-resumable-media==2.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos[grpc]==1.64.0
+googleapis-common-protos[grpc]==1.65.0
     # via
     #   google-api-core
     #   grpc-google-iam-v1
@@ -148,7 +148,7 @@ langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.104
+langsmith==0.1.105
     # via
     #   langchain
     #   langchain-community

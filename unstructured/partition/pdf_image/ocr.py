@@ -65,16 +65,15 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    file_name = ""
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-        data_bytes = data if isinstance(data, bytes) else data.read()
-        tmp_file.write(data_bytes)
-        tmp_file.flush()
-        file_name = tmp_file.name
+    data_bytes = data if isinstance(data, bytes) else data.read()
 
-    try:
+    with tempfile.TemporaryDirectory() as tmp_dir_path:
+        tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
+        with open(tmp_file_path, "wb") as tmp_file:
+            tmp_file.write(data_bytes)
+
         merged_layouts = process_file_with_ocr(
-            filename=file_name,
+            filename=tmp_file_path,
             out_layout=out_layout,
             extracted_layout=extracted_layout,
             is_image=is_image,
@@ -84,9 +83,6 @@ def process_data_with_ocr(
             pdf_image_dpi=pdf_image_dpi,
             ocr_drawer=ocr_drawer,
         )
-    finally:
-        if os.path.isfile(file_name):
-            os.remove(file_name)
 
     return merged_layouts
 
