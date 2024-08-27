@@ -3,10 +3,10 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
+from pydantic import Field, SecretStr
 
 from unstructured.documents.elements import Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
-from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 USER_AGENT = "@mixedbread-ai/unstructured"
@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     from mixedbread_ai.core import RequestOptions
 
 
-@dataclass
 class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
     """
     Configuration class for Mixedbread AI Embedding Encoder.
@@ -32,13 +31,30 @@ class MixedbreadAIEmbeddingConfig(EmbeddingConfig):
         model_name (str): Name of the model to use for embeddings.
     """
 
-    api_key: str = field(
-        default_factory=lambda: os.environ.get("MXBAI_API_KEY"),
+    api_key: SecretStr = Field(
+        default_factory=lambda: SecretStr(os.environ.get("MXBAI_API_KEY")),
     )
 
-    model_name: str = field(
+    model_name: str = Field(
         default="mixedbread-ai/mxbai-embed-large-v1",
     )
+
+    @requires_dependencies(
+        ["mixedbread_ai"],
+        extras="embed-mixedbreadai",
+    )
+    def get_client(self) -> "MixedbreadAI":
+        """
+        Create the Mixedbread AI client.
+
+        Returns:
+            MixedbreadAI: Initialized client.
+        """
+        from mixedbread_ai.client import MixedbreadAI
+
+        return MixedbreadAI(
+            api_key=self.api_key.get_secret_value(),
+        )
 
 
 @dataclass
@@ -52,23 +68,12 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     config: MixedbreadAIEmbeddingConfig
 
-    _client: Optional["MixedbreadAI"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
     _request_options: Optional["RequestOptions"] = field(init=False, default=None)
 
-    @property
-    def client(self) -> "MixedbreadAI":
-        """Lazy initialization of the Mixedbread AI client."""
-        if self._client is None:
-            self._client = self.create_client()
-        return self._client
-
-    @property
-    def exemplary_embedding(self) -> List[float]:
+    def get_exemplary_embedding(self) -> List[float]:
         """Get an exemplary embedding to determine dimensions and unit vector status."""
-        if self._exemplary_embedding is None:
-            self._exemplary_embedding = self._embed(["Q"])[0]
-        return self._exemplary_embedding
+        return self._embed(["Q"])[0]
 
     def initialize(self):
         if self.config.api_key is None:
@@ -89,12 +94,14 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
     @property
     def num_of_dimensions(self):
         """Get the number of dimensions for the embeddings."""
-        return np.shape(self.exemplary_embedding)
+        exemplary_embedding = self.get_exemplary_embedding()
+        return np.shape(exemplary_embedding)
 
     @property
     def is_unit_vector(self) -> bool:
         """Check if the embedding is a unit vector."""
-        return np.isclose(np.linalg.norm(self.exemplary_embedding), 1.0)
+        exemplary_embedding = self.get_exemplary_embedding()
+        return np.isclose(np.linalg.norm(exemplary_embedding), 1.0)
 
     def _embed(self, texts: List[str]) -> List[List[float]]:
         """
@@ -110,10 +117,10 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         batch_itr = range(0, len(texts), batch_size)
 
         responses = []
-
+        client = self.config.get_client()
         for i in batch_itr:
             batch = texts[i : i + batch_size]
-            response = self.client.embeddings(
+            response = client.embeddings(
                 model=self.config.model_name,
                 normalized=True,
                 encoding_format=ENCODING_FORMAT,
@@ -169,21 +176,3 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
             List[float]: Embedding of the query.
         """
         return self._embed([query])[0]
-
-    @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["mixedbread_ai"],
-        extras="embed-mixedbreadai",
-    )
-    def create_client(self) -> "MixedbreadAI":
-        """
-        Create the Mixedbread AI client.
-
-        Returns:
-            MixedbreadAI: Initialized client.
-        """
-        from mixedbread_ai.client import MixedbreadAI
-
-        return MixedbreadAI(
-            api_key=self.config.api_key,
-        )

@@ -1,4 +1,0 @@
--c ../deps/constraints.txt
--c ../base.txt
-openai
-tiktoken

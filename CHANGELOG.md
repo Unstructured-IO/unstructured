@@ -1,3 +1,14 @@
+## 0.16.0
+
+### Enhancements
+
+* **Remove Ingest**
+
+### Features
+
+
+### Fixes
+
 ## 0.15.8
 
 ### Enhancements
