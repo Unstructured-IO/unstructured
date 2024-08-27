@@ -88,7 +88,7 @@ google-resumable-media==2.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos[grpc]==1.63.2
+googleapis-common-protos[grpc]==1.64.0
     # via
     #   google-api-core
     #   grpc-google-iam-v1
@@ -112,7 +112,7 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langchain-google-vertexai

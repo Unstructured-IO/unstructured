@@ -354,7 +354,7 @@ wheel==0.44.0
     #   pip-tools
 widgetsnbextension==4.0.13
     # via ipywidgets
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

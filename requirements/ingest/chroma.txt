@@ -60,7 +60,7 @@ fsspec==2024.6.1
     # via huggingface-hub
 google-auth==2.34.0
     # via kubernetes
-googleapis-common-protos==1.63.2
+googleapis-common-protos==1.64.0
     # via opentelemetry-exporter-otlp-proto-grpc
 grpcio==1.66.0
     # via
@@ -245,7 +245,7 @@ wrapt==1.16.0
     #   -c ./ingest/../deps/constraints.txt
     #   deprecated
     #   opentelemetry-instrumentation
-zipp==3.20.0
+zipp==3.20.1
     # via
     #   importlib-metadata
     #   importlib-resources
