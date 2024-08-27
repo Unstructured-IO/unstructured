@@ -6,7 +6,7 @@ import re
 import tempfile
 import unicodedata
 from copy import deepcopy
-from io import BufferedReader, BytesIO
+from io import BytesIO
 from pathlib import Path, PurePath
 from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
@@ -125,10 +125,10 @@ def save_elements(
     element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, BufferedReader]] = None,
+    file: bytes | IO[bytes] | None = None,
     is_image: bool = False,
     extract_image_block_to_payload: bool = False,
-    output_dir_path: Optional[str] = None,
+    output_dir_path: str | None = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -154,12 +154,11 @@ def save_elements(
             if file is None:
                 image_paths = [filename]
             else:
-                if isinstance(file, (BinaryIO, BufferedReader)):
+                if isinstance(file, bytes):
+                    file_data = file
+                else:
                     file.seek(0)
                     file_data = file.read()
-                else:
-                    # -- isinstance(file, bytes)
-                    file_data = file
 
                 tmp_file_path = os.path.join(temp_dir, "tmp_file")
                 with open(tmp_file_path, "wb") as tmp_file:
