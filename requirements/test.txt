@@ -51,7 +51,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./test.in
@@ -63,11 +63,11 @@ httpcore==1.0.5
     # via
     #   -c ./base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-idna==3.7
+idna==3.8
     # via
     #   -c ./base.txt
     #   anyio
@@ -96,7 +96,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.11.1
+mypy==1.11.2
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -201,7 +201,7 @@ tqdm==4.66.5
     #   nltk
 types-click==7.1.8
     # via -r ./test.in
-types-markdown==3.6.0.20240316
+types-markdown==3.7.0.20240822
     # via -r ./test.in
 types-requests==2.31.0.6
     # via -r ./test.in

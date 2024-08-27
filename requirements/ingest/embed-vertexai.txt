@@ -88,14 +88,14 @@ google-resumable-media==2.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos[grpc]==1.63.2
+googleapis-common-protos[grpc]==1.64.0
     # via
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   google-api-core
@@ -112,11 +112,14 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
+    #   langchain-google-vertexai
     #   langsmith
-idna==3.7
+httpx-sse==0.4.0
+    # via langchain-google-vertexai
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -135,17 +138,17 @@ langchain-community==0.2.12
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.33
+langchain-core==0.2.35
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.8
+langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.100
+langsmith==0.1.104
     # via
     #   langchain
     #   langchain-community

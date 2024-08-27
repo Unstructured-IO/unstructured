@@ -8,7 +8,7 @@ attrs==24.2.0
     # via boxsdk
 boxfs==0.3.0
     # via -r ./ingest/box.in
-boxsdk[jwt]==3.12.0
+boxsdk[jwt]==3.13.0
     # via boxfs
 certifi==2024.7.4
     # via
@@ -27,7 +27,7 @@ fsspec==2024.6.1
     # via
     #   -r ./ingest/box.in
     #   boxfs
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests

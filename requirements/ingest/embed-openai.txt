@@ -36,12 +36,12 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
     #   openai
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -53,11 +53,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.33
+langchain-core==0.2.35
     # via langchain-openai
 langchain-openai==0.1.22
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.100
+langsmith==0.1.104
     # via langchain-core
 openai==1.42.0
     # via langchain-openai

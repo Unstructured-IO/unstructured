@@ -19,13 +19,13 @@ clarifai-grpc==10.7.1
     # via clarifai
 contextlib2==21.6.0
     # via schema
-googleapis-common-protos==1.63.2
+googleapis-common-protos==1.64.0
     # via clarifai-grpc
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
-idna==3.7
+idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -61,7 +61,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   clarifai-grpc
-rich==13.7.1
+rich==13.8.0
     # via clarifai
 schema==0.7.5
     # via clarifai

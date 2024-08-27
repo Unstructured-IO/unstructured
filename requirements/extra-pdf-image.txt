@@ -53,11 +53,11 @@ google-auth==2.34.0
     #   google-cloud-vision
 google-cloud-vision==3.7.4
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.63.2
+googleapis-common-protos==1.64.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.65.5
+grpcio==1.66.0
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -72,11 +72,11 @@ huggingface-hub==0.24.6
     #   unstructured-inference
 humanfriendly==10.0
     # via coloredlogs
-idna==3.7
+idna==3.8
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.4.3
+importlib-resources==6.4.4
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -122,9 +122,8 @@ onnx==1.16.2
     #   unstructured-inference
 onnxruntime==1.19.0
     # via unstructured-inference
-opencv-python==4.8.0.76
+opencv-python==4.10.0.84
     # via
-    #   -c ././deps/constraints.txt
     #   layoutparser
     #   unstructured-inference
 packaging==24.1
@@ -148,7 +147,9 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.4
     # via layoutparser
-pikepdf==9.1.2
+pi-heif==0.18.0
+    # via -r ./extra-pdf-image.in
+pikepdf==9.2.0
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -156,12 +157,10 @@ pillow==10.4.0
     #   matplotlib
     #   pdf2image
     #   pdfplumber
+    #   pi-heif
     #   pikepdf
-    #   pillow-heif
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.18.0
-    # via -r ./extra-pdf-image.in
 portalocker==2.10.1
     # via iopath
 proto-plus==1.24.0
@@ -190,7 +189,7 @@ pycocotools==2.0.8
     #   effdet
 pycparser==2.22
     # via cffi
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via matplotlib
 pypdf==4.3.1
     # via
@@ -244,7 +243,7 @@ sympy==1.13.2
     # via
     #   onnxruntime
     #   torch
-timm==1.0.8
+timm==1.0.9
     # via
     #   effdet
     #   unstructured-inference
@@ -269,7 +268,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.44.1
+transformers==4.44.2
     # via unstructured-inference
 typing-extensions==4.12.2
     # via
@@ -294,5 +293,5 @@ wrapt==1.16.0
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-resources
