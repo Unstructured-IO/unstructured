@@ -56,7 +56,7 @@ def convert_file_to_html_text_using_pandoc(
 
     if file is not None:
         with tempfile.TemporaryDirectory() as temp_dir_path:
-            tmp_file_path = os.path.join(temp_dir_path, "tmp_file")
+            tmp_file_path = os.path.join(temp_dir_path, f"tmp_file.{source_format}")
             with open(tmp_file_path, "wb") as tmp_file:
                 tmp_file.write(file.read())
             return convert_file_to_text(
