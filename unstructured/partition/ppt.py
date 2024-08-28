@@ -73,32 +73,33 @@ def partition_ppt(
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """
-    # Verify that only one of the arguments was provided
-    if filename is None:
-        filename = ""
+    # -- Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
-    last_modification_date = None
-    if len(filename) > 0:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        last_modification_date = None
+        if filename:
+            # -- Verify filename.
+            if not os.path.exists(filename):
+                raise ValueError(f"The file {filename} does not exist.")
+            # -- Get last modified date from filename.
+            last_modification_date = get_last_modified_date(filename)
+
+        else:
+            assert file
+            # -- Create filename.
+            tmp_file_path = os.path.join(tmpdir, "tmp_file")
+            with open(tmp_file_path, "wb") as tmp_file:
+                tmp_file.write(file.read())
+            filename = tmp_file_path
+            # -- Get last modified date from file.
+            last_modification_date = (
+                get_last_modified_date_from_file(file) if date_from_file_object else None
+            )
+
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
-        last_modification_date = get_last_modified_date(filename)
 
-    elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
-        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-
-    base_filename, _ = os.path.splitext(filename_no_path)
-
-    with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(
             filename,
             tmpdir,
@@ -119,7 +120,7 @@ def partition_ppt(
             strategy=strategy,
         )
 
-    # remove tmp.name from filename if parsing file
+    # -- Remove tmp.name from filename if parsing file
     if file:
         for element in elements:
             element.metadata.filename = metadata_filename

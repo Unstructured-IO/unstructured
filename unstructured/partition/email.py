@@ -9,7 +9,7 @@ from email import policy
 from email.headerregistry import AddressHeader
 from email.message import EmailMessage
 from functools import partial
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from typing import IO, Any, Callable, Final, Optional, Type, cast
 
 from unstructured.chunking import add_chunking_strategy
@@ -222,8 +222,8 @@ def extract_attachment_info(
             attachment_info["payload"] = part.get_payload(decode=True)
             list_attachments.append(attachment_info)
 
-            for idx, attachment in enumerate(list_attachments):
-                if output_dir:
+            if output_dir:
+                for idx, attachment in enumerate(list_attachments):
                     if "filename" in attachment:
                         filename = output_dir + "/" + attachment["filename"]
                         with open(filename, "wb") as f:
@@ -231,12 +231,9 @@ def extract_attachment_info(
                             # causes an error since the payloads are bytes not str
                             f.write(attachment["payload"])
                     else:
-                        with NamedTemporaryFile(
-                            mode="wb",
-                            dir=output_dir,
-                            delete=False,
-                        ) as f:
-                            list_attachments[idx]["filename"] = os.path.basename(f.name)
+                        filename = os.path.join(output_dir, f"attachment_{idx}")
+                        with open(filename, "wb") as f:
+                            list_attachments[idx]["filename"] = os.path.basename(filename)
                             f.write(attachment["payload"])
 
     return list_attachments

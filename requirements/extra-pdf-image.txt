@@ -53,7 +53,7 @@ google-auth==2.34.0
     #   google-cloud-vision
 google-cloud-vision==3.7.4
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.64.0
+googleapis-common-protos==1.65.0
     # via
     #   google-api-core
     #   grpcio-status

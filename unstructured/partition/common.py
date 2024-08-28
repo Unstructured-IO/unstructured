@@ -384,7 +384,7 @@ def convert_office_doc(
     target_filter: Optional[str] = None,
     wait_for_soffice_ready_time_out: int = 10,
 ):
-    """Converts a .doc file to a .docx file using the libreoffice CLI.
+    """Converts a .doc/.ppt file to a .docx/.pptx file using the libreoffice CLI.
 
     Parameters
     ----------
