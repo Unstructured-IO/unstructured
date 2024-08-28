@@ -6,9 +6,10 @@ from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
+    extract_text_objects,
     open_pdfminer_pages_generator,
     rect_to_bbox,
-    extract_text_objects,
+    remove_duplicate_objects,
 )
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, Source
@@ -54,16 +55,24 @@ def process_data_with_pdfminer(
 
         layout: list["TextRegion"] = []
         for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-
             if hasattr(obj, "get_text"):
                 inner_text_objects = extract_text_objects(obj)
-                _text = obj.get_text()
-                text_region = _create_text_region(
-                    x1, y1, x2, y2, coef, _text, Source.PDFMINER, EmbeddedTextRegion
-                )
-                if text_region.bbox is not None and text_region.bbox.area > 0:
-                    layout.append(text_region)
+                unique_inner_text_objects = remove_duplicate_objects(inner_text_objects)
+                for inner_obj in unique_inner_text_objects:
+                    _text = obj.get_text()
+                    new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(inner_obj.bbox, height)
+                    text_region = _create_text_region(
+                        new_x1,
+                        new_y1,
+                        new_x2,
+                        new_y2,
+                        coef,
+                        _text,
+                        Source.PDFMINER,
+                        EmbeddedTextRegion,
+                    )
+                    if text_region.bbox is not None and text_region.bbox.area > 0:
+                        layout.append(text_region)
             else:
                 inner_image_objects = extract_image_objects(obj)
                 for img_obj in inner_image_objects:

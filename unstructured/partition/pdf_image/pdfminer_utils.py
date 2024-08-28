@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Tuple
+from typing import Any, BinaryIO, List, Tuple
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
@@ -113,3 +113,53 @@ def open_pdfminer_pages_generator(
                 interpreter.process_page(page)
                 page_layout = device.get_result()
                 yield page, page_layout
+
+
+def is_bbox_similar(
+    bbox1: tuple[float, float, float, float],
+    bbox2: [float, float, float, float],
+    threshold: int = 2,
+) -> bool:
+    """Check if two bounding boxes are similar within a certain threshold."""
+    return all(abs(a - b) <= threshold for a, b in zip(bbox1, bbox2))
+
+
+def is_bbox_subregion(
+    bbox1: tuple[float, float, float, float],
+    bbox2: [float, float, float, float],
+    threshold: int = 2,
+) -> bool:
+    """Check if bbox1 is a subregion of bbox2."""
+    return (
+        bbox2[0] - threshold <= bbox1[0] <= bbox2[2] + threshold
+        and bbox2[1] - threshold <= bbox1[1] <= bbox2[3] + threshold
+        and bbox2[0] - threshold <= bbox1[2] <= bbox2[2] + threshold
+        and bbox2[1] - threshold <= bbox1[3] <= bbox2[3] + threshold
+    )
+
+
+def remove_duplicate_objects(objects: list[Any], threshold=2) -> list[Any]:
+    """
+    Removes duplicate objects based on bounding box similarity.
+
+    This function iterates through a list of objects, each of which is assumed to have a `bbox`
+    attribute representing its bounding box as a tuple (x0, y0, x1, y1). It removes objects that
+    have bounding boxes similar to others already in the list (based on a specified threshold) or
+    are subregions of other objects. The remaining unique objects are returned.
+    """
+    unique_objects = []
+
+    for obj in objects:
+        is_duplicate_or_subregion = False
+
+        for unique_obj in unique_objects:
+            if is_bbox_similar(obj.bbox, unique_obj.bbox, threshold) or is_bbox_subregion(
+                obj.bbox, unique_obj.bbox, threshold
+            ):
+                is_duplicate_or_subregion = True
+                break
+
+        if not is_duplicate_or_subregion:
+            unique_objects.append(obj)
+
+    return unique_objects
