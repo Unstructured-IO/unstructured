@@ -50,7 +50,7 @@ def extract_document_layout_info(layout: DocumentLayout) -> dict:
     return {"pages": pages}
 
 
-def object_detection_classes(model_name) -> list[str]:
+def object_detection_classes(model_name) -> List[str]:
     model = get_model(model_name)
     if isinstance(model, UnstructuredYoloXModel):
         return list(YOLOX_LABEL_MAP.values())
@@ -79,7 +79,7 @@ class ObjectDetectionLayoutDumper(LayoutDumper):
         return self.layout
 
 
-def _get_info_from_extracted_page(page: list[TextRegion]) -> list[dict]:
+def _get_info_from_extracted_page(page: List[TextRegion]) -> List[dict]:
     elements = []
     for element in page:
         is_image = isinstance(element, ImageTextRegion)
@@ -95,7 +95,7 @@ def _get_info_from_extracted_page(page: list[TextRegion]) -> list[dict]:
     return elements
 
 
-def extract_text_regions_info(layout: list[list[TextRegion]]) -> dict:
+def extract_text_regions_info(layout: List[List[TextRegion]]) -> dict:
     pages = []
     for page_num, page in enumerate(layout, 1):
         elements = _get_info_from_extracted_page(page)
@@ -107,7 +107,7 @@ class ExtractedLayoutDumper(LayoutDumper):
 
     layout_source = "pdfminer"
 
-    def __init__(self, layout: list[list[TextRegion]]):
+    def __init__(self, layout: List[List[TextRegion]]):
         self.layout = extract_text_regions_info(layout)
 
     def dump(self) -> dict:
@@ -122,7 +122,7 @@ class OCRLayoutDumper(LayoutDumper):
         self.layout = []
         self.page_number = 1
 
-    def add_ocred_page(self, page: list[TextRegion]):
+    def add_ocred_page(self, page: List[TextRegion]):
         elements = _get_info_from_extracted_page(page)
         self.layout.append({"number": self.page_number, "elements": elements})
         self.page_number += 1

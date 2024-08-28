@@ -21,7 +21,7 @@ from unstructured.partition.pdf_image.analysis.layout_dump import (
 )
 
 
-def _get_drawer_for_dumper(dumper: LayoutDumper) -> LayoutDrawer | None:
+def _get_drawer_for_dumper(dumper: LayoutDumper) -> Optional[LayoutDrawer]:
     """For a given layout dumper, return the corresponding layout drawer instance initialized with
     a dumped layout dict.
 

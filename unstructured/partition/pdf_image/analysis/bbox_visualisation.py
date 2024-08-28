@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Generator, Optional, TypeVar, Union
+from typing import Any, Generator, List, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
@@ -625,7 +625,7 @@ class AnalysisDrawer(AnalysisProcessor):
         image.close()
         return expanded_image
 
-    def paste_images_on_grid(self, images: list[Image.Image]) -> Image.Image:
+    def paste_images_on_grid(self, images: List[Image.Image]) -> Image.Image:
         """Creates a single image that presents all the images on a grid 2 x n/2"""
 
         pairs = []
