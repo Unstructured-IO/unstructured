@@ -4,7 +4,7 @@
 
 ### Features
 
-* **Add support for encoding parameter in partition_csv**
+* **Add support for encoding parameter in partition_csv.**
 
 ### Fixes
 
