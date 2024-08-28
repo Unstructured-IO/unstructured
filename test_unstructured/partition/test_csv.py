@@ -74,6 +74,12 @@ def test_partition_csv_from_filename_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
+def test_partition_csv_with_encoding():
+    elements = partition_csv(example_doc_path("stanley-cups-utf-16.csv"), encoding="utf-16")
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
@@ -279,6 +285,7 @@ class Describe_CsvPartitioningContext:
         ctx = _CsvPartitioningContext.load(
             file_path=example_doc_path("stanley-cups.csv"),
             file=None,
+            encoding=None,
             metadata_file_path=None,
             metadata_last_modified=None,
             include_header=True,
@@ -292,6 +299,7 @@ class Describe_CsvPartitioningContext:
             _CsvPartitioningContext.load(
                 file_path=None,
                 file=None,
+                encoding=None,
                 metadata_file_path=None,
                 metadata_last_modified=None,
                 include_header=True,

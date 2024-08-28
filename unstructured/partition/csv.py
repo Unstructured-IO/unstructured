@@ -29,6 +29,7 @@ DETECTION_ORIGIN: str = "csv"
 def partition_csv(
     filename: str | None = None,
     file: IO[bytes] | None = None,
+    encoding: str | None = None,
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     include_header: bool = False,
@@ -47,6 +48,8 @@ def partition_csv(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    encoding
+        The encoding method used to decode the text input. If None, utf-8 will be used.
     metadata_filename
         The filename to use for the metadata.
     metadata_last_modified
@@ -73,6 +76,7 @@ def partition_csv(
     ctx = _CsvPartitioningContext(
         file_path=filename,
         file=file,
+        encoding=encoding,
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         include_header=include_header,
@@ -81,7 +85,7 @@ def partition_csv(
     )
 
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter)
+        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=encoding)
 
     html_text = dataframe.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
@@ -110,6 +114,7 @@ class _CsvPartitioningContext:
         self,
         file_path: str | None = None,
         file: IO[bytes] | None = None,
+        encoding: str | None = None,
         metadata_file_path: str | None = None,
         metadata_last_modified: str | None = None,
         include_header: bool = False,
@@ -118,6 +123,7 @@ class _CsvPartitioningContext:
     ):
         self._file_path = file_path
         self._file = file
+        self._encoding = encoding
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
         self._include_header = include_header
@@ -129,6 +135,7 @@ class _CsvPartitioningContext:
         cls,
         file_path: str | None,
         file: IO[bytes] | None,
+        encoding: str | None,
         metadata_file_path: str | None,
         metadata_last_modified: str | None,
         include_header: bool,
@@ -138,6 +145,7 @@ class _CsvPartitioningContext:
         return cls(
             file_path=file_path,
             file=file,
+            encoding=encoding,
             metadata_file_path=metadata_file_path,
             metadata_last_modified=metadata_last_modified,
             include_header=include_header,
@@ -156,7 +164,9 @@ class _CsvPartitioningContext:
 
         with self.open() as file:
             # -- read whole lines, sniffer can be confused by a trailing partial line --
-            data = "\n".join(ln.decode("utf-8") for ln in file.readlines(num_bytes))
+            data = "\n".join(
+                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
+            )
 
         try:
             return sniffer.sniff(data, delimiters=",;").delimiter
