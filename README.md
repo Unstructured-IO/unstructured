@@ -134,6 +134,14 @@ elements = partition(filename="example-docs/eml/fake-email.eml")
 print("\n\n".join([str(el) for el in elements]))
 ```
 
+If you face `nltk` related issue, install it again and download `nltk_data`
+```python
+!pip install --upgrade nltk
+
+import nltk
+nltk.download('all')
+```
+
 ### Installation Instructions for Local Development
 
 The following instructions are intended to help you get up and running with `unstructured`
