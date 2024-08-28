@@ -1350,17 +1350,19 @@ def test_analysis_artifacts_saved():
         layout_dump_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "layout_dump"
         assert layout_dump_dir.exists()
         layout_dump_files = list(layout_dump_dir.iterdir())
-        assert len(layout_dump_files) == 1
-        assert (layout_dump_dir / "object_detection.json").exists()
+        assert len(layout_dump_files) == 4
+        expected_layout_dumps = ["object_detection", "ocr", "pdfminer", "final"]
+        for expected_layout_dump in expected_layout_dumps:
+            assert (layout_dump_dir / f"{expected_layout_dump}.json").exists()
 
         bboxes_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "bboxes"
         assert bboxes_dir.exists()
         bboxes_files = list(bboxes_dir.iterdir())
         assert len(bboxes_files) == 2 * 4  # 2 pages * 4 different layouts per page
 
-        expected_layouts = ["od_model", "ocr", "pdfminer", "final"]
+        expected_renders = ["od_model", "ocr", "pdfminer", "final"]
         expected_pages = [1, 2]
-        for el in expected_layouts:
+        for el in expected_renders:
             for page in expected_pages:
                 assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
 
