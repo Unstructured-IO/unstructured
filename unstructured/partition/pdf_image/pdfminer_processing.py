@@ -59,7 +59,7 @@ def process_data_with_pdfminer(
                 inner_text_objects = extract_text_objects(obj)
                 unique_inner_text_objects = remove_duplicate_objects(inner_text_objects)
                 for inner_obj in unique_inner_text_objects:
-                    _text = obj.get_text()
+                    _text = inner_obj.get_text()
                     new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(inner_obj.bbox, height)
                     text_region = _create_text_region(
                         new_x1,
