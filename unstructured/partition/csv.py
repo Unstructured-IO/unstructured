@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import csv
-from typing import IO, Any, Iterator, Optional
+from typing import IO, Any, Iterator
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -29,7 +29,7 @@ DETECTION_ORIGIN: str = "csv"
 def partition_csv(
     filename: str | None = None,
     file: IO[bytes] | None = None,
-    encoding: Optional[str] = None,
+    encoding: str | None = None,
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     include_header: bool = False,
