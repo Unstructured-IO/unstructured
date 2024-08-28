@@ -1,8 +1,10 @@
-## 0.15.9-dev0
+## 0.15.9-dev1
 
 ### Enhancements
 
 ### Features
+
+* **Add support for encoding parameter in partition_csv**
 
 ### Fixes
 
