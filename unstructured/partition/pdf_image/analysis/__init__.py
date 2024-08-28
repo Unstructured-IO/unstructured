@@ -22,6 +22,15 @@ from unstructured.partition.pdf_image.analysis.layout_dump import (
 
 
 def _get_drawer_for_dumper(dumper: LayoutDumper) -> LayoutDrawer | None:
+    """For a given layout dumper, return the corresponding layout drawer instance initialized with
+    a dumped layout dict.
+
+    Args:
+        dumper: The layout dumper instance
+
+    Returns:
+        LayoutDrawer: The corresponding layout drawer instance
+    """
     if isinstance(dumper, ObjectDetectionLayoutDumper):
         return ODModelLayoutDrawer(layout_dump=dumper.dump())
     elif isinstance(dumper, ExtractedLayoutDumper):
@@ -37,6 +46,14 @@ def _get_drawer_for_dumper(dumper: LayoutDumper) -> LayoutDrawer | None:
 def save_analysis_artifiacts(
     *layout_dumpers: LayoutDumper, filename: str, analyzed_image_output_dir_path: str
 ):
+    """Save the analysis artifacts for a given file. Loads some settings from
+    the environment configuration.
+
+    Args:
+        layout_dumpers: The layout dumpers to save and use for bboxes rendering
+        filename: The filename of the sources analyzed file (pdf/image)
+        analyzed_image_output_dir_path: The directory to save the analysis artifacts
+    """
     skip_bboxes = env_config.ANALYSIS_BBOX_SKIP
     skip_dump_od = env_config.ANALYSIS_DUMP_OD_SKIP
     if skip_bboxes or skip_dump_od:
@@ -74,6 +91,18 @@ def render_bboxes_for_file(
     analyzed_image_output_dir_path: str,
     renders_output_dir_path: Optional[str] = None,
 ):
+    """Render the bounding boxes for a given layout dimp file.
+    Expects that the analyzed_image_output_dir_path keeps the structure
+    that was created by the save_analysis_artifacts function.
+
+    Args:
+        filename: The filename of the sources analyzed file (pdf/image)
+        analyzed_image_output_dir_path: The directory where the analysis artifacts
+          (layout dumps) are saved. It should be the root directory of the structure
+          created by the save_analysis_artifacts function.
+        renders_output_dir_path: Optional directory to save the rendered bboxes -
+          if not provided, it will be saved in the analysis directory.
+    """
     filename_stem = Path(filename).stem
     analysis_dumps_dir = (
         Path(analyzed_image_output_dir_path) / "analysis" / filename_stem / "layout_dump"
