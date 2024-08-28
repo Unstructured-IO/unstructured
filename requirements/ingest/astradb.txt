@@ -51,7 +51,7 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx[http2]==0.27.0
+httpx[http2]==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   astrapy

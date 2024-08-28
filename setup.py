@@ -171,6 +171,7 @@ setup(
         "local-inference": all_doc_reqs,
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
         "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
+        "embed-mixedbreadai": load_requirements("requirements/ingest/embed-mixedbreadai.in"),
         "embed-octoai": load_requirements("requirements/ingest/embed-octoai.in"),
         "embed-vertexai": load_requirements("requirements/ingest/embed-vertexai.in"),
         "embed-voyageai": load_requirements("requirements/ingest/embed-voyageai.in"),

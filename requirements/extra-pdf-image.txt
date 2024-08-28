@@ -53,7 +53,7 @@ google-auth==2.34.0
     #   google-cloud-vision
 google-cloud-vision==3.7.4
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.63.2
+googleapis-common-protos==1.65.0
     # via
     #   google-api-core
     #   grpcio-status
@@ -147,7 +147,9 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.4
     # via layoutparser
-pikepdf==9.1.2
+pi-heif==0.18.0
+    # via -r ./extra-pdf-image.in
+pikepdf==9.2.0
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -155,12 +157,10 @@ pillow==10.4.0
     #   matplotlib
     #   pdf2image
     #   pdfplumber
+    #   pi-heif
     #   pikepdf
-    #   pillow-heif
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.18.0
-    # via -r ./extra-pdf-image.in
 portalocker==2.10.1
     # via iopath
 proto-plus==1.24.0
@@ -189,7 +189,7 @@ pycocotools==2.0.8
     #   effdet
 pycparser==2.22
     # via cffi
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via matplotlib
 pypdf==4.3.1
     # via
@@ -243,7 +243,7 @@ sympy==1.13.2
     # via
     #   onnxruntime
     #   torch
-timm==1.0.8
+timm==1.0.9
     # via
     #   effdet
     #   unstructured-inference
@@ -293,5 +293,5 @@ wrapt==1.16.0
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-resources

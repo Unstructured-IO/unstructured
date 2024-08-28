@@ -1,14 +1,28 @@
-## 0.15.8-dev5
+## 0.15.9-dev1
+
+### Enhancements
+
+### Features
+
+* **Add support for encoding parameter in partition_csv**
+
+### Fixes
+
+* **Fix disk space leaks and Windows errors when accessing file.name on a NamedTemporaryFile** Uses of `NamedTemporaryFile(..., delete=False)` and/or uses of `file.name` of NamedTemporaryFiles have been replaced with TemporaryFileDirectory to avoid a known issue: https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile
+
+## 0.15.8
 
 ### Enhancements
 
 * **Bump unstructured.paddleocr to 2.8.1.0.**
-* **Add support for encoding parameter in partition_csv**
 
 ### Features
 
+* **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
+
 ### Fixes
 
+* **Replace `pillow-heif` with `pi-heif`**. Replaces `pillow-heif` with `pi-heif` due to more permissive licensing on the wheel for `pi-heif`.
 * **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
 * **Fall back to filename extension-based file-type detection for unidentified OLE files.** Resolves a problem where a DOC file that could not be detected as such by `filetype` was incorrectly identified as a MSG file.
 

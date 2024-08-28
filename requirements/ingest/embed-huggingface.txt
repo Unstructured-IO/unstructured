@@ -42,7 +42,7 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
@@ -68,11 +68,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.34
+langchain-core==0.2.35
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.104
+langsmith==0.1.105
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2

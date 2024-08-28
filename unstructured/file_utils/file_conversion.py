@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import tempfile
 from typing import IO
 
@@ -54,11 +55,12 @@ def convert_file_to_html_text_using_pandoc(
     exactly_one(filename=filename, file=file)
 
     if file is not None:
-        with tempfile.NamedTemporaryFile() as tmp:
-            tmp.write(file.read())
-            tmp.flush()
+        with tempfile.TemporaryDirectory() as temp_dir_path:
+            tmp_file_path = os.path.join(temp_dir_path, f"tmp_file.{source_format}")
+            with open(tmp_file_path, "wb") as tmp_file:
+                tmp_file.write(file.read())
             return convert_file_to_text(
-                filename=tmp.name, source_format=source_format, target_format="html"
+                filename=tmp_file_path, source_format=source_format, target_format="html"
             )
 
     assert filename is not None

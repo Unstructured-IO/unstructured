@@ -43,7 +43,7 @@ httpcore==1.0.5
     # via
     #   -c ./base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./base.txt
     #   paddlepaddle
@@ -120,7 +120,7 @@ protobuf==4.23.4
     #   paddlepaddle
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
-pyparsing==3.1.2
+pyparsing==3.1.4
     # via matplotlib
 python-dateutil==2.9.0.post0
     # via
@@ -158,7 +158,7 @@ sniffio==1.3.1
     #   -c ./base.txt
     #   anyio
     #   httpx
-tifffile==2024.8.10
+tifffile==2024.8.24
     # via scikit-image
 tqdm==4.66.5
     # via
@@ -176,5 +176,5 @@ urllib3==1.26.19
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-resources

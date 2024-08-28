@@ -605,6 +605,7 @@ def test_partition_email_can_process_attachments(tmp_path: pathlib.Path):
     expected_metadata.parent_id = None
     elements[-1].metadata.parent_id = None
 
+    assert [a.name for a in os.scandir(output_dir) if a.is_file()] == ["fake-attachment.txt"]
     assert elements[0].text.startswith("Hello!")
     for element in elements[:-1]:
         assert element.metadata.filename == "fake-email-attachment.eml"

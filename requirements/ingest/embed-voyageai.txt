@@ -53,7 +53,7 @@ httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-httpx==0.27.0
+httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
@@ -70,7 +70,7 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.14
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.34
+langchain-core==0.2.35
     # via
     #   langchain
     #   langchain-text-splitters
@@ -79,7 +79,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.104
+langsmith==0.1.105
     # via
     #   langchain
     #   langchain-core
