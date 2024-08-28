@@ -53,16 +53,12 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
     tesseract_to_paddle_language,
 )
-from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
-    AnalysisDrawer,
-    FinalLayoutDrawer,
-    OCRLayoutDrawer,
-    ODModelLayoutDrawer,
-    PdfminerLayoutDrawer,
-)
+from unstructured.partition.pdf_image.analysis import save_analysis_artifiacts
 from unstructured.partition.pdf_image.analysis.layout_dump import (
-    JsonLayoutDumper,
+    ExtractedLayoutDumper,
+    FinalLayoutDumper,
     ObjectDetectionLayoutDumper,
+    OCRLayoutDumper,
 )
 from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
@@ -589,12 +585,12 @@ def _partition_pdf_or_image_local(
             f"(currently {pdf_image_dpi}).",
         )
 
-    pdfminer_drawer: Optional[PdfminerLayoutDrawer] = None
-    od_model_drawer: Optional[ODModelLayoutDrawer] = None
-    ocr_drawer: Optional[OCRLayoutDrawer] = None
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
-    skip_bboxes = env_config.ANALYSIS_BBOX_SKIP
-    skip_dump_od = env_config.ANALYSIS_DUMP_OD_SKIP
+    extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None
+    ocr_layout_dumper: Optional[OCRLayoutDumper] = None
+    final_layout_dumper: Optional[FinalLayoutDumper] = None
+
+    skip_analysis_dump = env_config.ANALYSIS_DUMP_OD_SKIP
 
     if file is None:
         inferred_document_layout = process_file_with_model(
@@ -624,19 +620,15 @@ def _partition_pdf_or_image_local(
                     else:
                         analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
                 os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
-                if not skip_bboxes:
-                    pdfminer_drawer = PdfminerLayoutDrawer(
-                        layout=extracted_layout,
-                    )
-                    od_model_drawer = ODModelLayoutDrawer(
-                        layout=inferred_document_layout,
-                    )
-                    ocr_drawer = OCRLayoutDrawer()
-                if not skip_dump_od:
+                if not skip_analysis_dump:
                     od_model_layout_dumper = ObjectDetectionLayoutDumper(
                         layout=inferred_document_layout,
                         model_name=hi_res_model_name,
                     )
+                    extracted_layout_dumper = ExtractedLayoutDumper(
+                        layout=extracted_layout,
+                    )
+                    ocr_layout_dumper = OCRLayoutDumper()
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
@@ -653,7 +645,7 @@ def _partition_pdf_or_image_local(
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
-                ocr_drawer=ocr_drawer,
+                ocr_layout_dumper=ocr_layout_dumper,
             )
     else:
         inferred_document_layout = process_data_with_model(
@@ -685,14 +677,15 @@ def _partition_pdf_or_image_local(
                         )
                     else:
                         analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
-                os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
-                pdfminer_drawer = PdfminerLayoutDrawer(
-                    layout=extracted_layout,
-                )
-                od_model_drawer = ODModelLayoutDrawer(
-                    layout=inferred_document_layout,
-                )
-                ocr_drawer = OCRLayoutDrawer()
+                if not skip_analysis_dump:
+                    od_model_layout_dumper = ObjectDetectionLayoutDumper(
+                        layout=inferred_document_layout,
+                        model_name=hi_res_model_name,
+                    )
+                    extracted_layout_dumper = ExtractedLayoutDumper(
+                        layout=extracted_layout,
+                    )
+                    ocr_layout_dumper = OCRLayoutDumper()
 
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
@@ -712,7 +705,7 @@ def _partition_pdf_or_image_local(
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
-                ocr_drawer=ocr_drawer,
+                ocr_layout_dumper=ocr_layout_dumper,
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
@@ -801,38 +794,25 @@ def _partition_pdf_or_image_local(
         )
         out_elements.extend(forms)
 
-    if analysis and not skip_bboxes:
-        final_drawer = FinalLayoutDrawer(
-            layout=out_elements,
-        )
-        analysis_drawer = AnalysisDrawer(
-            filename=filename,
-            save_dir=analyzed_image_output_dir_path,
-            draw_grid=env_config.ANALYSIS_BBOX_DRAW_GRID,
-            draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
-            resize=env_config.ANALYSIS_BBOX_RESIZE,
-            format=env_config.ANALYSIS_BBOX_FORMAT,
-        )
-
-        if od_model_drawer:
-            analysis_drawer.add_drawer(od_model_drawer)
-
-        if pdfminer_drawer:
-            analysis_drawer.add_drawer(pdfminer_drawer)
-
-        if ocr_drawer:
-            analysis_drawer.add_drawer(ocr_drawer)
-        analysis_drawer.add_drawer(final_drawer)
-        analysis_drawer.process()
-
-    if analysis and not skip_dump_od:
-        json_layout_dumper = JsonLayoutDumper(
-            filename=filename,
-            save_dir=analyzed_image_output_dir_path,
-        )
+    if analysis:
+        if not skip_analysis_dump:
+            final_layout_dumper = FinalLayoutDumper(
+                layout=out_elements,
+            )
+        layout_dumpers = []
         if od_model_layout_dumper:
-            json_layout_dumper.add_layout_dumper(od_model_layout_dumper)
-        json_layout_dumper.process()
+            layout_dumpers.append(od_model_layout_dumper)
+        if extracted_layout_dumper:
+            layout_dumpers.append(extracted_layout_dumper)
+        if ocr_layout_dumper:
+            layout_dumpers.append(ocr_layout_dumper)
+        if final_layout_dumper:
+            layout_dumpers.append(final_layout_dumper)
+        save_analysis_artifiacts(
+            *layout_dumpers,
+            filename=filename,
+            analyzed_image_output_dir_path=analyzed_image_output_dir_path,
+        )
 
     return out_elements
 
