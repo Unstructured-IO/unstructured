@@ -1,4 +1,3 @@
-import copy
 import logging
 import math
 import tempfile
@@ -6,20 +5,15 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Collection, Generator, List, Optional, TypeVar, Union
+from typing import Any, Generator, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
 from PIL import Image, ImageDraw, ImageFont
 from unstructured_inference.constants import ElementType
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
 
-from unstructured.documents.elements import Element, Text
 from unstructured.partition.pdf_image.analysis.processor import AnalysisProcessor
 from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image
-from unstructured.partition.utils.sorting import coordinates_to_bbox
 
 PageImage = TypeVar("PageImage", Image.Image, np.ndarray)
 
@@ -390,51 +384,74 @@ def draw_bbox_on_image(
 
 class LayoutDrawer(ABC):
     layout_source: str = "unknown"
+    laytout_dump: dict
 
-    @abstractmethod
+    def __init__(self, layout_dump: dict):
+        self.layout_dump = layout_dump
+
     def draw_layout_on_page(self, page_image: Image.Image, page_num: int) -> Image.Image:
         """Draw the layout bboxes with additional metadata on the image."""
+        layout_pages = self.layout_dump.get("pages")
+        if not layout_pages:
+            print(f"Warning: layout in drawer {self.__class__.__name__} is empty - skipping")
+            return page_image
+        if len(layout_pages) < page_num:
+            print(f"Error! Page {page_num} not found in layout (pages: {len(layout_pages)})")
+            return page_image
+        image_draw = ImageDraw.ImageDraw(page_image)
+        page_layout_dump = layout_pages[page_num - 1]
+        if dump_page_num := page_layout_dump.get("number"):
+            assert (
+                dump_page_num == page_num
+            ), f"Requested page num {page_num} differs from dump {page_layout_dump.get('number')}"
+        for idx, elements in enumerate(page_layout_dump["elements"], 1):
+            self.render_element_on_page(idx, image_draw, elements)
+        return page_image
+
+    @abstractmethod
+    def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
+        """Draw a single element on the image."""
 
 
 class SimpleLayoutDrawer(LayoutDrawer, ABC):
-    layout: list[list[TextRegion]]
     color: str
     show_order: bool = False
     show_text_length: bool = False
 
-    def draw_layout_on_page(self, page_image: Image.Image, page_num: int) -> Image.Image:
-        if not self.layout:
-            print(f"Warning: layout in drawer {self.__class__.__name__} is empty - skipping")
-            return page_image
-        if len(self.layout) < page_num:
-            print(f"Error! Page {page_num} not found in layout (pages: {len(self.layout)})")
-            return page_image
-        image_draw = ImageDraw.ImageDraw(page_image)
-        page_layout = self.layout[page_num - 1]
-        for idx, region in enumerate(page_layout):
-            text_len = len(region.text) if region.text else 0
-            element_prob = getattr(region, "prob", None)
-            element_order = f"{idx + 1}" if self.show_order else None
-            text_len = f"len: {text_len}" if self.show_text_length else None
-            bbox = BBox(
-                points=(region.bbox.x1, region.bbox.y1, region.bbox.x2, region.bbox.y2),
-                labels=BboxLabels(
-                    top_right=f"prob: {element_prob:.2f}" if element_prob else None,
-                    bottom_left=text_len,
-                    center=element_order,
-                ),
-            )
-            draw_bbox_on_image(image_draw, bbox, color=self.color)
-        return page_image
+    def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
+        text_len = len(elements.get("text", ""))
+        element_prob = elements.get("prob")
+        element_order = f"{idx}" if self.show_order else None
+        text_len = f"len: {text_len}" if self.show_text_length else None
+        bbox = BBox(
+            points=elements["bbox"],
+            labels=BboxLabels(
+                top_right=f"prob: {element_prob:.2f}" if element_prob else None,
+                bottom_left=text_len,
+                center=element_order,
+            ),
+        )
+        draw_bbox_on_image(image_draw, bbox, color=self.color)
 
 
 class PdfminerLayoutDrawer(SimpleLayoutDrawer):
     layout_source = "pdfminer"
 
-    def __init__(self, layout: List[List[TextRegion]], color: str = "red"):
-        self.layout = copy.deepcopy(layout)
+    def __init__(self, layout_dump: dict, color: str = "red"):
+        self.layout_dump = layout_dump
         self.color = color
         self.show_order = True
+        super().__init__(layout_dump)
+
+
+class OCRLayoutDrawer(SimpleLayoutDrawer):
+    layout_source = "ocr"
+
+    def __init__(self, layout_dump: dict, color: str = "red"):
+        self.color = color
+        self.show_order = False
+        self.show_text_length = False
+        super().__init__(layout_dump)
 
 
 class ODModelLayoutDrawer(LayoutDrawer):
@@ -454,54 +471,22 @@ class ODModelLayoutDrawer(LayoutDrawer):
         ElementType.TITLE: "greenyellow",
     }
 
-    def __init__(self, layout: DocumentLayout):
-        self.layout: list[Collection[LayoutElement]] = copy.deepcopy(
-            [page.elements for page in layout.pages]
+    def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
+        element_type = elements["type"]
+        element_prob = elements.get("prob")
+        bbox_points = elements["bbox"]
+        color = self.get_element_type_color(element_type)
+        bbox = BBox(
+            points=bbox_points,
+            labels=BboxLabels(
+                top_left=f"{element_type}",
+                top_right=f"prob: {element_prob:.2f}" if element_prob else None,
+            ),
         )
-
-    def draw_layout_on_page(self, page_image: Image.Image, page_num: int) -> Image.Image:
-        if not self.layout:
-            print(f"Warning: layout in drawer {self.__class__.__name__} is empty - skipping")
-            return page_image
-        if len(self.layout) < page_num:
-            print(f"Error! Page {page_num} not found in layout (pages: {len(self.layout)})")
-            return page_image
-        image_draw = ImageDraw.ImageDraw(page_image)
-        page_layout = self.layout[page_num - 1]
-        for layout_element in page_layout:
-            element_type = layout_element.type
-            element_prob = layout_element.prob
-            color = self.get_element_type_color(element_type)
-            bbox = BBox(
-                points=(
-                    layout_element.bbox.x1,
-                    layout_element.bbox.y1,
-                    layout_element.bbox.x2,
-                    layout_element.bbox.y2,
-                ),
-                labels=BboxLabels(
-                    top_left=f"{element_type}",
-                    top_right=f"prob: {element_prob:.2f}" if element_prob else None,
-                ),
-            )
-            draw_bbox_on_image(image_draw, bbox, color=color)
-        return page_image
+        draw_bbox_on_image(image_draw, bbox, color=color)
 
     def get_element_type_color(self, element_type: str) -> str:
         return self.color_map.get(element_type, "cyan")
-
-
-class OCRLayoutDrawer(SimpleLayoutDrawer):
-    layout_source = "ocr"
-
-    def __init__(self, color: str = "red"):
-        self.color = color
-        self.layout: list[list[TextRegion]] = []
-        self.show_order = False
-        self.show_text_length = False
-
-    def add_ocred_page(self, page_layout: list[TextRegion]):
-        self.layout.append(copy.deepcopy(page_layout))
 
 
 class FinalLayoutDrawer(LayoutDrawer):
@@ -523,36 +508,27 @@ class FinalLayoutDrawer(LayoutDrawer):
         "PageNumber": "crimson",
     }
 
-    def __init__(self, layout: List[Element]):
-        self.layout = layout
+    def __init__(self, layout_dump: dict):
+        self.layout_dump = layout_dump
 
-    def draw_layout_on_page(self, page_image: Image.Image, page_num: int) -> Image.Image:
-        image_draw = ImageDraw.ImageDraw(page_image)
-        elements_for_page = [
-            element for element in self.layout if element.metadata.page_number == page_num
-        ]
-        for idx, element in enumerate(elements_for_page):
-            element_order = idx + 1
-            element_type = (
-                element.category if isinstance(element, Text) else str(element.__class__.__name__)
-            )
-            element_prob = getattr(element.metadata, "detection_class_prob", None)
-            text_len = len(element.text)
-            bbox_points = coordinates_to_bbox(element.metadata.coordinates)
-            color = self.get_element_type_color(element_type)
-            cluster = getattr(element.metadata, "cluster", None)
-            bbox = BBox(
-                points=bbox_points,
-                labels=BboxLabels(
-                    top_left=f"{element_type}",
-                    top_right=f"prob: {element_prob:.2f}" if element_prob else None,
-                    bottom_right=f"len: {text_len}",
-                    bottom_left=f"cl: {cluster}" if cluster else None,
-                    center=f"{element_order}",
-                ),
-            )
-            draw_bbox_on_image(image_draw, bbox, color=color)
-        return page_image
+    def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
+        element_type = elements["type"]
+        element_prob = elements.get("prob")
+        text_len = len(elements.get("text", ""))
+        bbox_points = elements["bbox"]
+        color = self.get_element_type_color(element_type)
+        cluster = elements.get("cluster")
+        bbox = BBox(
+            points=bbox_points,
+            labels=BboxLabels(
+                top_left=f"{element_type}",
+                top_right=f"prob: {element_prob:.2f}" if element_prob else None,
+                bottom_right=f"len: {text_len}",
+                bottom_left=f"cl: {cluster}" if cluster else None,
+                center=f"{idx}",
+            ),
+        )
+        draw_bbox_on_image(image_draw, bbox, color=color)
 
     def get_element_type_color(self, element_type: str) -> str:
         return self.color_map.get(element_type, "cyan")
