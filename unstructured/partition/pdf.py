@@ -811,6 +811,8 @@ def _partition_pdf_or_image_local(
         save_analysis_artifiacts(
             *layout_dumpers,
             filename=filename,
+            file=file,
+            is_image=is_image,
             analyzed_image_output_dir_path=analyzed_image_output_dir_path,
         )
 

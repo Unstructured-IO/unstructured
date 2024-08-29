@@ -4,6 +4,7 @@ import tempfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
+from io import BytesIO
 from pathlib import Path
 from typing import Any, Generator, List, Optional, TypeVar, Union
 
@@ -419,7 +420,7 @@ class SimpleLayoutDrawer(LayoutDrawer, ABC):
     show_text_length: bool = False
 
     def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
-        text_len = len(elements.get("text", ""))
+        text_len = len(elements["text"]) if elements.get("text") else 0
         element_prob = elements.get("prob")
         element_order = f"{idx}" if self.show_order else None
         text_len = f"len: {text_len}" if self.show_text_length else None
@@ -514,7 +515,7 @@ class FinalLayoutDrawer(LayoutDrawer):
     def render_element_on_page(self, idx: int, image_draw: ImageDraw, elements: dict[str, Any]):
         element_type = elements["type"]
         element_prob = elements.get("prob")
-        text_len = len(elements.get("text", ""))
+        text_len = len(elements["text"]) if elements.get("text") else 0
         bbox_points = elements["bbox"]
         color = self.get_element_type_color(element_type)
         cluster = elements.get("cluster")
@@ -538,8 +539,10 @@ class AnalysisDrawer(AnalysisProcessor):
 
     def __init__(
         self,
-        filename: Union[str, Path],
+        filename: Optional[Union[str, Path]],
+        is_image: bool,
         save_dir: Union[str, Path],
+        file: Optional[BytesIO] = None,
         draw_caption: bool = True,
         draw_grid: bool = False,
         resize: Optional[float] = None,
@@ -548,8 +551,10 @@ class AnalysisDrawer(AnalysisProcessor):
         self.draw_caption = draw_caption
         self.draw_grid = draw_grid
         self.resize = resize
+        self.is_image = is_image
         self.format = format
         self.drawers = []
+        self.file = file
 
         super().__init__(filename, save_dir)
 
@@ -652,15 +657,34 @@ class AnalysisDrawer(AnalysisProcessor):
 
     def load_source_image(self) -> Generator[Image.Image, None, None]:
         with tempfile.TemporaryDirectory() as temp_dir:
-            try:
-                image_paths = convert_pdf_to_image(
-                    self.filename,
-                    output_folder=temp_dir,
-                    path_only=True,
-                )
-            except:  # noqa: E722
-                # probably got an image instead of pdf - load it directly
-                image_paths = [self.filename]
+            image_paths = []
+            if self.is_image:
+                if self.file:
+                    try:
+                        image = Image.open(self.file)
+                        output_file = Path(temp_dir) / self.filename
+                        image.save(output_file, format="PNG")
+                        image_paths = [output_file]
+                    except Exception as ex:  # noqa: E722
+                        print(
+                            f"Error while converting image to PNG for file {self.filename}, "
+                            f"exception: {ex}"
+                        )
+                else:
+                    image_paths = [self.filename]
+            else:
+                try:
+                    image_paths = convert_pdf_to_image(
+                        filename=self.filename,
+                        file=self.file,
+                        output_folder=temp_dir,
+                        path_only=True,
+                    )
+                except Exception as ex:  # noqa: E722
+                    print(
+                        f"Error while converting pdf to image for file {self.filename}",
+                        f"exception: {ex}",
+                    )
 
             for image_path in image_paths:
                 with Image.open(image_path) as image:

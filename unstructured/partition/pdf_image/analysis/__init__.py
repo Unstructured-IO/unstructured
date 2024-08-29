@@ -1,4 +1,6 @@
 import json
+import uuid
+from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
@@ -43,8 +45,22 @@ def _get_drawer_for_dumper(dumper: LayoutDumper) -> Optional[LayoutDrawer]:
         raise ValueError(f"Unknown dumper type: {dumper}")
 
 
+def _generate_filename(is_image: bool):
+    """Generate a filename for the analysis artifacts based on the file type.
+    Adds a random uuid suffix
+    """
+    suffix = uuid.uuid4().hex[:5]
+    if is_image:
+        return f"image_{suffix}.png"
+    return f"pdf_{suffix}.pdf"
+
+
 def save_analysis_artifiacts(
-    *layout_dumpers: LayoutDumper, filename: str, analyzed_image_output_dir_path: str
+    *layout_dumpers: LayoutDumper,
+    is_image: bool,
+    analyzed_image_output_dir_path: str,
+    filename: Optional[str] = None,
+    file: Optional[BytesIO] = None,
 ):
     """Save the analysis artifacts for a given file. Loads some settings from
     the environment configuration.
@@ -54,6 +70,8 @@ def save_analysis_artifiacts(
         filename: The filename of the sources analyzed file (pdf/image)
         analyzed_image_output_dir_path: The directory to save the analysis artifacts
     """
+    if not filename:
+        filename = _generate_filename(is_image)
     skip_bboxes = env_config.ANALYSIS_BBOX_SKIP
     skip_dump_od = env_config.ANALYSIS_DUMP_OD_SKIP
     if skip_bboxes or skip_dump_od:
@@ -73,6 +91,8 @@ def save_analysis_artifiacts(
     if not skip_bboxes:
         analysis_drawer = AnalysisDrawer(
             filename=filename,
+            file=file,
+            is_image=is_image,
             save_dir=output_path,
             draw_grid=env_config.ANALYSIS_BBOX_DRAW_GRID,
             draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
@@ -104,6 +124,7 @@ def render_bboxes_for_file(
           if not provided, it will be saved in the analysis directory.
     """
     filename_stem = Path(filename).stem
+    is_image = not Path(filename).suffix.endswith("pdf")
     analysis_dumps_dir = (
         Path(analyzed_image_output_dir_path) / "analysis" / filename_stem / "layout_dump"
     )
@@ -136,6 +157,7 @@ def render_bboxes_for_file(
         analysis_drawer = AnalysisDrawer(
             filename=filename,
             save_dir=output_path,
+            is_image=is_image,
             draw_grid=env_config.ANALYSIS_BBOX_DRAW_GRID,
             draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
             resize=env_config.ANALYSIS_BBOX_RESIZE,
