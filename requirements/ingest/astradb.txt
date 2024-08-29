@@ -8,9 +8,9 @@ anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-astrapy==1.4.1
+astrapy==1.4.2
     # via -r ./ingest/astradb.in
-cassandra-driver==3.29.1
+cassandra-driver==3.29.2
     # via cassio
 cassio==0.1.8
     # via astrapy
@@ -96,5 +96,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-uuid6==2024.1.12
+uuid6==2024.7.10
     # via astrapy

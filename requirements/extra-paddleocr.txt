@@ -58,7 +58,7 @@ imageio==2.35.1
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-resources==6.4.4
+importlib-resources==6.4.5
     # via matplotlib
 kiwisolver==1.4.7
     # via matplotlib

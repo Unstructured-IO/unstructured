@@ -78,11 +78,11 @@ langchain-text-splitters==0.2.4
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.116
+langsmith==0.1.117
     # via
     #   langchain
     #   langchain-core
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -131,6 +131,7 @@ typing-extensions==4.12.2
     #   -c ./ingest/../base.txt
     #   anyio
     #   langchain-core
+    #   multidict
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
@@ -141,5 +142,5 @@ urllib3==1.26.20
     #   requests
 voyageai==0.2.3
     # via langchain-voyageai
-yarl==1.11.0
+yarl==1.11.1
     # via aiohttp
