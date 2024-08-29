@@ -61,6 +61,8 @@ def save_analysis_artifiacts(
     analyzed_image_output_dir_path: str,
     filename: Optional[str] = None,
     file: Optional[BytesIO] = None,
+    skip_bboxes: bool = False,
+    skip_dump_od: bool = False,
 ):
     """Save the analysis artifacts for a given file. Loads some settings from
     the environment configuration.
@@ -72,8 +74,6 @@ def save_analysis_artifiacts(
     """
     if not filename:
         filename = _generate_filename(is_image)
-    skip_bboxes = env_config.ANALYSIS_BBOX_SKIP
-    skip_dump_od = env_config.ANALYSIS_DUMP_OD_SKIP
     if skip_bboxes or skip_dump_od:
         return
 
@@ -112,6 +112,9 @@ def render_bboxes_for_file(
     renders_output_dir_path: Optional[str] = None,
 ):
     """Render the bounding boxes for a given layout dimp file.
+    To be used for analysis after the partition is performed for
+    only dumping the layouts - the bboxes can be rendered later.
+
     Expects that the analyzed_image_output_dir_path keeps the structure
     that was created by the save_analysis_artifacts function.
 

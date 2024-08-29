@@ -814,6 +814,8 @@ def _partition_pdf_or_image_local(
             file=file,
             is_image=is_image,
             analyzed_image_output_dir_path=analyzed_image_output_dir_path,
+            skip_bboxes=env_config.ANALYSIS_BBOX_SKIP,
+            skip_dump_od=env_config.ANALYSIS_DUMP_OD_SKIP,
         )
 
     return out_elements

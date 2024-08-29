@@ -401,10 +401,9 @@ class LayoutDrawer(ABC):
             return page_image
         image_draw = ImageDraw.ImageDraw(page_image)
         page_layout_dump = layout_pages[page_num - 1]
-        if dump_page_num := page_layout_dump.get("number"):
-            assert (
-                dump_page_num == page_num
-            ), f"Requested page num {page_num} differs from dump {page_layout_dump.get('number')}"
+        if page_num != page_layout_dump.get("number"):
+            dump_page_num = page_layout_dump.get("number")
+            print(f"Warning: Requested page num {page_num} differs from dump {dump_page_num}")
         for idx, elements in enumerate(page_layout_dump["elements"], 1):
             self.render_element_on_page(idx, image_draw, elements)
         return page_image
