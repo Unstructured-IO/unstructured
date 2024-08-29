@@ -7,7 +7,6 @@
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   hubspot-api-client
 hubspot-api-client==9.0.0
     # via -r ./ingest/hubspot.in

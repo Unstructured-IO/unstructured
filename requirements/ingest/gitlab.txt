@@ -7,7 +7,6 @@
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -17,7 +16,7 @@ idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
-python-gitlab==4.9.0
+python-gitlab==4.10.0
     # via -r ./ingest/gitlab.in
 requests==2.32.3
     # via

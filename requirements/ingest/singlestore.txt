@@ -9,7 +9,6 @@ build==1.2.1
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -53,9 +52,7 @@ urllib3==1.26.19
     #   -c ./ingest/../deps/constraints.txt
     #   requests
 wheel==0.44.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   singlestoredb
+    # via singlestoredb
 zipp==3.20.1
     # via importlib-metadata
 

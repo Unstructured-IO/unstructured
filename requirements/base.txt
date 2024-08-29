@@ -12,7 +12,6 @@ beautifulsoup4==4.12.3
     # via -r ./base.in
 certifi==2024.7.4
     # via
-    #   -c ././deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
@@ -29,7 +28,7 @@ dataclasses-json==0.6.7
     # via
     #   -r ./base.in
     #   unstructured-client
-deepdiff==7.0.1
+deepdiff==8.0.1
     # via unstructured-client
 emoji==2.12.1
     # via -r ./base.in
@@ -71,7 +70,7 @@ nltk==3.9.1
     # via -r ./base.in
 numpy==1.26.4
     # via -r ./base.in
-ordered-set==4.1.0
+orderly-set==5.2.2
     # via deepdiff
 packaging==24.1
     # via
@@ -128,9 +127,7 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.25.5
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in
 urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt

@@ -14,7 +14,6 @@ anyio==4.4.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests

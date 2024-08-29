@@ -122,7 +122,6 @@ jupyter-console==6.6.3
     # via jupyter
 jupyter-core==5.7.2
     # via
-    #   -c ././deps/constraints.txt
     #   ipykernel
     #   jupyter-client
     #   jupyter-console
@@ -263,8 +262,7 @@ pyzmq==26.2.0
     #   jupyter-console
     #   jupyter-server
     #   notebook
-    #   qtconsole
-qtconsole==5.5.2
+qtconsole==5.6.0
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
@@ -349,9 +347,7 @@ webencodings==0.5.1
 websocket-client==1.8.0
     # via jupyter-server
 wheel==0.44.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   pip-tools
+    # via pip-tools
 widgetsnbextension==4.0.13
     # via ipywidgets
 zipp==3.20.1

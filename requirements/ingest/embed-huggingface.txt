@@ -13,7 +13,6 @@ anyio==4.4.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
@@ -68,11 +67,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.35
+langchain-core==0.2.36
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.105
+langsmith==0.1.106
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -145,9 +144,7 @@ tokenizers==0.19.1
     #   langchain-huggingface
     #   transformers
 torch==2.4.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   sentence-transformers
+    # via sentence-transformers
 tqdm==4.66.5
     # via
     #   -c ./ingest/../base.txt

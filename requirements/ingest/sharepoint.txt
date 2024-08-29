@@ -7,7 +7,6 @@
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 cffi==1.17.0
     # via cryptography
