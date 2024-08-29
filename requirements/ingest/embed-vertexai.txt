@@ -29,7 +29,6 @@ cachetools==5.5.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
@@ -51,7 +50,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-google-api-core[grpc]==2.19.1
+google-api-core[grpc]==2.19.2
     # via
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
@@ -66,7 +65,7 @@ google-auth==2.34.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.63.0
+google-cloud-aiplatform==1.64.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -95,7 +94,7 @@ googleapis-common-protos[grpc]==1.65.0
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.66.0
+grpcio==1.66.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   google-api-core
@@ -130,15 +129,15 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.14
+langchain==0.2.15
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.12
+langchain-community==0.2.14
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.35
+langchain-core==0.2.36
     # via
     #   langchain
     #   langchain-community
@@ -148,7 +147,7 @@ langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.105
+langsmith==0.1.106
     # via
     #   langchain
     #   langchain-community

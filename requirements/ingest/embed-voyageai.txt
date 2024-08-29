@@ -29,7 +29,6 @@ attrs==24.2.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
@@ -68,9 +67,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.14
+langchain==0.2.15
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.35
+langchain-core==0.2.36
     # via
     #   langchain
     #   langchain-text-splitters
@@ -79,7 +78,7 @@ langchain-text-splitters==0.2.2
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.105
+langsmith==0.1.106
     # via
     #   langchain
     #   langchain-core

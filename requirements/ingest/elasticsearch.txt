@@ -17,7 +17,6 @@ attrs==24.2.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   elastic-transport
 elastic-transport==8.15.0
     # via elasticsearch

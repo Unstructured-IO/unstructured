@@ -14,7 +14,6 @@ anyio==4.4.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
@@ -53,11 +52,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.35
+langchain-core==0.2.36
     # via langchain-openai
-langchain-openai==0.1.22
+langchain-openai==0.1.23
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.105
+langsmith==0.1.106
     # via langchain-core
 openai==1.42.0
     # via langchain-openai

@@ -6,7 +6,6 @@
 #
 certifi==2024.7.4
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
 charset-normalizer==3.3.2
@@ -90,9 +89,7 @@ tokenizers==0.19.1
     #   -c ././deps/constraints.txt
     #   transformers
 torch==2.4.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./huggingface.in
+    # via -r ./huggingface.in
 tqdm==4.66.5
     # via
     #   -c ./base.txt

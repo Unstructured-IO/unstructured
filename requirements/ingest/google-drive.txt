@@ -9,15 +9,14 @@ cachetools==5.5.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-google-api-core==2.19.1
+google-api-core==2.19.2
     # via google-api-python-client
-google-api-python-client==2.142.0
+google-api-python-client==2.143.0
     # via -r ./ingest/google-drive.in
 google-auth==2.34.0
     # via

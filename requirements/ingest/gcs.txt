@@ -25,7 +25,6 @@ cachetools==5.5.0
 certifi==2024.7.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -43,7 +42,7 @@ fsspec==2024.6.1
     #   gcsfs
 gcsfs==2024.6.1
     # via -r ./ingest/gcs.in
-google-api-core==2.19.1
+google-api-core==2.19.2
     # via
     #   google-cloud-core
     #   google-cloud-storage
