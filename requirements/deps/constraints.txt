@@ -9,10 +9,6 @@ grpcio>=1.65.5
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
 Office365-REST-Python-Client<2.4.3
-# NOTE(trevor) `unstructured-inference` is set in extra-pdf-image.in to allow
-# unstructured-inference to be upgraded when unstructured library is upgraded
-# https://github.com/Unstructured-IO/unstructured/issues/1458
-# unstructured-inference
 # use the known compatible version of weaviate
 weaviate-client>3.25.0
 # TODO: Pinned in transformers package, remove when that gets updated
