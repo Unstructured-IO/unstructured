@@ -396,7 +396,9 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_guessed_m
     ],
 )
 def test_ole_file_structure_trusted_over_mime_type_guess(filename, mime_type, expected):
-    _guess_mime = lambda *args, **kwargs: mime_type
+    def _guess_mime(*args, **kwargs):
+        return mime_type
+
     with patch("filetype.guess_mime", _guess_mime):
         detect_filetype(example_doc_path(filename)) == expected
 
