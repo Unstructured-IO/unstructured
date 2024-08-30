@@ -111,8 +111,10 @@ def get_coords_from_bboxes(bboxes) -> np.ndarray:
     return coords
 
 
-def areas_of_boxes_and_intersection_area(coords1, coords2, threshold: float = 0.5):
-    """compute iou for a group of elements"""
+def areas_of_boxes_and_intersection_area(
+    coords1: np.ndarray, coords2: np.ndarray, threshold: float = 0.5
+):
+    """compute intersection area and own areas for two groups of bounding boxes"""
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
     x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
 
@@ -129,7 +131,8 @@ def areas_of_boxes_and_intersection_area(coords1, coords2, threshold: float = 0.
 
 
 def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
-    """compute iou for a group of elements"""
+    """compute if each element from bboxes1 is almost a subregion of one or more elements in
+    bboxes2"""
     coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
 
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords1, coords2)
@@ -145,7 +148,7 @@ def boxes_self_iou(bboxes, threshold: float = 0.5) -> np.ndarray:
 
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords, coords)
 
-    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area - inter_area)) > threshold
+    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
 
 
 @requires_dependencies("unstructured_inference")

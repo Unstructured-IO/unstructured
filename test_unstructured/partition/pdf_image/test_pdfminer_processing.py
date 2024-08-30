@@ -8,6 +8,7 @@ from unstructured_inference.inference.layout import DocumentLayout, LayoutElemen
 from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
+    boxes_self_iou,
     clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
 )
@@ -183,3 +184,28 @@ def test_bboxes1_is_almost_subregion_of_bboxes2(coords1, coords2, expected):
     np.testing.assert_array_equal(
         bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2), expected
     )
+
+
+@pytest.mark.parametrize(
+    ("coords", "threshold", "expected"),
+    [
+        (
+            [[0, 0, 10, 10], [2, 2, 12, 12], [10, 10, 20, 20]],
+            0.5,
+            [[True, True, False], [True, True, False], [False, False, True]],
+        ),
+        (
+            [[0, 0, 10, 10], [2, 2, 12, 12], [10, 10, 20, 20]],
+            0.9,
+            [[True, False, False], [False, True, False], [False, False, True]],
+        ),
+        (
+            [[0, 0, 10, 10], [10, 10, 10, 10]],
+            0.5,
+            [[True, False], [False, True]],
+        ),
+    ],
+)
+def test_boxes_self_iou(coords, threshold, expected):
+    bboxes = [Rectangle(*row) for row in coords]
+    np.testing.assert_array_equal(boxes_self_iou(bboxes, threshold), expected)
