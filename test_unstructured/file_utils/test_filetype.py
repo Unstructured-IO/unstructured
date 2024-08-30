@@ -1058,6 +1058,27 @@ class Describe_OleFileDifferentiator:
 
         assert differentiator.file_type is expected_value
 
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [
+            ("simple.doc", FileType.DOC),
+            ("fake-power-point.ppt", FileType.PPT),
+            ("tests-example.xls", FileType.XLS),
+            ("fake-email.msg", FileType.MSG),
+            ("README.org", None),
+        ],
+    )
+    def it_distinguishes_the_file_type_of_applicable_OLE_files_from_storage_content(
+        self, file_name: str, expected_value: FileType | None
+    ):
+        # -- no file-name available, just to make sure we're not relying on an extension --
+        with open(example_doc_path(file_name), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+        differentiator = _OleFileDifferentiator(ctx)
+
+        assert differentiator._check_ole_file_type(ctx) is expected_value
+
     def but_it_returns_None_to_engage_fallback_when_filetype_cannot_guess_mime(
         self, guess_mime_: Mock
     ):
