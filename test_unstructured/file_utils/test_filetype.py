@@ -387,6 +387,21 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_guessed_m
 
 
 @pytest.mark.parametrize(
+    ("filename", "mime_type", "expected"),
+    [
+        ("fake.doc", "application/vnd.ms-excel", FileType.DOC),
+        ("fake-power-point.ppt", "application/vnd.ms-excel", FileType.PPT),
+        ("tests-example.xls", "application/msword", FileType.XLS),
+        ("fake-email.msg", "application/vnd.ms-excel", FileType.MSG),
+    ],
+)
+def test_ole_file_structure_trusted_over_mime_type_guess(filename, mime_type, expected):
+    _guess_mime = lambda *args, **kwargs: mime_type
+    with patch("filetype.guess_mime", _guess_mime):
+        detect_filetype(example_doc_path(filename)) == expected
+
+
+@pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
         # -- `filetype` lib recognizes all these binary file-types --

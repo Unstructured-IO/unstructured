@@ -478,8 +478,9 @@ class _OleFileDifferentiator:
         if not self._is_ole_file(self._ctx):
             return None
 
-        if (guessed_ole_file_type := self._guess_ole_file_type(self._ctx)) is not None:
-            return guessed_ole_file_type
+        # -- check storage contents of the ole file for file type markers
+        if (ole_file_type := self._check_ole_file_type(self._ctx)) is not None:
+            return ole_file_type
 
         # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so we rely on it
         # -- to differentiate those. Note `filetype` doesn't detect MSG type and won't always
@@ -497,7 +498,7 @@ class _OleFileDifferentiator:
             return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
 
     @staticmethod
-    def _guess_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
+    def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
         with ctx.open() as f:
             ole = OleFileIO(f)
             root_storage = Storage.from_ole(ole)
