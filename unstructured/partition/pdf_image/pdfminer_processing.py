@@ -100,6 +100,38 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
     )
 
 
+def get_coords_from_bboxes(bboxes) -> np.ndarray:
+    """convert a list of boxes's coords into np array"""
+    # preallocate memory
+    coords = np.zeros((len(bboxes), 4))
+
+    for i, bbox in enumerate(bboxes):
+        coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
+
+    return coords
+
+
+def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
+    """compute iou for a group of elements"""
+    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
+
+    x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
+    x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
+
+    xa = np.maximum(x11, np.transpose(x21))
+    ya = np.maximum(y11, np.transpose(y21))
+    xb = np.minimum(x12, np.transpose(x22))
+    yb = np.minimum(y12, np.transpose(y22))
+
+    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
+    boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
+    boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
+
+    return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
+        boxa_area <= boxb_area.T
+    )
+
+
 @requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
@@ -172,51 +204,36 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        tables = [e for e in page.elements if e.type == ElementType.TABLE]
+        table_boxes = [e.bbox for e in page.elements if e.type == ElementType.TABLE]
+        element_boxes = []
+        element_to_subregion_map = {}
+        subregion_indice = 0
         for i, element in enumerate(page.elements):
             if element.source != Source.PDFMINER:
                 continue
-            subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
-            element_inside_table = [
-                element.bbox.is_almost_subregion_of(t.bbox, subregion_threshold) for t in tables
-            ]
-            if sum(element_inside_table) == 1:
-                page.elements[i] = None
-        page.elements = [e for e in page.elements if e]
+            element_boxes.append(element.bbox)
+            element_to_subregion_map[i] = subregion_indice
+            subregion_indice += 1
+
+        is_element_subregion_of_tables = (
+            bboxes1_is_almost_subregion_of_bboxes2(
+                element_boxes,
+                table_boxes,
+                env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+            ).sum(axis=1)
+            == 1
+        )
+
+        page.elements = [
+            e
+            for i, e in enumerate(page.elements)
+            if (
+                (i not in element_to_subregion_map)
+                or not is_element_subregion_of_tables[element_to_subregion_map[i]]
+            )
+        ]
 
     return document
-
-
-def get_coords_from_bboxes(bboxes) -> np.ndarray:
-    """convert a list of boxes's coords into np array"""
-    # preallocate memory
-    coords = np.zeros((len(bboxes), 4))
-
-    for i, bbox in enumerate(bboxes):
-        coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
-
-    return coords
-
-
-def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
-    """compute iou for a group of elements"""
-    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
-
-    x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
-    x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
-
-    xa = np.maximum(x11, np.transpose(x21))
-    ya = np.maximum(y11, np.transpose(y21))
-    xb = np.minimum(x12, np.transpose(x22))
-    yb = np.minimum(y12, np.transpose(y22))
-
-    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
-    boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
-    boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
-
-    return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
-        boxa_area <= boxb_area.T
-    )
 
 
 def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
@@ -254,11 +271,11 @@ def aggregate_embedded_text_by_block(
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
-    subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
-    filtered_blocks = [
-        obj
-        for obj in pdf_objects
-        if obj.bbox.is_almost_subregion_of(text_region.bbox, subregion_threshold)
-    ]
-    text = " ".join([x.text for x in filtered_blocks if x.text])
+    mask = bboxes1_is_almost_subregion_of_bboxes2(
+        [obj.bbox for obj in pdf_objects],
+        [text_region.bbox],
+        env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+    ).sum(axis=1)
+
+    text = " ".join([obj.text for i, obj in enumerate(pdf_objects) if (mask[i] and obj.text)])
     return text
