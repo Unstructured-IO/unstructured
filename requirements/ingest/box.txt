@@ -10,7 +10,7 @@ boxfs==0.3.0
     # via -r ./ingest/box.in
 boxsdk[jwt]==3.13.0
     # via boxfs
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -51,7 +51,7 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   python-dateutil
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

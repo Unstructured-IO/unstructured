@@ -8,7 +8,7 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.5.0
     # via google-auth
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   requests
@@ -279,7 +279,7 @@ unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

@@ -4,7 +4,7 @@
 #
 #    pip-compile ./huggingface.in
 #
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   requests
@@ -103,7 +103,7 @@ typing-extensions==4.12.2
     #   -c ./base.txt
     #   huggingface-hub
     #   torch
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

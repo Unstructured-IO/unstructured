@@ -24,7 +24,7 @@ build==1.2.1
     # via chromadb
 cachetools==5.5.0
     # via google-auth
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
@@ -268,7 +268,7 @@ typing-extensions==4.12.2
     #   starlette
     #   typer
     #   uvicorn
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
