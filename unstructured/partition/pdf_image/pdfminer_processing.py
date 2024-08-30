@@ -111,10 +111,8 @@ def get_coords_from_bboxes(bboxes) -> np.ndarray:
     return coords
 
 
-def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
+def areas_of_boxes_and_intersection_area(coords1, coords2, threshold: float = 0.5):
     """compute iou for a group of elements"""
-    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
-
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
     x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
 
@@ -127,9 +125,27 @@ def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
 
+    return inter_area, boxa_area, boxb_area
+
+
+def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
+    """compute iou for a group of elements"""
+    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords1, coords2)
+
     return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
         boxa_area <= boxb_area.T
     )
+
+
+def boxes_self_iou(bboxes, threshold: float = 0.5) -> np.ndarray:
+    """compute iou for a group of elements"""
+    coords = get_coords_from_bboxes(bboxes)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords, coords)
+
+    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area - inter_area)) > threshold
 
 
 @requires_dependencies("unstructured_inference")
@@ -239,27 +255,36 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
 def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
     """Removes duplicate image elements extracted by PDFMiner from a document layout."""
 
-    from unstructured_inference.inference.elements import (
-        region_bounding_boxes_are_almost_the_same,
-    )
-
     for page in document.pages:
-        image_elements = []
+        image_bboxes = []
+        texts = []
+        bbox_to_iou_mapping = {}
+        current_idx = 0
         for i, element in enumerate(page.elements):
             if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
                 continue
+            image_bboxes.append(element.bbox)
+            texts.append(element.text)
+            bbox_to_iou_mapping[i] = current_idx
+            current_idx += 1
 
-            # check if this element is a duplicate
+        iou = boxes_self_iou(image_bboxes, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD)
+
+        filtered_elements = []
+        for i, element in enumerate(page.elements[:-1]):
+            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
+                filtered_elements.append(element)
+                continue
+            text = element.text
+            this_idx = bbox_to_iou_mapping[i]
             if any(
-                e.text == element.text
-                and region_bounding_boxes_are_almost_the_same(
-                    e.bbox, element.bbox, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
-                )
-                for e in image_elements
+                text == texts[potential_match + this_idx + 1]
+                for potential_match in np.where(iou[this_idx, this_idx + 1 :])[0]
             ):
-                page.elements[i] = None
-            image_elements.append(element)
-        page.elements = [e for e in page.elements if e]
+                continue
+            else:
+                filtered_elements.append(element)
+        page.elements[:-1] = filtered_elements
 
     return document
 
