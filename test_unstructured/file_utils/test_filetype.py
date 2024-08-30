@@ -545,21 +545,6 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 # ================================================================================================
 
 
-@pytest.mark.parametrize(
-    ("metadata_file_path", "expected_value"),
-    [
-        ("fake-email.msg", FileType.MSG),
-        ("fake-email.msg.outlook", FileType.UNK),
-    ],
-)
-def test_it_can_only_detect_MSG_format_by_extension(
-    metadata_file_path: str, expected_value: FileType
-):
-    with open(example_doc_path("fake-email.msg"), "rb") as f:
-        file = io.BytesIO(f.read())
-    assert detect_filetype(file=file, metadata_file_path=metadata_file_path) == expected_value
-
-
 @pytest.mark.parametrize("mime_type", ["application/xml", "text/xml"])
 @pytest.mark.parametrize("extension", [".html", ".htm"])
 def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extension(
@@ -1043,7 +1028,7 @@ class Describe_OleFileDifferentiator:
             ("simple.doc", FileType.DOC),
             ("fake-power-point.ppt", FileType.PPT),
             ("tests-example.xls", FileType.XLS),
-            ("fake-email.msg", None),
+            ("fake-email.msg", FileType.MSG),
             ("README.org", None),
         ],
     )
@@ -1065,7 +1050,6 @@ class Describe_OleFileDifferentiator:
             ("fake-power-point.ppt", FileType.PPT),
             ("tests-example.xls", FileType.XLS),
             ("fake-email.msg", FileType.MSG),
-            ("README.org", None),
         ],
     )
     def it_distinguishes_the_file_type_of_applicable_OLE_files_from_storage_content(
@@ -1088,6 +1072,8 @@ class Describe_OleFileDifferentiator:
             file = io.BytesIO(f.read())
         ctx = _FileTypeDetectionContext(file=file)
         differentiator = _OleFileDifferentiator(ctx)
+        # -- force method to return None to trigger the mime type being guessed
+        differentiator._check_ole_file_type = lambda ctx: None
 
         file_type = differentiator.file_type
 

@@ -506,7 +506,7 @@ class _OleFileDifferentiator:
         for stream in root_storage.streams:
             if stream.name == "WordDocument":
                 return FileType.DOC
-            elif stream.name == "PowerPointDocument":
+            elif stream.name == "PowerPoint Document":
                 return FileType.PPT
             elif stream.name == "Workbook":
                 return FileType.XLS
