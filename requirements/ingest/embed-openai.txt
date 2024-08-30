@@ -11,7 +11,7 @@ anyio==4.4.0
     #   -c ./ingest/../base.txt
     #   httpx
     #   openai
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
@@ -56,9 +56,9 @@ langchain-core==0.2.36
     # via langchain-openai
 langchain-openai==0.1.23
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.106
+langsmith==0.1.107
     # via langchain-core
-openai==1.42.0
+openai==1.43.0
     # via langchain-openai
 orjson==3.10.7
     # via langsmith
@@ -106,7 +106,7 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

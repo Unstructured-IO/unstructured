@@ -10,7 +10,7 @@ anyio==4.4.0
     #   httpx
 astor==0.8.1
     # via paddlepaddle
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   httpcore
@@ -170,7 +170,7 @@ typing-extensions==4.12.2
     #   paddlepaddle
 unstructured-paddleocr==2.8.1.0
     # via -r ./extra-paddleocr.in
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

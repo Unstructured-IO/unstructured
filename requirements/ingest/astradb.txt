@@ -14,7 +14,7 @@ cassandra-driver==3.29.1
     # via cassio
 cassio==0.1.8
     # via astrapy
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
@@ -91,7 +91,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

@@ -6,7 +6,7 @@
 #
 build==1.2.1
     # via singlestoredb
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -46,7 +46,7 @@ tomli==2.0.1
     # via
     #   build
     #   singlestoredb
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
