@@ -205,16 +205,18 @@ def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
     x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
 
-    xA = np.maximum(x11, np.transpose(x21))
-    yA = np.maximum(y11, np.transpose(y21))
-    xB = np.minimum(x12, np.transpose(x22))
-    yB = np.minimum(y12, np.transpose(y22))
+    xa = np.maximum(x11, np.transpose(x21))
+    ya = np.maximum(y11, np.transpose(y21))
+    xb = np.minimum(x12, np.transpose(x22))
+    yb = np.minimum(y12, np.transpose(y22))
 
-    interArea = np.maximum((xB - xA + 1), 0) * np.maximum((yB - yA + 1), 0)
-    boxAArea = (x12 - x11 + 1) * (y12 - y11 + 1)
-    boxBArea = (x22 - x21 + 1) * (y22 - y21 + 1)
+    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
+    boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
+    boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
 
-    return (interArea / np.maximum(boxAArea, EPSILON_AREA) > threshold) & (boxAArea <= boxBArea.T)
+    return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
+        boxa_area <= boxb_area.T
+    )
 
 
 def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
