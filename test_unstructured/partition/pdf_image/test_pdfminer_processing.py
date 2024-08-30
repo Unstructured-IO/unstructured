@@ -170,6 +170,11 @@ def test_aggregate_by_block():
             [[0, 0, 10, 10], [10, 10, 22, 22], [0, 0, 5, 5]],
             [[True, False, False], [False, False, False], [False, True, False]],
         ),
+        (
+            [[0, 0, 10, 10], [10, 10, 10, 10]],
+            [[0, 0, 10, 10], [10, 10, 22, 22], [0, 0, 5, 5]],
+            [[True, False, False], [True, True, False]],
+        ),
     ],
 )
 def test_bboxes1_is_almost_subregion_of_bboxes2(coords1, coords2, expected):
