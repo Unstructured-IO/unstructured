@@ -38,6 +38,8 @@ import zipfile
 from typing import IO, Callable, Iterator, Optional
 
 import filetype as ft
+from olefile import OleFileIO
+from oxmsg.storage import Storage
 from typing_extensions import ParamSpec
 
 from unstructured.documents.elements import Element
@@ -476,6 +478,10 @@ class _OleFileDifferentiator:
         if not self._is_ole_file(self._ctx):
             return None
 
+        # -- check storage contents of the ole file for file type markers
+        if (ole_file_type := self._check_ole_file_type(self._ctx)) is not None:
+            return ole_file_type
+
         # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so we rely on it
         # -- to differentiate those. Note `filetype` doesn't detect MSG type and won't always
         # -- detect DOC, PPT, or XLS, returning `None` instead. We let those fall through and we
@@ -490,6 +496,24 @@ class _OleFileDifferentiator:
         """True when file has CFBF magic first 8 bytes."""
         with ctx.open() as file:
             return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+
+    @staticmethod
+    def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
+        with ctx.open() as f:
+            ole = OleFileIO(f)
+            root_storage = Storage.from_ole(ole)
+
+        for stream in root_storage.streams:
+            if stream.name == "WordDocument":
+                return FileType.DOC
+            elif stream.name == "PowerPoint Document":
+                return FileType.PPT
+            elif stream.name == "Workbook":
+                return FileType.XLS
+            elif stream.name == "__properties_version1.0":
+                return FileType.MSG
+
+        return None
 
 
 class _TextFileDifferentiator:

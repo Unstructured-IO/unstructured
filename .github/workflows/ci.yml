@@ -215,7 +215,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
+        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data

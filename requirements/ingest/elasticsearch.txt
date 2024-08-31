@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==24.2.0
     # via aiohttp
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   elastic-transport
@@ -34,7 +34,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

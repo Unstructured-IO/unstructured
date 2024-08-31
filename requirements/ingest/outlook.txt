@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/outlook.in
 #
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -41,7 +41,7 @@ requests==2.32.3
     #   -c ./ingest/../base.txt
     #   msal
     #   office365-rest-python-client
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

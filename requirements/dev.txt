@@ -34,7 +34,7 @@ bleach==6.1.0
     # via nbconvert
 build==1.2.1
     # via pip-tools
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -130,7 +130,7 @@ jsonschema[format-nongpl]==3.2.0
     #   jupyter-events
     #   jupyterlab-server
     #   nbformat
-jupyter==1.1.0
+jupyter==1.1.1
     # via -r ./dev.in
 jupyter-client==7.4.9
     # via
@@ -370,7 +370,7 @@ typing-extensions==4.12.2
     #   -c ./test.txt
     #   anyio
     #   ipython
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

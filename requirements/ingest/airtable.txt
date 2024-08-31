@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -36,7 +36,7 @@ typing-extensions==4.12.2
     #   pyairtable
     #   pydantic
     #   pydantic-core
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

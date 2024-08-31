@@ -26,7 +26,7 @@ attrs==24.2.0
     # via aiohttp
 cachetools==5.5.0
     # via google-auth
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
@@ -147,7 +147,7 @@ langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.106
+langsmith==0.1.107
     # via
     #   langchain
     #   langchain-community
@@ -261,7 +261,7 @@ typing-inspect==0.9.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

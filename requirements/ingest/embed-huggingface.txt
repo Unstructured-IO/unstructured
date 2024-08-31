@@ -10,7 +10,7 @@ anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
@@ -71,7 +71,7 @@ langchain-core==0.2.36
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.106
+langsmith==0.1.107
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -164,7 +164,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   torch
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

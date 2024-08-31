@@ -22,7 +22,7 @@ bs4==0.0.2
     # via -r ./ingest/gcs.in
 cachetools==5.5.0
     # via google-auth
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -107,7 +107,7 @@ soupsieve==2.6
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

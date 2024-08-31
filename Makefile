@@ -83,10 +83,6 @@ install-pypandoc:
 install-markdown:
 	python3 -m pip install -r requirements/extra-markdown.txt
 
-.PHONY: install-msg
-install-msg:
-	python3 -m pip install -r requirements/extra-msg.txt
-
 .PHONY: install-pdf-image
 install-pdf-image:
 	python3 -m pip install -r requirements/extra-pdf-image.txt
@@ -100,7 +96,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-all-ingest
 install-all-ingest:
@@ -342,12 +338,6 @@ test-extra-epub:
 .PHONY: test-extra-markdown
 test-extra-markdown:
 	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_md.py
-
-.PHONY: test-extra-msg
-test-extra-msg:
-	# NOTE(scanny): exclude attachment test because partitioning attachments requires other extras
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py \
-          -k "not test_partition_msg_can_process_attachments"
 
 .PHONY: test-extra-odt
 test-extra-odt:
