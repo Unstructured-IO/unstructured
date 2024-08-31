@@ -1,6 +1,8 @@
-## 0.15.9-dev1
+## 0.15.9-dev2
 
 ### Enhancements
+
+* **Vectorize pdfminer elements deduplication computation**. Use `numpy` operations to compute IOU and sub-region membership instead of using simply loop. This improves the speed of deduplicating elements for pages with a lot of elements.
 
 ### Features
 
