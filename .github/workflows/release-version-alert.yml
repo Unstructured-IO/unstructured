@@ -75,7 +75,7 @@ jobs:
           key: message-cache-${{ env.MESSAGE_HASH }}
       - name: Slack Notification
         if: env.SKIP_STEPS != 'true'
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.27.0
         with:
           channel-id: 'C05S1QMKL5D'
           slack-message: ${{ env.SLACK_MESSAGE }}
