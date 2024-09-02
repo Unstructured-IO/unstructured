@@ -1,6 +1,7 @@
-## 0.15.10-dev0
+## 0.15.10-dev1
 
 ### Enhancements
+* **Modified analysis drawing tools to dump to files and draw from dumps** If the parameter `analysis` of the `partition_pdf` function is set to `True`, the layout for Object Detection, Pdfminer Extraction, OCR and final layouts will be dumped as json files. The drawers now accept dict (dump) objects instead of internal classes instances.
 
 ### Features
 
