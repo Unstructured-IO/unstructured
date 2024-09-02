@@ -21,3 +21,4 @@ unstructured-client
 wrapt
 tqdm
 psutil
+python-oxmsg

@@ -10,10 +10,9 @@ anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
 exceptiongroup==1.2.2

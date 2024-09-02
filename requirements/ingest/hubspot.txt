@@ -4,10 +4,9 @@
 #
 #    pip-compile ./ingest/hubspot.in
 #
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   hubspot-api-client
 hubspot-api-client==9.0.0
     # via -r ./ingest/hubspot.in
@@ -20,7 +19,7 @@ six==1.16.0
     #   -c ./ingest/../base.txt
     #   hubspot-api-client
     #   python-dateutil
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

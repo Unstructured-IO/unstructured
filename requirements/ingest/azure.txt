@@ -27,10 +27,9 @@ azure-identity==1.17.1
     # via adlfs
 azure-storage-blob==12.22.0
     # via adlfs
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 cffi==1.17.0
     # via
@@ -95,7 +94,7 @@ typing-extensions==4.12.2
     #   azure-core
     #   azure-identity
     #   azure-storage-blob
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

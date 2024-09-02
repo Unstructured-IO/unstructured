@@ -4,10 +4,9 @@
 #
 #    pip-compile ./ingest/github.in
 #
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 cffi==1.17.0
     # via
@@ -41,7 +40,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pygithub
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

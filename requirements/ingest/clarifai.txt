@@ -4,10 +4,9 @@
 #
 #    pip-compile ./ingest/clarifai.in
 #
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -21,7 +20,7 @@ contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.65.0
     # via clarifai-grpc
-grpcio==1.66.0
+grpcio==1.66.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
@@ -75,7 +74,7 @@ tqdm==4.66.5
     #   clarifai
 tritonclient==2.41.1
     # via clarifai
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

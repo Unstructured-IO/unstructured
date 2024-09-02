@@ -18,9 +18,8 @@ autoflake==2.3.1
     # via -r ./test.in
 black==24.8.0
     # via -r ./test.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   httpcore
     #   httpx
@@ -51,7 +50,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.66.0
+grpcio==1.66.1
     # via
     #   -c ././deps/constraints.txt
     #   -r ./test.in
@@ -222,7 +221,7 @@ tzdata==2024.1
     # via pandas
 ujson==5.10.0
     # via label-studio-sdk
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

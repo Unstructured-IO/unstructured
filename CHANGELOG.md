@@ -1,4 +1,4 @@
-## 0.15.9-dev1
+## 0.15.10-dev1
 
 ### Enhancements
 * **Modified analysis drawing tools to dump to files and draw from dumps** If the parameter `analysis` of the `partition_pdf` function is set to `True`, the layout for Object Detection, Pdfminer Extraction, OCR and final layouts will be dumped as json files. The drawers now accept dict (dump) objects instead of internal classes instances.
@@ -7,6 +7,17 @@
 
 ### Fixes
 
+## 0.15.9
+
+### Enhancements
+
+### Features
+
+* **Add support for encoding parameter in partition_csv**
+
+### Fixes
+
+* **Check storage contents for OLE file type detection** Updates `detect_filetype` to check the content of OLE files to more reliable differentiate DOC, PPT, XLS, and MSG files. As part of this, the `"msg"` extra was removed because the `python-oxmsg` package is now a base dependency.
 * **Fix disk space leaks and Windows errors when accessing file.name on a NamedTemporaryFile** Uses of `NamedTemporaryFile(..., delete=False)` and/or uses of `file.name` of NamedTemporaryFiles have been replaced with TemporaryFileDirectory to avoid a known issue: https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile
 
 ## 0.15.8

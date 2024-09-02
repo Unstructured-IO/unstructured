@@ -10,17 +10,16 @@ anyio==4.4.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
 exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.66.0
+grpcio==1.66.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
@@ -77,7 +76,7 @@ typing-extensions==4.12.2
     #   anyio
     #   pydantic
     #   pydantic-core
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

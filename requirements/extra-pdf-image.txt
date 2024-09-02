@@ -8,9 +8,8 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.5.0
     # via google-auth
-certifi==2024.7.4
+certifi==2024.8.30
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
 cffi==1.17.0
@@ -22,7 +21,7 @@ charset-normalizer==3.3.2
     #   requests
 coloredlogs==15.0.1
     # via onnxruntime
-contourpy==1.2.1
+contourpy==1.3.0
     # via matplotlib
 cryptography==43.0.0
     # via pdfminer-six
@@ -45,7 +44,7 @@ fsspec==2024.6.1
     # via
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.19.1
+google-api-core[grpc]==2.19.2
     # via google-cloud-vision
 google-auth==2.34.0
     # via
@@ -57,7 +56,7 @@ googleapis-common-protos==1.65.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.66.0
+grpcio==1.66.1
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -184,9 +183,7 @@ pyasn1==0.6.0
 pyasn1-modules==0.4.0
     # via google-auth
 pycocotools==2.0.8
-    # via
-    #   -c ././deps/constraints.txt
-    #   effdet
+    # via effdet
 pycparser==2.22
     # via cffi
 pyparsing==3.1.4
@@ -253,7 +250,6 @@ tokenizers==0.19.1
     #   transformers
 torch==2.4.0
     # via
-    #   -c ././deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
@@ -283,7 +279,7 @@ unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

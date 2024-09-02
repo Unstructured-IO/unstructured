@@ -10,10 +10,9 @@ azure-core==1.30.2
     # via azure-search-documents
 azure-search-documents==11.5.1
     # via -r ./ingest/azure-cognitive-search.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -39,7 +38,7 @@ typing-extensions==4.12.2
     #   -c ./ingest/../base.txt
     #   azure-core
     #   azure-search-documents
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

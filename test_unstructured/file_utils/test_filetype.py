@@ -387,6 +387,23 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_guessed_m
 
 
 @pytest.mark.parametrize(
+    ("filename", "mime_type", "expected"),
+    [
+        ("fake.doc", "application/vnd.ms-excel", FileType.DOC),
+        ("fake-power-point.ppt", "application/vnd.ms-excel", FileType.PPT),
+        ("tests-example.xls", "application/msword", FileType.XLS),
+        ("fake-email.msg", "application/vnd.ms-excel", FileType.MSG),
+    ],
+)
+def test_ole_file_structure_trusted_over_mime_type_guess(filename, mime_type, expected):
+    def _guess_mime(*args, **kwargs):
+        return mime_type
+
+    with patch("filetype.guess_mime", _guess_mime):
+        detect_filetype(example_doc_path(filename)) == expected
+
+
+@pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
         # -- `filetype` lib recognizes all these binary file-types --
@@ -528,21 +545,6 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 # ================================================================================================
 # SPECIAL CASES
 # ================================================================================================
-
-
-@pytest.mark.parametrize(
-    ("metadata_file_path", "expected_value"),
-    [
-        ("fake-email.msg", FileType.MSG),
-        ("fake-email.msg.outlook", FileType.UNK),
-    ],
-)
-def test_it_can_only_detect_MSG_format_by_extension(
-    metadata_file_path: str, expected_value: FileType
-):
-    with open(example_doc_path("fake-email.msg"), "rb") as f:
-        file = io.BytesIO(f.read())
-    assert detect_filetype(file=file, metadata_file_path=metadata_file_path) == expected_value
 
 
 @pytest.mark.parametrize("mime_type", ["application/xml", "text/xml"])
@@ -1028,7 +1030,7 @@ class Describe_OleFileDifferentiator:
             ("simple.doc", FileType.DOC),
             ("fake-power-point.ppt", FileType.PPT),
             ("tests-example.xls", FileType.XLS),
-            ("fake-email.msg", None),
+            ("fake-email.msg", FileType.MSG),
             ("README.org", None),
         ],
     )
@@ -1043,6 +1045,26 @@ class Describe_OleFileDifferentiator:
 
         assert differentiator.file_type is expected_value
 
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"),
+        [
+            ("simple.doc", FileType.DOC),
+            ("fake-power-point.ppt", FileType.PPT),
+            ("tests-example.xls", FileType.XLS),
+            ("fake-email.msg", FileType.MSG),
+        ],
+    )
+    def it_distinguishes_the_file_type_of_applicable_OLE_files_from_storage_content(
+        self, file_name: str, expected_value: FileType | None
+    ):
+        # -- no file-name available, just to make sure we're not relying on an extension --
+        with open(example_doc_path(file_name), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+        differentiator = _OleFileDifferentiator(ctx)
+
+        assert differentiator._check_ole_file_type(ctx) is expected_value
+
     def but_it_returns_None_to_engage_fallback_when_filetype_cannot_guess_mime(
         self, guess_mime_: Mock
     ):
@@ -1052,6 +1074,8 @@ class Describe_OleFileDifferentiator:
             file = io.BytesIO(f.read())
         ctx = _FileTypeDetectionContext(file=file)
         differentiator = _OleFileDifferentiator(ctx)
+        # -- force method to return None to trigger the mime type being guessed
+        differentiator._check_ole_file_type = lambda ctx: None
 
         file_type = differentiator.file_type
 

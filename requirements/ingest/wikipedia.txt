@@ -8,10 +8,9 @@ beautifulsoup4==4.12.3
     # via
     #   -c ./ingest/../base.txt
     #   wikipedia
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
@@ -29,7 +28,7 @@ soupsieve==2.6
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
