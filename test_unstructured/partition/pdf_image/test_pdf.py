@@ -1336,33 +1336,67 @@ def test_unique_and_deterministic_element_ids(strategy, expected_ids):
     assert ids == expected_ids, "Element IDs do not match expected IDs"
 
 
-def test_analysis_artifacts_saved():
+@pytest.mark.parametrize("is_path", [True, False])
+@pytest.mark.parametrize(
+    ("example_doc", "doc_pages"),
+    [
+        ("pdf/layout-parser-paper-fast.pdf", 2),
+        ("img/DA-1p.png", 1),
+    ],
+)
+def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: int):
     with tempfile.TemporaryDirectory() as temp_dir:
-        filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+        file = None
+        filename = example_doc_path(example_doc)
+        is_image = not Path(filename).suffix.endswith("pdf")
+        if not is_path:
+            file = open(filename, "rb")  # noqa: SIM115
+            filename = None
         pdf.partition_pdf(
             filename=filename,
+            file=file,
+            is_image=is_image,
             strategy=PartitionStrategy.HI_RES,
             analysis=True,
             analyzed_image_output_dir_path=temp_dir,
         )
 
         analysis_dir = Path(temp_dir)
-        layout_dump_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "layout_dump"
+        file_analysis_root = None
+        if is_path:
+            file_analysis_root = analysis_dir / "analysis" / Path(example_doc).stem
+        else:
+            # if file is not a path, the filename is None and the analysis directory
+            # for the document is generated
+            generated_file_stem_path = list((analysis_dir / "analysis").iterdir())[0]
+            if is_image:
+                assert "image" in generated_file_stem_path.name
+            else:
+                assert "pdf" in generated_file_stem_path.name
+            file_analysis_root = generated_file_stem_path
+        layout_dump_dir = file_analysis_root / "layout_dump"
         assert layout_dump_dir.exists()
         layout_dump_files = list(layout_dump_dir.iterdir())
-        assert len(layout_dump_files) == 1
-        assert (layout_dump_dir / "object_detection.json").exists()
 
-        bboxes_dir = analysis_dir / "analysis" / "layout-parser-paper-fast" / "bboxes"
+        expected_layout_dumps = ["object_detection", "ocr", "pdfminer", "final"]
+        assert len(layout_dump_files) == len(expected_layout_dumps)
+
+        for expected_layout_dump in expected_layout_dumps:
+            assert (layout_dump_dir / f"{expected_layout_dump}.json").exists()
+
+        bboxes_dir = file_analysis_root / "bboxes"
         assert bboxes_dir.exists()
         bboxes_files = list(bboxes_dir.iterdir())
-        assert len(bboxes_files) == 2 * 4  # 2 pages * 4 different layouts per page
 
-        expected_layouts = ["od_model", "ocr", "pdfminer", "final"]
-        expected_pages = [1, 2]
-        for el in expected_layouts:
+        expected_renders = ["od_model", "ocr", "pdfminer", "final"]
+        assert len(bboxes_files) == doc_pages * len(expected_renders)
+
+        expected_pages = range(1, doc_pages + 1)
+        for el in expected_renders:
             for page in expected_pages:
                 assert bboxes_dir / f"page{page}_layout_{el}.png" in bboxes_files
+        if file:
+            file.close()
 
 
 @pytest.mark.parametrize(
