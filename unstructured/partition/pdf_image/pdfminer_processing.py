@@ -223,7 +223,7 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        table_boxes = [e.bbox for e in page.elements if e.type == ElementType.TABLE]
+        non_pdfminer_element_boxes = [e.bbox for e in page.elements if e.source != Source.PDFMINER]
         element_boxes = []
         element_to_subregion_map = {}
         subregion_indice = 0
@@ -234,10 +234,10 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
             element_to_subregion_map[i] = subregion_indice
             subregion_indice += 1
 
-        is_element_subregion_of_tables = (
+        is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
                 element_boxes,
-                table_boxes,
+                non_pdfminer_element_boxes,
                 env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
             ).sum(axis=1)
             == 1
@@ -248,7 +248,7 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
             for i, e in enumerate(page.elements)
             if (
                 (i not in element_to_subregion_map)
-                or not is_element_subregion_of_tables[element_to_subregion_map[i]]
+                or not is_element_subregion_of_other_elements[element_to_subregion_map[i]]
             )
         ]
 
