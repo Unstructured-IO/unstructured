@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
+import numpy as np
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
@@ -17,6 +18,9 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layout import DocumentLayout
+
+
+EPSILON_AREA = 0.01
 
 
 def process_file_with_pdfminer(
@@ -96,6 +100,57 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
     )
 
 
+def get_coords_from_bboxes(bboxes) -> np.ndarray:
+    """convert a list of boxes's coords into np array"""
+    # preallocate memory
+    coords = np.zeros((len(bboxes), 4))
+
+    for i, bbox in enumerate(bboxes):
+        coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
+
+    return coords
+
+
+def areas_of_boxes_and_intersection_area(
+    coords1: np.ndarray, coords2: np.ndarray, threshold: float = 0.5
+):
+    """compute intersection area and own areas for two groups of bounding boxes"""
+    x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
+    x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
+
+    xa = np.maximum(x11, np.transpose(x21))
+    ya = np.maximum(y11, np.transpose(y21))
+    xb = np.minimum(x12, np.transpose(x22))
+    yb = np.minimum(y12, np.transpose(y22))
+
+    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
+    boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
+    boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
+
+    return inter_area, boxa_area, boxb_area
+
+
+def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
+    """compute if each element from bboxes1 is almost a subregion of one or more elements in
+    bboxes2"""
+    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords1, coords2)
+
+    return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
+        boxa_area <= boxb_area.T
+    )
+
+
+def boxes_self_iou(bboxes, threshold: float = 0.5) -> np.ndarray:
+    """compute iou for a group of elements"""
+    coords = get_coords_from_bboxes(bboxes)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords, coords)
+
+    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+
+
 @requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
@@ -168,17 +223,34 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        tables = [e for e in page.elements if e.type == ElementType.TABLE]
+        table_boxes = [e.bbox for e in page.elements if e.type == ElementType.TABLE]
+        element_boxes = []
+        element_to_subregion_map = {}
+        subregion_indice = 0
         for i, element in enumerate(page.elements):
             if element.source != Source.PDFMINER:
                 continue
-            subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
-            element_inside_table = [
-                element.bbox.is_almost_subregion_of(t.bbox, subregion_threshold) for t in tables
-            ]
-            if sum(element_inside_table) == 1:
-                page.elements[i] = None
-        page.elements = [e for e in page.elements if e]
+            element_boxes.append(element.bbox)
+            element_to_subregion_map[i] = subregion_indice
+            subregion_indice += 1
+
+        is_element_subregion_of_tables = (
+            bboxes1_is_almost_subregion_of_bboxes2(
+                element_boxes,
+                table_boxes,
+                env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+            ).sum(axis=1)
+            == 1
+        )
+
+        page.elements = [
+            e
+            for i, e in enumerate(page.elements)
+            if (
+                (i not in element_to_subregion_map)
+                or not is_element_subregion_of_tables[element_to_subregion_map[i]]
+            )
+        ]
 
     return document
 
@@ -186,27 +258,36 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
 def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
     """Removes duplicate image elements extracted by PDFMiner from a document layout."""
 
-    from unstructured_inference.inference.elements import (
-        region_bounding_boxes_are_almost_the_same,
-    )
-
     for page in document.pages:
-        image_elements = []
+        image_bboxes = []
+        texts = []
+        bbox_to_iou_mapping = {}
+        current_idx = 0
         for i, element in enumerate(page.elements):
             if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
                 continue
+            image_bboxes.append(element.bbox)
+            texts.append(element.text)
+            bbox_to_iou_mapping[i] = current_idx
+            current_idx += 1
 
-            # check if this element is a duplicate
+        iou = boxes_self_iou(image_bboxes, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD)
+
+        filtered_elements = []
+        for i, element in enumerate(page.elements[:-1]):
+            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
+                filtered_elements.append(element)
+                continue
+            text = element.text
+            this_idx = bbox_to_iou_mapping[i]
             if any(
-                e.text == element.text
-                and region_bounding_boxes_are_almost_the_same(
-                    e.bbox, element.bbox, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
-                )
-                for e in image_elements
+                text == texts[potential_match + this_idx + 1]
+                for potential_match in np.where(iou[this_idx, this_idx + 1 :])[0]
             ):
-                page.elements[i] = None
-            image_elements.append(element)
-        page.elements = [e for e in page.elements if e]
+                continue
+            else:
+                filtered_elements.append(element)
+        page.elements[:-1] = filtered_elements
 
     return document
 
@@ -218,11 +299,11 @@ def aggregate_embedded_text_by_block(
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
-    subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
-    filtered_blocks = [
-        obj
-        for obj in pdf_objects
-        if obj.bbox.is_almost_subregion_of(text_region.bbox, subregion_threshold)
-    ]
-    text = " ".join([x.text for x in filtered_blocks if x.text])
+    mask = bboxes1_is_almost_subregion_of_bboxes2(
+        [obj.bbox for obj in pdf_objects],
+        [text_region.bbox],
+        env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+    ).sum(axis=1)
+
+    text = " ".join([obj.text for i, obj in enumerate(pdf_objects) if (mask[i] and obj.text)])
     return text
