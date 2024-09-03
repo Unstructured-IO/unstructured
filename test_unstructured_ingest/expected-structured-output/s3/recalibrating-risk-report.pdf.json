@@ -1276,52 +1276,8 @@
     }
   },
   {
-    "type": "Image",
-    "element_id": "b0197950e1af5c2aac10f5b67d61524a",
-    "text": "",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "e690f37ef36368a509d150f373a0bbe0",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
-        },
-        "date_created": "1676196572.0",
-        "date_modified": "1676196572.0"
-      }
-    }
-  },
-  {
-    "type": "Image",
-    "element_id": "34d2dd4af420ea3fdddc8fc5d581cac2",
-    "text": "",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "e690f37ef36368a509d150f373a0bbe0",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/"
-        },
-        "date_created": "1676196572.0",
-        "date_modified": "1676196572.0"
-      }
-    }
-  },
-  {
     "type": "FigureCaption",
-    "element_id": "a8ac039aa1d77ac96ecd4c8c14a556d5",
+    "element_id": "7803862f2804d04dfe8c38c4a353001d",
     "text": "Equally, it is well established that living without access to electricity results in illness and death around the world, caused by everything from not having access to modern healthcare to household air pollution. As of today, 770 million people around the world do not have access to electricity, with over 75% of that population living in Sub-Saharan Africa. The world's poorest 4 billion people consume a mere 5% of the energy used in developed economies, and we need to find ways of delivering reliable electricity to the entire human population in a fashion that is sustainable. Household and ambient air pollution causes 8.7 million deaths each year, largely because of the continued use of fossil fuels. Widespread electrification is a key tool for delivering a just energy transition. Investment in nuclear, has become an urgent necessity. Discarding it, based on risk perceptions divorced from science, would be to abandon the moral obligation to ensure affordable, reliable, and sustainable energy for every community around the world.",
     "metadata": {
       "filetype": "application/pdf",
