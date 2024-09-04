@@ -16,7 +16,7 @@ function join_by {
 }
 
 # NOTE(alan): Add any dependency files here we don't want to include in the resolution.
-excludefiles=("requirements//build.txt")
+excludefiles=("requirements//ingest.txt")
 
 # Build an array of requirements files.
 shopt -s nullglob
