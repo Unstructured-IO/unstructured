@@ -87,7 +87,7 @@ else
   exit 1
 fi
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

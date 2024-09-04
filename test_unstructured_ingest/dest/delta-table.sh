@@ -31,7 +31,7 @@ else
   echo "$DESTINATION_TABLE does not exist or is not a directory, skipping deletion"
 fi
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

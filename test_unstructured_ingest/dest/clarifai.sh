@@ -65,7 +65,7 @@ else
   exit 1
 fi
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir "$OUTPUT_DIR" \

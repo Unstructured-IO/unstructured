@@ -24,8 +24,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+unstructured-ingest \
   gitlab \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

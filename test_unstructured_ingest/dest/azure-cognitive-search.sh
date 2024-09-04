@@ -70,8 +70,7 @@ else
   exit 1
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

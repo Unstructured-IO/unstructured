@@ -1,10 +1,8 @@
-## 0.15.13-dev0
+## 0.16.0
 
 ### Enhancements
 
-### Features
-
-### Fixes
+* **Remove ingest implementation**
 
 ## 0.15.12
 
