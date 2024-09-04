@@ -104,10 +104,6 @@ install-ingest:
 	python3 -m pip install -r requirements/ingest/ingest.txt
 
 
-.PHONY: install-unstructured-inference
-install-unstructured-inference:
-	${PYTHON} -m pip install -r requirements/ingest/local-inference.txt
-
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
 install-local-inference: install install-all-docs
