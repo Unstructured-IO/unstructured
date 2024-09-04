@@ -32,9 +32,8 @@ trap cleanup EXIT
 scripts/minio-test-helpers/create-and-check-minio.sh
 wait
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
-  PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+  unstructured-ingest \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

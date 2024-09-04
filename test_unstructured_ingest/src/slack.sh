@@ -29,8 +29,7 @@ if [ -z "$SLACK_TOKEN" ]; then
   exit 8
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+unstructured-ingest \
   slack \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
