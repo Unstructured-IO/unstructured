@@ -72,7 +72,6 @@ jobs:
       - name: Install all doc and test dependencies
         run: |
           make install-ci
-          make install-all-ingest
           make check-licenses
 
   lint:
