@@ -98,6 +98,9 @@ install-xlsx:
 .PHONY: install-all-docs
 install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
 
+.PHONY: install-ingest
+install-ingest:
+	python3 -m pip install -r requirements/ingest.txt
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
