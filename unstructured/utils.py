@@ -10,7 +10,6 @@ import platform
 import subprocess
 import tempfile
 import threading
-from datetime import datetime
 from functools import wraps
 from itertools import combinations
 from typing import (
@@ -236,36 +235,6 @@ def dependency_exists(dependency: str):
         if dependency in repr(e):
             return False
     return True
-
-
-def validate_date_args(date: Optional[str] = None) -> bool:
-    """Validate whether the provided date string satisfies any of the supported date formats.
-
-    Used by unstructured/ingest/connector/biomed.py
-
-    Returns `True` if the date string satisfies any of the supported formats, otherwise raises
-    `ValueError`.
-
-    Supported Date Formats:
-        - 'YYYY-MM-DD'
-        - 'YYYY-MM-DDTHH:MM:SS'
-        - 'YYYY-MM-DD+HH:MM:SS'
-        - 'YYYY-MM-DDTHH:MM:SS±HHMM'
-    """
-    if not date:
-        raise ValueError("The argument date is None.")
-
-    for format in DATE_FORMATS:
-        try:
-            datetime.strptime(date, format)
-            return True
-        except ValueError:
-            pass
-
-    raise ValueError(
-        f"The argument {date} does not satisfy the format:"
-        f" YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SS±HHMM",
-    )
 
 
 def _first_and_remaining_iterator(it: Iterable[_T]) -> Tuple[_T, Iterator[_T]]:

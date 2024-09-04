@@ -38,8 +38,7 @@ if [ -z "$BOX_APP_CONFIG_PATH" ]; then
   echo "$BOX_APP_CONFIG" >"$BOX_APP_CONFIG_PATH"
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+unstructured-ingest \
   box \
   --download-dir "$DOWNLOAD_DIR" \
   --box-app-config "$BOX_APP_CONFIG_PATH" \

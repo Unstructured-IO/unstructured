@@ -37,9 +37,7 @@ elif [[ "$CI" == "true" ]]; then
   echo
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-#shellcheck disable=SC2086
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+unstructured-ingest \
   github \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

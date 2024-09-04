@@ -39,7 +39,7 @@ function cleanup() {
 
 trap cleanup EXIT
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \

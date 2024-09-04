@@ -33,7 +33,7 @@ echo "Creating weaviate instance"
 scripts/weaviate-test-helpers/create-weaviate-instance.sh
 wait
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

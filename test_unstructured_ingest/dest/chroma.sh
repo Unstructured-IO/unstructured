@@ -38,7 +38,7 @@ scripts/chroma-test-helpers/create-and-check-chroma.sh "$DESTINATION_PATH"
 wait
 sleep 5
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \
