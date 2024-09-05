@@ -74,7 +74,7 @@ process_file_part() {
     -F starting_page_number="$STARTING_PAGE_NUMBER" \
     -F files=@"$file;filename=$PDF_FILE" \
     -o "$OUTPUT_JSON"
-  
+
   # Verify JSON content
   if ! jq -e 'if type=="array" then all(.[]; type=="object" or length==0) else empty end' "$OUTPUT_JSON" >/dev/null; then
     echo "Invalid JSON structure in $OUTPUT_JSON (contents below), deleting file."
@@ -104,7 +104,7 @@ mapfile -t pdf_parts < <(find "$PDF_DIR" -name '*.pdf' -print)
 
 # Process PDF parts in batches of 30, by default
 batch_size=${BATCH_SIZE:-30}
-for ((i = 0; i < ${#pdf_parts[@]}; i+=batch_size)); do
+for ((i = 0; i < ${#pdf_parts[@]}; i += batch_size)); do
   process_batch "${pdf_parts[@]:i:batch_size}"
 done
 
