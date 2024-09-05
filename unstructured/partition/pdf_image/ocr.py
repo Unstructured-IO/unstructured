@@ -13,7 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
-from unstructured.partition.pdf_image.analysis import OCRLayoutDumper
+from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCRMode
