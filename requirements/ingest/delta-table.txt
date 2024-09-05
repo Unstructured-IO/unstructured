@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/delta-table.in
 #
-deltalake==0.19.2
+deltalake==0.19.1
     # via -r ./ingest/delta-table.in
 fsspec==2024.9.0
     # via -r ./ingest/delta-table.in
