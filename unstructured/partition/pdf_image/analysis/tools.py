@@ -150,7 +150,6 @@ def render_bboxes_for_file(
     analysis_dumps_dir = (
         Path(analyzed_image_output_dir_path) / "analysis" / filename_stem / "layout_dump"
     )
-    print(f"analysis_dumps_dir: {analysis_dumps_dir}")
     if not analysis_dumps_dir.exists():
         return
     layout_drawers = []

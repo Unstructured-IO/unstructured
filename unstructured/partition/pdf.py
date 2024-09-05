@@ -816,10 +816,10 @@ def _partition_pdf_or_image_local(
             analyzed_image_output_dir_path=analyzed_image_output_dir_path,
             skip_bboxes=env_config.ANALYSIS_BBOX_SKIP,
             skip_dump_od=env_config.ANALYSIS_DUMP_OD_SKIP,
-            draw_grid=env_config.ANALYSIS_DRAW_GRID,
-            draw_caption=env_config.ANALYSIS_DRAW_CAPTION,
-            resize=env_config.ANALYSIS_RESIZE,
-            format=env_config.ANALYSIS_FORMAT,
+            draw_grid=env_config.ANALYSIS_BBOX_DRAW_GRID,
+            draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
+            resize=env_config.ANALYSIS_BBOX_RESIZE,
+            format=env_config.ANALYSIS_BBOX_FORMAT,
         )
 
     return out_elements
