@@ -42,7 +42,7 @@ MD5_SUM=$(md5sum "$PDF_FILE" | awk '{ print $1 }')
 PDF_DIR="$PDF_SPLITS_DIR/$PDF_NAME-${MD5_SUM}_split-${SPLIT_SIZE}"
 PDF_OUTPUT_DIR="$PDF_SPLITS_DIR/${PDF_NAME}-output-${MD5_SUM}_split-${SPLIT_SIZE}_strat-${STRATEGY}"
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Check if PDF parts directory exists
 if [ ! -d "$PDF_DIR" ]; then
@@ -52,7 +52,7 @@ fi
 # Create output directory if it does not exist
 mkdir -p "$PDF_OUTPUT_DIR"
 
-incomplete=0  # Flag to track incomplete processing
+incomplete=0 # Flag to track incomplete processing
 
 # Function to process a single PDF part file
 process_file_part() {
@@ -60,7 +60,6 @@ process_file_part() {
   local STARTING_PAGE_NUMBER="$2"
   local OUTPUT_JSON="$3"
 
-  
   if [ -f "$OUTPUT_JSON" ]; then
     echo "Skipping processing for $OUTPUT_JSON as it already exists."
     return
@@ -77,7 +76,7 @@ process_file_part() {
     -o "$OUTPUT_JSON"
   
   # Verify JSON content
-  if ! jq -e 'if type=="array" then all(.[]; type=="object" or length==0) else empty end' "$OUTPUT_JSON" > /dev/null; then
+  if ! jq -e 'if type=="array" then all(.[]; type=="object" or length==0) else empty end' "$OUTPUT_JSON" >/dev/null; then
     echo "Invalid JSON structure in $OUTPUT_JSON (contents below), deleting file."
     cat "$OUTPUT_JSON"
     rm "$OUTPUT_JSON"
@@ -105,7 +104,7 @@ mapfile -t pdf_parts < <(find "$PDF_DIR" -name '*.pdf' -print)
 
 # Process PDF parts in batches of 30, by default
 batch_size=${BATCH_SIZE:-30}
-for ((i=0; i < ${#pdf_parts[@]}; i+=batch_size)); do
+for ((i = 0; i < ${#pdf_parts[@]}; i+=batch_size)); do
   process_batch "${pdf_parts[@]:i:batch_size}"
 done
 
