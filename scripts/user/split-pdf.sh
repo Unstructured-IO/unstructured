@@ -28,13 +28,13 @@ TOTAL_PAGES=$(qpdf --show-npages "$PDF_FILE")
 
 # Split PDF into $SPLIT_SIZE-page chunks
 START_PAGE=1
-while [ $START_PAGE -le $TOTAL_PAGES ]; do
+while [ "$START_PAGE" -le "$TOTAL_PAGES" ]; do
   END_PAGE=$((START_PAGE + SPLIT_SIZE - 1))
-  if [ $END_PAGE -gt $TOTAL_PAGES ]; then
+  if [ "$END_PAGE" -gt "$TOTAL_PAGES" ]; then
     END_PAGE=$TOTAL_PAGES
   fi
   OUTPUT_FILE="$PDF_DIR/${PDF_NAME}_pages_${START_PAGE}_to_${END_PAGE}.pdf"
-  qpdf "$PDF_FILE" --pages . $START_PAGE-$END_PAGE -- "$OUTPUT_FILE"
+  qpdf "$PDF_FILE" --pages . "$START_PAGE"-"$END_PAGE" -- "$OUTPUT_FILE"
   echo "Created $OUTPUT_FILE"
   START_PAGE=$((END_PAGE + 1))
 done

@@ -21,7 +21,7 @@ fi
 ALLOWED_STRATEGIES=("hi_res" "fast" "auto")
 
 # Validate STRATEGY environment variable if it's set
-if [ -n "${STRATEGY:-}" ] && [[ ! " ${ALLOWED_STRATEGIES[*]} " =~ " ${STRATEGY} " ]]; then
+if [ -n "${STRATEGY:-}" ] && [[ ! " ${ALLOWED_STRATEGIES[*]} " =~ ${STRATEGY} ]]; then
     echo "Error: STRATEGY must be one of ${ALLOWED_STRATEGIES[*]}" >&2
     exit 1
 fi
@@ -90,8 +90,10 @@ process_file_part() {
 # Function to process a batch of files
 process_batch() {
   for file in "$@"; do
-    local START_PAGE=$(echo "$file" | sed -n 's/.*_pages_\([0-9]*\)_to_[0-9]*.pdf/\1/p')
-    local END_PAGE=$(echo "$file" | sed -n 's/.*_pages_[0-9]*_to_\([0-9]*\).pdf/\1/p')
+    local START_PAGE
+    START_PAGE=$(echo "$file" | sed -n 's/.*_pages_\([0-9]*\)_to_[0-9]*.pdf/\1/p')
+    local END_PAGE=
+    END_PAGE=$(echo "$file" | sed -n 's/.*_pages_[0-9]*_to_\([0-9]*\).pdf/\1/p')
     local OUTPUT_JSON="$PDF_OUTPUT_DIR/${PDF_NAME}_pages_${START_PAGE}_to_${END_PAGE}.json"
     process_file_part "$file" "$START_PAGE" "$OUTPUT_JSON" &
   done
