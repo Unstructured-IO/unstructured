@@ -12,7 +12,7 @@ aiohttp==3.10.5
     # via
     #   aiobotocore
     #   s3fs
-aioitertools==0.11.0
+aioitertools==0.12.0
     # via aiobotocore
 aiosignal==1.3.1
     # via aiohttp
@@ -28,7 +28,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   -r ./ingest/s3.in
     #   s3fs
@@ -46,7 +46,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   botocore
-s3fs==2024.6.1
+s3fs==2024.9.0
     # via -r ./ingest/s3.in
 six==1.16.0
     # via
@@ -66,5 +66,5 @@ wrapt==1.16.0
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   aiobotocore
-yarl==1.9.4
+yarl==1.9.11
     # via aiohttp

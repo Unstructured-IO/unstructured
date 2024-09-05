@@ -6,13 +6,13 @@
 #
 bcrypt==4.2.0
     # via paramiko
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   cryptography
     #   pynacl
-cryptography==43.0.0
+cryptography==43.0.1
     # via paramiko
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via -r ./ingest/sftp.in
 paramiko==3.4.1
     # via -r ./ingest/sftp.in

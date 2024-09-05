@@ -29,7 +29,7 @@ filelock==3.15.4
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
@@ -67,11 +67,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.36
+langchain-core==0.2.38
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.107
+langsmith==0.1.114
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -96,11 +96,11 @@ packaging==24.1
     #   transformers
 pillow==10.4.0
     # via sentence-transformers
-pydantic==2.8.2
+pydantic==2.9.0
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.20.1
+pydantic-core==2.23.2
     # via pydantic
 pyyaml==6.0.2
     # via
@@ -117,7 +117,7 @@ requests==2.32.3
     #   huggingface-hub
     #   langsmith
     #   transformers
-safetensors==0.4.4
+safetensors==0.4.5
     # via transformers
 scikit-learn==1.5.1
     # via sentence-transformers
@@ -143,7 +143,7 @@ tokenizers==0.19.1
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-huggingface
     #   transformers
-torch==2.4.0
+torch==2.4.1
     # via sentence-transformers
 tqdm==4.66.5
     # via
@@ -164,6 +164,8 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   torch
+tzdata==2024.1
+    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt

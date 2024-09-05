@@ -49,9 +49,9 @@ jiter==0.5.0
     # via openai
 openai==1.43.0
     # via -r ./ingest/embed-octoai.in
-pydantic==2.8.2
+pydantic==2.9.0
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.23.2
     # via pydantic
 regex==2024.7.24
     # via
@@ -80,6 +80,8 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
+tzdata==2024.1
+    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt

@@ -21,7 +21,7 @@ filelock==3.15.4
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
@@ -74,7 +74,7 @@ requests==2.32.3
     #   transformers
 sacremoses==0.1.1
     # via -r ./huggingface.in
-safetensors==0.4.4
+safetensors==0.4.5
     # via transformers
 sentencepiece==0.2.0
     # via -r ./huggingface.in
@@ -88,7 +88,7 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.0
+torch==2.4.1
     # via -r ./huggingface.in
 tqdm==4.66.5
     # via
