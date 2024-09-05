@@ -12,7 +12,7 @@ certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via cryptography
 charset-normalizer==3.3.2
     # via
@@ -23,7 +23,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.3.0
     # via matplotlib
-cryptography==43.0.0
+cryptography==43.0.1
     # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -40,7 +40,7 @@ flatbuffers==24.3.25
     # via onnxruntime
 fonttools==4.53.1
     # via matplotlib
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
@@ -81,7 +81,7 @@ iopath==0.1.10
     # via layoutparser
 jinja2==3.1.4
     # via torch
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
 layoutparser==0.3.4
     # via unstructured-inference
@@ -119,7 +119,7 @@ onnx==1.16.2
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.19.0
+onnxruntime==1.19.2
     # via unstructured-inference
 opencv-python==4.10.0.84
     # via
@@ -148,7 +148,7 @@ pdfplumber==0.11.4
     # via layoutparser
 pi-heif==0.18.0
     # via -r ./extra-pdf-image.in
-pikepdf==9.2.0
+pikepdf==9.2.1
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -210,7 +210,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.6
+rapidfuzz==3.9.7
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -226,7 +226,7 @@ requests==2.32.3
     #   transformers
 rsa==4.9
     # via google-auth
-safetensors==0.4.4
+safetensors==0.4.5
     # via
     #   timm
     #   transformers
@@ -248,13 +248,13 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.0
+torch==2.4.1
     # via
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.19.0
+torchvision==0.19.1
     # via
     #   effdet
     #   timm

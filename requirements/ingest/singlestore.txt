@@ -38,7 +38,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   singlestoredb
-singlestoredb==1.6.2
+singlestoredb==1.6.3
     # via -r ./ingest/singlestore.in
 sqlparams==6.1.0
     # via singlestoredb

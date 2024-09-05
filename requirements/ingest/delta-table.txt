@@ -6,7 +6,7 @@
 #
 deltalake==0.19.1
     # via -r ./ingest/delta-table.in
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via -r ./ingest/delta-table.in
 numpy==1.26.4
     # via

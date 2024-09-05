@@ -31,7 +31,7 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   azure-datalake-store
     #   cryptography
@@ -39,7 +39,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -49,7 +49,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.6.1
+fsspec==2024.9.0
     # via
     #   -r ./ingest/azure.in
     #   adlfs
@@ -99,5 +99,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.9.4
+yarl==1.9.11
     # via aiohttp

@@ -14,13 +14,13 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via cryptography
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   msal
     #   pyjwt

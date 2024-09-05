@@ -22,9 +22,9 @@ inflection==0.5.1
     # via pyairtable
 pyairtable==2.3.3
     # via -r ./ingest/airtable.in
-pydantic==2.8.2
+pydantic==2.9.0
     # via pyairtable
-pydantic-core==2.20.1
+pydantic-core==2.23.2
     # via pydantic
 requests==2.32.3
     # via
@@ -36,6 +36,8 @@ typing-extensions==4.12.2
     #   pyairtable
     #   pydantic
     #   pydantic-core
+tzdata==2024.1
+    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt

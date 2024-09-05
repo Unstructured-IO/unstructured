@@ -52,11 +52,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.2.36
+langchain-core==0.2.38
     # via langchain-openai
 langchain-openai==0.1.23
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.107
+langsmith==0.1.114
     # via langchain-core
 openai==1.43.0
     # via langchain-openai
@@ -66,12 +66,12 @@ packaging==24.1
     # via
     #   -c ./ingest/../base.txt
     #   langchain-core
-pydantic==2.8.2
+pydantic==2.9.0
     # via
     #   langchain-core
     #   langsmith
     #   openai
-pydantic-core==2.20.1
+pydantic-core==2.23.2
     # via pydantic
 pyyaml==6.0.2
     # via langchain-core
@@ -106,6 +106,8 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
+tzdata==2024.1
+    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt

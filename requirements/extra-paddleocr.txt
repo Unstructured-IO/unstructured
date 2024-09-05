@@ -60,7 +60,7 @@ imgaug==0.4.0
     # via unstructured-paddleocr
 importlib-resources==6.4.4
     # via matplotlib
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
 lazy-loader==0.4
     # via scikit-image
@@ -127,7 +127,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.9.6
+rapidfuzz==3.9.7
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -157,7 +157,7 @@ sniffio==1.3.1
     #   -c ./base.txt
     #   anyio
     #   httpx
-tifffile==2024.8.28
+tifffile==2024.8.30
     # via scikit-image
 tqdm==4.66.5
     # via
