@@ -53,13 +53,13 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
     tesseract_to_paddle_language,
 )
-from unstructured.partition.pdf_image.analysis import save_analysis_artifiacts
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
     FinalLayoutDumper,
     ObjectDetectionLayoutDumper,
     OCRLayoutDumper,
 )
+from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
 from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     check_element_types_to_extract,
@@ -816,6 +816,10 @@ def _partition_pdf_or_image_local(
             analyzed_image_output_dir_path=analyzed_image_output_dir_path,
             skip_bboxes=env_config.ANALYSIS_BBOX_SKIP,
             skip_dump_od=env_config.ANALYSIS_DUMP_OD_SKIP,
+            draw_grid=env_config.ANALYSIS_DRAW_GRID,
+            draw_caption=env_config.ANALYSIS_DRAW_CAPTION,
+            resize=env_config.ANALYSIS_RESIZE,
+            format=env_config.ANALYSIS_FORMAT,
         )
 
     return out_elements
