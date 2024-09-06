@@ -1,4 +1,4 @@
-## 0.15.10-dev4
+## 0.15.10-dev5
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 ### Features
 
 ### Fixes
+
+* **Fix a counting bug in intersection area computation**
 
 ## 0.15.9
 

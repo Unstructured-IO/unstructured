@@ -123,7 +123,7 @@ def areas_of_boxes_and_intersection_area(
     xb = np.minimum(x12, np.transpose(x22))
     yb = np.minimum(y12, np.transpose(y22))
 
-    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
+    inter_area = np.maximum((xb - xa), 0) * np.maximum((yb - ya), 0)
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
 
