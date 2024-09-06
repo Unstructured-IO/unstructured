@@ -106,7 +106,7 @@ def test_partition_via_api_raises_with_bad_response(request: FixtureRequest):
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
     elements_no_strategy = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         strategy="auto",
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
@@ -114,7 +114,7 @@ def test_partition_via_api_with_no_strategy():
         skip_infer_table_types=["pdf"],
     )
     elements_hi_res = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         strategy="hi_res",
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
@@ -134,7 +134,7 @@ def test_partition_via_api_with_no_strategy():
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     # coordinates not included by default to limit payload size
     elements = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         strategy="hi_res",
         coordinates="true",
         api_key=get_api_key(),
@@ -149,7 +149,7 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_valid_request_data_kwargs():
     elements = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         strategy="fast",
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
@@ -163,7 +163,7 @@ def test_partition_via_api_valid_request_data_kwargs():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_image_block_extraction():
     elements = partition_via_api(
-        filename=example_doc_path("embedded-images-tables.pdf"),
+        filename=example_doc_path("pdf/embedded-images-tables.pdf"),
         strategy="hi_res",
         extract_image_block_types=["image", "table"],
         api_key=get_api_key(),
@@ -357,8 +357,8 @@ def get_api_key():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
-        example_doc_path("layout-parser-paper-fast.pdf"),
-        example_doc_path("layout-parser-paper-fast.jpg"),
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        example_doc_path("img/layout-parser-paper-fast.jpg"),
     ]
 
     elements = partition_multiple_via_api(
