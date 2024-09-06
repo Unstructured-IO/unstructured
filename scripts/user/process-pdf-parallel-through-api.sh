@@ -5,6 +5,8 @@
 set -eu -o pipefail
 
 if [ $# -ne 1 ]; then
+  echo "Processes a single PDF through the Unstructured API by breaking it into smaller splits that are processed concurrently."
+  echo
   echo "Usage: $0 <pdf_filename>"
   echo "Please provide a PDF filename as the first argument."
   echo
@@ -26,9 +28,9 @@ if [ -n "${STRATEGY:-}" ] && [[ ! " ${ALLOWED_STRATEGIES[*]} " =~ ${STRATEGY} ]]
   exit 1
 fi
 
-# Check if PAID_UNST_API_KEY is set
-if [ -z "${PAID_UNST_API_KEY}" ]; then
-  echo "Error: PAID_UNST_API_KEY is not set or is empty" >&2
+# Check if UNST_API_KEY is set
+if [ -z "${UNST_API_KEY}" ]; then
+  echo "Error: UNST_API_KEY is not set or is empty" >&2
   exit 1
 fi
 
@@ -66,7 +68,7 @@ process_file_part() {
   fi
 
   curl -q -X POST https://api.unstructuredapp.io/general/v0/general \
-    -H "unstructured-api-key: $PAID_UNST_API_KEY" \
+    -H "unstructured-api-key: $UNST_API_KEY" \
     -H 'accept: application/json' \
     -H 'Content-Type: multipart/form-data' \
     -F strategy="${STRATEGY:-hi_res}" \
