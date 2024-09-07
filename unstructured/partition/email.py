@@ -205,6 +205,8 @@ def extract_attachment_info(
     list_attachments: list[Any] = []
 
     for part in message.walk():
+        if part.is_multipart():
+            continue
         if "content-disposition" in part:
             cdisp = part["content-disposition"].split(";")
             cdisp = [clean_extra_whitespace(item) for item in cdisp]
