@@ -105,7 +105,7 @@ def test_partition_via_api_raises_with_bad_response(request: FixtureRequest):
     partition_mock_.assert_called_once()
 
 
-# @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 def test_partition_via_api_with_no_strategy():
     test_file = example_doc_path("pdf/loremipsum-flat.pdf")
     elements_no_strategy = partition_via_api(
@@ -144,7 +144,7 @@ def test_partition_via_api_with_no_strategy():
     assert elements_hi_res[0].metadata.coordinates is None
 
 
-# @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     # coordinates not included by default to limit payload size
     elements = partition_via_api(
@@ -158,7 +158,7 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     assert elements[0].metadata.coordinates is not None
 
 
-# @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 def test_partition_via_api_image_block_extraction():
     elements = partition_via_api(
         filename=example_doc_path("pdf/embedded-images-tables.pdf"),
@@ -351,8 +351,8 @@ def get_api_key():
     return api_key
 
 
-# @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
-def test_partition_multiple_via_api_valid_request_data_kwargs():
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+def test_partition_multiple_via_api_valid_request_data_kwargs(:
     filenames = [
         example_doc_path("fake-text.txt"),
         example_doc_path("fake-email.txt"),
@@ -370,7 +370,7 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
     assert isinstance(list_of_lists_of_elements[1], list)
 
 
-# @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 def test_partition_multiple_via_api_invalid_request_data_kwargs():
     filenames = [
         example_doc_path("pdf/layout-parser-paper-fast.pdf"),
