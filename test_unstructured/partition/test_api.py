@@ -360,8 +360,8 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
         filenames=filenames,
         strategy="auto",
         api_key=get_api_key(),
-        # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        # NOTE(crag): point to freemium API for now
+        api_url="https://api.unstructured.io/general/v0/general",
     )
     assert isinstance(elements, list)
 
