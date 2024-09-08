@@ -18,6 +18,9 @@ from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
+# NOTE(crag): point to freemium API for now
+API_URL = "https://api.unstructured.io/general/v0/general"
+
 is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
@@ -105,20 +108,29 @@ def test_partition_via_api_raises_with_bad_response(request: FixtureRequest):
 @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
+    test_file = example_doc_path("pdf/loremipsum-flat.pdf")
     elements_no_strategy = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=test_file,
         strategy="auto",
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        api_url=API_URL,
         skip_infer_table_types=["pdf"],
     )
     elements_hi_res = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=test_file,
         strategy="hi_res",
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        api_url=API_URL,
+        skip_infer_table_types=["pdf"],
+    )
+    elements_fast_res = partition_via_api(
+        filename=test_file,
+        strategy="fast",
+        api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url=API_URL,
         skip_infer_table_types=["pdf"],
     )
 
@@ -126,7 +138,11 @@ def test_partition_via_api_with_no_strategy():
     # elements_hi_res[3].text =
     #     'LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis'
     # while elements_no_strategy[3].text = ']' (as of this writing)
-    assert elements_no_strategy[3].text != elements_hi_res[3].text
+    assert len(elements_no_strategy) == len(elements_hi_res)
+    assert len(elements_hi_res) != len(elements_fast_res)
+
+    # NOTE(crag): slightly out scope assertion, but avoid extra API call
+    assert elements_hi_res[0].metadata.coordinates is None
 
 
 @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
@@ -134,12 +150,11 @@ def test_partition_via_api_with_no_strategy():
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     # coordinates not included by default to limit payload size
     elements = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
+        filename=example_doc_path("pdf/fake-memo.pdf"),
         strategy="hi_res",
         coordinates="true",
         api_key=get_api_key(),
-        # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        api_url=API_URL,
     )
 
     assert elements[0].metadata.coordinates is not None
@@ -147,28 +162,14 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
 
 @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
-def test_partition_via_api_valid_request_data_kwargs():
-    elements = partition_via_api(
-        filename=example_doc_path("layout-parser-paper-fast.pdf"),
-        strategy="fast",
-        api_key=get_api_key(),
-        # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
-    )
-
-    assert isinstance(elements, list)
-
-
-@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
-@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_image_block_extraction():
     elements = partition_via_api(
-        filename=example_doc_path("embedded-images-tables.pdf"),
+        filename=example_doc_path("pdf/embedded-images-tables.pdf"),
         strategy="hi_res",
         extract_image_block_types=["image", "table"],
         api_key=get_api_key(),
         # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        api_url=API_URL,
     )
     image_elements = [el for el in elements if el.category == ElementType.IMAGE]
     for el in image_elements:
@@ -357,18 +358,20 @@ def get_api_key():
 @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
-        example_doc_path("layout-parser-paper-fast.pdf"),
-        example_doc_path("layout-parser-paper-fast.jpg"),
+        example_doc_path("fake-text.txt"),
+        example_doc_path("fake-email.txt"),
     ]
 
-    elements = partition_multiple_via_api(
+    list_of_lists_of_elements = partition_multiple_via_api(
         filenames=filenames,
-        strategy="auto",
+        strategy="fast",
         api_key=get_api_key(),
-        # The url has changed since the 06/24 API release while the sdk defaults to the old url
-        api_url="https://api.unstructuredapp.io/general/v0/general",
+        api_url=API_URL,
     )
-    assert isinstance(elements, list)
+    # assert there is a list of elements for each file
+    assert len(list_of_lists_of_elements) == 2
+    assert isinstance(list_of_lists_of_elements[0], list)
+    assert isinstance(list_of_lists_of_elements[1], list)
 
 
 @pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
@@ -383,7 +386,7 @@ def test_partition_multiple_via_api_invalid_request_data_kwargs():
             strategy="not_a_strategy",
             api_key=get_api_key(),
             # The url has changed since the 06/24 API release while the sdk defaults to the old url
-            api_url="https://api.unstructuredapp.io/general/v0/general",
+            api_url=API_URL,
         )
 
 
