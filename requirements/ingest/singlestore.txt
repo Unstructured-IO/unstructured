@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/singlestore.in
 #
-build==1.2.1
+build==1.2.2
     # via singlestoredb
 certifi==2024.8.30
     # via

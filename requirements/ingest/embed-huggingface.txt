@@ -24,7 +24,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-filelock==3.15.4
+filelock==3.16.0
     # via
     #   huggingface-hub
     #   torch
@@ -71,7 +71,7 @@ langchain-core==0.2.38
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.114
+langsmith==0.1.116
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -96,11 +96,11 @@ packaging==24.1
     #   transformers
 pillow==10.4.0
     # via sentence-transformers
-pydantic==2.9.0
+pydantic==2.9.1
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.23.2
+pydantic-core==2.23.3
     # via pydantic
 pyyaml==6.0.2
     # via
@@ -164,8 +164,6 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   torch
-tzdata==2024.1
-    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
