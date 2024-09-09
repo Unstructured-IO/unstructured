@@ -9,6 +9,15 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
+RUN wget "https://utic-public-cf.s3.amazonaws.com/mesa-gl-24.1.0-r0.718c913d.apk" && \
+  wget "https://utic-public-cf.s3.amazonaws.com/mesa-glapi-24.1.0-r0.4390a503.apk" && \
+  apk del mesa-gl && \
+  apk add --allow-untrusted mesa-gl-24.1.0-r0.718c913d.apk && \
+  apk add --allow-untrusted mesa-glapi-24.1.0-r0.4390a503.apk && \
+  rm mesa-gl-24.1.0-r0.718c913d.apk && \
+  rm mesa-glapi-24.1.0-r0.4390a503.apk
+
+
 RUN chown -R notebook-user:notebook-user /app && \
   apk add font-ubuntu git && \
   fc-cache -fv && \
