@@ -31,7 +31,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.15.4
+filelock==3.16.0
     # via
     #   huggingface-hub
     #   torch

@@ -39,5 +39,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   elastic-transport
-yarl==1.9.11
+yarl==1.11.0
     # via aiohttp

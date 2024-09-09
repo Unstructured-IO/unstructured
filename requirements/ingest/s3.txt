@@ -66,5 +66,5 @@ wrapt==1.16.0
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   aiobotocore
-yarl==1.9.11
+yarl==1.11.0
     # via aiohttp
