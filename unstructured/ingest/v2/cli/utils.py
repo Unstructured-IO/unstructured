@@ -13,7 +13,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.logger import logger
 
 
-def conform_click_options(options: dict):
+def conform_click_options(options: dict[str, Any]) -> None:
     # Click sets all multiple fields as tuple, this needs to be updated to list
     for k, v in options.items():
         if isinstance(v, tuple):
