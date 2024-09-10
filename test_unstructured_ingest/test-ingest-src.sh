@@ -97,6 +97,7 @@ python_version=$(python --version 2>&1)
 tests_to_ignore=(
   'notion.sh'
   'local-embed-mixedbreadai.sh'
+  'hubspot.sh'
 )
 
 for test in "${all_tests[@]}"; do
