@@ -17,7 +17,7 @@ from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
+    from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layout import DocumentLayout
 
 
@@ -303,8 +303,10 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
     return document
 
 
+@requires_dependencies("unstructured_inference")
 def remove_duplicate_embedded_text(elements: list["TextRegion"]) -> list["TextRegion"]:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
+    from unstructured_inference.inference.elements import EmbeddedTextRegion
 
     bboxes = []
     texts = []
