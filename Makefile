@@ -100,7 +100,7 @@ install-all-docs: install-base install-csv install-docx install-epub install-odt
 
 .PHONY: install-ingest
 install-ingest:
-	python3 -m pip install -r requirements/ingest.txt
+	python3 -m pip install -r requirements/ingest/base.txt
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference

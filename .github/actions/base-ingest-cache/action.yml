@@ -18,7 +18,7 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/base.txt') }}
         lookup-only: ${{ inputs.check-only }}
     - name: Restore base virtual environment
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
@@ -45,5 +45,5 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/base.txt') }}
 
