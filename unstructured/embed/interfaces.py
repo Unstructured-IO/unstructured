@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from unstructured.documents.elements import Element
 
 
-@dataclass
 class EmbeddingConfig(BaseModel):
     pass
 
