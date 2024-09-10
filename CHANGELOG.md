@@ -1,3 +1,13 @@
+## 0.15.11-dev0
+
+### Enhancements
+
+* **Improve `pdfminer` element processing** Implemented splitting of `pdfminer` elements (groups of text chunks) into smaller bounding boxes (text lines). This prevents loss of information from the object detection model and facilitates more effective removal of duplicated `pdfminer` text.
+
+### Features
+
+### Fixes
+
 ## 0.15.10
 
 ### Enhancements
