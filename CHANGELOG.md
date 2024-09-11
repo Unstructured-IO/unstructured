@@ -1,4 +1,4 @@
-## 0.15.11-dev0
+## 0.15.12-dev0
 
 ### Enhancements
 
@@ -7,6 +7,13 @@
 ### Features
 
 ### Fixes
+
+## 0.15.11
+
+### Enhancements
+
+* **Add deprecation warning to embed code**
+* **Remove ingest console script**
 
 ## 0.15.10
 
