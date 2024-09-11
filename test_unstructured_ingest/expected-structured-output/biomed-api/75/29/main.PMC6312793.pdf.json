@@ -143,7 +143,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "016c6f30b572558eeb8b71edc23834ac",
+    "element_id": "1cd38ce7fe0ffbaf86c4dc77b2de9fb3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -152,11 +152,102 @@
       ],
       "page_number": 1
     },
-    "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072, Australia f Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India",
+    "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "53da3cdbc0b8bf4d18be34d28ff5b23e",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "57631ad0ec5b8f3569ccf4e7e500a0ed",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "550fdd63139a3a90a35bc871a4a54546",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "8c49eb856f0d4a8e36e4a83c02b018bd",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "©",
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b211f93156fafa7348f2be1e4f569c21",
+    "element_id": "03b4116b32ee9de3beea142b52694b19",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072,",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "bfcbabb9ed9169f6a4be19576064f702",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Australia",
+    "type": "Title"
+  },
+  {
+    "element_id": "85875ebbc1de554e92edc54674add1d5",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "f Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "f9f33fff8fbb981301df3055b60e12c7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -169,7 +260,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "642e946699f33e26140357538d0dcc72",
+    "element_id": "4f3f69dd17ddae776c656ec73d9837ae",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -182,7 +273,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2354c20c25e668c32da0f18eea88758e",
+    "element_id": "34522460857b10c63d8c2c8d2fbb3087",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -195,7 +286,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ff825f9f1f67d0a09964b630e6e8b20c",
+    "element_id": "a807aca2a8ed5b05247afce4462a5265",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -208,7 +299,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "135f9d4c925434bc91d93fd9f977cf24",
+    "element_id": "7961184fa99a7e10d50f37a0b56f8fb6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -217,11 +308,11 @@
       ],
       "page_number": 1
     },
-    "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license",
     "type": "NarrativeText"
   },
   {
-    "element_id": "88dbc4847fce9fb9cd4c1bd72209f5e2",
+    "element_id": "f3f737f73d82d84c0a644d2539c719f9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -230,11 +321,11 @@
       ],
       "page_number": 1
     },
-    "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007 n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India.",
-    "type": "UncategorizedText"
+    "text": "(http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "type": "NarrativeText"
   },
   {
-    "element_id": "d015eb225a0c464c1281688fd4a873f2",
+    "element_id": "26df7873600c047edc18648775de77ae",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -243,11 +334,24 @@
       ],
       "page_number": 1
     },
-    "text": "E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni).",
+    "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "7908ca49d8b815456f5785d535b93235",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India. E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni).",
     "type": "ListItem"
   },
   {
-    "element_id": "ca5a07d65b88b23bf94f92d1392a1f9b",
+    "element_id": "1d4ac78953564742e250d50dc9207822",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -256,7 +360,20 @@
       ],
       "page_number": 1
     },
-    "text": "https://doi.org/10.1016/j.dib.2018.12.055 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "text": "https://doi.org/10.1016/j.dib.2018.12.055",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "5e4b10d5b4882e8af9496518545c64f8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
     "type": "NarrativeText"
   },
   {
@@ -286,7 +403,7 @@
     "type": "Title"
   },
   {
-    "element_id": "1d5dccc54143c991c5dac7f3eaf028e8",
+    "element_id": "0cc9334df550d1730f2d468941a38225",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -295,7 +412,7 @@
       ],
       "page_number": 2
     },
-    "text": "Subject area Operations research More speciﬁc subject area Vehicle scheduling Type of data How data were acquired Tables, text ﬁles Artiﬁcially generated by a C þ þ program on Intels Xeons CPU E5– 2670 v2 with Linux operating system. Raw Sixty randomly generated instances of the MDVSP with the number of depots in (8, 12, 16) and the number of trips in (1500, 2000, 2500, 3000) Randomly generated instances IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai, India. Data can be downloaded from https://orlib.uqcloud.net/ Kulkarni, S., Krishnamoorthy, M., Ranade, A., Ernst, A.T. and Patil, R., 2018. A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem. Transportation Research Part B: Methodological, 118, pp. 457–487 [3]. Data format Experimental factors Experimental features Data source location Data accessibility Related research article",
+    "text": "Subject area Operations research More speciﬁc subject area Vehicle scheduling Type of data Tables, text ﬁles How data were acquired Artiﬁcially generated by a C þ þ program on Intels Xeons CPU E5– 2670 v2 with Linux operating system. Data format Raw Experimental factors Sixty randomly generated instances of the MDVSP with the number of depots in (8, 12, 16) and the number of trips in (1500, 2000, 2500, 3000) Experimental features Randomly generated instances Data source location IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai, India. Data accessibility Data can be downloaded from https://orlib.uqcloud.net/ Related research article Kulkarni, S., Krishnamoorthy, M., Ranade, A., Ernst, A.T. and Patil, R., 2018. A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem. Transportation Research Part B: Methodological, 118, pp. 457–487 [3].",
     "type": "Table"
   },
   {
@@ -338,7 +455,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "3ef13ef244943d8c0c99a778ae8a177e",
+    "element_id": "79e2a2e0c24e1e8befe2b6beb2f1df64",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -347,11 +464,11 @@
       ],
       "page_number": 2
     },
-    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can",
+    "text": "e All the problem instances are available for use without any restrictions.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "f7503405f2d9e9be5fcdb000f0248741",
+    "element_id": "d401597b8ff2854bfb89f2833d02a763",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -360,7 +477,7 @@
       ],
       "page_number": 2
     },
-    "text": "be used for the comparison.",
+    "text": "e The benchmark solutions and solution time for the problem instances are presented in [3] and can be used for the comparison.",
     "type": "ListItem"
   },
   {
@@ -390,7 +507,7 @@
     "type": "Title"
   },
   {
-    "element_id": "3f75ae21ef4d8973948ca41f0329efb9",
+    "element_id": "683993fc4592941bf8b06173870aa63c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -399,11 +516,11 @@
       ],
       "page_number": 2
     },
-    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number ‘RN-8–1500-01.dat’, for is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net.",
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate ﬁle. Each ﬁle is named as ‘RN-m-n-k.dat’, where ‘m’, ‘n’, and ‘k’ denote the number of depots, the number of trips, and the instance number for the size, ‘ðm; nÞ’, respectively. For example, the problem instance, ‘RN-8–1500-01.dat’, is the ﬁrst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, ðm; nÞ, ﬁve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net. For each problem instance, the following information is provided:",
     "type": "NarrativeText"
   },
   {
-    "element_id": "950af9be0340541a956f6ffad3ecb178",
+    "element_id": "fc547df12bfc22e91a0b5927670caa78",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -412,8 +529,8 @@
       ],
       "page_number": 2
     },
-    "text": "For each problem instance, the following information is provided: The number of depots mð The number of trips ðnÞ, The number of locations ðlÞ, The number of vehicles at each depot, For each trip i A 1; 2; …; n, a start time, ts",
-    "type": "NarrativeText"
+    "text": "The number of depots mð",
+    "type": "Title"
   },
   {
     "element_id": "320f6d28582c354d35673c2a4119851f",
@@ -429,7 +546,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "38269e29d1bd6e68141cb8e14afb50e5",
+    "element_id": "6aeb7fbb6968ef22dc0adfbe09dbb58b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -438,11 +555,50 @@
       ],
       "page_number": 2
     },
-    "text": "i , a start location, ls i , an end time, te i , and an end location, le i , and",
+    "text": "The number of trips ðnÞ,",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "8fac4e6fad19e30a40504920771062f8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "The number of locations ðlÞ,",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "37965175e9f553f4c05167c81d0984d6",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "The number of vehicles at each depot,",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "96ca028aef61c1fd98c9f0232a833498",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "For each trip i A 1; 2; …; n, a start time, ts i , an end time, te i , a start location, ls i , and an end location, le i , and",
     "type": "NarrativeText"
   },
   {
-    "element_id": "9dd8b3854d974abcb78d8980939f6df7",
+    "element_id": "448de3300a8c7e2cfdd2028dd0bb4171",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -455,7 +611,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "8d5157e6f596a6e1f4f9c031b8fedb5e",
+    "element_id": "b13807f59ac7c6647ee0aee74f9b0dd3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -468,7 +624,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "376bb2fb8e9604649d5074748810bb10",
+    "element_id": "db480e847a5703b19be6b79223e1ee03",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -481,7 +637,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "223fae9ea1c1eb30d7676d252e4a65da",
+    "element_id": "326c44638a881f86474b82cc244896f9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -533,7 +689,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d0b1bc28aacb27456fe8ec060b4e5255",
+    "element_id": "53d11fbc182749dc1483c8ebf8100d2c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -542,11 +698,11 @@
       ],
       "page_number": 3
     },
-    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at",
+    "text": "1. Each schedule should start and end at the same depot.",
     "type": "ListItem"
   },
   {
-    "element_id": "2fbe14c5bf022eba7d64cbb1d33b2bca",
+    "element_id": "383a0750affc0a1ff2274816ab83ccf9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -555,11 +711,11 @@
       ],
       "page_number": 3
     },
-    "text": "the depot.",
+    "text": "2. Each trip should be covered by only one vehicle.",
     "type": "ListItem"
   },
   {
-    "element_id": "94c0ad90a1bb3711fa03b5fda69166c8",
+    "element_id": "b71e166a3fac487df44a3cb5d5bcc953",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -568,11 +724,11 @@
       ],
       "page_number": 3
     },
-    "text": "A sufﬁcient number of vehicles are provided to maintain the feasibility of an instance. For each instance size ðm; nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule.",
-    "type": "NarrativeText"
+    "text": "3. The number of schedules that start from a depot should not exceed the number of vehicles at the depot.",
+    "type": "ListItem"
   },
   {
-    "element_id": "3d57bb91b2a5543faae14c6309327eda",
+    "element_id": "b7a3531443154b36c9c85ffa48647e05",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -581,11 +737,37 @@
       ],
       "page_number": 3
     },
-    "text": "The description of the ﬁle for each problem instance is presented in Table 2. The ﬁrst line in the ﬁle provides the number of depots ðmÞ, the number of trips, ðnÞ, and the number of locations ðlÞ, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; …; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; …; l",
+    "text": "A sufﬁcient number of vehicles are provided to maintain the feasibility of an instance.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "13cb9ea3a2ad87f3e489c0f816d0a762",
+    "element_id": "9d3f44c51fe13ebdf6b9511859e4f1b7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "For each instance size ðm; nÞ, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over ﬁve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "4c1454f26189366f8014d0815ed3afc1",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "The description of the file for each problem instance is presented in Table 2. The first line in the file provides the number of depots (m), the number of trips, (n), and the number of locations (I), in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, ie{1,...,n}, and provides the start location, the start time, the end location, and the end time of trip i. The next | lines present the travel times between any two locations, i,j e {1, wal}.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "d9904b5393369c5204af83b64035802a",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -598,7 +780,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "68f62c559d15d9cf62c956b66943ab71",
+    "element_id": "0db20c23a12e1b6eadee6eb8aecc17d8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -607,11 +789,11 @@
       ],
       "page_number": 3
     },
-    "text": "Table 1 Average number of locations, times, vehicles and empty travels for each instance size.",
-    "type": "UncategorizedText"
+    "text": "Table 1",
+    "type": "Title"
   },
   {
-    "element_id": "15bf6f769efd074ae328ba8a919fe673",
+    "element_id": "849ee5b486ae80522665b843341bd492",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -620,11 +802,24 @@
       ],
       "page_number": 3
     },
-    "text": "Instance size (m, n) Average number of Locations Times Vehicles (8, 1500) (8, 2000) (8, 2500) (8, 3000) (12, 1500) (12, 2000) (12, 2500) (12, 3000) (16, 1500) (16, 2000) (16, 2500) (16, 3000) 568.40 672.80 923.40 977.00 566.00 732.60 875.00 1119.60 581.80 778.00 879.00 1087.20 975.20 1048.00 1078.00 1113.20 994.00 1040.60 1081.00 1107.40 985.40 1040.60 1083.20 1101.60 652.20 857.20 1082.40 1272.80 642.00 861.20 1096.00 1286.20 667.80 872.40 1076.40 1284.60 668,279.40 1,195,844.80 1,866,175.20 2,705,617.00 674,191.00 1,199,659.80 1,878,745.20 2,711,180.40 673,585.80 1,200,560.80 1,879,387.00 2,684,983.60",
+    "text": "Average number of locations, times, vehicles and empty travels for each instance size.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "63de709cd751564fc9622864af4e9310",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "Instance size (m, n) Average number of Locations Times Vehicles (8, 1500) 568.40 975.20 652.20 668,279.40 (8, 2000) 672.80 1048.00 857.20 1,195,844.80 (8, 2500) 923.40 1078.00 1082.40 1,866,175.20 (8, 3000) 977.00 1113.20 1272.80 2,705,617.00 (12, 1500) 566.00 994.00 642.00 674,191.00 (12, 2000) 732.60 1040.60 861.20 1,199,659.80 (12, 2500) 875.00 1081.00 1096.00 1,878,745.20 (12, 3000) 1119.60 1107.40 1286.20 2,711,180.40 (16, 1500) 581.80 985.40 667.80 673,585.80 (16, 2000) 778.00 1040.60 872.40 1,200,560.80 (16, 2500) 879.00 1083.20 1076.40 1,879,387.00 (16, 3000) 1087.20 1101.60 1284.60 2,684,983.60",
     "type": "Table"
   },
   {
-    "element_id": "f7847444eec1921a6618e0eb97d5ce40",
+    "element_id": "ec04cd3d411eed35515b3ea80ebac5af",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -650,7 +845,7 @@
     "type": "Header"
   },
   {
-    "element_id": "0a4152d3ee312a3d28cc2b63d6f59a6e",
+    "element_id": "ee868bdc4e792cd79b6ca4f1c953d18f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -659,11 +854,11 @@
       ],
       "page_number": 4
     },
-    "text": "Table 2 Description of ﬁle format for each problem instance.",
+    "text": "Table 2",
     "type": "Title"
   },
   {
-    "element_id": "08f12f3a48acd91df47c88ee29818b25",
+    "element_id": "3b85fcba083782b79205b4eb3d36b000",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -672,11 +867,24 @@
       ],
       "page_number": 4
     },
-    "text": "Number of lines Number of columns in each line Description 1 1 n l 3 m 4 l The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j. i , the start i , the end location le",
+    "text": "Description of ﬁle format for each problem instance.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "17e17590003c0f514220c453f88da6b7",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4
+    },
+    "text": "Number of Number of columns in Description lines each line 1 3 The number of depots, the number of trips, and the number of locations. 1 m The number of vehicles rd at each depot d. n 4 One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls i , the start i , the end location le time ts i and the end time te i for the corresponding trip. l l Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j.",
     "type": "Table"
   },
   {
-    "element_id": "87a92f03858a6c0dca834e8d761fad1c",
+    "element_id": "42b81f7b374412677918314eb4c50b0b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -689,7 +897,7 @@
     "type": "Title"
   },
   {
-    "element_id": "33136db034d62e5e01ac821ec8b275c2",
+    "element_id": "56241511960379f96bdaa0db2d4143c4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -702,7 +910,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "1c846fccfb6d9af904cc70c5c7c1fb06",
+    "element_id": "188dbf85ea2874b6d7a24ba7d468c2df",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -715,7 +923,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "94bc0bbd2096d54a7d7c315043221933",
+    "element_id": "e8f33017d2ad6a495ed09fd0c2dd5771",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -728,7 +936,7 @@
     "type": "Title"
   },
   {
-    "element_id": "91032c8f702188685199114840d2d934",
+    "element_id": "c099a73c6a332ceab3b11d480690b6b4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -741,7 +949,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2264d7dcff32783949952d865a0ac67f",
+    "element_id": "dd64556bf9fb6aec39ebcbec74ebe3a9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -754,7 +962,7 @@
     "type": "Title"
   },
   {
-    "element_id": "f58a55cffa2179242cb67a525fb43f66",
+    "element_id": "00311a8330f799ab5ee12c4c704ce0db",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -767,7 +975,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "9ec9dc8439ff48e46a1fbf6d07a53fe7",
+    "element_id": "b76af82ca59e2d4347ca8cc18fc37a0e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -780,7 +988,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "88901bd600ad2a39811f9a761ea63f14",
+    "element_id": "8d2a994da7c053f79017e9d2106d4680",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -793,7 +1001,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "19251c318ce218a75808ae503b2d66f3",
+    "element_id": "59ea62c54d1da68865c6c49121c3c469",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -806,7 +1014,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "2ec6f7b25d8beece707bbb57230fe77e",
+    "element_id": "0ca3ff6b5ba7ee78a40e64a79b2b1f5d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -819,7 +1027,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "d4665f68c9443a201143c62674372052",
+    "element_id": "806d3d417aa93116103226da5011f8e0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
