@@ -308,9 +308,31 @@
     }
   },
   {
+    "type": "Header",
+    "element_id": "9aa82368657b60536f152fd413aec316",
+    "text": "Core Skills for Biomedical Data Scientists",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": "237960874052008560436652606947751982249",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678440764.0",
+        "date_modified": "1678440764.0"
+      }
+    }
+  },
+  {
     "type": "UncategorizedText",
-    "element_id": "b810a8721369c3551c942aab9011b7d1",
-    "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________",
+    "element_id": "4f2dbe3656a9ebc60c7e3426ad3cb3e3",
+    "text": "_____________________________________________________________________________________________",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -331,7 +353,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c8fdefac1ae82fa42caeceff04853415",
+    "element_id": "cd359ae8c49885ead47318021438eead",
     "text": "this commitment, a recent report to the NLM Director recommended working across NIH to identify and develop core skills required of a biomedical data scientist to consistency across the cohort of NIH-trained data scientists. This report provides a set of recommended core skills based on analysis of current BD2K-funded training programs, biomedical data science job ads, and practicing members of the current data science workforce.",
     "metadata": {
       "filetype": "application/pdf",
@@ -353,7 +375,7 @@
   },
   {
     "type": "Title",
-    "element_id": "b5b7392d0a946f5016bfa8ad0c248a9b",
+    "element_id": "bf8321a34edb7103ec4209f3e4a8a8da",
     "text": "Methodology",
     "metadata": {
       "filetype": "application/pdf",
@@ -375,7 +397,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d9d8e38d221ae621c0ddbcabaa4a28b4",
+    "element_id": "1e1d3d1a5c1397fc588393568d829bc8",
     "text": "The Workforce Excellence team took a three-pronged approach to identifying core skills required of a biomedical data scientist (BDS), drawing from:",
     "metadata": {
       "filetype": "application/pdf",
@@ -397,7 +419,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ba70aa3bc3ad0dec6a62939c94c5a20c",
+    "element_id": "45d7ff56632d66a2ab2d4dd2716d4d2e",
     "text": "a) Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use.",
     "metadata": {
       "filetype": "application/pdf",
@@ -419,7 +441,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "24724b1f0d20a6575f2782fd525c562f",
+    "element_id": "bf452aac5123fcedda30dd6ed179f41c",
     "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A.",
     "metadata": {
       "filetype": "application/pdf",
@@ -441,7 +463,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "5e6c73154a1e5f74780c69afbc9bc084",
+    "element_id": "ca176cbef532792b1f11830ff7520587",
     "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (33.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
     "metadata": {
       "filetype": "application/pdf",
@@ -463,7 +485,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "249f6c76b2c99dadbefb8b8811b0d4cd",
+    "element_id": "11b170fedd889c3b895bbd28acd811ca",
     "text": "Analysis of the above data provided insights into the current state of biomedical data science training, as well as a view into data science-related skills likely to be needed to prepare the BDS workforce to succeed in the future. Together, these analyses informed recommendations for core skills necessary for a competitive biomedical data scientist.",
     "metadata": {
       "filetype": "application/pdf",
@@ -485,8 +507,30 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6543ce4e447de8fb3db98ceb06a50c28",
-    "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com 2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017",
+    "element_id": "2665aadf75bca259f1f5b4c91a53a301",
+    "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "data_source": {
+        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
+        "version": "237960874052008560436652606947751982249",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678440764.0",
+        "date_modified": "1678440764.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "8bbfe1c3e6bca9a33226d20d69b2297a",
+    "text": "2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -507,7 +551,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "1a6ff96d028f18331a9d9c9748b49321",
+    "element_id": "dd4a661e1a3c898a5cf6328ba56b924d",
     "text": "2",
     "metadata": {
       "filetype": "application/pdf",
