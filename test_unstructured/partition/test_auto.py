@@ -531,7 +531,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
 def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/chevron-page.pdf")
     metadata_filename = file_path if pass_metadata_filename else None
 
     with open(file_path, "rb") as f:
@@ -542,16 +542,13 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
             strategy=PartitionStrategy.HI_RES,
         )
 
-    # NOTE(scanny): see "from_filename" version of this test above for more on this oddness
-    idx = 2 if sys.platform == "darwin" else 3
-
-    e = elements[idx]
+    e = elements[0]
     assert isinstance(e, Title)
-    assert e.text.startswith("LayoutParser")
+    assert e.text.startswith("eastern mediterranean")
 
-    e = elements[idx + 1]
+    e = elements[1]
     assert isinstance(e, NarrativeText)
-    assert e.text.startswith("Zejiang Shen")
+    assert e.text.startswith("We’re investing")
 
 
 def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
