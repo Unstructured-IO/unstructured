@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Description: Compare the current evaluation metrics to the previoud evaluation metrics and exit
+# Description: Compare the current evaluation metrics to the previous evaluation metrics and exit
 #              with an error if they are different. If the environment variable OVERWRITE_FIXTURES
 #              is not "false", then this script will instead copy the output files to the expected
 #              output directory.
