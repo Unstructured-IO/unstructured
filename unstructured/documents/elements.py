@@ -629,7 +629,7 @@ def _add_regex_metadata(
 ) -> list[Element]:
     """Adds metadata based on a user provided regular expression.
 
-    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
+    The additional metadata will be added to the regex_metadata attributed in the element metadata.
     """
     for element in elements:
         if isinstance(element, Text):
