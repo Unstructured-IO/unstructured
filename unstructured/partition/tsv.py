@@ -50,7 +50,7 @@ def partition_tsv(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     include_header
-        Determines whether or not header info is included in text and medatada.text_as_html.
+        Determines whether or not header info is included in text and metadata.text_as_html.
     include_metadata
         Determines whether or not metadata is included in the output.
     metadata_last_modified

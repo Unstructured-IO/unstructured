@@ -85,7 +85,7 @@ def partition_xlsx(
     metadata_last_modified
         The day of the last modification
     include_header
-        Determines whether or not header info is included in text and medatada.text_as_html
+        Determines whether or not header info is included in text and metadata.text_as_html
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
