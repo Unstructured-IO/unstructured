@@ -1309,7 +1309,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ### Enhancements
 
 * Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
-  and email is PGP encryped, the functions will return an empy list of elements and
+  and email is PGP encryped, the functions will return an empty list of elements and
   emit a warning about the encrypted content.
 * Add threaded Slack conversations into Slack connector output
 * Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
