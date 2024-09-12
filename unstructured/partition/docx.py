@@ -399,7 +399,7 @@ class _DocxPartitioner:
         self = cls(opts)
         # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
         # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
-        # "section-less" document has to be interated differently and has no headers or footers and
+        # "section-less" document has to be iterated differently and has no headers or footers and
         # therefore no page-size or margins.
         return (
             self._iter_document_elements()
