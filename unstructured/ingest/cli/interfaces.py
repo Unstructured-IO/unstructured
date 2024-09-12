@@ -71,7 +71,7 @@ class FileOrJson(click.ParamType):
                     return value
         self.fail(
             gettext(
-                "{value} is not a valid json string nor an existing filepath.",
+                "{value} is neither a valid json string nor an existing filepath.",
             ).format(value=value),
             param,
             ctx,
