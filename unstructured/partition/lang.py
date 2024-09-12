@@ -207,7 +207,7 @@ def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) ->
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
     if languages is None:
-        raise ValueError("`languages` can not be `None`")
+        raise ValueError("`languages` cannot be `None`")
     converted_languages = list(
         filter(
             lambda x: x is not None and x != "",

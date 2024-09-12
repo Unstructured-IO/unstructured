@@ -44,7 +44,7 @@ class SimpleBoxConfig(SimpleFsspecConfig):
 
     @requires_dependencies(["boxfs"], extras="box")
     def get_access_config(self) -> dict:
-        # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
+        # Return access_kwargs with oauth. The oauth object cannot be stored directly in the config
         # because it is not serializable.
         from boxsdk import JWTAuth
 
