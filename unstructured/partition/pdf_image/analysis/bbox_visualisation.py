@@ -385,7 +385,7 @@ def draw_bbox_on_image(
 
 class LayoutDrawer(ABC):
     layout_source: str = "unknown"
-    laytout_dump: dict
+    layout_dump: dict
 
     def __init__(self, layout_dump: dict):
         self.layout_dump = layout_dump
