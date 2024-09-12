@@ -1244,7 +1244,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
+* Fix a bug where `xy-cut` sorting attempts to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
 
 ## 0.10.10
 
