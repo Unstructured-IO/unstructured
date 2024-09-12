@@ -309,7 +309,7 @@ class ElementMetadata:
         self.url = url
 
     def __eq__(self, other: object) -> bool:
-        """Implments equivalence, like meta == other_meta.
+        """Implements equivalence, like meta == other_meta.
 
         All fields at all levels must match. Unpopulated fields are not considered except when
         populated in one and not the other.
