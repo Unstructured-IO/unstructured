@@ -3,7 +3,7 @@ This is a collection of tools helpful for inspecting and tracking performance of
 
 The benchmarking script allows a user to track performance time to partitioning results against a fixed set of test documents and store those results with indication of architecture, instance type, and git hash, in S3.
 
-The profiling script allows a user to inspect how time time and memory are spent across called functions when performing partitioning on a given document.
+The profiling script allows a user to inspect how time and memory are spent across called functions when performing partitioning on a given document.
 
 ## Install
 Benchmarking requires no additional dependencies and should work without any initial setup.
