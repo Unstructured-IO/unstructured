@@ -1073,7 +1073,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 * **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
 * **Fix various cases of HTML text missing after partition**
-  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Problem: Under certain circumstances, text immediately after some HTML tags will be missing from partition result.
   Fix: Updated code to deal with these cases.
   Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
 * **Fixes chunking when `detection_class_prob` appears in Element metadata** Problem: when `detection_class_prob` appears in Element metadata, Elements will only be combined by chunk_by_title if they have the same `detection_class_prob` value (which is rare). This is unlikely a case we ever need to support and most often results in no chunking. Fix: `detection_class_prob` is included in the chunking list of metadata keys excluded for similarity comparison. Importance: This change allows `chunk_by_title` to operate as intended for documents which include `detection_class_prob` metadata in their Elements.
