@@ -28,7 +28,7 @@
 # Validate dependencies
 check_python_module() {
   if ! python3 -c "import $1" >/dev/null 2>&1; then
-    echo "Error: Python module $1 is not installed. Please install required depencies with 'pip install -r scripts/performance/requirements.txt'."
+    echo "Error: Python module $1 is not installed. Please install required dependencies with 'pip install -r scripts/performance/requirements.txt'."
     exit 1
   fi
 }
