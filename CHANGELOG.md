@@ -309,7 +309,7 @@
 * **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
   to avoid text being dynamically injected into the XML document.
 * **Chromadb change from Add to Upsert using element_id to make idempotent**
-* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Disable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
 * **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
 * **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
 
