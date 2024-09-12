@@ -226,7 +226,7 @@ class FsspecSourceConnector(
 
     def get_ingest_docs(self):
         raw_files = self._list_files()
-        # If glob filters provided, use to fiter on filepaths
+        # If glob filters provided, use to filter on filepaths
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
