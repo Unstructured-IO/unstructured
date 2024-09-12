@@ -177,7 +177,7 @@ def test_partition_docx_includes_neither_page_breaks_nor_numbers_when_rendered_b
 
 
 def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppressed():
-    """Page-number metadata is not supressed when `include_page_breaks` arga is False.
+    """Page-number metadata is not supressed when `include_page_breaks` arg is False.
 
     Only inclusion of PageBreak elements is affected by that option.
     """
