@@ -29,7 +29,7 @@ if [ -z "$DISCORD_TOKEN" ]; then
   exit 8
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   discord \
   --num-processes "$max_processes" \
   --metadata-exclude coordinates,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

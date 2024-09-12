@@ -38,7 +38,7 @@ fi
 # shellcheck disable=SC1091
 source ./scripts/airtable-test-helpers/component_ids.sh
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   airtable \
   --download-dir "$DOWNLOAD_DIR" \
   --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \

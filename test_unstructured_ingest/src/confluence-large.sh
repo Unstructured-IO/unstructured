@@ -37,7 +37,7 @@ fi
 # are being provided at the same time, which is a wrong way to use the connector.
 
 # We expect the test to ignore --confluence-num-of-spaces and use --confluence-list-of-spaces.
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   confluence \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
@@ -46,7 +46,7 @@ unstructured-ingest \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
-  --url https://unstructured-ingest-test.atlassian.net \
+  --url https://PYTHONPATH=. unstructured-ingest-test.atlassian.net \
   --user-email "$CONFLUENCE_USER_EMAIL" \
   --api-token "$CONFLUENCE_API_TOKEN" \
   --max-num-of-spaces 10 \

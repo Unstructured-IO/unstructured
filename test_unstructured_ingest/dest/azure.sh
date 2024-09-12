@@ -35,7 +35,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

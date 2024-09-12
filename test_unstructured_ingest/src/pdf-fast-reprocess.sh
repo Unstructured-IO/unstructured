@@ -28,7 +28,7 @@ trap cleanup EXIT
 echo "REPROCESS INPUT PATH"
 ls "$INPUT_PATH"
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \

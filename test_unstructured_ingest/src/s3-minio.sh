@@ -33,7 +33,7 @@ scripts/minio-test-helpers/create-and-check-minio.sh
 wait
 
 AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
-  unstructured-ingest \
+  PYTHONPATH=. unstructured-ingest \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

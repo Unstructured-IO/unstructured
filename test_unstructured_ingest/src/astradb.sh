@@ -22,7 +22,7 @@ fi
 
 COLLECTION_NAME="ingest_test_src"
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   astradb \
   --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \

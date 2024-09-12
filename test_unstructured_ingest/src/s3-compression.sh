@@ -20,7 +20,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
