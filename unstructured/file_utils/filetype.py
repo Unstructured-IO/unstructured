@@ -89,7 +89,7 @@ def detect_filetype(
     Raises:
         ValueError: when:
         - `file_path` is specified but does not correspond to a file on the
-          fileesystem.
+          filesystem.
         - Neither `file_path` nor `file` were specified.
     """
     ctx = _FileTypeDetectionContext.new(
