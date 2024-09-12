@@ -671,7 +671,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
     def _get_paths(self, doc: Path) -> tuple(str, Path, Path):
         """Resolves ground doctype, prediction file path and ground truth path.
 
-        As OD dump directory structure differes from other simple outputs, it needs
+        As OD dump directory structure differs from other simple outputs, it needs
         a specific processing to match the output OD dump file with corresponding
         OD GT file.
 
