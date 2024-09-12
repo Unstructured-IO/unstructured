@@ -866,7 +866,7 @@ class _TableSplitter:
     even cell boundary and a single cell that is by itself too big to fit in the chunking window
     is divided by text-splitting.
 
-    The returned `html` value is always a parseable HTML `<table>` subtree.
+    The returned `html` value is always a parsable HTML `<table>` subtree.
     """
 
     def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):

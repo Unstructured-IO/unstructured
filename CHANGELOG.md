@@ -75,7 +75,7 @@
 
 * **Bump to NLTK 3.9.x** Bumps to the latest `nltk` version to resolve CVE.
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
-* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parsable HTML, and the table is split on even row boundaries whenever possible.
 
 ## 0.15.5
 
@@ -815,7 +815,7 @@
 * **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
 * **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
 * **Fix empty table is identified as bulleted-table.** A table with no text content was mistakenly identified as a bulleted-table and processed by the wrong branch of the initial HTML partitioner.
-* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparseable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
+* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparsable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
 * **Fix HTML `element.metadata.text_as_html` contains spurious <br> elements in invalid locations.** The HTML generated for the `text_as_html` metadata for HTML tables contained `<br>` elements invalid locations like between `<table>` and `<tr>`. Change the HTML generator such that these do not appear.
 * **Fix HTML table cells enclosed in <thead> and <tfoot> elements are dropped.** HTML table cells nested in a `<thead>` or `<tfoot>` element were not detected and the text in those cells was omitted from the table element text and `.text_as_html`. Detect table rows regardless of the semantic tag they may be nested in.
 * **Remove whitespace padding from `.text_as_html`.** `tabulate` inserts padding spaces to achieve visual alignment of columns in HTML tables it generates. Add our own HTML generator to do this simple job and omit that padding as well as newlines ("\n") used for human readability.
