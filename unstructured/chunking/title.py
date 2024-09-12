@@ -45,7 +45,7 @@ def chunk_by_title(
         Combines elements (for example a series of titles) until a section reaches a length of
         n characters. Defaults to `max_characters` which combines chunks whenever space allows.
         Specifying 0 for this argument suppresses combining of small chunks. Note this value is
-        "capped" at the `new_after_n_chars` value since a value higher than that would not change
+        "capped" at the `new_after_n_chars` value since a value greater than that would not change
         this parameter's effect.
     include_orig_elements
         When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field

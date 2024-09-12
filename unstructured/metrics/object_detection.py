@@ -380,7 +380,7 @@ class ObjectDetectionEvalProcessor:
         # so here for each prediction we order the targets by iou.
         sorted_iou, target_sorted = iou.sort(descending=True, stable=True)
 
-        # Only iterate over IoU values higher than min threshold to speed up the process
+        # Only iterate over IoU values greater than min threshold to speed up the process
         for pred_selected_i, target_sorted_i in (sorted_iou > iou_thresholds[0]).nonzero(
             as_tuple=False
         ):

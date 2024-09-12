@@ -86,7 +86,7 @@ class ENVConfig:
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
         """maximum text height acceptable from tesseract OCR results
 
-        if estimated text height from tesseract OCR results is higher than this value the image is
+        if estimated text height from tesseract OCR results is greater than this value the image is
         scaled down to be processed again
         """
         return self._get_int("TESSERACT_MAX_TEXT_HEIGHT", 100)

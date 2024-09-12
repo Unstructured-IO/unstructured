@@ -78,7 +78,7 @@ class ChunkingOptions:
         pre-chunk can be combined with the next pre-chunk if it is still under the length threshold.
         Defaults to `max_characters` which combines chunks whenever space allows. Specifying 0 for
         this argument suppresses combining of small chunks. Note this value is "capped" at the
-        `new_after_n_chars` value since a value higher than that would not change this parameter's
+        `new_after_n_chars` value since a value greater than that would not change this parameter's
         effect.
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
