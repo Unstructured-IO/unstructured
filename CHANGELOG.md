@@ -2361,7 +2361,7 @@ is used without --download-dir.
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
 * Adds `partition_pptx` for partitioning PowerPoint documents
-* LayoutParser models now download from HugginfaceHub instead of DropBox
+* LayoutParser models now download from HuggingfaceHub instead of DropBox
 * Fixed file type detection for XML and HTML files on Amazon Linux
 
 ## 0.4.3
