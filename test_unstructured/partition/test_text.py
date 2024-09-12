@@ -516,7 +516,7 @@ def test_Text_element_assigns_id_hashes_that_are_unique_and_deterministic():
     ]
 
 
-def test_Text_element_assings_UUID_when_unique_element_ids_is_True():
+def test_Text_element_assigns_UUID_when_unique_element_ids_is_True():
     elements = partition_text(text="hello\nhello\nhello", unique_element_ids=True)
 
     for element in elements:
