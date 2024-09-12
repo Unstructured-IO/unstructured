@@ -29,7 +29,7 @@ if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_USER_PNAME" ]
   exit 8
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   onedrive \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

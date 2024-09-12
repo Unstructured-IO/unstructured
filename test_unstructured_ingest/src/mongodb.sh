@@ -27,7 +27,7 @@ fi
 pip uninstall -y bson pymongo
 make install-ingest-mongodb
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   mongodb \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \

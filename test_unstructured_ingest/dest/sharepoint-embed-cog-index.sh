@@ -78,7 +78,7 @@ else
   exit 1
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   sharepoint \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

@@ -31,7 +31,7 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
 fi
 
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   sharepoint \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

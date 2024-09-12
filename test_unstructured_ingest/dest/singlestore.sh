@@ -39,7 +39,7 @@ PASSWORD=password
 PORT=3306
 TABLE=elements
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

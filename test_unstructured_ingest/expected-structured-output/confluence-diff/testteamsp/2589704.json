@@ -7,9 +7,9 @@
         "date_modified": "2023-07-14T22:16:58.907000",
         "record_locator": {
           "page_id": "2589704",
-          "url": "https://unstructured-ingest-test.atlassian.net"
+          "url": "https://PYTHONPATH=. unstructured-ingest-test.atlassian.net"
         },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/2589704",
+        "url": "https://PYTHONPATH=. unstructured-ingest-test.atlassian.net/wiki/rest/api/content/2589704",
         "version": "3"
       },
       "filetype": "text/html",

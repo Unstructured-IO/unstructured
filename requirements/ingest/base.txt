@@ -1,1 +1,2 @@
 unstructured-ingest[airtable, astradb, azure, azure-cognitive-search, bedrock, biomed, box, chroma, clarifai, confluence, couchbase, databricks-volumes, delta-table, discord, dropbox, elasticsearch, embed-huggingface, embed-octoai, embed-vertexai, embed-voyageai, gcs, github, gitlab, google-drive, hubspot, jira, kafka, kdbai, milvus, mongodb, notion, onedrive, openai, opensearch, outlook, pinecone, postgres, qdrant, reddit, remote, s3, salesforce, sftp, sharepoint, singlestore, slack, vectara, weaviate, wikipedia]
+s3fs>=2024.9.0

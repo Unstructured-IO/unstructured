@@ -30,7 +30,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --strategy fast \

@@ -36,7 +36,7 @@ echo "Creating elasticsearch instance"
 scripts/elasticsearch-test-helpers/destination_connector/create-elasticsearch-instance.sh
 wait
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \
