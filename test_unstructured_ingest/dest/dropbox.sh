@@ -54,7 +54,7 @@ else
   jq <<<"$content"
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

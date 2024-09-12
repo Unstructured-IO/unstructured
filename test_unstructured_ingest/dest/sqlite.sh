@@ -35,7 +35,7 @@ echo "Creating SQL DB instance"
 scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_TYPE" "$DB_PATH"
 wait
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \

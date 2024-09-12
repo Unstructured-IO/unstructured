@@ -29,7 +29,7 @@ if [ -z "$SLACK_TOKEN" ]; then
   exit 8
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   slack \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

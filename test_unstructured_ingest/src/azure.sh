@@ -21,7 +21,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   azure \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

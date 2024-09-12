@@ -37,7 +37,7 @@ elif [[ "$CI" == "true" ]]; then
   echo
 fi
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   github \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

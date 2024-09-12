@@ -57,7 +57,7 @@ python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
   --confluent false \
   --port 29092
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   kafka \
   --bootstrap-server localhost \
   --download-dir "$DOWNLOAD_DIR" \

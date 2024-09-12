@@ -24,7 +24,7 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --chunking-strategy basic \
   --chunk-overlap 20 \

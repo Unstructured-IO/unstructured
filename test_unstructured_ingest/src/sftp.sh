@@ -33,7 +33,7 @@ trap cleanup EXIT
 scripts/sftp-test-helpers/create-and-check-sftp.sh
 wait
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   sftp \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

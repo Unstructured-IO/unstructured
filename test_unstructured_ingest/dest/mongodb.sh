@@ -46,7 +46,7 @@ python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
   --database "$MONGODB_DATABASE_NAME" \
   --collection "$DESTINATION_MONGO_COLLECTION" up
 
-unstructured-ingest \
+PYTHONPATH=. unstructured-ingest \
   local \
   --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \
