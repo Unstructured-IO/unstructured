@@ -25,7 +25,7 @@ fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.6
+huggingface-hub==0.24.7
     # via
     #   tokenizers
     #   transformers
@@ -62,7 +62,7 @@ pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   transformers
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./base.txt
     #   sacremoses

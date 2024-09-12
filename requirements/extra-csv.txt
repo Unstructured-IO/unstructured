@@ -14,7 +14,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 six==1.16.0
     # via

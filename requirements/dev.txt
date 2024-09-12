@@ -19,8 +19,10 @@ filelock==3.16.0
     # via virtualenv
 identify==2.6.0
     # via pre-commit
-importlib-metadata==8.4.0
-    # via build
+importlib-metadata==8.5.0
+    # via
+    #   -c ././deps/constraints.txt
+    #   build
 nodeenv==1.9.1
     # via pre-commit
 packaging==24.1
