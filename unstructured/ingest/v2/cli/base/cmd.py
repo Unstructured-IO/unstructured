@@ -75,7 +75,7 @@ class BaseCmd(ABC):
         }
         if chunker := self.get_chunker(options=source_options):
             pipeline_kwargs["chunker"] = chunker
-        if embedder := self.get_embeder(options=source_options):
+        if embedder := self.get_embedder(options=source_options):
             pipeline_kwargs["embedder"] = embedder
         if dest:
             logger.debug(
@@ -106,7 +106,7 @@ class BaseCmd(ABC):
         return Chunker(config=chunker_config)
 
     @staticmethod
-    def get_embeder(options: dict[str, Any]) -> Optional[Embedder]:
+    def get_embedder(options: dict[str, Any]) -> Optional[Embedder]:
         embedder_config = extract_config(flat_data=options, config=EmbedderConfig)
         if not embedder_config.embedding_provider:
             return None
