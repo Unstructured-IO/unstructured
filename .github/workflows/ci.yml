@@ -67,7 +67,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       # NOTE(robinson) - dependencies are installed first because liccheck
-      # produces an error if there is a a mismatch between the dep version
+      # produces an error if there is a mismatch between the dep version
       # in the requirements file and the dep version in site packages
       - name: Install all doc and test dependencies
         run: |
