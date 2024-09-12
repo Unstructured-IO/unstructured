@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ####################################################################################################
-# Check depedency consistency by forcing pip to resolve all the requirement .txt files at once
+# Check dependency consistency by forcing pip to resolve all the requirement .txt files at once
 # (without installing).
 ####################################################################################################
 
