@@ -1721,7 +1721,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Enhancements
 
-* Convert fast startegy to ocr_only for images
+* Convert fast strategy to ocr_only for images
 * Adds support for page numbers in `.docx` and `.doc` when user or renderer
   created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
