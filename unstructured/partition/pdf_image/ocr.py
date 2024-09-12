@@ -396,7 +396,7 @@ def supplement_layout_with_ocr_elements(
     """
     Supplement the existing layout with additional OCR-derived elements.
 
-    This function takes two lists: one list of pre-existing layout elements (`layout`)
+    This function takes two lists: one list of preexisting layout elements (`layout`)
     and another list of OCR-detected text regions (`ocr_layout`). It identifies OCR regions
     that are subregions of the elements in the existing layout and removes them from the
     OCR-derived list. Then, it appends the remaining OCR-derived regions to the existing layout.
