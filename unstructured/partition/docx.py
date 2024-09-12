@@ -369,7 +369,7 @@ class DocxPartitionerOptions:
         return self._file
 
     def _validate(self) -> DocxPartitionerOptions:
-        """Raise on first invalide option, return self otherwise."""
+        """Raise on first invalid option, return self otherwise."""
         # -- provide distinguished error between "file-not-found" and "not-a-DOCX-file" --
         if self._file_path:
             if not os.path.isfile(self._file_path):
