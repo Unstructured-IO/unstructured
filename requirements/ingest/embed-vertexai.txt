@@ -147,7 +147,7 @@ langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.4
     # via langchain
-langsmith==0.1.116
+langsmith==0.1.117
     # via
     #   langchain
     #   langchain-community
@@ -156,7 +156,7 @@ marshmallow==3.22.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -253,6 +253,7 @@ typing-extensions==4.12.2
     #   -c ./ingest/../base.txt
     #   anyio
     #   langchain-core
+    #   multidict
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
@@ -266,5 +267,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.11.0
+yarl==1.11.1
     # via aiohttp

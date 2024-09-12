@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import multiprocessing as mp
 from dataclasses import InitVar, dataclass, field
@@ -44,24 +46,24 @@ class Pipeline:
     partitioner: InitVar[Partitioner]
     partitioner_step: PartitionStep = field(init=False)
     chunker: InitVar[Optional[Chunker]] = None
-    chunker_step: ChunkStep = field(init=False, default=None)
+    chunker_step: ChunkStep | None = field(init=False, default=None)
     embedder: InitVar[Optional[Embedder]] = None
-    embedder_step: EmbedStep = field(init=False, default=None)
+    embedder_step: EmbedStep | None = field(init=False, default=None)
     stager: InitVar[Optional[UploadStager]] = None
-    stager_step: UploadStageStep = field(init=False, default=None)
+    stager_step: UploadStageStep | None = field(init=False, default=None)
     uploader: InitVar[Uploader] = field(default=LocalUploader())
-    uploader_step: UploadStep = field(init=False, default=None)
-    uncompress_step: UncompressStep = field(init=False, default=None)
+    uploader_step: UploadStep | None = field(init=False, default=None)
+    uncompress_step: UncompressStep | None = field(init=False, default=None)
 
     def __post_init__(
         self,
         indexer: IndexerT,
         downloader: DownloaderT,
         partitioner: Partitioner,
-        chunker: Chunker = None,
-        embedder: Embedder = None,
-        stager: UploadStager = None,
-        uploader: Uploader = None,
+        chunker: Chunker | None = None,
+        embedder: Embedder | None = None,
+        stager: UploadStager | None = None,
+        uploader: Uploader | None = None,
     ):
         make_default_logger(level=logging.DEBUG if self.context.verbose else logging.INFO)
         self.indexer_step = IndexStep(process=indexer, context=self.context)
@@ -117,7 +119,7 @@ class Pipeline:
             if self.context.status:
                 raise PipelineError("Pipeline did not run successfully")
 
-    def clean_results(self, results: Optional[list[Union[Any, list[Any]]]]) -> Optional[list[Any]]:
+    def clean_results(self, results: list[Union[Any, list[Any]]] | None) -> list[Any] | None:
         if not results:
             return None
         results = [r for r in results if r]

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import hashlib
 import json
 from dataclasses import dataclass
-from typing import Generator, Optional, TypeVar
+from typing import Any, Callable, Generator, Optional, TypeVar
 
 from unstructured.ingest.v2.interfaces.indexer import Indexer
 from unstructured.ingest.v2.logger import logger
@@ -37,7 +39,9 @@ class IndexStep(PipelineStep):
             f"connection configs: {connection_config}"
         )
 
-    def run(self) -> Generator[str, None, None]:
+    def run(
+        self, _fn: Callable[..., Any] | None = None, **kwargs: Any
+    ) -> Generator[str, None, None]:
         for file_data in self.process.run():
             logger.debug(f"Generated file data: {file_data}")
             try:

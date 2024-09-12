@@ -6,23 +6,13 @@
 # consistency with local-inference-pin
 protobuf<4.24
 grpcio>=1.65.5
-# NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
-# AttributeError: 'ResourcePath' object has no attribute 'collection'
-Office365-REST-Python-Client<2.4.3
-# use the known compatible version of weaviate
-weaviate-client>3.25.0
 # TODO: Pinned in transformers package, remove when that gets updated
 tokenizers>=0.19,<0.20
-platformdirs==3.10.0
-
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
 # updated or we drop support for 3.9
 urllib3<1.27
-
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
 botocore<1.34.132
-
 # python 3.12 support
 wrapt>=1.14.0
-
 langchain-community>=0.2.5
