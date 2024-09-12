@@ -151,7 +151,7 @@ def measure_element_type_accuracy_command(
     "--data_input",
     type=str,
     required=True,
-    help="A datafram or path to the CSV/TSV file containing the data",
+    help="A dataframe or path to the CSV/TSV file containing the data",
 )
 @click.option(
     "--export_dir",
