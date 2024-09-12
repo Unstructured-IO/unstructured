@@ -24,7 +24,7 @@ def get_tempdir(dir: str) -> str:
 
 @dataclass
 class ENVConfig:
-    """class for configuring enviorment parameters"""
+    """class for configuring environment parameters"""
 
     def __post_init__(self):
         if self.GLOBAL_WORKING_DIR_ENABLED:
