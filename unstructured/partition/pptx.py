@@ -211,7 +211,7 @@ class _PptxPartitioner:
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
-        """True when `paragraph` has a bullet-charcter prefix.
+        """True when `paragraph` has a bullet-character prefix.
 
         Bullet characters in the openxml schema are represented by buChar.
         """
