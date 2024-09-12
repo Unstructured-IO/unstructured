@@ -1187,7 +1187,7 @@ class TextPreChunkAccumulator:
     another pre-chunk.
 
     `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
-    This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
+    This method returns an iterator that generates zero-or-one `TextPreChunk` objects and is used
     like so:
 
         yield from accum.flush()
