@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 import multiprocessing as mp
@@ -138,7 +140,7 @@ class PipelineStep(ABC):
     async def _run_async(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError
 
-    def run(self, _fn: Optional[Callable] = None, **kwargs: Any) -> Optional[Any]:
+    def run(self, _fn: Callable[..., Any] | None = None, **kwargs: Any) -> Optional[Any]:
         try:
             fn = _fn or self.process.run
             return self._run(fn=fn, **kwargs)

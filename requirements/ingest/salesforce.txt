@@ -30,10 +30,8 @@ lxml==5.3.0
     #   zeep
 more-itertools==10.5.0
     # via simple-salesforce
-platformdirs==3.10.0
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   zeep
+platformdirs==4.3.2
+    # via zeep
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.9.0

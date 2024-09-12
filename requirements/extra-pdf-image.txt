@@ -75,7 +75,7 @@ idna==3.8
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.4.4
+importlib-resources==6.4.5
     # via matplotlib
 iopath==0.1.10
     # via layoutparser

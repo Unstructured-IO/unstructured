@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -87,8 +89,8 @@ class OnedriveIndexer(Indexer):
     connection_config: OnedriveConnectionConfig
     index_config: OnedriveIndexerConfig
 
-    def list_objects(self, folder, recursive) -> list["DriveItem"]:
-        drive_items = folder.children.get().execute_query()
+    def list_objects(self, folder: DriveItem, recursive: bool) -> list[DriveItem]:
+        drive_items: list[DriveItem] = list(folder.children.get().execute_query())
         files = [d for d in drive_items if d.is_file]
         if not recursive:
             return files
@@ -123,12 +125,12 @@ class OnedriveIndexer(Indexer):
         server_path = file_path + "/" + filename
         rel_path = server_path.replace(self.index_config.path, "").lstrip("/")
         date_modified_dt = (
-            parser.parse(drive_item.last_modified_datetime)
+            parser.parse(str(drive_item.last_modified_datetime))
             if drive_item.last_modified_datetime
             else None
         )
         date_created_at = (
-            parser.parse(drive_item.created_datetime) if drive_item.created_datetime else None
+            parser.parse(str(drive_item.created_datetime)) if drive_item.created_datetime else None
         )
         return FileData(
             identifier=drive_item.id,
@@ -140,7 +142,7 @@ class OnedriveIndexer(Indexer):
                 url=drive_item.parent_reference.path + "/" + drive_item.name,
                 version=drive_item.etag,
                 date_modified=str(date_modified_dt.timestamp()) if date_modified_dt else None,
-                date_created=str(date_created_at.timestamp()) if date_modified_dt else None,
+                date_created=str(date_created_at.timestamp()) if date_created_at else None,
                 date_processed=str(time()),
                 record_locator={
                     "user_pname": self.connection_config.user_pname,

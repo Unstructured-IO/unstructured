@@ -30,9 +30,8 @@ packaging==24.1
     #   build
 pip-tools==7.4.1
     # via -r ./dev.in
-platformdirs==3.10.0
+platformdirs==4.3.2
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./test.txt
     #   virtualenv
 pre-commit==3.8.0
