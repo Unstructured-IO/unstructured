@@ -386,7 +386,7 @@ def _partition_pdf_with_pdfminer(
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
 
-    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
+    Implementation is based on the `extract_text` implementation in pdfminer.six, but
     modified to support tracking page numbers and working with file-like objects.
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
