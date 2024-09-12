@@ -885,7 +885,7 @@
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
-* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existence of a config object.
 
 * **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
