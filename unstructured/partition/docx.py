@@ -749,7 +749,7 @@ class _DocxPartitioner:
 
         # -- This method is called upon entering a new section, which happens before any paragraphs
         # -- in that section are partitioned. A rendered page-break due to a section-start occurs
-        # -- in the first paragraph of the section and so occurs _later_ in the proces. Here we
+        # -- in the first paragraph of the section and so occurs _later_ in the process. Here we
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
