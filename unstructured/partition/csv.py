@@ -55,7 +55,7 @@ def partition_csv(
     metadata_last_modified
         The last modified date for the document.
     include_header
-        Determines whether or not header info info is included in text and medatada.text_as_html.
+        Determines whether or not header info is included in text and medatada.text_as_html.
     include_metadata
         Determines whether or not metadata is included in the output.
     infer_table_structure
