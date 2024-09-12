@@ -675,7 +675,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
         a specific processing to match the output OD dump file with corresponding
         OD GT file.
 
-        The outputs are placed in a dicrectory structure:
+        The outputs are placed in a directory structure:
 
         analysis
         |- document_name
