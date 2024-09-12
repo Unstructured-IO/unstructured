@@ -58,7 +58,7 @@ class LabelStudioResult:
 
 @dataclass
 class LabelStudioReview:
-    """Class for representing a LablStudio review. Reviews are only available in the
+    """Class for representing a LabelStudio review. Reviews are only available in the
     Enterprise offering.
     ref: https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks"""
 
