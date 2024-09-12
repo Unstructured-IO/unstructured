@@ -26,8 +26,8 @@
   },
   {
     "type": "Title",
-    "element_id": "8466f1c7e05ce04838ff95211c4fff50",
-    "text": "WORLD ECONOMIC OUTLOOK UPDATE Inflation Peaking amid Low Growth",
+    "element_id": "ba69012a8fb5d70fcf3e58b80b42b1ce",
+    "text": "WORLD",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -51,7 +51,107 @@
   },
   {
     "type": "Title",
-    "element_id": "04fca18cc5aea2fdb24b55c01f4fa968",
+    "element_id": "464e483f73e708f251dd997141ca910a",
+    "text": "ECONOMIC",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "bd1b383b1523f7a038f369fcab02f861",
+    "text": "OUTLOOK",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1ee4c1d4ef02f1368001b9557fc4650c",
+    "text": "UPDATE",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "359641a904473c37f58769cc8a1d9c36",
+    "text": "Inflation Peaking amid Low Growth",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a27cc1b76f2648a54e6469d4fd57202d",
     "text": "2023 JAN",
     "metadata": {
       "filetype": "application/pdf",
@@ -76,7 +176,7 @@
   },
   {
     "type": "Image",
-    "element_id": "e8910cbfc6833d5ca117621c22a183e5",
+    "element_id": "3cbcac684b7f5dfb187b5d3d313f30a9",
     "text": "",
     "metadata": {
       "filetype": "application/pdf",
@@ -201,8 +301,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "6d8185901672f642fb852b8b77c2f244",
-    "text": "tighter monetary conditions and lower growth potentially affecting financial and debt stability, it is necessary to deploy macroprudential tools and strengthen debt restructuring frameworks. Accelerating COVID-19 vaccinations in China would safeguard the recovery, with positive cross-border spillovers. Fiscal support should be better targeted at those most affected by elevated food and energy prices, and broad-based fiscal relief measures should be withdrawn. Stronger multilateral cooperation is essential to preserve the gains from the rules-based multilateral system and to mitigate climate change by limiting emissions and raising green investment.",
+    "element_id": "dd461967e22f3ebdfc8cf78173c94018",
+    "text": "In most economies, amid the cost-of-living crisis, the priority remains achieving sustained disinflation. With tighter monetary conditions and lower growth potentially affecting financial and debt stability, it is necessary to deploy macroprudential tools and strengthen debt restructuring frameworks. Accelerating COVID-19 vaccinations in China would safeguard the recovery, with positive cross-border spillovers. Fiscal support should be better targeted at those most affected by elevated food and energy prices, and broad-based fiscal relief measures should be withdrawn. Stronger multilateral cooperation is essential to preserve the gains from the rules-based multilateral system and to mitigate climate change by limiting emissions and raising green investment.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -401,8 +501,58 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2951e1eb514a453e5813bc6889f759f5",
-    "text": "Monetary policy starts to bite. Signs are apparent that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle\u2014such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks\u2019 communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago.",
+    "element_id": "1d6876589a1534c985d4671d913a6515",
+    "text": "Monetary policy starts to bite. Signs are apparent",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e0d8de407f3ab4149ae9ec09501ca50b",
+    "text": "that monetary policy tightening is starting to cool demand and inflation, but the full impact is unlikely to be realized before 2024. Global headline inflation appears to have peaked in the third quarter of 2022 (Figure 1). Prices of fuel and nonfuel commodities have declined, lowering headline inflation, notably in the United States, the euro area, and Latin America. But underlying (core) inflation has not yet peaked in most economies and remains well above pre-pandemic levels. It has persisted amid second-round effects from earlier cost shocks and tight labor markets with robust wage growth as consumer demand has remained resilient. Medium-term inflation expectations generally remain anchored, but some gauges are up. These developments have caused central banks to raise rates faster than expected, especially in the United States and the euro area, and to signal that rates will stay elevated for longer. Core inflation is declining in some economies that have completed their tightening cycle\u2014such as Brazil. Financial markets are displaying high sensitivity to inflation news, with equity markets rising following recent releases of lower inflation data in anticipation of interest rate cuts (Box 1), despite central banks\u2019 communicating their resolve to tighten policy further. With the peak in US headline inflation and an acceleration in",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "72129da956da90c4e678bc7f831baa2f",
+    "text": "Figure 1. Twin Peaks? Headline and Core Inflation (Percent, year over year)",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -426,8 +576,8 @@
   },
   {
     "type": "Title",
-    "element_id": "ea9e70213dbb306bbfc411301593a01f",
-    "text": "Median country Brazil",
+    "element_id": "153b8351d764074d2c0f5bf2b2a528c7",
+    "text": "Median country",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -451,7 +601,7 @@
   },
   {
     "type": "Title",
-    "element_id": "a37a878930b52526b96231dcbcb9b3f4",
+    "element_id": "0127157dbb9f84b224f1eeecf25dc30c",
     "text": "United States",
     "metadata": {
       "filetype": "application/pdf",
@@ -476,7 +626,7 @@
   },
   {
     "type": "Title",
-    "element_id": "cdd95d6fc1603d1c87d82ef501854019",
+    "element_id": "9b00d9f3f5dc1ca65b2f2b482f853609",
     "text": "Euro area",
     "metadata": {
       "filetype": "application/pdf",
@@ -500,8 +650,133 @@
     }
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "3b7737beb76051b3562a749fdc734e87",
+    "text": "\u2014",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "887933ebf94ea84ceb6d564a1ed0497a",
+    "text": "\u2014\u2014",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Image",
+    "element_id": "4a16d2c1ec538127db008afd58997035",
+    "text": "Brazil  18  16  1. Headline Inflation  14  12  10  8  6  4  2  0  \u20132  Jan.  2019  Jul.  19  Jan.  20  Jul.  20  Jan.  21  Jul.  21  Jan.  22  16  14  2. Core Inflation  12  10  8  6  4  2  0  \u20132  Jan.  Jul.  Jan.  Jul.  Jan.  Jul.  Jan.  2019  19  20  20  21  21  22  Jul.  22  Jul.  22  Nov.  22  Nov.  22 ",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "1248f309b0a6807c8a134933d85550eb",
+    "text": "Sources: Haver Analytics; and IMF staff calculations. Note: The figure shows the developments in headline and core inflation across 18 advanced economies and 17 emerging market and developing economies. Core inflation is the change in prices for goods and services, but excluding those for food and energy (or the closest available measure). For the euro area (and other European countries for which the data are available), energy, food, alcohol, and tobacco are excluded. The gray bands depict the 10th to 90th percentiles of inflation across economies.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "f37bd3b81db4c6ef56f199b5d899aebd",
+    "element_id": "bbdb4ab6d6984079a115ef1e9b38c7aa",
+    "text": "rate hikes by several non-US central banks, the dollar has weakened since September but remains significantly stronger than a year ago.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "507c6366e98028004c385ed2d7f6737c",
     "text": "Winter comes to Europe. European economic growth in 2022 was more resilient than expected in the face of the large negative terms-of-trade shock from the war in Ukraine. This resilience\u2013\u2013which is",
     "metadata": {
       "filetype": "application/pdf",
@@ -526,58 +801,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "23cc5e8cc806e807c2d2a5070bd07b1c",
+    "element_id": "809c2b1b5c4247d05c07ef923109b738",
     "text": "2 International Monetary Fund | January 2023",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "43f5a5eb2707a8a8f8d7fd26a78f9dca",
-    "text": "Nov. \u00ab22",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "010f24c0d9604698a0a97e91efcf2ae6",
-    "text": "Nov.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -901,8 +1126,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "af70a583660627245d8a985c424ed5ce",
-    "text": "percent in 2024. The 0.2 percentage point upward revision to the forecast for 2023 reflects the effects of faster rate hikes by the European Central Bank and eroding real incomes, offset by the carryover from the 2022 outturn, lower wholesale energy prices, and additional announcements of fiscal purchasing power support in the form of energy price controls and cash transfers.",
+    "element_id": "dc4ee21bddd5388c5390a3d6491e1d76",
+    "text": "Growth in the euro area is projected to bottom out at 0.7 percent in 2023 before rising to 1.6 percent in 2024. The 0.2 percentage point upward revision to the forecast for 2023 reflects the effects of faster rate hikes by the European Central Bank and eroding real incomes, offset by the carryover from the 2022 outturn, lower wholesale energy prices, and additional announcements of fiscal purchasing power support in the form of energy price controls and cash transfers.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1001,33 +1226,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c1e048bf64acdbfb4b3f07ae2c2bd9a0",
-    "text": "percent, respectively, after the deeper-than-expected slowdown in 2022 to 4.3 percent attributable to China\u2019s economy. China\u2019s real GDP slowdown in the fourth quarter of 2022 implies a 0.2 percentage point downgrade for 2022 growth to 3.0 percent\u2014the first time in more than 40 years with China\u2019s growth below the global average. Growth in China is projected to rise to 5.2 percent in 2023, reflecting rapidly improving mobility, and to fall to 4.5 percent in 2024 before settling at below 4 percent over the medium term amid declining business dynamism and slow progress on structural reforms. Growth in India is set to decline from 6.8 percent in 2022 to 6.1 percent in 2023 before picking up to 6.8 percent in 2024, with resilient domestic demand despite external headwinds. Growth in the ASEAN-5 countries (Indonesia, Malaysia, Philippines, Singapore, Thailand) is similarly projected to slow to 4.3 percent in 2023 and then pick up to 4.7 percent in 2024.",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "9da9aade2e55fc72f03d8b5a78092503",
-    "text": "Growth in emerging and developing Europe is projected to have bottomed out in 2022 at 0.7 percent and, since the October forecast, has been revised up for 2023 by 0.9 percentage point to 1.5 percent. This reflects a smaller economic contraction in Russia in 2022 (estimated at \u20132.2 percent compared with a predicted \u20133.4 percent) followed by modestly positive growth in 2023. At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries. In Latin America and the Caribbean, growth is projected to decline from 3.9 percent in 2022 to 1.8 percent in 2023, with an upward revision for 2023 of 0.1 percentage point since October. The forecast revision reflects upgrades of 0.2 percentage point for Brazil and 0.5 percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in",
+    "element_id": "2514ae8c84a15a8ddcfda4bd5f14677a",
+    "text": "Growth in emerging and developing Asia is expected to rise in 2023 and 2024 to 5.3 percent and 5.2 percent, respectively, after the deeper-than-expected slowdown in 2022 to 4.3 percent attributable to China\u2019s economy. China\u2019s real GDP slowdown in the fourth quarter of 2022 implies a 0.2 percentage point downgrade for 2022 growth to 3.0 percent\u2014the first time in more than 40 years with China\u2019s growth below the global average. Growth in China is projected to rise to 5.2 percent in 2023, reflecting rapidly improving mobility, and to fall to 4.5 percent in 2024 before settling at below 4 percent over the medium term amid declining business dynamism and slow progress on structural reforms. Growth in India is set to decline from 6.8 percent in 2022 to 6.1 percent in 2023 before picking up to 6.8 percent in 2024, with resilient domestic demand despite external headwinds. Growth in the ASEAN-5 countries (Indonesia, Malaysia, Philippines, Singapore, Thailand) is similarly projected to slow to 4.3 percent in 2023 and then pick up to 4.7 percent in 2024.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1051,7 +1251,57 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e2f761e5fbfa887c5c4654959178dd0e",
+    "element_id": "372dd00b56271064cbdb336f0c1edf09",
+    "text": "Growth in emerging and developing Europe is projected to have bottomed out in 2022 at 0.7 percent and, since the October forecast, has been revised up for 2023 by 0.9 percentage point to 1.5 percent. This reflects a smaller economic contraction in Russia in 2022 (estimated at \u20132.2 percent compared with a predicted \u20133.4 percent) followed by modestly positive growth in 2023. At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f272e9be7b941dd959170f15e9aeda36",
+    "text": "In Latin America and the Caribbean, growth is projected to decline from 3.9 percent in 2022 to 1.8 percent in 2023, with an upward revision for 2023 of 0.1 percentage point since October. The forecast revision reflects upgrades of 0.2 percentage point for Brazil and 0.5 percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a215de8ed995008ce337de99d5cd92af",
     "text": "4 International Monetary Fund | January 2023",
     "metadata": {
       "filetype": "application/pdf",
@@ -1125,9 +1375,34 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "d75546413a70b32318e60a4439de8e7f",
-    "text": "Growth in the Middle East and Central Asia is projected to decline from 5.3 percent in 2022 to 3.2 percent in 2023, with a downward revision of 0.4 percentage point since October, mainly attributable to a steeper-than-expected growth slowdown in Saudi Arabia, from 8.7 percent in 2022 (which was stronger than expected by 1.1 percentage points) to 2.6 percent in 2023, with a negative revision of 1.1 percentage points. The downgrade for 2023 reflects mainly lower oil production in line with an agreement through OPEC+ (Organization of the Petroleum Exporting Countries, including Russia and other non-OPEC oil exporters), while non-oil growth is expected to remain robust. In sub-Saharan Africa, growth is projected to remain moderate at 3.8 percent in 2023 amid prolonged fallout from the COVID-19 pandemic, although with a modest upward revision since October, before picking up to 4.1 percent in 2024. The small upward revision for 2023 (0.1 percentage point) reflects Nigeria\u2019s rising growth in 2023 due to measures to address insecurity issues in the oil sector. In South Africa, by contrast, after a COVID-19 reopening rebound in 2022, projected growth more than halves in 2023, to 1.2 percent, reflecting weaker external demand, power shortages, and structural constraints.",
+    "type": "ListItem",
+    "element_id": "995efce4c4b1e974e61f6e4205687a44",
+    "text": "Growth in the Middle East and Central Asia is projected to decline from 5.3 percent in 2022 to 3.2 percent in 2023, with a downward revision of 0.4 percentage point since October, mainly attributable to a steeper-than-expected growth slowdown in Saudi Arabia, from 8.7 percent in 2022 (which was stronger than expected by 1.1 percentage points) to 2.6 percent in 2023, with a negative revision of 1.1 percentage points. The downgrade for 2023 reflects mainly lower oil production in line with an agreement through OPEC+ (Organization of the Petroleum Exporting Countries, including Russia and other non-OPEC oil exporters), while non-oil growth is expected to remain robust.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 6,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "98fe012aca786c787983b2ecfb06dc7d",
+    "text": "In sub-Saharan Africa, growth is projected to remain moderate at 3.8 percent in 2023 amid prolonged fallout from the COVID-19 pandemic, although with a modest upward revision since October, before picking up to 4.1 percent in 2024. The small upward revision for 2023 (0.1 percentage point) reflects Nigeria\u2019s rising growth in 2023 due to measures to address insecurity issues in the oil sector. In South Africa, by contrast, after a COVID-19 reopening rebound in 2022, projected growth more than halves in 2023, to 1.2 percent, reflecting weaker external demand, power shortages, and structural constraints.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1151,7 +1426,7 @@
   },
   {
     "type": "Title",
-    "element_id": "c4ed38259052e804c28ab9511fb83709",
+    "element_id": "2b171bf6d92042917f888e7977663b26",
     "text": "Inflation Peaking",
     "metadata": {
       "filetype": "application/pdf",
@@ -1176,7 +1451,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "6fad039abd2a07c18e04427a5c0934c1",
+    "element_id": "a8698c237c1e670a0a9076a1b967dfd3",
     "text": "About 84 percent of countries are expected to have lower headline (consumer price index) inflation in 2023 than in 2022. Global inflation is set to fall from 8.8 percent in 2022 (annual average) to 6.6 percent in 2023 and 4.3 percent in 2024\u2013\u2013above pre-pandemic (2017\u201319) levels of about 3.5 percent. The projected disinflation partly reflects declining international fuel and nonfuel commodity prices due to weaker global demand. It also reflects the cooling effects of monetary policy tightening on underlying (core) inflation, which globally is expected to decline from 6.9 percent in the fourth quarter of 2022 (year over year) to 4.5 percent by the fourth quarter of 2023. Still, disinflation will take time: by 2024, projected annual average headline and core inflation will, respectively, still be above pre-pandemic levels in 82 percent and 86 percent of economies.",
     "metadata": {
       "filetype": "application/pdf",
@@ -1201,7 +1476,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "276ca71db7194279383dbd5ed47e6401",
+    "element_id": "decfc37fc750386b02317a784566d058",
     "text": "In advanced economies, annual average inflation is projected to decline from 7.3 percent in 2022 to 4.6 percent in 2023 and 2.6 percent in 2024\u2013\u2013above target in several cases. In emerging market and developing economies, projected annual inflation declines from 9.9 percent in 2022 to 8.1 percent in 2023 and 5.5 percent in 2024, above the 4.9 percent pre-pandemic (2017\u201319) average. In low-income developing countries, inflation is projected to moderate from 14.2 percent in 2022 to 8.6 percent in 2024\u2013\u2013still high, but close to the pre-pandemic average.",
     "metadata": {
       "filetype": "application/pdf",
@@ -1226,7 +1501,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "dad6fdc16c791d4a298b86a74a7787cb",
+    "element_id": "0bbd5bc12c1f007da0810f63e0759a48",
     "text": "The balance of risks to the global outlook remains tilted to the downside, with scope for lower growth and higher inflation, but adverse risks have moderated since the October 2022 World Economic Outlook.",
     "metadata": {
       "filetype": "application/pdf",
@@ -1251,7 +1526,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4a9791d1daa8c2de8ae6fe9473b0806c",
+    "element_id": "8851acc6825396c414e4f510fbd1a74e",
     "text": "International Monetary Fund | January 2023. 5",
     "metadata": {
       "filetype": "application/pdf",
@@ -1326,8 +1601,8 @@
   },
   {
     "type": "Table",
-    "element_id": "4eb34e94205ace0b2308f955a58a3f0a",
-    "text": "Year over Year Difference from October 2022 Q4 over Q4 2/ 2021 Estimate 2022 Projections 2023 2024 WEO Projections 1/ 2023 2024 Estimate 2022 Projections 2023 2024 6.2 3.4 2.9 3.1 0.2 \u20130.1 1.9 3.2 3.0 Advanced Economies United States Euro Area Germany France Italy Spain Japan United Kingdom Canada Other Advanced Economies 3/ 5.4 5.9 5.3 2.6 6.8 6.7 5.5 2.1 7.6 5.0 5.3 2.7 2.0 3.5 1.9 2.6 3.9 5.2 1.4 4.1 3.5 2.8 1.2 1.4 0.7 0.1 0.7 0.6 1.1 1.8 \u20130.6 1.5 2.0 1.4 1.0 1.6 1.4 1.6 0.9 2.4 0.9 0.9 1.5 2.4 0.1 0.4 0.2 0.4 0.0 0.8 \u20130.1 0.2 \u20130.9 0.0 \u20130.3 \u20130.2 \u20130.2 \u20130.2 \u20130.1 0.0 \u20130.4 \u20130.2 \u20130.4 0.3 \u20130.1 \u20130.2 1.3 0.7 1.9 1.4 0.5 2.1 2.1 1.7 0.4 2.3 1.4 1.1 1.0 0.5 0.0 0.9 0.1 1.3 1.0 \u20130.5 1.2 2.1 1.6 1.3 2.1 2.3 1.8 1.0 2.8 1.0 1.8 1.9 2.2 Emerging Market and Developing Economies Emerging and Developing Asia China India 4/ Emerging and Developing Europe Russia Latin America and the Caribbean Brazil Mexico Middle East and Central Asia Saudi Arabia Sub-Saharan Africa Nigeria South Africa 6.7 7.4 8.4 8.7 6.9 4.7 7.0 5.0 4.7 4.5 3.2 4.7 3.6 4.9 3.9 4.3 3.0 6.8 0.7 \u20132.2 3.9 3.1 3.1 5.3 8.7 3.8 3.0 2.6 4.0 5.3 5.2 6.1 1.5 0.3 1.8 1.2 1.7 3.2 2.6 3.8 3.2 1.2 4.2 5.2 4.5 6.8 2.6 2.1 2.1 1.5 1.6 3.7 3.4 4.1 2.9 1.3 0.3 0.4 0.8 0.0 0.9 2.6 0.1 0.2 0.5 \u20130.4 \u20131.1 0.1 0.2 0.1 \u20130.1 0.0 0.0 0.0 0.1 0.6 \u20130.3 \u20130.4 \u20130.2 0.2 0.5 0.0 0.0 0.0 2.5 3.4 2.9 4.3 \u20132.0 \u20134.1 2.6 2.8 3.7 . . . 4.6 . . . 2.6 3.0 5.0 6.2 5.9 7.0 3.5 1.0 1.9 0.8 1.1 . . . 2.7 . . . 3.1 0.5 4.1 4.9 4.1 7.1 2.8 2.0 1.9 2.2 1.9 . . . 3.5 . . . 2.9 1.8 Memorandum World Growth Based on Market Exchange Rates European Union ASEAN-5 5/ Middle East and North Africa Emerging Market and Middle-Income Economies Low-Income Developing Countries 6.0 5.5 3.8 4.1 7.0 4.1 3.1 3.7 5.2 5.4 3.8 4.9 2.4 0.7 4.3 3.2 4.0 4.9 2.5 1.8 4.7 3.5 4.1 5.6 0.3 0.0 \u20130.2 \u20130.4 0.4 0.0 \u20130.1 \u20130.3 \u20130.2 0.2 0.0 0.1 1.7 1.8 3.7 . . . 2.5 . . . 2.5 1.2 5.7 . . . 5.0 . . . 2.5 2.0 4.0 . . . 4.1 . . . 10.4 9.4 12.1 5.4 6.6 3.4 2.4 2.3 2.6 3.4 2.7 4.6 \u20130.1 0.0 \u20130.3 \u20130.3 \u20130.4 0.0 . . . . . . . . . . . . . . . . . . . . . . . . . . . 65.8 26.4 39.8 7.0 \u201316.2 \u20136.3 \u20137.1 \u20130.4 \u20133.3 \u20130.1 \u20130.9 0.3 11.2 \u20132.0 \u20139.8 1.4 \u20135.9 \u20130.2",
+    "element_id": "9a04939a11dc75f1f95170cfc4e9dbc5",
+    "text": "Year over Year Difference from October 2022 Q4 over Q4 2/ Estimate Projections WEO Projections 1/ Estimate Projections 2021 2022 2023 2024 2023 2024 2022 2023 2024 6.2 3.4 2.9 3.1 0.2 \u20130.1 1.9 3.2 3.0 Advanced Economies 5.4 2.7 1.2 1.4 0.1 \u20130.2 1.3 1.1 1.6 United States 5.9 2.0 1.4 1.0 0.4 \u20130.2 0.7 1.0 1.3 Euro Area 5.3 3.5 0.7 1.6 0.2 \u20130.2 1.9 0.5 2.1 Germany 2.6 1.9 0.1 1.4 0.4 \u20130.1 1.4 0.0 2.3 France 6.8 2.6 0.7 1.6 0.0 0.0 0.5 0.9 1.8 Italy 6.7 3.9 0.6 0.9 0.8 \u20130.4 2.1 0.1 1.0 Spain 5.5 5.2 1.1 2.4 \u20130.1 \u20130.2 2.1 1.3 2.8 Japan 2.1 1.4 1.8 0.9 0.2 \u20130.4 1.7 1.0 1.0 United Kingdom 7.6 4.1 \u20130.6 0.9 \u20130.9 0.3 0.4 \u20130.5 1.8 Canada 5.0 3.5 1.5 1.5 0.0 \u20130.1 2.3 1.2 1.9 Other Advanced Economies 3/ 5.3 2.8 2.0 2.4 \u20130.3 \u20130.2 1.4 2.1 2.2 Emerging Market and Developing Economies 6.7 3.9 4.0 4.2 0.3 \u20130.1 2.5 5.0 4.1 Emerging and Developing Asia 7.4 4.3 5.3 5.2 0.4 0.0 3.4 6.2 4.9 China 8.4 3.0 5.2 4.5 0.8 0.0 2.9 5.9 4.1 India 4/ 8.7 6.8 6.1 6.8 0.0 0.0 4.3 7.0 7.1 Emerging and Developing Europe 6.9 0.7 1.5 2.6 0.9 0.1 \u20132.0 3.5 2.8 Russia 4.7 \u20132.2 0.3 2.1 2.6 0.6 \u20134.1 1.0 2.0 Latin America and the Caribbean 7.0 3.9 1.8 2.1 0.1 \u20130.3 2.6 1.9 1.9 Brazil 5.0 3.1 1.2 1.5 0.2 \u20130.4 2.8 0.8 2.2 Mexico 4.7 3.1 1.7 1.6 0.5 \u20130.2 3.7 1.1 1.9 Middle East and Central Asia 4.5 5.3 3.2 3.7 \u20130.4 0.2 . . . . . . . . . Saudi Arabia 3.2 8.7 2.6 3.4 \u20131.1 0.5 4.6 2.7 3.5 Sub-Saharan Africa 4.7 3.8 3.8 4.1 0.1 0.0 . . . . . . . . . Nigeria 3.6 3.0 3.2 2.9 0.2 0.0 2.6 3.1 2.9 South Africa 4.9 2.6 1.2 1.3 0.1 0.0 3.0 0.5 1.8 Memorandum World Growth Based on Market Exchange Rates 6.0 3.1 2.4 2.5 0.3 \u20130.1 1.7 2.5 2.5 European Union 5.5 3.7 0.7 1.8 0.0 \u20130.3 1.8 1.2 2.0 ASEAN-5 5/ 3.8 5.2 4.3 4.7 \u20130.2 \u20130.2 3.7 5.7 4.0 Middle East and North Africa 4.1 5.4 3.2 3.5 \u20130.4 0.2 . . . . . . . . . Emerging Market and Middle-Income Economies 7.0 3.8 4.0 4.1 0.4 0.0 2.5 5.0 4.1 Low-Income Developing Countries 4.1 4.9 4.9 5.6 0.0 0.1 . . . . . . . . . 10.4 5.4 2.4 3.4 \u20130.1 \u20130.3 . . . . . . . . . 9.4 6.6 2.3 2.7 0.0 \u20130.4 . . . . . . . . . 12.1 3.4 2.6 4.6 \u20130.3 0.0 . . . . . . . . . 65.8 39.8 \u201316.2 \u20137.1 \u20133.3 \u20130.9 11.2 \u20139.8 \u20135.9 26.4 7.0 \u20136.3 \u20130.4 \u20130.1 0.3 \u20132.0 1.4 \u20130.2 4.7 8.8 6.6 4.3 0.1 0.2 9.2 5.0 3.5 3.1 7.3 4.6 2.6 0.2 0.2 7.8 3.1 2.3",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1375,9 +1650,109 @@
     }
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "8c0af04bc7a87b5013697ac78410d6e3",
-    "text": "World Trade Volume (goods and services) 6/ Advanced Economies Emerging Market and Developing Economies",
+    "type": "Title",
+    "element_id": "cde79e6244a9923c5712c3adc31c2f4d",
+    "text": "World Trade Volume (goods and services) 6/",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b822f693f3cd08255c54b66e334fd26d",
+    "text": "Advanced Economies",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "60a0feaace246d39e4f86e9cfc6e96db",
+    "text": "Emerging Market and Developing Economies",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "c44ae79200013da750a6ea80d8a8fe11",
+    "text": "Commodity Prices",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8cbc99504fd7235d91f3873e0ed62d93",
+    "text": "Oil 7/",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1401,8 +1776,83 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "61cc155370f47a3bdda30c407ce2958b",
-    "text": "Commodity Prices Oil 7/ Nonfuel (average based on world commodity import weights)",
+    "element_id": "0e84a245d7d13d46592851b1a27cb5f7",
+    "text": "Nonfuel (average based on world commodity import weights)",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "d8565931efa0e4c16aef187a34276810",
+    "text": "World Consumer Prices 8/",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "ae516f771563a4a0c897f8c86f0c7eef",
+    "text": "Advanced Economies 9/",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a46bed6bfca63e9f5907181bd6105c6c",
+    "text": "Emerging Market and Developing Economies 8/",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1426,8 +1876,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "7b87f70df5eb0c5c5f4e05cb89393628",
-    "text": "World Consumer Prices 8/ Advanced Economies 9/ Emerging Market and Developing Economies 8/",
+    "element_id": "089adf893ed0036f58de8e9706275deb",
+    "text": "5.9",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1451,8 +1901,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "01f6110f227ca362f21307a252d387bc",
-    "text": "4.7 3.1 5.9",
+    "element_id": "bf7bc8145db012e18cec57be028bfc8d",
+    "text": "9.9",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1476,8 +1926,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "54dc7fe009c437d116108cec181e3792",
-    "text": "8.8 7.3 9.9",
+    "element_id": "ec4456307c6149d30b284be6357f05a2",
+    "text": "8.1",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1501,8 +1951,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "348fa41c29526b8d4933fa0492af810e",
-    "text": "6.6 4.6 8.1",
+    "element_id": "fcbe2b933557443cc5f9950f8f9dac9b",
+    "text": "5.5",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1526,8 +1976,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6aabe10eb8cae2bc4de874c542565ec1",
-    "text": "4.3 2.6 5.5",
+    "element_id": "7c8543343d260ef01680bd865d5421c7",
+    "text": "0.0",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1551,8 +2001,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "41242d1e0d075b14e1153a9a6eac1abc",
-    "text": "0.1 0.2 0.0",
+    "element_id": "cdc1c70627c920de18637df922f17ae8",
+    "text": "0.2",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1576,8 +2026,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "553fd3a7a662ec2190665ed75ae70c65",
-    "text": "0.2 0.2 0.2",
+    "element_id": "55363b264a5a2c416380c14ade9df65a",
+    "text": "10.4",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1601,33 +2051,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "42d777ee314b8f164aabb1976e185638",
-    "text": "9.2 7.8 10.4",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "b536aeb880e2566ac393af151f8a53c0",
-    "text": "5.0 3.1 6.6",
+    "element_id": "9fdc4175cb32892f0cdd1bbf5de1e402",
+    "text": "6.6",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1651,8 +2076,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "2ccb29d3db680f09050e16da013cfa4c",
-    "text": "Note: Real effective exchange rates are assumed to remain constant at the levels prevailing during October 26, 2022--November 23, 2022. Economies are listed on the basis of economic size. The aggregated quarterly data are seasonally adjusted. WEO = World Economic Outlook. 1/ Difference based on rounded figures for the current and October 2022 WEO forecasts. Countries whose forecasts have been updated relative to October 2022 WEO forecasts account for approximately 90 percent of world GDP measured at purchasing-power-parity weights. 2/ For World Output (Emerging Market and Developing Economies), the quarterly estimates and projections account for approximately 90 percent (80 percent) of annual world (emerging market and developing economies') output at purchasing-power-parity weights. 3/ Excludes the Group of Seven (Canada, France, Germany, Italy, Japan, United Kingdom, United States) and euro area countries. 4/ For India, data and projections are presented on a fiscal year basis, with FY 2022/23 (starting in April 2022) shown in the 2022 column. India's growth projections are 5.4 percent in 2023 and 6.8 percent in 2024 based on calendar year. 5/ Indonesia, Malaysia, Philippines, Singapore, Thailand. 6/ Simple average of growth rates for export and import volumes (goods and services). 7/ Simple average of prices of UK Brent, Dubai Fateh, and West Texas Intermediate crude oil. The average assumed price of oil in US dollars a barrel, based on futures markets (as of November 29, 2022), is $81.13 in 2023 and $75.36 in 2024. 8/ Excludes Venezuela. 9/ The inflation rate for the euro area is 5.7% in 2023 and 3.3% in 2024, that for Japan is 2.8% in 2023 and 2.0% in 2024, and that for the United States is 4.0% in 2023 and 2.2% in 2024.",
+    "element_id": "14a60bb89dd75e34c4e894ca12298218",
+    "text": "Note: Real effective exchange rates are assumed to remain constant at the levels prevailing during October 26, 2022--November 23, 2022. Economies are listed on the basis of economic size. The aggregated quarterly data are seasonally adjusted. WEO = World Economic Outlook.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1676,7 +2101,232 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fcdbec90e78c273dd191e6938b63b3aa",
+    "element_id": "205d2c6b91ba4b8ad601aa39e6c51282",
+    "text": "1/ Difference based on rounded figures for the current and October 2022 WEO forecasts. Countries whose forecasts have been updated relative to October 2022 WEO forecasts account for approximately 90 percent of world GDP measured at purchasing-power-parity weights.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "db1914e8ceaa83aeb722e8aaf7e7c852",
+    "text": "2/ For World Output (Emerging Market and Developing Economies), the quarterly estimates and projections account for approximately 90 percent (80 percent) of annual world (emerging market and developing economies') output at purchasing-power-parity weights.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "dab3760c894e16c85be30799ec5754b9",
+    "text": "3/ Excludes the Group of Seven (Canada, France, Germany, Italy, Japan, United Kingdom, United States) and euro area countries.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "bb37c2b3e527a7286e6eba57f0fced2d",
+    "text": "4/ For India, data and projections are presented on a fiscal year basis, with FY 2022/23 (starting in April 2022) shown in the 2022 column. India's growth projections are 5.4 percent in 2023 and 6.8 percent in 2024 based on calendar year.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "06574cb65c0c27e2c82512f214bea9de",
+    "text": "5/ Indonesia, Malaysia, Philippines, Singapore, Thailand.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0ff16b590c69a739da83943b6e17f6dc",
+    "text": "6/ Simple average of growth rates for export and import volumes (goods and services).",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9ff51d771010925e3f6c8e6f0a040375",
+    "text": "7/ Simple average of prices of UK Brent, Dubai Fateh, and West Texas Intermediate crude oil. The average assumed price of oil in US dollars a barrel, based on futures markets (as of November 29, 2022), is $81.13 in 2023 and $75.36 in 2024.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a0014ae86555bf77f85d23cec4682505",
+    "text": "8/ Excludes Venezuela.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3307764891fd4a62cc0400e84d4f0165",
+    "text": "9/ The inflation rate for the euro area is 5.7% in 2023 and 3.3% in 2024, that for Japan is 2.8% in 2023 and 2.0% in 2024, and that for the United States is 4.0% in 2023 and 2.2% in 2024.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4cf883e80aeb2f99200910188f532ee7",
     "text": "Upside risks\u2014Plausible upside risks include more favorable surprises to domestic spending\u2014as in the third quarter of 2022\u2014which, however, would increase inflation further. At the same time, there is room for an upside scenario with lower-than-expected inflation and less monetary tightening:",
     "metadata": {
       "filetype": "application/pdf",
@@ -1701,8 +2351,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "05b94a59813751cc052b233294eea3bf",
-    "text": "support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption\u2014particularly of services, including tourism.",
+    "element_id": "a226b17757fe212f8d04ee9fad9fc92b",
+    "text": "Pent-up demand boost: Fueled by the stock of excess private savings from the pandemic fiscal support and, in many cases, still-tight labor markets and solid wage growth, pent-up demand remains an upside risk to the growth outlook. In some advanced economies, recent data show that households are still on net adding to their stock of excess savings (as in some euro area countries and the United Kingdom) or have ample savings left (as in the United States). This leaves scope for a further boost to consumption\u2014particularly of services, including tourism.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1726,7 +2376,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a92c9c37dd45ab95af9ee011a431bbfd",
+    "element_id": "29e7108e3c30105f858cdcad9c4b4189",
     "text": "6 International Monetary Fund | January 2023",
     "metadata": {
       "filetype": "application/pdf",
@@ -1751,8 +2401,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "36b409ff8f7f08da8322fb6945b054ef",
-    "text": "3.5 2.3 4.5",
+    "element_id": "6c50e486db99ce57c0a2eb0558d6586d",
+    "text": "4.5",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1876,8 +2526,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9d5064113562605b7a1b3f1bc24840a4",
-    "text": "capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems.",
+    "element_id": "0a4f402b21ca4eb05c8b2d1d9940d49c",
+    "text": "China\u2019s recovery stalling: Amid still-low population immunity levels and insufficient hospital capacity, especially outside the major urban areas, significant health consequences could hamper the recovery. A deepening crisis in the real estate market remains a major source of vulnerability, with risks of widespread defaults by developers and resulting financial sector instability. Spillovers to the rest of the world would operate primarily through lower demand and potentially renewed supply chain problems.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1901,33 +2551,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a020d627fc081a56453ab6b3ee8c0881",
-    "text": "vulnerability, particularly for Europe and lower-income countries. Europe is facing lower-than- anticipated gas prices, having stored enough gas to make shortages unlikely this winter. However, refilling storage with much-diminished Russian flows will be challenging ahead of next winter, particularly if it is a very cold one and China\u2019s energy demand picks up, causing price spikes. A possible increase in food prices from a failed extension of the Black Sea grain initiative would put further pressure on lower-income countries that are experiencing food insecurity and have limited budgetary room to cushion the impact on households and businesses. With elevated food and fuel prices, social unrest may increase.",
-    "metadata": {
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8,
-      "data_source": {
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "metadata": {
-            "ingest-test": "custom metadata"
-          }
-        },
-        "date_created": "1720544414.0",
-        "date_modified": "1720544414.0"
-      }
-    }
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "5a4931739cd615032ea03860c3ace150",
-    "text": "Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box 1) and dollar depreciation. About 15 percent of low-income countries are estimated to be in debt distress, with an additional 45 percent at high risk of debt distress and about 25 percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs. Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China\u2019s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy.",
+    "element_id": "f258a4e73392b053b7cd4cfd1f455c7e",
+    "text": "War in Ukraine escalating: An escalation of the war in Ukraine remains a major source of vulnerability, particularly for Europe and lower-income countries. Europe is facing lower-than- anticipated gas prices, having stored enough gas to make shortages unlikely this winter. However, refilling storage with much-diminished Russian flows will be challenging ahead of next winter, particularly if it is a very cold one and China\u2019s energy demand picks up, causing price spikes. A possible increase in food prices from a failed extension of the Black Sea grain initiative would put further pressure on lower-income countries that are experiencing food insecurity and have limited budgetary room to cushion the impact on households and businesses. With elevated food and fuel prices, social unrest may increase.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1951,7 +2576,57 @@
   },
   {
     "type": "ListItem",
-    "element_id": "5c53b2d3f514a92cc6c099fd9a46b49a",
+    "element_id": "d483fc1e7a6b11dc7c029afef53f19c2",
+    "text": "Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box 1) and dollar depreciation. About 15 percent of low-income countries are estimated to be in debt distress, with an additional 45 percent at high risk of debt distress and about 25 percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "b1d0038f42c249af7b65ac64d90ed36c",
+    "text": "Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China\u2019s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a2a6d319d6d69c9f012f209332552ba6",
     "text": "Sudden financial market repricing: A premature easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy.",
     "metadata": {
       "filetype": "application/pdf",
@@ -1975,9 +2650,9 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "e3c931f10a12b33fb9aeb6427a16c7ae",
-    "text": "Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing",
+    "type": "ListItem",
+    "element_id": "ecc3a5976f8b96e1a909f9a8aa8e8441",
+    "text": "Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2001,8 +2676,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "84d70cebf2068479ad03b1f4fca89141",
-    "text": "earlier geopolitical tensions, such as those associated with the US-China trade dispute.",
+    "element_id": "0065ea6e5228a2d5574ba0d589525726",
+    "text": "pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing earlier geopolitical tensions, such as those associated with the US-China trade dispute.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2026,7 +2701,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9fda15cda44df99e579f024b037349d9",
+    "element_id": "213dfe37b16f104c8b97aac565751c03",
     "text": "International Monetary Fund | January 2023. 7",
     "metadata": {
       "filetype": "application/pdf",
@@ -2401,8 +3076,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "65269b45848d66c7d8b45099ddf6a328",
-    "text": "Restraining the pandemic: Global coordination is needed to resolve bottlenecks in the global",
+    "element_id": "92e17c7b49f5b47d390e74eb4570e1be",
+    "text": "Restraining the pandemic: Global coordination is needed to resolve bottlenecks in the global distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2425,9 +3100,9 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2ae3be4a3aa90a31eea5a5a306d3837c",
-    "text": "distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential. Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty\u2019s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non\u2013 Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes.",
+    "type": "ListItem",
+    "element_id": "70fa5a835209352e5eabef3536f54ea6",
+    "text": "Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty\u2019s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non\u2013 Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2626,8 +3301,8 @@
   },
   {
     "type": "Image",
-    "element_id": "16c33c9e209b518305829584935190dd",
-    "text": "7  6  5  4  United States Euro area China Other AEs Other EMs  October 2022  GFSR  3  2  1  0  \u20131  \u20132  \u20133  2006     08 08  06  10   10    12   12    14      16   14  16    18   18     20     22 22  20 ",
+    "element_id": "23816dd0ae1864f91d16153d457c27a2",
+    "text": "7  6  5  4  3  United States  Euro area  China  Other AEs  Other EMs  October  2022   GFSR  2  1  0  \u20131  \u20132  \u20133  2006     08  06  08  10    10    12    12    14      16    14  16    18    18     20     22  20  22 ",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2676,8 +3351,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fd3223759c188ca12a81861f36083bb9",
-    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors\u2019 anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe. However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia\u2019s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives.",
+    "element_id": "883a98747b49966e50dd49bd113e1e7e",
+    "text": "Slowing aggregate demand and weaker-than-expected inflation prints in some major advanced economies have prompted investors\u2019 anticipation of a further reduction in the pace of future policy rate hikes. Corporate earnings forecasts have been cut due to headwinds from slowing demand, and margins have contracted across most regions. In addition, survey-based probabilities of recession have been increasing, particularly in the United States and Europe.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2701,8 +3376,58 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "9f931c3b54669a87892391846beda98c",
-    "text": "Figure 1.2. Market-Implied Expectations of Policy Rates (Percent)",
+    "element_id": "968e19e279ea80fbf994f5d88dfb8e5d",
+    "text": "However, upside risks to the inflation outlook remain. Despite the recent moderation in headline inflation, core inflation remains stubbornly high across most regions, labor markets are still tight, energy prices remain pressured by Russia\u2019s ongoing war in Ukraine, and supply chain disruptions may reappear. To keep these risks in check, financial conditions will likely need to tighten further. If not, central banks may need to increase policy rates even more in order to achieve their inflation objectives.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c6c6a6b0c3cbc1ea71cf7c3c01a58334",
+    "text": "Figure 1.2. Market-Implied Expectations of Policy Rates",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "7ecca4609cad7db875f50a681f44c018",
+    "text": "(Percent)",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2726,8 +3451,33 @@
   },
   {
     "type": "Image",
-    "element_id": "bffdca980631ced1f96ab886cf9dcf22",
-    "text": "Latest  October 2022 GFSR  6  1. United States  2. Euro area  5  4  3  2  5  4  3  2  1  1  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26 ",
+    "element_id": "5f7378ac2edd8680261c6c3d7d09d218",
+    "text": "Latest  October 2022 GFSR  6  1. United States  2. Euro area  5  5  4  4  3  3  2  2  1  Oct.  Apr.  Oct.  Dec.  Dec.  Oct.  Apr.  Oct.  Dec.  Dec.  1  22  23  23  24  26  22  23  23  24  26 ",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "3a23d2294f9cfbb497818d718219197b",
+    "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2751,8 +3501,33 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f787afd6d27e6bfdc89bd82044a417a6",
-    "text": "Given the tension between rising recession risks and monetary policy uncertainty, markets have seen significant volatility. While many central banks in advanced economies have stepped down the size of hikes, they have also explicitly stated they will need to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess their outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked.",
+    "element_id": "1a36b434e009ab68418605545fc8d0fc",
+    "text": "While many central banks in advanced economies have stepped",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "15aa1a08bc273dd83a060288e81eb612",
+    "text": "Sources: Bloomberg Finance L.P.; and IMF staff calculations. Note: GFSR = Global Financial Stability Report.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2776,7 +3551,57 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b0002e1597c04292e2e01d4e15cb0dd7",
+    "element_id": "a2b56bcce2b2bb67011eee8026399e51",
+    "text": "down the size of hikes, they have also explicitly stated they will need",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "19df82c029a3ce4664e1bab599208e9c",
+    "text": "to keep rates higher, for a longer period of time, to tamp down inflation. Risk assets could face significant declines if earnings retrench further or if investors reassess their outlook for monetary policy given central bank communications. Globally, the partial reversal of the dollar rally has contributed to recent easing due to improved risk appetite, and some emerging market central banks have paused tightening amid tentative signs that inflation may have peaked.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 11,
+      "data_source": {
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "c7eed4fc056b089a98f6a3ad9ec9373e",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "metadata": {
+            "ingest-test": "custom metadata"
+          }
+        },
+        "date_created": "1720544414.0",
+        "date_modified": "1720544414.0"
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a01645da40596bc8aa78e59b61a7909c",
     "text": "Financial market volatility is expected to remain elevated and could be exacerbated by poor market liquidity. For some asset classes (such as US Treasuries), liquidity has deteriorated to the March 2020 lows of the COVID-19 pandemic. With the process of central bank balance sheet reduction (quantitative tightening) underway, market liquidity is expected to remain challenging.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2801,7 +3626,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2a9dc522d08d54609f97f566911ceed1",
+    "element_id": "df734ee213c4062e841e9590038ed56e",
     "text": "10 \u2014 International Monetary Fund | January 2023",
     "metadata": {
       "filetype": "application/pdf",
@@ -2826,7 +3651,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "103cccd2abc41bc4beb9e70dff33123a",
+    "element_id": "66921f38d7525151f33aaac16264d3d1",
     "text": "WEO Update \u00a9 2023 \u2022 ISBN: 979-8-40023-224-4",
     "metadata": {
       "filetype": "application/pdf",

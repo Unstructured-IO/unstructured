@@ -1,6 +1,8 @@
-## 0.15.12-dev1
+## 0.15.12-dev2
 
 ### Enhancements
+
+* **Improve `pdfminer` element processing** Implemented splitting of `pdfminer` elements (groups of text chunks) into smaller bounding boxes (text lines). This prevents loss of information from the object detection model and facilitates more effective removal of duplicated `pdfminer` text.
 
 ### Features
 
@@ -22,7 +24,6 @@
 * **Enhance `pdfminer` element cleanup** Expand removal of `pdfminer` elements to include those inside all `non-pdfminer` elements, not just `tables`.
 * **Modified analysis drawing tools to dump to files and draw from dumps** If the parameter `analysis` of the `partition_pdf` function is set to `True`, the layout for Object Detection, Pdfminer Extraction, OCR and final layouts will be dumped as json files. The drawers now accept dict (dump) objects instead of internal classes instances.
 * **Vectorize pdfminer elements deduplication computation**. Use `numpy` operations to compute IOU and sub-region membership instead of using simply loop. This improves the speed of deduplicating elements for pages with a lot of elements.
-* **Add deprecation warning to embed code**
 
 ### Features
 
