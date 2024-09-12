@@ -111,7 +111,7 @@ def test_partition_docx_raises_with_neither():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_parition_docx_from_team_chat():
+def test_partition_docx_from_team_chat():
     """Docx with no sections partitions recognizing both paragraphs and tables."""
     elements = partition_docx(example_doc_path("teams_chat.docx"))
     assert [e.text for e in elements] == [

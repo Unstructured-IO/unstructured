@@ -1270,7 +1270,7 @@ def test_auto_partition_languages_argument_default_to_None_when_omitted():
 
 def test_auto_partition_default_does_not_overwrite_other_defaults():
     """`partition()` ["eng"] default does not overwrite ["auto"] default in other partitioners."""
-    # the default for `languages` is ["auto"] in partiton_text
+    # the default for `languages` is ["auto"] in partition_text
     from unstructured.partition.text import partition_text
 
     # Use a document that is primarily in a language other than English
