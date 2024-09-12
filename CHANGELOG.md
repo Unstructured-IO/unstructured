@@ -1207,7 +1207,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
-* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
+* GH issue 1361: fixes a sorting error that prevented some PDF's from being parsed
 * Bump unstructured-inference
   * Brings back embedded images in PDF's (0.5.23)
 
