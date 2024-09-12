@@ -138,7 +138,7 @@ class FileType(enum.Enum):
         """The canonical MIME-type for this file-type, suitable for use in metadata.
 
         This value is used in `.metadata.filetype` for elements partitioned from files of this
-        type. In general it is the "offical", "recommended", or "defacto-standard" MIME-type for
+        type. In general it is the "official", "recommended", or "defacto-standard" MIME-type for
         files of this type, in that order, as available.
         """
         return self._canonical_mime_type
