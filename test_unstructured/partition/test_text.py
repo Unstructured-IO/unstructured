@@ -112,7 +112,7 @@ def test_partition_text_from_filename_default_encoding(filename: str):
         ("fake-text-utf-16-be.txt", "utf-16", UnicodeError),
     ],
 )
-def test_partition_text_from_filename_raises_econding_error(
+def test_partition_text_from_filename_raises_encoding_error(
     filename: str,
     encoding: Optional[str],
     error: Type[BaseException],
