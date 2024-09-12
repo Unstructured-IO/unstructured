@@ -1,10 +1,12 @@
-## 0.15.12-dev0
+## 0.15.12-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Fixed table accuracy metric** Table accuracy was incorrectly using column content difference in calculating row accuracy.
 
 ## 0.15.11
 
