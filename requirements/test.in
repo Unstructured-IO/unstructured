@@ -21,3 +21,4 @@ vcrpy
 grpcio
 autoflake
 liccheck
+weaviate-client
