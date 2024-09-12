@@ -126,7 +126,7 @@ def render_bboxes_for_file(
     resize: Optional[float] = None,
     format: str = "png",
 ):
-    """Render the bounding boxes for a given layout dimp file.
+    """Render the bounding boxes for a given layout dump file.
     To be used for analysis after the partition is performed for
     only dumping the layouts - the bboxes can be rendered later.
 
