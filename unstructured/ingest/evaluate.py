@@ -44,7 +44,7 @@ def main():
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
-@click.option("--group_by", type=str, help="Input field for aggregration, or leave blank if none.")
+@click.option("--group_by", type=str, help="Input field for aggregation, or leave blank if none.")
 @click.option(
     "--weights",
     type=(int, int, int),
