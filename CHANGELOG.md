@@ -123,7 +123,7 @@
 
 * **Updates NLTK data file for compatibility with `nltk>=3.8.2`**. The NLTK data file now container `punkt_tab`, making it possible to upgrade to `nltk>=3.8.2`. The `nltk==3.8.2` patches CVE-2024-39705.
 * **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
-* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
+* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimiters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
 * **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
 * **Removes dependency on unstructured.pytesseract** Unstructured forked pytesseract while waiting for code to be upstreamed. Now that the new version has been released, this fork can be removed.
@@ -369,7 +369,7 @@
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
 * **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
-* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Improve CSV delimiter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
 * **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
