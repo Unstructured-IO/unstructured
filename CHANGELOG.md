@@ -456,7 +456,7 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
-* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
+* **Fix pip-compile make target** Missing base.in dependency missing from requirements make file added
 
 ## 0.13.2
 
