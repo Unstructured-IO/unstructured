@@ -512,7 +512,7 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
         filename=example_doc_path(filename), strategy=PartitionStrategy.OCR_ONLY
     )
     for element in elements:
-        # TODO (jennings) One or multiple elements is an empty string
+        # TODO(jennings): One or multiple elements is an empty string
         # without coordinates. This should be fixed in a new issue
         if element.text:
             box = element.metadata.coordinates.points

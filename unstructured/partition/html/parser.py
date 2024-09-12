@@ -885,7 +885,7 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
     if is_possible_narrative_text(text):
         return NarrativeText
 
-    # NOTE (scanny): Classifying short paragraphs as titles produces noise much more frequently
+    # NOTE(scanny): Classifying short paragraphs as titles produces noise much more frequently
     # than it does value. A `Title` element is very consequential in its effect on chunking and
     # document hierarchy. Classifying any small paragraph as a heading is frequently wrong and
     # throws off these important downstream processes much more than missing the occasional

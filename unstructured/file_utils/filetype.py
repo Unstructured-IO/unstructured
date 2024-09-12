@@ -694,7 +694,7 @@ def add_metadata(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element
             metadata_kwargs = {
                 kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
             }
-            # NOTE (yao): do not use cast here as cast(None) still is None
+            # NOTE(yao): do not use cast here as cast(None) still is None
             if not str(kwargs.get("model_name", "")).startswith("chipper"):
                 # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
                 elements = set_element_hierarchy(elements)

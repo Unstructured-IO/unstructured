@@ -221,7 +221,7 @@ def test_partition_tsv_with_json(filename: str):
     assert_round_trips_through_JSON(elements)
 
 
-# NOTE (jennings) partition_tsv returns a single TableElement per sheet,
+# NOTE(jennings): partition_tsv returns a single TableElement per sheet,
 # so no adding tests for multiple languages like the other partitions
 def test_partition_tsv_element_metadata_has_languages():
     filename = "example-docs/stanley-cups-with-emoji.tsv"

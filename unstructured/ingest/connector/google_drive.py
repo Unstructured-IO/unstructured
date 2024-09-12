@@ -295,7 +295,7 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
                                 guess = guess_extension(export_mime)
                                 ext = guess if guess else ext
 
-                        # TODO (Habeeb): Consider filtering at the query level.
+                        # TODO(Habeeb): Consider filtering at the query level.
                         if (
                             self.connector_config.extension
                             and self.connector_config.extension != ext

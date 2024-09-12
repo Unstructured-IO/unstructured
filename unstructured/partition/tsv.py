@@ -36,7 +36,7 @@ def partition_tsv(
     include_header: bool = False,
     include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
-    # NOTE (jennings) partition_tsv generates a single TableElement
+    # NOTE(jennings): partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
     **kwargs: Any,

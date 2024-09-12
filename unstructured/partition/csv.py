@@ -35,7 +35,7 @@ def partition_csv(
     include_header: bool = False,
     infer_table_structure: bool = True,
     languages: list[str] | None = ["auto"],
-    # NOTE (jennings) partition_csv generates a single TableElement so detect_language_per_element
+    # NOTE(jennings): partition_csv generates a single TableElement so detect_language_per_element
     # is not included as a param
     date_from_file_object: bool = False,
     **kwargs: Any,
