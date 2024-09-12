@@ -44,7 +44,7 @@ def partition_doc(
     metadata_last_modified
         The last modified date for the document.
     libre_office_filter
-        The filter to use when coverting to .doc. The default is the
+        The filter to use when converting to .doc. The default is the
         filter that is required when using LibreOffice7. Pass in None
         if you do not want to apply any filter.
     languages
