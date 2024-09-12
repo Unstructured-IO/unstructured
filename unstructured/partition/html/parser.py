@@ -110,7 +110,7 @@ from unstructured.utils import lazyproperty
 
 
 Annotation: TypeAlias = Mapping[str, Any]
-"""A mapping with zero or more keywords, each represening a noted characteristic.
+"""A mapping with zero or more keywords, each representing a noted characteristic.
 
 An annotation can be associated with a text segment or element. In general the keys and value-types
 differ between the individual (text-segment) and consolidated (Element) forms.
