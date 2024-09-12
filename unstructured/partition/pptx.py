@@ -236,7 +236,7 @@ class _PptxPartitioner:
             return
         notes_text = notes_text_frame.text.strip()
 
-        # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
+        # -- not all notes text-frames contain text (if it's all deleted the text-frame remains) --
         if not notes_text:
             return
 
