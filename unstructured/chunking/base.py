@@ -451,7 +451,7 @@ class TablePreChunk:
         # -- only text-split a table when it's longer than the chunking window --
         maxlen = self._opts.hard_max
         if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
-            # -- use the compactified html for .text_as_html, even though we're not splitting --
+            # -- use the compacted html for .text_as_html, even though we're not splitting --
             metadata = self._metadata
             metadata.text_as_html = self._html or None
             # -- note the overlap-prefix is prepended to its text --
@@ -483,7 +483,7 @@ class TablePreChunk:
 
     @lazyproperty
     def _html(self) -> str:
-        """The compactified HTML for this table when it has text-as-HTML.
+        """The compacted HTML for this table when it has text-as-HTML.
 
         The empty string when table-structure has not been captured, perhaps because
         `infer_table_structure` was set `False` in the partitioning call.
