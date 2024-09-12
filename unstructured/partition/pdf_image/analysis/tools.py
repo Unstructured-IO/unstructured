@@ -54,7 +54,7 @@ def _generate_filename(is_image: bool):
     return f"pdf_{suffix}.pdf"
 
 
-def save_analysis_artifiacts(
+def save_analysis_artifacts(
     *layout_dumpers: LayoutDumper,
     is_image: bool,
     analyzed_image_output_dir_path: str,

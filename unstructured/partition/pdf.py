@@ -59,7 +59,7 @@ from unstructured.partition.pdf_image.analysis.layout_dump import (
     ObjectDetectionLayoutDumper,
     OCRLayoutDumper,
 )
-from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
+from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifacts
 from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     check_element_types_to_extract,
@@ -808,7 +808,7 @@ def _partition_pdf_or_image_local(
             layout_dumpers.append(ocr_layout_dumper)
         if final_layout_dumper:
             layout_dumpers.append(final_layout_dumper)
-        save_analysis_artifiacts(
+        save_analysis_artifacts(
             *layout_dumpers,
             filename=filename,
             file=file,
