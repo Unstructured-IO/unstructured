@@ -1,10 +1,11 @@
 import json
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 
-def sterilize_dict(data: dict) -> dict:
-    def json_serial(obj):
+def sterilize_dict(data: dict[str, Any]) -> dict[str, Any]:
+    def json_serial(obj: Any) -> str:
         if isinstance(obj, Path):
             return obj.as_posix()
         if isinstance(obj, datetime):

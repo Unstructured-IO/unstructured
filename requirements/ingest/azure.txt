@@ -67,7 +67,7 @@ msal==1.31.0
     #   msal-extensions
 msal-extensions==1.2.0
     # via azure-identity
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -94,10 +94,11 @@ typing-extensions==4.12.2
     #   azure-core
     #   azure-identity
     #   azure-storage-blob
+    #   multidict
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.11.0
+yarl==1.11.1
     # via aiohttp

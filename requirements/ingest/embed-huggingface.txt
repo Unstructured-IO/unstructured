@@ -71,7 +71,7 @@ langchain-core==0.2.38
     # via langchain-huggingface
 langchain-huggingface==0.0.3
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.116
+langsmith==0.1.117
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2

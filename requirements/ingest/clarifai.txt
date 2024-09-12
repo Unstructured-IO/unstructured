@@ -60,7 +60,7 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   clarifai-grpc
-rich==13.8.0
+rich==13.8.1
     # via clarifai
 schema==0.7.5
     # via clarifai

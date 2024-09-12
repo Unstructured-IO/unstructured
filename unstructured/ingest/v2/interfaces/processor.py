@@ -2,7 +2,7 @@ import os
 from asyncio import Semaphore
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 
@@ -28,7 +28,7 @@ class ProcessorConfig(EnhancedDataClassJsonMixin):
     uncompress: bool = False
 
     # Used to keep track of state in pipeline
-    status: dict = field(default_factory=dict)
+    status: dict[str, Any] = field(default_factory=dict)
     semaphore: Optional[Semaphore] = field(init=False, default=None)
 
     def __post_init__(self):

@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import Optional, Type
+from typing import Any, Optional, Type
 
 import click
 
@@ -30,7 +30,7 @@ class SrcCmd(BaseCmd):
         ]
     )
 
-    def cmd(self, ctx: click.Context, **options) -> None:
+    def cmd(self, ctx: click.Context, **options: dict[str, Any]) -> None:
         if ctx.invoked_subcommand:
             return
 

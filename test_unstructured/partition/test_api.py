@@ -515,7 +515,7 @@ def expected_call_():
             split_pdf_concurrency_level=5,
             split_pdf_page=True,
             starting_page_number=None,
-            strategy=shared.Strategy.AUTO,
+            strategy=shared.Strategy.HI_RES,
             unique_element_ids=False,
             xml_keep_tags=False,
         ),

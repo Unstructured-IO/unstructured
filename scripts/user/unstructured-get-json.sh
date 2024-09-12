@@ -12,6 +12,7 @@ USAGE_MESSAGE="Usage: $0 [options] <file>"'
 
 Options:
   --api-key KEY   Specify the API key for authentication. Set the env var $UNST_API_KEY to skip providing this option.
+  --freemium      Use the free API rather paid API
   --hi-res        hi_res strategy: Enable high-resolution processing, with layout segmentation and OCR
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
@@ -22,8 +23,12 @@ Options:
   --s3            Write the resulting output to s3 (like a pastebin)
   --help          Display this help and exit.
 
+
 Arguments:
   <file>          File to send to the API.
+
+If running against an API instance other than hosted Unstructured paid API (or --freemium),
+set the enviornment variable UNST_API_ENDPOINT.
 
 The script requires a <file>, the document to post to the Unstructured API.
 The .json result is written to ~/tmp/unst-outputs/ -- this path is echoed and copied to your clipboard.
@@ -35,7 +40,6 @@ if [ "$#" -eq 0 ]; then
 fi
 
 API_KEY=${UNST_API_KEY:-""}
-API_ENDPOINT=${UNST_API_ENDPOINT:-"https://api.unstructured.io/general/v0/general"}
 TMP_DOWNLOADS_DIR="$HOME/tmp/unst-downloads"
 TMP_OUTPUTS_DIR="$HOME/tmp/unst-outputs"
 # only applicable if writing .json output files to S3 when using --s3, e.g. s3://bucket-name/path/
@@ -62,6 +66,7 @@ STRATEGY=""
 VERBOSE=false
 TRACE=false
 COORDINATES=false
+FREEMIUM=false
 TABLES=true
 S3=""
 
@@ -97,6 +102,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --coordinates)
     COORDINATES=true
+    shift
+    ;;
+  --freemium)
+    FREEMIUM=true
     shift
     ;;
   --api-key)
@@ -137,6 +146,12 @@ if [[ "$INPUT" =~ ^https?:// ]]; then
 else
   FILENAME=$(basename "$INPUT")
   INPUT_FILEPATH=${INPUT}
+fi
+
+if $FREEMIUM; then
+  API_ENDPOINT="https://api.unstructured.io/general/v0/general"
+else
+  API_ENDPOINT=${UNST_API_ENDPOINT:-"https://api.unstructuredapp.io/general/v0/general"}
 fi
 
 if $HI_RES; then
