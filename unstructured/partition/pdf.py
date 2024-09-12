@@ -1120,7 +1120,7 @@ def get_uris(
 ) -> list[dict[str, Any]]:
     """
     Extracts URI annotations from a single or a list of PDF object references on a specific page.
-    The type of annots (list or not) depends on the pdf formatting. The function detectes the type
+    The type of annots (list or not) depends on the pdf formatting. The function detects the type
     of annots and then pass on to get_uris_from_annots function as a list.
 
     Args:
