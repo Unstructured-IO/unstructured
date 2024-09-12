@@ -75,7 +75,7 @@ class DescribeChunkingOptions:
         """Subclasses can store `combine_text_under_n_chars` but must validate and enable it.
 
         The `combine_text_under_n_chars` option is not used by all chunkers and its behavior can
-        differ between subtypes. It is present in and stored by the contructur but it defaults to
+        differ between subtypes. It is present in and stored by the constructor but it defaults to
         `0` (no pre-chunk combining) and must be overridden by subclasses to give it the desired
         behavior.
         """
