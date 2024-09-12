@@ -181,7 +181,7 @@ class _PptxPartitioner:
         # -- stream and each `yield from` as "add elements found by this function to the stream".
         # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
         # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- more performant, uses less memory (avoids producing and then garbage-collecting all
         # -- those small lists), is more flexible for later iterator operations like filter,
         # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
