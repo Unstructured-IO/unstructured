@@ -683,7 +683,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
                 |- object_detection.json
             |- bboxes # not used in this evaluation
 
-        and the GT file is pleced in od_gt directory for given dataset
+        and the GT file is placed in od_gt directory for given dataset
 
         dataset_name
         |- od_gt
