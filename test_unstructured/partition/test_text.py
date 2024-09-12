@@ -293,11 +293,11 @@ def test_partition_text_splits_max_min_partition():
 
     from unstructured.nlp.patterns import BULLETS_PATTERN
 
-    # NOTE(klaijan) - clean the asterik out of both text.
+    # NOTE(klaijan) - clean the asterisk out of both text.
     # The `elements` was partitioned by new line and thus makes line 56 (shown below)
     # "*Club domestic league appearances and goals"
     # be considered as a bullet point by the function is_bulleted_text
-    # and so the asterik was removed from the paragraph
+    # and so the asterisk was removed from the paragraph
     # whereas `elements_max_part` was partitioned differently and thus none of the line
     # starts with any of the BULLETS_PATTERN.
 
