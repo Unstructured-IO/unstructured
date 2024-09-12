@@ -913,7 +913,7 @@ class _DocxPartitioner:
             return self._parse_category_depth_by_style_ilvl()
 
     def _parse_category_depth_by_style_ilvl(self) -> int:
-        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        # TODO(newelh): Parsing category depth by style ilvl is not yet implemented
         return 0
 
     def _parse_category_depth_by_style_name(self, style_name: str) -> int:
