@@ -460,7 +460,7 @@ class TablePreChunk:
 
         # -- When there's no HTML, split it like a normal element. Also fall back to text-only
         # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
-        # -- for a chunking window that small because the 33 characterss of HTML overhead for each
+        # -- for a chunking window that small because the 33 characters of HTML overhead for each
         # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
         # -- very small chunks.
         if not self._html or self._opts.hard_max < 50:
