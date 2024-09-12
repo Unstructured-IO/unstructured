@@ -1770,7 +1770,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Reslove `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
+* Resolve `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
 * Remove building `detectron2` from source in Dockerfile
 
 ## 0.7.3
