@@ -1043,7 +1043,7 @@ def _get_links_from_urls_metadata(
 def _combine_coordinates_into_element1(
     element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
 ) -> Element:
-    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
+    """Combine the coordinates of two elements and apply the updated coordinates to `elements1`"""
     x1 = min(
         element1.metadata.coordinates.points[0][0],
         element2.metadata.coordinates.points[0][0],

@@ -112,7 +112,7 @@ def sort_page_elements(
      SORT_MODE_XY_CUT.
         - SORT_MODE_XY_CUT: Sorts elements based on XY-cut sorting approach. Requires the
          recursive_xy_cut function and coordinates_to_bbox function to be defined. And requires all
-         elements to have valid cooridnates
+         elements to have valid coordinates
         - SORT_MODE_BASIC: Sorts elements based on their coordinates. Elements without coordinates
          will be pushed to the end.
         - If an unrecognized sort_mode is provided, the function returns the elements as-is.
