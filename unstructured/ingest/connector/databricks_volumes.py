@@ -112,10 +112,10 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
         **kwargs,
     ) -> None:
         output_folder = self.write_config.path
-        output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
+        output_folder = os.path.join(output_folder)  # Make sure folder ends with file separator
         filename = (
             filename.strip(os.sep) if filename else filename
-        )  # Make sure filename doesn't begin with file seperator
+        )  # Make sure filename doesn't begin with file separator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
         logger.debug(f"uploading content to {output_path}")
         self.client.files.upload(
