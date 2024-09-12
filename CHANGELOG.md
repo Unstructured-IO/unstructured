@@ -927,7 +927,7 @@
 * **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
 * **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
 * **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
-* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectly, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
 
 ## 0.10.25
 
@@ -950,7 +950,7 @@ ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the en
 * **Fix language detection of elements with empty strings** This resolves a warning message that was raised by `langdetect` if the language was attempted to be detected on an empty string. Language detection is now skipped for empty strings.
 * **Fix chunks breaking on regex-metadata matches.** Fixes "over-chunking" when `regex_metadata` was used, where every element that contained a regex-match would start a new chunk.
 * **Fix regex-metadata match offsets not adjusted within chunk.** Fixes incorrect regex-metadata match start/stop offset in chunks where multiple elements are combined.
-* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectly, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
 * **Fix metrics folder not discoverable** Fixes issue where unstructured/metrics folder is not discoverable on PyPI by adding an `__init__.py` file under the folder.
 * **Fix a bug when `parition_pdf` get `model_name=None`** In API usage the `model_name` value is `None` and the `cast` function in `partition_pdf` would return `None` and lead to attribution error. Now we use `str` function to explicit convert the content to string so it is guaranteed to have `starts_with` and other string functions as attributes
 * **Fix html partition fail on tables without `tbody` tag** HTML tables may sometimes just contain headers without body (`tbody` tag)
