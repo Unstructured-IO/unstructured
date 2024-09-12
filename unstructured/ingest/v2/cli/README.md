@@ -25,4 +25,4 @@ generated text from the Click library to be more intuitive on this approach (i.e
 The configs in [configs/](./configs) and connector specific ones in [cmds/](./cmds) help surface all user parameters that
 are needed to marshall the input dictionary from Click into all the respective configs needed to create a full pipeline run.
 Because click returns a flat dictionary of user inputs, the `extract_config` method in `utils.py` helps deserialize this dictionary
-into dataclasses that have nexted fields (such as access configs).
+into dataclasses that have nested fields (such as access configs).
