@@ -303,7 +303,7 @@ class _ConnectedComponent:
     def merge(self, other: _ConnectedComponent) -> _ConnectedComponent:
         """Produce new instance with union of cells in `self` and `other`.
 
-        Used to combine regions of workshet that are "overlapping" row-wise but not actually
+        Used to combine regions of worksheet that are "overlapping" row-wise but not actually
         2D-connected.
         """
         return _ConnectedComponent(
