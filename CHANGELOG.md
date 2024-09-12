@@ -865,7 +865,7 @@
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix.** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 * **Fix flaky chunk-metadata.** Prior implementation was sensitive to element order in the section resulting in metadata values sometimes being dropped. Also, not all metadata items can be consolidated across multiple elements (e.g. coordinates) and so are now dropped from consolidated metadata.
-* **Fix tesseract error `Estimating resolution as X`** leaded by invalid language parameters input. Proceed with defalut language `eng` when `lang.py` fails to find valid language code for tesseract, so that we don't pass an empty string to tesseract CLI and raise an exception in downstream.
+* **Fix tesseract error `Estimating resolution as X`** leaded by invalid language parameters input. Proceed with default language `eng` when `lang.py` fails to find valid language code for tesseract, so that we don't pass an empty string to tesseract CLI and raise an exception in downstream.
 
 ## 0.10.28
 
