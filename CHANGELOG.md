@@ -368,7 +368,7 @@
 * **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
 * **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not reflect this previously.
-* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a parameter in partition_pdf.
 * **Improve CSV delimiter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
 * **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
