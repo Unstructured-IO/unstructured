@@ -203,7 +203,7 @@ class ENVConfig:
 
     @property
     def ANALYSIS_BBOX_RESIZE(self) -> Optional[float]:
-        """Analaysis bbox resize value"""
+        """Analysis bbox resize value"""
         resize = self._get_float("ANALYSIS_BBOX_RESIZE", -1.0)
         if resize == -1.0:
             return None
