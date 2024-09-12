@@ -151,7 +151,7 @@ class TextSegment(NamedTuple):
     Annotations are for emphasis and for links. The text includes any leading, trailing, and
     inter-word whitespace, just as it occurred in the HTML. The text-segments for a paragraph are
     consolidated once the paragraph is fully parsed and whitespace it normalized at that time. It
-    cannot be normalized prior to that without distoring or losing inter-word spacing.
+    cannot be normalized prior to that without distorting or losing inter-word spacing.
 
     However, text within annotations, like the text of a link, is normalized since its full extents
     are known.
