@@ -112,7 +112,7 @@ class ChunkingOptions:
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
-        Overridden by sub-typs to provide semantic-boundary isolation behaviors.
+        Overridden by sub-types to provide semantic-boundary isolation behaviors.
         """
         return ()
 
