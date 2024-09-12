@@ -1302,7 +1302,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in incoherent elements.
 
 ## 0.10.6
 
