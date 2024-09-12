@@ -21,4 +21,4 @@ if response.meta.status != 200:
 es.indices.refresh(index=INDEX_NAME)
 response = es.cat.count(index=INDEX_NAME, format="json")
 
-print("Succesfully created an Elasticsearch index for testing elasticsearch ingest.")
+print("Successfully created an Elasticsearch index for testing elasticsearch ingest.")

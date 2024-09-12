@@ -21,4 +21,4 @@ response = client.indices.create(index=INDEX_NAME, body=mappings)
 if not response["acknowledged"]:
     raise RuntimeError("failed to create index")
 
-print("Succesfully created an OpenSearch index for testing opensearch ingest.")
+print("Successfully created an OpenSearch index for testing opensearch ingest.")
