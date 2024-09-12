@@ -1911,7 +1911,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Supports `hml` filetype for partition as a variation of html filetype.
+* Supports `htm` filetype for partition as a variation of html filetype.
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
