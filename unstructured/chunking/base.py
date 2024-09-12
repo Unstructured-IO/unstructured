@@ -1077,7 +1077,7 @@ class _CellAccumulator:
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
-        """True when `cell` will fit within remaining space left by accummulated cells."""
+        """True when `cell` will fit within remaining space left by accumulated cells."""
         return self._remaining_space >= len(cell.html)
 
     def _iter_cell_texts(self) -> Iterator[str]:
@@ -1124,7 +1124,7 @@ class _RowAccumulator:
         yield text, html
 
     def will_fit(self, row: HtmlRow) -> bool:
-        """True when `row` will fit within remaining space left by accummulated rows."""
+        """True when `row` will fit within remaining space left by accumulated rows."""
         return self._remaining_space >= len(row.html)
 
     def _iter_cell_texts(self) -> Iterator[str]:
