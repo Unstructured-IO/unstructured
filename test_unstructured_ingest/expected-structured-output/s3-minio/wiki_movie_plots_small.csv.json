@@ -15,7 +15,8 @@
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "s3://utic-dev-tech-fixtures/"
-        }
+        },
+        "filesize_bytes": 19610
       }
     }
   }
