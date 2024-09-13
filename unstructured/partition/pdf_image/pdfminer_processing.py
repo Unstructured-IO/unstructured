@@ -56,37 +56,42 @@ def process_data_with_pdfminer(
     for page, page_layout in open_pdfminer_pages_generator(file):
         height = page_layout.height
 
-        layout: list["TextRegion"] = []
+        text_layout = []
+        image_layout = []
         for obj in page_layout:
             if hasattr(obj, "get_text"):
                 inner_text_objects = extract_text_objects(obj)
                 for inner_obj in inner_text_objects:
                     _text = inner_obj.get_text()
-                    new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(inner_obj.bbox, height)
                     text_region = _create_text_region(
-                        new_x1,
-                        new_y1,
-                        new_x2,
-                        new_y2,
+                        *rect_to_bbox(inner_obj.bbox, height),
                         coef,
                         _text,
                         Source.PDFMINER,
                         EmbeddedTextRegion,
                     )
                     if text_region.bbox is not None and text_region.bbox.area > 0:
-                        layout.append(text_region)
+                        text_layout.append(text_region)
             else:
                 inner_image_objects = extract_image_objects(obj)
                 for img_obj in inner_image_objects:
-                    new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(img_obj.bbox, height)
                     text_region = _create_text_region(
-                        new_x1, new_y1, new_x2, new_y2, coef, None, Source.PDFMINER, ImageTextRegion
+                        *rect_to_bbox(img_obj.bbox, height),
+                        coef,
+                        None,
+                        Source.PDFMINER,
+                        ImageTextRegion,
                     )
                     if text_region.bbox is not None and text_region.bbox.area > 0:
-                        layout.append(text_region)
+                        image_layout.append(text_region)
 
-        layout = remove_duplicate_embedded_text(layout)
-
+        clean_text_layout = remove_duplicate_elements(
+            text_layout, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
+        )
+        clean_image_layout = remove_duplicate_elements(
+            image_layout, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
+        )
+        layout = [*clean_text_layout, *clean_image_layout]
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
         layout = sort_text_regions(layout, SORT_MODE_BASIC)
@@ -304,31 +309,25 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
 
 
 @requires_dependencies("unstructured_inference")
-def remove_duplicate_embedded_text(elements: list["TextRegion"]) -> list["TextRegion"]:
+def remove_duplicate_elements(
+    elements: list["TextRegion"],
+    threshold: float = 0.5,
+) -> list["TextRegion"]:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
-    from unstructured_inference.inference.elements import EmbeddedTextRegion
+
+    valid_element_length = 10000
+    if len(elements) > valid_element_length:
+        return []
 
     bboxes = []
-    texts = []
-    bbox_to_iou_mapping = {}
-    current_idx = 0
     for i, element in enumerate(elements):
-        if not isinstance(element, EmbeddedTextRegion):
-            continue
         bboxes.append(element.bbox)
-        texts.append(element.text)
-        bbox_to_iou_mapping[i] = current_idx
-        current_idx += 1
 
-    iou = boxes_self_iou(bboxes, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD)
+    iou = boxes_self_iou(bboxes, threshold)
 
     filtered_elements = []
     for i, element in enumerate(elements):
-        if not isinstance(element, EmbeddedTextRegion):
-            filtered_elements.append(element)
-            continue
-        this_idx = bbox_to_iou_mapping[i]
-        if iou[this_idx, this_idx + 1 :].any():
+        if iou[i, i + 1 :].any():
             continue
         filtered_elements.append(element)
 
