@@ -24,12 +24,14 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
+    #   unstructured-client
 cffi==1.17.1
     # via cryptography
 charset-normalizer==3.3.2
     # via
     #   -c base.txt
     #   requests
+    #   unstructured-client
 click==8.1.7
     # via
     #   -c base.txt
@@ -41,6 +43,12 @@ coverage[toml]==7.6.1
     #   pytest-cov
 cryptography==43.0.1
     # via authlib
+dataclasses-json==0.6.7
+    # via
+    #   -c base.txt
+    #   unstructured-client
+deepdiff==8.0.1
+    # via unstructured-client
 exceptiongroup==1.2.2
     # via
     #   anyio
@@ -71,6 +79,7 @@ httpcore==1.0.5
 httpx==0.27.0
     # via
     #   label-studio-sdk
+    #   unstructured-client
     #   weaviate-client
 idna==3.10
     # via
@@ -78,6 +87,7 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
+    #   unstructured-client
     #   yarl
 ijson==3.3.0
     # via label-studio-sdk
@@ -87,6 +97,8 @@ joblib==1.4.2
     # via
     #   -c base.txt
     #   nltk
+jsonpath-python==1.0.6
+    # via unstructured-client
 jsonschema==3.2.0
     # via label-studio-sdk
 label-studio-sdk==1.0.5
@@ -97,6 +109,11 @@ lxml==5.3.0
     # via
     #   -c base.txt
     #   label-studio-sdk
+marshmallow==3.22.0
+    # via
+    #   -c base.txt
+    #   dataclasses-json
+    #   unstructured-client
 mccabe==0.7.0
     # via flake8
 multidict==6.1.0
@@ -108,6 +125,10 @@ mypy-extensions==1.0.0
     #   -c base.txt
     #   black
     #   mypy
+    #   typing-inspect
+    #   unstructured-client
+nest-asyncio==1.6.0
+    # via unstructured-client
 nltk==3.9.1
     # via
     #   -c base.txt
@@ -116,11 +137,15 @@ numpy==1.26.4
     # via
     #   -c base.txt
     #   pandas
+orderly-set==5.2.2
+    # via deepdiff
 packaging==24.1
     # via
     #   -c base.txt
     #   black
+    #   marshmallow
     #   pytest
+    #   unstructured-client
 pandas==2.2.2
     # via label-studio-sdk
 pathspec==0.12.1
@@ -153,6 +178,8 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
+pypdf==4.3.1
+    # via unstructured-client
 pyrsistent==0.20.0
     # via jsonschema
 pytest==8.3.3
@@ -167,6 +194,7 @@ python-dateutil==2.9.0.post0
     # via
     #   freezegun
     #   pandas
+    #   unstructured-client
 pytz==2024.2
     # via pandas
 pyyaml==6.0.2
@@ -180,9 +208,13 @@ requests==2.32.3
     #   -c base.txt
     #   label-studio-sdk
     #   requests-mock
+    #   requests-toolbelt
+    #   unstructured-client
     #   weaviate-client
 requests-mock==1.12.1
     # via label-studio-sdk
+requests-toolbelt==1.0.0
+    # via unstructured-client
 ruff==0.4.10
     # via -r test.in
 semantic-version==2.10.0
@@ -192,6 +224,7 @@ six==1.16.0
     #   -c base.txt
     #   jsonschema
     #   python-dateutil
+    #   unstructured-client
 sniffio==1.3.1
     # via
     #   anyio
@@ -229,15 +262,26 @@ typing-extensions==4.12.2
     #   mypy
     #   pydantic
     #   pydantic-core
+    #   pypdf
+    #   typing-inspect
+    #   unstructured-client
+typing-inspect==0.9.0
+    # via
+    #   -c base.txt
+    #   dataclasses-json
+    #   unstructured-client
 tzdata==2024.1
     # via pandas
 ujson==5.10.0
     # via label-studio-sdk
+unstructured-client==0.25.8
+    # via -r test.in
 urllib3==1.26.20
     # via
     #   -c ./deps/constraints.txt
     #   -c base.txt
     #   requests
+    #   unstructured-client
     #   vcrpy
 validators==0.34.0
     # via weaviate-client
