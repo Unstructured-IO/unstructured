@@ -384,9 +384,9 @@ def partition_email(
     is_encrypted = False
     content_map: dict[str, str] = {}
     for part in msg.walk():
-        # NOTE(robinson) - content dispostiion is None for the content of the email itself.
+        # content dispostiion is None/inline for the content of the email itself.
         # Other dispositions include "attachment" for attachments
-        if part.get_content_disposition() is not None:
+        if part.get_content_disposition() not in (None, "inline"):
             continue
         content_type = part.get_content_type()
 
