@@ -12,32 +12,29 @@ anyio==4.4.0
     #   httpx
     #   starlette
     #   watchfiles
-asgiref==3.8.1
-    # via opentelemetry-instrumentation-asgi
 backoff==2.2.1
     # via
     #   -c ./ingest/../base.txt
+    #   opentelemetry-exporter-otlp-proto-grpc
     #   posthog
 bcrypt==4.2.0
-    # via chromadb
-build==1.2.2
     # via chromadb
 cachetools==5.5.0
     # via google-auth
 certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
-    #   httpcore
     #   httpx
     #   kubernetes
+    #   pulsar-client
     #   requests
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-chroma-hnswlib==0.7.6
+chroma-hnswlib==0.7.3
     # via chromadb
-chromadb==0.5.5
+chromadb==0.4.17
     # via -r ./ingest/chroma.in
 click==8.1.7
     # via
@@ -47,15 +44,12 @@ click==8.1.7
 coloredlogs==15.0.1
     # via onnxruntime
 deprecated==1.2.14
-    # via
-    #   opentelemetry-api
-    #   opentelemetry-exporter-otlp-proto-grpc
-    #   opentelemetry-semantic-conventions
+    # via opentelemetry-api
 exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-fastapi==0.114.0
+fastapi==0.114.1
     # via chromadb
 filelock==3.16.0
     # via huggingface-hub
@@ -77,17 +71,9 @@ h11==0.14.0
     #   -c ./ingest/../base.txt
     #   httpcore
     #   uvicorn
-httpcore==1.0.5
-    # via
-    #   -c ./ingest/../base.txt
-    #   httpx
 httptools==0.6.1
     # via uvicorn
-httpx==0.27.2
-    # via
-    #   -c ./ingest/../base.txt
-    #   chromadb
-huggingface-hub==0.24.6
+huggingface-hub==0.24.7
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -97,16 +83,13 @@ idna==3.8
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==8.4.0
+importlib-metadata==8.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/chroma.in
-    #   build
-    #   opentelemetry-api
 importlib-resources==6.4.5
     # via chromadb
 kubernetes==30.1.0
-    # via chromadb
-mmh3==4.1.0
     # via chromadb
 monotonic==1.6
     # via posthog
@@ -124,46 +107,21 @@ oauthlib==3.2.2
     #   requests-oauthlib
 onnxruntime==1.19.2
     # via chromadb
-opentelemetry-api==1.27.0
+opentelemetry-api==1.16.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
-    #   opentelemetry-instrumentation
-    #   opentelemetry-instrumentation-asgi
-    #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-sdk
-    #   opentelemetry-semantic-conventions
-opentelemetry-exporter-otlp-proto-common==1.27.0
+opentelemetry-exporter-otlp-proto-grpc==1.16.0
+    # via chromadb
+opentelemetry-proto==1.16.0
     # via opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-exporter-otlp-proto-grpc==1.27.0
-    # via chromadb
-opentelemetry-instrumentation==0.48b0
-    # via
-    #   opentelemetry-instrumentation-asgi
-    #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-asgi==0.48b0
-    # via opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-fastapi==0.48b0
-    # via chromadb
-opentelemetry-proto==1.27.0
-    # via
-    #   opentelemetry-exporter-otlp-proto-common
-    #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-sdk==1.27.0
+opentelemetry-sdk==1.16.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-semantic-conventions==0.48b0
-    # via
-    #   opentelemetry-instrumentation-asgi
-    #   opentelemetry-instrumentation-fastapi
-    #   opentelemetry-sdk
-opentelemetry-util-http==0.48b0
-    # via
-    #   opentelemetry-instrumentation-asgi
-    #   opentelemetry-instrumentation-fastapi
-orjson==3.10.7
-    # via chromadb
+opentelemetry-semantic-conventions==0.37b0
+    # via opentelemetry-sdk
 overrides==7.7.0
     # via chromadb
 packaging==24.1
@@ -180,11 +138,13 @@ protobuf==4.23.4
     #   googleapis-common-protos
     #   onnxruntime
     #   opentelemetry-proto
-pyasn1==0.6.0
+pulsar-client==3.5.0
+    # via chromadb
+pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via google-auth
 pydantic==2.9.1
     # via
@@ -194,8 +154,6 @@ pydantic-core==2.23.3
     # via pydantic
 pypika==0.48.9
     # via chromadb
-pyproject-hooks==1.1.0
-    # via build
 python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
@@ -212,6 +170,7 @@ pyyaml==6.0.2
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
+    #   chromadb
     #   huggingface-hub
     #   kubernetes
     #   posthog
@@ -243,8 +202,6 @@ tokenizers==0.19.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   chromadb
-tomli==2.0.1
-    # via build
 tqdm==4.66.5
     # via
     #   -c ./ingest/../base.txt
@@ -258,7 +215,6 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-    #   asgiref
     #   chromadb
     #   fastapi
     #   huggingface-hub
@@ -287,7 +243,6 @@ websockets==13.0.1
 wrapt==1.16.0
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   deprecated
     #   opentelemetry-instrumentation
 zipp==3.20.1

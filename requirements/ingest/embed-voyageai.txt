@@ -69,7 +69,7 @@ jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.16
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.2.38
+langchain-core==0.2.39
     # via
     #   langchain
     #   langchain-text-splitters
@@ -78,7 +78,7 @@ langchain-text-splitters==0.2.4
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.117
+langsmith==0.1.118
     # via
     #   langchain
     #   langchain-core

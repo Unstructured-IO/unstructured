@@ -83,17 +83,15 @@ jsonpointer==3.0.0
 langchain==0.2.16
     # via langchain-community
 langchain-community==0.2.16
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.38
+    # via -r ./ingest/embed-aws-bedrock.in
+langchain-core==0.2.39
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.4
     # via langchain
-langsmith==0.1.117
+langsmith==0.1.118
     # via
     #   langchain
     #   langchain-community

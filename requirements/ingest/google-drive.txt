@@ -16,7 +16,7 @@ charset-normalizer==3.3.2
     #   requests
 google-api-core==2.19.2
     # via google-api-python-client
-google-api-python-client==2.144.0
+google-api-python-client==2.145.0
     # via -r ./ingest/google-drive.in
 google-auth==2.34.0
     # via
@@ -43,11 +43,11 @@ protobuf==4.23.4
     #   google-api-core
     #   googleapis-common-protos
     #   proto-plus
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via google-auth
 pyparsing==3.1.4
     # via httplib2

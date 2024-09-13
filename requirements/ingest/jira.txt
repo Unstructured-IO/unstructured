@@ -53,5 +53,4 @@ urllib3==1.26.20
 wrapt==1.16.0
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   deprecated

@@ -63,7 +63,7 @@ grpcio==1.66.1
     #   grpcio-status
 grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.24.6
+huggingface-hub==0.24.7
     # via
     #   timm
     #   tokenizers
@@ -176,11 +176,11 @@ protobuf==4.23.4
     #   onnx
     #   onnxruntime
     #   proto-plus
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via google-auth
 pycocotools==2.0.8
     # via effdet
@@ -201,7 +201,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-multipart==0.0.9
     # via unstructured-inference
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via
@@ -214,7 +214,7 @@ rapidfuzz==3.9.7
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./base.txt
     #   transformers
@@ -286,7 +286,6 @@ urllib3==1.26.20
     #   requests
 wrapt==1.16.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
 zipp==3.20.1

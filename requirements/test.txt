@@ -154,11 +154,11 @@ python-dateutil==2.9.0.post0
     #   -c ./base.txt
     #   freezegun
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via vcrpy
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./base.txt
     #   nltk
@@ -230,7 +230,6 @@ vcrpy==6.0.1
     # via -r ./test.in
 wrapt==1.16.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   vcrpy
 xmljson==0.2.1
