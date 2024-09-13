@@ -25,7 +25,7 @@ fi
 # astradb dependencies.
 # ref: https://pymongo.readthedocs.io/en/stable/installation.html
 python -m pip uninstall -y bson pymongo
-make install-ingest-mongodb
+pip install "unstructured-ingest[mongodb]"
 
 PYTHONPATH=. unstructured-ingest \
   mongodb \
