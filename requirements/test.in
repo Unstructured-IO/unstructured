@@ -22,3 +22,4 @@ grpcio
 autoflake
 liccheck
 weaviate-client
+unstructured_client
