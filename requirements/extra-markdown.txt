@@ -10,5 +10,5 @@ importlib-metadata==8.5.0
     #   markdown
 markdown==3.7
     # via -r ./extra-markdown.in
-zipp==3.20.1
+zipp==3.20.2
     # via importlib-metadata

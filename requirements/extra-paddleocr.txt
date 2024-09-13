@@ -5,9 +5,7 @@
 #    pip-compile ./extra-paddleocr.in
 #
 anyio==4.4.0
-    # via
-    #   -c ./base.txt
-    #   httpx
+    # via httpx
 astor==0.8.1
     # via paddlepaddle
 certifi==2024.8.30
@@ -29,23 +27,15 @@ cython==3.0.11
 decorator==5.1.1
     # via paddlepaddle
 exceptiongroup==1.2.2
-    # via
-    #   -c ./base.txt
-    #   anyio
+    # via anyio
 fonttools==4.53.1
     # via matplotlib
 h11==0.14.0
-    # via
-    #   -c ./base.txt
-    #   httpcore
+    # via httpcore
 httpcore==1.0.5
-    # via
-    #   -c ./base.txt
-    #   httpx
+    # via httpx
 httpx==0.27.2
-    # via
-    #   -c ./base.txt
-    #   paddlepaddle
+    # via paddlepaddle
 idna==3.8
     # via
     #   -c ./base.txt
@@ -122,9 +112,7 @@ pyclipper==1.3.0.post5
 pyparsing==3.1.4
     # via matplotlib
 python-dateutil==2.9.0.post0
-    # via
-    #   -c ./base.txt
-    #   matplotlib
+    # via matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
 rapidfuzz==3.9.7
@@ -154,7 +142,6 @@ six==1.16.0
     #   python-dateutil
 sniffio==1.3.1
     # via
-    #   -c ./base.txt
     #   anyio
     #   httpx
 tifffile==2024.8.30
@@ -175,5 +162,5 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.20.1
+zipp==3.20.2
     # via importlib-resources
