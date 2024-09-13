@@ -55,7 +55,7 @@ virtualenv==20.26.4
     # via pre-commit
 wheel==0.44.0
     # via pip-tools
-zipp==3.20.1
+zipp==3.20.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
