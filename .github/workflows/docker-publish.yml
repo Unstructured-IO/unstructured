@@ -24,9 +24,7 @@ jobs:
   build-images:
     strategy:
       matrix:
-        # NOTE(robinson) - temporarily disabling linux/arm64. Build is currently failing
-        # due to broken mesa-gl package. Still need an arm build for the working version.
-        docker-platform: ["linux/amd64"]
+        docker-platform: ["linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest-m
     needs: set-short-sha
     env:
@@ -95,22 +93,22 @@ jobs:
     - name: Pull AMD image
       run: |
         docker pull $DOCKER_BUILD_REPOSITORY:amd64-$SHORT_SHA
-    # - name: Pull ARM image
-    #   run: |
-    #     docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
+    - name: Pull ARM image
+      run: |
+        docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
     - name: Push latest build tags for AMD and ARM
       run: |
         # these are used to construct the final manifest but also cache-from in subsequent runs
         docker tag $DOCKER_BUILD_REPOSITORY:amd64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64
         docker push $DOCKER_BUILD_REPOSITORY:amd64
-        # docker tag $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64
-        # docker push $DOCKER_BUILD_REPOSITORY:arm64
+        docker tag $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA $DOCKER_BUILD_REPOSITORY:arm64
+        docker push $DOCKER_BUILD_REPOSITORY:arm64
     - name: Push multiarch manifest
       run: |
-        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 # $DOCKER_BUILD_REPOSITORY:arm64
+        docker manifest create ${DOCKER_REPOSITORY}:latest $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:latest
-        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64 # $DOCKER_BUILD_REPOSITORY:arm64
+        docker manifest create ${DOCKER_REPOSITORY}:$SHORT_SHA $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$SHORT_SHA
         VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' unstructured/__version__.py)
-        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 # $DOCKER_BUILD_REPOSITORY:arm64
+        docker manifest create ${DOCKER_REPOSITORY}:$VERSION $DOCKER_BUILD_REPOSITORY:amd64 $DOCKER_BUILD_REPOSITORY:arm64
         docker manifest push $DOCKER_REPOSITORY:$VERSION
