@@ -46,7 +46,7 @@ PYTHONPATH=. unstructured-ingest \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
-  --url https://PYTHONPATH=. unstructured-ingest-test.atlassian.net \
+  --url https://unstructured-ingest-test.atlassian.net \
   --user-email "$CONFLUENCE_USER_EMAIL" \
   --api-token "$CONFLUENCE_API_TOKEN" \
   --max-num-of-spaces 10 \
