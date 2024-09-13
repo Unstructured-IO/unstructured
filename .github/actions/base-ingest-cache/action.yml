@@ -46,4 +46,9 @@ runs:
           .venv
           nltk_data
         key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/base.txt') }}
+    - name: Print python versions
+      shell: bash
+      run: |
+        source .venv/bin/activate
+        pip freeze
 
