@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/jira.in
 #
-atlassian-python-api==3.41.15
+atlassian-python-api==3.41.16
     # via -r ./ingest/jira.in
 beautifulsoup4==4.12.3
     # via
@@ -20,7 +20,7 @@ charset-normalizer==3.3.2
     #   requests
 deprecated==1.2.14
     # via atlassian-python-api
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests

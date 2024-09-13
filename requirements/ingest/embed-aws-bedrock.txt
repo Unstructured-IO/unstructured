@@ -65,7 +65,7 @@ httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -80,18 +80,18 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.16
+langchain==0.3.0
     # via langchain-community
-langchain-community==0.2.16
+langchain-community==0.3.0
     # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.39
+langchain-core==0.3.0
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.4
+langchain-text-splitters==0.3.0
     # via langchain
-langsmith==0.1.118
+langsmith==0.1.120
     # via
     #   langchain
     #   langchain-community
@@ -125,12 +125,17 @@ pydantic==2.9.1
     #   langchain
     #   langchain-core
     #   langsmith
+    #   pydantic-settings
 pydantic-core==2.23.3
     # via pydantic
+pydantic-settings==2.5.2
+    # via langchain-community
 python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   botocore
+python-dotenv==1.0.1
+    # via pydantic-settings
 pyyaml==6.0.2
     # via
     #   langchain

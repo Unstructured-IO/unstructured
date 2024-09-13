@@ -12,11 +12,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
-python-gitlab==4.10.0
+python-gitlab==4.11.1
     # via -r ./ingest/gitlab.in
 requests==2.32.3
     # via

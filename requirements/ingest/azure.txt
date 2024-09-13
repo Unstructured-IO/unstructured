@@ -16,7 +16,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==24.2.0
     # via aiohttp
-azure-core==1.30.2
+azure-core==1.31.0
     # via
     #   adlfs
     #   azure-identity
@@ -53,7 +53,7 @@ fsspec==2024.9.0
     # via
     #   -r ./ingest/azure.in
     #   adlfs
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -76,7 +76,9 @@ portalocker==2.10.1
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.9.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import uuid
 from dataclasses import dataclass, field
@@ -5,6 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
+from chromadb.config import Settings
 from dateutil import parser
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -28,14 +31,14 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from chromadb import Client
+    from chromadb.api import ClientAPI
 
 CONNECTOR_TYPE = "chroma"
 
 
 @dataclass
 class ChromaAccessConfig(AccessConfig):
-    settings: Optional[Dict[str, str]] = None
+    settings: Optional[Settings] = None
     headers: Optional[Dict[str, str]] = None
 
 
@@ -44,8 +47,8 @@ class ChromaConnectionConfig(ConnectionConfig):
     collection_name: str
     access_config: ChromaAccessConfig = enhanced_field(sensitive=True)
     path: Optional[str] = None
-    tenant: Optional[str] = "default_tenant"
-    database: Optional[str] = "default_database"
+    tenant: str = "default_tenant"
+    database: str = "default_database"
     host: Optional[str] = None
     port: Optional[int] = None
     ssl: bool = False
@@ -112,13 +115,13 @@ class ChromaUploader(Uploader):
     connector_type: str = CONNECTOR_TYPE
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
-    client: Optional["Client"] = field(init=False)
+    client: Optional[ClientAPI] = field(init=False)
 
     def __post_init__(self):
         self.client = self.create_client()
 
     @requires_dependencies(["chromadb"], extras="chroma")
-    def create_client(self) -> "Client":
+    def create_client(self) -> ClientAPI:
         import chromadb
 
         if self.connection_config.path:

@@ -10,7 +10,7 @@ certifi==2024.8.30
     #   pinecone-client
 pinecone-client==5.0.1
     # via -r ./ingest/pinecone.in
-pinecone-plugin-inference==1.0.3
+pinecone-plugin-inference==1.1.0
     # via pinecone-client
 pinecone-plugin-interface==0.0.7
     # via

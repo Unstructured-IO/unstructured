@@ -24,7 +24,7 @@ grpcio==1.66.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -45,7 +45,7 @@ pillow==10.4.0
     # via clarifai
 prompt-toolkit==3.0.47
     # via inquirerpy
-protobuf==4.23.4
+protobuf==4.25.4
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
