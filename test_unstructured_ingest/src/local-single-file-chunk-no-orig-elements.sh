@@ -38,9 +38,9 @@ RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=. unstructured-ingest \
   local \
   --chunking-strategy by_title \
-  --chunk-no-include-orig-elements \
+  --no-chunk-include-orig-elements \
   --chunk-max-characters 2000 \
-  --chunk-no-multipage-sections \
+  --no-chunk-multipage-sections \
   --input-path "$ABS_INPUT_PATH" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
