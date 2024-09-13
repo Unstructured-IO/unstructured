@@ -74,7 +74,7 @@ def test_prepare_languages_for_tesseract_warns_non_tesseract_language(caplog):
 
 
 def test_prepare_languages_for_tesseract_None_languages():
-    with pytest.raises(ValueError, match="`languages` can not be `None`"):
+    with pytest.raises(ValueError, match="`languages` cannot be `None`"):
         languages = None
         prepare_languages_for_tesseract(languages)
 

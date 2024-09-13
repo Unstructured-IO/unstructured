@@ -221,7 +221,7 @@ def supplement_page_layout_with_ocr(
                     ),
                 )
                 # Note(yuming): instead of getting OCR layout, we just need
-                # the text extraced from OCR for individual elements
+                # the text extracted from OCR for individual elements
                 text_from_ocr = ocr_agent.get_text_from_image(cropped_image)
                 element.text = text_from_ocr
     else:
@@ -396,7 +396,7 @@ def supplement_layout_with_ocr_elements(
     """
     Supplement the existing layout with additional OCR-derived elements.
 
-    This function takes two lists: one list of pre-existing layout elements (`layout`)
+    This function takes two lists: one list of preexisting layout elements (`layout`)
     and another list of OCR-detected text regions (`ocr_layout`). It identifies OCR regions
     that are subregions of the elements in the existing layout and removes them from the
     OCR-derived list. Then, it appends the remaining OCR-derived regions to the existing layout.

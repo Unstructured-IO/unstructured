@@ -10,7 +10,7 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 writer_processes=$(((max_processes - 1) > 1 ? (max_processes - 1) : 2))
-CONTAINTER_NAME="qdrant_test"
+CONTAINER_NAME="qdrant_test"
 QDRANT_PORT=6333
 QDRANT_HOST=localhost:$QDRANT_PORT
 COLLECTION_NAME="qdrant-test-$(date +%s)"
@@ -18,12 +18,12 @@ EXPECTED_POINTS_COUNT=1404
 RETRIES=5
 
 function stop_docker() {
-  docker stop $CONTAINTER_NAME
+  docker stop $CONTAINER_NAME
 }
 
 docker run -d --rm \
   -p 6333:$QDRANT_PORT \
-  --name $CONTAINTER_NAME qdrant/qdrant:latest
+  --name $CONTAINER_NAME qdrant/qdrant:latest
 
 trap stop_docker SIGINT
 trap stop_docker ERR

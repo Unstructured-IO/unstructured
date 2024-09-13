@@ -309,7 +309,7 @@ class ElementMetadata:
         self.url = url
 
     def __eq__(self, other: object) -> bool:
-        """Implments equivalence, like meta == other_meta.
+        """Implements equivalence, like meta == other_meta.
 
         All fields at all levels must match. Unpopulated fields are not considered except when
         populated in one and not the other.
@@ -629,7 +629,7 @@ def _add_regex_metadata(
 ) -> list[Element]:
     """Adds metadata based on a user provided regular expression.
 
-    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
+    The additional metadata will be added to the regex_metadata attributed in the element metadata.
     """
     for element in elements:
         if isinstance(element, Text):

@@ -181,7 +181,7 @@ class _PptxPartitioner:
         # -- stream and each `yield from` as "add elements found by this function to the stream".
         # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
         # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- more performant, uses less memory (avoids producing and then garbage-collecting all
         # -- those small lists), is more flexible for later iterator operations like filter,
         # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
@@ -211,7 +211,7 @@ class _PptxPartitioner:
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
-        """True when `paragraph` has a bullet-charcter prefix.
+        """True when `paragraph` has a bullet-character prefix.
 
         Bullet characters in the openxml schema are represented by buChar.
         """
@@ -236,7 +236,7 @@ class _PptxPartitioner:
             return
         notes_text = notes_text_frame.text.strip()
 
-        # -- not all notes text-frams contain text (if it's all deleted the text-frame remains) --
+        # -- not all notes text-frames contain text (if it's all deleted the text-frame remains) --
         if not notes_text:
             return
 

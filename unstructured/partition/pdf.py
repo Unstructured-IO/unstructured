@@ -59,7 +59,7 @@ from unstructured.partition.pdf_image.analysis.layout_dump import (
     ObjectDetectionLayoutDumper,
     OCRLayoutDumper,
 )
-from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
+from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifacts
 from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     check_element_types_to_extract,
@@ -386,7 +386,7 @@ def _partition_pdf_with_pdfminer(
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
 
-    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
+    Implementation is based on the `extract_text` implementation in pdfminer.six, but
     modified to support tracking page numbers and working with file-like objects.
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
@@ -808,7 +808,7 @@ def _partition_pdf_or_image_local(
             layout_dumpers.append(ocr_layout_dumper)
         if final_layout_dumper:
             layout_dumpers.append(final_layout_dumper)
-        save_analysis_artifiacts(
+        save_analysis_artifacts(
             *layout_dumpers,
             filename=filename,
             file=file,
@@ -1043,7 +1043,7 @@ def _get_links_from_urls_metadata(
 def _combine_coordinates_into_element1(
     element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
 ) -> Element:
-    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
+    """Combine the coordinates of two elements and apply the updated coordinates to `elements1`"""
     x1 = min(
         element1.metadata.coordinates.points[0][0],
         element2.metadata.coordinates.points[0][0],
@@ -1120,7 +1120,7 @@ def get_uris(
 ) -> list[dict[str, Any]]:
     """
     Extracts URI annotations from a single or a list of PDF object references on a specific page.
-    The type of annots (list or not) depends on the pdf formatting. The function detectes the type
+    The type of annots (list or not) depends on the pdf formatting. The function detects the type
     of annots and then pass on to get_uris_from_annots function as a list.
 
     Args:

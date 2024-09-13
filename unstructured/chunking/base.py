@@ -78,7 +78,7 @@ class ChunkingOptions:
         pre-chunk can be combined with the next pre-chunk if it is still under the length threshold.
         Defaults to `max_characters` which combines chunks whenever space allows. Specifying 0 for
         this argument suppresses combining of small chunks. Note this value is "capped" at the
-        `new_after_n_chars` value since a value higher than that would not change this parameter's
+        `new_after_n_chars` value since a value greater than that would not change this parameter's
         effect.
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
@@ -112,7 +112,7 @@ class ChunkingOptions:
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
-        Overridden by sub-typs to provide semantic-boundary isolation behaviors.
+        Overridden by sub-types to provide semantic-boundary isolation behaviors.
         """
         return ()
 
@@ -451,7 +451,7 @@ class TablePreChunk:
         # -- only text-split a table when it's longer than the chunking window --
         maxlen = self._opts.hard_max
         if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
-            # -- use the compactified html for .text_as_html, even though we're not splitting --
+            # -- use the compacted html for .text_as_html, even though we're not splitting --
             metadata = self._metadata
             metadata.text_as_html = self._html or None
             # -- note the overlap-prefix is prepended to its text --
@@ -460,7 +460,7 @@ class TablePreChunk:
 
         # -- When there's no HTML, split it like a normal element. Also fall back to text-only
         # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
-        # -- for a chunking window that small because the 33 characterss of HTML overhead for each
+        # -- for a chunking window that small because the 33 characters of HTML overhead for each
         # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
         # -- very small chunks.
         if not self._html or self._opts.hard_max < 50:
@@ -483,7 +483,7 @@ class TablePreChunk:
 
     @lazyproperty
     def _html(self) -> str:
-        """The compactified HTML for this table when it has text-as-HTML.
+        """The compacted HTML for this table when it has text-as-HTML.
 
         The empty string when table-structure has not been captured, perhaps because
         `infer_table_structure` was set `False` in the partitioning call.
@@ -866,7 +866,7 @@ class _TableSplitter:
     even cell boundary and a single cell that is by itself too big to fit in the chunking window
     is divided by text-splitting.
 
-    The returned `html` value is always a parseable HTML `<table>` subtree.
+    The returned `html` value is always a parsable HTML `<table>` subtree.
     """
 
     def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):
@@ -1077,7 +1077,7 @@ class _CellAccumulator:
         yield text, html
 
     def will_fit(self, cell: HtmlCell) -> bool:
-        """True when `cell` will fit within remaining space left by accummulated cells."""
+        """True when `cell` will fit within remaining space left by accumulated cells."""
         return self._remaining_space >= len(cell.html)
 
     def _iter_cell_texts(self) -> Iterator[str]:
@@ -1124,7 +1124,7 @@ class _RowAccumulator:
         yield text, html
 
     def will_fit(self, row: HtmlRow) -> bool:
-        """True when `row` will fit within remaining space left by accummulated rows."""
+        """True when `row` will fit within remaining space left by accumulated rows."""
         return self._remaining_space >= len(row.html)
 
     def _iter_cell_texts(self) -> Iterator[str]:
@@ -1187,7 +1187,7 @@ class TextPreChunkAccumulator:
     another pre-chunk.
 
     `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
-    This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
+    This method returns an iterator that generates zero-or-one `TextPreChunk` objects and is used
     like so:
 
         yield from accum.flush()

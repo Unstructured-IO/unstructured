@@ -28,7 +28,7 @@ Arguments:
   <file>          File to send to the API.
 
 If running against an API instance other than hosted Unstructured paid API (or --freemium),
-set the enviornment variable UNST_API_ENDPOINT.
+set the environment variable UNST_API_ENDPOINT.
 
 The script requires a <file>, the document to post to the Unstructured API.
 The .json result is written to ~/tmp/unst-outputs/ -- this path is echoed and copied to your clipboard.

@@ -211,7 +211,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
 
         def get_metadata(element) -> t.Dict[str, t.Any]:
             """
-            Select which meta-data fields to include and optionaly map them to a new new.
+            Select which meta-data fields to include and optionally map them to a new new.
             remove the "metadata-" prefix from the keys
             """
             metadata_map = {

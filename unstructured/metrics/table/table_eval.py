@@ -60,7 +60,7 @@ class TableEvaluation:
 
 
 def table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices):
-    """computes for each predicted table its accurary compared to ground truth.
+    """computes for each predicted table its accuracy compared to ground truth.
 
     The accuracy is defined as the SequenceMatcher.ratio() between those two strings. If a
     prediction does not have a matched ground truth its accuracy is 0

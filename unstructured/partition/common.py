@@ -637,7 +637,7 @@ def document_to_element_list(
                 # 1. LayoutElement if the document is LayoutDocument (if the partition is on a
                 #   pdf/image);
                 # 2. Element if the document is HTMLDocument (if the partition is on an html file)
-                # this discrepency is due to Element class defined in unstructured and LayoutElement
+                # this discrepancy is due to Element class defined in unstructured and LayoutElement
                 # class defined in unstructured_inference do not have the same list of attributes
                 if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
                     getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements

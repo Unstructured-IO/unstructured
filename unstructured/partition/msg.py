@@ -306,7 +306,7 @@ class _AttachmentPartitioner:
     def _attachment_last_modified(self) -> str | None:
         """ISO8601 string timestamp of attachment last-modified date.
 
-        This value generally available on the attachment and will be the most reliable last-modifed
+        This value generally available on the attachment and will be the most reliable last-modified
         time. There are fallbacks for when it is not present, ultimately `None` if we have no way
         of telling.
         """

@@ -111,7 +111,7 @@ def test_partition_docx_raises_with_neither():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_parition_docx_from_team_chat():
+def test_partition_docx_from_team_chat():
     """Docx with no sections partitions recognizing both paragraphs and tables."""
     elements = partition_docx(example_doc_path("teams_chat.docx"))
     assert [e.text for e in elements] == [
@@ -177,7 +177,7 @@ def test_partition_docx_includes_neither_page_breaks_nor_numbers_when_rendered_b
 
 
 def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppressed():
-    """Page-number metadata is not supressed when `include_page_breaks` arga is False.
+    """Page-number metadata is not supressed when `include_page_breaks` arg is False.
 
     Only inclusion of PageBreak elements is affected by that option.
     """

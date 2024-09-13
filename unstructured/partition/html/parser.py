@@ -110,7 +110,7 @@ from unstructured.utils import lazyproperty
 
 
 Annotation: TypeAlias = Mapping[str, Any]
-"""A mapping with zero or more keywords, each represening a noted characteristic.
+"""A mapping with zero or more keywords, each representing a noted characteristic.
 
 An annotation can be associated with a text segment or element. In general the keys and value-types
 differ between the individual (text-segment) and consolidated (Element) forms.
@@ -151,7 +151,7 @@ class TextSegment(NamedTuple):
     Annotations are for emphasis and for links. The text includes any leading, trailing, and
     inter-word whitespace, just as it occurred in the HTML. The text-segments for a paragraph are
     consolidated once the paragraph is fully parsed and whitespace it normalized at that time. It
-    cannot be normalized prior to that without distoring or losing inter-word spacing.
+    cannot be normalized prior to that without distorting or losing inter-word spacing.
 
     However, text within annotations, like the text of a link, is normalized since its full extents
     are known.
@@ -885,7 +885,7 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
     if is_possible_narrative_text(text):
         return NarrativeText
 
-    # NOTE (scanny): Classifying short paragraphs as titles produces noise much more frequently
+    # NOTE(scanny): Classifying short paragraphs as titles produces noise much more frequently
     # than it does value. A `Title` element is very consequential in its effect on chunking and
     # document hierarchy. Classifying any small paragraph as a heading is frequently wrong and
     # throws off these important downstream processes much more than missing the occasional

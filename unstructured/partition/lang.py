@@ -207,7 +207,7 @@ def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) ->
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
     if languages is None:
-        raise ValueError("`languages` can not be `None`")
+        raise ValueError("`languages` cannot be `None`")
     converted_languages = list(
         filter(
             lambda x: x is not None and x != "",
@@ -294,7 +294,7 @@ def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> O
                 return None
             languages = str_languages.split(TESSERACT_LANGUAGES_SPLITTER)
         # else, remove the extraneous languages.
-        # NOTE (jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
+        # NOTE(jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
         else:
             # define as 'auto' for language detection when partitioning non-pdfs or -images
             languages = ["auto"]

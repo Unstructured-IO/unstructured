@@ -86,7 +86,7 @@
 
 * **Bump to NLTK 3.9.x** Bumps to the latest `nltk` version to resolve CVE.
 * **Update CI for `ingest-test-fixture-update-pr` to resolve NLTK model download errors.**
-* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parseable HTML, and the table is split on even row boundaries whenever possible.
+* **Synchronized text and html on `TableChunk` splits.** When a `Table` element is divided during chunking to fit the chunking window, `TableChunk.text` corresponds exactly with the table text in `TableChunk.metadata.text_as_html`, `.text_as_html` is always parsable HTML, and the table is split on even row boundaries whenever possible.
 
 ## 0.15.5
 
@@ -97,7 +97,7 @@
 ### Fixes
 
 * **Revert to using `unstructured.pytesseract` fork**. Due to the unavailability of some recent release versions of `pytesseract` on PyPI, the project now uses the `unstructured.pytesseract` fork to ensure stability and continued support.
-* **Bump `libreoffice` verson in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
+* **Bump `libreoffice` version in image.** Bumps the `libreoffice` version to `25.2.5.2` to address CVEs.
 * **Downgrade NLTK dependency version for compatibility**. Due to the unavailability of `nltk==3.8.2` on PyPI, the NLTK dependency has been downgraded to `<3.8.2`. This change ensures continued functionality and compatibility.
 
 ## 0.15.4
@@ -134,7 +134,7 @@
 
 * **Updates NLTK data file for compatibility with `nltk>=3.8.2`**. The NLTK data file now container `punkt_tab`, making it possible to upgrade to `nltk>=3.8.2`. The `nltk==3.8.2` patches CVE-2024-39705.
 * **Renames Astra to Astra DB** Conforms with DataStax internal naming conventions.
-* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimeters).
+* **Accommodate single-column CSV files.** Resolves a limitation of `partition_csv()` where delimiter detection would fail on a single-column CSV file (which naturally has no delimiters).
 * **Accommodate `image/jpg` in PPTX as alias for `image/jpeg`.** Resolves problem partitioning PPTX files having an invalid `image/jpg` (should be `image/jpeg`) MIME-type in the `[Content_Types].xml` member of the PPTX Zip archive.
 * **Fixes an issue in Object Detection metrics** The issue was in preprocessing/validating the ground truth and predicted data for object detection metrics.
 * **Removes dependency on unstructured.pytesseract** Unstructured forked pytesseract while waiting for code to be upstreamed. Now that the new version has been released, this fork can be removed.
@@ -156,7 +156,7 @@
 * **Update `HuggingFaceEmbeddingEncoder` to use `HuggingFaceEmbeddings` from `langchain_huggingface` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
 * **Update `OpenAIEmbeddingEncoder` to use `OpenAIEmbeddings` from `langchain-openai` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
 * **Update import of Pinecone exception** Adds compatibility for pinecone-client>=5.0.0
-* **File-type detection catches non-existent file-path.** `detect_filetype()` no longer silently falls back to detecting a file-type based on the extension when no file exists at the path provided. Instead `FileNotFoundError` is raised. This provides consistent user notification of a mis-typed path rather than an unpredictable exception from a file-type specific partitioner when the file cannot be opened.
+* **File-type detection catches nonexistent file-path.** `detect_filetype()` no longer silently falls back to detecting a file-type based on the extension when no file exists at the path provided. Instead `FileNotFoundError` is raised. This provides consistent user notification of a mis-typed path rather than an unpredictable exception from a file-type specific partitioner when the file cannot be opened.
 * **EML files specified as a file-path are detected correctly.** Resolved a bug where an EML file submitted to `partition()` as a file-path was identified as TXT and partitioned using `partition_text()`. EML files specified by path are now identified and processed correctly, including processing any attachments.
 * **A DOCX, PPTX, or XLSX file specified by path and ambiguously identified as MIME-type "application/octet-stream" is identified correctly.** Resolves a shortcoming where a file specified by path immediately fell back to filename-extension based identification when misidentified as "application/octet-stream", either by asserted content type or a mis-guess by libmagic. An MS Office file misidentified in this way is now correctly identified regardless of its filename and whether it is specified by path or file-like object.
 * **Textual content retrieved from a URL with gzip transport compression now partitions correctly.** Resolves a bug where a textual file-type (such as Markdown) retrieved by passing a URL to `partition()` would raise when `gzip` compression was used for transport by the server.
@@ -220,7 +220,7 @@
 
 ### Enhancements
 
-* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffice`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
 
 ### Features
 
@@ -260,7 +260,7 @@
 
 ### Fixes
 
-* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.** The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
+* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.** The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `engine="rust"` to use `"schema_mode"`.
 * **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
 * **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
 * **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
@@ -320,7 +320,7 @@
 * **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
   to avoid text being dynamically injected into the XML document.
 * **Chromadb change from Add to Upsert using element_id to make idempotent**
-* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Disable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTRACT_TABLE_AS_CELLS` is `true`
 * **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
 * **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
 
@@ -367,7 +367,7 @@
 * **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
-* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameters to control temporary storage.
 
 ### Features
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
@@ -378,9 +378,9 @@
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
 * **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
-* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
-* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
-* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a parameter in partition_pdf.
+* **Improve CSV delimiter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
 * **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
@@ -456,7 +456,7 @@
 
 * **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
 * **Add support for `start_index` in `html` links extraction**
-* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
+* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this partitioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 * **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
 * **Introduce `starting_page_number` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
 * **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
@@ -467,7 +467,7 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
-* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
+* **Fix pip-compile make target** Missing base.in dependency missing from requirements make file added
 
 ## 0.13.2
 
@@ -575,7 +575,7 @@
 * **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
 * **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
 * **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for the signed message is extracted and added to metadata.
-* **Fallback to valid content types for emails** If the user selected content type does not exist on the email message, `partition_email` now falls back to anoter valid content type if it's available.
+* **Fallback to valid content types for emails** If the user selected content type does not exist on the email message, `partition_email` now falls back to another valid content type if it's available.
 
 ### Features
 
@@ -587,7 +587,7 @@
 ### Fixes
 
 * **Fix `partition_pdf()` not working when using chipper model with `file`**
-* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
+* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotation marks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
 * **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
 * **Fix remove Vectara requirements from setup.py - there are no dependencies**
 * **Add missing dependency files to package manifest**. Updates the file path for the ingest
@@ -616,7 +616,7 @@
 * **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
 * **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
 * **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
-* **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
+* **Update documentation.** (i) best practice for table extraction by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
 * **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
 
 ## 0.12.2
@@ -635,10 +635,10 @@
 ### Enhancements
 
 * **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
-* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+* **Add support for bitmap images in `partition_image`** Adds support for `.bmp` files in
   `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
-* **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
+* **Add filetype detection for `.wav` files.** Add filetype detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
 * **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
 * **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
@@ -806,7 +806,7 @@
 ### Enhancements
 
 * **Add a class for the strategy constants.** Add a class `PartitionStrategy` for the strategy constants and use the constants to replace strategy strings.
-* **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
+* **Temporary Support for paddle language parameter.** User can specify default language code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
 * **Improve DOCX page-break fidelity.** Improve page-break fidelity such that a paragraph containing a page-break is split into two elements, one containing the text before the page-break and the other the text after. Emit the PageBreak element between these two and assign the correct page-number (n and n+1 respectively) to the two textual elements.
 
 ### Features
@@ -826,7 +826,7 @@
 * **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
 * **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
 * **Fix empty table is identified as bulleted-table.** A table with no text content was mistakenly identified as a bulleted-table and processed by the wrong branch of the initial HTML partitioner.
-* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparseable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
+* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparsable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
 * **Fix HTML `element.metadata.text_as_html` contains spurious <br> elements in invalid locations.** The HTML generated for the `text_as_html` metadata for HTML tables contained `<br>` elements invalid locations like between `<table>` and `<tr>`. Change the HTML generator such that these do not appear.
 * **Fix HTML table cells enclosed in <thead> and <tfoot> elements are dropped.** HTML table cells nested in a `<thead>` or `<tfoot>` element were not detected and the text in those cells was omitted from the table element text and `.text_as_html`. Detect table rows regardless of the semantic tag they may be nested in.
 * **Remove whitespace padding from `.text_as_html`.** `tabulate` inserts padding spaces to achieve visual alignment of columns in HTML tables it generates. Add our own HTML generator to do this simple job and omit that padding as well as newlines ("\n") used for human readability.
@@ -876,7 +876,7 @@
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix.** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 * **Fix flaky chunk-metadata.** Prior implementation was sensitive to element order in the section resulting in metadata values sometimes being dropped. Also, not all metadata items can be consolidated across multiple elements (e.g. coordinates) and so are now dropped from consolidated metadata.
-* **Fix tesseract error `Estimating resolution as X`** leaded by invalid language parameters input. Proceed with defalut language `eng` when `lang.py` fails to find valid language code for tesseract, so that we don't pass an empty string to tesseract CLI and raise an exception in downstream.
+* **Fix tesseract error `Estimating resolution as X`** leaded by invalid language parameters input. Proceed with default language `eng` when `lang.py` fails to find valid language code for tesseract, so that we don't pass an empty string to tesseract CLI and raise an exception in downstream.
 
 ## 0.10.28
 
@@ -896,7 +896,7 @@
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
-* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no related cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existence of a config object.
 
 * **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
@@ -938,7 +938,7 @@
 * **Fix partition docx without sections** Some docx files, like those from teams output, do not contain sections and it would produce no results because the code assumes all components are in sections. Now if no sections is detected from a document we iterate through the paragraphs and return contents found in the paragraphs.
 * **Fix out-of-order sequencing of split chunks.** Fixes behavior where "split" chunks were inserted at the beginning of the chunk sequence. This would produce a chunk sequence like [5a, 5b, 3a, 3b, 1, 2, 4] when sections 3 and 5 exceeded `max_characters`.
 * **Deserialization of ingest docs fixed** When ingest docs are being deserialized as part of the ingest pipeline process (cli), there were certain fields that weren't getting persisted (metadata and date processed). The from_dict method was updated to take these into account and a unit test added to check.
-* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectly, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
 
 ## 0.10.25
 
@@ -949,11 +949,11 @@
 
 ### Features
 
-* **Table OCR refactor** support Table OCR with pre-computed OCR data to ensure we only do one OCR for entrie document. User can specify
+* **Table OCR refactor** support Table OCR with pre-computed OCR data to ensure we only do one OCR for entire document. User can specify
 ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the entire document.
 * **Adds accuracy function** The accuracy scoring was originally an option under `calculate_edit_distance`. For easy function call, it is now a wrapper around the original function that calls edit_distance and return as "score".
 * **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
-* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
+* **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connection to run.
 
 ### Fixes
 
@@ -961,9 +961,9 @@ ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the en
 * **Fix language detection of elements with empty strings** This resolves a warning message that was raised by `langdetect` if the language was attempted to be detected on an empty string. Language detection is now skipped for empty strings.
 * **Fix chunks breaking on regex-metadata matches.** Fixes "over-chunking" when `regex_metadata` was used, where every element that contained a regex-match would start a new chunk.
 * **Fix regex-metadata match offsets not adjusted within chunk.** Fixes incorrect regex-metadata match start/stop offset in chunks where multiple elements are combined.
-* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectoy, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
+* **Map source cli command configs when destination set** Due to how the source connector is dynamically called when the destination connector is set via the CLI, the configs were being set incorrectly, causing the source connector to break. The configs were fixed and updated to take into account Fsspec-specific connectors.
 * **Fix metrics folder not discoverable** Fixes issue where unstructured/metrics folder is not discoverable on PyPI by adding an `__init__.py` file under the folder.
-* **Fix a bug when `parition_pdf` get `model_name=None`** In API usage the `model_name` value is `None` and the `cast` function in `partition_pdf` would return `None` and lead to attribution error. Now we use `str` function to explicit convert the content to string so it is garanteed to have `starts_with` and other string functions as attributes
+* **Fix a bug when `partition_pdf` get `model_name=None`** In API usage the `model_name` value is `None` and the `cast` function in `partition_pdf` would return `None` and lead to attribution error. Now we use `str` function to explicit convert the content to string so it is guaranteed to have `starts_with` and other string functions as attributes
 * **Fix html partition fail on tables without `tbody` tag** HTML tables may sometimes just contain headers without body (`tbody` tag)
 
 ## 0.10.24
@@ -1019,7 +1019,7 @@ an `__init__.py` file under the folder.
 ### Fixes
 
 * **Fixes PDF list parsing creating duplicate list items** Previously a bug in PDF list item parsing caused removal of other elements and duplication of the list item
-* **Fixes duplicated elements** Fixes issue where elements are duplicated when embeddings are generated. This will allow users to generate embeddings for their list of Elements without duplicating/breaking the orginal content.
+* **Fixes duplicated elements** Fixes issue where elements are duplicated when embeddings are generated. This will allow users to generate embeddings for their list of Elements without duplicating/breaking the original content.
 * **Fixes failure when flagging for embeddings through unstructured-ingest** Currently adding the embedding parameter to any connector results in a failure on the copy stage. This is resolves the issue by adding the IngestDoc to the context map in the embedding node's `run` method. This allows users to specify that connectors fetch embeddings without failure.
 * **Fix ingest pipeline reformat nodes not discoverable** Fixes issue where  reformat nodes raise ModuleNotFoundError on import. This was due to the directory was missing `__init__.py` in order to make it discoverable.
 * **Fix default language in ingest CLI** Previously the default was being set to english which injected potentially incorrect information to downstream language detection libraries. By setting the default to None allows those libraries to better detect what language the text is in the doc being processed.
@@ -1036,7 +1036,7 @@ an `__init__.py` file under the folder.
 * **Refactor OCR code** The OCR code for entire page is moved from unstructured-inference to unstructured. On top of continuing support for OCR language parameter, we also support two OCR processing modes, "entire_page" or "individual_blocks".
 * **Align to top left when shrinking bounding boxes for `xy-cut` sorting:** Update `shrink_bbox()` to keep top left rather than center.
 * **Add visualization script to annotate elements** This script is often used to analyze/visualize elements with coordinates (e.g. partition_pdf()).
-* **Adds data source properties to the Jira, Github and Gitlab connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
+* **Adds data source properties to the Jira, GitHub and GitLab connectors** These properties (date_created, date_modified, version, source_url, record_locator) are written to element metadata during ingest, mapping elements to information about the document source from which they derive. This functionality enables downstream applications to reveal source document applications, e.g. a link to a GDrive doc, Salesforce record, etc.
 * **Improve title detection in pptx documents** The default title textboxes on a pptx slide are now categorized as titles.
 * **Improve hierarchy detection in pptx documents** List items, and other slide text are properly nested under the slide title. This will enable better chunking of pptx documents.
 * **Refactor of the ingest cli workflow** The refactored approach uses a dynamically set pipeline with a snapshot along each step to save progress and accommodate continuation from a snapshot if an error occurs. This also allows the pipeline to dynamically assign any number of steps to modify the partitioned content before it gets written to a destination.
@@ -1053,7 +1053,7 @@ setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 
 ### Fixes
 
-* **Fix zero division error in annotation bbox size** This fixes the bug where we find annotation bboxes realted to an element that need to divide the intersection size between annotation bbox and element bbox by the size of the annotation bbox
+* **Fix zero division error in annotation bbox size** This fixes the bug where we find annotation bboxes related to an element that need to divide the intersection size between annotation bbox and element bbox by the size of the annotation bbox
 * **Fix prevent metadata module from importing dependencies from unnecessary modules** Problem: The `metadata` module had several top level imports that were only used in and applicable to code related to specific document types, while there were many general-purpose functions. As a result, general-purpose functions couldn't be used without unnecessary dependencies being installed. Fix: moved 3rd party dependency top level imports to inside the functions in which they are used and applied a decorator to check that the dependency is installed and emit a helpful error message if not.
 * **Fixes category_depth None value for Title elements** Problem: `Title` elements from `chipper` get `category_depth`= None even when `Headline` and/or `Subheadline` elements are present in the same page. Fix: all `Title` elements with `category_depth` = None should be set to have a depth of 0 instead iff there are `Headline` and/or `Subheadline` element-types present. Importance: `Title` elements should be equivalent html `H1` when nested headings are present; otherwise, `category_depth` metadata can result ambiguous within elements in a page.
 * **Tweak `xy-cut` ordering output to be more column friendly** This results in the order of elements more closely reflecting natural reading order which benefits downstream applications. While element ordering from `xy-cut` is usually mostly correct when ordering multi-column documents, sometimes elements from a RHS column will appear before elements in a LHS column. Fix: add swapped `xy-cut` ordering by sorting by X coordinate first and then Y coordinate.
@@ -1076,7 +1076,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Features
 
-* **change default `hi_res` model for pdf/image partition to `yolox`** Now partitioning pdf/image using `hi_res` strategy utilizes `yolox_quantized` model isntead of `detectron2_onnx` model. This new default model has better recall for tables and produces more detailed categories for elements.
+* **change default `hi_res` model for pdf/image partition to `yolox`** Now partitioning pdf/image using `hi_res` strategy utilizes `yolox_quantized` model instead of `detectron2_onnx` model. This new default model has better recall for tables and produces more detailed categories for elements.
 * **XLSX can now reads subtables within one sheet** Problem: Many .xlsx files are not created to be read as one full table per sheet. There are subtables, text and header along with more informations to extract from each sheet. Feature: This `partition_xlsx` now can reads subtable(s) within one .xlsx sheet, along with extracting other title and narrative texts. Importance: This enhance the power of .xlsx reading to not only one table per sheet, allowing user to capture more data tables from the file, if exists.
 * **Update Documentation on Element Types and Metadata**: We have updated the documentation according to the latest element types and metadata. It includes the common and additional metadata provided by the Partitions and Connectors.
 
@@ -1084,7 +1084,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 * **Fixes partition_pdf is_alnum reference bug** Problem: The `partition_pdf` when attempt to get bounding box from element experienced a reference before assignment error when the first object is not text extractable.  Fix: Switched to a flag when the condition is met. Importance: Crucial to be able to partition with pdf.
 * **Fix various cases of HTML text missing after partition**
-  Problem: Under certain circumstances, text immediately after some HTML tags will be misssing from partition result.
+  Problem: Under certain circumstances, text immediately after some HTML tags will be missing from partition result.
   Fix: Updated code to deal with these cases.
   Importance: This will ensure the correctness when partitioning HTML and Markdown documents.
 * **Fixes chunking when `detection_class_prob` appears in Element metadata** Problem: when `detection_class_prob` appears in Element metadata, Elements will only be combined by chunk_by_title if they have the same `detection_class_prob` value (which is rare). This is unlikely a case we ever need to support and most often results in no chunking. Fix: `detection_class_prob` is included in the chunking list of metadata keys excluded for similarity comparison. Importance: This change allows `chunk_by_title` to operate as intended for documents which include `detection_class_prob` metadata in their Elements.
@@ -1153,7 +1153,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
   * "Abstract": `NarrativeText`
 * **Better ListItem grouping for PDF's (fast strategy).** The `partition_pdf` with `fast` strategy previously broke down some numbered list item lines as separate elements. This enhancement leverages the x,y coordinates and bbox sizes to help decide whether the following chunk of text is a continuation of the immediate previous detected ListItem element or not, and not detect it as its own non-ListItem element.
 * **Fall back to text-based classification for uncategorized Layout elements for Images and PDF's**. Improves element classification by running existing text-based rules on previously `UncategorizedText` elements.
-* **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now propery extracted.
+* **Adds table partitioning for Partitioning for many doc types including: .html, .epub., .md, .rst, .odt, and .msg.** At the core of this change is the .html partition functionality, which is leveraged by the other effected doc types. This impacts many scenarios where `Table` Elements are now property extracted.
 * **Create and add `add_chunking_strategy` decorator to partition functions.** Previously, users were responsible for their own chunking after partitioning elements, often required for downstream applications. Now, individual elements may be combined into right-sized chunks where min and max character size may be specified if `chunking_strategy=by_title`. Relevant elements are grouped together for better downstream results. This enables users immediately use partitioned results effectively in downstream applications (e.g. RAG architecture apps) without any additional post-processing.
 * **Adds `languages` as an input parameter and marks `ocr_languages` kwarg for deprecation in pdf, image, and auto partitioning functions.** Previously, language information was only being used for Tesseract OCR for image-based documents and was in a Tesseract specific string format, but by refactoring into a list of standard language codes independent of Tesseract, the `unstructured` library will better support `languages` for other non-image pipelines and/or support for other OCR engines.
 * **Removes `UNSTRUCTURED_LANGUAGE` env var usage and replaces `language` with `languages` as an input parameter to unstructured-partition-text_type functions.** The previous parameter/input setup was not user-friendly or scalable to the variety of elements being processed. By refactoring the inputted language information into a list of standard language codes, we can support future applications of the element language such as detection, metadata, and multi-language elements. Now, to skip English specific checks, set the `languages` parameter to any non-English language(s).
@@ -1185,7 +1185,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * **`add_pytesseract_bboxes_to_elements` no longer returns `nan` values**. The function logic is now broken into new methods
   `_get_element_box` and `convert_multiple_coordinates_to_new_system`
 * **Selecting a different model wasn't being respected when calling `partition_image`.** Problem: `partition_pdf` allows for passing a `model_name` parameter. Given the similarity between the image and PDF pipelines, the expected behavior is that `partition_image` should support the same parameter, but `partition_image` was unintentionally not passing along its `kwargs`. This was corrected by adding the kwargs to the downstream call.
-* **Fixes a chunking issue via dropping the field "coordinates".** Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparision. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
+* **Fixes a chunking issue via dropping the field "coordinates".** Problem: chunk_by_title function was chunking each element to its own individual chunk while it needed to group elements into a fewer number of chunks. We've discovered that this happens due to a metadata matching logic in chunk_by_title function, and discovered that elements with different metadata can't be put into the same chunk. At the same time, any element with "coordinates" essentially had different metadata than other elements, due each element locating in different places and having different coordinates. Fix: That is why we have included the key "coordinates" inside a list of excluded metadata keys, while doing this "metadata_matches" comparison. Importance: This change is crucial to be able to chunk by title for documents which include "coordinates" metadata in their elements.
 
 ## 0.10.14
 
@@ -1218,7 +1218,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 * `partition_html` breaks on `<br>` elements.
 * Ingest error handling to properly raise errors when wrapped
-* GH issue 1361: fixes a sortig error that prevented some PDF's from being parsed
+* GH issue 1361: fixes a sorting error that prevented some PDF's from being parsed
 * Bump unstructured-inference
   * Brings back embedded images in PDF's (0.5.23)
 
@@ -1255,7 +1255,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Fix a bug where `xy-cut` sorting attemps to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
+* Fix a bug where `xy-cut` sorting attempts to sort elements without valid coordinates; now xy cut sorting only works when **all** elements have valid coordinates
 
 ## 0.10.10
 
@@ -1313,14 +1313,14 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in inchorent elements.
+* Remove overly aggressive ListItem chunking for images and PDF's which typically resulted in incoherent elements.
 
 ## 0.10.6
 
 ### Enhancements
 
-* Enable `partition_email` and `partition_msg` to detect if an email is PGP encryped. If
-  and email is PGP encryped, the functions will return an empy list of elements and
+* Enable `partition_email` and `partition_msg` to detect if an email is PGP encrypted. If
+  and email is PGP encrypted, the functions will return an empty list of elements and
   emit a warning about the encrypted content.
 * Add threaded Slack conversations into Slack connector output
 * Add functionality to sort elements using `xy-cut` sorting approach in `partition_pdf` for `hi_res` and `fast` strategies
@@ -1612,7 +1612,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Update to ensure `convert_to_datafame` grabs all of the metadata fields.
+* Update to ensure `convert_to_dataframe` grabs all of the metadata fields.
 * Adjust encoding recognition threshold value in `detect_file_encoding`
 * Fix KeyError when `isd_to_elements` doesn't find a type
 * Fix `_output_filename` for local connector, allowing single files to be written correctly to the disk
@@ -1732,7 +1732,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Enhancements
 
-* Convert fast startegy to ocr_only for images
+* Convert fast strategy to ocr_only for images
 * Adds support for page numbers in `.docx` and `.doc` when user or renderer
   created page breaks are present.
 * Adds retry logic for the unstructured-ingest Biomed connector
@@ -1781,7 +1781,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Reslove `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
+* Resolve `grpcio` import issue on `weaviate.schema.validate_schema` for python 3.9 and 3.10
 * Remove building `detectron2` from source in Dockerfile
 
 ## 0.7.3
@@ -1922,7 +1922,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-* Supports `hml` filetype for partition as a variation of html filetype.
+* Supports `htm` filetype for partition as a variation of html filetype.
 * Makes `pytesseract` a function level import in `partition_pdf` so you can use the `"fast"`
   or `"hi_res"` strategies if `pytesseract` is not installed. Also adds the
   `required_dependencies` decorator for the `"hi_res"` and `"ocr_only"` strategies.
@@ -2224,7 +2224,7 @@ from `FsspecConnector`
 * Add setup script for Amazon Linux 2
 * Add optional `encoding` argument to the `partition_(text/email/html)` functions.
 * Added Google Drive connector for ingest cli.
-* Added Gitlab connector for ingest cli.
+* Added GitLab connector for ingest cli.
 
 ### Fixes
 
@@ -2341,7 +2341,7 @@ is used without --download-dir.
 ## 0.4.7
 
 * Added the ability to pull an HTML document from a url in `partition_html`.
-* Added the the ability to get file summary info from lists of filenames and lists
+* Added the ability to get file summary info from lists of filenames and lists
   of file contents.
 * Added optional page break to `partition` for `.pptx`, `.pdf`, images, and `.html` files.
 * Added `to_dict` method to document elements.
@@ -2372,8 +2372,8 @@ is used without --download-dir.
 * Adds `FigureCaption` and `CheckBox` document elements
 * Added ability to split lists detected in `LayoutElement` objects
 * Adds `partition_pptx` for partitioning PowerPoint documents
-* LayoutParser models now download from HugginfaceHub instead of DropBox
-* Fixed file type detection for XML and HTML files on Amazone Linux
+* LayoutParser models now download from HuggingfaceHub instead of DropBox
+* Fixed file type detection for XML and HTML files on Amazon Linux
 
 ## 0.4.3
 

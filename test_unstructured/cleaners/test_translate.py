@@ -40,7 +40,7 @@ def test_translate_raises_with_bad_language():
         translate.translate_text(text, "zz")
 
 
-def test_tranlate_works_with_russian():
+def test_translate_works_with_russian():
     text = "Я тоже можно переводать русский язык!"
     assert translate.translate_text(text) == "I can also translate Russian!"
 

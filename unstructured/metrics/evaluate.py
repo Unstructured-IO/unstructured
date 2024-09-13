@@ -671,11 +671,11 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
     def _get_paths(self, doc: Path) -> tuple(str, Path, Path):
         """Resolves ground doctype, prediction file path and ground truth path.
 
-        As OD dump directory structure differes from other simple outputs, it needs
+        As OD dump directory structure differs from other simple outputs, it needs
         a specific processing to match the output OD dump file with corresponding
         OD GT file.
 
-        The outputs are placed in a dicrectory structure:
+        The outputs are placed in a directory structure:
 
         analysis
         |- document_name
@@ -683,7 +683,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
                 |- object_detection.json
             |- bboxes # not used in this evaluation
 
-        and the GT file is pleced in od_gt directory for given dataset
+        and the GT file is placed in od_gt directory for given dataset
 
         dataset_name
         |- od_gt

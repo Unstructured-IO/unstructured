@@ -112,7 +112,7 @@ def test_partition_text_from_filename_default_encoding(filename: str):
         ("fake-text-utf-16-be.txt", "utf-16", UnicodeError),
     ],
 )
-def test_partition_text_from_filename_raises_econding_error(
+def test_partition_text_from_filename_raises_encoding_error(
     filename: str,
     encoding: Optional[str],
     error: Type[BaseException],
@@ -293,11 +293,11 @@ def test_partition_text_splits_max_min_partition():
 
     from unstructured.nlp.patterns import BULLETS_PATTERN
 
-    # NOTE(klaijan) - clean the asterik out of both text.
+    # NOTE(klaijan) - clean the asterisk out of both text.
     # The `elements` was partitioned by new line and thus makes line 56 (shown below)
     # "*Club domestic league appearances and goals"
     # be considered as a bullet point by the function is_bulleted_text
-    # and so the asterik was removed from the paragraph
+    # and so the asterisk was removed from the paragraph
     # whereas `elements_max_part` was partitioned differently and thus none of the line
     # starts with any of the BULLETS_PATTERN.
 
@@ -516,7 +516,7 @@ def test_Text_element_assigns_id_hashes_that_are_unique_and_deterministic():
     ]
 
 
-def test_Text_element_assings_UUID_when_unique_element_ids_is_True():
+def test_Text_element_assigns_UUID_when_unique_element_ids_is_True():
     elements = partition_text(text="hello\nhello\nhello", unique_element_ids=True)
 
     for element in elements:

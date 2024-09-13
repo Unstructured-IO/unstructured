@@ -112,7 +112,7 @@ def test_convert_to_dataframe():
 def test_convert_to_dataframe_maintains_fields():
     elements = partition_email(
         "example-docs/eml/fake-email-attachment.eml",
-        process_attachements=True,
+        process_attachments=True,
         regex_metadata={"hello": r"Hello", "punc": r"[!]"},
     )
     df = base.convert_to_dataframe(elements)

@@ -226,7 +226,7 @@ class FsspecSourceConnector(
 
     def get_ingest_docs(self):
         raw_files = self._list_files()
-        # If glob filters provided, use to fiter on filepaths
+        # If glob filters provided, use to filter on filepaths
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
@@ -331,10 +331,10 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
 
         output_folder = self.connector_config.path_without_protocol
-        output_folder = os.path.join(output_folder)  # Make sure folder ends with file seperator
+        output_folder = os.path.join(output_folder)  # Make sure folder ends with file separator
         filename = (
             filename.strip(os.sep) if filename else filename
-        )  # Make sure filename doesn't begin with file seperator
+        )  # Make sure filename doesn't begin with file separator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
         full_output_path = f"{self.connector_config.protocol}://{output_path}"
         logger.debug(f"uploading content to {full_output_path}")

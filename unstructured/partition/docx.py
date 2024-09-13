@@ -369,7 +369,7 @@ class DocxPartitionerOptions:
         return self._file
 
     def _validate(self) -> DocxPartitionerOptions:
-        """Raise on first invalide option, return self otherwise."""
+        """Raise on first invalid option, return self otherwise."""
         # -- provide distinguished error between "file-not-found" and "not-a-DOCX-file" --
         if self._file_path:
             if not os.path.isfile(self._file_path):
@@ -399,7 +399,7 @@ class _DocxPartitioner:
         self = cls(opts)
         # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
         # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
-        # "section-less" document has to be interated differently and has no headers or footers and
+        # "section-less" document has to be iterated differently and has no headers or footers and
         # therefore no page-size or margins.
         return (
             self._iter_document_elements()
@@ -414,7 +414,7 @@ class _DocxPartitioner:
         # -- stream and each `yield from` as "add elements found by this function to the stream".
         # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
         # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
+        # -- more performant, uses less memory (avoids producing and then garbage-collecting all
         # -- those small lists), is more flexible for later iterator operations like filter,
         # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
         # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
@@ -749,7 +749,7 @@ class _DocxPartitioner:
 
         # -- This method is called upon entering a new section, which happens before any paragraphs
         # -- in that section are partitioned. A rendered page-break due to a section-start occurs
-        # -- in the first paragraph of the section and so occurs _later_ in the proces. Here we
+        # -- in the first paragraph of the section and so occurs _later_ in the process. Here we
         # -- predict when two page breaks will be needed and emit one of them. The second will be
         # -- emitted by the rendered page-break to follow.
 
@@ -913,7 +913,7 @@ class _DocxPartitioner:
             return self._parse_category_depth_by_style_ilvl()
 
     def _parse_category_depth_by_style_ilvl(self) -> int:
-        # TODO(newelh) Parsing category depth by style ilvl is not yet implemented
+        # TODO(newelh): Parsing category depth by style ilvl is not yet implemented
         return 0
 
     def _parse_category_depth_by_style_name(self, style_name: str) -> int:

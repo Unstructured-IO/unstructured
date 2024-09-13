@@ -30,7 +30,7 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
     To be able to extract a nested dataclass from a flat dictionary (as in one coming
     from a click-based options input), the config class is dynamically looked through for
     nested dataclass fields and new nested dictionaries are created to conform to the
-    shape the overall class expects whn parsing from a dict. During the process, this will create
+    shape the overall class expects when parsing from a dict. During the process, this will create
     copies of the original dictionary to avoid pruning fields but this isn't a
     problem since the `from_dict()` method ignores unneeded values.
 

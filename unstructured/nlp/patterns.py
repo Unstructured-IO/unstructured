@@ -75,7 +75,7 @@ EMAIL_HEAD_PATTERN = (
 EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 
 # Helps split text by paragraphs. There must be one newline, with potential whitespace
-# (incluing \r and \n chars) on either side
+# (including \r and \n chars) on either side
 PARAGRAPH_PATTERN = r"\s*\n\s*"
 
 PARAGRAPH_PATTERN_RE = re.compile(

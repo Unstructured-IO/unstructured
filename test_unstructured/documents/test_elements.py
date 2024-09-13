@@ -55,7 +55,7 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
 
 
 def test_Text_is_JSON_serializable():
-    # -- This shold run without an error --
+    # -- This should run without an error --
     json.dumps(Text(text="hello there!", element_id=None).to_dict())
 
 

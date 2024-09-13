@@ -24,7 +24,7 @@ def get_tempdir(dir: str) -> str:
 
 @dataclass
 class ENVConfig:
-    """class for configuring enviorment parameters"""
+    """class for configuring environment parameters"""
 
     def __post_init__(self):
         if self.GLOBAL_WORKING_DIR_ENABLED:
@@ -86,7 +86,7 @@ class ENVConfig:
     def TESSERACT_MAX_TEXT_HEIGHT(self) -> int:
         """maximum text height acceptable from tesseract OCR results
 
-        if estimated text height from tesseract OCR results is higher than this value the image is
+        if estimated text height from tesseract OCR results is greater than this value the image is
         scaled down to be processed again
         """
         return self._get_int("TESSERACT_MAX_TEXT_HEIGHT", 100)
@@ -208,7 +208,7 @@ class ENVConfig:
 
     @property
     def ANALYSIS_BBOX_RESIZE(self) -> Optional[float]:
-        """Analaysis bbox resize value"""
+        """Analysis bbox resize value"""
         resize = self._get_float("ANALYSIS_BBOX_RESIZE", -1.0)
         if resize == -1.0:
             return None

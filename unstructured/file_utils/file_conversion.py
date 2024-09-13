@@ -50,7 +50,7 @@ def convert_file_to_html_text_using_pandoc(
 ) -> str:
     """Converts a document to HTML raw text.
 
-    Enables the doucment to be processed using `partition_html()`.
+    Enables the document to be processed using `partition_html()`.
     """
     exactly_one(filename=filename, file=file)
 

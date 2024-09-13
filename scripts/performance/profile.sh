@@ -23,12 +23,12 @@
 # Usage example:
 # ./scripts/performance/profile.sh
 
-# NOTE: because memray does not build wheels for ARM-Linux, this script can not run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
+# NOTE: because memray does not build wheels for ARM-Linux, this script cannot run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
 
 # Validate dependencies
 check_python_module() {
   if ! python3 -c "import $1" >/dev/null 2>&1; then
-    echo "Error: Python module $1 is not installed. Please install required depencies with 'pip install -r scripts/performance/requirements.txt'."
+    echo "Error: Python module $1 is not installed. Please install required dependencies with 'pip install -r scripts/performance/requirements.txt'."
     exit 1
   fi
 }

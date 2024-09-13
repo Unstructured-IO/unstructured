@@ -139,7 +139,7 @@ def _sorting_key(filename):
 def _uniquity_file(file_list, target_filename) -> str:
     """
     Checks the duplicity of the file name from the list and run the numerical check
-    of the minimum number needed as extension to not overwrite the exising file.
+    of the minimum number needed as extension to not overwrite the existing file.
     Returns a string of file name in the format of `filename (<min number>).ext`.
     """
     original_filename, extension = target_filename.rsplit(".", 1)
