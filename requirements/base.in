@@ -17,7 +17,6 @@ numpy<2
 rapidfuzz
 backoff
 typing-extensions
-unstructured-client
 wrapt
 tqdm
 psutil
