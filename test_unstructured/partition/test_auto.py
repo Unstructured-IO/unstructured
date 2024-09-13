@@ -6,7 +6,6 @@ import io
 import json
 import os
 import pathlib
-import sys
 import tempfile
 import warnings
 from importlib import import_module
@@ -505,7 +504,7 @@ def test_auto_partition_org_from_file():
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
 def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/chevron-page.pdf")
     metadata_filename = file_path if pass_metadata_filename else None
 
     elements = partition(
@@ -515,20 +514,15 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
         strategy=PartitionStrategy.HI_RES,
     )
 
-    # NOTE(scanny): gave up trying to figure out why, but this file partitions differently locally
-    # (on Mac) than it does in CI. Basically the first element when partitioning locally is split
-    # in two when partitioning on CI. Other than that split the text is exactly the same.
-    idx = 2 if sys.platform == "darwin" else 3
-
-    e = elements[idx]
+    e = elements[0]
     assert isinstance(e, Title)
-    assert e.text.startswith("LayoutParser")
+    assert e.text.startswith("eastern mediterranean")
     assert e.metadata.filename == os.path.basename(file_path)
     assert e.metadata.file_directory == os.path.split(file_path)[0]
 
-    e = elements[idx + 1]
+    e = elements[1]
     assert isinstance(e, NarrativeText)
-    assert e.text.startswith("Zejiang Shen")
+    assert e.text.startswith("We’re investing")
 
 
 @pytest.mark.parametrize(
@@ -536,7 +530,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename: bool, content_
     [(False, None), (False, "application/pdf"), (True, "application/pdf"), (True, None)],
 )
 def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type: str | None):
-    file_path = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    file_path = example_doc_path("pdf/chevron-page.pdf")
     metadata_filename = file_path if pass_metadata_filename else None
 
     with open(file_path, "rb") as f:
@@ -547,16 +541,13 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename: bool, content_type
             strategy=PartitionStrategy.HI_RES,
         )
 
-    # NOTE(scanny): see "from_filename" version of this test above for more on this oddness
-    idx = 2 if sys.platform == "darwin" else 3
-
-    e = elements[idx]
+    e = elements[0]
     assert isinstance(e, Title)
-    assert e.text.startswith("LayoutParser")
+    assert e.text.startswith("eastern mediterranean")
 
-    e = elements[idx + 1]
+    e = elements[1]
     assert isinstance(e, NarrativeText)
-    assert e.text.startswith("Zejiang Shen")
+    assert e.text.startswith("We’re investing")
 
 
 def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):

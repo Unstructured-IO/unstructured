@@ -65,7 +65,6 @@ urllib3==1.26.20
 wrapt==1.16.0
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   aiobotocore
 yarl==1.11.1
     # via aiohttp

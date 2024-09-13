@@ -7,6 +7,7 @@ from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
+    extract_text_objects,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -57,15 +58,23 @@ def process_data_with_pdfminer(
 
         layout: list["TextRegion"] = []
         for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-
             if hasattr(obj, "get_text"):
-                _text = obj.get_text()
-                text_region = _create_text_region(
-                    x1, y1, x2, y2, coef, _text, Source.PDFMINER, EmbeddedTextRegion
-                )
-                if text_region.bbox is not None and text_region.bbox.area > 0:
-                    layout.append(text_region)
+                inner_text_objects = extract_text_objects(obj)
+                for inner_obj in inner_text_objects:
+                    _text = inner_obj.get_text()
+                    new_x1, new_y1, new_x2, new_y2 = rect_to_bbox(inner_obj.bbox, height)
+                    text_region = _create_text_region(
+                        new_x1,
+                        new_y1,
+                        new_x2,
+                        new_y2,
+                        coef,
+                        _text,
+                        Source.PDFMINER,
+                        EmbeddedTextRegion,
+                    )
+                    if text_region.bbox is not None and text_region.bbox.area > 0:
+                        layout.append(text_region)
             else:
                 inner_image_objects = extract_image_objects(obj)
                 for img_obj in inner_image_objects:
@@ -75,6 +84,8 @@ def process_data_with_pdfminer(
                     )
                     if text_region.bbox is not None and text_region.bbox.area > 0:
                         layout.append(text_region)
+
+        layout = remove_duplicate_embedded_text(layout)
 
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
@@ -287,6 +298,38 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
         page.elements[:-1] = filtered_elements
 
     return document
+
+
+@requires_dependencies("unstructured_inference")
+def remove_duplicate_embedded_text(elements: list["TextRegion"]) -> list["TextRegion"]:
+    """Removes duplicate text elements extracted by PDFMiner from a document layout."""
+    from unstructured_inference.inference.elements import EmbeddedTextRegion
+
+    bboxes = []
+    texts = []
+    bbox_to_iou_mapping = {}
+    current_idx = 0
+    for i, element in enumerate(elements):
+        if not isinstance(element, EmbeddedTextRegion):
+            continue
+        bboxes.append(element.bbox)
+        texts.append(element.text)
+        bbox_to_iou_mapping[i] = current_idx
+        current_idx += 1
+
+    iou = boxes_self_iou(bboxes, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD)
+
+    filtered_elements = []
+    for i, element in enumerate(elements):
+        if not isinstance(element, EmbeddedTextRegion):
+            filtered_elements.append(element)
+            continue
+        this_idx = bbox_to_iou_mapping[i]
+        if iou[this_idx, this_idx + 1 :].any():
+            continue
+        filtered_elements.append(element)
+
+    return filtered_elements
 
 
 def aggregate_embedded_text_by_block(

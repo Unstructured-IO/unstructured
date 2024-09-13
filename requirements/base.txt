@@ -94,7 +94,7 @@ python-oxmsg==0.0.1
     # via -r ./base.in
 rapidfuzz==3.9.7
     # via -r ./base.in
-regex==2024.7.24
+regex==2024.9.11
     # via nltk
 requests==2.32.3
     # via
@@ -141,6 +141,4 @@ urllib3==1.26.20
     #   requests
     #   unstructured-client
 wrapt==1.16.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in

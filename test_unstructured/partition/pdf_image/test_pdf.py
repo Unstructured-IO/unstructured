@@ -159,7 +159,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     [
         (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
         (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
-        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer"}),
+        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer", "ocr_tesseract"}),
         (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
@@ -552,7 +552,7 @@ def test_partition_pdf_with_copy_protection():
     filename = example_doc_path("pdf/copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 22
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
     assert elements[idx].metadata.detection_class_prob is not None
