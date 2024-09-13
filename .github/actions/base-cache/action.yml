@@ -47,9 +47,4 @@ runs:
           .venv
           nltk_data
         key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Print python versions
-      shell: bash
-      run: |
-        source .venv/bin/activate
-        pip freeze
 
