@@ -129,8 +129,8 @@ def areas_of_boxes_and_intersection_area(
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
     x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
 
-    inter_area = np.maximum((np.maximum(x12, x22.T) - np.maximum(x11, x21.T) + 1), 0) * np.maximum(
-        (np.maximum(y12, y22.T) - np.maximum(y11, y21.T) + 1), 0
+    inter_area = np.maximum((np.minimum(x12, x22.T) - np.maximum(x11, x21.T) + 1), 0) * np.maximum(
+        (np.minimum(y12, y22.T) - np.maximum(y11, y21.T) + 1), 0
     )
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
