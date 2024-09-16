@@ -51,7 +51,7 @@ fi
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
 
 RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
-PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \t \
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   jira \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
