@@ -14,7 +14,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-databricks-sdk==0.32.0
+databricks-sdk==0.32.1
     # via -r ./ingest/databricks-volumes.in
 google-auth==2.34.0
     # via databricks-sdk
@@ -22,11 +22,11 @@ idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via google-auth
 requests==2.32.3
     # via

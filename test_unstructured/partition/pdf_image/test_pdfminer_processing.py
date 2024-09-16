@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from PIL import Image
 from unstructured_inference.constants import Source as InferenceSource
-from unstructured_inference.inference.elements import Rectangle, TextRegion
+from unstructured_inference.inference.elements import EmbeddedTextRegion, Rectangle, TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -11,6 +11,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     boxes_self_iou,
     clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
+    remove_duplicate_embedded_text,
 )
 from unstructured.partition.utils.constants import Source
 
@@ -209,3 +210,22 @@ def test_bboxes1_is_almost_subregion_of_bboxes2(coords1, coords2, expected):
 def test_boxes_self_iou(coords, threshold, expected):
     bboxes = [Rectangle(*row) for row in coords]
     np.testing.assert_array_equal(boxes_self_iou(bboxes, threshold), expected)
+
+
+def test_remove_duplicate_embedded_text():
+    sample_elements = [
+        EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 1"),
+        EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 2"),
+        EmbeddedTextRegion(bbox=Rectangle(20, 20, 30, 30), text="Text 3"),
+    ]
+
+    result = remove_duplicate_embedded_text(sample_elements)
+
+    # Check that duplicates were removed and only 2 unique elements remain
+    assert len(result) == 2
+    assert result[0].text == "Text 2"
+    assert result[1].text == "Text 3"
+
+    # Ensure the duplicate was removed by checking that result contains no redundant bboxes
+    assert result[0].bbox == Rectangle(0, 0, 10, 10)
+    assert result[1].bbox == Rectangle(20, 20, 30, 30)

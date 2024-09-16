@@ -93,7 +93,7 @@ lxml==5.3.0
     #   label-studio-sdk
 mccabe==0.7.0
     # via flake8
-multidict==6.0.5
+multidict==6.1.0
     # via yarl
 mypy==1.11.2
     # via -r ./test.in
@@ -121,21 +121,19 @@ pathspec==0.12.1
     # via black
 pillow==10.4.0
     # via label-studio-sdk
-platformdirs==3.10.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   black
+platformdirs==4.3.2
+    # via black
 pluggy==1.5.0
     # via pytest
 pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.9.0
+pydantic==2.9.1
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.23.2
+pydantic-core==2.23.3
     # via pydantic
 pyflakes==3.2.0
     # via
@@ -143,7 +141,7 @@ pyflakes==3.2.0
     #   flake8
 pyrsistent==0.20.0
     # via jsonschema
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   pytest-cov
     #   pytest-mock
@@ -156,11 +154,11 @@ python-dateutil==2.9.0.post0
     #   -c ./base.txt
     #   freezegun
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via vcrpy
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./base.txt
     #   nltk
@@ -214,13 +212,12 @@ typing-extensions==4.12.2
     #   anyio
     #   black
     #   label-studio-sdk
+    #   multidict
     #   mypy
     #   pydantic
     #   pydantic-core
 tzdata==2024.1
-    # via
-    #   pandas
-    #   pydantic
+    # via pandas
 ujson==5.10.0
     # via label-studio-sdk
 urllib3==1.26.20
@@ -233,12 +230,11 @@ vcrpy==6.0.1
     # via -r ./test.in
 wrapt==1.16.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.9.11
+yarl==1.11.1
     # via vcrpy
 
 # The following packages are considered to be unsafe in a requirements file:

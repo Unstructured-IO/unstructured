@@ -3,7 +3,7 @@ import tempfile
 from typing import BinaryIO, List, Tuple
 
 from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem
+from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PSSyntaxError
@@ -30,6 +30,19 @@ def extract_image_objects(parent_object: LTItem) -> List[LTImage]:
     elif isinstance(parent_object, LTContainer):
         for child in parent_object:
             objects.extend(extract_image_objects(child))
+
+    return objects
+
+
+def extract_text_objects(parent_object: LTItem) -> List[LTTextLine]:
+    """Recursively extracts text objects from a given parent object in a PDF document."""
+    objects = []
+
+    if isinstance(parent_object, LTTextLine):
+        objects.append(parent_object)
+    elif isinstance(parent_object, LTContainer):
+        for child in parent_object:
+            objects.extend(extract_text_objects(child))
 
     return objects
 

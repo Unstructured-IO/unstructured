@@ -20,7 +20,7 @@ certifi==2024.8.30
     #   elastic-transport
 elastic-transport==8.15.0
     # via elasticsearch
-elasticsearch[async]==8.15.0
+elasticsearch[async]==8.15.1
     # via -r ./ingest/elasticsearch.in
 frozenlist==1.4.1
     # via
@@ -30,14 +30,18 @@ idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   yarl
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
+typing-extensions==4.12.2
+    # via
+    #   -c ./ingest/../base.txt
+    #   multidict
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   elastic-transport
-yarl==1.9.11
+yarl==1.11.1
     # via aiohttp

@@ -60,14 +60,14 @@ idna==3.8
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.30.0
+msal==1.31.0
     # via
     #   azure-datalake-store
     #   azure-identity
     #   msal-extensions
 msal-extensions==1.2.0
     # via azure-identity
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -94,10 +94,11 @@ typing-extensions==4.12.2
     #   azure-core
     #   azure-identity
     #   azure-storage-blob
+    #   multidict
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.9.11
+yarl==1.11.1
     # via aiohttp

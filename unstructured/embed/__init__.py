@@ -1,3 +1,5 @@
+import warnings
+
 from unstructured.embed.bedrock import BedrockEmbeddingEncoder
 from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
 from unstructured.embed.mixedbreadai import MixedbreadAIEmbeddingEncoder
@@ -15,3 +17,11 @@ EMBEDDING_PROVIDER_TO_CLASS_MAP = {
     "mixedbread-ai": MixedbreadAIEmbeddingEncoder,
     "octoai": OctoAIEmbeddingEncoder,
 }
+
+
+warnings.warn(
+    "unstructured.ingest will be removed in a future version. "
+    "Functionality moved to the unstructured-ingest project.",
+    DeprecationWarning,
+    stacklevel=2,
+)

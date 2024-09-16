@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/singlestore.in
 #
-build==1.2.1
+build==1.2.2
     # via singlestoredb
 certifi==2024.8.30
     # via
@@ -18,8 +18,10 @@ idna==3.8
     # via
     #   -c ./ingest/../base.txt
     #   requests
-importlib-metadata==8.4.0
-    # via build
+importlib-metadata==8.5.0
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   build
 packaging==24.1
     # via
     #   -c ./ingest/../base.txt
@@ -30,7 +32,7 @@ pyjwt==2.9.0
     # via singlestoredb
 pyproject-hooks==1.1.0
     # via build
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./ingest/../base.txt
     #   parsimonious

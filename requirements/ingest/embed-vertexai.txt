@@ -65,7 +65,7 @@ google-auth==2.34.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.65.0
+google-cloud-aiplatform==1.66.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
@@ -134,10 +134,8 @@ langchain==0.2.16
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
 langchain-community==0.2.16
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/embed-vertexai.in
-langchain-core==0.2.38
+    # via -r ./ingest/embed-vertexai.in
+langchain-core==0.2.39
     # via
     #   langchain
     #   langchain-community
@@ -147,7 +145,7 @@ langchain-google-vertexai==1.0.10
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.4
     # via langchain
-langsmith==0.1.114
+langsmith==0.1.118
     # via
     #   langchain
     #   langchain-community
@@ -156,7 +154,7 @@ marshmallow==3.22.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -194,19 +192,19 @@ protobuf==4.23.4
     #   grpc-google-iam-v1
     #   grpcio-status
     #   proto-plus
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via google-auth
-pydantic==2.9.0
+pydantic==2.9.1
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.23.2
+pydantic-core==2.23.3
     # via pydantic
 python-dateutil==2.9.0.post0
     # via
@@ -253,6 +251,7 @@ typing-extensions==4.12.2
     #   -c ./ingest/../base.txt
     #   anyio
     #   langchain-core
+    #   multidict
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
@@ -261,12 +260,10 @@ typing-inspect==0.9.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-tzdata==2024.1
-    # via pydantic
 urllib3==1.26.20
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.9.11
+yarl==1.11.1
     # via aiohttp

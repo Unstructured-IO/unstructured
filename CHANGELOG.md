@@ -1,4 +1,31 @@
-## 0.15.10-dev4
+## 0.15.13-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.15.12
+
+### Enhancements
+
+* **Improve `pdfminer` element processing** Implemented splitting of `pdfminer` elements (groups of text chunks) into smaller bounding boxes (text lines). This prevents loss of information from the object detection model and facilitates more effective removal of duplicated `pdfminer` text.
+
+### Features
+
+### Fixes
+
+* **Fixed table accuracy metric** Table accuracy was incorrectly using column content difference in calculating row accuracy.
+
+## 0.15.11
+
+### Enhancements
+
+* **Add deprecation warning to embed code**
+* **Remove ingest console script**
+
+## 0.15.10
 
 ### Enhancements
 
