@@ -25,7 +25,6 @@ runs:
       uses: ./.github/actions/base-cache
       with:
         python-version: ${{ inputs.python-version }}
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       uses: actions/setup-python@v4

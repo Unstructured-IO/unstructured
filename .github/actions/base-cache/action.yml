@@ -8,9 +8,6 @@ inputs:
   check-only:
     description: 'if set, will not restore the cache if it exists'
     default: "false"
-  cache-key:
-    description: 'if set, be used for cache restoration'
-    default: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
 runs:
   using: "composite"
   steps:
@@ -21,7 +18,7 @@ runs:
         path: |
           .venv
           nltk_data
-        key: ${{ inputs.cache-key }}
+        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
         lookup-only: ${{ inputs.check-only }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
