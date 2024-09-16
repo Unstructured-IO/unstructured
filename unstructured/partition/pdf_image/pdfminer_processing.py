@@ -315,10 +315,6 @@ def remove_duplicate_elements(
 ) -> list["TextRegion"]:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
 
-    valid_element_length = 10000
-    if len(elements) > valid_element_length:
-        return []
-
     bboxes = []
     for i, element in enumerate(elements):
         bboxes.append(element.bbox)
