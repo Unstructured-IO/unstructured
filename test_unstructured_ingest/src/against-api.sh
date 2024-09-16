@@ -27,7 +27,8 @@ trap cleanup EXIT
 TEST_FILE_NAME=layout-parser-paper-with-table.pdf
 
 # including pdf-infer-table-structure to validate partition arguments are passed to the api
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --api-key "$UNS_API_KEY" \
   --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

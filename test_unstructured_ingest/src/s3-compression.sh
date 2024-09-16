@@ -20,7 +20,8 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

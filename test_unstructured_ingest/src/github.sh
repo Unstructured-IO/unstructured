@@ -38,7 +38,8 @@ elif [[ "$CI" == "true" ]]; then
 fi
 
 #shellcheck disable=SC2086
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   github \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

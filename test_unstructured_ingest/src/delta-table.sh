@@ -31,7 +31,8 @@ function cleanup() {
 
 trap cleanup EXIT
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   delta-table \
   --num-processes "$max_processes" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.data_source.date_created,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

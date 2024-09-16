@@ -35,7 +35,8 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --chunking-strategy by_title \
   --no-chunk-include-orig-elements \

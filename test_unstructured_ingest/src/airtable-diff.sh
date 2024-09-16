@@ -35,7 +35,8 @@ if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
   exit 8
 fi
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   airtable \
   --download-dir "$DOWNLOAD_DIR" \
   --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \

@@ -39,7 +39,8 @@ fi
 #   Can be used multiple times to specify multiple objects.
 # --custom-properties Custom property to process information from. Comma separated list.
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   hubspot \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
