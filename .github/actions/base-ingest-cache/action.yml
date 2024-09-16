@@ -18,13 +18,14 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
         lookup-only: ${{ inputs.check-only }}
     - name: Restore base virtual environment
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       uses: ./.github/actions/base-cache
       with:
         python-version: ${{ inputs.python-version }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       uses: actions/setup-python@v4
@@ -45,5 +46,5 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
 
