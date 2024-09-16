@@ -23,7 +23,8 @@ trap cleanup EXIT
 
 "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

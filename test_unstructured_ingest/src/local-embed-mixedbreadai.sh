@@ -26,7 +26,8 @@ trap cleanup EXIT
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 
 # Run the ingestion script with the specified parameters
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.record_locator.path,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

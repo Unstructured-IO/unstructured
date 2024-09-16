@@ -24,7 +24,8 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   wikipedia \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \

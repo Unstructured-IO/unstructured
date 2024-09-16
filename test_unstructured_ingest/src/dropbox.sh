@@ -34,7 +34,8 @@ fi
 DROPBOX_RESPONSE=$(curl https://api.dropbox.com/oauth2/token -d refresh_token="$DROPBOX_REFRESH_TOKEN" -d grant_type=refresh_token -d client_id="$DROPBOX_APP_KEY" -d client_secret="$DROPBOX_APP_SECRET")
 DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<<"$DROPBOX_RESPONSE")
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   dropbox \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \

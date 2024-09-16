@@ -43,7 +43,8 @@ if [ -z "$SALESFORCE_PRIVATE_KEY_PATH" ]; then
   echo "$SALESFORCE_PRIVATE_KEY" >"$SALESFORCE_PRIVATE_KEY_PATH"
 fi
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   salesforce \
   --categories "EmailMessage,Campaign" \
   --download-dir "$DOWNLOAD_DIR" \

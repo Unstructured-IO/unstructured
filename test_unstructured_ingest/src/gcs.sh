@@ -34,7 +34,8 @@ fi
 GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
 echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
-PYTHONPATH=. unstructured-ingest \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   gcs \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
