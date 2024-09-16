@@ -3,10 +3,11 @@
 # extras. Putting a dependency here will only affect dependency sets that contain them -- in other
 # words, if something does not require a constraint, it will not be installed.
 ####################################################################################################
-# consistency with local-inference-pin
-protobuf<4.24
+# (jennings): Versions greater than 5.0 create dependency conflicts with other packages
+protobuf<5.0
+# TODO: Constriant due to multiple versions being installed during pip-compile
 grpcio>=1.65.5
-# TODO: Pinned in transformers package, remove when that gets updated
+# TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
 tokenizers>=0.19,<0.20
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
 # updated or we drop support for 3.9

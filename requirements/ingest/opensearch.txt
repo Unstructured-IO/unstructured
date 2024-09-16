@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     #   requests
 events==0.5
     # via opensearch-py
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
