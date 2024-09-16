@@ -19,11 +19,11 @@
         "permissions_data": [
           {
             "id": "18298851591250030956",
-            "displayName": "ingest@PYTHONPATH=. unstructured-ingest-test.iam.gserviceaccount.com",
+            "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "type": "user",
             "kind": "drive#permission",
             "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJok2KRwwYvrEDkeZVCYosHOMoa52GZa2qIIC1jScCRoFLHaQ=s64",
-            "emailAddress": "ingest@PYTHONPATH=. unstructured-ingest-test.iam.gserviceaccount.com",
+            "emailAddress": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "role": "writer",
             "deleted": false,
             "pendingOwner": false
@@ -57,7 +57,8 @@
             "deleted": false,
             "pendingOwner": false
           }
-        ]
+        ],
+        "filesize_bytes": 36602
       }
     }
   }
