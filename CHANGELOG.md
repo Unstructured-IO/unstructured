@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Fixes high memory overhead for intersection area computation** Using `numpy.half` for coordinates and remove intermediate variables to reduce memory usage when computing intersection areas
+* **Fixes high memory overhead for intersection area computation** Using `numpy.float32` for coordinates and remove intermediate variables to reduce memory usage when computing intersection areas
 
 ## 0.15.12
 
