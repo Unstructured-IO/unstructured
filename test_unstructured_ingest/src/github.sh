@@ -37,8 +37,8 @@ elif [[ "$CI" == "true" ]]; then
   echo
 fi
 
-#shellcheck disable=SC2086
 RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+#shellcheck disable=SC2086
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   github \
   --num-processes "$max_processes" \
