@@ -18,7 +18,7 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==43.0.1
     # via pyjwt
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -30,7 +30,7 @@ lxml==5.3.0
     #   zeep
 more-itertools==10.5.0
     # via simple-salesforce
-platformdirs==4.3.2
+platformdirs==4.3.3
     # via zeep
 pycparser==2.22
     # via cffi

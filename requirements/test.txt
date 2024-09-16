@@ -66,7 +66,7 @@ httpx==0.27.2
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-idna==3.8
+idna==3.10
     # via
     #   -c ./base.txt
     #   anyio
@@ -121,7 +121,7 @@ pathspec==0.12.1
     # via black
 pillow==10.4.0
     # via label-studio-sdk
-platformdirs==4.3.2
+platformdirs==4.3.3
     # via black
 pluggy==1.5.0
     # via pytest
