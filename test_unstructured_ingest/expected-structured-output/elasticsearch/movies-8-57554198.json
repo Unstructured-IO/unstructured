@@ -16,7 +16,8 @@
           ],
           "index_name": "movies",
           "document_id": "8"
-        }
+        },
+        "filesize_bytes": 780
       }
     }
   },
@@ -37,7 +38,8 @@
           ],
           "index_name": "movies",
           "document_id": "8"
-        }
+        },
+        "filesize_bytes": 780
       }
     }
   },
@@ -58,7 +60,8 @@
           ],
           "index_name": "movies",
           "document_id": "8"
-        }
+        },
+        "filesize_bytes": 780
       }
     }
   }

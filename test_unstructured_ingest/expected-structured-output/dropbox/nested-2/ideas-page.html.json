@@ -16,7 +16,8 @@
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAADQ"
-        }
+        },
+        "filesize_bytes": 6161
       }
     }
   }

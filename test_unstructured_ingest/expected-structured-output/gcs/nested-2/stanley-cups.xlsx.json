@@ -19,7 +19,8 @@
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973"
+        "date_modified": "1687304904.973",
+        "filesize_bytes": 6339
       }
     }
   },
@@ -44,7 +45,8 @@
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973"
+        "date_modified": "1687304904.973",
+        "filesize_bytes": 6339
       }
     }
   },
@@ -68,7 +70,8 @@
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973"
+        "date_modified": "1687304904.973",
+        "filesize_bytes": 6339
       }
     }
   },
@@ -93,7 +96,8 @@
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973"
+        "date_modified": "1687304904.973",
+        "filesize_bytes": 6339
       }
     }
   }

@@ -16,7 +16,8 @@
           ],
           "index_name": "movies",
           "document_id": "0"
-        }
+        },
+        "filesize_bytes": 1281
       }
     }
   },
@@ -37,7 +38,8 @@
           ],
           "index_name": "movies",
           "document_id": "0"
-        }
+        },
+        "filesize_bytes": 1281
       }
     }
   },
@@ -58,7 +60,8 @@
           ],
           "index_name": "movies",
           "document_id": "0"
-        }
+        },
+        "filesize_bytes": 1281
       }
     }
   },
@@ -79,7 +82,8 @@
           ],
           "index_name": "movies",
           "document_id": "0"
-        }
+        },
+        "filesize_bytes": 1281
       }
     }
   },
@@ -100,7 +104,8 @@
           ],
           "index_name": "movies",
           "document_id": "0"
-        }
+        },
+        "filesize_bytes": 1281
       }
     }
   }

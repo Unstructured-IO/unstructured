@@ -18,7 +18,8 @@
           "file_id": "utic-test-ingest-fixtures/nested-1/nested/ideas-page.html/1687304893748677"
         },
         "date_created": "1687304893.75",
-        "date_modified": "1687304893.75"
+        "date_modified": "1687304893.75",
+        "filesize_bytes": 6161
       }
     }
   }
