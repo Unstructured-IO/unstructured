@@ -35,8 +35,11 @@ runs:
       shell: bash
       run: |
         python${{ inputs.python-version }} -m pip install --upgrade virtualenv
-        virtualenv .venv-ingest
-        source .venv-ingest/bin/activate
+        # if this is invoked after base cache restore/install the folder .venv would already exist on the runner
+        if [ ! -d ".venv" ]; then
+          python${{ inputs.python-version }} -m venv .venv
+        fi
+        source .venv/bin/activate
         echo $(python --version)
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
           python -m ensurepip --upgrade
