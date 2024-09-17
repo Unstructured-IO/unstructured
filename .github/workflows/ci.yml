@@ -96,7 +96,7 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
-        pip freeze | grep black
+        python -m pip freeze | grep black
         make check
 
   shellcheck:
