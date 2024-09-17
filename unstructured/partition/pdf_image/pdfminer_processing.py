@@ -114,7 +114,7 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
 def get_coords_from_bboxes(bboxes) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
     # preallocate memory
-    coords = np.zeros((len(bboxes), 4))
+    coords = np.zeros((len(bboxes), 4), dtype=np.float32)
 
     for i, bbox in enumerate(bboxes):
         coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
@@ -129,12 +129,9 @@ def areas_of_boxes_and_intersection_area(
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
     x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
 
-    xa = np.maximum(x11, np.transpose(x21))
-    ya = np.maximum(y11, np.transpose(y21))
-    xb = np.minimum(x12, np.transpose(x22))
-    yb = np.minimum(y12, np.transpose(y22))
-
-    inter_area = np.maximum((xb - xa + 1), 0) * np.maximum((yb - ya + 1), 0)
+    inter_area = np.maximum(
+        (np.minimum(x12, np.transpose(x22)) - np.maximum(x11, np.transpose(x21)) + 1), 0
+    ) * np.maximum((np.minimum(y12, np.transpose(y22)) - np.maximum(y11, np.transpose(y21)) + 1), 0)
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
 
