@@ -1,5 +1,5 @@
 -c ./deps/constraints.txt
--c base.txt
+-c ./deps/base.txt
 
 openpyxl
 pandas
