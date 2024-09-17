@@ -34,8 +34,13 @@ runs:
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        python3 -m venv .venv
+        python${{ inputs.python-version }} -m pip install --upgrade virtualenv
+        python${{ inputs.python-version }} -m venv .venv
         source .venv/bin/activate
+        if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade setuptools
+        fi
         make install-all-ingest
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
