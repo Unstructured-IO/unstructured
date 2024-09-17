@@ -30,12 +30,16 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-    - name: Setup virtual environment (no cache hit)
+    - name: Create new virtual environment (no cache hit)
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
         python${{ inputs.python-version }} -m pip install --upgrade virtualenv
         python${{ inputs.python-version }} -m venv .venv
+    - name: Setup virtual environment (no cache hit)
+      if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
         source .venv/bin/activate
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
           python -m ensurepip --upgrade
