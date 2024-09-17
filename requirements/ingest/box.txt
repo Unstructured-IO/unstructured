@@ -26,7 +26,7 @@ fsspec==2024.9.0
     # via
     #   -r ./ingest/box.in
     #   boxfs
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests

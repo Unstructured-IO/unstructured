@@ -32,7 +32,7 @@ fsspec==2024.9.0
     # via
     #   -r ./ingest/s3.in
     #   s3fs
-idna==3.8
+idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   yarl

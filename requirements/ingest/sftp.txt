@@ -14,7 +14,7 @@ cryptography==43.0.1
     # via paramiko
 fsspec==2024.9.0
     # via -r ./ingest/sftp.in
-paramiko==3.4.1
+paramiko==3.5.0
     # via -r ./ingest/sftp.in
 pycparser==2.22
     # via cffi

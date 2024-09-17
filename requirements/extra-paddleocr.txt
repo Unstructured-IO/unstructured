@@ -46,7 +46,7 @@ httpx==0.27.2
     # via
     #   -c ./base.txt
     #   paddlepaddle
-idna==3.8
+idna==3.10
     # via
     #   -c ./base.txt
     #   anyio
@@ -113,7 +113,7 @@ pillow==10.4.0
     #   pdf2image
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==4.23.4
+protobuf==4.25.4
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle
@@ -175,5 +175,5 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.20.1
+zipp==3.20.2
     # via importlib-resources
