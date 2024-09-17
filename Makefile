@@ -378,7 +378,7 @@ check-black:
 
 .PHONY: check-flake8
 check-flake8:
-	flake8 .
+	python3 -m flake8 .
 
 .PHONY: check-licenses
 check-licenses:
