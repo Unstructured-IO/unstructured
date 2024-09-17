@@ -374,7 +374,7 @@ check-shfmt:
 
 .PHONY: check-black
 check-black:
-	black . --check --line-length=100
+	python3 -m black . --check --line-length=100
 
 .PHONY: check-flake8
 check-flake8:
