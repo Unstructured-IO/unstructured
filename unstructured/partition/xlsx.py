@@ -15,6 +15,7 @@ from typing_extensions import Self, TypeAlias
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
+    DataSourceMetadata,
     Element,
     ElementMetadata,
     ListItem,
@@ -26,7 +27,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
+from unstructured.partition.common import (
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -124,6 +128,9 @@ def partition_xlsx(
                     page_number=page_number,
                     filename=opts.metadata_file_path,
                     last_modified=opts.last_modified,
+                    data_source=DataSourceMetadata(
+                        record_locator=dict(rc=(0, 0), excel_rc="A1"),
+                    ),
                 )
                 metadata.detection_origin = DETECTION_ORIGIN
             else:
@@ -133,12 +140,25 @@ def partition_xlsx(
             elements.append(table)
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
-                subtable_parser = _SubtableParser(component.subtable)
+                subtable_parser = _SubtableParser(component)
 
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_leading_single_cell_rows_texts():
+                for row_index, content in zip(
+                    subtable_parser.leading_single_cell_row_indices,
+                    subtable_parser.iter_leading_single_cell_rows_texts(),
+                ):
+
+                    # find column (usually it will be top_left_column but not necessarily)
+                    c: int = subtable_parser._subtable.iloc[row_index].notna().idxmax()
+
                     element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = subtable_parser.top_left_coordinate[0] + row_index + include_header
+                    element.metadata = _get_metadata(
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
+                    )
                     elements.append(element)
 
                 # -- emit core-table (if it exists) as a `Table` element --
@@ -149,7 +169,18 @@ def partition_xlsx(
                     )
                     text = soupparser_fromstring(html_text).text_content()
                     element = Table(text=text)
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = (
+                        subtable_parser.top_left_coordinate[0]
+                        + subtable_parser.core_table_start
+                        + include_header
+                    )
+                    c = subtable_parser.top_left_coordinate[1]
+                    element.metadata = _get_metadata(
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
+                    )
                     element.metadata.text_as_html = (
                         html_text if opts.infer_table_structure else None
                     )
@@ -158,9 +189,19 @@ def partition_xlsx(
                 # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
 
                 # -- emit each trailing single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_trailing_single_cell_rows_texts():
+                for row_index, content in zip(
+                    subtable_parser.trailing_single_cell_row_indices,
+                    subtable_parser.iter_trailing_single_cell_rows_texts(),
+                ):
                     element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = subtable_parser.top_left_coordinate[0] + row_index + include_header
+                    c: int = subtable_parser._subtable.iloc[row_index].notna().idxmax()
+                    element.metadata = _get_metadata(
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
+                    )
                     elements.append(element)
 
     elements = list(
@@ -295,15 +336,10 @@ class _ConnectedComponent:
         self._worksheet = worksheet
         self._cell_coordinate_set = cell_coordinate_set
 
-    @lazyproperty
-    def max_x(self) -> int:
-        """The right-most column index of the connected component."""
-        return self._extents[2]
-
     def merge(self, other: _ConnectedComponent) -> _ConnectedComponent:
         """Produce new instance with union of cells in `self` and `other`.
 
-        Used to combine regions of workshet that are "overlapping" row-wise but not actually
+        Used to combine regions of worksheet that are "overlapping" row-wise but not actually
         2D-connected.
         """
         return _ConnectedComponent(
@@ -311,9 +347,14 @@ class _ConnectedComponent:
         )
 
     @lazyproperty
+    def max_x(self) -> int:
+        """The right-most column index of the connected component."""
+        return self.extents[2]
+
+    @lazyproperty
     def min_x(self) -> int:
         """The left-most column index of the connected component."""
-        return self._extents[0]
+        return self.extents[0]
 
     @lazyproperty
     def subtable(self) -> pd.DataFrame:
@@ -322,11 +363,11 @@ class _ConnectedComponent:
         The subtable is the rectangular region of the worksheet inside the connected-component
         bounding-box. Row-indices and column labels are preserved, not restarted at 0.
         """
-        min_x, min_y, max_x, max_y = self._extents
+        min_x, min_y, max_x, max_y = self.extents
         return self._worksheet.iloc[min_x : max_x + 1, min_y : max_y + 1]
 
     @lazyproperty
-    def _extents(self) -> tuple[int, int, int, int]:
+    def extents(self) -> tuple[int, int, int, int]:
         """Compute bounding box of this connected component."""
         min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
         for x, y in self._cell_coordinate_set:
@@ -435,39 +476,44 @@ class _SubtableParser:
     element.
     """
 
-    def __init__(self, subtable: pd.DataFrame):
-        self._subtable = subtable
+    def __init__(self, component: _ConnectedComponent):
+        self._subtable = component.subtable
+        self.top_left_coordinate = component.extents[0:2]
+
+    @lazyproperty
+    def core_table_start(self) -> int:
+        """The index of the first row in the core-table."""
+        return len(self.leading_single_cell_row_indices)
 
     @lazyproperty
     def core_table(self) -> pd.DataFrame | None:
         """The part between the leading and trailing single-cell rows, if any."""
-        core_table_start = len(self._leading_single_cell_row_indices)
 
         # -- if core-table start is the end of table, there is no core-table
         # -- (all rows are single-cell)
-        if core_table_start == len(self._subtable):
+        if self.core_table_start == len(self._subtable):
             return None
 
         # -- assert: there is at least one core-table row (leading single-cell rows greedily
         # -- consumes all consecutive single-cell rows.
 
-        core_table_stop = len(self._subtable) - len(self._trailing_single_cell_row_indices)
+        core_table_stop = len(self._subtable) - len(self.trailing_single_cell_row_indices)
 
         # -- core-table is what's left in-between --
-        return self._subtable[core_table_start:core_table_stop]
+        return self._subtable[self.core_table_start : core_table_stop]
 
     def iter_leading_single_cell_rows_texts(self) -> Iterator[str]:
         """Generate the cell-text for each leading single-cell row."""
-        for row_idx in self._leading_single_cell_row_indices:
+        for row_idx in self.leading_single_cell_row_indices:
             yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
 
     def iter_trailing_single_cell_rows_texts(self) -> Iterator[str]:
         """Generate the cell-text for each trailing single-cell row."""
-        for row_idx in self._trailing_single_cell_row_indices:
+        for row_idx in self.trailing_single_cell_row_indices:
             yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
 
     @lazyproperty
-    def _leading_single_cell_row_indices(self) -> tuple[int, ...]:
+    def leading_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each leading single-cell row in subtable, in top-down order."""
 
         def iter_leading_single_cell_row_indices() -> Iterator[int]:
@@ -491,10 +537,10 @@ class _SubtableParser:
         return tuple(iter_single_cell_row_idxs())
 
     @lazyproperty
-    def _trailing_single_cell_row_indices(self) -> tuple[int, ...]:
+    def trailing_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each trailing single-cell row in subtable, in top-down order."""
         # -- if all subtable rows are single-cell, then by convention they are all leading --
-        if len(self._leading_single_cell_row_indices) == len(self._subtable):
+        if len(self.leading_single_cell_row_indices) == len(self._subtable):
             return ()
 
         def iter_trailing_single_cell_row_indices() -> Iterator[int]:
@@ -524,16 +570,44 @@ def _create_element(text: str) -> Element:
 
 
 def _get_metadata(
-    sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
+    sheet_name: str,
+    page_number: int,
+    opts: _XlsxPartitionerOptions,
+    rc: Optional[_CellCoordinate] = None,
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
+    excel_rc = _turn_coordinate_to_excel_format(rc)
     return (
         ElementMetadata(
             page_name=sheet_name,
             page_number=page_number,
             filename=opts.metadata_file_path,
             last_modified=opts.last_modified,
+            data_source=DataSourceMetadata(record_locator=dict(rc=rc, excel_rc=excel_rc)),
         )
         if opts.include_metadata
         else ElementMetadata()
     )
+
+
+def _turn_coordinate_to_excel_format(rc: _CellCoordinate | None) -> None | str:
+    """
+    Converts a tuple of row and column indices to Excel-like cell coordinate.
+    Takes into account that
+    - after Z it starts with AA, AB, ..., ZZ, AAA, ...
+    - if the header was included, the row index needs to be increased by 1
+    """
+    if rc is None:
+        return None
+    row, col = rc
+
+    # Adjust row and column index to be 1-based
+    col += 1
+    row += 1
+
+    col_letters = ""
+    while col > 0:
+        col, remainder = divmod(col - 1, 26)
+        col_letters = chr(remainder + 65) + col_letters
+
+    return f"{col_letters}{row}"

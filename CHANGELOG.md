@@ -151,6 +151,8 @@
 * **Mark ingest as deprecated** Begin sunset of ingest code in this repo as it's been moved to a dedicated repo.
 * **Add `pdf_hi_res_max_pages` argument for partitioning, which allows rejecting PDF files that exceed this page number limit, when the `high_res` strategy is chosen.** By default, it will allow parsing PDF files with an unlimited number of pages.
 
+* **Add row-column coordinate to partition-xlsx** Adds row-column coordinate to the metadata of the elements returned when partitioning an Excel file. It both returns the coordinate as a python tuple (0-based), and in Excel format (e.g. "A1").
+
 ### Fixes
 
 * **Update `HuggingFaceEmbeddingEncoder` to use `HuggingFaceEmbeddings` from `langchain_huggingface` package instead of the deprecated version from `langchain-community`.** This resolves the deprecation warning and ensures compatibility with future versions of langchain.
