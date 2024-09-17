@@ -96,7 +96,6 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
-        echo $(python --version)
         make install-ci
         make check
 
