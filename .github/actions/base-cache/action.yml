@@ -22,20 +22,20 @@ runs:
         lookup-only: ${{ inputs.check-only }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        python${{ inputs.python-version }} -m pip install --upgrade virtualenv
-        python${{ inputs.python-version }} -m venv .venv
+        python3 -m pip install --upgrade virtualenv
+        python3 -m venv .venv
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
-          python -m ensurepip --upgrade
-          python -m pip install --upgrade setuptools
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade setuptools
         fi
         make install-ci
     - name: Save Cache

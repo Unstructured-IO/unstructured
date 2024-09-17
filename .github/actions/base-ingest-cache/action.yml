@@ -27,14 +27,14 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
     - name: Setup virtual environment (no cache hit)
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        python${{ inputs.python-version }} -m venv .venv
+        python3 -m venv .venv
         source .venv/bin/activate
         make install-all-ingest
     - name: Save Ingest Cache
@@ -45,5 +45,5 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
 
