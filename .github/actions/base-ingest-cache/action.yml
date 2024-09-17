@@ -34,7 +34,7 @@ runs:
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        python${{ inputs.python-version }} -m pip install --upgrade virtualenv
+        apt install python${{ inputs.python-version}}-venv
         python${{ inputs.python-version }} -m venv .venv
     - name: Setup virtual environment (no cache hit)
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
