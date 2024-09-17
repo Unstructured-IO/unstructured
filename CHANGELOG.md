@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Improve `pdfminer` image cleanup process** Optimized the removal of duplicated pdfminer images by performing the cleanup before merging elements, rather than after. This improvement reduces execution time and enhances overall processing speed of PDF documents.
+* **Improve `pdfminer` image cleanup process**. Optimized the removal of duplicated pdfminer images by performing the cleanup before merging elements, rather than after. This improvement reduces execution time and enhances overall processing speed of PDF documents.
 
 ### Features
 
