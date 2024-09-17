@@ -35,8 +35,8 @@ runs:
       shell: bash
       run: |
         python${{ inputs.python-version }} -m pip install --upgrade virtualenv
-        virtualenv .venv
-        source .venv/bin/activate
+        virtualenv .venv-ingest
+        source .venv-ingest/bin/activate
         echo $(python --version)
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
           python -m ensurepip --upgrade
