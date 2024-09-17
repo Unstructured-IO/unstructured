@@ -40,6 +40,7 @@ runs:
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        ls .venv/bin
         source .venv/bin/activate
         if [ "${{ inputs.python-version == '3.12' }}" == "true" ]; then
           python -m ensurepip --upgrade
