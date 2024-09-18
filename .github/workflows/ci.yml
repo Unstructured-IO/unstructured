@@ -209,6 +209,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-ci
         make install-nltk-models
         make test-no-extras CI=true
 
