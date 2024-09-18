@@ -138,7 +138,6 @@ jobs:
         TESSERACT_VERSION : "5.4.1"
       run: |
         source .venv/bin/activate
-        echo $VIRTUAL_ENV
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
@@ -180,7 +179,6 @@ jobs:
         NLTK_DATA: ${{ github.workspace }}/nltk_data
       run: |
         source .venv/bin/activate
-        echo $VIRTUAL_ENV
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         make install-pandoc install-test
@@ -211,7 +209,6 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
-        echo $VIRTUAL_ENV
         make install-nltk-models
         make test-no-extras CI=true
 
@@ -300,7 +297,7 @@ jobs:
            PYTHON: python${{ matrix.python-version }}
         run: |
           source .venv/bin/activate
-          echo $VIRTUAL_ENV
+          make install-ci
           PYTHONPATH=. ${PYTHON} -m pytest test_unstructured_ingest/unit
 
 
@@ -378,9 +375,7 @@ jobs:
         PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        echo $VIRTUAL_ENV
         make install-ci
-        echo $VIRTUAL_ENV
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc

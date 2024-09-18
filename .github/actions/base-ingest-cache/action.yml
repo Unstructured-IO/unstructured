@@ -18,7 +18,7 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}-test2
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
         lookup-only: ${{ inputs.check-only }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
@@ -46,5 +46,5 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}-test2
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
 
