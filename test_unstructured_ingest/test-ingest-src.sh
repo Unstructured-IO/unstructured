@@ -4,6 +4,7 @@ set -u -o pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
+PYTHON=${PYTHON:-python}
 # If the file already exists, reset it
 if [ -f "$SKIPPED_FILES_LOG" ]; then
   rm "$SKIPPED_FILES_LOG"
@@ -92,7 +93,7 @@ function print_last_run() {
 
 trap print_last_run EXIT
 
-python_version=$(python --version 2>&1)
+python_version=$(${PYTHON} --version 2>&1)
 
 tests_to_ignore=(
   'notion.sh'

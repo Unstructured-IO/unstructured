@@ -135,7 +135,7 @@ install-ingest-delta-table:
 
 .PHONY: install-ingest-discord
 install-ingest-discord:
-	pip install -r requirements/ingest/discord.txt
+	${PYTHON} -m pip install -r requirements/ingest/discord.txt
 
 .PHONY: install-ingest-github
 install-ingest-github:
@@ -163,7 +163,7 @@ install-ingest-reddit:
 
 .PHONY: install-ingest-slack
 install-ingest-slack:
-	pip install -r requirements/ingest/slack.txt
+	${PYTHON} -m pip install -r requirements/ingest/slack.txt
 
 .PHONY: install-ingest-kafka
 install-ingest-kafka:
@@ -282,12 +282,12 @@ pip-compile:
 .PHONY: install-project-local
 install-project-local: install
 	# MAYBE TODO: fail if already exists?
-	pip install -e .
+	${PYTHON} -m pip install -e .
 
 ## uninstall-project-local: uninstall unstructured from your local python environment
 .PHONY: uninstall-project-local
 uninstall-project-local:
-	pip uninstall ${PACKAGE_NAME}
+	${PYTHON} -m pip uninstall ${PACKAGE_NAME}
 
 #################
 # Test and Lint #
@@ -300,12 +300,12 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} -m "not chipper" --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest test_${PACKAGE_NAME} -m "not chipper" --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-chipper
 test-chipper:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest test_${PACKAGE_NAME} -m "chipper" --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest test_${PACKAGE_NAME} -m "chipper" --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -314,7 +314,7 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 test-no-extras:
 	PYTHONPATH=. CI=$(CI) \
-		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
@@ -322,48 +322,48 @@ test-no-extras:
 
 .PHONY: test-extra-csv
 test-extra-csv:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
 		test_unstructured/partition/test_csv.py \
 		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
 		test_unstructured/partition/test_doc.py \
 		test_unstructured/partition/test_docx.py
 
 .PHONY: test-extra-epub
 test-extra-epub:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_epub.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_md.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_odt.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/pdf_image
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
 		test_unstructured/partition/test_ppt.py \
 		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
-	PYTHONPATH=. CI=$(CI) pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
 		test_unstructured/partition/test_org.py \
 		test_unstructured/partition/test_rst.py \
 		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_xlsx.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_xlsx.py
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
