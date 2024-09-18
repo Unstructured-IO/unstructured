@@ -96,6 +96,7 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
+        make install-ci
         make check
 
   shellcheck:
@@ -174,9 +175,10 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        PYTHON: python${{ matrix.python-version }}
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
       run: |
         source .venv/bin/activate
-        make install-nltk-models
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         make install-pandoc install-test
@@ -207,6 +209,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
+        make install-ci
         make install-nltk-models
         make test-no-extras CI=true
 
@@ -267,6 +270,7 @@ jobs:
       - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
+          check-only: 'true'
 
   test_ingest_unit:
     strategy:
@@ -289,10 +293,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test Ingest (unit)
+        env:
+           NLTK_DATA: ${{ github.workspace }}/nltk_data
+           PYTHON: python${{ matrix.python-version }}
         run: |
           source .venv/bin/activate
-          make install-nltk-models
-          PYTHONPATH=. pytest test_unstructured_ingest/unit
+          make install-ci
+          make install-all-ingest
+          PYTHONPATH=. ${PYTHON} -m pytest test_unstructured_ingest/unit
 
 
   test_ingest_src:
@@ -365,9 +373,12 @@ jobs:
         MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
+        PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        make install-nltk-models
+        make install-ci
+        make install-all-ingest
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -435,9 +446,12 @@ jobs:
         DATABRICKS_CATALOG: ${{secrets.DATABRICKS_CATALOG}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
+        PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        make install-nltk-models
+        make install-ci
+        make install-all-ingest
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -469,6 +483,8 @@ jobs:
       - name: Validate --help
         run: |
           source .venv/bin/activate
+          make install-ci
+          make install-all-ingest
           ./test_unstructured_ingest/test-help.sh
 
 
