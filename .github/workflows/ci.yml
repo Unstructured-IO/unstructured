@@ -448,7 +448,7 @@ jobs:
         PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        echo $VIRTUAL_ENV
+        make install-ci
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
