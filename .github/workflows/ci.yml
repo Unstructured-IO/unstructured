@@ -480,6 +480,7 @@ jobs:
       - name: Validate --help
         run: |
           source .venv/bin/activate
+          make install-ci
           ./test_unstructured_ingest/test-help.sh
 
 
