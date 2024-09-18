@@ -179,7 +179,7 @@ jobs:
         NLTK_DATA: ${{ github.workspace }}/nltk_data
       run: |
         source .venv/bin/activate
-        make install-nltk-models
+        make install-ci
         sudo apt-get update
         sudo apt-get install -y poppler-utils
         make install-pandoc install-test
@@ -299,7 +299,7 @@ jobs:
            PYTHON: python${{ matrix.python-version }}
         run: |
           source .venv/bin/activate
-          make install-nltk-models
+          make install-ci
           PYTHONPATH=. pytest test_unstructured_ingest/unit
 
 
@@ -377,7 +377,7 @@ jobs:
         PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        make install-nltk-models
+        make install-ci
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -445,9 +445,11 @@ jobs:
         DATABRICKS_CATALOG: ${{secrets.DATABRICKS_CATALOG}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
+        PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
-        make install-nltk-models
+        make install-ci
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
