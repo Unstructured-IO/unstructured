@@ -42,7 +42,7 @@ from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition.common import (
+from unstructured.partition.common.common import (
     document_to_element_list,
     exactly_one,
     ocr_data_to_elements,

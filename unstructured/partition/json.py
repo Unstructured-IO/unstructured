@@ -19,8 +19,8 @@ from unstructured.file_utils.filetype import (
     add_metadata_with_filetype,
     is_json_processable,
 )
-from unstructured.partition.common import (
-    exactly_one,
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.metadata import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )

@@ -46,9 +46,8 @@ from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.metadata import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )

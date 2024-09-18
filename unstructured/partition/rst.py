@@ -7,7 +7,8 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.file_conversion import convert_file_to_html_text_using_pandoc
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import exactly_one, get_last_modified
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.metadata import get_last_modified
 from unstructured.partition.html import partition_html
 
 DETECTION_ORIGIN: str = "rst"

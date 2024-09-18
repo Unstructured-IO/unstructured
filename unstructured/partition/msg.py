@@ -14,7 +14,7 @@ from unstructured.documents.elements import Element, ElementMetadata, process_me
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.partition.common import (
+from unstructured.partition.common.metadata import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )

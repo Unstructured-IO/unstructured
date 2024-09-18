@@ -17,16 +17,16 @@ from PIL import Image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.metadata import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
