@@ -175,6 +175,8 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        PYTHON: python${{ matrix.python-version }}
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
       run: |
         source .venv/bin/activate
         make install-nltk-models
@@ -206,6 +208,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
       run: |
         source .venv/bin/activate
         make install-nltk-models
@@ -268,6 +271,7 @@ jobs:
       - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
+          check-only: 'true'
 
   test_ingest_unit:
     strategy:
@@ -290,6 +294,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test Ingest (unit)
+        env:
+           NLTK_DATA: ${{ github.workspace }}/nltk_data
+           PYTHON: python${{ matrix.python-version }}
         run: |
           source .venv/bin/activate
           make install-nltk-models
@@ -366,6 +373,8 @@ jobs:
         MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
+        NLTK_DATA: ${{ github.workspace }}/nltk_data
+        PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
         make install-nltk-models

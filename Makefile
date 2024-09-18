@@ -2,6 +2,7 @@ PACKAGE_NAME := unstructured
 PIP_VERSION := 23.2.1
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
+PYTHON ?= python3
 
 .PHONY: help
 help: Makefile
@@ -28,109 +29,109 @@ install-base-ci: install-base-pip-packages install-nltk-models install-test inst
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
-	python3 -m pip install pip==${PIP_VERSION}
-	python3 -m pip install -r requirements/base.txt
+	${PYTHON} -m pip install pip==${PIP_VERSION}
+	${PYTHON} -m pip install -r requirements/base.txt
 
 .PHONY: install-huggingface
 install-huggingface:
-	python3 -m pip install pip==${PIP_VERSION}
-	python3 -m pip install -r requirements/huggingface.txt
+	${PYTHON} -m pip install pip==${PIP_VERSION}
+	${PYTHON} -m pip install -r requirements/huggingface.txt
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	python3 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
+	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 .PHONY: install-test
 install-test:
-	python3 -m pip install -r requirements/test.txt
+	${PYTHON} -m pip install -r requirements/test.txt
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
-	python3 -m pip install unstructured_pytesseract
-	# python3 -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
+	${PYTHON} -m pip install unstructured_pytesseract
+	# ${PYTHON} -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
+	${PYTHON} -m pip install weaviate-client -c requirements/deps/constraints.txt
 
 .PHONY: install-dev
 install-dev:
-	python3 -m pip install -r requirements/dev.txt
+	${PYTHON} -m pip install -r requirements/dev.txt
 
 .PHONY: install-build
 install-build:
-	python3 -m pip install -r requirements/build.txt
+	${PYTHON} -m pip install -r requirements/build.txt
 
 .PHONY: install-csv
 install-csv:
-	python3 -m pip install -r requirements/extra-csv.txt
+	${PYTHON} -m pip install -r requirements/extra-csv.txt
 
 .PHONY: install-docx
 install-docx:
-	python3 -m pip install -r requirements/extra-docx.txt
+	${PYTHON} -m pip install -r requirements/extra-docx.txt
 
 .PHONY: install-epub
 install-epub:
-	python3 -m pip install -r requirements/extra-epub.txt
+	${PYTHON} -m pip install -r requirements/extra-epub.txt
 
 .PHONY: install-odt
 install-odt:
-	python3 -m pip install -r requirements/extra-odt.txt
+	${PYTHON} -m pip install -r requirements/extra-odt.txt
 
 .PHONY: install-pypandoc
 install-pypandoc:
-	python3 -m pip install -r requirements/extra-pandoc.txt
+	${PYTHON} -m pip install -r requirements/extra-pandoc.txt
 
 .PHONY: install-markdown
 install-markdown:
-	python3 -m pip install -r requirements/extra-markdown.txt
+	${PYTHON} -m pip install -r requirements/extra-markdown.txt
 
 .PHONY: install-pdf-image
 install-pdf-image:
-	python3 -m pip install -r requirements/extra-pdf-image.txt
+	${PYTHON} -m pip install -r requirements/extra-pdf-image.txt
 
 .PHONY: install-pptx
 install-pptx:
-	python3 -m pip install -r requirements/extra-pptx.txt
+	${PYTHON} -m pip install -r requirements/extra-pptx.txt
 
 .PHONY: install-xlsx
 install-xlsx:
-	python3 -m pip install -r requirements/extra-xlsx.txt
+	${PYTHON} -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
 install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-all-ingest
 install-all-ingest:
-	find requirements/ingest -type f -name "*.txt" -exec python3 -m pip install -r '{}' ';'
+	find requirements/ingest -type f -name "*.txt" -exec ${PYTHON} -m pip install -r '{}' ';'
 
 
 .PHONY: install-ingest-google-drive
 install-ingest-google-drive:
-	python3 -m pip install -r requirements/ingest/google-drive.txt
+	${PYTHON} -m pip install -r requirements/ingest/google-drive.txt
 
 ## install-ingest-s3:       install requirements for the s3 connector
 .PHONY: install-ingest-s3
 install-ingest-s3:
-	python3 -m pip install -r requirements/ingest/s3.txt
+	${PYTHON} -m pip install -r requirements/ingest/s3.txt
 
 .PHONY: install-ingest-gcs
 install-ingest-gcs:
-	python3 -m pip install -r requirements/ingest/gcs.txt
+	${PYTHON} -m pip install -r requirements/ingest/gcs.txt
 
 .PHONY: install-ingest-dropbox
 install-ingest-dropbox:
-	python3 -m pip install -r requirements/ingest/dropbox.txt
+	${PYTHON} -m pip install -r requirements/ingest/dropbox.txt
 
 .PHONY: install-ingest-azure
 install-ingest-azure:
-	python3 -m pip install -r requirements/ingest/azure.txt
+	${PYTHON} -m pip install -r requirements/ingest/azure.txt
 
 .PHONY: install-ingest-box
 install-ingest-box:
-	python3 -m pip install -r requirements/ingest/box.txt
+	${PYTHON} -m pip install -r requirements/ingest/box.txt
 
 .PHONY: install-ingest-delta-table
 install-ingest-delta-table:
-	python3 -m pip install -r requirements/ingest/delta-table.txt
+	${PYTHON} -m pip install -r requirements/ingest/delta-table.txt
 
 .PHONY: install-ingest-discord
 install-ingest-discord:
@@ -138,27 +139,27 @@ install-ingest-discord:
 
 .PHONY: install-ingest-github
 install-ingest-github:
-	python3 -m pip install -r requirements/ingest/github.txt
+	${PYTHON} -m pip install -r requirements/ingest/github.txt
 
 .PHONY: install-ingest-biomed
 install-ingest-biomed:
-	python3 -m pip install -r requirements/ingest/biomed.txt
+	${PYTHON} -m pip install -r requirements/ingest/biomed.txt
 
 .PHONY: install-ingest-gitlab
 install-ingest-gitlab:
-	python3 -m pip install -r requirements/ingest/gitlab.txt
+	${PYTHON} -m pip install -r requirements/ingest/gitlab.txt
 
 .PHONY: install-ingest-onedrive
 install-ingest-onedrive:
-	python3 -m pip install -r requirements/ingest/onedrive.txt
+	${PYTHON} -m pip install -r requirements/ingest/onedrive.txt
 
 .PHONY: install-ingest-outlook
 install-ingest-outlook:
-	python3 -m pip install -r requirements/ingest/outlook.txt
+	${PYTHON} -m pip install -r requirements/ingest/outlook.txt
 
 .PHONY: install-ingest-reddit
 install-ingest-reddit:
-	python3 -m pip install -r requirements/ingest/reddit.txt
+	${PYTHON} -m pip install -r requirements/ingest/reddit.txt
 
 .PHONY: install-ingest-slack
 install-ingest-slack:
@@ -166,39 +167,39 @@ install-ingest-slack:
 
 .PHONY: install-ingest-kafka
 install-ingest-kafka:
-	python3 -m pip install -r requirements/ingest/kafka.txt
+	${PYTHON} -m pip install -r requirements/ingest/kafka.txt
 
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
-	python3 -m pip install -r requirements/ingest/wikipedia.txt
+	${PYTHON} -m pip install -r requirements/ingest/wikipedia.txt
 
 .PHONY: install-ingest-elasticsearch
 install-ingest-elasticsearch:
-	python3 -m pip install -r requirements/ingest/elasticsearch.txt
+	${PYTHON} -m pip install -r requirements/ingest/elasticsearch.txt
 
 .PHONY: install-ingest-opensearch
 install-ingest-opensearch:
-	python3 -m pip install -r requirements/ingest/opensearch.txt
+	${PYTHON} -m pip install -r requirements/ingest/opensearch.txt
 
 .PHONY: install-ingest-confluence
 install-ingest-confluence:
-	python3 -m pip install -r requirements/ingest/confluence.txt
+	${PYTHON} -m pip install -r requirements/ingest/confluence.txt
 
 .PHONY: install-ingest-airtable
 install-ingest-airtable:
-	python3 -m pip install -r requirements/ingest/airtable.txt
+	${PYTHON} -m pip install -r requirements/ingest/airtable.txt
 
 .PHONY: install-ingest-sharepoint
 install-ingest-sharepoint:
-	python3 -m pip install -r requirements/ingest/sharepoint.txt
+	${PYTHON} -m pip install -r requirements/ingest/sharepoint.txt
 
 .PHONY: install-ingest-singlestore
 install-ingest-singlestore:
-	python3 -m pip install -r requirements/ingest/singlestore.txt
+	${PYTHON} -m pip install -r requirements/ingest/singlestore.txt
 
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
-	python3 -m pip install -r requirements/ingest/weaviate.txt
+	${PYTHON} -m pip install -r requirements/ingest/weaviate.txt
 
 .PHONY: install-ingest-local
 install-ingest-local:
@@ -206,63 +207,63 @@ install-ingest-local:
 
 .PHONY: install-ingest-notion
 install-ingest-notion:
-	python3 -m pip install -r requirements/ingest/notion.txt
+	${PYTHON} -m pip install -r requirements/ingest/notion.txt
 
 .PHONY: install-ingest-salesforce
 install-ingest-salesforce:
-	python3 -m pip install -r requirements/ingest/salesforce.txt
+	${PYTHON} -m pip install -r requirements/ingest/salesforce.txt
 
 .PHONY: install-ingest-jira
 install-ingest-jira:
-	python3 -m pip install -r requirements/ingest/jira.txt
+	${PYTHON} -m pip install -r requirements/ingest/jira.txt
 
 .PHONY: install-ingest-hubspot
 install-ingest-hubspot:
-	python3 -m pip install -r requirements/ingest/hubspot.txt
+	${PYTHON} -m pip install -r requirements/ingest/hubspot.txt
 
 .PHONY: install-ingest-sftp
 install-ingest-sftp:
-	python3 -m pip install -r requirements/ingest/sftp.txt
+	${PYTHON} -m pip install -r requirements/ingest/sftp.txt
 
 .PHONY: install-ingest-pinecone
 install-ingest-pinecone:
-	python3 -m pip install -r requirements/ingest/pinecone.txt
+	${PYTHON} -m pip install -r requirements/ingest/pinecone.txt
 
 .PHONY: install-ingest-qdrant
 install-ingest-qdrant:
-	python3 -m pip install -r requirements/ingest/qdrant.txt
+	${PYTHON} -m pip install -r requirements/ingest/qdrant.txt
 
 .PHONY: install-ingest-chroma
 install-ingest-chroma:
-	python3 -m pip install -r requirements/ingest/chroma.txt
+	${PYTHON} -m pip install -r requirements/ingest/chroma.txt
 
 .PHONY: install-ingest-postgres
 install-ingest-postgres:
-	python3 -m pip install -r requirements/ingest/postgres.txt
+	${PYTHON} -m pip install -r requirements/ingest/postgres.txt
 
 .PHONY: install-ingest-mongodb
 install-ingest-mongodb:
-	python3 -m pip install -r requirements/ingest/mongodb.txt
+	${PYTHON} -m pip install -r requirements/ingest/mongodb.txt
 
 .PHONY: install-ingest-databricks-volumes
 install-ingest-databricks-volumes:
-	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
+	${PYTHON} -m pip install -r requirements/ingest/databricks-volumes.txt
 
 .PHONY: install-ingest-astradb
 install-ingest-astradb:
-	python3 -m pip install -r requirements/ingest/astradb.txt
+	${PYTHON} -m pip install -r requirements/ingest/astradb.txt
 
 .PHONY: install-ingest-clarifai
 install-ingest-clarifai:
-	python3 -m pip install -r requirements/ingest/clarifai.txt
+	${PYTHON} -m pip install -r requirements/ingest/clarifai.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
-	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
+	${PYTHON} -m pip install -r requirements/ingest/embed-huggingface.txt
 
 .PHONY: install-unstructured-inference
 install-unstructured-inference:
-	python3 -m pip install -r requirements/ingest/local-inference.txt
+	${PYTHON} -m pip install -r requirements/ingest/local-inference.txt
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
@@ -374,11 +375,11 @@ check-shfmt:
 
 .PHONY: check-black
 check-black:
-	python3 -m black . --check --line-length=100
+	${PYTHON} -m black . --check --line-length=100
 
 .PHONY: check-flake8
 check-flake8:
-	python3 -m flake8 .
+	${PYTHON} -m flake8 .
 
 .PHONY: check-licenses
 check-licenses:
@@ -434,7 +435,7 @@ version-sync:
 
 .PHONY: check-coverage
 check-coverage:
-	coverage report --fail-under=90
+	${PYTHON} -m coverage report --fail-under=90
 
 ## check-deps:              check consistency of dependencies
 .PHONY: check-deps
