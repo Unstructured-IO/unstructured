@@ -299,6 +299,7 @@ jobs:
         run: |
           source .venv/bin/activate
           make install-ci
+          make install-all-ingest
           PYTHONPATH=. ${PYTHON} -m pytest test_unstructured_ingest/unit
 
 
@@ -377,6 +378,7 @@ jobs:
       run: |
         source .venv/bin/activate
         make install-ci
+        make install-all-ingest
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -449,6 +451,7 @@ jobs:
       run: |
         source .venv/bin/activate
         make install-ci
+        make install-all-ingest
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -481,6 +484,7 @@ jobs:
         run: |
           source .venv/bin/activate
           make install-ci
+          make install-all-ingest
           ./test_unstructured_ingest/test-help.sh
 
 
