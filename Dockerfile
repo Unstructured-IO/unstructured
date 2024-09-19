@@ -10,7 +10,7 @@ COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN chown -R notebook-user:notebook-user /app && \
-  apk add mesa-gl-dev font-ubuntu git && \
+  apk add mesa-dev font-ubuntu git && \
   fc-cache -fv && \
   ln -s /usr/bin/python3.11 /usr/bin/python3
 
