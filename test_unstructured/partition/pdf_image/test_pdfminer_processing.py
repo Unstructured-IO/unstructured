@@ -9,7 +9,6 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
-    clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
     remove_duplicate_elements,
 )
@@ -127,23 +126,6 @@ elements_without_duplicate_images = [
     ),
     LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
 ]
-
-
-@pytest.mark.parametrize(
-    ("elements", "expected_document_length"),
-    [
-        (elements_with_duplicate_images, 2),
-        (elements_without_duplicate_images, 4),
-    ],
-)
-def test_clean_pdfminer_duplicate_image_elements(elements, expected_document_length):
-    page = PageLayout(number=1, image=Image.new("1", (1, 1)))
-    page.elements = elements
-    document = DocumentLayout(pages=[page])
-
-    cleaned_doc = clean_pdfminer_duplicate_image_elements(document)
-
-    assert len(cleaned_doc.pages[0].elements) == expected_document_length
 
 
 def test_aggregate_by_block():
