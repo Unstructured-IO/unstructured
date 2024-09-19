@@ -161,6 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4

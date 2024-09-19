@@ -24,7 +24,7 @@ fi
 # which is incompatible with the bson installed from pypi. bson is installed as part of the
 # astradb dependencies.
 # ref: https://pymongo.readthedocs.io/en/stable/installation.html
-pip uninstall -y bson pymongo
+python -m pip uninstall -y bson pymongo
 make install-ingest-mongodb
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
