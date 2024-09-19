@@ -8,15 +8,16 @@ COPY ./requirements requirements/
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
+COPY scripts/install-wolfi-mesa-gl.sh install-wolfi-mesa-gl.sh
 
 RUN chown -R notebook-user:notebook-user /app && \
   apk add font-ubuntu git && \
   fc-cache -fv && \
-  ln -s /usr/bin/python3.11 /usr/bin/python3
+  ln -s /usr/bin/python3.11 /usr/bin/python3 && \
+  apk del mesa-gl && \
+  ./install-wolfi-mesa-gl.sh
 
 USER notebook-user
-
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/lib"
 
 RUN find requirements/ -type f -name "*.txt" -exec pip3.11 install --no-cache-dir --user -r '{}' ';' && \
   python3.11 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()" && \
