@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 import numpy as np
 from pdfminer.utils import open_filename
 
-from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
@@ -264,43 +263,6 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
                 or not is_element_subregion_of_other_elements[element_to_subregion_map[i]]
             )
         ]
-
-    return document
-
-
-def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
-    """Removes duplicate image elements extracted by PDFMiner from a document layout."""
-
-    for page in document.pages:
-        image_bboxes = []
-        texts = []
-        bbox_to_iou_mapping = {}
-        current_idx = 0
-        for i, element in enumerate(page.elements):
-            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
-                continue
-            image_bboxes.append(element.bbox)
-            texts.append(element.text)
-            bbox_to_iou_mapping[i] = current_idx
-            current_idx += 1
-
-        iou = boxes_self_iou(image_bboxes, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD)
-
-        filtered_elements = []
-        for i, element in enumerate(page.elements[:-1]):
-            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
-                filtered_elements.append(element)
-                continue
-            text = element.text
-            this_idx = bbox_to_iou_mapping[i]
-            if any(
-                text == texts[potential_match + this_idx + 1]
-                for potential_match in np.where(iou[this_idx, this_idx + 1 :])[0]
-            ):
-                continue
-            else:
-                filtered_elements.append(element)
-        page.elements[:-1] = filtered_elements
 
     return document
 
