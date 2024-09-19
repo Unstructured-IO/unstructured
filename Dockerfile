@@ -10,11 +10,13 @@ COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN chown -R notebook-user:notebook-user /app && \
-  apk add mesa-dev font-ubuntu git && \
+  apk add font-ubuntu git && \
   fc-cache -fv && \
   ln -s /usr/bin/python3.11 /usr/bin/python3
 
 USER notebook-user
+
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/lib"
 
 RUN find requirements/ -type f -name "*.txt" -exec pip3.11 install --no-cache-dir --user -r '{}' ';' && \
   python3.11 -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()" && \
