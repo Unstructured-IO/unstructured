@@ -15,13 +15,16 @@ certifi==2024.8.30
     #   -c ./ingest/../base.txt
     #   requests
 cffi==1.17.1
-    # via cryptography
+    # via
+    #   -c ./ingest/../base.txt
+    #   cryptography
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
 cryptography==43.0.1
     # via
+    #   -c ./ingest/../base.txt
     #   msal
     #   pyjwt
 idna==3.10
@@ -32,14 +35,14 @@ msal==1.31.0
     # via
     #   -r ./ingest/onedrive.in
     #   office365-rest-python-client
-office365-rest-python-client==2.5.12
+office365-rest-python-client==2.5.13
     # via -r ./ingest/onedrive.in
 pycparser==2.22
-    # via cffi
-pyjwt[crypto]==2.9.0
     # via
-    #   msal
-    #   pyjwt
+    #   -c ./ingest/../base.txt
+    #   cffi
+pyjwt[crypto]==2.9.0
+    # via msal
 pytz==2024.2
     # via office365-rest-python-client
 requests==2.32.3

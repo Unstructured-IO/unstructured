@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./base.txt
     #   httpx
@@ -121,7 +121,7 @@ pathspec==0.12.1
     # via black
 pillow==10.4.0
     # via label-studio-sdk
-platformdirs==4.3.3
+platformdirs==4.3.6
     # via black
 pluggy==1.5.0
     # via pytest
@@ -129,11 +129,11 @@ pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.9.1
+pydantic==2.9.2
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.23.3
+pydantic-core==2.23.4
     # via pydantic
 pyflakes==3.2.0
     # via

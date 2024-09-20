@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./base.txt
     #   httpx
@@ -113,7 +113,7 @@ pillow==10.4.0
     #   pdf2image
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==4.25.4
+protobuf==4.25.5
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle

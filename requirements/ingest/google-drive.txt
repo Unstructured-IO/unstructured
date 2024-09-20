@@ -14,11 +14,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-google-api-core==2.19.2
+google-api-core==2.20.0
     # via google-api-python-client
-google-api-python-client==2.145.0
+google-api-python-client==2.146.0
     # via -r ./ingest/google-drive.in
-google-auth==2.34.0
+google-auth==2.35.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -37,7 +37,7 @@ idna==3.10
     #   requests
 proto-plus==1.24.0
     # via google-api-core
-protobuf==4.25.4
+protobuf==4.25.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   google-api-core

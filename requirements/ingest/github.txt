@@ -10,6 +10,7 @@ certifi==2024.8.30
     #   requests
 cffi==1.17.1
     # via
+    #   -c ./ingest/../base.txt
     #   cryptography
     #   pynacl
 charset-normalizer==3.3.2
@@ -17,7 +18,9 @@ charset-normalizer==3.3.2
     #   -c ./ingest/../base.txt
     #   requests
 cryptography==43.0.1
-    # via pyjwt
+    # via
+    #   -c ./ingest/../base.txt
+    #   pyjwt
 deprecated==1.2.14
     # via pygithub
 idna==3.10
@@ -25,7 +28,9 @@ idna==3.10
     #   -c ./ingest/../base.txt
     #   requests
 pycparser==2.22
-    # via cffi
+    # via
+    #   -c ./ingest/../base.txt
+    #   cffi
 pygithub==2.4.0
     # via -r ./ingest/github.in
 pyjwt[crypto]==2.9.0
