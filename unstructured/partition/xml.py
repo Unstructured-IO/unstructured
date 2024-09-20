@@ -52,7 +52,7 @@ def _get_leaf_elements(
     xml_path: Optional[str] = None,
 ) -> Iterator[Optional[str]]:
     """Parse the XML tree in a memory efficient manner if possible."""
-    element_stack = []
+    element_stack: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
 
     element_iterator = etree.iterparse(file, events=("start", "end"), resolve_entities=False)
     # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
@@ -90,7 +90,6 @@ def partition_xml(
     include_metadata: bool = True,
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
