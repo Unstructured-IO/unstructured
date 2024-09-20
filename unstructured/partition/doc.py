@@ -4,32 +4,24 @@ import os
 import tempfile
 from typing import IO, Any, Optional
 
-from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.documents.elements import Element
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import convert_office_doc, exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.docx import partition_docx
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.DOC)
-@add_chunking_strategy
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
-    include_page_breaks: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    starting_page_number: int = 1,
-    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
+
+    All parameters available on `partition_docx()` are also available here.
 
     Parameters
     ----------
@@ -96,13 +88,10 @@ def partition_doc(
         # -- resulting elements are not double-chunked.
         elements = partition_docx(
             filename=target_file_path,
-            detect_language_per_element=detect_language_per_element,
-            include_page_breaks=include_page_breaks,
-            languages=languages,
-            metadata_filename=metadata_filename,
+            metadata_filename=metadata_filename or filename,
+            metadata_file_type=FileType.DOC,
             metadata_last_modified=metadata_last_modified or last_modified,
-            starting_page_number=starting_page_number,
-            strategy=strategy,
+            **kwargs,
         )
 
     # -- Remove temporary document.docx path from metadata when necessary. Note `metadata_filename`

@@ -4,9 +4,7 @@ import os
 import tempfile
 from typing import IO, Any, Optional, cast
 
-from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.documents.elements import Element
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -14,23 +12,17 @@ from unstructured.partition.docx import partition_docx
 from unstructured.utils import requires_dependencies
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.ODT)
-@add_chunking_strategy
 def partition_odt(
     filename: Optional[str] = None,
     *,
     file: Optional[IO[bytes]] = None,
-    detect_language_per_element: bool = False,
-    infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    starting_page_number: int = 1,
-    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
+
+    All parameters that are available on `partition_docx()` are also available here.
 
     Parameters
     ----------
@@ -61,13 +53,10 @@ def partition_odt(
         docx_path = _convert_odt_to_docx(target_dir, filename, file)
         elements = partition_docx(
             filename=docx_path,
-            detect_language_per_element=detect_language_per_element,
-            infer_table_structure=infer_table_structure,
-            languages=languages,
-            metadata_filename=metadata_filename,
+            metadata_filename=metadata_filename or filename,
+            metadata_file_type=FileType.ODT,
             metadata_last_modified=metadata_last_modified or last_modified,
-            starting_page_number=starting_page_number,
-            strategy=strategy,
+            **kwargs,
         )
 
     return elements
