@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from tempfile import SpooledTemporaryFile
-
 import pytest
 from pytest_mock import MockerFixture
 
@@ -175,36 +173,11 @@ def test_partition_xml_from_file_path_prefers_metadata_last_modified(mocker: Moc
     assert elements[0].metadata.last_modified == metadata_last_modified
 
 
-def test_partition_xml_from_file_explicit_get_metadata_date(mocker: MockerFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.xml.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(example_doc_path("factbook.xml"), "rb") as f:
-        elements = partition_xml(file=f, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
 def test_partition_xml_from_file_prefers_metadata_last_modified():
     with open("example-docs/factbook.xml", "rb") as f:
         elements = partition_xml(file=f, metadata_last_modified="2029-07-05T09:24:28")
 
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
-
-
-def test_partition_xml_from_file_without_metadata_date():
-    """Test partition_xml() with file that are not possible to get last modified date"""
-    with open(example_doc_path("factbook.xml"), "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_xml(file=sf, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified is None
 
 
 # ------------------------------------------------------------------------------------------------
