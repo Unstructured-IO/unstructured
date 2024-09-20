@@ -9,9 +9,8 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
-    clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
-    remove_duplicate_embedded_text,
+    remove_duplicate_elements,
 )
 from unstructured.partition.utils.constants import Source
 
@@ -129,23 +128,6 @@ elements_without_duplicate_images = [
 ]
 
 
-@pytest.mark.parametrize(
-    ("elements", "expected_document_length"),
-    [
-        (elements_with_duplicate_images, 2),
-        (elements_without_duplicate_images, 4),
-    ],
-)
-def test_clean_pdfminer_duplicate_image_elements(elements, expected_document_length):
-    page = PageLayout(number=1, image=Image.new("1", (1, 1)))
-    page.elements = elements
-    document = DocumentLayout(pages=[page])
-
-    cleaned_doc = clean_pdfminer_duplicate_image_elements(document)
-
-    assert len(cleaned_doc.pages[0].elements) == expected_document_length
-
-
 def test_aggregate_by_block():
     expected = "Inside region1 Inside region2"
     embedded_regions = [
@@ -212,14 +194,14 @@ def test_boxes_self_iou(coords, threshold, expected):
     np.testing.assert_array_equal(boxes_self_iou(bboxes, threshold), expected)
 
 
-def test_remove_duplicate_embedded_text():
+def test_remove_duplicate_elements():
     sample_elements = [
         EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 1"),
         EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 2"),
         EmbeddedTextRegion(bbox=Rectangle(20, 20, 30, 30), text="Text 3"),
     ]
 
-    result = remove_duplicate_embedded_text(sample_elements)
+    result = remove_duplicate_elements(sample_elements)
 
     # Check that duplicates were removed and only 2 unique elements remain
     assert len(result) == 2
