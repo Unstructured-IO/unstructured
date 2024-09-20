@@ -47,12 +47,12 @@ from unstructured.file_utils.encoding import detect_file_encoding, format_encodi
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import (
+from unstructured.partition.common.common import (
     add_element_metadata,
     exactly_one,
     remove_element_metadata,
-    set_element_hierarchy,
 )
+from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
@@ -500,8 +500,8 @@ class _OleFileDifferentiator:
     @staticmethod
     def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
         with ctx.open() as f:
-            ole = OleFileIO(f)
-            root_storage = Storage.from_ole(ole)
+            ole = OleFileIO(f)  # pyright: ignore[reportUnknownVariableType]
+            root_storage = Storage.from_ole(ole)  # pyright: ignore[reportUnknownMemberType]
 
         for stream in root_storage.streams:
             if stream.name == "WordDocument":

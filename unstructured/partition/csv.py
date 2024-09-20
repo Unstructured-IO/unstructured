@@ -16,7 +16,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
+from unstructured.partition.common.metadata import (
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.utils import is_temp_file_path, lazyproperty
 

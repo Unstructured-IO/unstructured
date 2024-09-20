@@ -1,4 +1,16 @@
+## 0.15.14-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
 ## 0.15.13
+
+### BREAKING CHANGES
+
+* **Remove dead experimental code.** Unused code in `file_utils.experimantal` and `file_utils.metadata` was removed. These functions were never published in the documentation, but if a client dug these out and used them this removal could break client code.
 
 ### Enhancements
 
