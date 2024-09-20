@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/astradb.in
 #
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -12,7 +12,7 @@ astrapy==1.4.2
     # via -r ./ingest/astradb.in
 cassandra-driver==3.29.2
     # via cassio
-cassio==0.1.8
+cassio==0.1.9
     # via astrapy
 certifi==2024.8.30
     # via
@@ -70,7 +70,7 @@ packaging==24.1
     # via
     #   -c ./ingest/../base.txt
     #   deprecation
-pymongo==4.8.0
+pymongo==4.9.1
     # via astrapy
 requests==2.32.3
     # via

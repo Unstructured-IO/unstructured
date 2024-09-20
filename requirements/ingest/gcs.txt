@@ -42,11 +42,11 @@ fsspec==2024.9.0
     #   gcsfs
 gcsfs==2024.9.0.post1
     # via -r ./ingest/gcs.in
-google-api-core==2.19.2
+google-api-core==2.20.0
     # via
     #   google-cloud-core
     #   google-cloud-storage
-google-auth==2.34.0
+google-auth==2.35.0
     # via
     #   gcsfs
     #   google-api-core
@@ -80,7 +80,7 @@ oauthlib==3.2.2
     # via requests-oauthlib
 proto-plus==1.24.0
     # via google-api-core
-protobuf==4.25.4
+protobuf==4.25.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   google-api-core

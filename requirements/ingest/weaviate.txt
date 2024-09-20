@@ -11,19 +11,25 @@ certifi==2024.8.30
     #   -c ./ingest/../base.txt
     #   requests
 cffi==1.17.1
-    # via cryptography
+    # via
+    #   -c ./ingest/../base.txt
+    #   cryptography
 charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
 cryptography==43.0.1
-    # via authlib
+    # via
+    #   -c ./ingest/../base.txt
+    #   authlib
 idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
 pycparser==2.22
-    # via cffi
+    # via
+    #   -c ./ingest/../base.txt
+    #   cffi
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt

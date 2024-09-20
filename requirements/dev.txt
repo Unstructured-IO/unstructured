@@ -15,7 +15,7 @@ click==8.1.7
     #   pip-tools
 distlib==0.3.8
     # via virtualenv
-filelock==3.16.0
+filelock==3.16.1
     # via virtualenv
 identify==2.6.1
     # via pre-commit
@@ -32,7 +32,7 @@ packaging==24.1
     #   build
 pip-tools==7.4.1
     # via -r ./dev.in
-platformdirs==4.3.3
+platformdirs==4.3.6
     # via
     #   -c ./test.txt
     #   virtualenv
@@ -51,7 +51,7 @@ tomli==2.0.1
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.26.4
+virtualenv==20.26.5
     # via pre-commit
 wheel==0.44.0
     # via pip-tools

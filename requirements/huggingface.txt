@@ -16,7 +16,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   sacremoses
-filelock==3.16.0
+filelock==3.16.1
     # via
     #   huggingface-hub
     #   torch
@@ -25,7 +25,7 @@ fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.7
+huggingface-hub==0.25.0
     # via
     #   tokenizers
     #   transformers
@@ -82,7 +82,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.13.2
+sympy==1.13.3
     # via torch
 tokenizers==0.19.1
     # via

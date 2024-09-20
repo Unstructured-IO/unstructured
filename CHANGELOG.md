@@ -1,4 +1,4 @@
-## 0.15.13-dev3
+## 0.15.13
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Fixes
 
 * **Fixes high memory overhead for intersection area computation** Using `numpy.float32` for coordinates and remove intermediate variables to reduce memory usage when computing intersection areas
+* **Fixes the `arm64` image build** `arm64` builds are now fixed and will be available against starting with the `0.15.13` release.
 
 ## 0.15.12
 

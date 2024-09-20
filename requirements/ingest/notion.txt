@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/notion.in
 #
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx

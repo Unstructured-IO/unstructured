@@ -23,9 +23,9 @@ azure-core==1.31.0
     #   azure-storage-blob
 azure-datalake-store==0.0.53
     # via adlfs
-azure-identity==1.17.1
+azure-identity==1.18.0
     # via adlfs
-azure-storage-blob==12.22.0
+azure-storage-blob==12.23.0
     # via adlfs
 certifi==2024.8.30
     # via
@@ -33,6 +33,7 @@ certifi==2024.8.30
     #   requests
 cffi==1.17.1
     # via
+    #   -c ./ingest/../base.txt
     #   azure-datalake-store
     #   cryptography
 charset-normalizer==3.3.2
@@ -41,6 +42,7 @@ charset-normalizer==3.3.2
     #   requests
 cryptography==43.0.1
     # via
+    #   -c ./ingest/../base.txt
     #   azure-identity
     #   azure-storage-blob
     #   msal
@@ -74,11 +76,11 @@ multidict==6.1.0
 portalocker==2.10.1
     # via msal-extensions
 pycparser==2.22
-    # via cffi
-pyjwt[crypto]==2.9.0
     # via
-    #   msal
-    #   pyjwt
+    #   -c ./ingest/../base.txt
+    #   cffi
+pyjwt[crypto]==2.9.0
+    # via msal
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt

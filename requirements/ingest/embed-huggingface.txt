@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -24,7 +24,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-filelock==3.16.0
+filelock==3.16.1
     # via
     #   huggingface-hub
     #   torch
@@ -45,7 +45,7 @@ httpx==0.27.2
     # via
     #   -c ./ingest/../base.txt
     #   langsmith
-huggingface-hub==0.24.7
+huggingface-hub==0.25.0
     # via
     #   langchain-huggingface
     #   sentence-transformers
@@ -67,11 +67,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.3.0
+langchain-core==0.3.2
     # via langchain-huggingface
 langchain-huggingface==0.1.0
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.120
+langsmith==0.1.125
     # via langchain-core
 markupsafe==2.1.5
     # via jinja2
@@ -84,7 +84,6 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   scikit-learn
     #   scipy
-    #   sentence-transformers
     #   transformers
 orjson==3.10.7
     # via langsmith
@@ -96,11 +95,11 @@ packaging==24.1
     #   transformers
 pillow==10.4.0
     # via sentence-transformers
-pydantic==2.9.1
+pydantic==2.9.2
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.23.3
+pydantic-core==2.23.4
     # via pydantic
 pyyaml==6.0.2
     # via
@@ -125,14 +124,14 @@ scipy==1.13.1
     # via
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==3.1.0
+sentence-transformers==3.1.1
     # via langchain-huggingface
 sniffio==1.3.1
     # via
     #   -c ./ingest/../base.txt
     #   anyio
     #   httpx
-sympy==1.13.2
+sympy==1.13.3
     # via torch
 tenacity==8.5.0
     # via langchain-core

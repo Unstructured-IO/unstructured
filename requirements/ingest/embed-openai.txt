@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -52,13 +52,13 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain-core==0.3.0
+langchain-core==0.3.2
     # via langchain-openai
 langchain-openai==0.2.0
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.120
+langsmith==0.1.125
     # via langchain-core
-openai==1.45.0
+openai==1.46.1
     # via langchain-openai
 orjson==3.10.7
     # via langsmith
@@ -66,12 +66,12 @@ packaging==24.1
     # via
     #   -c ./ingest/../base.txt
     #   langchain-core
-pydantic==2.9.1
+pydantic==2.9.2
     # via
     #   langchain-core
     #   langsmith
     #   openai
-pydantic-core==2.23.3
+pydantic-core==2.23.4
     # via pydantic
 pyyaml==6.0.2
     # via langchain-core
