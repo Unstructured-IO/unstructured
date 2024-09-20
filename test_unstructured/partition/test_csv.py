@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import io
-from tempfile import SpooledTemporaryFile
 
 import pytest
 from pytest_mock import MockFixture
@@ -118,106 +117,53 @@ def test_partition_csv_can_exclude_metadata():
     assert elements[0].metadata.filename is None
 
 
-def test_partition_csv_metadata_date(mocker: MockFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
+def test_partition_csv_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.csv.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_csv(example_doc_path("stanley-cups.csv"))
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == filesystem_last_modified
 
 
-def test_partition_csv_custom_metadata_date(mocker: MockFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_csv_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.csv.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.csv.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_csv(
-        example_doc_path("stanley-cups.csv"),
-        metadata_last_modified=expected_last_modification_date,
-        include_header=False,
+        example_doc_path("stanley-cups.csv"), metadata_last_modified=metadata_last_modified
     )
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
-def test_partition_csv_from_file_metadata_date(mocker: MockFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.csv.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
+def test_partition_csv_from_file_gets_last_modified_None():
     with open(example_doc_path("stanley-cups.csv"), "rb") as f:
-        elements = partition_csv(file=f, include_header=False)
+        elements = partition_csv(file=f)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_csv_from_file_explicit_get_metadata_date(mocker: MockFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.csv.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
+def test_partition_csv_from_file_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
 
     with open(example_doc_path("stanley-cups.csv"), "rb") as f:
-        elements = partition_csv(file=f, include_header=False, date_from_file_object=True)
+        elements = partition_csv(file=f, metadata_last_modified=metadata_last_modified)
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
-def test_partition_csv_from_file_custom_metadata_date(mocker: MockFixture):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.csv.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
-        elements = partition_csv(
-            file=f,
-            metadata_last_modified=expected_last_modification_date,
-            include_header=False,
-            date_from_file_object=True,
-        )
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_csv_from_file_without_metadata(mocker: MockFixture):
-    """Test partition_csv() with file that are not possible to get last modified date"""
-
-    with open(example_doc_path("stanley-cups.csv"), "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_csv(file=sf, date_from_file_object=True)
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.last_modified is None
+# ------------------------------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("filename", ["stanley-cups.csv", "stanley-cups-with-emoji.csv"])
@@ -290,7 +236,6 @@ class Describe_CsvPartitioningContext:
             metadata_last_modified=None,
             include_header=True,
             infer_table_structure=True,
-            date_from_file_object=False,
         )
         assert isinstance(ctx, _CsvPartitioningContext)
 
@@ -304,7 +249,6 @@ class Describe_CsvPartitioningContext:
                 metadata_last_modified=None,
                 include_header=True,
                 infer_table_structure=True,
-                date_from_file_object=False,
             )
 
     # -- .delimiter ---------------------------------------------
@@ -355,28 +299,12 @@ class Describe_CsvPartitioningContext:
         get_last_modified_date_.assert_called_once_with("a/b/document.csv")
         assert last_modified == "2024-08-04T02:23:53"
 
-    def and_it_falls_back_to_last_modified_date_of_file_when_a_file_like_object_is_provided(
-        self, get_last_modified_date_from_file_: Mock
-    ):
-        get_last_modified_date_from_file_.return_value = "2024-08-04T13:17:47"
+    def and_it_falls_back_to_None_for_the_last_modified_date_when_file_path_is_not_provided(self):
         file = io.BytesIO(b"abcdefg")
-        ctx = _CsvPartitioningContext(file=file, date_from_file_object=True)
+        ctx = _CsvPartitioningContext(file=file)
 
         last_modified = ctx.last_modified
 
-        get_last_modified_date_from_file_.assert_called_once_with(file)
-        assert last_modified == "2024-08-04T13:17:47"
-
-    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
-        self, get_last_modified_date_from_file_: Mock
-    ):
-        get_last_modified_date_from_file_.return_value = "2024-08-04T13:18:57"
-        file = io.BytesIO(b"abcdefg")
-        ctx = _CsvPartitioningContext(file=file, date_from_file_object=False)
-
-        last_modified = ctx.last_modified
-
-        get_last_modified_date_from_file_.assert_not_called()
         assert last_modified is None
 
     # -- .open() ------------------------------------------------
@@ -412,7 +340,3 @@ class Describe_CsvPartitioningContext:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.csv.get_last_modified_date")
-
-    @pytest.fixture()
-    def get_last_modified_date_from_file_(self, request: FixtureRequest):
-        return function_mock(request, "unstructured.partition.csv.get_last_modified_date_from_file")
