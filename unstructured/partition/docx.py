@@ -9,7 +9,6 @@ import tempfile
 import zipfile
 from typing import IO, Any, Iterator, Protocol, Type
 
-# -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
@@ -42,12 +41,9 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -59,6 +55,7 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "docx"
+# -- CT_* stands for "complex-type", an XML element type in docx parlance --
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
 BlockItem: TypeAlias = "Paragraph | DocxTable"
 
@@ -100,19 +97,14 @@ class PicturePartitionerT(Protocol):
 # ================================================================================================
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.DOCX)
+@apply_metadata(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(
     filename: str | None = None,
     *,
-    detect_language_per_element: bool = False,
     file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     infer_table_structure: bool = True,
-    languages: list[str] | None = ["auto"],
-    metadata_filename: str | None = None,
-    metadata_last_modified: str | None = None,
     starting_page_number: int = 1,
     strategy: str | None = None,
     **kwargs: Any,
@@ -139,13 +131,6 @@ def partition_docx(
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
@@ -155,19 +140,12 @@ def partition_docx(
         file_path=filename,
         include_page_breaks=include_page_breaks,
         infer_table_structure=infer_table_structure,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
         strategy=strategy,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
 
-    elements = apply_lang_metadata(
-        elements=elements,
-        languages=languages,
-        detect_language_per_element=detect_language_per_element,
-    )
     return list(elements)
 
 
@@ -191,8 +169,6 @@ class DocxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         infer_table_structure: bool,
-        metadata_file_path: str | None,
-        metadata_last_modified: str | None,
         starting_page_number: int = 1,
         strategy: str | None = None,
     ):
@@ -200,8 +176,6 @@ class DocxPartitionerOptions:
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
@@ -246,25 +220,17 @@ class DocxPartitionerOptions:
     @lazyproperty
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format, and any last-modified date for the file
-        # -- would be just now.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
+        if not self._file_path:
+            return None
 
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        return None
+        return (
+            None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
+        )
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @property
     def metadata_page_number(self) -> int | None:
