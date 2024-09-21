@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
-from typing import IO, Optional, Sequence
+from typing import Optional, Sequence
 
 from unstructured.documents.elements import Element
 
@@ -22,22 +22,6 @@ def get_last_modified_date(filename: str) -> Optional[str]:
 
     modify_date = dt.datetime.fromtimestamp(os.path.getmtime(filename))
     return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
-
-
-def get_last_modified_date_from_file(file: IO[bytes] | bytes) -> Optional[str]:
-    """Modified timestamp of `file` if it corresponds to a file on the local filesystem."""
-    # -- a file-like object will have a name attribute if created by `open()` or if a name is
-    # -- assigned to it for metadata purposes. Use "" as default because the empty string is never
-    # -- a path to an actual file.
-    filename = str(getattr(file, "name", ""))
-
-    # -- there's no guarantee the path corresponds to an actual file on the filesystem. In
-    # -- particular, a user can set the `.name` attribute of an e.g. `io.BytesIO` object to
-    # -- populate the `.metadata.filename` fields for a payload perhaps downloaded via HTTP.
-    if not os.path.isfile(filename):
-        return None
-
-    return get_last_modified_date(filename)
 
 
 HIERARCHY_RULE_SET = {
