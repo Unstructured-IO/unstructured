@@ -61,26 +61,35 @@ def test_partition_rst_from_file_exclude_metadata():
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_rst_pulls_last_modified_from_filesystem(mocker: MockFixture):
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
+def test_partition_rst_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "unstructured.partition.rst.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.rst.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_rst(example_doc_path("README.rst"))
 
-    assert elements[0].metadata.last_modified == filesystem_last_modified
+    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_rst_prefers_metadata_last_modified(mocker: MockFixture):
-    metadata_last_modified = "2024-06-14T16:01:29"
-    mocker.patch("unstructured.partition.rst.get_last_modified", return_value="2029-07-05T09:24:28")
+def test_partition_rst_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2024-06-14T16:01:29"
+    metadata_last_modified = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.rst.get_last_modified_date", return_value=filesystem_last_modified
+    )
 
     elements = partition_rst(
         example_doc_path("README.rst"), metadata_last_modified=metadata_last_modified
     )
 
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_rst_with_json():
