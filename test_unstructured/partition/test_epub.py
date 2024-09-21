@@ -78,28 +78,35 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filename is None
 
 
-def test_partition_epub_pulls_last_modified_from_filesystem(mocker: MockFixture):
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
+def test_partition_epub_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "unstructured.partition.epub.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.epub.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    elements = partition_epub("example-docs/winter-sports.epub")
+    elements = partition_epub(example_doc_path("winter-sports.epub"))
 
     assert elements[0].metadata.last_modified == filesystem_last_modified
 
 
-def test_partition_epub_prefers_metadata_last_modified(mocker: MockFixture):
-    metadata_last_modified = "2024-06-14T16:01:29"
+def test_partition_xml_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2024-06-14T16:01:29"
+    metadata_last_modified = "2020-03-08T06:10:23"
     mocker.patch(
-        "unstructured.partition.epub.get_last_modified", return_value="2029-07-05T09:24:28"
+        "unstructured.partition.epub.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_epub(
-        "example-docs/winter-sports.epub", metadata_last_modified=metadata_last_modified
+        example_doc_path("winter-sports.epub"), metadata_last_modified=metadata_last_modified
     )
 
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_epub_with_json():
@@ -109,22 +116,20 @@ def test_partition_epub_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_add_chunking_strategy_on_partition_epub(
-    filename=example_doc_path("winter-sports.epub"),
-):
-    elements = partition_epub(filename=filename)
-    chunk_elements = partition_epub(filename, chunking_strategy="by_title")
+def test_add_chunking_strategy_on_partition_epub():
+    file_path = example_doc_path("winter-sports.epub")
+    elements = partition_epub(file_path)
+    chunk_elements = partition_epub(file_path, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_on_partition_epub_non_default(
-    filename=example_doc_path("winter-sports.epub"),
-):
-    elements = partition_epub(filename=filename)
+def test_add_chunking_strategy_on_partition_epub_non_default():
+    file_path = example_doc_path("winter-sports.epub")
+    elements = partition_epub(filename=file_path)
     chunk_elements = partition_epub(
-        filename,
+        file_path,
         chunking_strategy="by_title",
         max_characters=5,
         new_after_n_chars=5,
