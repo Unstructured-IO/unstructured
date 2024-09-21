@@ -14,10 +14,7 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html.parser import Flow, html_parser
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.utils import is_temp_file_path, lazyproperty
@@ -35,7 +32,6 @@ def partition_html(
     url: Optional[str] = None,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
-    date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
     languages: Optional[list[str]] = ["auto"],
     metadata_last_modified: Optional[str] = None,
@@ -62,9 +58,6 @@ def partition_html(
     ssl_verify
         If the URL parameter is set, determines whether or not SSL verification is performed
         on the HTTP request.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
 
@@ -97,7 +90,6 @@ def partition_html(
         url=url,
         headers=headers,
         ssl_verify=ssl_verify,
-        date_from_file_object=date_from_file_object,
         metadata_last_modified=metadata_last_modified,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
@@ -127,7 +119,6 @@ class HtmlPartitionerOptions:
         url: str | None,
         headers: dict[str, str],
         ssl_verify: bool,
-        date_from_file_object: bool,
         metadata_last_modified: str | None,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
@@ -139,7 +130,6 @@ class HtmlPartitionerOptions:
         self._url = url
         self._headers = headers
         self._ssl_verify = ssl_verify
-        self._date_from_file_object = date_from_file_object
         self._metadata_last_modified = metadata_last_modified
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
@@ -196,13 +186,6 @@ class HtmlPartitionerOptions:
                 None
                 if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
             )
 
         return None
