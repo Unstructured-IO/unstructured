@@ -122,7 +122,7 @@ def test_partition_odt_suppresses_text_as_html_when_infer_table_structure_is_Fal
 def test_partition_odt_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.odt.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_odt(example_doc_path("fake.odt"))
@@ -134,7 +134,7 @@ def test_partition_odt_prefers_metadata_last_modified_when_provided(mocker: Mock
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.odt.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_odt(
