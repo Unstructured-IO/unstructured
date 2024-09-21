@@ -46,10 +46,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -109,7 +106,6 @@ class PicturePartitionerT(Protocol):
 def partition_docx(
     filename: Optional[str] = None,
     *,
-    date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
@@ -150,15 +146,11 @@ def partition_docx(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
     """
     opts = DocxPartitionerOptions.load(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
@@ -195,7 +187,6 @@ class DocxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         file: IO[bytes] | None,
         file_path: str | None,
         include_page_breaks: bool,
@@ -205,7 +196,6 @@ class DocxPartitionerOptions:
         starting_page_number: int = 1,
         strategy: str | None = None,
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
@@ -267,13 +257,6 @@ class DocxPartitionerOptions:
                 None
                 if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
             )
 
         return None
