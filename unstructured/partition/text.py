@@ -30,8 +30,8 @@ from unstructured.file_utils.model import FileType
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,

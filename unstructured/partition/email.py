@@ -47,9 +47,9 @@ from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
@@ -101,7 +101,7 @@ def partition_email_header(msg: EmailMessage) -> list[Element]:
         for addr in header.addresses:
             elements.append(
                 element_type(
-                    name=addr.display_name or addr.username,
+                    name=addr.display_name or addr.username,  # type: ignore
                     text=addr.addr_spec,  # type: ignore
                 )
             )

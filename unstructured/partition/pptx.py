@@ -37,8 +37,8 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import convert_ms_office_table_to_text
+from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,

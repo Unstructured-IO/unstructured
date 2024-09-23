@@ -20,8 +20,8 @@ from unstructured.partition.common.common import (
     exactly_one,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import element_from_text
 
 DETECTION_ORIGIN: str = "xml"

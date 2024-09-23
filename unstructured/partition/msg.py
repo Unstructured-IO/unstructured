@@ -14,9 +14,9 @@ from unstructured.documents.elements import Element, ElementMetadata, process_me
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
+from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 from unstructured.utils import is_temp_file_path, lazyproperty
 
