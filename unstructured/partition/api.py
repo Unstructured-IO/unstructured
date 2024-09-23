@@ -5,7 +5,7 @@ from typing import IO, Any, Optional, Sequence
 
 import requests
 from unstructured_client import UnstructuredClient
-from unstructured_client.models import shared, operations
+from unstructured_client.models import operations, shared
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
