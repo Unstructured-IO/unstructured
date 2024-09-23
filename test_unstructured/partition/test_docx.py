@@ -243,73 +243,44 @@ def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_docx_metadata_date(mocker: MockFixture):
+def test_partition_docx_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value="2029-07-05T09:24:28"
+        "unstructured.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_docx(example_doc_path("fake.docx"))
 
-    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
+    assert elements[0].metadata.last_modified == filesystem_last_modified
 
 
-def test_partition_docx_metadata_date_with_custom_metadata(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value="2023-11-01T14:13:07"
-    )
-
-    elements = partition_docx(
-        example_doc_path("fake.docx"), metadata_last_modified="2020-07-05T09:24:28"
-    )
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
-
-
-def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2029-07-05T09:24:28",
-    )
-
-    with open(example_doc_path("fake.docx"), "rb") as f:
+def test_partition_docx_from_file_gets_last_modified_None():
+    with open(example_doc_path("simple.docx"), "rb") as f:
         elements = partition_docx(file=f)
 
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture):
+def test_partition_docx_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2023-11-01T14:13:07"
+    metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2029-07-05T09:24:28",
+        "unstructured.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file=f, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
-
-
-def test_partition_docx_from_file_metadata_date_with_custom_metadata(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2023-11-01T14:13:07",
+    elements = partition_docx(
+        example_doc_path("fake.docx"), metadata_last_modified=metadata_last_modified
     )
 
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file=f, metadata_last_modified="2020-07-05T09:24:28")
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
-def test_partition_docx_from_file_without_metadata_date():
-    """Test partition_docx() with file that are not possible to get last modified date"""
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        sf = tempfile.SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_docx(file=sf, date_from_file_object=True)
+def test_partition_docx_from_file_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        elements = partition_docx(file=f, metadata_last_modified=metadata_last_modified)
 
-    assert elements[0].metadata.last_modified is None
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
 # ------------------------------------------------------------------------------------------------
@@ -744,7 +715,6 @@ def opts_args() -> dict[str, Any]:
     compact for testing purposes.
     """
     return {
-        "date_from_file_object": False,
         "file": None,
         "file_path": None,
         "include_page_breaks": True,
@@ -871,33 +841,14 @@ class DescribeDocxPartitionerOptions:
         get_last_modified_date_.assert_called_once_with("a/b/document.docx")
         assert last_modified == "2024-04-02T20:32:35"
 
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_no_file_path_is_provided(
+        self, opts_args: dict[str, Any]
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
-        opts_args["date_from_file_object"] = True
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
         opts = DocxPartitionerOptions(**opts_args)
 
-        last_modified = opts.last_modified
-
-        get_last_modified_date_from_file_.assert_called_once_with(file)
-        assert last_modified == "2024-04-02T20:42:07"
-
-    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
-    ):
-        file = io.BytesIO(b"abcdefg")
-        opts_args["file"] = file
-        opts_args["date_from_file_object"] = False
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        last_modified = opts.last_modified
-
-        get_last_modified_date_from_file_.assert_not_called()
-        assert last_modified is None
+        assert opts.last_modified is None
 
     # -- .metadata_file_path ---------------------
 
@@ -1064,12 +1015,6 @@ class DescribeDocxPartitionerOptions:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.docx.get_last_modified_date")
-
-    @pytest.fixture()
-    def get_last_modified_date_from_file_(self, request: FixtureRequest):
-        return function_mock(
-            request, "unstructured.partition.docx.get_last_modified_date_from_file"
-        )
 
 
 class Describe_DocxPartitioner:

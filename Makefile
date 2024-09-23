@@ -318,7 +318,7 @@ test-no-extras:
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml_partition.py
+		test_${PACKAGE_NAME}/partition/test_xml.py
 
 .PHONY: test-extra-csv
 test-extra-csv:

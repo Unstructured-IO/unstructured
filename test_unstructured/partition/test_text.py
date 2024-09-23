@@ -6,8 +6,7 @@ import json
 import os
 import pathlib
 import uuid
-from tempfile import SpooledTemporaryFile
-from typing import Optional, Type
+from typing import Optional, Type, cast
 
 import pytest
 from pytest_mock import MockerFixture
@@ -345,7 +344,7 @@ def test_split_content_to_fit_max():
 
 def test_combine_paragraphs_less_than_min():
     segments = _combine_paragraphs_less_than_min(
-        SHORT_PARAGRAPHS.split("\n\n"),
+        cast(list[str], SHORT_PARAGRAPHS.split("\n\n")),
         max_partition=1500,
         min_partition=7,
     )
@@ -387,124 +386,69 @@ def test_partition_text_from_file_exclude_metadata():
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_text_metadata_date(mocker: MockerFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
+# -- .metadata.last_modified ---------------------------------------------------------------------
 
+
+def test_partition_text_from_file_path_gets_last_modified_from_filesystem(mocker: MockerFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.text.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.text.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    elements = partition_text(
-        filename=filename,
-    )
+    elements = partition_text(example_doc_path("fake-text.txt"))
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_text_with_custom_metadata_date(mocker: MockerFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_text_from_file_gets_last_modified_None():
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
+        elements = partition_text(file=f)
 
-    mocker.patch(
-        "unstructured.partition.text.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = partition_text(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert all(e.metadata.last_modified is None for e in elements)
 
 
-def test_partition_text_from_file_metadata_date(mocker: MockerFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.text.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_text(
-            file=f,
-        )
-
-    assert elements[0].metadata.last_modified is None
-
-
-def test_partition_text_from_file_explicit_get_metadata_date(mocker: MockerFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.text.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_text(
-            file=f,
-            date_from_file_object=True,
-        )
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_text_from_file_with_custom_metadata_date(mocker: MockerFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.text.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_text(file=f, metadata_last_modified=expected_last_modification_date)
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_text_from_text_metadata_date():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename) as f:
+def test_partition_text_from_text_gets_last_modified_None():
+    with open(example_doc_path("fake-text.txt")) as f:
         text = f.read()
 
-    elements = partition_text(
-        text=text,
+    elements = partition_text(text=text)
+
+    assert all(e.metadata.last_modified is None for e in elements)
+
+
+def test_partition_text_from_file_path_prefers_metadata_last_modified(mocker: MockerFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.text.get_last_modified_date", return_value=filesystem_last_modified
     )
-    assert elements[0].metadata.last_modified is None
+
+    elements = partition_text(
+        example_doc_path("fake-text.txt"), metadata_last_modified=metadata_last_modified
+    )
+
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_text_from_text_with_custom_metadata_date():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_text_from_file_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
+        elements = partition_text(file=f, metadata_last_modified=metadata_last_modified)
 
-    with open(filename) as f:
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+def test_partition_text_from_text_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("fake-text.txt")) as f:
         text = f.read()
 
-    elements = partition_text(text=text, metadata_last_modified=expected_last_modification_date)
+    elements = partition_text(text=text, metadata_last_modified=metadata_last_modified)
 
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_text_from_file_without_metadata_date():
-    """Test partition_text() with file that are not possible to get last modified date"""
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_text(file=sf, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified is None
+# ------------------------------------------------------------------------------------------------
 
 
 def test_Text_element_assigns_id_hashes_that_are_unique_and_deterministic():

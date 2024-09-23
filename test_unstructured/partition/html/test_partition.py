@@ -1208,7 +1208,6 @@ def opts_args() -> dict[str, Any]:
         "url": None,
         "headers": {},
         "ssl_verify": True,
-        "date_from_file_object": False,
         "metadata_last_modified": None,
         "skip_headers_and_footers": False,
         "detection_origin": None,
@@ -1330,32 +1329,15 @@ class DescribeHtmlPartitionerOptions:
         get_last_modified_date_.assert_called_once_with("a/b/document.html")
         assert last_modified == "2024-04-02T20:32:35"
 
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_no_file_path_is_provided(
+        self, opts_args: dict[str, Any]
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
-        opts_args["date_from_file_object"] = True
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
         opts = HtmlPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
-        get_last_modified_date_from_file_.assert_called_once_with(file)
-        assert last_modified == "2024-04-02T20:42:07"
-
-    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
-    ):
-        file = io.BytesIO(b"abcdefg")
-        opts_args["file"] = file
-        opts_args["date_from_file_object"] = False
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = HtmlPartitionerOptions(**opts_args)
-
-        last_modified = opts.last_modified
-
-        get_last_modified_date_from_file_.assert_not_called()
         assert last_modified is None
 
     # -- .skip_headers_and_footers ---------------
@@ -1375,12 +1357,6 @@ class DescribeHtmlPartitionerOptions:
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(
             request, "unstructured.partition.html.partition.get_last_modified_date"
-        )
-
-    @pytest.fixture()
-    def get_last_modified_date_from_file_(self, request: FixtureRequest):
-        return function_mock(
-            request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
         )
 
 

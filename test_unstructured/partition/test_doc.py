@@ -135,7 +135,7 @@ def test_partition_doc_from_file_prefers_metadata_filename_when_provided():
 def test_partition_doc_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_doc(example_doc_path("fake.doc"))
@@ -149,7 +149,7 @@ def test_partition_doc_prefers_metadata_last_modified_when_provided(
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified", return_value=filesystem_last_modified
+        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_doc(

@@ -1,8 +1,11 @@
-from tempfile import SpooledTemporaryFile
+from __future__ import annotations
+
+from typing import Any
 from unittest.mock import patch
 
 import pytest
 import requests
+from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -40,7 +43,7 @@ def test_partition_md_from_filename_with_metadata_filename():
 
 def test_partition_md_from_file():
     filename = example_doc_path("README.md")
-    with open(filename) as f:
+    with open(filename, "rb") as f:
         elements = partition_md(file=f)
     assert len(elements) > 0
     for element in elements:
@@ -49,7 +52,7 @@ def test_partition_md_from_file():
 
 def test_partition_md_from_file_with_metadata_filename():
     filename = example_doc_path("README.md")
-    with open(filename) as f:
+    with open(filename, "rb") as f:
         elements = partition_md(file=f, metadata_filename="test")
     assert len(elements) > 0
     assert all(element.metadata.filename == "test" for element in elements)
@@ -66,7 +69,7 @@ def test_partition_md_from_text():
 
 
 class MockResponse:
-    def __init__(self, text, status_code, headers={}):
+    def __init__(self, text: str, status_code: int, headers: dict[str, Any] = {}):
         self.text = text
         self.status_code = status_code
         self.ok = status_code < 300
@@ -142,7 +145,7 @@ def test_partition_md_from_filename_exclude_metadata():
 
 def test_partition_md_from_file_exclude_metadata():
     filename = example_doc_path("README.md")
-    with open(filename) as f:
+    with open(filename, "rb") as f:
         elements = partition_md(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
@@ -157,135 +160,69 @@ def test_partition_md_from_text_exclude_metadata():
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_md_metadata_date(
-    mocker,
-    filename="example-docs/README.md",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
+# -- .metadata.last_modified ---------------------------------------------------------------------
 
+
+def test_partition_md_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.md.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.md.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    elements = partition_md(
-        filename=filename,
-    )
+    elements = partition_md(example_doc_path("README.md"))
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_md_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/README.md",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_md_from_file_gets_last_modified_None():
+    with open(example_doc_path("README.md"), "rb") as f:
+        elements = partition_md(file=f)
 
-    mocker.patch(
-        "unstructured.partition.md.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = partition_md(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert all(e.metadata.last_modified is None for e in elements)
 
 
-def test_partition_md_from_file_metadata_date(
-    mocker,
-    filename="example-docs/README.md",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.md.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_md(
-            file=f,
-        )
-
-    assert elements[0].metadata.last_modified is None
-
-
-def test_partition_md_from_file_explicit_get_metadata_date(
-    mocker,
-    filename="example-docs/README.md",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.md.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_md(file=f, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_md_from_file_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/README.md",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.md.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_md(file=f, metadata_last_modified=expected_last_modification_date)
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_md_from_text_metadata_date(
-    filename="example-docs/README.md",
-):
-    with open(filename) as f:
+def test_partition_md_from_text_gets_last_modified_None():
+    with open(example_doc_path("README.md")) as f:
         text = f.read()
 
-    elements = partition_md(
-        text=text,
+    elements = partition_md(text=text)
+
+    assert all(e.metadata.last_modified is None for e in elements)
+
+
+def test_partition_md_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.md.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    assert elements[0].metadata.last_modified is None
+    elements = partition_md(
+        example_doc_path("README.md"), metadata_last_modified=metadata_last_modified
+    )
+
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_md_from_text_with_custom_metadata_date(
-    filename="example-docs/README.md",
-):
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_md_from_file_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("README.md"), "rb") as f:
+        elements = partition_md(file=f, metadata_last_modified=metadata_last_modified)
 
-    with open(filename) as f:
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+def test_partition_md_from_text_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("README.md")) as f:
         text = f.read()
 
-    elements = partition_md(text=text, metadata_last_modified=expected_last_modification_date)
+    elements = partition_md(text=text, metadata_last_modified=metadata_last_modified)
 
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_md_from_file_without_metadata_date(
-    filename="example-docs/README.md",
-):
-    """Test partition_md() with file that are not possible to get last modified date"""
-    with open(filename, "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_md(file=sf, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified is None
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_md_with_json():
@@ -295,12 +232,12 @@ def test_partition_md_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_add_chunking_strategy_by_title_on_partition_md(
-    filename="example-docs/README.md",
-):
-    elements = partition_md(filename=filename)
+def test_add_chunking_strategy_by_title_on_partition_md():
+    filename = example_doc_path("README.md")
+    elements = partition_md(filename)
     chunk_elements = partition_md(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
