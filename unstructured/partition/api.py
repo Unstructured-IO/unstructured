@@ -5,7 +5,7 @@ from typing import IO, Any, Optional, Sequence
 
 import requests
 from unstructured_client import UnstructuredClient
-from unstructured_client.models import shared
+from unstructured_client.models import shared, operations
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
@@ -83,8 +83,11 @@ def partition_via_api(
             )
         files = shared.Files(content=file, file_name=metadata_filename)
 
-    req = shared.PartitionParameters(files=files, **request_kwargs)
-    response = sdk.general.partition(req)
+    req = operations.PartitionRequest(
+        partition_parameters=shared.PartitionParameters(files=files, **request_kwargs)
+    )
+
+    response = sdk.general.partition(request=req)
 
     if response.status_code == 200:
         return elements_from_json(text=response.raw_response.text)

@@ -1,4 +1,4 @@
-## 0.15.14-dev0
+## 0.15.14-dev1
 
 ### Enhancements
 
@@ -6,11 +6,13 @@
 
 ### Fixes
 
+* **Update Python SDK usage in `partition_via_api`.** Make a minor syntax change to ensure forward compatibility with the upcoming 0.26.0 Python SDK.
+
 ## 0.15.13
 
 ### BREAKING CHANGES
 
-* **Remove dead experimental code.** Unused code in `file_utils.experimantal` and `file_utils.metadata` was removed. These functions were never published in the documentation, but if a client dug these out and used them this removal could break client code.
+* **Remove dead experimental code.** Unused code in `file_utils.experimental` and `file_utils.metadata` was removed. These functions were never published in the documentation, but if a client dug these out and used them this removal could break client code.
 
 ### Enhancements
 
