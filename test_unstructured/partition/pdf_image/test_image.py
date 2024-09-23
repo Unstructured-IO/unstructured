@@ -301,7 +301,7 @@ def test_partition_image_default_strategy_hi_res():
 def test_partition_image_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=filesystem_last_modified,
     )
 
@@ -315,7 +315,7 @@ def test_partition_image_from_file_path_with_hi_res_strategy_gets_last_modified_
 ):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=filesystem_last_modified,
     )
 
@@ -330,7 +330,7 @@ def test_partition_image_from_file_path_prefers_metadata_last_modified(mocker: M
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2009-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=filesystem_last_modified,
     )
 
@@ -348,7 +348,7 @@ def test_partition_image_from_file_path_with_hi_res_strategy_prefers_metadata_la
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2009-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=filesystem_last_modified,
     )
 
