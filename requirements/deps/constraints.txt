@@ -16,5 +16,5 @@ urllib3<1.27
 botocore<1.34.132
 # TODO: Constriant due to both 8.5.0 and 8.4.0 being installed during pip-compile
 importlib-metadata>=8.5.0
-# (austin): Versions below this have a different interace for passing parameters
+# (austin): Versions below this have a different interface for passing parameters
 unstructured-client>=0.23.0
