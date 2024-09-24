@@ -5,9 +5,13 @@ from __future__ import annotations
 import datetime as dt
 import os
 import pathlib
+from typing import Any, Callable
+
+import pytest
 
 from unstructured.documents.elements import (
     CheckBox,
+    Element,
     ElementMetadata,
     FigureCaption,
     Header,
@@ -16,7 +20,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import (
+    apply_metadata,
     get_last_modified_date,
     set_element_hierarchy,
 )
@@ -119,3 +125,193 @@ def test_set_element_hierarchy_custom_rule_set():
     assert (
         elements[5].metadata.parent_id == elements[4].id
     ), "FigureCaption should be child of Title 2"
+
+
+class Describe_apply_metadata:
+    """Unit-test suite for `unstructured.partition.common.metadata.apply_metadata()` decorator."""
+
+    # -- unique-ids -------------------------------------------------------
+
+    def it_assigns_hash_element_ids_when_unique_ids_arg_is_not_specified(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+        elements_2 = partition()
+
+        # -- SHA1 hash is 32 characters long, no hyphens --
+        assert all(len(e.id) == 32 for e in elements)
+        assert all("-" not in e.id for e in elements)
+        # -- SHA1 hashes are deterministic --
+        assert all(e.id == e2.id for e, e2 in zip(elements, elements_2))
+
+    def it_assigns_hash_element_ids_when_unique_ids_arg_is_False(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(unique_element_ids=False)
+        elements_2 = partition(unique_element_ids=False)
+
+        # -- SHA1 hash is 32 characters long, no hyphens --
+        assert all(len(e.id) == 32 for e in elements)
+        assert all("-" not in e.id for e in elements)
+        # -- SHA1 hashes are deterministic --
+        assert all(e.id == e2.id for e, e2 in zip(elements, elements_2))
+
+    def it_leaves_UUID_element_ids_when_unique_ids_arg_is_True(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(unique_element_ids=True)
+        elements_2 = partition(unique_element_ids=True)
+
+        # -- UUID is 36 characters long with four hyphens --
+        assert all(len(e.id) == 36 for e in elements)
+        assert all(e.id.count("-") == 4 for e in elements)
+        # -- UUIDs are non-deterministic, different every time --
+        assert all(e.id != e2.id for e, e2 in zip(elements, elements_2))
+
+    # -- parent-id --------------------------------------------------------
+
+    def it_computes_and_assigns_parent_id(self, fake_partitioner: Callable[..., list[Element]]):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        title = elements[0]
+        assert title.metadata.category_depth == 1
+        narr_text = elements[1]
+        assert narr_text.metadata.parent_id == title.id
+
+    # -- languages --------------------------------------------------------
+
+    def it_applies_language_metadata(self, fake_partitioner: Callable[..., list[Element]]):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(languages=["auto"], detect_language_per_element=True)
+
+        assert all(e.metadata.languages == ["eng"] for e in elements)
+
+    # -- filetype (MIME-type) ---------------------------------------------
+
+    def it_assigns_the_value_of_a_metadata_file_type_arg_when_there_is_one(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """A `metadata_file_type` arg overrides the file-type specified in the decorator.
+
+        This is used for example by a delegating partitioner to preserve the original file-type in
+        the metadata, like EPUB instead of the HTML that partitioner converts the .epub file to.
+        """
+        partition = apply_metadata(file_type=FileType.DOCX)(fake_partitioner)
+
+        elements = partition(metadata_file_type=FileType.ODT)
+
+        assert all(
+            e.metadata.filetype == "application/vnd.oasis.opendocument.text" for e in elements
+        )
+
+    def and_it_assigns_the_decorator_file_type_when_the_metadata_file_type_arg_is_omitted(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """The `file_type=...` decorator arg is the "normal" way to specify the file-type.
+
+        This is used for principal (non-delegating) partitioners.
+        """
+        partition = apply_metadata(file_type=FileType.DOCX)(fake_partitioner)
+
+        elements = partition()
+
+        DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        assert all(e.metadata.filetype == DOCX_MIME_TYPE for e in elements)
+
+    def and_it_does_not_assign_file_type_metadata_when_both_are_omitted(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """A partitioner can elect to assign `.metadata.filetype` for itself.
+
+        This is done in `partition_image()` for example where the same partitioner is used for
+        multiple file-types.
+        """
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        assert all(e.metadata.filetype == "image/jpeg" for e in elements)
+
+    # -- filename ---------------------------------------------------------
+
+    def it_uses_metadata_filename_arg_value_when_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """A `metadata_filename` arg overrides all other sources."""
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(metadata_filename="a/b/c.xyz")
+
+        assert all(e.metadata.filename == "c.xyz" for e in elements)
+        assert all(e.metadata.file_directory == "a/b" for e in elements)
+
+    def and_it_uses_filename_arg_value_when_metadata_filename_arg_not_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(filename="a/b/c.xyz")
+
+        assert all(e.metadata.filename == "c.xyz" for e in elements)
+        assert all(e.metadata.file_directory == "a/b" for e in elements)
+
+    def and_it_does_not_assign_filename_metadata_when_neither_are_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        assert all(e.metadata.filename == "image.jpeg" for e in elements)
+        assert all(e.metadata.file_directory == "x/y/images" for e in elements)
+
+    # -- url --------------------------------------------------------------
+
+    def it_assigns_url_metadata_field_when_url_arg_is_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(url="https://adobe.com/stock/54321")
+
+        assert all(e.metadata.url == "https://adobe.com/stock/54321" for e in elements)
+
+    def and_it_does_not_assign_url_metadata_when_url_arg_is_not_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        assert all(e.metadata.url == "http://images.com" for e in elements)
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture
+    def fake_partitioner(self) -> Callable[..., list[Element]]:
+        def fake_partitioner(**kwargs: Any) -> list[Element]:
+            title = Title("Introduction")
+            title.metadata.category_depth = 1
+            title.metadata.file_directory = "x/y/images"
+            title.metadata.filename = "image.jpeg"
+            title.metadata.filetype = "image/jpeg"
+            title.metadata.url = "http://images.com"
+
+            narr_text = NarrativeText("To understand bar you must first understand foo.")
+            narr_text.metadata.file_directory = "x/y/images"
+            narr_text.metadata.filename = "image.jpeg"
+            narr_text.metadata.filetype = "image/jpeg"
+            narr_text.metadata.url = "http://images.com"
+
+            return [title, narr_text]
+
+        return fake_partitioner
