@@ -9,6 +9,7 @@ import pytest
 import requests
 from unstructured_client.general import General
 from unstructured_client.models import shared
+from unstructured_client.models.operations import PartitionRequest
 from unstructured_client.models.shared import PartitionParameters
 
 from unstructured.documents.elements import ElementType, NarrativeText
@@ -55,7 +56,7 @@ def test_partition_via_api_with_file_correctly_calls_sdk(
 
     # Update the fixture content to match the format passed to partition_via_api
     modified_expected_call = expected_call_[:]
-    modified_expected_call[1].files.content = f
+    modified_expected_call[1].partition_parameters.files.content = f
 
     partition_mock_.assert_called_once_with(*modified_expected_call)
     assert isinstance(partition_mock_.call_args_list[0].args[0], General)
@@ -76,7 +77,7 @@ def test_partition_via_api_warns_with_file_and_filename_and_calls_sdk(
 
     # Update the fixture content to match the format passed to partition_via_api
     modified_expected_call = expected_call_[:]
-    modified_expected_call[1].files.content = f
+    modified_expected_call[1].partition_parameters.files.content = f
 
     partition_mock_.assert_called_once_with(*modified_expected_call)
     assert "WARNING" in caplog.text
@@ -487,36 +488,38 @@ def expected_call_():
         file_bytes = f.read()
     return [
         ANY,
-        PartitionParameters(
-            files=shared.Files(
-                content=file_bytes,
-                file_name=example_doc_path("eml/fake-email.eml"),
-            ),
-            chunking_strategy=None,
-            combine_under_n_chars=None,
-            coordinates=False,
-            encoding=None,
-            extract_image_block_types=None,
-            gz_uncompressed_content_type=None,
-            hi_res_model_name=None,
-            include_orig_elements=None,
-            include_page_breaks=False,
-            languages=None,
-            max_characters=None,
-            multipage_sections=True,
-            new_after_n_chars=None,
-            ocr_languages=None,
-            output_format=shared.OutputFormat.APPLICATION_JSON,
-            overlap=0,
-            overlap_all=False,
-            pdf_infer_table_structure=True,
-            similarity_threshold=None,
-            skip_infer_table_types=None,
-            split_pdf_concurrency_level=5,
-            split_pdf_page=True,
-            starting_page_number=None,
-            strategy=shared.Strategy.HI_RES,
-            unique_element_ids=False,
-            xml_keep_tags=False,
+        PartitionRequest(
+            partition_parameters=PartitionParameters(
+                files=shared.Files(
+                    content=file_bytes,
+                    file_name=example_doc_path("eml/fake-email.eml"),
+                ),
+                chunking_strategy=None,
+                combine_under_n_chars=None,
+                coordinates=False,
+                encoding=None,
+                extract_image_block_types=None,
+                gz_uncompressed_content_type=None,
+                hi_res_model_name=None,
+                include_orig_elements=None,
+                include_page_breaks=False,
+                languages=None,
+                max_characters=None,
+                multipage_sections=True,
+                new_after_n_chars=None,
+                ocr_languages=None,
+                output_format=shared.OutputFormat.APPLICATION_JSON,
+                overlap=0,
+                overlap_all=False,
+                pdf_infer_table_structure=True,
+                similarity_threshold=None,
+                skip_infer_table_types=None,
+                split_pdf_concurrency_level=5,
+                split_pdf_page=True,
+                starting_page_number=None,
+                strategy=shared.Strategy.HI_RES,
+                unique_element_ids=False,
+                xml_keep_tags=False,
+            )
         ),
     ]
