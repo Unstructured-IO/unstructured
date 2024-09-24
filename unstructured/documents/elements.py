@@ -562,7 +562,7 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     # -- map old parent IDs to new ones --
     for e in elements:
         parent_id = e.metadata.parent_id
-        if not parent_id:
+        if not parent_id or parent_id not in old_to_new_mapping:
             continue
         e.metadata.parent_id = old_to_new_mapping[parent_id]
 

@@ -704,6 +704,21 @@ def test_hash_ids_are_unique_for_duplicate_elements():
             ), "Parent ID hasn't changed after recalculation"
 
 
+def test_hash_ids_can_handle_duplicated_element_instances():
+    # GIVEN
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    element = Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id))
+    elements = [parent, element, element]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+    ids = [element.id for element in updated_elements]
+
+    # THEN
+    assert len(ids) == len(set(ids)) + 1, "One element is duplicated so uniques should be one less."
+    assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
+
+
 def test_hash_ids_are_deterministic():
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
     elements = [

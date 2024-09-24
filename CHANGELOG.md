@@ -8,6 +8,7 @@
 
 * **Update Python SDK usage in `partition_via_api`.** Make a minor syntax change to ensure forward compatibility with the upcoming 0.26.0 Python SDK.
 * **Remove "unused" `date_from_file_object` parameter.** As part of simplifying partitioning parameter set, remove `date_from_file_object` parameter. A file object does not have a last-modified date attribute so can never give a useful value. When a file-object is used as the document source (such as in Unstructured API) the last-modified date must come from the `metadata_last_modified` argument.
+* **Fix occasional `KeyError` when mapping parent ids to hash ids.** Occasionally the input elements into `assign_and_map_hash_ids` can contain duplicated element instances, which lead to error when mapping parent id.
 
 ## 0.15.13
 
