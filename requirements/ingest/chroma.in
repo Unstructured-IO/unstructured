@@ -3,7 +3,7 @@
 chromadb>0.4.14
 importlib-metadata>=8.2.0
 # Future releases adds in typer-cli which breaks the resolution of typer as a library
-typer<=0.9.0
+typer<=0.12.5
 # tenacity 9.0.0 is being installed via chroma, but other dependencies (langchain) restrict tenacity
 # to <9.0.0 and resolve to 8.5.0.
 # The original langchain pin: https://github.com/langchain-ai/langchain/pull/849/
