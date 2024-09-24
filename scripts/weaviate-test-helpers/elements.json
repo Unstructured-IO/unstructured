@@ -363,15 +363,6 @@
                 },
                 {
                     "dataType": [
-                        "text"
-                    ],
-                    "indexFilterable": true,
-                    "indexSearchable": true,
-                    "name": "regex_metadata",
-                    "tokenization": "word"
-                },
-                {
-                    "dataType": [
                         "number"
                     ],
                     "indexFilterable": true,

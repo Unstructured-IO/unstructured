@@ -272,13 +272,7 @@ def flatten_dict(
 
 
 def _get_table_fieldnames(rows: list[dict[str, Any]]):
-    table_fieldnames = list(TABLE_FIELDNAMES)
-    for row in rows:
-        metadata = row["metadata"]
-        for key in flatten_dict(metadata):
-            if key.startswith("regex_metadata") and key not in table_fieldnames:
-                table_fieldnames.append(key)
-    return table_fieldnames
+    return list(TABLE_FIELDNAMES)
 
 
 def convert_to_csv(elements: Iterable[Element]) -> str:
@@ -337,7 +331,6 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "emphasized_text_contents": object,  # Optional[list[str]]
         "emphasized_text_tags": object,  # Optional[list[str]]
         "text_as_html": pd.StringDtype(),  # Optional[str]  # type: ignore
-        "regex_metadata": object,
         "max_characters": "Int64",  # Optional[int]
         "is_continuation": "boolean",  # Optional[bool]
         "detection_class_prob": float,  # Optional[float],
@@ -354,7 +347,6 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "data_source_date_processed": pd.StringDtype(),  # Optional[str]  # type: ignore
         "data_source_permissions_data": object,
         "embeddings": object,
-        "regex_metadata_key": object,
     }
 
 

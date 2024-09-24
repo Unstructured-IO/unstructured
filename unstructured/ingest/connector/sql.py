@@ -159,9 +159,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
-
         if data.get("metadata", {}).get("data_source", None):
             data.update(data.get("metadata", {}).pop("data_source", None))
         if data.get("metadata", {}).get("coordinates", None):
