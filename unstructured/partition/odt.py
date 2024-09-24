@@ -9,7 +9,7 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
-from unstructured.partition.common.metadata import get_last_modified
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.docx import partition_docx
 from unstructured.utils import requires_dependencies
 
@@ -20,9 +20,8 @@ from unstructured.utils import requires_dependencies
 def partition_odt(
     filename: Optional[str] = None,
     *,
-    date_from_file_object: bool = False,
-    detect_language_per_element: bool = False,
     file: Optional[IO[bytes]] = None,
+    detect_language_per_element: bool = False,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
@@ -54,10 +53,9 @@ def partition_odt(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from the file-like object, otherwise set it to None.
     """
+
+    last_modified = get_last_modified_date(filename) if filename else None
 
     with tempfile.TemporaryDirectory() as target_dir:
         docx_path = _convert_odt_to_docx(target_dir, filename, file)
@@ -67,9 +65,7 @@ def partition_odt(
             infer_table_structure=infer_table_structure,
             languages=languages,
             metadata_filename=metadata_filename,
-            metadata_last_modified=(
-                metadata_last_modified or get_last_modified(filename, file, date_from_file_object)
-            ),
+            metadata_last_modified=metadata_last_modified or last_modified,
             starting_page_number=starting_page_number,
             strategy=strategy,
         )

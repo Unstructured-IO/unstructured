@@ -49,7 +49,6 @@ def partition(
     request_timeout: Optional[int] = None,
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
 ):
@@ -135,10 +134,6 @@ def partition(
     model_name
         The layout detection model used when partitioning strategy is set to `hi_res`. To be
         deprecated in favor of `hi_res_model_name`.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True and inference
-        from message header failed, attempt to infer last_modified metadata from bytes,
-        otherwise set it to None.
     starting_page_number
         Indicates what page number should be assigned to the first page in the document.
         This information will be reflected in elements' metadata and can be be especially
@@ -154,12 +149,11 @@ def partition(
 
     if file_filename is not None:
         metadata_filename = file_filename
-        logger.warn(
+        logger.warning(
             "The file_filename kwarg will be deprecated in a future version of unstructured. "
             "Please use metadata_filename instead.",
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
-    kwargs.setdefault("date_from_file_object", date_from_file_object)
 
     if pdf_infer_table_structure:
         logger.warning(

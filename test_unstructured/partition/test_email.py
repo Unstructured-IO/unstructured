@@ -512,9 +512,11 @@ def test_partition_email_from_file_exclude_metadata():
     assert elements[0].metadata.filename is None
 
 
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
 def test_partition_email_metadata_date_from_header(mocker: MockFixture):
     mocker.patch("unstructured.partition.email.get_last_modified_date", return_value=None)
-    mocker.patch("unstructured.partition.email.get_last_modified_date_from_file", return_value=None)
 
     elements = partition_email(example_doc_path("eml/fake-email-attachment.eml"))
 
@@ -535,6 +537,9 @@ def test_partition_email_custom_metadata_date():
     )
 
     assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_eml_add_signature_to_metadata():

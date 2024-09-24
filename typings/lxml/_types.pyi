@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from os import PathLike
 from typing import Any, Callable, Collection, Protocol, TypeVar
 
 from typing_extensions import TypeAlias
@@ -20,6 +21,8 @@ _AttrVal: TypeAlias = _TextArg
 _ElemPathArg: TypeAlias = str | QName
 
 _ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
+
+_FilePath = str | PathLike[str] | PathLike[bytes]
 
 _TagName: TypeAlias = str
 

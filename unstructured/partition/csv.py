@@ -16,10 +16,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.utils import is_temp_file_path, lazyproperty
 
@@ -40,7 +37,6 @@ def partition_csv(
     languages: list[str] | None = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement so detect_language_per_element
     # is not included as a param
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -71,12 +67,9 @@ def partition_csv(
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
-    ctx = _CsvPartitioningContext(
+    ctx = _CsvPartitioningContext.load(
         file_path=filename,
         file=file,
         encoding=encoding,
@@ -84,7 +77,6 @@ def partition_csv(
         metadata_last_modified=metadata_last_modified,
         include_header=include_header,
         infer_table_structure=infer_table_structure,
-        date_from_file_object=date_from_file_object,
     )
 
     with ctx.open() as file:
@@ -122,7 +114,6 @@ class _CsvPartitioningContext:
         metadata_last_modified: str | None = None,
         include_header: bool = False,
         infer_table_structure: bool = True,
-        date_from_file_object: bool = False,
     ):
         self._file_path = file_path
         self._file = file
@@ -131,7 +122,6 @@ class _CsvPartitioningContext:
         self._metadata_last_modified = metadata_last_modified
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
-        self._date_from_file_object = date_from_file_object
 
     @classmethod
     def load(
@@ -143,7 +133,6 @@ class _CsvPartitioningContext:
         metadata_last_modified: str | None,
         include_header: bool,
         infer_table_structure: bool,
-        date_from_file_object: bool = False,
     ) -> _CsvPartitioningContext:
         return cls(
             file_path=file_path,
@@ -153,7 +142,6 @@ class _CsvPartitioningContext:
             metadata_last_modified=metadata_last_modified,
             include_header=include_header,
             infer_table_structure=infer_table_structure,
-            date_from_file_object=date_from_file_object,
         )._validate()
 
     @lazyproperty
@@ -195,13 +183,6 @@ class _CsvPartitioningContext:
                 None
                 if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
             )
 
         return None

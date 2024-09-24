@@ -12,6 +12,7 @@ from unittest import mock
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
+from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
@@ -704,46 +705,38 @@ def test_partition_pdf_exclude_metadata(
         PartitionStrategy.OCR_ONLY,
     ],
 )
-@pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
-@pytest.mark.parametrize("date_from_file_object", [True, False])
+@pytest.mark.parametrize("metadata_last_modified", [None, "2020-07-05T09:24:28"])
 def test_partition_pdf_metadata_date(
-    mocker,
-    file_mode,
-    strategy,
-    last_modification_date,
-    date_from_file_object,
-    filename=example_doc_path("pdf/copy-protected.pdf"),
+    mocker: MockFixture,
+    file_mode: str,
+    strategy: str,
+    metadata_last_modified: str | None,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = (
-        last_modification_date if last_modification_date else mocked_last_modification_date
+    filename = example_doc_path("pdf/copy-protected.pdf")
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    expected_last_modified = (
+        metadata_last_modified if metadata_last_modified else filesystem_last_modified
     )
-    if not date_from_file_object and not last_modification_date and file_mode != "filename":
-        expected_last_modification_date = None
+    if not metadata_last_modified and file_mode != "filename":
+        expected_last_modified = None
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-    mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     if file_mode == "filename":
         elements = pdf.partition_pdf(
             filename=filename,
             strategy=strategy,
-            metadata_last_modified=last_modification_date,
-            date_from_file_object=date_from_file_object,
+            metadata_last_modified=metadata_last_modified,
         )
     elif file_mode == "rb":
         with open(filename, "rb") as f:
             elements = pdf.partition_pdf(
                 file=f,
                 strategy=strategy,
-                metadata_last_modified=last_modification_date,
-                date_from_file_object=date_from_file_object,
+                metadata_last_modified=metadata_last_modified,
             )
     else:
         with open(filename, "rb") as test_file:
@@ -753,11 +746,10 @@ def test_partition_pdf_metadata_date(
             elements = pdf.partition_pdf(
                 file=spooled_temp_file,
                 strategy=strategy,
-                metadata_last_modified=last_modification_date,
-                date_from_file_object=date_from_file_object,
+                metadata_last_modified=metadata_last_modified,
             )
 
-    assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
+    assert {el.metadata.last_modified for el in elements} == {expected_last_modified}
 
 
 @pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.HI_RES])

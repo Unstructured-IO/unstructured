@@ -26,10 +26,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -58,7 +55,6 @@ def partition_xlsx(
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -89,12 +85,8 @@ def partition_xlsx(
         The day of the last modification
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     opts = _XlsxPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         detect_language_per_element=detect_language_per_element,
         file=file,
         file_path=filename,
@@ -118,7 +110,7 @@ def partition_xlsx(
                 else None
             )
             # XXX: `html_text` can be `None`. What happens on this call in that case?
-            text = soupparser_fromstring(html_text).text_content()
+            text = soupparser_fromstring(html_text).text_content()  # type: ignore
 
             if opts.include_metadata:
                 metadata = ElementMetadata(
@@ -182,7 +174,6 @@ class _XlsxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         detect_language_per_element: bool,
         file: Optional[IO[bytes]],
         file_path: Optional[str],
@@ -194,7 +185,6 @@ class _XlsxPartitionerOptions:
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
     ):
-        self._date_from_file_object = date_from_file_object
         self._detect_language_per_element = detect_language_per_element
         self._file = file
         self._file_path = file_path
@@ -257,13 +247,6 @@ class _XlsxPartitionerOptions:
 
         if self._file_path:
             return get_last_modified_date(self._file_path)
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
 
         return None
 

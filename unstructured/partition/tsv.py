@@ -18,10 +18,7 @@ from unstructured.partition.common.common import (
     exactly_one,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.lang import apply_lang_metadata
 
 DETECTION_ORIGIN: str = "tsv"
@@ -40,7 +37,6 @@ def partition_tsv(
     languages: Optional[list[str]] = ["auto"],
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions TSV files into document elements.
@@ -61,26 +57,21 @@ def partition_tsv(
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
-    last_modification_date = None
+    last_modified = get_last_modified_date(filename) if filename else None
+
     header = 0 if include_header else None
 
     if filename:
         table = pd.read_csv(filename, sep="\t", header=header)
-        last_modification_date = get_last_modified_date(filename)
-    elif file:
+    else:
+        assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
         table = pd.read_csv(f, sep="\t", header=header)
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
@@ -89,7 +80,7 @@ def partition_tsv(
         metadata = ElementMetadata(
             text_as_html=html_text,
             filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
+            last_modified=metadata_last_modified or last_modified,
             languages=languages,
         )
         metadata.detection_origin = DETECTION_ORIGIN

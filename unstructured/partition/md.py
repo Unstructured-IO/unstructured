@@ -10,10 +10,7 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
-from unstructured.partition.common.metadata import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 
 
@@ -38,10 +35,8 @@ def partition_md(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a markdown file into its constituent elements
@@ -71,9 +66,6 @@ def partition_md(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     # Verify that only one of the arguments was provided
     if text is None:
@@ -81,16 +73,13 @@ def partition_md(
 
     exactly_one(filename=filename, file=file, text=text, url=url)
 
-    last_modification_date = None
+    last_modified = get_last_modified_date(filename) if filename else None
+
     if filename is not None:
-        last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             text = optional_decode(f.read())
 
     elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
         text = optional_decode(file.read())
 
     elif url is not None:
@@ -114,7 +103,7 @@ def partition_md(
         include_metadata=include_metadata,
         source_format="md",
         metadata_filename=metadata_filename,
-        metadata_last_modified=metadata_last_modified or last_modification_date,
+        metadata_last_modified=metadata_last_modified or last_modified,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
         detection_origin=DETECTION_ORIGIN,
