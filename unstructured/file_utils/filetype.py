@@ -495,7 +495,7 @@ class _OleFileDifferentiator:
     def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:
         """True when file has CFBF magic first 8 bytes."""
         with ctx.open() as file:
-            return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+            return file.read(8) == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
     @staticmethod
     def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
@@ -719,10 +719,11 @@ def add_filetype(
 
     This decorator adds a post-processing step to a document partitioner.
 
-    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
-    - Adds `.metadata.regex-metadata` when `regex_metadata` keyword-argument is provided.
-    - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
+    - Adds `.metadata.filetype` (source-document MIME-type) metadata value
 
+    This "partial" decorator is present because `partition_image()` does not apply
+    `.metadata.filetype` this way since each image type has its own MIME-type (e.g. `image.jpeg`,
+    `image/png`, etc.).
     """
 
     def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:

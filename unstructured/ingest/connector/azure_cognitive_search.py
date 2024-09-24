@@ -107,8 +107,6 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["date_processed"] = parser.parse(
                 date_processed,
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 

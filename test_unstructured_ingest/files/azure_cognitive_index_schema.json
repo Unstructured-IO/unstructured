@@ -178,10 +178,6 @@
           "type": "Edm.String"
         },
         {
-          "name": "regex_metadata",
-          "type": "Edm.String"
-        },
-        {
           "name": "detection_class_prob",
           "type": "Edm.Double"
         }

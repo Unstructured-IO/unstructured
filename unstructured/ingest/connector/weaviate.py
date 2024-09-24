@@ -169,9 +169,6 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
-
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(elements_dict)} objects to destination "

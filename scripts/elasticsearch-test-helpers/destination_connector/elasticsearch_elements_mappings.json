@@ -135,9 +135,6 @@
                "type": "text",
                "analyzer": "standard"
             },
-            "regex_metadata": {
-               "type": "object"
-            },
             "detection_class_prob": {
                "type": "float"
             }

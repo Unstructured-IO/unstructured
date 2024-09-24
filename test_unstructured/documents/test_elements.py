@@ -27,7 +27,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Points,
-    RegexMetadata,
     Text,
     Title,
     assign_and_map_hash_ids,
@@ -233,24 +232,6 @@ def test_element_to_dict():
         "text": "",
         "element_id": "awt32t1",
     }
-
-
-def test_regex_metadata_round_trips_through_JSON():
-    """metadata.regex_metadata should appear at full depth in JSON."""
-    regex_metadata = {
-        "mail-stop": [RegexMetadata(text="MS-107", start=18, end=24)],
-        "version": [
-            RegexMetadata(text="current=v1.7.2", start=7, end=21),
-            RegexMetadata(text="supersedes=v1.7.2", start=22, end=40),
-        ],
-    }
-    metadata = ElementMetadata(regex_metadata=regex_metadata)
-
-    metadata_json = json.dumps(metadata.to_dict())
-    deserialized_metadata = ElementMetadata.from_dict(json.loads(metadata_json))
-    reserialized_metadata_json = json.dumps(deserialized_metadata.to_dict())
-
-    assert reserialized_metadata_json == metadata_json
 
 
 class DescribeElementMetadata:

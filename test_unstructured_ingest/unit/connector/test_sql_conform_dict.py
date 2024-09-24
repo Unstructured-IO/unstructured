@@ -55,7 +55,6 @@ TEST_DATA_2 = {
         },
         "last_modified": "2021-01-03T00:00:00",
         "page_number": 10,
-        "regex_metadata": {"pattern": "abc"},
     },
     "embeddings": [0.1, 0.2, 0.3],
 }
@@ -135,7 +134,6 @@ def test_conform_dict_2():
         "links": '{"link1": "https://example.com", "link2": "https://example.org"}',
         "last_modified": datetime.datetime(2021, 1, 3, 0, 0),
         "page_number": "10",
-        "regex_metadata": '{"pattern": "abc"}',
         "date_created": datetime.datetime(2021, 1, 1, 0, 0),
         "date_modified": datetime.datetime(2021, 1, 2, 0, 0),
         "date_processed": datetime.datetime(2022, 12, 13, 15, 44, 8),

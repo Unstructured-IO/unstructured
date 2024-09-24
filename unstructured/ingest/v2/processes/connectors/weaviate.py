@@ -126,9 +126,6 @@ class WeaviateUploadStager(UploadStager):
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
 
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
-
     def run(
         self,
         elements_filepath: Path,

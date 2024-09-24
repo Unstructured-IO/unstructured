@@ -31,7 +31,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     PageBreak,
-    RegexMetadata,
     Table,
     TableChunk,
     Text,
@@ -958,51 +957,6 @@ class DescribeTextPreChunk:
         assert orig_elements[0] is element
         assert orig_elements[1] is element_2
 
-    def it_consolidates_regex_metadata_in_a_field_specific_way(self):
-        """regex_metadata of chunk is combined regex_metadatas of its elements.
-
-        Also, the `start` and `end` offsets of each regex-match are adjusted to reflect their new
-        position in the chunk after element text has been concatenated.
-        """
-        pre_chunk = TextPreChunk(
-            [
-                Title(
-                    "Lorem Ipsum",
-                    metadata=ElementMetadata(
-                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
-                    ),
-                ),
-                Text(
-                    "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-                    metadata=ElementMetadata(
-                        regex_metadata={
-                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
-                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
-                        },
-                    ),
-                ),
-                Text(
-                    "In rhoncus ipsum sed lectus porta volutpat.",
-                    metadata=ElementMetadata(
-                        regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
-                    ),
-                ),
-            ],
-            overlap_prefix="ficitur.",  # len == 8
-            opts=ChunkingOptions(),
-        )
-
-        regex_metadata = pre_chunk._consolidated_regex_meta
-
-        assert regex_metadata == {
-            "dolor": [RegexMetadata(text="dolor", start=35, end=40)],
-            "ipsum": [
-                RegexMetadata(text="Ipsum", start=16, end=21),
-                RegexMetadata(text="ipsum", start=29, end=34),
-                RegexMetadata(text="ipsum", start=91, end=96),
-            ],
-        }
-
     def it_forms_ElementMetadata_constructor_kwargs_by_applying_consolidation_strategies(self):
         """._meta_kwargs is used like `ElementMetadata(**self._meta_kwargs)` to construct metadata.
 
@@ -1021,7 +975,6 @@ class DescribeTextPreChunk:
                         emphasized_text_contents=["Lorem", "Ipsum"],
                         emphasized_text_tags=["b", "i"],
                         languages=["lat"],
-                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
                     ),
                 ),
                 Text(
@@ -1036,11 +989,6 @@ class DescribeTextPreChunk:
                         emphasized_text_tags=["i", "b"],
                         # -- languages has LIST_UNIQUE strategy, so "lat(in)" appears only once --
                         languages=["eng", "lat"],
-                        # -- regex_metadata has its own dedicated consolidation-strategy (REGEX) --
-                        regex_metadata={
-                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
-                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
-                        },
                     ),
                 ),
             ],
@@ -1055,13 +1003,6 @@ class DescribeTextPreChunk:
             "emphasized_text_contents": ["Lorem", "Ipsum", "Lorem", "ipsum"],
             "emphasized_text_tags": ["b", "i", "i", "b"],
             "languages": ["lat", "eng"],
-            "regex_metadata": {
-                "ipsum": [
-                    RegexMetadata(text="Ipsum", start=6, end=11),
-                    RegexMetadata(text="ipsum", start=19, end=24),
-                ],
-                "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
-            },
         }
 
     def it_computes_the_original_elements_list_to_help(self):

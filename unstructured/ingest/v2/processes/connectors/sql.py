@@ -103,7 +103,6 @@ _COLUMNS = (
     "emphasized_text_contents",
     "emphasized_text_tags",
     "text_as_html",
-    "regex_metadata",
     "detection_class_prob",
 )
 
@@ -165,10 +164,7 @@ class SQLUploadStager(UploadStager):
             df[column] = df[column].apply(
                 lambda x: json.dumps(x) if isinstance(x, (list, dict)) else None
             )
-        for column in filter(
-            lambda x: x in df.columns,
-            ("version", "page_number", "regex_metadata"),
-        ):
+        for column in filter(lambda x: x in df.columns, ("version", "page_number")):
             df[column] = df[column].apply(str)
 
         with output_path.open("w") as output_file:
