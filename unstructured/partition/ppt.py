@@ -21,7 +21,6 @@ def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
-    include_metadata: bool = True,
     include_slide_notes: Optional[bool] = None,
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,

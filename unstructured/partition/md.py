@@ -32,7 +32,6 @@ def partition_md(
     text: Optional[str] = None,
     url: Optional[str] = None,
     include_page_breaks: bool = False,
-    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
@@ -53,8 +52,6 @@ def partition_md(
         The URL of a webpage to parse. Only for URLs that return a markdown document.
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it.
-    include_metadata
-        Determines whether or not metadata is included in the output.
     parser
         The parser to use for parsing the markdown document. If None, default parser will be used.
     metadata_last_modified
@@ -100,7 +97,6 @@ def partition_md(
     return partition_html(
         text=html,
         include_page_breaks=include_page_breaks,
-        include_metadata=include_metadata,
         source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modified,

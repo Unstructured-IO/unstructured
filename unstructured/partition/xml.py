@@ -84,7 +84,6 @@ def partition_xml(
     xml_keep_tags: bool = False,
     xml_path: Optional[str] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
@@ -108,9 +107,6 @@ def partition_xml(
         The xml_path to use for extracting the text. Only used if xml_keep_tags=False.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the
-        elements in the output.
     metadata_last_modified
         The day of the last modification.
     languages
@@ -127,14 +123,11 @@ def partition_xml(
 
     last_modification_date = get_last_modified_date(filename) if filename else None
 
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
-        )
-        metadata.detection_origin = DETECTION_ORIGIN
-    else:
-        metadata = ElementMetadata()
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=metadata_last_modified or last_modification_date,
+    )
+    metadata.detection_origin = DETECTION_ORIGIN
 
     if xml_keep_tags:
         if filename:

@@ -481,37 +481,6 @@ def test_partition_email_from_filename_has_metadata():
         assert element.metadata.filename == "fake-email.eml"
 
 
-def test_partition_email_from_filename_exclude_metadata():
-    elements = partition_email(
-        example_doc_path("eml/fake-email-header.eml"), include_metadata=False
-    )
-
-    assert parse_optional_datetime(elements[0].metadata.last_modified) is None
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
-def test_partition_email_from_text_file_exclude_metadata():
-    with open(example_doc_path("eml/fake-email.txt"), "rb") as f:
-        elements = partition_email(file=f, content_source="text/plain", include_metadata=False)
-
-    assert parse_optional_datetime(elements[0].metadata.last_modified) is None
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
-def test_partition_email_from_file_exclude_metadata():
-    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
-        elements = partition_email(file=f, include_metadata=False)
-
-    assert parse_optional_datetime(elements[0].metadata.last_modified) is None
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

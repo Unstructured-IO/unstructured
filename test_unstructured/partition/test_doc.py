@@ -95,21 +95,6 @@ def test_partition_raises_with_missing_doc(tmp_path: pathlib.Path):
         partition_doc(filename=doc_filename)
 
 
-# -- `include_metadata` arg ----------------------------------------------------------------------
-
-
-def test_partition_doc_from_filename_excludes_metadata_when_so_instructed():
-    elements = partition_doc(example_doc_path("simple.doc"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
-def test_partition_doc_from_file_excludes_metadata_when_so_instructed():
-    with open(example_doc_path("simple.doc"), "rb") as f:
-        elements = partition_doc(file=f, include_metadata=False)
-
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
 # -- .metadata.filename --------------------------------------------------------------------------
 
 

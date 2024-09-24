@@ -63,9 +63,6 @@ def partition_html(
 
     Other parameters
     ----------------
-    include_metadata
-        Optionally allows for excluding metadata from the output. Primarily intended
-        for when partition_html is called by other partitioners (like partition_email).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be

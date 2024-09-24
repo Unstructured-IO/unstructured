@@ -557,13 +557,13 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
 
     This decorator adds a post-processing step to a document partitioner.
 
-    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
+    - Adds `metadata_filename` parameter to docstring if not present.
     - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
 
     """
 
     def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
-        if func.__doc__:
+        if func.__doc__:  # noqa: SIM102
             if (
                 "metadata_filename" in func.__code__.co_varnames
                 and "metadata_filename" not in func.__doc__
@@ -571,15 +571,6 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
                 func.__doc__ += (
                     "\nMetadata Parameters:\n\tmetadata_filename:"
                     + "\n\t\tThe filename to use in element metadata."
-                )
-            if (
-                "include_metadata" in func.__code__.co_varnames
-                and "include_metadata" not in func.__doc__
-            ):
-                func.__doc__ += (
-                    "\n\tinclude_metadata:"
-                    + """\n\t\tDetermines whether or not metadata is included in the metadata
-                    attribute on the elements in the output."""
                 )
 
         @functools.wraps(func)

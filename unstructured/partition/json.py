@@ -31,7 +31,6 @@ def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
-    include_metadata: bool = True,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
@@ -79,7 +78,6 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        if include_metadata:
-            element.metadata.last_modified = metadata_last_modified or last_modified
+        element.metadata.last_modified = metadata_last_modified or last_modified
 
     return elements

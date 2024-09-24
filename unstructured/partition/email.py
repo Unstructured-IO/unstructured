@@ -97,12 +97,12 @@ def _strip_angle_brackets(data: str) -> str:
 
 
 def partition_email_header(msg: EmailMessage) -> list[Element]:
-
     def append_address_header_elements(header: AddressHeader, element_type: Type[Element]):
         for addr in header.addresses:
             elements.append(
                 element_type(
-                    name=addr.display_name or addr.username, text=addr.addr_spec  # type: ignore
+                    name=addr.display_name or addr.username,
+                    text=addr.addr_spec,  # type: ignore
                 )
             )
 
@@ -286,7 +286,6 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
-    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
@@ -436,7 +435,6 @@ def partition_email(
         content = content.replace("=\n", "").replace("=\r\n", "")
         elements = partition_html(
             text=content,
-            include_metadata=False,
             metadata_filename=metadata_filename,
             languages=[""],
             detection_origin="email",
@@ -474,7 +472,6 @@ def partition_email(
             max_partition=max_partition,
             min_partition=min_partition,
             languages=[""],
-            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
             detection_origin="email",
         )
     else:

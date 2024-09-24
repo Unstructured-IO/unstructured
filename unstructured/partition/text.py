@@ -49,7 +49,6 @@ def partition_text(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -74,8 +73,6 @@ def partition_text(
     paragrapher_grouper
         A str -> str function for fixing paragraphs that are interrupted by line breaks
         for formatting purposes.
-    include_metadata
-        Determines whether or not metadata is included in the output.
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -98,7 +95,6 @@ def partition_text(
         encoding=encoding,
         paragraph_grouper=paragraph_grouper,
         metadata_filename=metadata_filename,
-        include_metadata=include_metadata,
         languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
@@ -119,7 +115,6 @@ def _partition_text(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
@@ -170,15 +165,12 @@ def _partition_text(
     )
 
     elements: list[Element] = []
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modified,
-            languages=languages,
-        )
-        metadata.detection_origin = detection_origin
-    else:
-        metadata = ElementMetadata()
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=metadata_last_modified or last_modified,
+        languages=languages,
+    )
+    metadata.detection_origin = detection_origin
 
     for ctext in file_content:
         ctext = ctext.strip()

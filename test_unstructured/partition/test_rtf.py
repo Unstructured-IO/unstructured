@@ -46,21 +46,6 @@ def test_partition_rtf_from_file_with_metadata_filename():
         assert element.metadata.filename == "test"
 
 
-def test_partition_rtf_from_filename_exclude_metadata():
-    filename = example_doc_path("fake-doc.rtf")
-    elements = partition_rtf(filename=filename, include_metadata=False)
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
-def test_partition_rtf_from_file_exclude_metadata():
-    filename = example_doc_path("fake-doc.rtf")
-    with open(filename, "rb") as f:
-        elements = partition_rtf(file=f, include_metadata=False)
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 def test_partition_rtf_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(

@@ -33,7 +33,6 @@ def partition_tsv(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
-    include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
@@ -49,8 +48,6 @@ def partition_tsv(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
-    include_metadata
-        Determines whether or not metadata is included in the output.
     metadata_last_modified
         The day of the last modification.
     languages
@@ -76,16 +73,13 @@ def partition_tsv(
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
 
-    if include_metadata:
-        metadata = ElementMetadata(
-            text_as_html=html_text,
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modified,
-            languages=languages,
-        )
-        metadata.detection_origin = DETECTION_ORIGIN
-    else:
-        metadata = ElementMetadata()
+    metadata = ElementMetadata(
+        text_as_html=html_text,
+        filename=metadata_filename or filename,
+        last_modified=metadata_last_modified or last_modified,
+        languages=languages,
+    )
+    metadata.detection_origin = DETECTION_ORIGIN
 
     elements = apply_lang_metadata(
         [Table(text=text, metadata=metadata)],

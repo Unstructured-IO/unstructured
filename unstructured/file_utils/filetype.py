@@ -47,11 +47,7 @@ from unstructured.file_utils.encoding import detect_file_encoding, format_encodi
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
-from unstructured.partition.common.common import (
-    add_element_metadata,
-    exactly_one,
-    remove_element_metadata,
-)
+from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
@@ -686,28 +682,25 @@ def add_metadata(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
         elements = func(*args, **kwargs)
         call_args = get_call_args_applying_defaults(func, *args, **kwargs)
-        include_metadata = call_args.get("include_metadata", True)
-        if include_metadata:
-            if call_args.get("metadata_filename"):
-                call_args["filename"] = call_args.get("metadata_filename")
 
-            metadata_kwargs = {
-                kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
-            }
-            # NOTE (yao): do not use cast here as cast(None) still is None
-            if not str(kwargs.get("model_name", "")).startswith("chipper"):
-                # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
-                elements = set_element_hierarchy(elements)
+        if call_args.get("metadata_filename"):
+            call_args["filename"] = call_args.get("metadata_filename")
 
-            for element in elements:
-                # NOTE(robinson) - Attached files have already run through this logic
-                # in their own partitioning function
-                if element.metadata.attached_to_filename is None:
-                    add_element_metadata(element, **metadata_kwargs)
+        metadata_kwargs = {
+            kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+        }
+        # NOTE (yao): do not use cast here as cast(None) still is None
+        if not str(kwargs.get("model_name", "")).startswith("chipper"):
+            # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
+            elements = set_element_hierarchy(elements)
 
-            return elements
-        else:
-            return remove_element_metadata(elements)
+        for element in elements:
+            # NOTE(robinson) - Attached files have already run through this logic
+            # in their own partitioning function
+            if element.metadata.attached_to_filename is None:
+                add_element_metadata(element, **metadata_kwargs)
+
+        return elements
 
     return wrapper
 
@@ -730,18 +723,14 @@ def add_filetype(
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
-            params = get_call_args_applying_defaults(func, *args, **kwargs)
-            include_metadata = params.get("include_metadata", True)
-            if include_metadata:
-                for element in elements:
-                    # NOTE(robinson) - Attached files have already run through this logic
-                    # in their own partitioning function
-                    if element.metadata.attached_to_filename is None:
-                        add_element_metadata(element, filetype=filetype.mime_type)
 
-                return elements
-            else:
-                return remove_element_metadata(elements)
+            for element in elements:
+                # NOTE(robinson) - Attached files have already run through this logic
+                # in their own partitioning function
+                if element.metadata.attached_to_filename is None:
+                    add_element_metadata(element, filetype=filetype.mime_type)
+
+            return elements
 
         return wrapper
 

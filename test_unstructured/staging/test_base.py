@@ -253,7 +253,7 @@ def test_read_and_write_json_with_encoding():
 
 def test_filter_element_types_with_include_element_type():
     element_types = [Title]
-    elements = partition_text("example-docs/fake-text.txt", include_metadata=False)
+    elements = partition_text("example-docs/fake-text.txt")
     elements = base.filter_element_types(elements=elements, include_element_types=element_types)
     for element in elements:
         assert type(element) in element_types
@@ -261,7 +261,7 @@ def test_filter_element_types_with_include_element_type():
 
 def test_filter_element_types_with_exclude_element_type():
     element_types = [Title]
-    elements = partition_text("example-docs/fake-text.txt", include_metadata=False)
+    elements = partition_text("example-docs/fake-text.txt")
     elements = base.filter_element_types(elements=elements, exclude_element_types=element_types)
     for element in elements:
         assert type(element) not in element_types
@@ -269,7 +269,7 @@ def test_filter_element_types_with_exclude_element_type():
 
 def test_filter_element_types_with_exclude_and_include_element_type():
     element_types = [Title]
-    elements = partition_text("example-docs/fake-text.txt", include_metadata=False)
+    elements = partition_text("example-docs/fake-text.txt")
     with pytest.raises(ValueError):
         elements = base.filter_element_types(
             elements=elements,

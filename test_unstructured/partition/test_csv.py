@@ -107,16 +107,6 @@ def test_partition_csv_from_file_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
-def test_partition_csv_can_exclude_metadata():
-    elements = partition_csv(example_doc_path("stanley-cups.csv"), include_metadata=False)
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html is None
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.filename is None
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
