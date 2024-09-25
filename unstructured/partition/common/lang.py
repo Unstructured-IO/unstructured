@@ -3,8 +3,12 @@ from __future__ import annotations
 import re
 from typing import Iterable, Iterator, Optional
 
-import iso639
-from langdetect import DetectorFactory, detect_langs, lang_detect_exception
+import iso639  # pyright: ignore[reportMissingTypeStubs]
+from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
+    DetectorFactory,
+    detect_langs,  # pyright: ignore[reportUnknownVariableType]
+    lang_detect_exception,
+)
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
@@ -208,12 +212,13 @@ def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) ->
     """
     if languages is None:
         raise ValueError("`languages` can not be `None`")
-    converted_languages = list(
-        filter(
-            lambda x: x is not None and x != "",
-            [_convert_language_code_to_pytesseract_lang_code(lang) for lang in languages],
-        ),
-    )
+    converted_languages = [
+        lang_code
+        for lang_code in (
+            _convert_language_code_to_pytesseract_lang_code(lang) for lang in languages
+        )
+        if lang_code
+    ]
     # Remove duplicates from the list but keep the original order
     converted_languages = list(dict.fromkeys(converted_languages))
     if len(converted_languages) == 0:
@@ -245,13 +250,17 @@ def tesseract_to_paddle_language(tesseract_language: str) -> str:
     return lang
 
 
-def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> Optional[list[str]]:
-    """Handle users defining both `ocr_languages` and `languages`, giving preference to `languages`
-    and converting `ocr_languages` if needed, but defaulting to `None.
+def check_language_args(
+    languages: list[str], ocr_languages: str | list[str] | None
+) -> list[str] | None:
+    """Handle users defining both `ocr_languages` and `languages`.
+
+    Give preference to `languages` and convert `ocr_languages` if needed, but default to `None`.
 
     `ocr_languages` is only a parameter for `auto.partition`, `partition_image`, & `partition_pdf`.
     `ocr_languages` should not be defined as 'auto' since 'auto' is intended for language detection
-    which is not supported by `partition_image` or `partition_pdf`."""
+    which is not supported by `partition_image` or `partition_pdf`.
+    """
     # --- Clean and update defaults
     if ocr_languages:
         ocr_languages = _clean_ocr_languages_arg(ocr_languages)
@@ -259,6 +268,7 @@ def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> O
             "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
             "Please use languages instead.",
         )
+    assert ocr_languages is None or isinstance(ocr_languages, str)
 
     if ocr_languages and "auto" in ocr_languages:
         raise ValueError(
@@ -268,7 +278,7 @@ def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> O
             " Language detection is not currently supported in pdfs or images."
         )
 
-    if not isinstance(languages, list):
+    if not isinstance(languages, list):  # pyright: ignore[reportUnnecessaryIsInstance]
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
@@ -354,7 +364,7 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
 
 def _get_iso639_language_object(lang: str) -> Optional[iso639.Language]:
     try:
-        return iso639.Language.match(lang.lower())
+        return iso639.Language.match(lang.lower())  # pyright: ignore[reportUnknownMemberType]
     except iso639.LanguageNotFoundError:
         logger.warning(f"{lang} is not a valid standard language code.")
         return None
@@ -431,10 +441,10 @@ def detect_languages(
         # machine translation
         # TODO(shreya): decide how to maintain nonstandard chinese script information
         for langobj in langdetect_result:
-            if str(langobj.lang).startswith("zh"):
+            if str(langobj.lang).startswith("zh"):  # pyright: ignore
                 langdetect_langs.append("zho")
             else:
-                language = _get_iso639_language_object(langobj.lang[:3])
+                language = _get_iso639_language_object(langobj.lang[:3])  # pyright: ignore
                 if language:
                     langdetect_langs.append(language.part3)
 

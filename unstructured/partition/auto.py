@@ -14,7 +14,7 @@ from unstructured.file_utils.filetype import detect_filetype, is_json_processabl
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common.common import exactly_one
-from unstructured.partition.lang import check_language_args
+from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import dependency_exists
 

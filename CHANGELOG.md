@@ -1,8 +1,10 @@
-## 0.15.14-dev3
+## 0.15.14-dev4
 
 ### Enhancements
 
 ### Features
+
+* **Add (but do not install) a new post-partitioning decorator to handle metadata added for all file-types, like `.filename`, `.filetype` and `.languages`.** This will be installed in a closely following PR to replace the four currently being used for this purpose.
 
 ### Fixes
 

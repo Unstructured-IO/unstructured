@@ -6,7 +6,7 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata
 from unstructured.partition.common.common import exactly_one
-from unstructured.partition.lang import check_language_args
+from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 

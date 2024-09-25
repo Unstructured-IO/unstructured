@@ -48,12 +48,12 @@ from unstructured.partition.common.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.common.metadata import get_last_modified_date
-from unstructured.partition.lang import (
+from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
     tesseract_to_paddle_language,
 )
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
     FinalLayoutDumper,
