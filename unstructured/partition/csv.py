@@ -55,8 +55,6 @@ def partition_csv(
         The last modified date for the document.
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
-    include_metadata
-        Determines whether or not metadata is included in the output.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.

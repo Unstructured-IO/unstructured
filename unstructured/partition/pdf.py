@@ -122,7 +122,6 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
-    include_metadata: bool = True,  # used by decorator
     metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator

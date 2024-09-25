@@ -46,21 +46,6 @@ def test_partition_rst_from_file_with_metadata_filename():
         assert element.metadata.filename == "test"
 
 
-def test_partition_rst_from_filename_exclude_metadata():
-    elements = partition_rst(example_doc_path("README.rst"), include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
-def test_partition_rst_from_file_exclude_metadata():
-    with open(example_doc_path("README.rst"), "rb") as f:
-        elements = partition_rst(file=f, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

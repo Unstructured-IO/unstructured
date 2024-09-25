@@ -38,19 +38,6 @@ def test_partition_org_from_file_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
-def test_partition_org_from_filename_exclude_metadata():
-    elements = partition_org(example_doc_path("README.org"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
-def test_partition_org_from_file_exclude_metadata():
-    with open(example_doc_path("README.org"), "rb") as f:
-        elements = partition_org(file=f, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 def test_partition_org_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(

@@ -210,22 +210,6 @@ def test_partition_docx_detects_lists():
     assert sum(1 for e in elements if isinstance(e, ListItem)) == 10
 
 
-# -- `include_metadata` arg ----------------------------------------------------------------------
-
-
-def test_partition_docx_from_filename_excludes_metadata_when_so_instructed():
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
-def test_partition_docx_from_file_excludes_metadata_when_so_instructed():
-    with open(example_doc_path("simple.docx"), "rb") as f:
-        assert all(
-            element.metadata.to_dict() == {}
-            for element in partition_docx(file=f, include_metadata=False)
-        )
-
-
 # -- .metadata.filename --------------------------------------------------------------------------
 
 

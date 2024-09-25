@@ -48,7 +48,6 @@ def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
@@ -66,8 +65,6 @@ def partition_xlsx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the output.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -92,7 +89,6 @@ def partition_xlsx(
         file_path=filename,
         find_subtable=find_subtable,
         include_header=include_header,
-        include_metadata=include_metadata,
         infer_table_structure=infer_table_structure,
         languages=languages,
         metadata_file_path=metadata_filename,
@@ -112,17 +108,14 @@ def partition_xlsx(
             # XXX: `html_text` can be `None`. What happens on this call in that case?
             text = soupparser_fromstring(html_text).text_content()  # type: ignore
 
-            if opts.include_metadata:
-                metadata = ElementMetadata(
-                    text_as_html=html_text,
-                    page_name=sheet_name,
-                    page_number=page_number,
-                    filename=opts.metadata_file_path,
-                    last_modified=opts.last_modified,
-                )
-                metadata.detection_origin = DETECTION_ORIGIN
-            else:
-                metadata = ElementMetadata()
+            metadata = ElementMetadata(
+                text_as_html=html_text,
+                page_name=sheet_name,
+                page_number=page_number,
+                filename=opts.metadata_file_path,
+                last_modified=opts.last_modified,
+            )
+            metadata.detection_origin = DETECTION_ORIGIN
 
             table = Table(text=text, metadata=metadata)
             elements.append(table)
@@ -179,7 +172,6 @@ class _XlsxPartitionerOptions:
         file_path: Optional[str],
         find_subtable: bool,
         include_header: bool,
-        include_metadata: bool,
         infer_table_structure: bool,
         languages: Optional[list[str]],
         metadata_file_path: Optional[str],
@@ -190,7 +182,6 @@ class _XlsxPartitionerOptions:
         self._file_path = file_path
         self._find_subtable = find_subtable
         self._include_header = include_header
-        self._include_metadata = include_metadata
         self._infer_table_structure = infer_table_structure
         self._languages = languages
         self._metadata_file_path = metadata_file_path
@@ -218,11 +209,6 @@ class _XlsxPartitionerOptions:
     def include_header(self) -> bool:
         """True when column headers should be included in tables."""
         return self._include_header
-
-    @lazyproperty
-    def include_metadata(self) -> bool:
-        """True when partitioner should apply metadata to emitted elements."""
-        return self._include_metadata
 
     @lazyproperty
     def infer_table_structure(self) -> bool:
@@ -512,14 +498,9 @@ def _create_element(text: str) -> Element:
 def _get_metadata(
     sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
 ) -> ElementMetadata:
-    """Returns metadata depending on `include_metadata` flag"""
-    return (
-        ElementMetadata(
-            page_name=sheet_name,
-            page_number=page_number,
-            filename=opts.metadata_file_path,
-            last_modified=opts.last_modified,
-        )
-        if opts.include_metadata
-        else ElementMetadata()
+    return ElementMetadata(
+        page_name=sheet_name,
+        page_number=page_number,
+        filename=opts.metadata_file_path,
+        last_modified=opts.last_modified,
     )

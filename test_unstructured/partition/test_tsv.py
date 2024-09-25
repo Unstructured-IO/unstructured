@@ -76,27 +76,6 @@ def test_partition_tsv_from_file_with_metadata_filename():
         assert element.metadata.filename == "test"
 
 
-def test_partition_tsv_filename_exclude_metadata():
-    elements = partition_tsv(
-        example_doc_path("stanley-cups.tsv"), include_metadata=False, include_header=False
-    )
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
-    assert isinstance(elements[0], Table)
-    assert elements[0].metadata.text_as_html is None
-    assert elements[0].metadata.filetype is None
-    for element in elements:
-        assert element.metadata.filename is None
-
-
-def test_partition_tsv_from_file_exclude_metadata():
-    with open(example_doc_path("stanley-cups.tsv"), "rb") as f:
-        elements = partition_tsv(file=f, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

@@ -833,14 +833,6 @@ def test_partition_html_can_chunk_while_partitioning():
     assert chunks == chunks_2
 
 
-# -- `include_metadata` arg ----------------------------------------------------------------------
-
-
-def test_partition_html_from_filename_can_suppress_metadata():
-    elements = partition_html(example_doc_path("example-10k-1p.html"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
 # -- `skip_headers_and_footers` arg --------------------------------------------------------------
 
 

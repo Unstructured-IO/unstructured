@@ -63,20 +63,6 @@ def test_partition_odt_from_file():
     ]
 
 
-# -- `include_metadata` arg ----------------------------------------------------------------------
-
-
-def test_partition_odt_from_filename_exclude_metadata():
-    elements = partition_odt(example_doc_path("fake.odt"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
-def test_partition_odt_from_file_exclude_metadata():
-    with open(example_doc_path("fake.odt"), "rb") as f:
-        elements = partition_odt(file=f, include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
 # -- .metadata.filename --------------------------------------------------------------------------
 
 
@@ -96,7 +82,7 @@ def test_partition_odt_from_file_with_metadata_filename():
 
 @pytest.mark.parametrize("kwargs", [{}, {"infer_table_structure": True}])
 def test_partition_odt_adds_text_as_html_when_infer_table_structure_is_omitted_or_True(
-    kwargs: dict[str, Any]
+    kwargs: dict[str, Any],
 ):
     with open(example_doc_path("fake.odt"), "rb") as f:
         elements = partition_odt(file=f, **kwargs)

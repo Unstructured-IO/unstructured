@@ -61,23 +61,6 @@ def test_partition_epub_from_file_with_metadata_filename():
         assert element.metadata.filename == "test"
 
 
-def test_partition_epub_from_filename_exclude_metadata():
-    filename = example_doc_path("winter-sports.epub")
-    elements = partition_epub(filename=filename, include_metadata=False)
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
-def test_partition_epub_from_file_exlcude_metadata():
-    filename = example_doc_path("winter-sports.epub")
-    with open(filename, "rb") as f:
-        elements = partition_epub(file=f, include_metadata=False)
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

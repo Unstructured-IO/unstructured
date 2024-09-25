@@ -114,26 +114,6 @@ def test_partition_xml_from_file_rb_with_tags_raises_encoding_error():
             )
 
 
-@pytest.mark.parametrize("filename", ["factbook.xml", "factbook-utf-16.xml"])
-def test_partition_xml_from_filename_exclude_metadata(filename: str):
-    file_path = example_doc_path(filename)
-    elements = partition_xml(filename=file_path, xml_keep_tags=False, include_metadata=False)
-
-    assert elements[0].text == "United States"
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
-@pytest.mark.parametrize("filename", ["factbook.xml", "factbook-utf-16.xml"])
-def test_partition_xml_from_file_exclude_metadata(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        elements = partition_xml(file=f, xml_keep_tags=False, include_metadata=False)
-
-    assert elements[0].text == "United States"
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

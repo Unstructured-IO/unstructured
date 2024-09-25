@@ -77,24 +77,6 @@ def test_partition_xlsx_from_filename_no_subtables():
     ]
 
 
-def test_partition_xlsx_from_filename_no_subtables_no_metadata():
-    elements = partition_xlsx(
-        "example-docs/stanley-cups.xlsx", find_subtable=False, include_metadata=False
-    )
-
-    assert elements == [
-        Table(
-            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
-            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
-        ),
-        Table(
-            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
-            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
-        ),
-    ]
-    assert all(e.metadata.text_as_html is None for e in elements)
-
-
 def test_partition_xlsx_from_SpooledTemporaryFile_with_emoji():
     f = tempfile.SpooledTemporaryFile()
     with open("example-docs/emoji.xlsx", "rb") as g:
@@ -203,39 +185,6 @@ def test_partition_xlsx_from_file_with_header():
     text_as_html = elements[0].metadata.text_as_html
     assert text_as_html is not None
     assert "<thead>" in text_as_html
-
-
-def test_partition_xlsx_filename_exclude_metadata():
-    elements = partition_xlsx(
-        "example-docs/stanley-cups.xlsx", include_metadata=False, include_header=False
-    )
-
-    assert sum(isinstance(element, Table) for element in elements) == 2
-    assert len(elements) == 4
-
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
-    assert elements[1].metadata.text_as_html is None
-    assert elements[1].metadata.page_number is None
-    assert elements[1].metadata.filetype is None
-    assert elements[1].metadata.page_name is None
-    assert elements[1].metadata.filename is None
-
-
-def test_partition_xlsx_from_file_exclude_metadata():
-    with open("example-docs/stanley-cups.xlsx", "rb") as f:
-        elements = partition_xlsx(file=f, include_metadata=False, include_header=False)
-
-    assert sum(isinstance(element, Table) for element in elements) == 2
-    assert sum(isinstance(element, Title) for element in elements) == 2
-    assert len(elements) == 4
-
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
-    assert elements[0].metadata.text_as_html is None
-    assert elements[0].metadata.page_number is None
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
@@ -409,15 +358,6 @@ class Describe_XlsxPartitionerOptions:
         assert opts.include_header is arg_value
 
     @pytest.mark.parametrize("arg_value", [True, False])
-    def it_knows_whether_to_include_metadata_on_elements(
-        self, arg_value: bool, opts_args: dict[str, Any]
-    ):
-        opts_args["include_metadata"] = arg_value
-        opts = _XlsxPartitionerOptions(**opts_args)
-
-        assert opts.include_metadata is arg_value
-
-    @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_include_text_as_html_in_Table_metadata(
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
@@ -507,7 +447,6 @@ class Describe_XlsxPartitionerOptions:
             "file_path": None,
             "find_subtable": True,
             "include_header": False,
-            "include_metadata": True,
             "infer_table_structure": True,
             "languages": ["auto"],
             "metadata_file_path": None,

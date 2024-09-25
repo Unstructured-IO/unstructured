@@ -661,40 +661,6 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
         assert element.metadata.filename == "test"
 
 
-@pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize(
-    "strategy",
-    [
-        PartitionStrategy.AUTO,
-        PartitionStrategy.HI_RES,
-        PartitionStrategy.FAST,
-        PartitionStrategy.OCR_ONLY,
-    ],
-)
-def test_partition_pdf_exclude_metadata(
-    file_mode,
-    strategy,
-    filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
-):
-    if file_mode == "filename":
-        elements = pdf.partition_pdf(
-            filename=filename,
-            strategy=strategy,
-            include_metadata=False,
-        )
-    else:
-        with open(filename, "rb") as f:
-            elements = pdf.partition_pdf(
-                file=f,
-                url=None,
-                strategy=strategy,
-                include_metadata=False,
-            )
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
     "strategy",
