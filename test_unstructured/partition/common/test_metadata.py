@@ -274,6 +274,29 @@ class Describe_apply_metadata:
         assert all(e.metadata.filename == "image.jpeg" for e in elements)
         assert all(e.metadata.file_directory == "x/y/images" for e in elements)
 
+    # -- last_modified ----------------------------------------------------
+
+    def it_uses_metadata_last_modified_arg_value_when_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """A `metadata_last_modified` arg overrides all other sources."""
+        partition = apply_metadata()(fake_partitioner)
+        metadata_last_modified = "2024-09-26T15:17:53"
+
+        elements = partition(metadata_last_modified=metadata_last_modified)
+
+        assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+    @pytest.mark.parametrize("kwargs", [{}, {"metadata_last_modified": None}])
+    def but_it_does_not_update_last_modified_when_metadata_last_modified_arg_absent_or_None(
+        self, kwargs: dict[str, Any], fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(**kwargs)
+
+        assert all(e.metadata.last_modified == "2020-01-06T05:07:03" for e in elements)
+
     # -- url --------------------------------------------------------------
 
     def it_assigns_url_metadata_field_when_url_arg_is_present(
@@ -304,12 +327,14 @@ class Describe_apply_metadata:
             title.metadata.file_directory = "x/y/images"
             title.metadata.filename = "image.jpeg"
             title.metadata.filetype = "image/jpeg"
+            title.metadata.last_modified = "2020-01-06T05:07:03"
             title.metadata.url = "http://images.com"
 
             narr_text = NarrativeText("To understand bar you must first understand foo.")
             narr_text.metadata.file_directory = "x/y/images"
             narr_text.metadata.filename = "image.jpeg"
             narr_text.metadata.filetype = "image/jpeg"
+            narr_text.metadata.last_modified = "2020-01-06T05:07:03"
             narr_text.metadata.url = "http://images.com"
 
             return [title, narr_text]

@@ -139,6 +139,8 @@ def apply_metadata(
 
       - Replace `filename` with `metadata_filename` when present.
 
+      - Replace `last_modified` with `metadata_last_modified` when present.
+
       - Apply `url` metadata when present.
     """
 
@@ -175,7 +177,7 @@ def apply_metadata(
                 )
             )
 
-            # == apply filetype, filename, and url metadata =========================
+            # == apply filetype, filename, last_modified, and url metadata ===================
             metadata_kwargs: dict[str, Any] = {}
 
             # -- `filetype` (MIME-type) metadata --
@@ -187,6 +189,11 @@ def apply_metadata(
             filename = call_args.get("metadata_filename") or call_args.get("filename")
             if filename:
                 metadata_kwargs["filename"] = filename
+
+            # -- `last_modified` metadata - override with metadata_last_modified when present --
+            metadata_last_modified = call_args.get("metadata_last_modified")
+            if metadata_last_modified:
+                metadata_kwargs["last_modified"] = metadata_last_modified
 
             # -- `url` metadata - record url when present --
             url = call_args.get("url")
