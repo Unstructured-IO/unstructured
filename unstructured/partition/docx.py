@@ -7,7 +7,7 @@ import itertools
 import os
 import tempfile
 import zipfile
-from typing import IO, Any, Iterator, Optional, Protocol, Type
+from typing import IO, Any, Iterator, Protocol, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -104,17 +104,17 @@ class PicturePartitionerT(Protocol):
 @add_metadata_with_filetype(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(
-    filename: Optional[str] = None,
+    filename: str | None = None,
     *,
     detect_language_per_element: bool = False,
-    file: Optional[IO[bytes]] = None,
+    file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
+    languages: list[str] | None = ["auto"],
+    metadata_filename: str | None = None,
+    metadata_last_modified: str | None = None,
     starting_page_number: int = 1,
-    strategy: Optional[str] = None,
+    strategy: str | None = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -191,8 +191,8 @@ class DocxPartitionerOptions:
         file_path: str | None,
         include_page_breaks: bool,
         infer_table_structure: bool,
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
+        metadata_file_path: str | None,
+        metadata_last_modified: str | None,
         starting_page_number: int = 1,
         strategy: str | None = None,
     ):
@@ -244,7 +244,7 @@ class DocxPartitionerOptions:
         return self._infer_table_structure
 
     @lazyproperty
-    def last_modified(self) -> Optional[str]:
+    def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
         # -- Value explicitly specified by caller takes precedence. This is used for example when
         # -- this file was converted from another format, and any last-modified date for the file
@@ -267,7 +267,7 @@ class DocxPartitionerOptions:
         return self._metadata_file_path or self._file_path
 
     @property
-    def metadata_page_number(self) -> Optional[int]:
+    def metadata_page_number(self) -> int | None:
         """The current page number to report in metadata, or None if we can't really tell.
 
         Page numbers are not added to element metadata if we can't find any page-breaks in the
@@ -923,7 +923,7 @@ class _DocxPartitioner:
         # Other styles
         return 0
 
-    def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+    def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Type[Text] | None:
         """Attempt to differentiate the element-type by inspecting the raw text."""
         text = paragraph.text.strip()
 
@@ -940,7 +940,7 @@ class _DocxPartitioner:
 
         return None
 
-    def _style_based_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+    def _style_based_element_type(self, paragraph: Paragraph) -> Type[Text] | None:
         """Element-type for `paragraph` based on its paragraph-style.
 
         Returns `None` when the style doesn't tell us anything useful, including when it
