@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, Optional, Protocol, Sequence
+from typing import IO, Any, Iterator, Protocol, Sequence
 
 import pptx
 from pptx.presentation import Presentation
@@ -32,13 +32,10 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import convert_ms_office_table_to_text
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,
@@ -80,20 +77,15 @@ class AbstractPicturePartitioner(Protocol):
 # ================================================================================================
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.PPTX)
+@apply_metadata(FileType.PPTX)
 @add_chunking_strategy
 def partition_pptx(
-    filename: Optional[str] = None,
+    filename: str | None = None,
     *,
-    file: Optional[IO[bytes]] = None,
-    detect_language_per_element: bool = False,
+    file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
-    include_slide_notes: Optional[bool] = None,
+    include_slide_notes: bool | None = None,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
@@ -108,12 +100,6 @@ def partition_pptx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
-    metadata_filename
-        The filename to use for the metadata. Relevant because partition_ppt() converts its
-        (legacy) .ppt document to .pptx before partition. We want the filename of the original
-        .ppt source file in the metadata.
-    metadata_last_modified
-        The last modified date for the document.
     include_slide_notes
         If True, includes the slide notes as element
     infer_table_structure
@@ -122,13 +108,6 @@ def partition_pptx(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
     starting_page_number
         Indicates what page number should be assigned to the first slide in the presentation.
         This information will be reflected in elements' metadata and can be be especially
@@ -140,19 +119,11 @@ def partition_pptx(
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
         infer_table_structure=infer_table_structure,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
         strategy=strategy,
         starting_page_number=starting_page_number,
     )
 
-    elements = _PptxPartitioner.iter_presentation_elements(opts)
-    elements = apply_lang_metadata(
-        elements=elements,
-        languages=languages,
-        detect_language_per_element=detect_language_per_element,
-    )
-    return list(elements)
+    return list(_PptxPartitioner.iter_presentation_elements(opts))
 
 
 class _PptxPartitioner:
@@ -321,7 +292,7 @@ class _PptxPartitioner:
             detection_origin=DETECTION_ORIGIN,
         )
 
-    def _order_shapes(self, slide: Slide) -> tuple[Optional[Shape], Sequence[BaseShape]]:
+    def _order_shapes(self, slide: Slide) -> tuple[Shape | None, Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
 
         Returns the title shape if it exists and the ordered shapes."""
@@ -365,13 +336,11 @@ class PptxPartitionerOptions:
     def __init__(
         self,
         *,
-        file: Optional[IO[bytes]],
-        file_path: Optional[str],
+        file: IO[bytes] | None,
+        file_path: str | None,
         include_page_breaks: bool,
-        include_slide_notes: Optional[bool],
+        include_slide_notes: bool | None,
         infer_table_structure: bool,
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
         strategy: str,
         starting_page_number: int = 1,
     ):
@@ -380,8 +349,6 @@ class PptxPartitionerOptions:
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
         self._infer_table_structure = infer_table_structure
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number - 1
@@ -417,7 +384,9 @@ class PptxPartitionerOptions:
             yield PageBreak(
                 "",
                 detection_origin=DETECTION_ORIGIN,
-                metadata=ElementMetadata(last_modified=self.last_modified),
+                metadata=ElementMetadata(
+                    last_modified=self.last_modified, page_number=self.page_number - 1
+                ),
             )
 
     @lazyproperty
@@ -426,27 +395,19 @@ class PptxPartitionerOptions:
         return self._infer_table_structure
 
     @lazyproperty
-    def last_modified(self) -> Optional[str]:
+    def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format, and any last-modified date for the file
-        # -- would be just now.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
+        if not self._file_path:
+            return None
 
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        return None
+        return (
+            None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
+        )
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @property
     def page_number(self) -> int:
