@@ -31,7 +31,8 @@ def determine_pdf_or_image_strategy(
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
-    pytesseract_installed = dependency_exists("unstructured_pytesseract")
+    clarifai_installed = dependency_exists("clarifai")
+    pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if strategy == PartitionStrategy.AUTO:
@@ -69,17 +70,19 @@ def determine_pdf_or_image_strategy(
             logger.warning("Falling back to partitioning with fast.")
             return PartitionStrategy.FAST
 
-    elif strategy == PartitionStrategy.OCR_ONLY and not pytesseract_installed:
+    elif strategy == PartitionStrategy.OCR_ONLY and not clarifai_installed:
         logger.warning(
-            "pytesseract is not installed. Cannot use the ocr_only partitioning "
+            "clarifai is not installed. Cannot use the ocr_only partitioning "
             "strategy. Falling back to partitioning with another strategy.",
         )
         if pdf_text_extractable:
             logger.warning("Falling back to partitioning with fast.")
             return PartitionStrategy.FAST
         else:
-            logger.warning("Falling back to partitioning with hi_res.")
-            return PartitionStrategy.HI_RES
+            #clarifai is not installed and the text of the PDF is not extractable
+            raise ImportError(
+                f"clarifai is not installed. "
+                f"""Please install using `pip install clarifai`.""")
 
     return strategy
 

@@ -136,6 +136,8 @@ def partition_pdf(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    clarifai_ocr_model: Optional[str] = None,
+
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -220,6 +222,7 @@ def partition_pdf(
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
+        clarifai_ocr_model = clarifai_ocr_model,
         **kwargs,
     )
 
@@ -242,6 +245,7 @@ def partition_pdf_or_image(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    clarifai_ocr_model: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -348,6 +352,7 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 starting_page_number=starting_page_number,
+                clarifai_ocr_model=clarifai_ocr_model,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -858,6 +863,7 @@ def _partition_pdf_or_image_with_ocr(
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    clarifai_ocr_model: Optional[str] = None,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
@@ -877,6 +883,7 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
+                clarifai_ocr_model=clarifai_ocr_model,
                 **kwargs,
             )
             elements.extend(page_elements)
@@ -891,6 +898,7 @@ def _partition_pdf_or_image_with_ocr(
                 page_number=page_number,
                 include_page_breaks=include_page_breaks,
                 metadata_last_modified=metadata_last_modified,
+                clarifai_ocr_model=clarifai_ocr_model,
                 **kwargs,
             )
             elements.extend(page_elements)
@@ -906,6 +914,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
+    clarifai_ocr_model: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
@@ -918,7 +927,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
-    ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
+    ocr_data = ocr_agent.get_layout_elements_from_image(image=image,clarifai_ocr_model=clarifai_ocr_model)
 
     metadata = ElementMetadata(
         last_modified=metadata_last_modified,

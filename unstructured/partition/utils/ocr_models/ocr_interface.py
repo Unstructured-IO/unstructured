@@ -13,6 +13,7 @@ from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE_OLD,
     OCR_AGENT_TESSERACT,
     OCR_AGENT_TESSERACT_OLD,
+    OCR_AGENT_CLARIFAI
 )
 
 if TYPE_CHECKING:
@@ -30,8 +31,14 @@ class OCRAgent(ABC):
 
         The OCR package used by the agent is determined by the `OCR_AGENT` environment variable.
         """
-        ocr_agent_cls_qname = cls._get_ocr_agent_cls_qname()
-        return cls.get_instance(ocr_agent_cls_qname, language)
+        ocr_agent_cls_qname = OCR_AGENT_CLARIFAI
+        try:
+            return cls.get_instance(ocr_agent_cls_qname, language)
+        except (ImportError, AttributeError):
+            raise ValueError(
+                f"Environment variable OCR_AGENT must be set to an existing OCR agent module,"
+                f" not {ocr_agent_cls_qname}."
+            )
 
     @staticmethod
     @functools.lru_cache(maxsize=None)

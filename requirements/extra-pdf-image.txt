@@ -10,6 +10,7 @@ cachetools==5.5.0
     # via google-auth
 certifi==2024.8.30
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
 cffi==1.17.1
@@ -63,7 +64,7 @@ grpcio==1.66.1
     #   grpcio-status
 grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.24.6
+#huggingface-hub==0.23.4
     # via
     #   timm
     #   tokenizers
@@ -115,11 +116,11 @@ numpy==1.26.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnx==1.16.2
+#onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.19.2
+#onnxruntime==1.18.0
     # via unstructured-inference
 opencv-python==4.10.0.84
     # via
@@ -248,13 +249,13 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.1
+#torch==2.4.1
     # via
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.19.1
+#torchvision==0.18.1
     # via
     #   effdet
     #   timm
@@ -264,7 +265,7 @@ tqdm==4.66.5
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.44.2
+#transformers==4.41.2
     # via unstructured-inference
 typing-extensions==4.12.2
     # via
@@ -277,7 +278,7 @@ tzdata==2024.1
     # via pandas
 unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
-unstructured-pytesseract==0.3.13
+#unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
 urllib3==1.26.20
     # via
