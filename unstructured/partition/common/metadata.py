@@ -191,9 +191,9 @@ def apply_metadata(
                 metadata_kwargs["filename"] = filename
 
             # -- `last_modified` metadata - override with metadata_last_modified when present --
-            last_modified = call_args.get("metadata_last_modified")
-            if last_modified:
-                metadata_kwargs["last_modified"] = last_modified
+            metadata_last_modified = call_args.get("metadata_last_modified")
+            if metadata_last_modified:
+                metadata_kwargs["last_modified"] = metadata_last_modified
 
             # -- `url` metadata - record url when present --
             url = call_args.get("url")
