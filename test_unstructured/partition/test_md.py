@@ -17,28 +17,12 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 def test_partition_md_from_filename():
     filename = example_doc_path("README.md")
     elements = partition_md(filename=filename)
-    assert "PageBreak" not in [elem.category for elem in elements]
+
     assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename == "README.md"
+    assert "PageBreak" not in [elem.category for elem in elements]
+    assert isinstance(elements[0], Title)
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"md"}
-
-
-def test_partition_md_from_filename_returns_uns_elements():
-    filename = example_doc_path("README.md")
-    elements = partition_md(filename=filename)
-    assert len(elements) > 0
-    assert isinstance(elements[0], Title)
-
-
-def test_partition_md_from_filename_with_metadata_filename():
-    filename = example_doc_path("README.md")
-    elements = partition_md(filename=filename, metadata_filename="test")
-    assert "PageBreak" not in [elem.category for elem in elements]
-    assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename == "test"
 
 
 def test_partition_md_from_file():
@@ -46,26 +30,16 @@ def test_partition_md_from_file():
     with open(filename, "rb") as f:
         elements = partition_md(file=f)
     assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename is None
-
-
-def test_partition_md_from_file_with_metadata_filename():
-    filename = example_doc_path("README.md")
-    with open(filename, "rb") as f:
-        elements = partition_md(file=f, metadata_filename="test")
-    assert len(elements) > 0
-    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_md_from_text():
-    filename = example_doc_path("README.md")
-    with open(filename) as f:
+    with open(example_doc_path("README.md")) as f:
         text = f.read()
+
     elements = partition_md(text=text)
+
     assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename is None
+    assert all(e.metadata.filename is None for e in elements)
 
 
 class MockResponse:
@@ -90,8 +64,7 @@ def test_partition_md_from_url():
         elements = partition_md(url="https://fake.url")
 
     assert len(elements) > 0
-    for element in elements:
-        assert element.metadata.filename is None
+    assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_md_from_url_raises_with_bad_status_code():
@@ -134,6 +107,50 @@ def test_partition_md_raises_with_too_many_specified():
 
     with pytest.raises(ValueError):
         partition_md(filename=filename, text=text)
+
+
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_md_from_filename_gets_filename_from_filename_arg():
+    elements = partition_md(example_doc_path("README.md"))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == "README.md" for e in elements)
+
+
+def test_partition_md_from_file_gets_filename_None():
+    with open(example_doc_path("README.md"), "rb") as f:
+        elements = partition_md(file=f)
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_md_from_filename_prefers_metadata_filename():
+    elements = partition_md(example_doc_path("README.md"), metadata_filename="orig-name.md")
+
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "orig-name.md" for element in elements)
+
+
+def test_partition_md_from_file_prefers_metadata_filename():
+    with open(example_doc_path("README.md"), "rb") as f:
+        elements = partition_md(file=f, metadata_filename="orig-name.md")
+
+    assert all(e.metadata.filename == "orig-name.md" for e in elements)
+
+
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_md_gets_the_MD_MIME_type_in_metadata_filetype():
+    MD_MIME_TYPE = "text/markdown"
+    elements = partition_md(example_doc_path("README.md"))
+    assert all(e.metadata.filetype == MD_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{MD_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
