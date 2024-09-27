@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
-import pathlib
 import uuid
 from typing import Optional, Type, cast
 
@@ -21,9 +19,6 @@ from unstructured.partition.text import (
     partition_text,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test document to use for unit tests."),
@@ -69,8 +64,8 @@ End.
     ],
 )
 def test_partition_text_from_filename(filename: str, encoding: Optional[str]):
-    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    elements = partition_text(filename=filename_path, encoding=encoding)
+    elements = partition_text(example_doc_path(filename), encoding=encoding)
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -80,12 +75,10 @@ def test_partition_text_from_filename(filename: str, encoding: Optional[str]):
 
 
 def test_partition_text_from_filename_with_metadata_filename():
-    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
     elements = partition_text(
-        filename=filename_path,
-        encoding="utf-8",
-        metadata_filename="test",
+        example_doc_path("fake-text.txt"), encoding="utf-8", metadata_filename="test"
     )
+
     assert elements == EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename == "test"
@@ -96,8 +89,8 @@ def test_partition_text_from_filename_with_metadata_filename():
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_filename_default_encoding(filename: str):
-    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    elements = partition_text(filename=filename_path)
+    elements = partition_text(example_doc_path(filename))
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -117,14 +110,14 @@ def test_partition_text_from_filename_raises_econding_error(
     error: Type[BaseException],
 ):
     with pytest.raises(error):
-        filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
+        filename = example_doc_path(filename)
         partition_text(filename=filename, encoding=encoding)
 
 
 def test_partition_text_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
         elements = partition_text(file=f)
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -132,7 +125,7 @@ def test_partition_text_from_file():
 
 
 def test_partition_text_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    filename = example_doc_path("fake-text.txt")
     with open(filename, "rb") as f:
         elements = partition_text(file=f, metadata_filename="test")
     assert len(elements) > 0
@@ -146,8 +139,7 @@ def test_partition_text_from_file_with_metadata_filename():
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_file_default_encoding(filename: str):
-    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    with open(filename_path, "rb") as f:
+    with open(example_doc_path(filename), "rb") as f:
         elements = partition_text(file=f)
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
@@ -156,9 +148,9 @@ def test_partition_text_from_file_default_encoding(filename: str):
 
 
 def test_partition_text_from_bytes_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
         elements = partition_text(file=f)
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -170,9 +162,9 @@ def test_partition_text_from_bytes_file():
     ["fake-text-utf-16.txt", "fake-text-utf-16-le.txt", "fake-text-utf-32.txt"],
 )
 def test_partition_text_from_bytes_file_default_encoding(filename: str):
-    filename_path = os.path.join(EXAMPLE_DOCS_DIRECTORY, filename)
-    with open(filename_path, "rb") as f:
+    with open(example_doc_path(filename), "rb") as f:
         elements = partition_text(file=f)
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -180,16 +172,18 @@ def test_partition_text_from_bytes_file_default_encoding(filename: str):
 
 
 def test_text_partition_element_metadata_user_provided_languages():
-    filename = "example-docs/book-war-and-peace-1p.txt"
-    elements = partition_text(filename=filename, strategy="fast", languages=["en"])
+    elements = partition_text(
+        example_doc_path("book-war-and-peace-1p.txt"), strategy="fast", languages=["en"]
+    )
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_text_from_text():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
-    with open(filename) as f:
+    with open(example_doc_path("fake-text.txt")) as f:
         text = f.read()
+
     elements = partition_text(text=text)
+
     assert len(elements) > 0
     assert elements == EXPECTED_OUTPUT
     for element in elements:
@@ -206,7 +200,7 @@ def test_partition_text_raises_with_none_specified():
 
 
 def test_partition_text_raises_with_too_many_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-text.txt")
+    filename = example_doc_path("fake-text.txt")
     with open(filename) as f:
         text = f.read()
 
@@ -229,13 +223,16 @@ def test_partition_text_captures_everything_even_with_linebreaks():
 
 
 def test_partition_text_groups_broken_paragraphs():
-    text = """The big brown fox
-was walking down the lane.
-
-At the end of the lane,
-the fox met a bear."""
+    text = (
+        "The big brown fox\n"
+        "was walking down the lane.\n"
+        "\n"
+        "At the end of the lane,\n"
+        "the fox met a bear."
+    )
 
     elements = partition_text(text=text, paragraph_grouper=group_broken_paragraphs)
+
     assert elements == [
         NarrativeText(text="The big brown fox was walking down the lane."),
         NarrativeText(text="At the end of the lane, the fox met a bear."),
@@ -245,17 +242,16 @@ the fox met a bear."""
 
 
 def test_partition_text_splits_long_text():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = partition_text(filename=filename)
+    elements = partition_text(example_doc_path("norwich-city.txt"))
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
 
 
 def test_partition_text_splits_long_text_max_partition():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = partition_text(filename=filename)
-    elements_max_part = partition_text(filename=filename, max_partition=500)
+    filename = example_doc_path("norwich-city.txt")
+    elements = partition_text(filename)
+    elements_max_part = partition_text(filename, max_partition=500)
     # NOTE(klaijan) - I edited the operation here from < to <=
     # Please revert back if this does not make sense
     assert len(elements) <= len(elements_max_part)
@@ -267,7 +263,7 @@ def test_partition_text_splits_long_text_max_partition():
 
 
 def test_partition_text_splits_max_min_partition():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
+    filename = example_doc_path("norwich-city.txt")
     elements = partition_text(filename=filename)
     elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
     for i, element in enumerate(elements_max_part):
@@ -446,7 +442,7 @@ def test_partition_text_with_json(file_name: str, encoding: str | None):
 
 
 def test_add_chunking_strategy_on_partition_text():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
+    filename = example_doc_path("norwich-city.txt")
     elements = partition_text(filename=filename)
     chunk_elements = partition_text(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
@@ -455,34 +451,34 @@ def test_add_chunking_strategy_on_partition_text():
 
 
 def test_partition_text_element_metadata_has_languages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = partition_text(filename=filename)
+    elements = partition_text(example_doc_path("norwich-city.txt"))
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_text_respects_detect_language_per_element():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "language-docs", "eng_spa_mult.txt")
-    elements = partition_text(filename=filename, detect_language_per_element=True)
+    elements = partition_text(
+        example_doc_path("language-docs/eng_spa_mult.txt"), detect_language_per_element=True
+    )
+
     langs = [element.metadata.languages for element in elements]
+
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
 def test_partition_text_respects_languages_arg():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = partition_text(filename=filename, languages=["deu"])
+    elements = partition_text(example_doc_path("norwich-city.txt"), languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]
 
 
 def test_partition_text_element_metadata_raises_TypeError():
     with pytest.raises(TypeError):
-        filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-        partition_text(filename=filename, languages="eng")  # type: ignore
+        partition_text(example_doc_path("norwich-city.txt"), languages="eng")  # type: ignore
 
 
 def test_partition_text_detects_more_than_3_languages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "language-docs", "UDHR_first_article_all.txt")
-    elements = partition_text(filename=filename, detect_language_per_element=True)
-    langs = list(
-        {element.metadata.languages[0] for element in elements if element.metadata.languages},
+    elements = partition_text(
+        example_doc_path("language-docs/UDHR_first_article_all.txt"),
+        detect_language_per_element=True,
     )
+    langs = [e.metadata.languages[0] for e in elements if e.metadata.languages]
     assert len(langs) > 10
