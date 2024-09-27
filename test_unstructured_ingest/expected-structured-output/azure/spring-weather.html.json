@@ -1,7 +1,7 @@
 [
   {
     "type": "Title",
-    "element_id": "fb902c5b26b38e2d35a70a55d43a5de6",
+    "element_id": "53b9f53cd34120bf8b57d7010d183009",
     "text": "News Around NOAA",
     "metadata": {
       "languages": [
@@ -22,7 +22,7 @@
   },
   {
     "type": "Title",
-    "element_id": "100233c72890df3d216e2bc2c36f7153",
+    "element_id": "1234c9de70877f7cc9c7dbb3393f5d45",
     "text": "National Program",
     "metadata": {
       "languages": [
@@ -43,7 +43,7 @@
   },
   {
     "type": "Title",
-    "element_id": "88f0bebe7a9cca77675bd8a5db823092",
+    "element_id": "aa2d99e902ae1df419121a2999dc9d42",
     "text": "Are You Weather-Ready for the Spring?",
     "metadata": {
       "languages": [
@@ -64,7 +64,7 @@
   },
   {
     "type": "Title",
-    "element_id": "6ef25d028f4c859b5d955c777c4c597e",
+    "element_id": "524460d9bf34d7597cdda50b8e9fcd23",
     "text": "Weather.gov > News Around NOAA > Are You Weather-Ready for the Spring?",
     "metadata": {
       "link_texts": [
@@ -93,7 +93,7 @@
   },
   {
     "type": "Title",
-    "element_id": "eddf006a8c46b1cda2aac3b820775397",
+    "element_id": "0e225967315d167dfb21fa47e54a5655",
     "text": "Weather Safety",
     "metadata": {
       "link_texts": [
@@ -120,7 +120,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2c39116ce12eb3a8cd275e7c89c62abf",
+    "element_id": "7b298818c497ee5bb6534ef373aa787a",
     "text": "Air Quality",
     "metadata": {
       "link_texts": [
@@ -147,7 +147,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "37b3bec5196e722aebbb6bb5153d29c8",
+    "element_id": "0adea05920776faebbbbf1843b471d66",
     "text": "Beach Hazards",
     "metadata": {
       "link_texts": [
@@ -174,7 +174,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "063926ec3c557edf0dfd4bfbb1b93012",
+    "element_id": "84253e34f3008f29ca7157ace5aca572",
     "text": "Cold",
     "metadata": {
       "link_texts": [
@@ -201,7 +201,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "819fb41bb2932c2d900130821d88a652",
+    "element_id": "e681ddd4a0771fcfa42b48b1ac0b05c8",
     "text": "Cold Water",
     "metadata": {
       "link_texts": [
@@ -228,7 +228,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "fd2a7923ffb5c283577cb1f44d27d780",
+    "element_id": "1ca6ba0762db61aaef50d55694fd7d05",
     "text": "Drought",
     "metadata": {
       "link_texts": [
@@ -255,7 +255,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "e7e66ca3dccdb812809e14dc91915fea",
+    "element_id": "fe1267a876f5212930943489239e98b3",
     "text": "Floods",
     "metadata": {
       "link_texts": [
@@ -282,7 +282,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "fae686c1beaadff587803a1c2c601824",
+    "element_id": "ba7b6891a1cf5b1706d1ef6e3cc79af7",
     "text": "Fog",
     "metadata": {
       "link_texts": [
@@ -309,7 +309,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "652b08acd00f3f57b0687d2d1e0580f5",
+    "element_id": "52960b1734d8de317fb1910e5e03c6f7",
     "text": "Heat",
     "metadata": {
       "link_texts": [
@@ -336,7 +336,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "8a9bcf1a4f38c536066c54b17b81b791",
+    "element_id": "aa34c8c9412939ed1f65fca8ced153b6",
     "text": "Hurricanes",
     "metadata": {
       "link_texts": [
@@ -363,7 +363,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "741014158ee7a9f1de60c9e9e0ffe397",
+    "element_id": "d37be14a73f43d0d2649f2880670e94c",
     "text": "Lightning Safety",
     "metadata": {
       "link_texts": [
@@ -390,7 +390,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "b9ad0403ff877aea1df9bea1c738cbc7",
+    "element_id": "3ae9767576ad9d5ee098d7999206c61e",
     "text": "Rip Currents",
     "metadata": {
       "link_texts": [
@@ -417,7 +417,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "56b0c95cec6394bbe563cb68582370de",
+    "element_id": "488c4f0df0dc457dc206d577c0086140",
     "text": "Safe Boating",
     "metadata": {
       "link_texts": [
@@ -444,7 +444,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c1a739a65b5c223176f8d0a420fd5ab4",
+    "element_id": "d9a0c0ef29f85f7ed8a77ecbc60d61ac",
     "text": "Space Weather",
     "metadata": {
       "link_texts": [
@@ -471,7 +471,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2122be3ea729f76922b64fc521b23212",
+    "element_id": "e33d9302c515d4a2447ec8a76d157027",
     "text": "Sun (Ultraviolet Radiation)",
     "metadata": {
       "link_texts": [
@@ -498,7 +498,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d723c507c477d8be085d8e779fa93f46",
+    "element_id": "7cf875ed446156e07163550481ebef5a",
     "text": "Thunderstorms & Tornadoes",
     "metadata": {
       "link_texts": [
@@ -525,7 +525,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "8dd83da4044b0c0b4346445a5f64ee28",
+    "element_id": "fcda80005656798e97a9172e800da488",
     "text": "Tornado",
     "metadata": {
       "link_texts": [
@@ -552,7 +552,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "90c8dce77ac1702a2cd2c2b44bf43a33",
+    "element_id": "3d5c3f9f54d86a8bdce258ba3ffc6211",
     "text": "Tsunami",
     "metadata": {
       "link_texts": [
@@ -579,7 +579,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "b3a767e4ec9f8fda753a7300fcff9d1b",
+    "element_id": "15b47f82296daefb6983e3cca56ac941",
     "text": "Wildfire",
     "metadata": {
       "link_texts": [
@@ -606,7 +606,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4c664805f48d782068e1bea90ee7ec37",
+    "element_id": "564f033b0e04ebc1887a30e1198af630",
     "text": "Wind",
     "metadata": {
       "link_texts": [
@@ -633,7 +633,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "753fbd04224edadfd5a3ef4589ac4a94",
+    "element_id": "1780f99aa3464b5c0239856c09475efe",
     "text": "Winter",
     "metadata": {
       "link_texts": [
@@ -660,7 +660,7 @@
   },
   {
     "type": "Title",
-    "element_id": "0225c2250f787f919e1e69d0f49dceff",
+    "element_id": "4fe6b889e49efef2afb3c13976e93a63",
     "text": "Safety Campaigns",
     "metadata": {
       "link_texts": [
@@ -687,7 +687,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "b60f8982fb049e81a6188eb14ed80098",
+    "element_id": "5a4e833cdd93119af7c9bf544c3e2895",
     "text": "Seasonal Safety Campaigns",
     "metadata": {
       "link_texts": [
@@ -714,7 +714,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "34cffb77f95d809c924234e056b98348",
+    "element_id": "cd9bd3b67bd39788f50e9407302eeda1",
     "text": "#SafePlaceSelfie",
     "metadata": {
       "link_texts": [
@@ -741,7 +741,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "85e71456695dc655f543bd5ee5183779",
+    "element_id": "5d7989727c7421e7d2044c6585bebc79",
     "text": "Deaf & Hard of Hearing",
     "metadata": {
       "link_texts": [
@@ -768,7 +768,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "1443765ef30e3e80c7cea055adf7f606",
+    "element_id": "6d2716544dbc553796c86e0db187feed",
     "text": "Intellectual Disabilities",
     "metadata": {
       "link_texts": [
@@ -795,7 +795,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9de2e41190a645a6b3dc869cbe2ef155",
+    "element_id": "d70e707178d617e5363d6ed0e4a0ee32",
     "text": "Spanish-language Content",
     "metadata": {
       "link_texts": [
@@ -822,7 +822,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a66814e2e1eb1c5183996532c89010e6",
+    "element_id": "ae21ae374f41d3220123d8f60d085721",
     "text": "The Great Outdoors",
     "metadata": {
       "link_texts": [
@@ -849,7 +849,7 @@
   },
   {
     "type": "Title",
-    "element_id": "0640346478c8572ccec2dbe32e34a26d",
+    "element_id": "7b75189d369939b07d2170b4d51e0f6e",
     "text": "Ambassador",
     "metadata": {
       "link_texts": [
@@ -876,7 +876,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f8e6a863d99658aa1360f28cfb8e4e5a",
+    "element_id": "23d7075607abcde74588cbaab70a8992",
     "text": "About WRN Ambassadors",
     "metadata": {
       "link_texts": [
@@ -903,7 +903,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ef880d29b42c9f5436c62752cdbe75bf",
+    "element_id": "23a33ff9d256e621bece95af413ce6d6",
     "text": "Become an Ambassador",
     "metadata": {
       "link_texts": [
@@ -930,7 +930,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "eff3596db6d814cbe3d97defcf2797d0",
+    "element_id": "a222459b120b4af7468404ca917a763b",
     "text": "Ambassadors of Excellence",
     "metadata": {
       "link_texts": [
@@ -957,7 +957,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d23a1e5c66257639ff36614b8337c4ea",
+    "element_id": "c2736be7d2fecbffe521d800bf6e86f3",
     "text": "People of WRN",
     "metadata": {
       "link_texts": [
@@ -984,7 +984,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "77c0ac157a229b2081defb62a6ae27a8",
+    "element_id": "95e9cf4c61e3690f1725ae545dd96ad2",
     "text": "FAQS",
     "metadata": {
       "link_texts": [
@@ -1011,7 +1011,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c0b1fae13b933ba235f2de5ed8114e3d",
+    "element_id": "f8a52467ec28f5ab3ba652e370394093",
     "text": "Tell Your Success Story",
     "metadata": {
       "link_texts": [
@@ -1038,7 +1038,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "145b7263c7cd9d1626cddbf107d05449",
+    "element_id": "933ee7a30b79862f7d7ae19b95593314",
     "text": "Success Stories",
     "metadata": {
       "link_texts": [
@@ -1065,7 +1065,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "513e9d09a97e1009e09cc193c2646277",
+    "element_id": "183c43e3906c32a8467ac7963064ccdb",
     "text": "Tri-fold",
     "metadata": {
       "link_texts": [
@@ -1092,7 +1092,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c11f051bb195ee9b50425cc950e57649",
+    "element_id": "eca1961303d7f3165eb14b1283309db8",
     "text": "Aviation",
     "metadata": {
       "link_texts": [
@@ -1119,7 +1119,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9412ffe8798653567f37bc7cbe01c383",
+    "element_id": "5524ca7b7f562873b082432b2333ef72",
     "text": "Current Ambassadors",
     "metadata": {
       "link_texts": [
@@ -1146,7 +1146,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "4ea1effc6dfdbce63f11ae08f5f0a6bf",
+    "element_id": "68ee0ffe2f7bf940d09e2a8477f7575b",
     "text": "Brochure",
     "metadata": {
       "link_texts": [
@@ -1173,7 +1173,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3e05ad9b5d5efa415c86072900a544ca",
+    "element_id": "9ba982e20a0e706b2f91a623c2573794",
     "text": "En Espa\u00f1ol",
     "metadata": {
       "link_texts": [
@@ -1200,7 +1200,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4f18297d6e97fe97131067c4614d0b56",
+    "element_id": "b61db6a84521dd60594e6cd0774d0d65",
     "text": "Education",
     "metadata": {
       "link_texts": [
@@ -1227,7 +1227,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3425ae9a4bf996456c28a3a383f632a7",
+    "element_id": "abfb63b2fb94206dfe7d0a862019dd87",
     "text": "NWS Education Home",
     "metadata": {
       "link_texts": [
@@ -1254,7 +1254,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "80411d846bd3dd5f56ca576e376f4005",
+    "element_id": "2e86b1bbda4ee9f68bba0293b5cf6b96",
     "text": "Be A Force Of Nature",
     "metadata": {
       "link_texts": [
@@ -1281,7 +1281,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a4f595c8765cc3a0b5a15084ee7eb122",
+    "element_id": "39d1a33eb43938eced1f41d05839e8ff",
     "text": "WRN Kids Flyer",
     "metadata": {
       "link_texts": [
@@ -1308,7 +1308,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c17db7f1aaa47629976e8f5166622e76",
+    "element_id": "027ade2c45b035d0038ad9cd79822e05",
     "text": "Wireless Emergency Alerts",
     "metadata": {
       "link_texts": [
@@ -1335,7 +1335,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "edd86282ed0d85e5986532037959a2f0",
+    "element_id": "04c652c377cd5e5cbdf462367ef7497a",
     "text": "NOAA Weather Radio",
     "metadata": {
       "link_texts": [
@@ -1362,7 +1362,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "46cd16d10b37a045abd2617432c5dbfb",
+    "element_id": "e80cde61372e597ee64c8bcb55c9f60b",
     "text": "Mobile Weather",
     "metadata": {
       "link_texts": [
@@ -1389,7 +1389,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "7b443b7cd9b33f94b2a5f808d284a14a",
+    "element_id": "08450a91e5cdf710de2291d8c98da340",
     "text": "Brochures",
     "metadata": {
       "link_texts": [
@@ -1416,7 +1416,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0314b445b3bafe00abe90358aecad7ed",
+    "element_id": "7d9a4a4ea1f7f18b0e818be823319410",
     "text": "Hourly Weather Forecast",
     "metadata": {
       "link_texts": [
@@ -1443,7 +1443,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "1de9330b572f4e8872a37fc798eba1bc",
+    "element_id": "39c18c7743e62598eb28c5830768508c",
     "text": "Citizen Science",
     "metadata": {
       "link_texts": [
@@ -1470,7 +1470,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "9b8f1480242a74332d56768a19c2c3ba",
+    "element_id": "f3d8146fb5ee87fd570ee881c9db005c",
     "text": "Intellectual Disabilities",
     "metadata": {
       "link_texts": [
@@ -1497,7 +1497,7 @@
   },
   {
     "type": "Title",
-    "element_id": "f5121742894f599f7bad9e6c204219cd",
+    "element_id": "56940420a0f4576a50be34956fe87947",
     "text": "Collaboration",
     "metadata": {
       "link_texts": [
@@ -1524,7 +1524,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "411f179a39ce6f35d780ececcf5a663e",
+    "element_id": "5ef9dbe99e8866ded0711898d861e6e0",
     "text": "Get Involved",
     "metadata": {
       "link_texts": [
@@ -1551,7 +1551,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "3bbd638b65f65c518fd27245ad070e31",
+    "element_id": "7e89f12baf2ee79b5e731bae05eb8b7c",
     "text": "Social Media",
     "metadata": {
       "link_texts": [
@@ -1578,7 +1578,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "367c30facb2871ff643359f94ef54dbd",
+    "element_id": "4d5d64efd700643c4109ebb9dcc2410c",
     "text": "WRN Ambassadors \u200b",
     "metadata": {
       "link_texts": [
@@ -1605,7 +1605,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "193fb5253c63d3710c05022a62bb3045",
+    "element_id": "ba7546db4d896e1db0178bfc32570a45",
     "text": "Enterprise Resources",
     "metadata": {
       "link_texts": [
@@ -1632,7 +1632,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "724fcc66e549c1a95f1099f16f03f673",
+    "element_id": "a1d412b213e8d8848d0e039d1073b728",
     "text": "StormReady",
     "metadata": {
       "link_texts": [
@@ -1659,7 +1659,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "34d416cafa517f35f5d1263d3f84d0e4",
+    "element_id": "52fd18485917982c7fcf1f8d34cd8211",
     "text": "TsunamiReady",
     "metadata": {
       "link_texts": [
@@ -1686,7 +1686,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "613b531929637689a7cd0d616f71fc3e",
+    "element_id": "778029d25be4fbc1b05f0f9ba9d158ad",
     "text": "NWSChat (core partners only)",
     "metadata": {
       "link_texts": [
@@ -1713,7 +1713,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a49caec66691ba6a0cc9d04c7e9ce9bc",
+    "element_id": "19827723b7acf1cbb119991cec7ec648",
     "text": "InteractiveNWS (iNWS) (core partners only)\u200b",
     "metadata": {
       "link_texts": [
@@ -1740,7 +1740,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ed51ed0b4e5878e9439f0f18edb928f5",
+    "element_id": "f1e2978384f22108705b7db2b12b4bd5",
     "text": "SKYWARN",
     "metadata": {
       "link_texts": [
@@ -1767,7 +1767,7 @@
   },
   {
     "type": "Title",
-    "element_id": "556fb42a560167c2cc207d7cb6714bad",
+    "element_id": "f935102c83a95bbaba09b7848ecda452",
     "text": "News & Events",
     "metadata": {
       "link_texts": [
@@ -1794,7 +1794,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a788e14552083ec3eeace45644ab61f6",
+    "element_id": "b23f5312f21975d5b49e00164c72a790",
     "text": "Latest News",
     "metadata": {
       "link_texts": [
@@ -1821,7 +1821,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "081cd4934a58045952774609f4c933b9",
+    "element_id": "459199762179b300c1a0ea5831f8f096",
     "text": "Calendar",
     "metadata": {
       "link_texts": [
@@ -1848,7 +1848,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "11ee8366847061465e77830c50f56541",
+    "element_id": "f011ad161cd32a21fde9f50630ea206a",
     "text": "Meetings & Workshops",
     "metadata": {
       "link_texts": [
@@ -1875,7 +1875,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0dbdf234ff1ede3066c029317a2c086a",
+    "element_id": "1b7af13173464aefffaa8248d10332cd",
     "text": "NWS Aware Newsletter",
     "metadata": {
       "link_texts": [
@@ -1902,7 +1902,7 @@
   },
   {
     "type": "Title",
-    "element_id": "4fd5499bdc7ef505fbd5ad7808cc15e4",
+    "element_id": "62a7ddf4efb0e57450a0fc8b1f67e332",
     "text": "International",
     "metadata": {
       "link_texts": [
@@ -1929,7 +1929,7 @@
   },
   {
     "type": "Title",
-    "element_id": "aa70c71400e0cbb1efa4a90ffda7b576",
+    "element_id": "ee6c90c535cb797af9c903a6f88a3918",
     "text": "About",
     "metadata": {
       "link_texts": [
@@ -1956,7 +1956,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "a2a88821ceb3beaab2113187f62f107b",
+    "element_id": "8134a39cc8ba0030231672bead68f79a",
     "text": "Contact Us",
     "metadata": {
       "link_texts": [
@@ -1983,7 +1983,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d8b62cdf46831c81d890e1dbfca7d48f",
+    "element_id": "a87437beca982a04bd256f9fef93e568",
     "text": "What is WRN?",
     "metadata": {
       "link_texts": [
@@ -2010,7 +2010,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "027ed196c34f111fc5f60bbda8549811",
+    "element_id": "e5cac50e5113e853984bd3905ecc349a",
     "text": "WRN FAQ",
     "metadata": {
       "link_texts": [
@@ -2037,7 +2037,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f1227f69a53be4a073c718c7f056e277",
+    "element_id": "66a6920a12f6286dbbca6e5639690c54",
     "text": "WRN Brochure",
     "metadata": {
       "link_texts": [
@@ -2064,7 +2064,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "76ac56b6bf05505c5ed136a0115b13bc",
+    "element_id": "2e2107fb344acb508ff5dfc27e2b0dbc",
     "text": "Hazard Simplification",
     "metadata": {
       "link_texts": [
@@ -2091,7 +2091,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "dc08ebeca9f26eeb4c46ad055a7e08eb",
+    "element_id": "c3fcae1d3b11a034c0a4cd612c6ad051",
     "text": "IDSS Brochure",
     "metadata": {
       "link_texts": [
@@ -2118,7 +2118,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d228c35b349de0347cfff635f96308ca",
+    "element_id": "4b714dcc89c7435d671ef01a93ce5391",
     "text": "Roadmap",
     "metadata": {
       "link_texts": [
@@ -2145,7 +2145,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "738f4cffb78938db8fd26bb5ee2e8b73",
+    "element_id": "c43bd523aa3e97b7aab5c14741e728f2",
     "text": "Strategic Plan",
     "metadata": {
       "link_texts": [
@@ -2172,7 +2172,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "6b07bf9d8a69a826f08eb8aeb96d40a8",
+    "element_id": "3b034242608d7e077eae2a3ef589df08",
     "text": "WRN International",
     "metadata": {
       "link_texts": [
@@ -2199,7 +2199,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "de29e400f9d0ab80da7d3b3708b1398d",
+    "element_id": "9704650b32940bc924652a5a9b526e9a",
     "text": "Social Science",
     "metadata": {
       "link_texts": [
@@ -2226,7 +2226,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a859a27443333ffa9b214673a011d832",
+    "element_id": "53e67071ac50e32f2cc1b0ff162c8f4c",
     "text": "The spring season is all about change \u2013 a rebirth both literally and figuratively. Even though the spring season doesn\u2019t officially (astronomically, that is) begin until March 20 this year, climatologically, it starts March 1.",
     "metadata": {
       "languages": [
@@ -2247,7 +2247,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d9065d09d5289f575f03dd67043679f5",
+    "element_id": "5f97aed98f2bce44f388c6231ac65fc9",
     "text": "As cold winter nights are replaced by the warmth of longer daylight hours, the National Weather Service invites you to do two important things that may save your life or the life of a loved one.",
     "metadata": {
       "languages": [
@@ -2268,7 +2268,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e100f7b751351d8de4653bd7c5f69245",
+    "element_id": "0668821b3a35eb2305abc6d6c2dbdb5f",
     "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you. This could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become \u201cweather-ready.\u201d",
     "metadata": {
       "emphasized_text_contents": [
@@ -2295,7 +2295,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "55d81694fcd2fade3dfc62ef52422f7b",
+    "element_id": "0c6f5466d9784c25bdfde7fa6f963b32",
     "text": "Second, encourage others to become Weather-Ready as well. Share the message by taking advantage of our vast array of weather safety content \u2013 everything posted on our Spring Safety website is freely available, and we encourage sharing on social media networks. Also remember those who are most vulnerable, like an elderly family member or neighbor who might have limited mobility or is isolated. Reach out to those who are at higher risk of being impacted by extreme weather, and help them get prepared. This simple act of caring could become heroic.",
     "metadata": {
       "emphasized_text_contents": [
@@ -2328,7 +2328,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "cc697b1fe8918a5033fdc471d0f192f8",
+    "element_id": "c5b67740173e831e7435825f06f68f92",
     "text": "This spring, the campaign is focused on heat dangers. Heat illness and death can occur even in spring\u2019s moderately warm weather. The majority of all heat-related deaths occur outside of heat waves and roughly a third of child hot car deaths occur outside of the summer months. Learn more by viewing the infographics that are now available.",
     "metadata": {
       "link_texts": [
@@ -2355,7 +2355,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "939c4fee892e83225c5b774cf44ebe02",
+    "element_id": "b120d5337d0e107fb9744cec6e094f12",
     "text": "Stay safe this spring, and every season, by being informed, prepared, and Weather-Ready.",
     "metadata": {
       "languages": [
@@ -2376,7 +2376,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5e3a9e295119f09f8a9e8ac807188176",
+    "element_id": "cfa845e0852ca10131d149aea751839b",
     "text": "US Dept of Commerce National Oceanic and Atmospheric Administration National Weather Service News Around NOAA 1325 East West Highway Silver Spring, MD 20910 Comments? Questions? Please Contact Us.",
     "metadata": {
       "link_texts": [
@@ -2409,7 +2409,7 @@
   },
   {
     "type": "Title",
-    "element_id": "a8eed54a458923d7f04b9d1641e98d43",
+    "element_id": "ac247763133e2909191cd0cb4af41b3d",
     "text": "Disclaimer Information Quality Help Glossary",
     "metadata": {
       "link_texts": [
@@ -2442,7 +2442,7 @@
   },
   {
     "type": "Title",
-    "element_id": "b415705c2c1927eda24b454e6e91bea3",
+    "element_id": "da468cc6d1e3a2f1d6634d899a179dee",
     "text": "Privacy Policy Freedom of Information Act (FOIA) About Us Career Opportunities",
     "metadata": {
       "link_texts": [
