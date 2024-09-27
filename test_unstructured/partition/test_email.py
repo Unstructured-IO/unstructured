@@ -1,5 +1,7 @@
 """Test suite for `unstructured.partition.email` module."""
 
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
 import datetime
@@ -38,10 +40,10 @@ from unstructured.documents.email_elements import (
     Subject,
 )
 from unstructured.partition.email import (
-    convert_to_iso_8601,
-    extract_attachment_info,
+    _partition_email_header,
+    _convert_to_iso_8601,
+    _extract_attachment_info,
     partition_email,
-    partition_email_header,
 )
 from unstructured.partition.text import partition_text
 
@@ -312,7 +314,7 @@ def test_partition_email_from_file_with_header():
         msg = email.message_from_file(f, policy=policy.default)
 
     msg = cast(EmailMessage, msg)
-    elements = partition_email_header(msg)
+    elements = _partition_email_header(msg)
 
     assert len(elements) > 0
     assert elements == RECEIVED_HEADER_OUTPUT
@@ -369,7 +371,7 @@ def test_partition_email_processes_fake_email_with_header():
     ],
 )
 def test_convert_to_iso_8601(time: str, expected: str | None):
-    iso_time = convert_to_iso_8601(time)
+    iso_time = _convert_to_iso_8601(time)
 
     assert iso_time == expected
 
@@ -526,7 +528,7 @@ def test_extract_attachment_info():
     with open(example_doc_path("eml/fake-email-attachment.eml")) as f:
         msg = email.message_from_file(f, policy=policy.default)
         msg = cast(EmailMessage, msg)
-    attachment_info = extract_attachment_info(msg)
+    attachment_info = _extract_attachment_info(msg)
 
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
@@ -549,7 +551,7 @@ def test_partition_email_can_process_attachments(tmp_path: pathlib.Path):
     with open(filename) as f:
         msg = email.message_from_file(f, policy=policy.default)
         msg = cast(EmailMessage, msg)
-    extract_attachment_info(msg, output_dir=str(output_dir))
+    _extract_attachment_info(msg, output_dir=str(output_dir))
 
     attachment_filename = os.path.join(
         output_dir,
@@ -595,7 +597,7 @@ def test_partition_email_can_process_min_max_with_attachments(tmp_path: pathlib.
     with open(filename) as f:
         msg = email.message_from_file(f, policy=policy.default)
         msg = cast(EmailMessage, msg)
-    extract_attachment_info(msg, output_dir=str(output_dir))
+    _extract_attachment_info(msg, output_dir=str(output_dir))
 
     attachment_filename = str(
         os.path.join(

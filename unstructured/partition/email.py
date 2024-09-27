@@ -10,7 +10,7 @@ from email.headerregistry import AddressHeader
 from email.message import EmailMessage
 from functools import partial
 from tempfile import TemporaryDirectory
-from typing import IO, Any, Callable, Final, Optional, Type, cast
+from typing import IO, Any, Callable, Final, Type, cast
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
@@ -56,242 +56,23 @@ VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
 DETECTION_ORIGIN: str = "email"
 
 
-def _parse_received_data(data: str) -> list[Element]:
-    ip_address_names = extract_ip_address_name(data)
-    ip_addresses = extract_ip_address(data)
-    mapi_id = extract_mapi_id(data)
-    datetimetz = extract_datetimetz(data)
-
-    elements: list[Element] = []
-    if ip_address_names and ip_addresses:
-        for name, ip in zip(ip_address_names, ip_addresses):
-            elements.append(ReceivedInfo(name=name, text=ip))
-    if mapi_id:
-        elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
-    if datetimetz:
-        elements.append(
-            ReceivedInfo(
-                name="received_datetimetz",
-                text=str(datetimetz),
-                datestamp=datetimetz,
-            ),
-        )
-    return elements
-
-
-def _strip_angle_brackets(data: str) -> str:
-    """Remove angle brackets from the beginning and end of the string if they exist.
-
-    Returns:
-    str: The string with surrounding angle brackets removed.
-
-    Example:
-    >>> _strip_angle_brackets("<example>")
-    'example'
-    >>> _strip_angle_brackets("<another>test>")
-    'another>test'
-    >>> _strip_angle_brackets("<<edge>>")
-    '<edge>'
-    """
-    return re.sub(r"^<|>$", "", data)
-
-
-def partition_email_header(msg: EmailMessage) -> list[Element]:
-    def append_address_header_elements(header: AddressHeader, element_type: Type[Element]):
-        for addr in header.addresses:
-            elements.append(
-                element_type(
-                    name=addr.display_name or addr.username,  # type: ignore
-                    text=addr.addr_spec,  # type: ignore
-                )
-            )
-
-    elements: list[Element] = []
-
-    for msg_field, msg_value in msg.items():
-        if msg_field in {"To", "Bcc", "Cc"}:
-            append_address_header_elements(msg_value, Recipient)
-        elif msg_field == "From":
-            append_address_header_elements(msg_value, Sender)
-        elif msg_field == "Subject":
-            elements.append(Subject(text=msg_value))
-        elif msg_field == "Received":
-            elements += _parse_received_data(msg_value)
-        elif msg_field == "Message-ID":
-            elements.append(MetaData(name=msg_field, text=_strip_angle_brackets(str(msg_value))))
-        else:
-            elements.append(MetaData(name=msg_field, text=msg_value))
-
-    return elements
-
-
-def find_signature(msg: EmailMessage) -> Optional[str]:
-    """Extracts the signature from an email message, if it's available."""
-    payload: Any = msg.get_payload()
-    if not isinstance(payload, list):
-        return None
-
-    payload = cast(list[EmailMessage], payload)
-    for item in payload:
-        if item.get_content_type().endswith("signature"):
-            return item.get_payload()
-
-    return None
-
-
-def build_email_metadata(
-    msg: EmailMessage,
-    filename: Optional[str],
-    metadata_last_modified: Optional[str] = None,
-    last_modification_date: Optional[str] = None,
-) -> ElementMetadata:
-    """Creates an ElementMetadata object from the header information in the email."""
-    signature = find_signature(msg)
-
-    header_dict = dict(msg.raw_items())
-    email_date = header_dict.get("Date")
-
-    def parse_recipients(header_value: Optional[str]) -> Optional[list[str]]:
-        if header_value is not None:
-            return [recipient.strip() for recipient in header_value.split(",")]
-        return None
-
-    if email_date is not None:
-        email_date = convert_to_iso_8601(email_date)
-
-    email_message_id = header_dict.get("Message-ID")
-    if email_message_id:
-        email_message_id = _strip_angle_brackets(email_message_id)
-
-    element_metadata = ElementMetadata(
-        bcc_recipient=parse_recipients(header_dict.get("Bcc")),
-        cc_recipient=parse_recipients(header_dict.get("Cc")),
-        email_message_id=email_message_id,
-        sent_to=parse_recipients(header_dict.get("To")),
-        sent_from=parse_recipients(header_dict.get("From")),
-        subject=msg.get("Subject"),
-        signature=signature,
-        last_modified=metadata_last_modified or email_date or last_modification_date,
-        filename=filename,
-    )
-    element_metadata.detection_origin = DETECTION_ORIGIN
-    return element_metadata
-
-
-def convert_to_iso_8601(time: str) -> Optional[str]:
-    """Converts the datetime from the email output to ISO-8601 format."""
-    cleaned_time = clean_extra_whitespace(time)
-    regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
-    if regex_match is None:
-        logger.warning(
-            f"{time} did not match RFC-2822 format. Unable to extract the time.",
-        )
-        return None
-
-    start, end = regex_match.span()
-    dt_string = cleaned_time[start:end]
-    datetime_object = datetime.datetime.strptime(dt_string, "%a, %d %b %Y %H:%M:%S %z")
-    return datetime_object.isoformat()
-
-
-def extract_attachment_info(
-    message: EmailMessage,
-    output_dir: Optional[str] = None,
-) -> list[dict[str, str]]:
-    list_attachments: list[Any] = []
-
-    for part in message.walk():
-        if "content-disposition" in part:
-            cdisp = part["content-disposition"].split(";")
-            cdisp = [clean_extra_whitespace(item) for item in cdisp]
-
-            attachment_info: dict[str, Any] = {}
-            for item in cdisp:
-                if item.lower() in ("attachment", "inline"):
-                    continue
-                key, value = item.split("=", 1)
-                key = clean_extra_whitespace(key.replace('"', ""))
-                value = clean_extra_whitespace(value.replace('"', ""))
-                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
-                    value,
-                )
-            attachment_info["payload"] = part.get_payload(decode=True)
-            list_attachments.append(attachment_info)
-
-            if output_dir:
-                for idx, attachment in enumerate(list_attachments):
-                    if "filename" in attachment:
-                        filename = output_dir + "/" + attachment["filename"]
-                        with open(filename, "wb") as f:
-                            # Note(harrell) mypy wants to just us `w` when opening the file but this
-                            # causes an error since the payloads are bytes not str
-                            f.write(attachment["payload"])
-                    else:
-                        filename = os.path.join(output_dir, f"attachment_{idx}")
-                        with open(filename, "wb") as f:
-                            list_attachments[idx]["filename"] = os.path.basename(filename)
-                            f.write(attachment["payload"])
-
-    return list_attachments
-
-
-def has_embedded_image(element: Element):
-    PATTERN = re.compile(r"\[image: .+\]")
-    return PATTERN.search(element.text)
-
-
-def find_embedded_image(
-    element: NarrativeText | Title, indices: re.Match[str]
-) -> tuple[Element, Element]:
-    start, end = indices.start(), indices.end()
-
-    image_raw_info = element.text[start:end]
-    image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
-    element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
-    return Image(text=image_info[:-1], detection_origin="email"), element
-
-
-def parse_email(
-    filename: Optional[str] = None, file: Optional[IO[bytes]] = None
-) -> tuple[Optional[str], EmailMessage]:
-    if filename is not None:
-        with open(filename, "rb") as f:
-            msg = email.message_from_binary_file(f, policy=policy.default)
-    elif file is not None:
-        f_bytes = convert_to_bytes(file)
-        msg = email.message_from_bytes(f_bytes, policy=policy.default)
-    else:
-        raise ValueError("Either 'filename' or 'file' must be provided.")
-
-    encoding = None
-    charsets = msg.get_charsets() or []
-    for charset in charsets:
-        if charset and charset.strip() and validate_encoding(charset):
-            encoding = charset
-            break
-
-    formatted_encoding = format_encoding_str(encoding) if encoding else None
-    msg = cast(EmailMessage, msg)
-    return formatted_encoding, msg
-
-
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
 @add_chunking_strategy
 def partition_email(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    text: Optional[str] = None,
+    filename: str | None = None,
+    file: IO[bytes] | None = None,
+    text: str | None = None,
     content_source: str = "text/html",
-    encoding: Optional[str] = None,
+    encoding: str | None = None,
     include_headers: bool = False,
-    max_partition: Optional[int] = 1500,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
+    max_partition: int | None = 1500,
+    metadata_filename: str | None = None,
+    metadata_last_modified: str | None = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
-    min_partition: Optional[int] = 0,
-    languages: Optional[list[str]] = ["auto"],
+    attachment_partitioner: Callable[..., list[Element]] | None = None,
+    min_partition: int | None = 0,
+    languages: list[str] | None = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
@@ -345,7 +126,7 @@ def partition_email(
     exactly_one(filename=filename, file=file, text=text)
     detected_encoding = "utf-8"
     if filename is not None:
-        extracted_encoding, msg = parse_email(filename=filename)
+        extracted_encoding, msg = _parse_email(filename=filename)
         if extracted_encoding:
             detected_encoding = extracted_encoding
         else:
@@ -355,7 +136,7 @@ def partition_email(
             )
             msg = email.message_from_string(file_text, policy=policy.default)
     elif file is not None:
-        extracted_encoding, msg = parse_email(file=file)
+        extracted_encoding, msg = _parse_email(file=file)
         if extracted_encoding:
             detected_encoding = extracted_encoding
         else:
@@ -393,11 +174,13 @@ def partition_email(
             and part.get("content-transfer-encoding", None) == "base64"
         ):
             try:
-                content_map[content_type] = part.get_payload(decode=True).decode(encoding)
+                content_map[content_type] = part.get_payload(decode=True).decode(  # type: ignore
+                    encoding
+                )
             except (UnicodeDecodeError, UnicodeError):
-                content_map[content_type] = part.get_payload()
+                content_map[content_type] = part.get_payload()  # type: ignore
         else:
-            content_map[content_type] = part.get_payload()
+            content_map[content_type] = part.get_payload()  # type: ignore
 
     content = None
     if content_source in content_map:
@@ -481,20 +264,20 @@ def partition_email(
         )
 
     for idx, element in enumerate(elements):
-        indices = has_embedded_image(element)
+        indices = _has_embedded_image(element)
         if (isinstance(element, (NarrativeText, Title))) and indices:
-            image_info, clean_element = find_embedded_image(element, indices)
+            image_info, clean_element = _find_embedded_image(element, indices)
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
 
     header: list[Element] = []
     if include_headers:
-        header = partition_email_header(msg)
+        header = _partition_email_header(msg)
     all_elements = header + elements
 
     last_modified = get_last_modified_date(filename) if filename else None
 
-    metadata = build_email_metadata(
+    metadata = _build_email_metadata(
         msg,
         filename=metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
@@ -505,7 +288,7 @@ def partition_email(
 
     if process_attachments:
         with TemporaryDirectory() as tmpdir:
-            extract_attachment_info(msg, tmpdir)
+            _extract_attachment_info(msg, tmpdir)
             attached_files = os.listdir(tmpdir)
             for attached_file in attached_files:
                 attached_filename = os.path.join(tmpdir, attached_file)
@@ -534,3 +317,227 @@ def partition_email(
     )
 
     return elements
+
+
+# ================================================================================================
+# HELPER FUNCTIONS
+# ================================================================================================
+
+
+def _build_email_metadata(
+    msg: EmailMessage,
+    filename: str | None,
+    metadata_last_modified: str | None = None,
+    last_modification_date: str | None = None,
+) -> ElementMetadata:
+    """Creates an ElementMetadata object from the header information in the email."""
+    signature = _find_signature(msg)
+
+    header_dict = dict(msg.raw_items())
+    email_date = header_dict.get("Date")
+
+    def parse_recipients(header_value: str | None) -> list[str] | None:
+        if header_value is not None:
+            return [recipient.strip() for recipient in header_value.split(",")]
+        return None
+
+    if email_date is not None:
+        email_date = _convert_to_iso_8601(email_date)
+
+    email_message_id = header_dict.get("Message-ID")
+    if email_message_id:
+        email_message_id = _strip_angle_brackets(email_message_id)
+
+    element_metadata = ElementMetadata(
+        bcc_recipient=parse_recipients(header_dict.get("Bcc")),
+        cc_recipient=parse_recipients(header_dict.get("Cc")),
+        email_message_id=email_message_id,
+        sent_to=parse_recipients(header_dict.get("To")),
+        sent_from=parse_recipients(header_dict.get("From")),
+        subject=msg.get("Subject"),
+        signature=signature,
+        last_modified=metadata_last_modified or email_date or last_modification_date,
+        filename=filename,
+    )
+    element_metadata.detection_origin = DETECTION_ORIGIN
+    return element_metadata
+
+
+def _convert_to_iso_8601(time: str) -> str | None:
+    """Converts the datetime from the email output to ISO-8601 format."""
+    cleaned_time = clean_extra_whitespace(time)
+    regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
+    if regex_match is None:
+        logger.warning(
+            f"{time} did not match RFC-2822 format. Unable to extract the time.",
+        )
+        return None
+
+    start, end = regex_match.span()
+    dt_string = cleaned_time[start:end]
+    datetime_object = datetime.datetime.strptime(dt_string, "%a, %d %b %Y %H:%M:%S %z")
+    return datetime_object.isoformat()
+
+
+def _extract_attachment_info(
+    message: EmailMessage,
+    output_dir: str | None = None,
+) -> list[dict[str, str]]:
+    list_attachments: list[Any] = []
+
+    for part in message.walk():
+        if "content-disposition" in part:
+            cdisp = part["content-disposition"].split(";")
+            cdisp = [clean_extra_whitespace(item) for item in cdisp]
+
+            attachment_info: dict[str, Any] = {}
+            for item in cdisp:
+                if item.lower() in ("attachment", "inline"):
+                    continue
+                key, value = item.split("=", 1)
+                key = clean_extra_whitespace(key.replace('"', ""))
+                value = clean_extra_whitespace(value.replace('"', ""))
+                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
+                    value,
+                )
+            attachment_info["payload"] = part.get_payload(decode=True)
+            list_attachments.append(attachment_info)
+
+            if output_dir:
+                for idx, attachment in enumerate(list_attachments):
+                    if "filename" in attachment:
+                        filename = output_dir + "/" + attachment["filename"]
+                        with open(filename, "wb") as f:
+                            # Note(harrell) mypy wants to just us `w` when opening the file but this
+                            # causes an error since the payloads are bytes not str
+                            f.write(attachment["payload"])
+                    else:
+                        filename = os.path.join(output_dir, f"attachment_{idx}")
+                        with open(filename, "wb") as f:
+                            list_attachments[idx]["filename"] = os.path.basename(filename)
+                            f.write(attachment["payload"])
+
+    return list_attachments
+
+
+def _find_embedded_image(
+    element: NarrativeText | Title, indices: re.Match[str]
+) -> tuple[Element, Element]:
+    start, end = indices.start(), indices.end()
+
+    image_raw_info = element.text[start:end]
+    image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
+    element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
+    return Image(text=image_info[:-1], detection_origin="email"), element
+
+
+def _find_signature(msg: EmailMessage) -> str | None:
+    """Extracts the signature from an email message, if it's available."""
+    payload: Any = msg.get_payload()
+    if not isinstance(payload, list):
+        return None
+
+    payload = cast(list[EmailMessage], payload)
+    for item in payload:
+        if item.get_content_type().endswith("signature"):
+            return item.get_payload()
+
+    return None
+
+
+def _has_embedded_image(element: Element):
+    PATTERN = re.compile(r"\[image: .+\]")
+    return PATTERN.search(element.text)
+
+
+def _parse_email(
+    filename: str | None = None, file: IO[bytes] | None = None
+) -> tuple[str | None, EmailMessage]:
+    if filename is not None:
+        with open(filename, "rb") as f:
+            msg = email.message_from_binary_file(f, policy=policy.default)
+    elif file is not None:
+        f_bytes = convert_to_bytes(file)
+        msg = email.message_from_bytes(f_bytes, policy=policy.default)
+    else:
+        raise ValueError("Either 'filename' or 'file' must be provided.")
+
+    encoding = None
+    charsets = msg.get_charsets() or []
+    for charset in charsets:
+        if charset and charset.strip() and validate_encoding(charset):
+            encoding = charset
+            break
+
+    formatted_encoding = format_encoding_str(encoding) if encoding else None
+    msg = cast(EmailMessage, msg)
+    return formatted_encoding, msg
+
+
+def _parse_received_data(data: str) -> list[Element]:
+    ip_address_names = extract_ip_address_name(data)
+    ip_addresses = extract_ip_address(data)
+    mapi_id = extract_mapi_id(data)
+    datetimetz = extract_datetimetz(data)
+
+    elements: list[Element] = []
+    if ip_address_names and ip_addresses:
+        for name, ip in zip(ip_address_names, ip_addresses):
+            elements.append(ReceivedInfo(name=name, text=ip))
+    if mapi_id:
+        elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
+    if datetimetz:
+        elements.append(
+            ReceivedInfo(
+                name="received_datetimetz",
+                text=str(datetimetz),
+                datestamp=datetimetz,
+            ),
+        )
+    return elements
+
+
+def _partition_email_header(msg: EmailMessage) -> list[Element]:
+    def append_address_header_elements(header: AddressHeader, element_type: Type[Element]):
+        for addr in header.addresses:
+            elements.append(
+                element_type(
+                    name=addr.display_name or addr.username,  # type: ignore
+                    text=addr.addr_spec,  # type: ignore
+                )
+            )
+
+    elements: list[Element] = []
+
+    for msg_field, msg_value in msg.items():
+        if msg_field in {"To", "Bcc", "Cc"}:
+            append_address_header_elements(msg_value, Recipient)
+        elif msg_field == "From":
+            append_address_header_elements(msg_value, Sender)
+        elif msg_field == "Subject":
+            elements.append(Subject(text=msg_value))
+        elif msg_field == "Received":
+            elements += _parse_received_data(msg_value)
+        elif msg_field == "Message-ID":
+            elements.append(MetaData(name=msg_field, text=_strip_angle_brackets(str(msg_value))))
+        else:
+            elements.append(MetaData(name=msg_field, text=msg_value))
+
+    return elements
+
+
+def _strip_angle_brackets(data: str) -> str:
+    """Remove angle brackets from the beginning and end of the string if they exist.
+
+    Returns:
+    str: The string with surrounding angle brackets removed.
+
+    Example:
+    >>> _strip_angle_brackets("<example>")
+    'example'
+    >>> _strip_angle_brackets("<another>test>")
+    'another>test'
+    >>> _strip_angle_brackets("<<edge>>")
+    '<edge>'
+    """
+    return re.sub(r"^<|>$", "", data)
