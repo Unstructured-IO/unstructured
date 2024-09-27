@@ -1200,7 +1200,6 @@ def opts_args() -> dict[str, Any]:
         "url": None,
         "headers": {},
         "ssl_verify": True,
-        "metadata_last_modified": None,
         "skip_headers_and_footers": False,
         "detection_origin": None,
     }
@@ -1301,15 +1300,7 @@ class DescribeHtmlPartitionerOptions:
 
     # -- .last_modified --------------------------
 
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = HtmlPartitionerOptions(**opts_args)
-
-        assert opts.last_modified == "2024-03-05T17:02:53"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_file_path_is_provided(
         self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
         opts_args["file_path"] = "a/b/document.html"
