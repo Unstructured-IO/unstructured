@@ -40,9 +40,9 @@ from unstructured.documents.email_elements import (
     Subject,
 )
 from unstructured.partition.email import (
-    _partition_email_header,
     _convert_to_iso_8601,
     _extract_attachment_info,
+    _partition_email_header,
     partition_email,
 )
 from unstructured.partition.text import partition_text
@@ -268,18 +268,6 @@ def test_partition_email_from_text_file_with_headers():
     assert elements == ALL_EXPECTED_OUTPUT
     for element in elements:
         assert element.metadata.filename is None
-
-
-def test_partition_email_from_text_file_max():
-    with open(example_doc_path("eml/fake-email.txt"), "rb") as f:
-        elements = partition_email(file=f, content_source="text/plain", max_partition=20)
-
-    assert len(elements) == 6
-
-
-def test_partition_email_from_text_file_raises_value_error():
-    with pytest.raises(ValueError), open(example_doc_path("eml/fake-email.txt"), "rb") as f:
-        partition_email(file=f, content_source="text/plain", min_partition=1000)
 
 
 def test_partition_email_from_text():
@@ -588,46 +576,6 @@ def test_partition_email_can_process_attachments(tmp_path: pathlib.Path):
         assert element.metadata.subject == "Fake email with attachment"
     assert elements[-1].text == "Hey this is a fake attachment!"
     assert elements[-1].metadata == expected_metadata
-
-
-def test_partition_email_can_process_min_max_with_attachments(tmp_path: pathlib.Path):
-    output_dir = tmp_path / "output"
-    output_dir.mkdir()
-    filename = example_doc_path("eml/fake-email-attachment.eml")
-    with open(filename) as f:
-        msg = email.message_from_file(f, policy=policy.default)
-        msg = cast(EmailMessage, msg)
-    _extract_attachment_info(msg, output_dir=str(output_dir))
-
-    attachment_filename = str(
-        os.path.join(
-            output_dir,
-            str(ATTACH_EXPECTED_OUTPUT[0]["filename"]),
-        )
-    )
-
-    attachment_elements = partition_text(
-        filename=attachment_filename,
-        metadata_filename=attachment_filename,
-        min_partition=6,
-        max_partition=12,
-    )
-
-    elements = partition_email(
-        filename=filename,
-        attachment_partitioner=partition_text,
-        process_attachments=True,
-        min_partition=6,
-        max_partition=12,
-    )
-
-    assert elements[0].text.startswith("Hello!")
-    assert elements[-1].text == attachment_elements[-1].text
-    assert elements[-2].text == attachment_elements[-2].text
-    for element in elements:
-        if element.metadata.attached_to_filename is not None:
-            assert len(element.text) <= 12
-            assert len(element.text) >= 6
 
 
 # -- language behaviors --------------------------------------------------------------------------

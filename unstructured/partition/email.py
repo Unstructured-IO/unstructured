@@ -66,12 +66,10 @@ def partition_email(
     content_source: str = "text/html",
     encoding: str | None = None,
     include_headers: bool = False,
-    max_partition: int | None = 1500,
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     process_attachments: bool = False,
     attachment_partitioner: Callable[..., list[Element]] | None = None,
-    min_partition: int | None = 0,
     languages: list[str] | None = ["auto"],
     detect_language_per_element: bool = False,
     **kwargs: Any,
@@ -90,9 +88,6 @@ def partition_email(
         other: "text/plain"
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-    max_partition
-        The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied. Only applies if processing the text/plain content.
     metadata_filename
         The filename to use for the metadata.
     metadata_last_modified
@@ -102,9 +97,6 @@ def partition_email(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
-    min_partition
-        The minimum number of characters to include in a partition. Only applies if
-        processing the text/plain content.
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -252,8 +244,6 @@ def partition_email(
         elements = partition_text(
             text=content,
             encoding=encoding,
-            max_partition=max_partition,
-            min_partition=min_partition,
             languages=[""],
             detection_origin="email",
         )
@@ -297,10 +287,7 @@ def partition_email(
                         "Specify the attachment_partitioner kwarg to process attachments.",
                     )
                 attached_elements = attachment_partitioner(
-                    filename=attached_filename,
-                    metadata_last_modified=metadata_last_modified,
-                    max_partition=max_partition,
-                    min_partition=min_partition,
+                    filename=attached_filename, metadata_last_modified=metadata_last_modified
                 )
                 for element in attached_elements:
                     element.metadata.filename = attached_file

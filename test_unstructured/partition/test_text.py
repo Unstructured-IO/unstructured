@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import Optional, Type, cast
+from typing import Optional, Type
 
 import pytest
 from pytest_mock import MockerFixture
@@ -13,11 +13,7 @@ from test_unstructured.unit_utils import assert_round_trips_through_JSON, exampl
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
-from unstructured.partition.text import (
-    _combine_paragraphs_less_than_min,
-    _split_content_to_fit_max,
-    partition_text,
-)
+from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_OUTPUT = [
@@ -246,94 +242,6 @@ def test_partition_text_splits_long_text():
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
-
-
-def test_partition_text_splits_long_text_max_partition():
-    filename = example_doc_path("norwich-city.txt")
-    elements = partition_text(filename)
-    elements_max_part = partition_text(filename, max_partition=500)
-    # NOTE(klaijan) - I edited the operation here from < to <=
-    # Please revert back if this does not make sense
-    assert len(elements) <= len(elements_max_part)
-    for element in elements_max_part:
-        assert len(element.text) <= 500
-
-    # Make sure combined text is all the same
-    assert " ".join([el.text for el in elements]) == " ".join([el.text for el in elements_max_part])
-
-
-def test_partition_text_splits_max_min_partition():
-    filename = example_doc_path("norwich-city.txt")
-    elements = partition_text(filename=filename)
-    elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
-    for i, element in enumerate(elements_max_part):
-        # NOTE(robinson) - the last element does not have a next element to merge with,
-        # so it can be short
-        if i < len(elements_max_part) - 1:
-            assert len(element.text) <= 1500
-            assert len(element.text) >= 1000
-
-    import re
-
-    from unstructured.nlp.patterns import BULLETS_PATTERN
-
-    # NOTE(klaijan) - clean the asterik out of both text.
-    # The `elements` was partitioned by new line and thus makes line 56 (shown below)
-    # "*Club domestic league appearances and goals"
-    # be considered as a bullet point by the function is_bulleted_text
-    # and so the asterik was removed from the paragraph
-    # whereas `elements_max_part` was partitioned differently and thus none of the line
-    # starts with any of the BULLETS_PATTERN.
-
-    # TODO(klaijan) - when edit the function partition_text to support non-bullet paragraph
-    # that starts with bullet-like BULLETS_PATTERN, remove the re.sub part from the assert below.
-
-    # Make sure combined text is all the same
-    assert re.sub(BULLETS_PATTERN, "", " ".join([el.text for el in elements])) == re.sub(
-        BULLETS_PATTERN,
-        "",
-        " ".join([el.text for el in elements_max_part]),
-    )
-
-
-def test_partition_text_min_max():
-    segments = partition_text(text=SHORT_PARAGRAPHS, min_partition=6)
-    for i, segment in enumerate(segments):
-        # NOTE(robinson) - the last element does not have a next element to merge with,
-        # so it can be short
-        if i < len(segments) - 1:
-            assert len(segment.text) >= 6
-
-    segments = partition_text(text=SHORT_PARAGRAPHS, max_partition=20, min_partition=7)
-    for i, segment in enumerate(segments):
-        # NOTE(robinson) - the last element does not have a next element to merge with,
-        # so it can be short
-        if i < len(segments) - 1:
-            assert len(segment.text) >= 7
-            assert len(segment.text) <= 20
-
-
-def test_split_content_to_fit_max():
-    segments = _split_content_to_fit_max(
-        content=MIN_MAX_TEXT,
-        max_partition=75,
-    )
-    assert segments == [
-        "This is a story.",
-        "This is a story that doesn't matter because",
-        "it is just being used as an example. Hi. Hello. Howdy. Hola.",
-        "The example is simple and repetitive and long",
-        "and somewhat boring, but it serves a purpose. End.",
-    ]
-
-
-def test_combine_paragraphs_less_than_min():
-    segments = _combine_paragraphs_less_than_min(
-        cast(list[str], SHORT_PARAGRAPHS.split("\n\n")),
-        max_partition=1500,
-        min_partition=7,
-    )
-    assert len(segments) < len(SHORT_PARAGRAPHS)
 
 
 def test_partition_text_doesnt_get_page_breaks():
