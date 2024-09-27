@@ -22,12 +22,9 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -41,19 +38,15 @@ _CellCoordinate: TypeAlias = "tuple[int, int]"
 DETECTION_ORIGIN: str = "xlsx"
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.XLSX)
+@apply_metadata(FileType.XLSX)
 @add_chunking_strategy
 def partition_xlsx(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
-    infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    include_header: bool = False,
     find_subtable: bool = True,
+    include_header: bool = False,
+    infer_table_structure: bool = True,
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -71,28 +64,15 @@ def partition_xlsx(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages
-        User defined value for metadata.languages if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    metadata_last_modified
-        The day of the last modification
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
     """
     opts = _XlsxPartitionerOptions(
-        detect_language_per_element=detect_language_per_element,
-        file=file,
         file_path=filename,
+        file=file,
         find_subtable=find_subtable,
         include_header=include_header,
         infer_table_structure=infer_table_structure,
-        languages=languages,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
     )
 
     elements: list[Element] = []
@@ -151,13 +131,6 @@ def partition_xlsx(
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=elements,
-            languages=opts.languages,
-            detect_language_per_element=opts.detect_language_per_element,
-        ),
-    )
     return elements
 
 
@@ -167,30 +140,17 @@ class _XlsxPartitionerOptions:
     def __init__(
         self,
         *,
-        detect_language_per_element: bool,
-        file: Optional[IO[bytes]],
         file_path: Optional[str],
+        file: Optional[IO[bytes]],
         find_subtable: bool,
         include_header: bool,
         infer_table_structure: bool,
-        languages: Optional[list[str]],
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
     ):
-        self._detect_language_per_element = detect_language_per_element
-        self._file = file
         self._file_path = file_path
+        self._file = file
         self._find_subtable = find_subtable
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
-        self._languages = languages
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
-
-    @lazyproperty
-    def detect_language_per_element(self) -> bool:
-        """When True, detect language on element-by-element basis instead of document level."""
-        return self._detect_language_per_element
 
     @lazyproperty
     def find_subtable(self) -> bool:
@@ -216,30 +176,14 @@ class _XlsxPartitionerOptions:
         return self._infer_table_structure
 
     @lazyproperty
-    def languages(self) -> Optional[list[str]]:
-        """User-specified language(s) of this document.
-
-        When `None`, language is detected using naive Bayesian filter via `langdetect`. Multiple
-        language codes indicate text could be in any of those languages.
-        """
-        return self._languages
-
-    @lazyproperty
     def last_modified(self) -> Optional[str]:
         """The best last-modified date available, None if no sources are available."""
-        # -- value explicitly specified by caller takes precedence --
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        if self._file_path:
-            return get_last_modified_date(self._file_path)
-
-        return None
+        return get_last_modified_date(self._file_path) if self._file_path else None
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @lazyproperty
     def sheets(self) -> dict[str, pd.DataFrame]:

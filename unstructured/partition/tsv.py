@@ -21,6 +21,7 @@ DETECTION_ORIGIN: str = "tsv"
 @add_chunking_strategy
 def partition_tsv(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     include_header: bool = False,
     **kwargs: Any,

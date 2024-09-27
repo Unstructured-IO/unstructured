@@ -322,15 +322,6 @@ class Describe_XlsxPartitionerOptions:
     """Unit-test suite for `unstructured.partition.xlsx._XlsxPartitionerOptions` objects."""
 
     @pytest.mark.parametrize("arg_value", [True, False])
-    def it_knows_whether_to_detect_language_for_each_element_individually(
-        self, arg_value: bool, opts_args: dict[str, Any]
-    ):
-        opts_args["detect_language_per_element"] = arg_value
-        opts = _XlsxPartitionerOptions(**opts_args)
-
-        assert opts.detect_language_per_element is arg_value
-
-    @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_find_subtables_within_each_worksheet_or_return_table_per_worksheet(
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
@@ -366,37 +357,20 @@ class Describe_XlsxPartitionerOptions:
 
         assert opts.infer_table_structure is arg_value
 
-    @pytest.mark.parametrize(
-        ("arg_value", "expected_value"),
-        [(None, None), (["eng"], ["eng"]), (["eng", "spa"], ["eng", "spa"])],
-    )
-    def it_knows_what_languages_the_caller_expects_to_appear_in_the_text(
-        self, arg_value: bool, expected_value: int | None, opts_args: dict[str, Any]
-    ):
-        opts_args["languages"] = arg_value
-        opts = _XlsxPartitionerOptions(**opts_args)
+    # -- .last_modified --------------------------------------------------------------------------
 
-        assert opts.languages == expected_value
-
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = _XlsxPartitionerOptions(**opts_args)
-
-        assert opts.last_modified == "2024-03-05T17:02:53"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_a_path_is_provided(
         self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
+        filesystem_last_modified = "2024-04-02T20:32:35"
         opts_args["file_path"] = "a/b/spreadsheet.xlsx"
-        get_last_modified_date_.return_value = "2024-04-02T20:32:35"
+        get_last_modified_date_.return_value = filesystem_last_modified
         opts = _XlsxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
         get_last_modified_date_.assert_called_once_with("a/b/spreadsheet.xlsx")
-        assert last_modified == "2024-04-02T20:32:35"
+        assert last_modified == filesystem_last_modified
 
     def but_it_falls_back_to_None_for_the_last_modified_date_when_no_file_path_is_provided(
         self, opts_args: dict[str, Any]
@@ -409,24 +383,13 @@ class Describe_XlsxPartitionerOptions:
 
         assert last_modified is None
 
-    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
+    # -- .metadata_file_path ---------------------------------------------------------------------
+
+    def it_uses_the_file_path_argument_when_provided(self, opts_args: dict[str, Any]):
         opts_args["file_path"] = "x/y/z.xlsx"
-        opts_args["metadata_file_path"] = "a/b/c.xlsx"
         opts = _XlsxPartitionerOptions(**opts_args)
 
-        assert opts.metadata_file_path == "a/b/c.xlsx"
-
-    @pytest.mark.parametrize("file_path", ["u/v/w.xlsx", None])
-    def and_it_falls_back_to_the_document_file_path_otherwise(
-        self, file_path: str | None, opts_args: dict[str, Any]
-    ):
-        opts_args["file_path"] = file_path
-        opts_args["metadata_file_path"] = None
-        opts = _XlsxPartitionerOptions(**opts_args)
-
-        assert opts.metadata_file_path == file_path
+        assert opts.metadata_file_path == "x/y/z.xlsx"
 
     # -- fixtures --------------------------------------------------------------------------------
 
@@ -442,15 +405,11 @@ class Describe_XlsxPartitionerOptions:
         compact for testing purposes.
         """
         return {
-            "detect_language_per_element": False,
-            "file": None,
             "file_path": None,
+            "file": None,
             "find_subtable": True,
             "include_header": False,
             "infer_table_structure": True,
-            "languages": ["auto"],
-            "metadata_file_path": None,
-            "metadata_last_modified": None,
         }
 
 
