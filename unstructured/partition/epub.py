@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from typing import IO, Any, Optional
 
-from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
+from unstructured.documents.elements import Element
 from unstructured.file_utils.file_conversion import convert_file_to_html_text_using_pandoc
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -14,9 +12,6 @@ from unstructured.partition.html import partition_html
 DETECTION_ORIGIN: str = "epub"
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.EPUB)
-@add_chunking_strategy
 def partition_epub(
     filename: Optional[str] = None,
     *,
@@ -57,9 +52,11 @@ def partition_epub(
     return partition_html(
         text=html_text,
         encoding="unicode",
-        metadata_filename=metadata_filename,
+        metadata_filename=metadata_filename or filename,
+        metadata_file_type=FileType.EPUB,
         metadata_last_modified=metadata_last_modified or last_modified,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
         detection_origin=DETECTION_ORIGIN,
+        **kwargs,
     )
