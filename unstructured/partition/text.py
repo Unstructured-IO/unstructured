@@ -42,6 +42,9 @@ from unstructured.partition.text_type import (
 )
 
 
+@process_metadata()
+@add_metadata_with_filetype(FileType.TXT)
+@add_chunking_strategy
 def partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -57,7 +60,8 @@ def partition_text(
     detection_origin: Optional[str] = "text",
     **kwargs: Any,
 ) -> list[Element]:
-    """Partitions an .txt documents into its constituent paragraph elements.
+    """Partition a .txt documents into its constituent paragraph elements.
+
     If paragraphs are below "min_partition" or above "max_partition" boundaries,
     they are combined or split.
     Parameters
@@ -88,42 +92,6 @@ def partition_text(
     metadata_last_modified
         The day of the last modification
     """
-    return _partition_text(
-        filename=filename,
-        file=file,
-        text=text,
-        encoding=encoding,
-        paragraph_grouper=paragraph_grouper,
-        metadata_filename=metadata_filename,
-        languages=languages,
-        max_partition=max_partition,
-        min_partition=min_partition,
-        metadata_last_modified=metadata_last_modified,
-        detect_language_per_element=detect_language_per_element,
-        detection_origin=detection_origin,
-        **kwargs,
-    )
-
-
-@process_metadata()
-@add_metadata_with_filetype(FileType.TXT)
-@add_chunking_strategy
-def _partition_text(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    text: Optional[str] = None,
-    encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
-    metadata_filename: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
-    metadata_last_modified: Optional[str] = None,
-    detect_language_per_element: bool = False,
-    detection_origin: Optional[str] = "text",
-    **kwargs: Any,
-) -> list[Element]:
-    """internal API for `partition_text`"""
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
