@@ -114,6 +114,18 @@ def test_partition_xml_from_file_rb_with_tags_raises_encoding_error():
             )
 
 
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_xml_gets_the_XML_mime_type_in_metadata_filetype():
+    XML_MIME_TYPE = "application/xml"
+    elements = partition_xml(example_doc_path("factbook.xml"))
+    assert all(e.metadata.filetype == XML_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{XML_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
