@@ -6,7 +6,6 @@ from clarifai.client.model import Model
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
 from unstructured.partition.utils.constants import (
-    DEFAULT_PADDLE_LANG,
     Source,
     OCR_DEFAULT_CLARIFAI_MODEL_URL
 )
@@ -20,7 +19,11 @@ if TYPE_CHECKING:
 
 
 class OCRAgentClarifai(OCRAgent):
-    def load_agent(self):
+    """OCR service implementation for Clarifai."""
+    def __init__(self, language: str = "en"):
+        self.agent = self.load_agent(language)
+
+    def load_agent(self, language: str):
         pass
 
     def is_text_sorted(self):
