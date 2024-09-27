@@ -4,7 +4,7 @@ import copy
 import os
 import re
 import tempfile
-from typing import IO, Any, Iterator, Optional
+from typing import IO, Any, Iterator, Optional, Callable
 
 from oxmsg import Message
 from oxmsg.attachment import Attachment
@@ -35,6 +35,7 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
+    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -64,6 +65,7 @@ def partition_msg(
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         partition_attachments=process_attachments,
+        attachment_partitioner=attachment_partitioner,
     )
 
     return list(
@@ -87,6 +89,7 @@ class MsgPartitionerOptions:
         metadata_file_path: str | None,
         metadata_last_modified: str | None,
         partition_attachments: bool,
+        attachment_partitioner: Optional[Callable[..., list[Element]]],
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -94,6 +97,7 @@ class MsgPartitionerOptions:
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
         self._partition_attachments = partition_attachments
+        self._attachment_partitioner = attachment_partitioner
 
     @lazyproperty
     def is_encrypted(self) -> bool:
@@ -139,6 +143,11 @@ class MsgPartitionerOptions:
     def partition_attachments(self) -> bool:
         """True when message attachments should also be partitioned."""
         return self._partition_attachments
+
+    @lazyproperty
+    def attachment_partitioner(self) -> Optional[Callable[..., list[Element]]]:
+        """The function to use to partition attachments"""
+        return self._attachment_partitioner
 
     @lazyproperty
     def partitioning_kwargs(self) -> dict[str, Any]:
@@ -276,7 +285,6 @@ class _AttachmentPartitioner:
 
     def _iter_elements(self) -> Iterator[Element]:
         """Partition the file in an `oxmsg.attachment.Attachment` into elements."""
-        from unstructured.partition.auto import partition
 
         with tempfile.TemporaryDirectory() as tmp_dir_path:
             # -- save attachment as file in this temporary directory --
@@ -285,7 +293,7 @@ class _AttachmentPartitioner:
                 f.write(self._file_bytes)
 
             # -- partition the attachment --
-            for element in partition(
+            for element in self._opts.attachment_partitioner(
                 detached_file_path,
                 metadata_filename=self._attachment_file_name,
                 metadata_last_modified=self._attachment_last_modified,
