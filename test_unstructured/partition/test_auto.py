@@ -763,7 +763,7 @@ def test_auto_partition_tsv_from_filename():
                 ListItem(text="I love fuzzy blankets"),
             ],
         ),
-        ("fake-text-empty.txt", []),
+        ("fake-text-all-whitespace.txt", []),
     ],
 )
 def test_auto_partition_text_from_filename(filename: str, expected_elements: list[Element]):
