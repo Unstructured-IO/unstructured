@@ -601,7 +601,7 @@ class _TextFileDifferentiator:
         text_head = self._ctx.text_head
 
         # -- an empty file is not JSON --
-        if not text_head:
+        if not text_head.lstrip():
             return False
 
         # -- has to be a list or object, no string, number, or bool --

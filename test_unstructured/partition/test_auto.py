@@ -749,22 +749,30 @@ def test_auto_partition_tsv_from_filename():
 # ================================================================================================
 # TXT
 # ================================================================================================
-
-
-def test_auto_partition_text_from_filename():
-    file_path = example_doc_path("fake-text.txt")
+@pytest.mark.parametrize(
+    ("filename", "expected_elements"),
+    [
+        (
+            "fake-text.txt",
+            [
+                NarrativeText(text="This is a test document to use for unit tests."),
+                Address(text="Doylestown, PA 18901"),
+                Title(text="Important points:"),
+                ListItem(text="Hamburgers are delicious"),
+                ListItem(text="Dogs are the best"),
+                ListItem(text="I love fuzzy blankets"),
+            ],
+        ),
+        ("fake-text-all-whitespace.txt", []),
+    ],
+)
+def test_auto_partition_text_from_filename(filename: str, expected_elements: list[Element]):
+    file_path = example_doc_path(filename)
 
     elements = partition(filename=file_path, strategy=PartitionStrategy.HI_RES)
 
-    assert elements == [
-        NarrativeText(text="This is a test document to use for unit tests."),
-        Address(text="Doylestown, PA 18901"),
-        Title(text="Important points:"),
-        ListItem(text="Hamburgers are delicious"),
-        ListItem(text="Dogs are the best"),
-        ListItem(text="I love fuzzy blankets"),
-    ]
-    assert all(e.metadata.filename == "fake-text.txt" for e in elements)
+    assert elements == expected_elements
+    assert all(e.metadata.filename == filename for e in elements)
     assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
 
 
