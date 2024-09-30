@@ -1,9 +1,9 @@
 # Developing V2 Connectors
 ## Intro
-The Unstructured open source repo processes documents (artifacts) in a pipeline. The Source and Destination connectors sit at the front and back of the pipeline. For a visual example see the flow diagram at the bottom (link to bottom).
+The Unstructured open source library processes documents (artifacts) in a pipeline. The source and destination connectors sit at the front and back of the pipeline. For a visual example see the [sequence diagram](#sequence-diagram).
 
-## Simplest Example of a Pipeline
-The simplest example of a pipeline starts with a local source connector, followed by a partioner, and then ends with a local destination connector. Here is what the code to run this looks like:
+## Basic Example of a Pipeline
+The most basic example of a pipeline starts with a local source connector, followed by a partitioner, and then ends with a local destination connector. Here is what the code to run this looks like:
 
 >*** This is the type of Python file you'll want to run during development so that you can iterate on your connector.
 
@@ -43,11 +43,11 @@ The result is a partitioned `fake-text.txt.json` file in the `local-output` dire
 
 Notice that the pipeline runs the following:
 
-* context - The ProcessorConfig runs the pipeline. The arguments are related to the overall pipeline. We added some optional args to make development easier.
+* context - The `ProcessorConfig` runs the pipeline. The arguments are related to the overall pipeline. We added some args (`verbose`, `work_dir`) to make development easier.
 * source_connection - Takes arguments needed to connect to the source. Local files don't need anything here. Other connectors will.
-* indexer - Takes the files in the `input_path` and creates .json files that point the downloader step to the right files 
-* downloader - This does the actual downloading of the raw files (for non-blob files it may do something different like create a .txt file for every row in a source table)
-* partitioner - Partitions the downloaded file, provided it is a partionable file type. ([link to file types supported](https://github.com/Unstructured-IO/unstructured/blob/0c562d80503f6ef96504c6e38f27cfd9da8761df/unstructured/file_utils/filetype.py))
+* indexer - Takes the files in the `input_path` and creates `.json` files that point the downloader step to the right files. 
+* downloader - This does the actual downloading of the raw files (for non-blob files it may do something different like create a `.txt` file for every row in a source table)
+* partitioner - Partitions the downloaded file, provided it is a partionable file type. [See the supported file types.](https://github.com/Unstructured-IO/unstructured/blob/0c562d80503f6ef96504c6e38f27cfd9da8761df/unstructured/file_utils/filetype.py)
 * chunker/embedder - *Not represented here* but often needed to prepare files for upload to a vector database.
 * stager - *Not represented here* but is often used to prepare partitioned files for upload.
 * uploader - Uploads the blob-like files to the `output_dir`.
@@ -73,9 +73,9 @@ https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2
 
 If you look through the file you will notice these interfaces and functions
 
-* LocalAccessConfig - This usually holds passwords, tokens, etc. This data gets hidden in all logs (and encrypted in our platform solution)
+* LocalAccessConfig - This usually holds passwords, tokens, etc. This data gets hidden in all logs (and encrypted in our platform solution).
 
-* LocalConnectionConfig - Username, host, port, etc. Anything needed for connecting to the service. It also imports the AccessConfig 
+* LocalConnectionConfig - Username, host, port, etc. Anything needed for connecting to the service. It also imports the `AccessConfig`.
 
 * LocalIndexerConfig - Holds attributes that allow Indexer to connect to the service and what kind of documents to filter for.
 
@@ -96,7 +96,7 @@ If you look through the file you will notice these interfaces and functions
 
 
 ## Building a Destination Connector
-We'll start with building a Destination Connector because they are easier to build than Source Connectors.
+We'll start with building a destination connector because they are easier to build than source connectors.
 
 In this case we'll use the Chroma vector database destination because:
 
@@ -186,11 +186,11 @@ https://github.com/Unstructured-IO/unstructured/blob/main/unstructured/ingest/v2
 
 * ChromaUploadStagerConfig - The Stager config. Didn't need anything for Chroma.
 
-* ChromaUploadStager - The conform_dict is the critical method here. It takes the file we get from the Embedder step and prepares it for upload to the Chroma database. But it does not upload it. It saves the file to the `upload_stage` directory. The file type can be whatever makes sense for the Uploader phase (.json, .csv, .txt).
+* ChromaUploadStager - The conform_dict is the critical method here. It takes the file we get from the Embedder step and prepares it for upload to the Chroma database. But it does not upload it. It saves the file to the `upload_stage` directory. The file type can be whatever makes sense for the Uploader phase (`.json`, `.csv`, `.txt`).
 
 * ChromaUploaderConfig - Attributes that are necessary for the upload stage specifically. The ChromaUploader will be upserting artifacts in batches.
 
-* ChromaUploader - Connects to the Client. And uploads artifacts. Note that it does the minimum amount of processing possible to the artifacts before uploading. The Stager phase is responsible for preparing artifacts. Chroma wants artifacts in a dictionary of lists so we do have to create that in the Uploader since there is not a practical way to store that in a .json file.
+* ChromaUploader - Connects to the Client. And uploads artifacts. Note that it does the minimum amount of processing possible to the artifacts before uploading. The Stager phase is responsible for preparing artifacts. Chroma wants artifacts in a dictionary of lists so we do have to create that in the Uploader since there is not a practical way to store that in a `.json` file.
 
 * chroma_destination_entry - Registers the Chroma destination connector with the pipeline. (!!! LINK `unstructured/ingest/v2/processes/connectors/__init__.py`)
 
@@ -214,12 +214,12 @@ chroma-working-dir
 
 ### Additional files
 
-When you make a **new** Destination Connector you will need these files first:
+When you make a **new** destination connector you will need these files first:
 
 * `unstructured/ingest/v2/processes/connectors/your_connector.py`
 * And add that to: `unstructured/ingest/v2/processes/connectors/__init__.py`
 * Your python file to iterate on development. You can call it `unstructured/ingest/v2/examples/example_your_connector.py`
-* And some form of **live connection** to the Destination service. In the case of Chroma we have a local service running. Often we will run a docker container (Elasticsearch). At other times we will use a hosted service if there is no docker image (Pinecone).
+* And some form of **live connection** to the destination service. In the case of Chroma we have a local service running. Often we will run a docker container (Elasticsearch). At other times we will use a hosted service if there is no docker image (Pinecone).
 
 Once the connector is worked out with those files, you will need to add a few more files. 
 
@@ -249,14 +249,14 @@ If you can run the integration test successfully then most of the files should b
 
 ## Building a Source Connector
 
-The Source Connector example we will use is `onedrive.py`. The S3 connector might be a simpler example, but it relies on the incredibly useful fsspec package, so it is not a good general example.
+The source connector example we will use is `onedrive.py`. The S3 connector might be a simpler example, but it relies on the incredibly useful fsspec package, so it is not a good general example.
 https://filesystem-spec.readthedocs.io/en/latest/ 
 If your source connector can take advantage of fsspec, then S3 might be one to check out.
 
 
-The Source Connector instructions are similar to the Destination Connector  above.
+The source connector instructions are similar to the destination connector  above.
 
-But the key difference is the Indexer. The Indexer essentially gets a list of the documents/artifacts in the Source service. (In the case of a local connector it would be like a bash `ls` command). It then creates individual files for each artifact that need to be downloaded. This is so that the next phase, the Downloader phase, can be scaled out with multiple workers. The Indexer phase needs to return pointers to those artifacts in the shape of the FileData object, which it then downloads as `.json` files.
+But the key difference is the Indexer. The Indexer essentially gets a list of the documents/artifacts in the source service. (In the case of a local connector it would be like a bash `ls` command). It then creates individual files for each artifact that need to be downloaded. This is so that the next phase, the Downloader phase, can be scaled out with multiple workers. The Indexer phase needs to return pointers to those artifacts in the shape of the FileData object, which it then downloads as `.json` files.
 
 The Downloader then uses the `.json` files that the Indexer created and downloads the raw files (in the case of a blob type file, .pdf, .txt) or as individual rows in a table, or any other needed format.
 
@@ -327,7 +327,7 @@ If you look through the file you will notice these interfaces and functions
 
 * OnedriveDownloader - Does the actual downloading of the raw files.
 
-And those are the basics of a Source Connector. Each connector will have its specific problems to sort out. 
+And those are the basics of a source connector. Each connector will have its specific problems to sort out. 
 
 ### Additional Files
 
@@ -345,7 +345,7 @@ If you have any questions post in the public Slack channel `ask-for-help-open-so
 
 ### Sequence Diagram
 
-Yellow (without the Uncompressing) represents the steps in a Source Connector. Orange represents a Destination Connector.
+Yellow (without the Uncompressing) represents the steps in a source connector. Orange represents a destination connector.
 
 ![unstructured ingest diagram](assets/pipeline.png)
 
