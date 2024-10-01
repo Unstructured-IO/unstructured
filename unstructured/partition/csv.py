@@ -8,35 +8,22 @@ import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import (
-    Element,
-    ElementMetadata,
-    Table,
-    process_metadata,
-)
-from unstructured.file_utils.filetype import add_metadata_with_filetype
+from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.CSV)
+@apply_metadata(FileType.CSV)
 @add_chunking_strategy
 def partition_csv(
     filename: str | None = None,
     file: IO[bytes] | None = None,
     encoding: str | None = None,
-    metadata_filename: str | None = None,
-    metadata_last_modified: str | None = None,
     include_header: bool = False,
     infer_table_structure: bool = True,
-    languages: list[str] | None = ["auto"],
-    # NOTE (jennings) partition_csv generates a single TableElement so detect_language_per_element
-    # is not included as a param
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -49,10 +36,6 @@ def partition_csv(
         A file-like object using "rb" mode --> open(filename, "rb").
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-    metadata_filename
-        The filename to use for the metadata.
-    metadata_last_modified
-        The last modified date for the document.
     include_header
         Determines whether or not header info info is included in text and medatada.text_as_html.
     infer_table_structure
@@ -61,18 +44,12 @@ def partition_csv(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
     """
 
     ctx = _CsvPartitioningContext.load(
         file_path=filename,
         file=file,
         encoding=encoding,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
         include_header=include_header,
         infer_table_structure=infer_table_structure,
     )
@@ -84,16 +61,13 @@ def partition_csv(
     text = soupparser_fromstring(html_text).text_content()
 
     metadata = ElementMetadata(
-        filename=metadata_filename or filename,
+        filename=filename,
         last_modified=ctx.last_modified,
-        languages=languages,
         text_as_html=html_text if infer_table_structure else None,
     )
 
     # -- a CSV file becomes a single `Table` element --
-    elements = [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
-
-    return list(apply_lang_metadata(elements, languages=languages))
+    return [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
 
 
 class _CsvPartitioningContext:
@@ -108,16 +82,12 @@ class _CsvPartitioningContext:
         file_path: str | None = None,
         file: IO[bytes] | None = None,
         encoding: str | None = None,
-        metadata_file_path: str | None = None,
-        metadata_last_modified: str | None = None,
         include_header: bool = False,
         infer_table_structure: bool = True,
     ):
         self._file_path = file_path
         self._file = file
         self._encoding = encoding
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
 
@@ -127,8 +97,6 @@ class _CsvPartitioningContext:
         file_path: str | None,
         file: IO[bytes] | None,
         encoding: str | None,
-        metadata_file_path: str | None,
-        metadata_last_modified: str | None,
         include_header: bool,
         infer_table_structure: bool,
     ) -> _CsvPartitioningContext:
@@ -136,8 +104,6 @@ class _CsvPartitioningContext:
             file_path=file_path,
             file=file,
             encoding=encoding,
-            metadata_file_path=metadata_file_path,
-            metadata_last_modified=metadata_last_modified,
             include_header=include_header,
             infer_table_structure=infer_table_structure,
         )._validate()
@@ -171,19 +137,11 @@ class _CsvPartitioningContext:
     @lazyproperty
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        return None
+        return (
+            None
+            if not self._file_path or is_temp_file_path(self._file_path)
+            else get_last_modified_date(self._file_path)
+        )
 
     @contextlib.contextmanager
     def open(self) -> Iterator[IO[bytes]]:

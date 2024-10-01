@@ -462,10 +462,7 @@ def test_partition_docx_respects_languages_arg():
 def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = example_doc_path("handbook-1p.docx")
-        partition_docx(
-            filename=filename,
-            languages="eng",  # pyright: ignore[reportArgumentType]
-        )
+        partition_docx(filename=filename, languages="eng")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -703,8 +700,6 @@ def opts_args() -> dict[str, Any]:
         "file_path": None,
         "include_page_breaks": True,
         "infer_table_structure": True,
-        "metadata_file_path": None,
-        "metadata_last_modified": None,
         "strategy": None,
     }
 
@@ -805,15 +800,7 @@ class DescribeDocxPartitionerOptions:
 
     # -- .last_modified --------------------------
 
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        assert opts.last_modified == "2024-03-05T17:02:53"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_file_path_is_provided(
         self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
         opts_args["file_path"] = "a/b/document.docx"
@@ -836,21 +823,11 @@ class DescribeDocxPartitionerOptions:
 
     # -- .metadata_file_path ---------------------
 
-    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["file_path"] = "x/y/z.docx"
-        opts_args["metadata_file_path"] = "a/b/c.docx"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        assert opts.metadata_file_path == "a/b/c.docx"
-
     @pytest.mark.parametrize("file_path", ["u/v/w.docx", None])
-    def and_it_falls_back_to_the_document_file_path_otherwise(
+    def it_uses_the_file_path_argument_when_provided(
         self, file_path: str | None, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = file_path
-        opts_args["metadata_file_path"] = None
         opts = DocxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == file_path

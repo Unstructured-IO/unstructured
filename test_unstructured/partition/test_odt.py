@@ -1,20 +1,30 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for `unstructured.partition.odt` module."""
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterator
 
 import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import (
+    ANY,
     FixtureRequest,
     assert_round_trips_through_JSON,
     example_doc_path,
-    function_mock,
+    method_mock,
 )
 from unstructured.chunking.basic import chunk_elements
-from unstructured.documents.elements import CompositeElement, Table, TableChunk, Title
+from unstructured.documents.elements import (
+    CompositeElement,
+    Element,
+    Table,
+    TableChunk,
+    Text,
+    Title,
+)
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.odt import partition_odt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
@@ -66,15 +76,35 @@ def test_partition_odt_from_file():
 # -- .metadata.filename --------------------------------------------------------------------------
 
 
+def test_partition_odt_from_filename_gets_the_ODT_filename_in_metadata_not_the_DOCX_filename():
+    elements = partition_odt(example_doc_path("simple.odt"))
+    assert all(e.metadata.filename == "simple.odt" for e in elements), (
+        f"Expected all elements to have 'simple.odt' as their filename, but got:"
+        f" {repr(elements[0].metadata.filename)}"
+    )
+
+
 def test_partition_odt_from_filename_with_metadata_filename():
     elements = partition_odt(example_doc_path("fake.odt"), metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
+    assert all(e.metadata.filename == "test" for e in elements)
 
 
 def test_partition_odt_from_file_with_metadata_filename():
     with open(example_doc_path("fake.odt"), "rb") as f:
         elements = partition_odt(file=f, metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
+    assert all(e.metadata.filename == "test" for e in elements)
+
+
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_odt_gets_the_ODT_MIME_type_in_metadata_filetype():
+    ODT_MIME_TYPE = "application/vnd.oasis.opendocument.text"
+    elements = partition_odt(example_doc_path("simple.odt"))
+    assert all(e.metadata.filetype == ODT_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{ODT_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
 
 
 # -- .metadata.text_as_html ----------------------------------------------------------------------
@@ -130,7 +160,7 @@ def test_partition_odt_prefers_metadata_last_modified_when_provided(mocker: Mock
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-# -- language-recognition metadata ---------------------------------------------------------------
+# -- .metadata.languages -------------------------------------------------------------------------
 
 
 def test_partition_odt_adds_languages_metadata():
@@ -156,20 +186,27 @@ def test_partition_odt_respects_detect_language_per_element_arg():
 
 @pytest.mark.parametrize(
     ("kwargs", "expected_value"),
-    [({}, None), ({"strategy": None}, None), ({"strategy": "hi_res"}, "hi_res")],
+    [({}, "hi_res"), ({"strategy": None}, "hi_res"), ({"strategy": "auto"}, "auto")],
 )
 def test_partition_odt_forwards_strategy_arg_to_partition_docx(
     request: FixtureRequest, kwargs: dict[str, Any], expected_value: str | None
 ):
-    partition_docx_ = function_mock(request, "unstructured.partition.odt.partition_docx")
+    from unstructured.partition.docx import _DocxPartitioner
 
-    partition_odt(example_doc_path("simple.odt"), **kwargs)
+    def fake_iter_document_elements(self: _DocxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy == {self._opts.strategy}")
 
-    call_kwargs = partition_docx_.call_args.kwargs
-    # -- `strategy` keyword-argument appeared in the call --
-    assert "strategy" in call_kwargs
-    # -- `strategy` argument was passed with the expected value --
-    assert call_kwargs["strategy"] == expected_value
+    _iter_elements_ = method_mock(
+        request,
+        _DocxPartitioner,
+        "_iter_document_elements",
+        side_effect=fake_iter_document_elements,
+    )
+
+    (element,) = partition_odt(example_doc_path("simple.odt"), **kwargs)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy == {expected_value}"
 
 
 def test_partition_odt_round_trips_through_json():
