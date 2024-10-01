@@ -1,4 +1,4 @@
-## 0.15.14-dev7
+## 0.15.14-dev8
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 * **Fix occasional `KeyError` when mapping parent ids to hash ids.** Occasionally the input elements into `assign_and_map_hash_ids` can contain duplicated element instances, which lead to error when mapping parent id.
 * **Allow empty text files.** Fixes an issue where text files with only white space would fail to be partitioned.
 * **Remove double-decoration for CSV, DOC, ODT partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (CSV and DOCX in this case); remove decoration from delegating partitioners.
+* **Remove double-decoration for PPT, PPTX, TSV, XLSX, and XML partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner; remove decoration from delegating partitioners.
 
 ## 0.15.13
 
