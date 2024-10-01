@@ -1,4 +1,4 @@
-## 0.15.14-dev6
+## 0.15.14-dev7
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 * **Remove "unused" `date_from_file_object` parameter.** As part of simplifying partitioning parameter set, remove `date_from_file_object` parameter. A file object does not have a last-modified date attribute so can never give a useful value. When a file-object is used as the document source (such as in Unstructured API) the last-modified date must come from the `metadata_last_modified` argument.
 * **Fix occasional `KeyError` when mapping parent ids to hash ids.** Occasionally the input elements into `assign_and_map_hash_ids` can contain duplicated element instances, which lead to error when mapping parent id.
 * **Allow empty text files.** Fixes an issue where text files with only white space would fail to be partitioned.
+* **Remove double-decoration for CSV, DOC, ODT partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (CSV and DOCX in this case); remove decoration from delegating partitioners.
 
 ## 0.15.13
 
