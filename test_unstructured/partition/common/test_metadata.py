@@ -1,7 +1,10 @@
 """Test-suite for `unstructured.partition.common.metadata` module."""
 
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
+import copy
 import datetime as dt
 import os
 import pathlib
@@ -22,6 +25,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import (
+    _assign_hash_ids,
     apply_metadata,
     get_last_modified_date,
     set_element_hierarchy,
@@ -127,8 +131,49 @@ def test_set_element_hierarchy_custom_rule_set():
     ), "FigureCaption should be child of Title 2"
 
 
+# ================================================================================================
+# APPLY METADATA DECORATOR
+# ================================================================================================
+
+
 class Describe_apply_metadata:
     """Unit-test suite for `unstructured.partition.common.metadata.apply_metadata()` decorator."""
+
+    # -- unique-ify elements and metadata ---------------------------------
+
+    def it_produces_unique_elements_and_metadata_when_input_reuses_element_instances(self):
+        element = Text(text="Element", metadata=ElementMetadata(filename="foo.bar", page_number=1))
+
+        def fake_partitioner(**kwargs: Any) -> list[Element]:
+            return [element, element, element]
+
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        # -- all elements are unique instances --
+        assert len({id(e) for e in elements}) == len(elements)
+        # -- all metadatas are unique instances --
+        assert len({id(e.metadata) for e in elements}) == len(elements)
+
+    def and_it_produces_unique_elements_and_metadata_when_input_reuses_metadata_instances(self):
+        metadata = ElementMetadata(filename="foo.bar", page_number=1)
+
+        def fake_partitioner(**kwargs: Any) -> list[Element]:
+            return [
+                Text(text="foo", metadata=metadata),
+                Text(text="bar", metadata=metadata),
+                Text(text="baz", metadata=metadata),
+            ]
+
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition()
+
+        # -- all elements are unique instances --
+        assert len({id(e) for e in elements}) == len(elements)
+        # -- all metadatas are unique instances --
+        assert len({id(e.metadata) for e in elements}) == len(elements)
 
     # -- unique-ids -------------------------------------------------------
 
@@ -274,6 +319,29 @@ class Describe_apply_metadata:
         assert all(e.metadata.filename == "image.jpeg" for e in elements)
         assert all(e.metadata.file_directory == "x/y/images" for e in elements)
 
+    # -- last_modified ----------------------------------------------------
+
+    def it_uses_metadata_last_modified_arg_value_when_present(
+        self, fake_partitioner: Callable[..., list[Element]]
+    ):
+        """A `metadata_last_modified` arg overrides all other sources."""
+        partition = apply_metadata()(fake_partitioner)
+        metadata_last_modified = "2024-09-26T15:17:53"
+
+        elements = partition(metadata_last_modified=metadata_last_modified)
+
+        assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+    @pytest.mark.parametrize("kwargs", [{}, {"metadata_last_modified": None}])
+    def but_it_does_not_update_last_modified_when_metadata_last_modified_arg_absent_or_None(
+        self, kwargs: dict[str, Any], fake_partitioner: Callable[..., list[Element]]
+    ):
+        partition = apply_metadata()(fake_partitioner)
+
+        elements = partition(**kwargs)
+
+        assert all(e.metadata.last_modified == "2020-01-06T05:07:03" for e in elements)
+
     # -- url --------------------------------------------------------------
 
     def it_assigns_url_metadata_field_when_url_arg_is_present(
@@ -304,14 +372,42 @@ class Describe_apply_metadata:
             title.metadata.file_directory = "x/y/images"
             title.metadata.filename = "image.jpeg"
             title.metadata.filetype = "image/jpeg"
+            title.metadata.last_modified = "2020-01-06T05:07:03"
             title.metadata.url = "http://images.com"
 
             narr_text = NarrativeText("To understand bar you must first understand foo.")
             narr_text.metadata.file_directory = "x/y/images"
             narr_text.metadata.filename = "image.jpeg"
             narr_text.metadata.filetype = "image/jpeg"
+            narr_text.metadata.last_modified = "2020-01-06T05:07:03"
             narr_text.metadata.url = "http://images.com"
 
             return [title, narr_text]
 
         return fake_partitioner
+
+
+# ================================================================================================
+# HASH IDS
+# ================================================================================================
+
+
+def test_assign_hash_ids_produces_unique_and_deterministic_SHA1_ids_even_for_duplicate_elements():
+    elements: list[Element] = [
+        Text(text="Element", metadata=ElementMetadata(filename="foo.bar", page_number=1)),
+        Text(text="Element", metadata=ElementMetadata(filename="foo.bar", page_number=1)),
+        Text(text="Element", metadata=ElementMetadata(filename="foo.bar", page_number=1)),
+    ]
+    # -- default ids are UUIDs --
+    assert all(len(e.id) == 36 for e in elements)
+
+    elements = _assign_hash_ids(copy.deepcopy(elements))
+    elements_2 = _assign_hash_ids(copy.deepcopy(elements))
+
+    ids = [e.id for e in elements]
+    # -- ids are now SHA1 --
+    assert all(len(e.id) == 32 for e in elements)
+    # -- each id is unique --
+    assert len(ids) == len(set(ids))
+    # -- ids are deterministic, same value is computed each time --
+    assert all(e.id == e2.id for e, e2 in zip(elements, elements_2))

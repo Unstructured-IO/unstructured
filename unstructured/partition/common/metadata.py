@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import copy
 import datetime as dt
 import functools
+import itertools
 import os
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Iterator, Sequence
 
 from typing_extensions import ParamSpec
 
-from unstructured.documents.elements import Element, ElementMetadata, assign_and_map_hash_ids
+from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.utils import get_call_args_applying_defaults
@@ -139,6 +141,8 @@ def apply_metadata(
 
       - Replace `filename` with `metadata_filename` when present.
 
+      - Replace `last_modified` with `metadata_last_modified` when present.
+
       - Apply `url` metadata when present.
     """
 
@@ -155,14 +159,21 @@ def apply_metadata(
             elements = func(*args, **kwargs)
             call_args = get_call_args_applying_defaults(func, *args, **kwargs)
 
-            # -- Compute and apply hash-ids if the user does not want UUIDs. Note this changes the
-            # -- elements themselves, not the metadata.
-            unique_element_ids: bool = call_args.get("unique_element_ids", False)
-            if unique_element_ids is False:
-                elements = assign_and_map_hash_ids(elements)
+            # ------------------------------------------------------------------------------------
+            # unique-ify elements
+            # ------------------------------------------------------------------------------------
+            # Do this first to ensure all following operations behave as expected. It's easy for a
+            # partitioner to re-use an element or metadata instance when its values are common to
+            # multiple elements. This can lead to very hard-to diagnose bugs downstream when
+            # mutating one element unexpectedly also mutates others (because they are the same
+            # instance).
+            # ------------------------------------------------------------------------------------
 
-            # -- `parent_id` - process category-level etc. to assign parent-id --
-            elements = set_element_hierarchy(elements)
+            elements = _uniqueify_elements_and_metadata(elements)
+
+            # ------------------------------------------------------------------------------------
+            # apply metadata - do this first because it affects the hash computation.
+            # ------------------------------------------------------------------------------------
 
             # -- `language` - auto-detect language (e.g. eng, spa) --
             languages = call_args.get("languages")
@@ -175,7 +186,7 @@ def apply_metadata(
                 )
             )
 
-            # == apply filetype, filename, and url metadata =========================
+            # == apply filetype, filename, last_modified, and url metadata ===================
             metadata_kwargs: dict[str, Any] = {}
 
             # -- `filetype` (MIME-type) metadata --
@@ -187,6 +198,11 @@ def apply_metadata(
             filename = call_args.get("metadata_filename") or call_args.get("filename")
             if filename:
                 metadata_kwargs["filename"] = filename
+
+            # -- `last_modified` metadata - override with metadata_last_modified when present --
+            metadata_last_modified = call_args.get("metadata_last_modified")
+            if metadata_last_modified:
+                metadata_kwargs["last_modified"] = metadata_last_modified
 
             # -- `url` metadata - record url when present --
             url = call_args.get("url")
@@ -201,8 +217,70 @@ def apply_metadata(
                     continue
                 element.metadata.update(ElementMetadata(**metadata_kwargs))
 
+            # ------------------------------------------------------------------------------------
+            # compute hash ids (when so requestsd)
+            # ------------------------------------------------------------------------------------
+
+            # -- Compute and apply hash-ids if the user does not want UUIDs. Note this mutates the
+            # -- elements themselves, not their metadata.
+            unique_element_ids: bool = call_args.get("unique_element_ids", False)
+            if unique_element_ids is False:
+                elements = _assign_hash_ids(elements)
+
+            # ------------------------------------------------------------------------------------
+            # assign parent-id - do this after hash computation so parent-id is stable.
+            # ------------------------------------------------------------------------------------
+
+            # -- `parent_id` - process category-level etc. to assign parent-id --
+            elements = set_element_hierarchy(elements)
+
             return elements
 
         return wrapper
 
     return decorator
+
+
+def _assign_hash_ids(elements: list[Element]) -> list[Element]:
+    """Converts `.id` of each element from UUID to hash.
+
+    The hash is based on the `.text` of the element, but also on its page-number and sequence number
+    on that page. This provides for deterministic results even when the document is split into one
+    or more fragments for parallel processing.
+    """
+    # -- generate sequence number for each element on a page --
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_numbers = [
+        seq_on_page
+        for _, group in itertools.groupby(page_numbers)
+        for seq_on_page, _ in enumerate(group)
+    ]
+
+    for element, seq_on_page_counter in zip(elements, page_seq_numbers):
+        element.id_to_hash(seq_on_page_counter)
+
+    return elements
+
+
+def _uniqueify_elements_and_metadata(elements: list[Element]) -> list[Element]:
+    """Ensure each of `elements` and their metadata are unique instances.
+
+    This prevents hard-to-diagnose bugs downstream when mutating one element unexpectedly also
+    mutates others because they are the same instance.
+    """
+
+    def iter_unique_elements(elements: list[Element]) -> Iterator[Element]:
+        """Substitute deep-copies of any non-unique elements or metadata in `elements`."""
+        seen_elements: set[int] = set()
+        seen_metadata: set[int] = set()
+
+        for element in elements:
+            if id(element) in seen_elements:
+                element = copy.deepcopy(element)
+            if id(element.metadata) in seen_metadata:
+                element.metadata = copy.deepcopy(element.metadata)
+            seen_elements.add(id(element))
+            seen_metadata.add(id(element.metadata))
+            yield element
+
+    return list(iter_unique_elements(elements))
