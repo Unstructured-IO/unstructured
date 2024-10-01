@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import re
 import textwrap
-from typing import IO, Any, Callable, Literal, Optional
+from typing import IO, Any, Callable, Literal
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -46,18 +46,18 @@ from unstructured.partition.text_type import (
 @add_metadata_with_filetype(FileType.TXT)
 @add_chunking_strategy
 def partition_text(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    text: Optional[str] = None,
-    encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
-    metadata_filename: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
-    metadata_last_modified: Optional[str] = None,
+    filename: str | None = None,
+    file: IO[bytes] | None = None,
+    text: str | None = None,
+    encoding: str | None = None,
+    paragraph_grouper: Callable[[str], str] | Literal[False] | None = None,
+    metadata_filename: str | None = None,
+    languages: list[str] | None = ["auto"],
+    max_partition: int | None = 1500,
+    min_partition: int | None = 0,
+    metadata_last_modified: str | None = None,
     detect_language_per_element: bool = False,
-    detection_origin: Optional[str] = "text",
+    detection_origin: str | None = "text",
     **kwargs: Any,
 ) -> list[Element]:
     """Partition a .txt documents into its constituent paragraph elements.
@@ -143,7 +143,7 @@ def partition_text(
     for ctext in file_content:
         ctext = ctext.strip()
 
-        if ctext and not is_empty_bullet(ctext):
+        if ctext and not _is_empty_bullet(ctext):
             element = element_from_text(ctext)
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
@@ -158,59 +158,18 @@ def partition_text(
     return elements
 
 
-def is_empty_bullet(text: str) -> bool:
-    """Checks if input text is an empty bullet."""
-    return bool(UNICODE_BULLETS_RE.match(text) and len(text) == 1)
-
-
-def _get_height_percentage(
-    coordinates: tuple[tuple[float, float], ...],
-    coordinate_system: CoordinateSystem,
-) -> float:
-    avg_y = sum(coordinate[1] for coordinate in coordinates) / len(coordinates)
-    return avg_y / coordinate_system.height
-
-
-def is_in_header_position(
-    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
-    coordinate_system: Optional[CoordinateSystem] = None,
-    threshold: float = 0.07,
-) -> bool:
-    """Checks to see if the position of the text indicates that the text belongs
-    to a header."""
-    if coordinates is None or coordinate_system is None:
-        return False
-
-    height_percentage = _get_height_percentage(coordinates, coordinate_system)
-    return height_percentage < threshold
-
-
-def is_in_footer_position(
-    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
-    coordinate_system: Optional[CoordinateSystem] = None,
-    threshold: float = 0.93,
-) -> bool:
-    """Checks to see if the position of the text indicates that the text belongs
-    to a footer."""
-    if coordinates is None or coordinate_system is None:
-        return False
-
-    height_percentage = _get_height_percentage(coordinates, coordinate_system)
-    return height_percentage > threshold
-
-
 def element_from_text(
     text: str,
-    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
-    coordinate_system: Optional[CoordinateSystem] = None,
+    coordinates: tuple[tuple[float, float], ...] | None = None,
+    coordinate_system: CoordinateSystem | None = None,
 ) -> Element:
-    if is_in_header_position(coordinates, coordinate_system):
+    if _is_in_header_position(coordinates, coordinate_system):
         return Header(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_in_footer_position(coordinates, coordinate_system):
+    elif _is_in_footer_position(coordinates, coordinate_system):
         return Footer(
             text=text,
             coordinates=coordinates,
@@ -257,10 +216,15 @@ def element_from_text(
         )
 
 
+# ================================================================================================
+# HELPER FUNCTIONS
+# ================================================================================================
+
+
 def _combine_paragraphs_less_than_min(
     split_paragraphs: list[str],
-    max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
+    max_partition: int | None = 1500,
+    min_partition: int | None = 0,
 ) -> list[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
     min_partition = min_partition or 0
@@ -292,10 +256,50 @@ def _combine_paragraphs_less_than_min(
     return combined_paras
 
 
+def _get_height_percentage(
+    coordinates: tuple[tuple[float, float], ...],
+    coordinate_system: CoordinateSystem,
+) -> float:
+    avg_y = sum(coordinate[1] for coordinate in coordinates) / len(coordinates)
+    return avg_y / coordinate_system.height
+
+
+def _is_empty_bullet(text: str) -> bool:
+    """Checks if input text is an empty bullet."""
+    return bool(UNICODE_BULLETS_RE.match(text) and len(text) == 1)
+
+
+def _is_in_footer_position(
+    coordinates: tuple[tuple[float, float], ...] | None,
+    coordinate_system: CoordinateSystem | None,
+    threshold: float = 0.93,
+) -> bool:
+    """Checks to see if the position of the text indicates that the text belongs
+    to a footer."""
+    if coordinates is None or coordinate_system is None:
+        return False
+
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
+    return height_percentage > threshold
+
+
+def _is_in_header_position(
+    coordinates: tuple[tuple[float, float], ...] | None,
+    coordinate_system: CoordinateSystem | None,
+    threshold: float = 0.07,
+) -> bool:
+    """Checks to see if the position of the text indicates that the text belongs to a header."""
+    if coordinates is None or coordinate_system is None:
+        return False
+
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
+    return height_percentage < threshold
+
+
 def _split_by_paragraph(
     file_text: str,
-    min_partition: Optional[int] = 0,
-    max_partition: Optional[int] = 1500,
+    min_partition: int | None = 0,
+    max_partition: int | None = 1500,
 ) -> list[str]:
     """Split text into paragraphs that fit within the `min_` and `max_partition` window."""
     paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
@@ -331,7 +335,7 @@ def _split_content_size_n(content: str, n: int) -> list[str]:
 
 def _split_content_to_fit_max(
     content: str,
-    max_partition: Optional[int] = 1500,
+    max_partition: int | None = 1500,
 ) -> list[str]:
     """Splits a paragraph or section of content so that all of the elements fit into the
     max partition window."""
