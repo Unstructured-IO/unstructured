@@ -222,8 +222,6 @@ class Describe_CsvPartitioningContext:
             file_path=example_doc_path("stanley-cups.csv"),
             file=None,
             encoding=None,
-            metadata_file_path=None,
-            metadata_last_modified=None,
             include_header=True,
             infer_table_structure=True,
         )
@@ -235,8 +233,6 @@ class Describe_CsvPartitioningContext:
                 file_path=None,
                 file=None,
                 encoding=None,
-                metadata_file_path=None,
-                metadata_last_modified=None,
                 include_header=True,
                 infer_table_structure=True,
             )
@@ -272,22 +268,19 @@ class Describe_CsvPartitioningContext:
     ):
         assert _CsvPartitioningContext(include_header=include_header).header == expected_value
 
-    # -- .last_modified --------------------------
+    # -- .last_modified -----------------------------------------
 
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(self):
-        ctx = _CsvPartitioningContext(metadata_last_modified="2024-08-04T13:12:35")
-        assert ctx.last_modified == "2024-08-04T13:12:35"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_a_path_is_provided(
         self, get_last_modified_date_: Mock
     ):
-        get_last_modified_date_.return_value = "2024-08-04T02:23:53"
+        filesystem_last_modified = "2024-08-04T02:23:53"
+        get_last_modified_date_.return_value = filesystem_last_modified
         ctx = _CsvPartitioningContext(file_path="a/b/document.csv")
 
         last_modified = ctx.last_modified
 
         get_last_modified_date_.assert_called_once_with("a/b/document.csv")
-        assert last_modified == "2024-08-04T02:23:53"
+        assert last_modified == filesystem_last_modified
 
     def and_it_falls_back_to_None_for_the_last_modified_date_when_file_path_is_not_provided(self):
         file = io.BytesIO(b"abcdefg")
