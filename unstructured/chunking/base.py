@@ -15,7 +15,6 @@ from unstructured.documents.elements import (
     ConsolidationStrategy,
     Element,
     ElementMetadata,
-    RegexMetadata,
     Table,
     TableChunk,
     Title,
@@ -739,43 +738,6 @@ class TextPreChunk:
         continuation_metadata.is_continuation = True
         return continuation_metadata
 
-    @lazyproperty
-    def _consolidated_regex_meta(self) -> dict[str, list[RegexMetadata]]:
-        """Consolidate the regex-metadata in `regex_metadata_dicts` into a single dict.
-
-        This consolidated value is suitable for use in the chunk metadata. `start` and `end`
-        offsets of each regex match are also adjusted for their new positions.
-        """
-        chunk_regex_metadata: dict[str, list[RegexMetadata]] = {}
-        separator_len = len(self._opts.text_separator)
-        running_text_len = len(self._overlap_prefix) if self._overlap_prefix else 0
-        start_offset = running_text_len
-
-        for element in self._elements:
-            text_len = len(element.text)
-            # -- skip empty elements like `PageBreak("")` --
-            if not text_len:
-                continue
-            # -- account for blank line between "squashed" elements, but not at start of text --
-            running_text_len += separator_len if running_text_len else 0
-            start_offset = running_text_len
-            running_text_len += text_len
-
-            if not element.metadata.regex_metadata:
-                continue
-
-            # -- consolidate any `regex_metadata` matches, adjusting the match start/end offsets --
-            element_regex_metadata = copy.deepcopy(element.metadata.regex_metadata)
-            for regex_name, matches in element_regex_metadata.items():
-                for m in matches:
-                    m["start"] += start_offset
-                    m["end"] += start_offset
-                chunk_matches = chunk_regex_metadata.get(regex_name, [])
-                chunk_matches.extend(matches)
-                chunk_regex_metadata[regex_name] = chunk_matches
-
-        return chunk_regex_metadata
-
     def _iter_text_segments(self) -> Iterator[str]:
         """Generate overlap text and each element text segment in order.
 
@@ -812,8 +774,6 @@ class TextPreChunk:
                     # -- Python 3.7+ maintains dict insertion order --
                     ordered_unique_keys = {key: None for val_list in values for key in val_list}
                     yield field_name, list(ordered_unique_keys.keys())
-                elif strategy is CS.REGEX:
-                    yield field_name, self._consolidated_regex_meta
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

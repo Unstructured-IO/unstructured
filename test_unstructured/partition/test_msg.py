@@ -114,23 +114,6 @@ def test_partition_msg_raises_with_neither():
         partition_msg()
 
 
-def test_partition_msg_from_filename_exclude_metadata():
-    filename = example_doc_path("fake-email.msg")
-    elements = partition_msg(filename=filename, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
-def test_partition_msg_from_file_exclude_metadata():
-    filename = example_doc_path("fake-email.msg")
-    with open(filename, "rb") as f:
-        elements = partition_msg(file=f, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 def test_partition_msg_can_process_attachments():
     elements = partition_msg(
         example_doc_path("fake-email-multiple-attachments.msg"), process_attachments=True
@@ -173,12 +156,25 @@ def test_partition_msg_can_process_attachments():
     ]
 
 
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
 def test_partition_msg_pulls_last_modified_from_message_sent_date():
     elements = partition_msg(example_doc_path("fake-email.msg"))
     assert all(e.metadata.last_modified == "2023-03-28T17:00:31+00:00" for e in elements)
 
 
-def test_partition_msg_from_file_prefers_metadata_last_modified_when_provided():
+def test_partition_msg_from_file_path_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+
+    elements = partition_msg(
+        example_doc_path("fake-email.msg"), metadata_last_modified=metadata_last_modified
+    )
+
+    assert elements[0].metadata.last_modified == metadata_last_modified
+
+
+def test_partition_msg_from_file_prefers_metadata_last_modified():
     metadata_last_modified = "2020-07-05T09:24:28"
 
     with open(example_doc_path("fake-email.msg"), "rb") as f:
@@ -187,14 +183,7 @@ def test_partition_msg_from_file_prefers_metadata_last_modified_when_provided():
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_msg_custom_metadata_date():
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    elements = partition_msg(
-        example_doc_path("fake-email.msg"), metadata_last_modified=expected_last_modification_date
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_msg_with_json():
@@ -433,7 +422,6 @@ class DescribeMsgPartitionerOptions:
         compact for testing purposes.
         """
         return {
-            "date_from_file_object": False,
             "file": None,
             "file_path": None,
             "metadata_file_path": None,

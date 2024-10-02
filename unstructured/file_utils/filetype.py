@@ -47,12 +47,8 @@ from unstructured.file_utils.encoding import detect_file_encoding, format_encodi
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import (
-    add_element_metadata,
-    exactly_one,
-    remove_element_metadata,
-    set_element_hierarchy,
-)
+from unstructured.partition.common.common import add_element_metadata, exactly_one
+from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
@@ -495,13 +491,13 @@ class _OleFileDifferentiator:
     def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:
         """True when file has CFBF magic first 8 bytes."""
         with ctx.open() as file:
-            return file.read(8) == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+            return file.read(8) == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
     @staticmethod
     def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
         with ctx.open() as f:
-            ole = OleFileIO(f)
-            root_storage = Storage.from_ole(ole)
+            ole = OleFileIO(f)  # pyright: ignore[reportUnknownVariableType]
+            root_storage = Storage.from_ole(ole)  # pyright: ignore[reportUnknownMemberType]
 
         for stream in root_storage.streams:
             if stream.name == "WordDocument":
@@ -605,7 +601,7 @@ class _TextFileDifferentiator:
         text_head = self._ctx.text_head
 
         # -- an empty file is not JSON --
-        if not text_head:
+        if not text_head.lstrip():
             return False
 
         # -- has to be a list or object, no string, number, or bool --
@@ -686,28 +682,25 @@ def add_metadata(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
         elements = func(*args, **kwargs)
         call_args = get_call_args_applying_defaults(func, *args, **kwargs)
-        include_metadata = call_args.get("include_metadata", True)
-        if include_metadata:
-            if call_args.get("metadata_filename"):
-                call_args["filename"] = call_args.get("metadata_filename")
 
-            metadata_kwargs = {
-                kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
-            }
-            # NOTE (yao): do not use cast here as cast(None) still is None
-            if not str(kwargs.get("model_name", "")).startswith("chipper"):
-                # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
-                elements = set_element_hierarchy(elements)
+        if call_args.get("metadata_filename"):
+            call_args["filename"] = call_args.get("metadata_filename")
 
-            for element in elements:
-                # NOTE(robinson) - Attached files have already run through this logic
-                # in their own partitioning function
-                if element.metadata.attached_to_filename is None:
-                    add_element_metadata(element, **metadata_kwargs)
+        metadata_kwargs = {
+            kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+        }
+        # NOTE (yao): do not use cast here as cast(None) still is None
+        if not str(kwargs.get("model_name", "")).startswith("chipper"):
+            # NOTE(alan): Skip hierarchy if using chipper, as it should take care of that
+            elements = set_element_hierarchy(elements)
 
-            return elements
-        else:
-            return remove_element_metadata(elements)
+        for element in elements:
+            # NOTE(robinson) - Attached files have already run through this logic
+            # in their own partitioning function
+            if element.metadata.attached_to_filename is None:
+                add_element_metadata(element, **metadata_kwargs)
+
+        return elements
 
     return wrapper
 
@@ -719,28 +712,25 @@ def add_filetype(
 
     This decorator adds a post-processing step to a document partitioner.
 
-    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
-    - Adds `.metadata.regex-metadata` when `regex_metadata` keyword-argument is provided.
-    - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
+    - Adds `.metadata.filetype` (source-document MIME-type) metadata value
 
+    This "partial" decorator is present because `partition_image()` does not apply
+    `.metadata.filetype` this way since each image type has its own MIME-type (e.g. `image.jpeg`,
+    `image/png`, etc.).
     """
 
     def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
-            params = get_call_args_applying_defaults(func, *args, **kwargs)
-            include_metadata = params.get("include_metadata", True)
-            if include_metadata:
-                for element in elements:
-                    # NOTE(robinson) - Attached files have already run through this logic
-                    # in their own partitioning function
-                    if element.metadata.attached_to_filename is None:
-                        add_element_metadata(element, filetype=filetype.mime_type)
 
-                return elements
-            else:
-                return remove_element_metadata(elements)
+            for element in elements:
+                # NOTE(robinson) - Attached files have already run through this logic
+                # in their own partitioning function
+                if element.metadata.attached_to_filename is None:
+                    add_element_metadata(element, filetype=filetype.mime_type)
+
+            return elements
 
         return wrapper
 

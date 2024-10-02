@@ -14,12 +14,9 @@ from unstructured.documents.elements import Element, ElementMetadata, process_me
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.partition.common import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 from unstructured.utils import is_temp_file_path, lazyproperty
 
@@ -31,7 +28,6 @@ def partition_msg(
     filename: Optional[str] = None,
     *,
     file: Optional[IO[bytes]] = None,
-    date_from_file_object: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
@@ -45,10 +41,6 @@ def partition_msg(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True and inference
-        from message header failed, attempt to infer last_modified metadata from bytes,
-        otherwise set it to None.
     metadata_filename
         The filename to use for the metadata.
     metadata_last_modified
@@ -58,7 +50,6 @@ def partition_msg(
         processing the content of the email itself.
     """
     opts = MsgPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         metadata_file_path=metadata_filename,
@@ -81,14 +72,12 @@ class MsgPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         file: IO[bytes] | None,
         file_path: str | None,
         metadata_file_path: str | None,
         metadata_last_modified: str | None,
         partition_attachments: bool,
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._metadata_file_path = metadata_file_path
@@ -155,13 +144,6 @@ class MsgPartitionerOptions:
                 None
                 if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
             )
 
         return None

@@ -7,7 +7,8 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.file_conversion import convert_file_to_html_text_using_pandoc
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import exactly_one, get_last_modified
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 
 DETECTION_ORIGIN: str = "org"
@@ -23,7 +24,6 @@ def partition_org(
     metadata_last_modified: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an org document. The document is first converted to HTML and then
@@ -44,11 +44,10 @@ def partition_org(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
+
+    last_modified = get_last_modified_date(filename) if filename else None
 
     html_text = convert_file_to_html_text_using_pandoc(
         source_format="org", filename=filename, file=file
@@ -58,9 +57,7 @@ def partition_org(
         text=html_text,
         encoding="unicode",
         metadata_filename=metadata_filename,
-        metadata_last_modified=(
-            metadata_last_modified or get_last_modified(filename, file, date_from_file_object)
-        ),
+        metadata_last_modified=metadata_last_modified or last_modified,
         languages=languages,
         detect_language_per_element=detect_language_per_element,
         detection_origin=DETECTION_ORIGIN,

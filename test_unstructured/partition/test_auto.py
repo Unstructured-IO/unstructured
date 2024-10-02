@@ -9,7 +9,7 @@ import pathlib
 import tempfile
 import warnings
 from importlib import import_module
-from typing import Iterator, cast
+from typing import Iterator
 from unittest.mock import patch
 
 import pytest
@@ -381,16 +381,13 @@ def test_auto_partitioned_json_output_maintains_consistency_with_fixture_element
         expected_result = json.load(json_f)
 
     partitioning_result = json.loads(
-        cast(
-            str,
-            elements_to_json(
-                partition(
-                    filename=str(json_file_path),
-                    # -- use the original file name to get the same element IDs (hashes) --
-                    metadata_filename=original_file_name,
-                    strategy=PartitionStrategy.HI_RES,
-                )
-            ),
+        elements_to_json(
+            partition(
+                filename=str(json_file_path),
+                # -- use the original file name to get the same element IDs (hashes) --
+                metadata_filename=original_file_name,
+                strategy=PartitionStrategy.HI_RES,
+            )
         )
     )
     for elem in partitioning_result:
@@ -578,7 +575,6 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         extract_image_block_output_dir=None,
         extract_image_block_to_payload=False,
         hi_res_model_name=None,
-        date_from_file_object=False,
         starting_page_number=1,
     )
 
@@ -753,22 +749,30 @@ def test_auto_partition_tsv_from_filename():
 # ================================================================================================
 # TXT
 # ================================================================================================
-
-
-def test_auto_partition_text_from_filename():
-    file_path = example_doc_path("fake-text.txt")
+@pytest.mark.parametrize(
+    ("filename", "expected_elements"),
+    [
+        (
+            "fake-text.txt",
+            [
+                NarrativeText(text="This is a test document to use for unit tests."),
+                Address(text="Doylestown, PA 18901"),
+                Title(text="Important points:"),
+                ListItem(text="Hamburgers are delicious"),
+                ListItem(text="Dogs are the best"),
+                ListItem(text="I love fuzzy blankets"),
+            ],
+        ),
+        ("fake-text-all-whitespace.txt", []),
+    ],
+)
+def test_auto_partition_text_from_filename(filename: str, expected_elements: list[Element]):
+    file_path = example_doc_path(filename)
 
     elements = partition(filename=file_path, strategy=PartitionStrategy.HI_RES)
 
-    assert elements == [
-        NarrativeText(text="This is a test document to use for unit tests."),
-        Address(text="Doylestown, PA 18901"),
-        Title(text="Important points:"),
-        ListItem(text="Hamburgers are delicious"),
-        ListItem(text="Dogs are the best"),
-        ListItem(text="I love fuzzy blankets"),
-    ]
-    assert all(e.metadata.filename == "fake-text.txt" for e in elements)
+    assert elements == expected_elements
+    assert all(e.metadata.filename == filename for e in elements)
     assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
 
 

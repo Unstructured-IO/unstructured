@@ -26,8 +26,8 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -48,14 +48,12 @@ def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -67,8 +65,6 @@ def partition_xlsx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the output.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -86,18 +82,13 @@ def partition_xlsx(
         The day of the last modification
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     opts = _XlsxPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         detect_language_per_element=detect_language_per_element,
         file=file,
         file_path=filename,
         find_subtable=find_subtable,
         include_header=include_header,
-        include_metadata=include_metadata,
         infer_table_structure=infer_table_structure,
         languages=languages,
         metadata_file_path=metadata_filename,
@@ -115,19 +106,16 @@ def partition_xlsx(
                 else None
             )
             # XXX: `html_text` can be `None`. What happens on this call in that case?
-            text = soupparser_fromstring(html_text).text_content()
+            text = soupparser_fromstring(html_text).text_content()  # type: ignore
 
-            if opts.include_metadata:
-                metadata = ElementMetadata(
-                    text_as_html=html_text,
-                    page_name=sheet_name,
-                    page_number=page_number,
-                    filename=opts.metadata_file_path,
-                    last_modified=opts.last_modified,
-                )
-                metadata.detection_origin = DETECTION_ORIGIN
-            else:
-                metadata = ElementMetadata()
+            metadata = ElementMetadata(
+                text_as_html=html_text,
+                page_name=sheet_name,
+                page_number=page_number,
+                filename=opts.metadata_file_path,
+                last_modified=opts.last_modified,
+            )
+            metadata.detection_origin = DETECTION_ORIGIN
 
             table = Table(text=text, metadata=metadata)
             elements.append(table)
@@ -179,25 +167,21 @@ class _XlsxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         detect_language_per_element: bool,
         file: Optional[IO[bytes]],
         file_path: Optional[str],
         find_subtable: bool,
         include_header: bool,
-        include_metadata: bool,
         infer_table_structure: bool,
         languages: Optional[list[str]],
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
     ):
-        self._date_from_file_object = date_from_file_object
         self._detect_language_per_element = detect_language_per_element
         self._file = file
         self._file_path = file_path
         self._find_subtable = find_subtable
         self._include_header = include_header
-        self._include_metadata = include_metadata
         self._infer_table_structure = infer_table_structure
         self._languages = languages
         self._metadata_file_path = metadata_file_path
@@ -227,11 +211,6 @@ class _XlsxPartitionerOptions:
         return self._include_header
 
     @lazyproperty
-    def include_metadata(self) -> bool:
-        """True when partitioner should apply metadata to emitted elements."""
-        return self._include_metadata
-
-    @lazyproperty
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata."""
         return self._infer_table_structure
@@ -254,13 +233,6 @@ class _XlsxPartitionerOptions:
 
         if self._file_path:
             return get_last_modified_date(self._file_path)
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
 
         return None
 
@@ -526,14 +498,9 @@ def _create_element(text: str) -> Element:
 def _get_metadata(
     sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
 ) -> ElementMetadata:
-    """Returns metadata depending on `include_metadata` flag"""
-    return (
-        ElementMetadata(
-            page_name=sheet_name,
-            page_number=page_number,
-            filename=opts.metadata_file_path,
-            last_modified=opts.last_modified,
-        )
-        if opts.include_metadata
-        else ElementMetadata()
+    return ElementMetadata(
+        page_name=sheet_name,
+        page_number=page_number,
+        filename=opts.metadata_file_path,
+        last_modified=opts.last_modified,
     )

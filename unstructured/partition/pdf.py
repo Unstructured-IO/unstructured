@@ -42,17 +42,18 @@ from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition.common import (
+from unstructured.partition.common.common import (
     document_to_element_list,
     exactly_one,
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import (
+from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
     tesseract_to_paddle_language,
 )
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
     FinalLayoutDumper,
@@ -64,7 +65,6 @@ from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     check_element_types_to_extract,
     convert_pdf_to_images,
-    get_the_last_modification_date_pdf_or_img,
     save_elements,
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -122,7 +122,6 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
-    include_metadata: bool = True,  # used by decorator
     metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
@@ -131,7 +130,6 @@ def partition_pdf(
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
@@ -188,9 +186,6 @@ def partition_pdf(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     extract_forms
         Whether the form extraction logic should be run
         (results in adding FormKeysValues elements to output).
@@ -215,7 +210,6 @@ def partition_pdf(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
-        date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
@@ -237,7 +231,6 @@ def partition_pdf_or_image(
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
@@ -257,11 +250,7 @@ def partition_pdf_or_image(
 
     validate_strategy(strategy, is_image)
 
-    last_modification_date = get_the_last_modification_date_pdf_or_img(
-        file=file,
-        filename=filename,
-        date_from_file_object=date_from_file_object,
-    )
+    last_modified = get_last_modified_date(filename) if filename else None
 
     extracted_elements = []
     pdf_text_extractable = False
@@ -271,7 +260,7 @@ def partition_pdf_or_image(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
+                metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
                 **kwargs,
             )
@@ -312,7 +301,7 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 ocr_languages=ocr_languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
+                metadata_last_modified=metadata_last_modified or last_modified,
                 hi_res_model_name=hi_res_model_name,
                 pdf_text_extractable=pdf_text_extractable,
                 extract_images_in_pdf=extract_images_in_pdf,
@@ -345,7 +334,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 ocr_languages=ocr_languages,
                 is_image=is_image,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
+                metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
                 **kwargs,
             )

@@ -36,12 +36,9 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.common.common import convert_ms_office_table_to_text
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,
@@ -90,7 +87,6 @@ def partition_pptx(
     filename: Optional[str] = None,
     *,
     file: Optional[IO[bytes]] = None,
-    date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
     include_page_breaks: bool = True,
     include_slide_notes: Optional[bool] = None,
@@ -133,16 +129,12 @@ def partition_pptx(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
         Indicates what page number should be assigned to the first slide in the presentation.
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """
     opts = PptxPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
@@ -373,7 +365,6 @@ class PptxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         file: Optional[IO[bytes]],
         file_path: Optional[str],
         include_page_breaks: bool,
@@ -384,7 +375,6 @@ class PptxPartitionerOptions:
         strategy: str,
         starting_page_number: int = 1,
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
@@ -424,7 +414,11 @@ class PptxPartitionerOptions:
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
-            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
+            yield PageBreak(
+                "",
+                detection_origin=DETECTION_ORIGIN,
+                metadata=ElementMetadata(last_modified=self.last_modified),
+            )
 
     @lazyproperty
     def infer_table_structure(self) -> bool:
@@ -445,13 +439,6 @@ class PptxPartitionerOptions:
                 None
                 if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
             )
 
         return None

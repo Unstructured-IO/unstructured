@@ -16,13 +16,12 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import (
+from unstructured.partition.common.common import (
     exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.text import element_from_text
 
 DETECTION_ORIGIN: str = "xml"
@@ -50,7 +49,7 @@ def _get_leaf_elements(
     xml_path: Optional[str] = None,
 ) -> Iterator[Optional[str]]:
     """Parse the XML tree in a memory efficient manner if possible."""
-    element_stack = []
+    element_stack: list[etree._Element] = []  # pyright: ignore[reportPrivateUsage]
 
     element_iterator = etree.iterparse(file, events=("start", "end"), resolve_entities=False)
     # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
@@ -85,13 +84,10 @@ def partition_xml(
     xml_keep_tags: bool = False,
     xml_path: Optional[str] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an XML document into its document elements.
@@ -111,9 +107,6 @@ def partition_xml(
         The xml_path to use for extracting the text. Only used if xml_keep_tags=False.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the
-        elements in the output.
     metadata_last_modified
         The day of the last modification.
     languages
@@ -123,30 +116,18 @@ def partition_xml(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file, text=text)
 
     elements: list[Element] = []
 
-    last_modification_date = None
-    if filename:
-        last_modification_date = get_last_modified_date(filename)
-    elif file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
+    last_modification_date = get_last_modified_date(filename) if filename else None
 
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
-        )
-        metadata.detection_origin = DETECTION_ORIGIN
-    else:
-        metadata = ElementMetadata()
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=metadata_last_modified or last_modification_date,
+    )
+    metadata.detection_origin = DETECTION_ORIGIN
 
     if xml_keep_tags:
         if filename:

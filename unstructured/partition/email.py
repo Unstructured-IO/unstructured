@@ -46,14 +46,10 @@ from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 
 VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
@@ -101,12 +97,12 @@ def _strip_angle_brackets(data: str) -> str:
 
 
 def partition_email_header(msg: EmailMessage) -> list[Element]:
-
     def append_address_header_elements(header: AddressHeader, element_type: Type[Element]):
         for addr in header.addresses:
             elements.append(
                 element_type(
-                    name=addr.display_name or addr.username, text=addr.addr_spec  # type: ignore
+                    name=addr.display_name or addr.username,  # type: ignore
+                    text=addr.addr_spec,  # type: ignore
                 )
             )
 
@@ -290,16 +286,13 @@ def partition_email(
     encoding: Optional[str] = None,
     include_headers: bool = False,
     max_partition: Optional[int] = 1500,
-    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an .eml documents into its constituent elements.
@@ -338,10 +331,6 @@ def partition_email(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True and inference
-        from message header failed, attempt to infer last_modified metadata from bytes,
-        otherwise set it to None.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -446,7 +435,6 @@ def partition_email(
         content = content.replace("=\n", "").replace("=\r\n", "")
         elements = partition_html(
             text=content,
-            include_metadata=False,
             metadata_filename=metadata_filename,
             languages=[""],
             detection_origin="email",
@@ -484,7 +472,6 @@ def partition_email(
             max_partition=max_partition,
             min_partition=min_partition,
             languages=[""],
-            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
             detection_origin="email",
         )
     else:
@@ -505,19 +492,13 @@ def partition_email(
         header = partition_email_header(msg)
     all_elements = header + elements
 
-    last_modification_date = None
-    if filename is not None:
-        last_modification_date = get_last_modified_date(filename)
-    elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
+    last_modified = get_last_modified_date(filename) if filename else None
 
     metadata = build_email_metadata(
         msg,
         filename=metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
-        last_modification_date=last_modification_date,
+        last_modification_date=last_modified,
     )
     for element in all_elements:
         element.metadata = copy.deepcopy(metadata)

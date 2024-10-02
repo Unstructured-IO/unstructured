@@ -8,12 +8,8 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import (
-    convert_office_doc,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.common import convert_office_doc, exactly_one
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.pptx import partition_pptx
 from unstructured.partition.utils.constants import PartitionStrategy
 
@@ -25,15 +21,12 @@ def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
-    include_metadata: bool = True,
     include_slide_notes: Optional[bool] = None,
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
@@ -65,9 +58,6 @@ def partition_ppt(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
         Indicates what page number should be assigned to the first slide in the presentation.
         This information will be reflected in elements' metadata and can be be especially
@@ -76,14 +66,13 @@ def partition_ppt(
     # -- Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file)
 
+    last_modified = get_last_modified_date(filename) if filename else None
+
     with tempfile.TemporaryDirectory() as tmpdir:
-        last_modification_date = None
         if filename:
             # -- Verify filename.
             if not os.path.exists(filename):
                 raise ValueError(f"The file {filename} does not exist.")
-            # -- Get last modified date from filename.
-            last_modification_date = get_last_modified_date(filename)
 
         else:
             assert file
@@ -92,10 +81,6 @@ def partition_ppt(
             with open(tmp_file_path, "wb") as tmp_file:
                 tmp_file.write(file.read())
             filename = tmp_file_path
-            # -- Get last modified date from file.
-            last_modification_date = (
-                get_last_modified_date_from_file(file) if date_from_file_object else None
-            )
 
         _, filename_no_path = os.path.split(os.path.abspath(filename))
         base_filename, _ = os.path.splitext(filename_no_path)
@@ -115,7 +100,7 @@ def partition_ppt(
             infer_table_structure=infer_table_structure,
             languages=languages,
             metadata_filename=metadata_filename,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
+            metadata_last_modified=metadata_last_modified or last_modified,
             starting_page_number=starting_page_number,
             strategy=strategy,
         )

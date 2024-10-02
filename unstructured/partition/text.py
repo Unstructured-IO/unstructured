@@ -29,12 +29,9 @@ from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.nlp.tokenize import sent_tokenize
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -52,15 +49,12 @@ def partition_text(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "text",
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -79,8 +73,6 @@ def partition_text(
     paragrapher_grouper
         A str -> str function for fixing paragraphs that are interrupted by line breaks
         for formatting purposes.
-    include_metadata
-        Determines whether or not metadata is included in the output.
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -95,9 +87,6 @@ def partition_text(
         The minimum number of characters to include in a partition.
     metadata_last_modified
         The day of the last modification
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     return _partition_text(
         filename=filename,
@@ -106,15 +95,12 @@ def partition_text(
         encoding=encoding,
         paragraph_grouper=paragraph_grouper,
         metadata_filename=metadata_filename,
-        include_metadata=include_metadata,
         languages=languages,
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
-        chunking_strategy=chunking_strategy,
         detect_language_per_element=detect_language_per_element,
         detection_origin=detection_origin,
-        date_from_file_object=date_from_file_object,
         **kwargs,
     )
 
@@ -129,15 +115,12 @@ def _partition_text(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "text",
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """internal API for `partition_text`"""
@@ -155,16 +138,13 @@ def _partition_text(
     exactly_one(filename=filename, file=file, text=text)
     file_text = ""
 
-    last_modification_date = None
+    last_modified = get_last_modified_date(filename) if filename else None
+
     if filename is not None:
         encoding, file_text = read_txt_file(filename=filename, encoding=encoding)
-        last_modification_date = get_last_modified_date(filename)
 
     elif file is not None:
         encoding, file_text = read_txt_file(file=file, encoding=encoding)
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
     elif text is not None:
         file_text = str(text)
 
@@ -185,15 +165,12 @@ def _partition_text(
     )
 
     elements: list[Element] = []
-    if include_metadata:
-        metadata = ElementMetadata(
-            filename=metadata_filename or filename,
-            last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
-        )
-        metadata.detection_origin = detection_origin
-    else:
-        metadata = ElementMetadata()
+    metadata = ElementMetadata(
+        filename=metadata_filename or filename,
+        last_modified=metadata_last_modified or last_modified,
+        languages=languages,
+    )
+    metadata.detection_origin = detection_origin
 
     for ctext in file_content:
         ctext = ctext.strip()
@@ -215,14 +192,14 @@ def _partition_text(
 
 def is_empty_bullet(text: str) -> bool:
     """Checks if input text is an empty bullet."""
-    return UNICODE_BULLETS_RE.match(text) and len(text) == 1
+    return bool(UNICODE_BULLETS_RE.match(text) and len(text) == 1)
 
 
 def _get_height_percentage(
-    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
-    coordinate_system: Optional[CoordinateSystem] = None,
+    coordinates: tuple[tuple[float, float], ...],
+    coordinate_system: CoordinateSystem,
 ) -> float:
-    avg_y = sum([coordinate[1] for coordinate in coordinates]) / len(coordinates)
+    avg_y = sum(coordinate[1] for coordinate in coordinates) / len(coordinates)
     return avg_y / coordinate_system.height
 
 
