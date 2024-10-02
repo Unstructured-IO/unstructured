@@ -1,4 +1,4 @@
-## 0.15.14-dev8
+## 0.15.14-dev9
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
 * **Allow empty text files.** Fixes an issue where text files with only white space would fail to be partitioned.
 * **Remove double-decoration for CSV, DOC, ODT partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (CSV and DOCX in this case); remove decoration from delegating partitioners.
 * **Remove double-decoration for PPT, PPTX, TSV, XLSX, and XML partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner; remove decoration from delegating partitioners.
+* **Remove double-decoration for HTML, EPUB, MD, ORG, RST, and RTF partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (HTML in this case); remove decoration from delegating partitioners.
 
 ## 0.15.13
 
