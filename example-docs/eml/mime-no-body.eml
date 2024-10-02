@@ -1,0 +1,22 @@
+From: sender@example.com
+To: recipient@example.com
+Date: Tue, 01 Oct 2024 12:34:56 -0500
+Subject: Image Only Email
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary123"
+
+--boundary123
+Content-Type: image/jpeg
+Content-Disposition: attachment; filename="image.jpg"
+Content-Transfer-Encoding: base64
+
+/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEBAQEhISEBAWFRUVFhUVFRUWFRUWFhUWFhUV
+FRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGi0fHx8rLS0rLS0rLS0t
+LS0rLS0rLS0rLS0rLS0rLS0rLS0rLS0rLS0tLS0rLS0rLS0rLS0rLf/AABEIAMgAyAMBIgACEQED
+EQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAABAUCAwYBB//EAD0QAAIBAwMBBgQEBgIDCQAAAAECAwAE
+ERIhBTFBBhMiUWFxgZEykaGxFCNCUrHB0fAUM2JygpLwFySTwsL/xAAYAQEBAQEBAAAAAAAAAAAA
+AAAABQEDBP/EAB8RAQEBAQEBAQEBAQEAAAAAAAABEQIhEjEEQVFhcf/aAAwDAQACEQMRAD8A+6qK
+CiiggqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgq
+CiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCooIKgqCiiCo
+[Base64 encoded image data continues]
+--boundary123--
