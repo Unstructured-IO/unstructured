@@ -252,6 +252,64 @@ def test_partition_text_doesnt_get_page_breaks():
     assert not isinstance(elements[0], ListItem)
 
 
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_text_from_filename_gets_filename_metadata_from_file_path():
+    elements = partition_text(example_doc_path("fake-text.txt"))
+
+    assert all(e.metadata.filename == "fake-text.txt" for e in elements)
+    assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
+
+
+def test_partition_text_from_file_gets_filename_metadata_None():
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
+        elements = partition_text(file=f)
+
+    assert all(e.metadata.filename is None for e in elements)
+    assert all(e.metadata.file_directory is None for e in elements)
+
+
+def test_partition_text_from_filename_prefers_metadata_filename():
+    elements = partition_text(example_doc_path("fake-text.txt"), metadata_filename="a/b/c.txt")
+
+    assert all(e.metadata.filename == "c.txt" for e in elements)
+    assert all(e.metadata.file_directory == "a/b" for e in elements)
+
+
+def test_partition_text_from_file_prefers_metadata_filename():
+    with open(example_doc_path("fake-text.txt"), "rb") as f:
+        elements = partition_text(file=f, metadata_filename="d/e/f.txt")
+
+    assert all(e.metadata.filename == "f.txt" for e in elements)
+    assert all(e.metadata.file_directory == "d/e" for e in elements)
+
+
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_text_gets_the_TXT_MIME_type_in_metadata_filetype():
+    TXT_MIME_TYPE = "text/plain"
+    elements = partition_text(example_doc_path("fake-text.txt"))
+    assert all(e.metadata.filetype == TXT_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{TXT_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
+
+
+@pytest.mark.xfail(
+    reason="will be implemented by `@apply_metadata()` decorator",
+    raises=AssertionError,
+    strict=True,
+)
+def test_partition_text_prefers_metadata_file_type():
+    elements = partition_text(example_doc_path("README.md"), metadata_file_type="text/markdown")
+    assert all(e.metadata.filetype == "text/markdown" for e in elements), (
+        f"Expected all elements to have 'text/markdown' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
@@ -350,7 +408,7 @@ def test_partition_text_with_json(file_name: str, encoding: str | None):
 
 
 def test_add_chunking_strategy_on_partition_text():
-    filename = example_doc_path("norwich-city.txt")
+    filename = example_doc_path("book-war-and-peace-1p.txt")
     elements = partition_text(filename=filename)
     chunk_elements = partition_text(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
