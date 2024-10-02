@@ -22,6 +22,7 @@ from test_unstructured.unit_utils import (
     assert_round_trips_through_JSON,
     example_doc_path,
     function_mock,
+    property_mock,
 )
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
@@ -351,7 +352,7 @@ def test_partition_pptx_from_file_prefers_metadata_last_modified():
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-# ------------------------------------------------------------------------------------------------
+# -- .metadata.languages -------------------------------------------------------------------------
 
 
 def test_partition_pptx_element_metadata_has_languages():
@@ -374,7 +375,7 @@ def test_partition_pptx_respects_detect_language_per_element():
 
 def test_partition_pptx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
-        partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")  # type: ignore
+        partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")
 
 
 # == downstream behaviors ========================================================================
@@ -492,7 +493,7 @@ def test_partition_pptx_hierarchy_sample_document():
     test_cases = [
         (0, None, "b2859226ba1f9243fb3f1b2ace889f43"),
         (1, "b2859226ba1f9243fb3f1b2ace889f43", "d13f8827e94541c8b818b0df8f942526"),
-        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (None, None, "cbb95b030de22979af6bfa42969c8202"),
         (0, None, "e535f799d1f0e79d6777efa873a16ce1"),
         (0, "e535f799d1f0e79d6777efa873a16ce1", "f02bbfb417ad60daa2ba35080e96262f"),
         (0, "e535f799d1f0e79d6777efa873a16ce1", "414dfce72ea53cd4649176af0d62a4c1"),
@@ -500,7 +501,7 @@ def test_partition_pptx_hierarchy_sample_document():
         (1, "414dfce72ea53cd4649176af0d62a4c1", "a33333f527851f700ca175acd04b8a2c"),
         (2, "a33333f527851f700ca175acd04b8a2c", "6f1b87689e4da2b0fb865bc5f92d5702"),
         (0, "e535f799d1f0e79d6777efa873a16ce1", "3f58e0be3b8e8b15cba7adc4eae68586"),
-        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (None, None, "e5de1b503e64da424fb7d8113371e16d"),
         (0, None, "8319096532fe2e55f66c491ea8313150"),
         (0, "8319096532fe2e55f66c491ea8313150", "17a7e78277ab131a627cb4538bab7390"),
         (0, "8319096532fe2e55f66c491ea8313150", "41a9e1d0390f4edd77181142ceae51bc"),
@@ -514,7 +515,7 @@ def test_partition_pptx_hierarchy_sample_document():
         (1, "7f647b1f0f20c3db40c36ab57d9a5550", "6ec455f5f19782facf184886876c9a66"),
         (2, "6ec455f5f19782facf184886876c9a66", "5614b00c3f6bff23ebba1360e10f6428"),
         (0, "8319096532fe2e55f66c491ea8313150", "2f57a8d4182e6fd5bd5842b0a2d9841b"),
-        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (None, None, "4120066d251ba675ade42e8a167ca61f"),
         (None, None, "2ed3bd10daace79ac129cbf8faf22bfc"),
         (0, None, "fd08cacbaddafee5cbacc02528536ee5"),
     ]
@@ -545,8 +546,6 @@ def opts_args() -> dict[str, Any]:
         "include_page_breaks": True,
         "include_slide_notes": False,
         "infer_table_structure": True,
-        "metadata_file_path": None,
-        "metadata_last_modified": None,
         "strategy": "fast",
     }
 
@@ -632,15 +631,7 @@ class DescribePptxPartitionerOptions:
 
     # -- .last_modified --------------------------
 
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = PptxPartitionerOptions(**opts_args)
-
-        assert opts.last_modified == "2024-03-05T17:02:53"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_a_path_is_provided(
         self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
         opts_args["file_path"] = "a/b/spreadsheet.pptx"
@@ -665,21 +656,11 @@ class DescribePptxPartitionerOptions:
 
     # -- .metadata_file_path ---------------------
 
-    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["file_path"] = "x/y/z.pptx"
-        opts_args["metadata_file_path"] = "a/b/c.pptx"
-        opts = PptxPartitionerOptions(**opts_args)
-
-        assert opts.metadata_file_path == "a/b/c.pptx"
-
     @pytest.mark.parametrize("file_path", ["u/v/w.pptx", None])
-    def and_it_falls_back_to_the_document_file_path_otherwise(
+    def it_uses_the_filename_argument_when_provided(
         self, file_path: str | None, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = file_path
-        opts_args["metadata_file_path"] = None
         opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == file_path
@@ -769,9 +750,11 @@ class DescribePptxPartitionerOptions:
 
     # -- .table_metadata -------------------------
 
-    def it_can_create_table_metadata(self, opts_args: dict[str, Any]):
-        opts_args["metadata_file_path"] = "d/e/f.pptx"
-        opts_args["metadata_last_modified"] = "2024-04-02T19:51:55"
+    def it_can_create_table_metadata(
+        self, last_modified_prop_: Mock, metadata_file_path_prop_: Mock, opts_args: dict[str, Any]
+    ):
+        metadata_file_path_prop_.return_value = "d/e/f.pptx"
+        last_modified_prop_.return_value = "2024-04-02T19:51:55"
         opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
@@ -786,9 +769,11 @@ class DescribePptxPartitionerOptions:
 
     # -- .text_metadata -------------------------
 
-    def it_can_create_text_metadata(self, opts_args: dict[str, Any]):
-        opts_args["metadata_file_path"] = "d/e/f.pptx"
-        opts_args["metadata_last_modified"] = "2024-04-02T19:56:40"
+    def it_can_create_text_metadata(
+        self, last_modified_prop_: Mock, metadata_file_path_prop_: Mock, opts_args: dict[str, Any]
+    ):
+        metadata_file_path_prop_.return_value = "d/e/f.pptx"
+        last_modified_prop_.return_value = "2024-04-02T19:56:40"
         opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
@@ -806,3 +791,11 @@ class DescribePptxPartitionerOptions:
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.partition.pptx.get_last_modified_date")
+
+    @pytest.fixture()
+    def last_modified_prop_(self, request: FixtureRequest):
+        return property_mock(request, PptxPartitionerOptions, "last_modified")
+
+    @pytest.fixture()
+    def metadata_file_path_prop_(self, request: FixtureRequest):
+        return property_mock(request, PptxPartitionerOptions, "metadata_file_path")

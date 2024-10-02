@@ -30,11 +30,6 @@ def test_partition_ppt_from_filename():
         assert {element.metadata.detection_origin for element in elements} == {"pptx"}
 
 
-def test_partition_ppt_from_filename_with_metadata_filename():
-    elements = partition_ppt(example_doc_path("fake-power-point.ppt"), metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
-
-
 def test_partition_ppt_raises_with_missing_file():
     with pytest.raises(ValueError):
         partition_ppt(example_doc_path("doesnt-exist.ppt"))
@@ -65,6 +60,38 @@ def test_partition_ppt_raises_with_both_specified():
 def test_partition_ppt_raises_when_neither_file_path_or_file_is_provided():
     with pytest.raises(ValueError):
         partition_ppt()
+
+
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_ppt_from_filename_gets_filename_from_filename_arg():
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == "fake-power-point.ppt" for e in elements)
+
+
+def test_partition_ppt_from_file_gets_filename_None():
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
+        elements = partition_ppt(file=f)
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_ppt_from_filename_prefers_metadata_filename():
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"), metadata_filename="test")
+
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+def test_partition_ppt_from_file_prefers_metadata_filename():
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
+        elements = partition_ppt(file=f, metadata_filename="test")
+
+    assert all(e.metadata.filename == "test" for e in elements)
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
