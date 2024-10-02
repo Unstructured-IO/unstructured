@@ -13,6 +13,7 @@ from test_unstructured.unit_utils import assert_round_trips_through_JSON, exampl
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
 from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.file_utils.model import FileType
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -297,13 +298,8 @@ def test_partition_text_gets_the_TXT_MIME_type_in_metadata_filetype():
     )
 
 
-@pytest.mark.xfail(
-    reason="will be implemented by `@apply_metadata()` decorator",
-    raises=AssertionError,
-    strict=True,
-)
 def test_partition_text_prefers_metadata_file_type():
-    elements = partition_text(example_doc_path("README.md"), metadata_file_type="text/markdown")
+    elements = partition_text(example_doc_path("README.md"), metadata_file_type=FileType.MD)
     assert all(e.metadata.filetype == "text/markdown" for e in elements), (
         f"Expected all elements to have 'text/markdown' as their filetype, but got:"
         f" {repr(elements[0].metadata.filetype)}"
@@ -438,7 +434,7 @@ def test_partition_text_respects_languages_arg():
 
 def test_partition_text_element_metadata_raises_TypeError():
     with pytest.raises(TypeError):
-        partition_text(example_doc_path("norwich-city.txt"), languages="eng")  # type: ignore
+        partition_text(example_doc_path("norwich-city.txt"), languages="eng")
 
 
 def test_partition_text_detects_more_than_3_languages():

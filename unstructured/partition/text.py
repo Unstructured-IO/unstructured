@@ -21,15 +21,12 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
-    process_metadata,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN, UNICODE_BULLETS_RE
 from unstructured.partition.common.common import exactly_one
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -40,19 +37,15 @@ from unstructured.partition.text_type import (
 )
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.TXT)
+@apply_metadata(FileType.TXT)
 @add_chunking_strategy
 def partition_text(
     filename: str | None = None,
+    *,
     file: IO[bytes] | None = None,
-    text: str | None = None,
     encoding: str | None = None,
+    text: str | None = None,
     paragraph_grouper: Callable[[str], str] | Literal[False] | None = None,
-    metadata_filename: str | None = None,
-    languages: list[str] | None = ["auto"],
-    metadata_last_modified: str | None = None,
-    detect_language_per_element: bool = False,
     detection_origin: str | None = "text",
     **kwargs: Any,
 ) -> list[Element]:
@@ -66,30 +59,20 @@ def partition_text(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to "utf-8".
     text
         The string representation of the .txt document.
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
     paragrapher_grouper
         A str -> str function for fixing paragraphs that are interrupted by line breaks
         for formatting purposes.
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    metadata_last_modified
-        The day of the last modification
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
     # -- Verify that only one of the arguments was provided --
     exactly_one(filename=filename, file=file, text=text)
-
-    last_modified = get_last_modified_date(filename) if filename else None
 
     file_text = ""
     if filename is not None:
@@ -110,9 +93,7 @@ def partition_text(
 
     elements: list[Element] = []
     metadata = ElementMetadata(
-        filename=metadata_filename or filename,
-        last_modified=metadata_last_modified or last_modified,
-        languages=languages,
+        last_modified=get_last_modified_date(filename) if filename else None,
     )
     metadata.detection_origin = detection_origin
 
@@ -124,13 +105,6 @@ def partition_text(
             element.metadata = copy.deepcopy(metadata)
             elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
-    )
     return elements
 
 
