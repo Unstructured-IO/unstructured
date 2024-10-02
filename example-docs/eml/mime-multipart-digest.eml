@@ -1,0 +1,37 @@
+From: alice@example.com
+To: bob@example.com
+Cc: carol@example.com
+Bcc: dave@example.com
+Subject: Example Multipart Digest Email
+Message-ID: <1234567890@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/digest; boundary="boundary123"
+
+--boundary123
+Content-Type: message/rfc822
+
+From: eve@example.com
+To: alice@example.com
+Subject: First Message
+
+This is the first message in the digest.
+
+--boundary123
+Content-Type: message/rfc822
+
+From: frank@example.com
+To: bob@example.com
+Subject: Second Message
+
+This is the second message in the digest.
+
+--boundary123
+Content-Type: message/rfc822
+
+From: grace@example.com
+To: carol@example.com
+Subject: Third Message
+
+This is the third message in the digest.
+
+--boundary123--

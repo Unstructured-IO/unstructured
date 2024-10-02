@@ -1,0 +1,34 @@
+From: sender@example.com
+To: recipient@example.com
+Date: Tue, 01 Oct 2024 12:34:56 -0500
+Subject: Example MIME Email
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="boundary123"
+
+--boundary123
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+This is the text/plain part.
+
+Did you know that the first email was sent by Ray Tomlinson in 1971? He used the "@" symbol to separate the user's name from the computer name, a practice that is still in use today.
+
+Another interesting fact is that the first known instance of email spam occurred in 1978. A marketing message was sent to 393 recipients on ARPANET, marking the beginning of what we now know as email spam.
+
+--boundary123
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example MIME Email</title>
+</head>
+<body>
+    <p>This is the <code>text/html</code> part.</p>
+    <p>Did you know that the first <b>networked email</b> was sent by Ray Tomlinson in 1971? He used the "@" symbol to separate the user's name from the computer name, a practice that is still in use today.</p>
+    <p>Another interesting fact is that the first known instance of <i>email spam</i> occurred in 1978. A marketing message was sent to 393 recipients on ARPANET, marking the beginning of what we now know as email spam.</p>
+</body>
+</html>
+
+--boundary123--
