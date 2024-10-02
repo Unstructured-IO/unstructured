@@ -1,4 +1,4 @@
-## 0.15.14-dev9
+## 0.15.14-dev10
 
 ### Enhancements
 
@@ -15,6 +15,7 @@
 * **Remove double-decoration for CSV, DOC, ODT partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (CSV and DOCX in this case); remove decoration from delegating partitioners.
 * **Remove double-decoration for PPT, PPTX, TSV, XLSX, and XML partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner; remove decoration from delegating partitioners.
 * **Remove double-decoration for HTML, EPUB, MD, ORG, RST, and RTF partitioners.** Refactor these partitioners to use the new `@apply_metadata()` decorator and only decorate the principal partitioner (HTML in this case); remove decoration from delegating partitioners.
+* **Remove obsolete min_partition/max_partition args from TXT and EML.** The legacy `min_partition` and `max_partition` parameters were an initial rough implementation of chunking but now interfere with chunking and are unused. Remove those parameters from `partition_text()` and `partition_email()`.
 
 ## 0.15.13
 
