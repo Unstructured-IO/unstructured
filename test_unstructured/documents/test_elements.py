@@ -662,7 +662,7 @@ class DescribeElementMetadata:
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
-    elements = [
+    elements: list[Element] = [
         parent,
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
@@ -689,7 +689,7 @@ def test_hash_ids_can_handle_duplicated_element_instances():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
     element = Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id))
-    elements = [parent, element, element]
+    elements: list[Element] = [parent, element, element]
 
     # WHEN
     updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
@@ -702,7 +702,7 @@ def test_hash_ids_can_handle_duplicated_element_instances():
 
 def test_hash_ids_are_deterministic():
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
-    elements = [
+    elements: list[Element] = [
         parent,
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
@@ -735,7 +735,9 @@ def test_hash_ids_are_deterministic():
         ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
     ],
 )
-def test_id_to_hash_calculates(text, sequence_number, filename, page_number, expected_hash):
+def test_id_to_hash_calculates(
+    text: str, sequence_number: int, filename: str, page_number: int | None, expected_hash: str
+):
     element = Text(
         text=text,
         metadata=ElementMetadata(filename=filename, page_number=page_number),
@@ -750,5 +752,5 @@ def test_formskeysvalues_reads_saves():
     tmp_file = io.StringIO()
     json.dump([element.to_dict() for element in as_read], tmp_file)
     tmp_file.seek(0)
-    as_read_2 = partition_json(file=tmp_file)
+    as_read_2 = partition_json(file=tmp_file)  # type: ignore[arg-type]
     assert as_read == as_read_2

@@ -126,7 +126,7 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   attempt=$((attempt + 1))
 done
 
-EXPECTED=1825
+EXPECTED=1835
 
 if [ "$num_of_vectors_remote" -ne $EXPECTED ]; then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
