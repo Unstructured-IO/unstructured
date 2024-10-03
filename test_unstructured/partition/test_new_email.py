@@ -364,6 +364,19 @@ def test_partition_email_can_process_attachments():
     assert attachment_element.metadata.attached_to_filename == "fake-email-attachment.eml"
 
 
+def test_partition_email_silently_skips_attachments_it_cannot_partition():
+    elements = partition_email(
+        example_doc_path("eml/mime-attach-mp3.eml"), process_attachments=True
+    )
+
+    # -- no exception is raised --
+    assert elements == [
+        # -- the email body is partitioned --
+        NarrativeText("This is an email with an MP3 attachment."),
+        # -- no elements appear for the attachment --
+    ]
+
+
 # ================================================================================================
 # ISOLATED UNIT TESTS
 # ================================================================================================

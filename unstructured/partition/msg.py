@@ -11,6 +11,7 @@ from oxmsg.attachment import Attachment
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -259,14 +260,19 @@ class _AttachmentPartitioner:
                 f.write(self._file_bytes)
 
             # -- partition the attachment --
-            for element in partition(
-                detached_file_path,
-                metadata_filename=self._attachment_file_name,
-                metadata_last_modified=self._attachment_last_modified,
-                **self._opts.partitioning_kwargs,
-            ):
-                element.metadata.attached_to_filename = self._opts.metadata_file_path
-                yield element
+            try:
+                elements = partition(
+                    detached_file_path,
+                    metadata_filename=self._attachment_file_name,
+                    metadata_last_modified=self._attachment_last_modified,
+                    **self._opts.partitioning_kwargs,
+                )
+            except UnsupportedFileFormatError:
+                return
+
+            for e in elements:
+                e.metadata.attached_to_filename = self._opts.metadata_file_path
+                yield e
 
     @lazyproperty
     def _attachment_file_name(self) -> str:

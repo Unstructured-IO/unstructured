@@ -16,6 +16,7 @@ from typing import IO, Any, Final, Iterator, cast
 
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -387,14 +388,21 @@ class _AttachmentPartitioner:
         file = io.BytesIO(self._file_bytes)
 
         # -- partition the attachment --
-        for element in partition(
-            file=file,
-            metadata_filename=self._attachment_file_name,
-            metadata_last_modified=self._ctx.metadata_last_modified,
-            **self._ctx.partitioning_kwargs,
-        ):
-            element.metadata.attached_to_filename = self._attached_to_filename
-            yield element
+        try:
+            elements = partition(
+                file=file,
+                metadata_filename=self._attachment_file_name,
+                metadata_last_modified=self._ctx.metadata_last_modified,
+                **self._ctx.partitioning_kwargs,
+            )
+        except UnsupportedFileFormatError:
+            # -- indicates `auto.partition()` has no partitioner for this file-format;
+            # -- silently skip the attachment
+            return
+
+        for e in elements:
+            e.metadata.attached_to_filename = self._attached_to_filename
+            yield e
 
     @lazyproperty
     def _attached_to_filename(self) -> str | None:
