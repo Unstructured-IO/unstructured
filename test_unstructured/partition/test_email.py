@@ -602,4 +602,4 @@ class DescribeEmailPartitionerOptions:
 
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
-        return function_mock(request, "unstructured.partition.new_email.get_last_modified_date")
+        return function_mock(request, "unstructured.partition.email.get_last_modified_date")
