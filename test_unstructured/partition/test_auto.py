@@ -201,14 +201,6 @@ def test_auto_partition_email_from_file():
     assert elements == EXPECTED_EMAIL_OUTPUT
 
 
-def test_auto_partition_eml_add_signature_to_metadata():
-    elements = partition(example_doc_path("eml/signed-doc.p7s"))
-
-    assert len(elements) == 1
-    assert elements[0].text == "This is a test"
-    assert elements[0].metadata.signature == "<SIGNATURE>\n"
-
-
 # ================================================================================================
 # EPUB
 # ================================================================================================

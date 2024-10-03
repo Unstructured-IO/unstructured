@@ -26,7 +26,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.new_email import EmailPartitioningContext, partition_email
+from unstructured.partition.email import EmailPartitioningContext, partition_email
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
