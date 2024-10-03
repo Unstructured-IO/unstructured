@@ -471,6 +471,18 @@ def test_partition_email_from_filename_has_metadata():
         assert element.metadata.filename == "fake-email.eml"
 
 
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_email_gets_the_EMAIL_mime_type_in_metadata_filetype():
+    EMAIL_MIME_TYPE = "message/rfc822"
+    elements = partition_email(example_doc_path("fake-email.eml"))
+    assert all(e.metadata.filetype == EMAIL_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{EMAIL_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

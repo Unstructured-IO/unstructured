@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import datetime
 import email
 import os
@@ -12,7 +11,6 @@ from functools import partial
 from tempfile import TemporaryDirectory
 from typing import IO, Any, Callable, Final, Type, cast
 
-from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
@@ -27,7 +25,6 @@ from unstructured.documents.elements import (
     NarrativeText,
     Text,
     Title,
-    process_metadata,
 )
 from unstructured.documents.email_elements import (
     MetaData,
@@ -42,12 +39,10 @@ from unstructured.file_utils.encoding import (
     read_txt_file,
     validate_encoding,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.common.common import convert_to_bytes, exactly_one
-from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -56,38 +51,36 @@ VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
 DETECTION_ORIGIN: str = "email"
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.EML)
-@add_chunking_strategy
 def partition_email(
     filename: str | None = None,
+    *,
     file: IO[bytes] | None = None,
+    encoding: str | None = None,
     text: str | None = None,
     content_source: str = "text/html",
-    encoding: str | None = None,
     include_headers: bool = False,
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
     process_attachments: bool = False,
     attachment_partitioner: Callable[..., list[Element]] | None = None,
-    languages: list[str] | None = ["auto"],
-    detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an .eml documents into its constituent elements.
+
     Parameters
     ----------
     filename
         A string defining the target filename path.
     file
         A file-like object using "r" mode --> open(filename, "r").
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to "utf-8".
     text
         The string representation of the .eml document.
     content_source
         default: "text/html"
         other: "text/plain"
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
     metadata_filename
         The filename to use for the metadata.
     metadata_last_modified
@@ -97,13 +90,6 @@ def partition_email(
         processing the content of the email itself.
     attachment_partitioner
         The partitioning function to use to process attachments.
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -211,8 +197,9 @@ def partition_email(
         elements = partition_html(
             text=content,
             metadata_filename=metadata_filename,
-            languages=[""],
+            metadata_file_type=FileType.EML,
             detection_origin="email",
+            **kwargs,
         )
         for element in elements:
             if isinstance(element, Text):
@@ -244,8 +231,9 @@ def partition_email(
         elements = partition_text(
             text=content,
             encoding=encoding,
-            languages=[""],
+            metadata_file_type=FileType.EML,
             detection_origin="email",
+            **kwargs,
         )
     else:
         raise ValueError(
@@ -274,7 +262,7 @@ def partition_email(
         last_modification_date=last_modified,
     )
     for element in all_elements:
-        element.metadata = copy.deepcopy(metadata)
+        element.metadata.update(metadata)
 
     if process_attachments:
         with TemporaryDirectory() as tmpdir:
@@ -295,15 +283,7 @@ def partition_email(
                     element.metadata.attached_to_filename = metadata_filename or filename
                     all_elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=all_elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
-    )
-
-    return elements
+    return all_elements
 
 
 # ================================================================================================
