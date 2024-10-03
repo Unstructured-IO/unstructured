@@ -20,6 +20,7 @@ DETECTION_ORIGIN: str = "csv"
 @add_chunking_strategy
 def partition_csv(
     filename: str | None = None,
+    *,
     file: IO[bytes] | None = None,
     encoding: str | None = None,
     include_header: bool = False,

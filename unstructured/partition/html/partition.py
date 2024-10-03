@@ -10,18 +10,15 @@ import requests
 from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
+from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.lang import apply_lang_metadata
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.html.parser import Flow, html_parser
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.HTML)
+@apply_metadata(FileType.HTML)
 @add_chunking_strategy
 def partition_html(
     filename: Optional[str] = None,
@@ -32,9 +29,6 @@ def partition_html(
     url: Optional[str] = None,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
-    detect_language_per_element: bool = False,
-    languages: Optional[list[str]] = ["auto"],
-    metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
     detection_origin: Optional[str] = None,
     **kwargs: Any,
@@ -60,18 +54,6 @@ def partition_html(
         on the HTTP request.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-
-    Other parameters
-    ----------------
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    metadata_last_modified
-        The last modified date for the document.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
     """
@@ -87,20 +69,11 @@ def partition_html(
         url=url,
         headers=headers,
         ssl_verify=ssl_verify,
-        metadata_last_modified=metadata_last_modified,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
     )
 
-    elements = list(
-        apply_lang_metadata(
-            _HtmlPartitioner.iter_elements(opts),
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        )
-    )
-
-    return elements
+    return list(_HtmlPartitioner.iter_elements(opts))
 
 
 class HtmlPartitionerOptions:
@@ -116,7 +89,6 @@ class HtmlPartitionerOptions:
         url: str | None,
         headers: dict[str, str],
         ssl_verify: bool,
-        metadata_last_modified: str | None,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
     ):
@@ -127,7 +99,6 @@ class HtmlPartitionerOptions:
         self._url = url
         self._headers = headers
         self._ssl_verify = ssl_verify
-        self._metadata_last_modified = metadata_last_modified
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
 
@@ -173,19 +144,11 @@ class HtmlPartitionerOptions:
     @lazyproperty
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        return None
+        return (
+            None
+            if not self._file_path or is_temp_file_path(self._file_path)
+            else get_last_modified_date(self._file_path)
+        )
 
     @lazyproperty
     def skip_headers_and_footers(self) -> bool:

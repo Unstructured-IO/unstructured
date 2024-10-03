@@ -10,21 +10,7 @@ from unstructured.partition.rst import partition_rst
 
 def test_partition_rst_from_filename():
     elements = partition_rst(example_doc_path("README.rst"))
-
     assert elements[0] == Title("Example Docs")
-    assert elements[0].metadata.filetype == "text/x-rst"
-    for element in elements:
-        assert element.metadata.filename == "README.rst"
-
-
-def test_partition_rst_from_filename_returns_uns_elements():
-    elements = partition_rst(example_doc_path("README.rst"))
-    assert isinstance(elements[0], Title)
-
-
-def test_partition_rst_from_filename_with_metadata_filename():
-    elements = partition_rst(example_doc_path("README.rst"), metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_rst_from_file():
@@ -32,18 +18,50 @@ def test_partition_rst_from_file():
         elements = partition_rst(file=f)
 
     assert elements[0] == Title("Example Docs")
-    assert elements[0].metadata.filetype == "text/x-rst"
-    for element in elements:
-        assert element.metadata.filename is None
 
 
-def test_partition_rst_from_file_with_metadata_filename():
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_rst_from_filename_gets_filename_from_filename_arg():
+    elements = partition_rst(example_doc_path("README.rst"))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == "README.rst" for e in elements)
+
+
+def test_partition_rst_from_file_gets_filename_None():
     with open(example_doc_path("README.rst"), "rb") as f:
-        elements = partition_rst(file=f, metadata_filename="test")
+        elements = partition_rst(file=f)
 
-    assert elements[0] == Title("Example Docs")
-    for element in elements:
-        assert element.metadata.filename == "test"
+    assert len(elements) > 0
+    assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_rst_from_filename_prefers_metadata_filename():
+    elements = partition_rst(example_doc_path("README.rst"), metadata_filename="orig-name.rst")
+
+    assert len(elements) > 0
+    assert all(element.metadata.filename == "orig-name.rst" for element in elements)
+
+
+def test_partition_rst_from_file_prefers_metadata_filename():
+    with open(example_doc_path("README.rst"), "rb") as f:
+        elements = partition_rst(file=f, metadata_filename="orig-name.rst")
+
+    assert all(e.metadata.filename == "orig-name.rst" for e in elements)
+
+
+# -- .metadata.filetype --------------------------------------------------------------------------
+
+
+def test_partition_rst_gets_the_RST_MIME_type_in_metadata_filetype():
+    RST_MIME_TYPE = "text/x-rst"
+    elements = partition_rst(example_doc_path("README.rst"))
+    assert all(e.metadata.filetype == RST_MIME_TYPE for e in elements), (
+        f"Expected all elements to have '{RST_MIME_TYPE}' as their filetype, but got:"
+        f" {repr(elements[0].metadata.filetype)}"
+    )
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------

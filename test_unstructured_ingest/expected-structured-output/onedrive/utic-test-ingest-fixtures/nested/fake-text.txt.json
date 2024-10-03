@@ -4,10 +4,10 @@
     "element_id": "fc01503614e0f12f585427cccf81cf86",
     "text": "This is a test document to use for unit tests.",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
@@ -27,10 +27,10 @@
     "element_id": "d06d10c0722ac08a2488076a48e858d5",
     "text": "Doylestown, PA 18901",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
@@ -50,10 +50,10 @@
     "element_id": "a190164de573571375ecf759a5027a3a",
     "text": "Important points:",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
@@ -73,10 +73,10 @@
     "element_id": "64c58eb106608ad05424e47bbcdef7dc",
     "text": "Hamburgers are delicious",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
@@ -96,10 +96,10 @@
     "element_id": "9210d7882755a60fc82272a0e93df94f",
     "text": "Dogs are the best",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
@@ -119,10 +119,10 @@
     "element_id": "970dd4ac687529e2d2126e0a51cb7c27",
     "text": "I love fuzzy blankets",
     "metadata": {
-      "filename": "fake-text.txt",
       "languages": [
         "eng"
       ],
+      "filename": "fake-text.txt",
       "filetype": "text/plain",
       "data_source": {
         "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/nested/fake-text.txt",
