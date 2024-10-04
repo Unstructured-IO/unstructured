@@ -261,84 +261,8 @@ def partition(
     partitioning_kwargs["starting_page_number"] = starting_page_number
     partitioning_kwargs["strategy"] = strategy
 
-    if file_type == FileType.CSV:
-        partition_csv = partitioner_loader.get(file_type)
-        elements = partition_csv(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.DOC:
-        partition_doc = partitioner_loader.get(file_type)
-        elements = partition_doc(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.DOCX:
-        partition_docx = partitioner_loader.get(file_type)
-        elements = partition_docx(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.EML:
-        partition_email = partitioner_loader.get(file_type)
-        elements = partition_email(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.EPUB:
-        partition_epub = partitioner_loader.get(file_type)
-        elements = partition_epub(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.HTML:
-        partition_html = partitioner_loader.get(file_type)
-        elements = partition_html(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.MD:
-        partition_md = partitioner_loader.get(file_type)
-        elements = partition_md(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.MSG:
-        partition_msg = partitioner_loader.get(file_type)
-        elements = partition_msg(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.ODT:
-        partition_odt = partitioner_loader.get(file_type)
-        elements = partition_odt(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.ORG:
-        partition_org = partitioner_loader.get(file_type)
-        elements = partition_org(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.PPT:
-        partition_ppt = partitioner_loader.get(file_type)
-        elements = partition_ppt(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.PPTX:
-        partition_pptx = partitioner_loader.get(file_type)
-        elements = partition_pptx(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.RST:
-        partition_rst = partitioner_loader.get(file_type)
-        elements = partition_rst(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.RTF:
-        partition_rtf = partitioner_loader.get(file_type)
-        elements = partition_rtf(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.TSV:
-        partition_tsv = partitioner_loader.get(file_type)
-        elements = partition_tsv(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.TXT:
-        partition_text = partitioner_loader.get(file_type)
-        elements = partition_text(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type in (FileType.XLS, FileType.XLSX):
-        partition_xlsx = partitioner_loader.get(file_type)
-        elements = partition_xlsx(filename=filename, file=file, **partitioning_kwargs)
-
-    elif file_type == FileType.XML:
-        partition_xml = partitioner_loader.get(file_type)
-        elements = partition_xml(filename=filename, file=file, **partitioning_kwargs)
-
-    else:
-        msg = "Invalid file" if not filename else f"Invalid file {filename}"
-        raise UnsupportedFileFormatError(
-            f"{msg}. The {file_type} file type is not supported in partition."
-        )
-
+    partition = partitioner_loader.get(file_type)
+    elements = partition(filename=filename, file=file, **partitioning_kwargs)
     return augment_metadata(elements)
 
 
@@ -382,17 +306,15 @@ def decide_table_extraction(
 class _PartitionerLoader:
     """Provides uniform helpful error when a partitioner dependency is not installed.
 
-    Used by `partition()` to encapsulate coping with the possibility the Python
-    environment it is executing in may not have all dependencies installed for a
-    particular partitioner.
+    Used by `partition()` to encapsulate coping with the possibility the Python environment it is
+    executing in may not have all dependencies installed for a particular partitioner.
 
-    Provides `.get()` to access partitioners by file-type, which raises when one or
-    more dependencies for that partitioner are not installed.
+    Provides `.get()` to access partitioners by file-type, which raises when one or more
+    dependencies for that partitioner are not installed.
 
-    The error message indicates what extra needs to be installed to enable that
-    partitioner. This avoids an inconsistent variety of possibly puzzling exceptions
-    arising from much deeper in the partitioner when access to the missing dependency is
-    first attempted.
+    The error message indicates what extra needs to be installed to enable that partitioner. This
+    avoids an inconsistent variety of possibly puzzling exceptions arising from much deeper in the
+    partitioner when access to the missing dependency is first attempted.
     """
 
     # -- module-lifetime cache for partitioners once loaded --
@@ -402,8 +324,15 @@ class _PartitionerLoader:
         """Return partitioner for `file_type`.
 
         Raises when one or more package dependencies for that file-type have not been
-        installed.
+        installed. Also raises when the file-type is not partitionable.
         """
+        if not file_type.is_partitionable:
+            raise UnsupportedFileFormatError(
+                f"Partitioning is not supported for the {file_type} file type."
+            )
+
+        # -- if the partitioner is not in the cache, load it; note this raises if one or more of
+        # -- the partitioner's dependencies is not installed.
         if file_type not in self._partitioners:
             self._partitioners[file_type] = self._load_partitioner(file_type)
 

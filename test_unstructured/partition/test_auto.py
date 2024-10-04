@@ -895,7 +895,7 @@ def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
 
     with pytest.raises(
         UnsupportedFileFormatError,
-        match="Invalid file made-up.fake. The FileType.UNK file type is not supported in partiti",
+        match="Partitioning is not supported for the FileType.UNK file type.",
     ):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
