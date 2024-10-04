@@ -4,48 +4,94 @@
 #
 #    pip-compile ./base.in
 #
+anyio==4.6.0
+    # via httpx
 backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
 certifi==2024.8.30
-    # via requests
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
+    #   unstructured-client
+cffi==1.17.1
+    # via cryptography
 chardet==5.2.0
     # via -r ./base.in
 charset-normalizer==3.3.2
-    # via requests
+    # via
+    #   requests
+    #   unstructured-client
 click==8.1.7
     # via
     #   nltk
     #   python-oxmsg
+cryptography==43.0.1
+    # via unstructured-client
 dataclasses-json==0.6.7
-    # via -r ./base.in
+    # via
+    #   -r ./base.in
+    #   unstructured-client
+deepdiff==8.0.1
+    # via unstructured-client
 emoji==2.14.0
     # via -r ./base.in
+exceptiongroup==1.2.2
+    # via anyio
 filetype==1.2.0
     # via -r ./base.in
+h11==0.14.0
+    # via httpcore
+httpcore==1.0.6
+    # via httpx
+httpx==0.27.2
+    # via unstructured-client
 idna==3.10
-    # via requests
+    # via
+    #   anyio
+    #   httpx
+    #   requests
+    #   unstructured-client
 joblib==1.4.2
     # via nltk
+jsonpath-python==1.0.6
+    # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
 lxml==5.3.0
     # via -r ./base.in
 marshmallow==3.22.0
-    # via dataclasses-json
+    # via
+    #   dataclasses-json
+    #   unstructured-client
 mypy-extensions==1.0.0
-    # via typing-inspect
+    # via
+    #   typing-inspect
+    #   unstructured-client
+nest-asyncio==1.6.0
+    # via unstructured-client
 nltk==3.9.1
     # via -r ./base.in
 numpy==1.26.4
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
+orderly-set==5.2.2
+    # via deepdiff
 packaging==24.1
-    # via marshmallow
+    # via
+    #   marshmallow
+    #   unstructured-client
 psutil==6.0.0
     # via -r ./base.in
+pycparser==2.22
+    # via cffi
+pypdf==5.0.1
+    # via unstructured-client
+python-dateutil==2.9.0.post0
+    # via unstructured-client
 python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
@@ -57,9 +103,21 @@ rapidfuzz==3.10.0
 regex==2024.9.11
     # via nltk
 requests==2.32.3
-    # via -r ./base.in
+    # via
+    #   -r ./base.in
+    #   requests-toolbelt
+    #   unstructured-client
+requests-toolbelt==1.0.0
+    # via unstructured-client
 six==1.16.0
-    # via langdetect
+    # via
+    #   langdetect
+    #   python-dateutil
+    #   unstructured-client
+sniffio==1.3.1
+    # via
+    #   anyio
+    #   httpx
 soupsieve==2.6
     # via beautifulsoup4
 tabulate==0.9.0
@@ -71,13 +129,23 @@ tqdm==4.66.5
 typing-extensions==4.12.2
     # via
     #   -r ./base.in
+    #   anyio
+    #   pypdf
     #   python-oxmsg
     #   typing-inspect
+    #   unstructured-client
 typing-inspect==0.9.0
-    # via dataclasses-json
+    # via
+    #   dataclasses-json
+    #   unstructured-client
+unstructured-client==0.25.9
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in
 urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   requests
+    #   unstructured-client
 wrapt==1.16.0
     # via -r ./base.in

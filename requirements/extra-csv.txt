@@ -11,7 +11,9 @@ numpy==1.26.4
 pandas==2.2.3
     # via -r ./extra-csv.in
 python-dateutil==2.9.0.post0
-    # via pandas
+    # via
+    #   -c ./base.txt
+    #   pandas
 pytz==2024.2
     # via pandas
 six==1.16.0
