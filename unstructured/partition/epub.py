@@ -51,7 +51,6 @@ def partition_epub(
 
     return partition_html(
         text=html_text,
-        encoding="unicode",
         metadata_filename=metadata_filename or filename,
         metadata_file_type=FileType.EPUB,
         metadata_last_modified=metadata_last_modified or last_modified,

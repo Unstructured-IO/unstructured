@@ -265,17 +265,14 @@ def partition(
 
     partitioning_kwargs = copy.deepcopy(kwargs)
     partitioning_kwargs["detect_language_per_element"] = detect_language_per_element
+    partitioning_kwargs["encoding"] = encoding
     partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages
 
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
-        elements = partition_csv(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            **partitioning_kwargs,
-        )
+        elements = partition_csv(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.DOC:
         partition_doc = partitioner_loader.get(file_type)
         elements = partition_doc(
@@ -294,14 +291,11 @@ def partition(
             strategy=strategy,
             **partitioning_kwargs,
         )
+
     elif file_type == FileType.EML:
         partition_email = partitioner_loader.get(file_type)
-        elements = partition_email(
-            filename=filename,
-            file=file,
-            encoding=encoding,
-            **partitioning_kwargs,
-        )
+        elements = partition_email(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.EPUB:
         partition_epub = partitioner_loader.get(file_type)
         elements = partition_epub(
@@ -316,7 +310,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            encoding=encoding,
             **partitioning_kwargs,
         )
     elif file_type == FileType.MD:
@@ -394,7 +387,6 @@ def partition(
         elements = partition_text(
             filename=filename,
             file=file,
-            encoding=encoding,
             paragraph_grouper=paragraph_grouper,
             **partitioning_kwargs,
         )
@@ -411,7 +403,6 @@ def partition(
         elements = partition_xml(
             filename=filename,
             file=file,
-            encoding=encoding,
             xml_keep_tags=xml_keep_tags,
             **partitioning_kwargs,
         )

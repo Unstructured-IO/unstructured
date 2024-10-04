@@ -127,14 +127,6 @@ class HtmlPartitionerOptions:
         return self._detection_origin
 
     @lazyproperty
-    def encoding(self) -> str | None:
-        """Caller-provided encoding used to store HTML character stream as bytes.
-
-        `None` when no encoding was provided and encoding should be auto-detected.
-        """
-        return self._encoding
-
-    @lazyproperty
     def html_text(self) -> str:
         """The HTML document as a string, loaded from wherever the caller specified."""
         if self._file_path:
