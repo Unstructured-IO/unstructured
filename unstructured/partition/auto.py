@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import importlib
 import io
 from typing import IO, Any, Callable, Literal, Optional
@@ -262,6 +263,9 @@ def partition(
     #  ALL OTHER FILE TYPES
     # ============================================================================================
 
+    partitioning_kwargs = copy.deepcopy(kwargs)
+    partitioning_kwargs["detect_language_per_element"] = detect_language_per_element
+
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
         elements = partition_csv(
@@ -270,8 +274,7 @@ def partition(
             encoding=encoding,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.DOC:
         partition_doc = partitioner_loader.get(file_type)
@@ -280,10 +283,9 @@ def partition(
             file=file,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
             strategy=strategy,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.DOCX:
         partition_docx = partitioner_loader.get(file_type)
@@ -292,10 +294,9 @@ def partition(
             file=file,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
             strategy=strategy,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.EML:
         partition_email = partitioner_loader.get(file_type)
@@ -304,8 +305,7 @@ def partition(
             file=file,
             encoding=encoding,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.EPUB:
         partition_epub = partitioner_loader.get(file_type)
@@ -315,8 +315,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.HTML:
         partition_html = partitioner_loader.get(file_type)
@@ -326,8 +325,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             encoding=encoding,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.MD:
         partition_md = partitioner_loader.get(file_type)
@@ -337,8 +335,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.MSG:
         partition_msg = partitioner_loader.get(file_type)
@@ -346,8 +343,7 @@ def partition(
             filename=filename,
             file=file,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.ODT:
         partition_odt = partitioner_loader.get(file_type)
@@ -356,10 +352,9 @@ def partition(
             file=file,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
             strategy=strategy,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.ORG:
         partition_org = partitioner_loader.get(file_type)
@@ -368,8 +363,7 @@ def partition(
             file=file,
             include_page_breaks=include_page_breaks,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.PPT:
         partition_ppt = partitioner_loader.get(file_type)
@@ -379,9 +373,8 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             strategy=strategy,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.PPTX:
         partition_pptx = partitioner_loader.get(file_type)
@@ -391,10 +384,9 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
             strategy=strategy,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.RST:
         partition_rst = partitioner_loader.get(file_type)
@@ -404,8 +396,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.RTF:
         partition_rtf = partitioner_loader.get(file_type)
@@ -415,8 +406,7 @@ def partition(
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.TSV:
         partition_tsv = partitioner_loader.get(file_type)
@@ -424,8 +414,7 @@ def partition(
             filename=filename,
             file=file,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.TXT:
         partition_text = partitioner_loader.get(file_type)
@@ -435,8 +424,7 @@ def partition(
             encoding=encoding,
             paragraph_grouper=paragraph_grouper,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type in (FileType.XLS, FileType.XLSX):
         partition_xlsx = partitioner_loader.get(file_type)
@@ -445,9 +433,8 @@ def partition(
             file=file,
             infer_table_structure=infer_table_structure,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
-            **kwargs,
+            **partitioning_kwargs,
         )
     elif file_type == FileType.XML:
         partition_xml = partitioner_loader.get(file_type)
@@ -457,8 +444,7 @@ def partition(
             encoding=encoding,
             xml_keep_tags=xml_keep_tags,
             languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            **kwargs,
+            **partitioning_kwargs,
         )
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
