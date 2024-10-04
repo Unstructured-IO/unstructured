@@ -1,5 +1,4 @@
 -c ./deps/constraints.txt
-
 chardet
 filetype
 python-magic
@@ -18,7 +17,7 @@ numpy<2
 rapidfuzz
 backoff
 typing-extensions
-unstructured_client
+unstructured-client
 wrapt
 tqdm
 psutil

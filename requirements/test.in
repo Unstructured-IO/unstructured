@@ -1,6 +1,5 @@
 -c ./deps/constraints.txt
 -c base.txt
-
 black>=22.3.0
 coverage
 types-click
@@ -22,5 +21,3 @@ vcrpy
 grpcio
 autoflake
 liccheck
-weaviate-client
-httpx>=0.27.2
