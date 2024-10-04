@@ -33,7 +33,6 @@ def partition(
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
-    include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
@@ -83,8 +82,6 @@ def partition(
         A string defining the file content in MIME type
     metadata_filename
         When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
-    include_page_breaks
-        If True, the output will include page breaks if the filetype supports it
     strategy
         The strategy to use for partitioning PDF/image. Uses a layout detection model if set
         to 'hi_res', otherwise partition simply extracts the text from the document
@@ -208,7 +205,6 @@ def partition(
             filename=filename,
             file=file,
             url=None,
-            include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
@@ -228,7 +224,6 @@ def partition(
             filename=filename,
             file=file,
             url=None,
-            include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
@@ -289,28 +284,15 @@ def partition(
 
     elif file_type == FileType.EPUB:
         partition_epub = partitioner_loader.get(file_type)
-        elements = partition_epub(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_epub(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.HTML:
         partition_html = partitioner_loader.get(file_type)
-        elements = partition_html(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_html(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.MD:
         partition_md = partitioner_loader.get(file_type)
-        elements = partition_md(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_md(filename=filename, file=file, **partitioning_kwargs)
 
     elif file_type == FileType.MSG:
         partition_msg = partitioner_loader.get(file_type)
@@ -322,44 +304,23 @@ def partition(
 
     elif file_type == FileType.ORG:
         partition_org = partitioner_loader.get(file_type)
-        elements = partition_org(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_org(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.PPT:
         partition_ppt = partitioner_loader.get(file_type)
-        elements = partition_ppt(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_ppt(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.PPTX:
         partition_pptx = partitioner_loader.get(file_type)
-        elements = partition_pptx(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_pptx(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.RST:
         partition_rst = partitioner_loader.get(file_type)
-        elements = partition_rst(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_rst(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.RTF:
         partition_rtf = partitioner_loader.get(file_type)
-        elements = partition_rtf(
-            filename=filename,
-            file=file,
-            include_page_breaks=include_page_breaks,
-            **partitioning_kwargs,
-        )
+        elements = partition_rtf(filename=filename, file=file, **partitioning_kwargs)
 
     elif file_type == FileType.TSV:
         partition_tsv = partitioner_loader.get(file_type)
