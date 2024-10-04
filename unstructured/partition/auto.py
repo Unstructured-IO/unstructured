@@ -268,6 +268,7 @@ def partition(
     partitioning_kwargs["encoding"] = encoding
     partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages
+    partitioning_kwargs["starting_page_number"] = starting_page_number
 
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
@@ -278,7 +279,6 @@ def partition(
         elements = partition_doc(
             filename=filename,
             file=file,
-            starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
         )
@@ -287,7 +287,6 @@ def partition(
         elements = partition_docx(
             filename=filename,
             file=file,
-            starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
         )
@@ -330,7 +329,6 @@ def partition(
         elements = partition_odt(
             filename=filename,
             file=file,
-            starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
         )
@@ -357,7 +355,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
         )
@@ -390,14 +387,11 @@ def partition(
             paragraph_grouper=paragraph_grouper,
             **partitioning_kwargs,
         )
+
     elif file_type in (FileType.XLS, FileType.XLSX):
         partition_xlsx = partitioner_loader.get(file_type)
-        elements = partition_xlsx(
-            filename=filename,
-            file=file,
-            starting_page_number=starting_page_number,
-            **partitioning_kwargs,
-        )
+        elements = partition_xlsx(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.XML:
         partition_xml = partitioner_loader.get(file_type)
         elements = partition_xml(
