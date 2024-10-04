@@ -265,6 +265,7 @@ def partition(
 
     partitioning_kwargs = copy.deepcopy(kwargs)
     partitioning_kwargs["detect_language_per_element"] = detect_language_per_element
+    partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages
 
     if file_type == FileType.CSV:
@@ -273,7 +274,6 @@ def partition(
             filename=filename,
             file=file,
             encoding=encoding,
-            infer_table_structure=infer_table_structure,
             **partitioning_kwargs,
         )
     elif file_type == FileType.DOC:
@@ -281,7 +281,6 @@ def partition(
         elements = partition_doc(
             filename=filename,
             file=file,
-            infer_table_structure=infer_table_structure,
             starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
@@ -291,7 +290,6 @@ def partition(
         elements = partition_docx(
             filename=filename,
             file=file,
-            infer_table_structure=infer_table_structure,
             starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
@@ -310,7 +308,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             **partitioning_kwargs,
         )
     elif file_type == FileType.HTML:
@@ -328,7 +325,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             **partitioning_kwargs,
         )
 
@@ -341,7 +337,6 @@ def partition(
         elements = partition_odt(
             filename=filename,
             file=file,
-            infer_table_structure=infer_table_structure,
             starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
@@ -360,7 +355,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             strategy=strategy,
             **partitioning_kwargs,
         )
@@ -370,7 +364,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             starting_page_number=starting_page_number,
             strategy=strategy,
             **partitioning_kwargs,
@@ -381,7 +374,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             **partitioning_kwargs,
         )
     elif file_type == FileType.RTF:
@@ -390,7 +382,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
             **partitioning_kwargs,
         )
 
@@ -412,7 +403,6 @@ def partition(
         elements = partition_xlsx(
             filename=filename,
             file=file,
-            infer_table_structure=infer_table_structure,
             starting_page_number=starting_page_number,
             **partitioning_kwargs,
         )
