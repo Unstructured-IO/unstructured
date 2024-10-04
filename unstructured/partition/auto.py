@@ -51,7 +51,7 @@ def partition(
     model_name: Optional[str] = None,  # to be deprecated
     starting_page_number: int = 1,
     **kwargs: Any,
-):
+) -> list[Element]:
     """Partitions a document into its constituent elements.
 
     Uses libmagic to determine the file's type and route it to the appropriate partitioning
@@ -199,6 +199,69 @@ def partition(
 
         return elements
 
+    # -- handle PDF/Image partitioning separately because they have a lot of special-case
+    # -- parameters. We'll come back to this after sorting out the other file types.
+    if file_type == FileType.PDF:
+        partition_pdf = partitioner_loader.get(file_type)
+        elements = partition_pdf(
+            filename=filename,
+            file=file,
+            url=None,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            strategy=strategy,
+            languages=languages,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
+            **kwargs,
+        )
+        return augment_metadata(elements)
+
+    if file_type.partitioner_shortname == "image":
+        partition_image = partitioner_loader.get(file_type)
+        elements = partition_image(
+            filename=filename,
+            file=file,
+            url=None,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            strategy=strategy,
+            languages=languages,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
+            **kwargs,
+        )
+        return augment_metadata(elements)
+
+    # -- JSON is a special case because it's not a document format per se and is insensitive to
+    # -- most of the parameters that apply to other file types.
+    if file_type == FileType.JSON:
+        if not is_json_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected a JSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
+        partition_json = partitioner_loader.get(file_type)
+        elements = partition_json(filename=filename, file=file, **kwargs)
+        return augment_metadata(elements)
+
+    # -- EMPTY is also a special case because while we can't determine the file type, we can be
+    # -- sure it doesn't contain any elements.
+    if file_type == FileType.EMPTY:
+        return []
+
+    # ============================================================================================
+    #  ALL OTHER FILE TYPES
+    # ============================================================================================
+
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
         elements = partition_csv(
@@ -266,32 +329,6 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif file_type.partitioner_shortname == "image":
-        partition_image = partitioner_loader.get(file_type)
-        elements = partition_image(
-            filename=filename,
-            file=file,
-            url=None,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            strategy=strategy,
-            languages=languages,
-            hi_res_model_name=hi_res_model_name or model_name,
-            extract_images_in_pdf=extract_images_in_pdf,
-            extract_image_block_types=extract_image_block_types,
-            extract_image_block_output_dir=extract_image_block_output_dir,
-            extract_image_block_to_payload=extract_image_block_to_payload,
-            starting_page_number=starting_page_number,
-            **kwargs,
-        )
-    elif file_type == FileType.JSON:
-        if not is_json_processable(filename=filename, file=file):
-            raise ValueError(
-                "Detected a JSON file that does not conform to the Unstructured schema. "
-                "partition_json currently only processes serialized Unstructured output.",
-            )
-        partition_json = partitioner_loader.get(file_type)
-        elements = partition_json(filename=filename, file=file, **kwargs)
     elif file_type == FileType.MD:
         partition_md = partitioner_loader.get(file_type)
         elements = partition_md(
@@ -332,24 +369,6 @@ def partition(
             include_page_breaks=include_page_breaks,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
-            **kwargs,
-        )
-    elif file_type == FileType.PDF:
-        partition_pdf = partitioner_loader.get(file_type)
-        elements = partition_pdf(
-            filename=filename,
-            file=file,
-            url=None,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            strategy=strategy,
-            languages=languages,
-            hi_res_model_name=hi_res_model_name or model_name,
-            extract_images_in_pdf=extract_images_in_pdf,
-            extract_image_block_types=extract_image_block_types,
-            extract_image_block_output_dir=extract_image_block_output_dir,
-            extract_image_block_to_payload=extract_image_block_to_payload,
-            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif file_type == FileType.PPT:
@@ -441,8 +460,6 @@ def partition(
             detect_language_per_element=detect_language_per_element,
             **kwargs,
         )
-    elif file_type == FileType.EMPTY:
-        elements = []
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise UnsupportedFileFormatError(
