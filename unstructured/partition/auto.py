@@ -28,7 +28,6 @@ def partition(
     file: Optional[IO[bytes]] = None,
     encoding: Optional[str] = None,
     content_type: Optional[str] = None,
-    file_filename: Optional[str] = None,
     url: Optional[str] = None,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
@@ -143,18 +142,6 @@ def partition(
     """
     exactly_one(file=file, filename=filename, url=url)
 
-    if metadata_filename and file_filename:
-        raise ValueError(
-            "Only one of metadata_filename and file_filename is specified. "
-            "metadata_filename is preferred. file_filename is marked for deprecation.",
-        )
-
-    if file_filename is not None:
-        metadata_filename = file_filename
-        logger.warning(
-            "The file_filename kwarg will be deprecated in a future version of unstructured. "
-            "Please use metadata_filename instead.",
-        )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
     if pdf_infer_table_structure:
