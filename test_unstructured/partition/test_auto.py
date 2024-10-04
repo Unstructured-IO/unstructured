@@ -560,7 +560,6 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         strategy=PartitionStrategy.FAST,
         languages=None,
         metadata_filename=None,
-        include_page_breaks=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
