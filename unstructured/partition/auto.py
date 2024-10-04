@@ -43,7 +43,6 @@ def partition(
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
@@ -124,9 +123,6 @@ def partition(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
-    xml_keep_tags
-        If True, will retain the XML tags in the output. Otherwise it will simply extract
-        the text from within the tags. Only applies to partition_xml.
     hi_res_model_name
         The layout detection model used when partitioning strategy is set to `hi_res`.
     model_name
@@ -335,12 +331,8 @@ def partition(
 
     elif file_type == FileType.XML:
         partition_xml = partitioner_loader.get(file_type)
-        elements = partition_xml(
-            filename=filename,
-            file=file,
-            xml_keep_tags=xml_keep_tags,
-            **partitioning_kwargs,
-        )
+        elements = partition_xml(filename=filename, file=file, **partitioning_kwargs)
+
     else:
         msg = "Invalid file" if not filename else f"Invalid file {filename}"
         raise UnsupportedFileFormatError(
