@@ -269,6 +269,7 @@ def partition(
     partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages
     partitioning_kwargs["starting_page_number"] = starting_page_number
+    partitioning_kwargs["strategy"] = strategy
 
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
@@ -276,20 +277,11 @@ def partition(
 
     elif file_type == FileType.DOC:
         partition_doc = partitioner_loader.get(file_type)
-        elements = partition_doc(
-            filename=filename,
-            file=file,
-            strategy=strategy,
-            **partitioning_kwargs,
-        )
+        elements = partition_doc(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.DOCX:
         partition_docx = partitioner_loader.get(file_type)
-        elements = partition_docx(
-            filename=filename,
-            file=file,
-            strategy=strategy,
-            **partitioning_kwargs,
-        )
+        elements = partition_docx(filename=filename, file=file, **partitioning_kwargs)
 
     elif file_type == FileType.EML:
         partition_email = partitioner_loader.get(file_type)
@@ -326,12 +318,8 @@ def partition(
 
     elif file_type == FileType.ODT:
         partition_odt = partitioner_loader.get(file_type)
-        elements = partition_odt(
-            filename=filename,
-            file=file,
-            strategy=strategy,
-            **partitioning_kwargs,
-        )
+        elements = partition_odt(filename=filename, file=file, **partitioning_kwargs)
+
     elif file_type == FileType.ORG:
         partition_org = partitioner_loader.get(file_type)
         elements = partition_org(
@@ -346,7 +334,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            strategy=strategy,
             **partitioning_kwargs,
         )
     elif file_type == FileType.PPTX:
@@ -355,7 +342,6 @@ def partition(
             filename=filename,
             file=file,
             include_page_breaks=include_page_breaks,
-            strategy=strategy,
             **partitioning_kwargs,
         )
     elif file_type == FileType.RST:
