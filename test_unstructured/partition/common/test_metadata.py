@@ -83,33 +83,39 @@ class Describe_set_element_hierarchy:
         assert result[4].metadata.parent_id == "2"  # Title1 is under Header0
         assert result[5].metadata.parent_id == "4"  # Text2 is under Title1, which is under Header0
 
-    def it_applies_ruleset_based_on_element_category_regardless_of_depth(self):
+    def it_applies_ruleset_based_on_element_category_hierarchy_regardless_of_category_depth(self):
         elements = [
             Title(element_id="0", text="Title", metadata=ElementMetadata(category_depth=2)),
-            Text(element_id="1", text="Text", metadata=ElementMetadata(category_depth=1)),
+            Text(element_id="1", text="Text", metadata=ElementMetadata(category_depth=0)),
             Header(element_id="2", text="Header", metadata=ElementMetadata(category_depth=2)),
-            Text(element_id="3", text="Text", metadata=ElementMetadata(category_depth=1)),
-        ]
-
-        result = set_element_hierarchy(elements)
-
-        assert result[1].metadata.parent_id == "0"  # Text is under Title despite category_depth
-        assert result[3].metadata.parent_id == "2"  # Text is under Header despite category_depth
-
-    def but_it_applies_category_depth_when_element_category_is_the_same(self):
-        elements = [
-            Title(element_id="0", text="Title0", metadata=ElementMetadata(category_depth=1)),
-            Text(element_id="1", text="Text0", metadata=ElementMetadata(category_depth=0)),
-            Text(element_id="2", text="Text1", metadata=ElementMetadata(category_depth=1)),
-            Text(element_id="3", text="Text2", metadata=ElementMetadata(category_depth=0)),
+            Text(element_id="3", text="Text", metadata=ElementMetadata(category_depth=0)),
+            ListItem(element_id="4", text="ListItem", metadata=ElementMetadata(category_depth=1)),
+            NarrativeText(element_id="5", text="", metadata=ElementMetadata(category_depth=0)),
         ]
 
         result = set_element_hierarchy(elements)
 
         assert result[0].metadata.parent_id is None
-        assert result[1].metadata.parent_id == "0"
-        assert result[2].metadata.parent_id == "1"
-        assert result[3].metadata.parent_id == "0"
+        assert result[1].metadata.parent_id == "0"  # Text is under Title despite category_depth=0
+        assert result[2].metadata.parent_id is None
+        assert result[3].metadata.parent_id == "2"  # These are under Header despite category_depth
+        assert result[4].metadata.parent_id == "2"
+        assert result[5].metadata.parent_id == "2"
+
+    def but_it_applies_category_depth_when_element_category_is_the_same(self):
+        elements = [
+            Title(element_id="0", text="Title0", metadata=ElementMetadata(category_depth=1)),
+            ListItem(element_id="1", text="ListItem0", metadata=ElementMetadata(category_depth=0)),
+            ListItem(element_id="2", text="ListItem1", metadata=ElementMetadata(category_depth=1)),
+            ListItem(element_id="3", text="ListItem2", metadata=ElementMetadata(category_depth=0)),
+        ]
+
+        result = set_element_hierarchy(elements)
+
+        assert result[0].metadata.parent_id is None
+        assert result[1].metadata.parent_id == "0"  # category_depth=0
+        assert result[2].metadata.parent_id == "1"  # category_depth=1, so it is under ListItem0
+        assert result[3].metadata.parent_id == "0"  # category_depth=0
 
     def it_skips_elements_with_pre_existing_parent_id(self):
         elements = [
@@ -125,7 +131,7 @@ class Describe_set_element_hierarchy:
         assert result[1].metadata.parent_id is None
         assert result[2].metadata.parent_id == "1"
 
-    def test_set_element_hierarchy(self):
+    def it_sets_parent_id_for_each_element_in_elements(self):
         elements_to_set = [
             Title(text="Title"),  # 0
             NarrativeText(text="NarrativeText"),  # 1

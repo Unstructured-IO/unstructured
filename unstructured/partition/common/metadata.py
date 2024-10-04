@@ -66,7 +66,9 @@ def set_element_hierarchy(
 ) -> list[Element]:
     """Sets `.metadata.parent_id` for each element it applies to.
 
-    `parent_id` assignment is based on the element's category, depth and a ruleset.
+    `parent_id` assignment is based on the element's category and depth. The importance of an
+    element's category is determined by a rule set. The rule set trumps category_depth. That is,
+    category_depth is only relevant when elements are of the same category.
     """
     stack: list[Element] = []
     for element in elements:
