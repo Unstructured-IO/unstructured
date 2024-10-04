@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import json
 import os
 import pathlib
@@ -1035,26 +1034,6 @@ def test_auto_partition_forwards_metadata_filename_via_kwargs():
         elements = partition(file=f, metadata_filename="much-more-interesting-name.txt")
 
     assert all(e.metadata.filename == "much-more-interesting-name.txt" for e in elements)
-
-
-def test_auto_partition_warns_about_file_filename_deprecation(caplog: LogCaptureFixture):
-    file_path = example_doc_path("fake-text.txt")
-
-    with open(file_path, "rb") as f:
-        elements = partition(file=f, file_filename=file_path)
-
-    assert all(e.metadata.filename == "fake-text.txt" for e in elements)
-    assert caplog.records[0].levelname == "WARNING"
-    assert "The file_filename kwarg will be deprecated" in caplog.text
-
-
-def test_auto_partition_raises_when_both_file_filename_and_metadata_filename_args_are_used():
-    file_path = example_doc_path("fake-text.txt")
-    with open(file_path, "rb") as f:
-        file = io.BytesIO(f.read())
-
-    with pytest.raises(ValueError, match="Only one of metadata_filename and file_filename is spe"):
-        partition(file=file, file_filename=file_path, metadata_filename=file_path)
 
 
 # -- ocr_languages --------------------------------------------------------
