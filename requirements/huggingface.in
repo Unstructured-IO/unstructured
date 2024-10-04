@@ -1,5 +1,5 @@
 -c ./deps/constraints.txt
--c ./deps/base.txt
+-c base.txt
 langdetect
 sacremoses
 sentencepiece

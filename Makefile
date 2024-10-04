@@ -30,7 +30,7 @@ install-base-ci: install-base-pip-packages install-nltk-models install-test inst
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	${PYTHON} -m pip install pip==${PIP_VERSION}
-	${PYTHON} -m pip install -r requirements/deps/base.txt
+	${PYTHON} -m pip install -r requirements/base.txt
 
 .PHONY: install-huggingface
 install-huggingface:
@@ -43,7 +43,7 @@ install-nltk-models:
 
 .PHONY: install-test
 install-test:
-	${PYTHON} -m pip install -r requirements/deps/test.txt
+	${PYTHON} -m pip install -r requirements/test.txt
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
 	python3 -m pip install unstructured_pytesseract

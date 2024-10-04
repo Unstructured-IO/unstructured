@@ -1,4 +1,4 @@
--c constraints.txt
+-c ./deps/constraints.txt
 -c base.txt
 
 black>=22.3.0

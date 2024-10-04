@@ -1,5 +1,5 @@
 -c ./deps/constraints.txt
--c ./deps/base.txt
--c ./deps/test.txt
+-c base.txt
+-c test.txt
 pip-tools
 pre-commit

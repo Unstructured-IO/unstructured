@@ -27,7 +27,7 @@ from unstructured.__version__ import __version__
 
 def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List[str]:
     if file_list is None:
-        file_list = ["requirements/deps/base.in"]
+        file_list = ["requirements/base.in"]
     if isinstance(file_list, str):
         file_list = [file_list]
     requirements: List[str] = []

@@ -8,7 +8,7 @@ if ! python -c "import sys; assert sys.version_info.major == $major and sys.vers
   exit 1
 fi
 
-find ./requirements -type f -name "*.txt" ! -name "constraints.txt" ! -name "ingest.txt" -exec rm '{}' ';'
-pip-compile --upgrade ./requirements/deps/base.in
-pip-compile --upgrade ./requirements/deps/test.in
-find ./requirements -type f -name "*.in" -maxdepth 1 -exec pip-compile --upgrade '{}' ';'
+pushd ./requirements || exit
+make clean
+make all
+popd || exit

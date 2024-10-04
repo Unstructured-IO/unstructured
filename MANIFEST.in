@@ -1,5 +1,5 @@
 # Base requirements and constraints
-include requirements/deps/base.in
+include requirements/base.in
 
 # Unstructured library extras
 include requirements/extra-csv.in
