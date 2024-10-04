@@ -25,17 +25,18 @@ Partitioner: TypeAlias = Callable[..., list[Element]]
 def partition(
     filename: Optional[str] = None,
     *,
-    content_type: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
+    encoding: Optional[str] = None,
+    content_type: Optional[str] = None,
     file_filename: Optional[str] = None,
     url: Optional[str] = None,
+    headers: dict[str, str] = {},
+    ssl_verify: bool = True,
+    request_timeout: Optional[int] = None,
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
-    encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
-    headers: dict[str, str] = {},
     skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
-    ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
@@ -47,7 +48,6 @@ def partition(
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
-    request_timeout: Optional[int] = None,
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
     starting_page_number: int = 1,
@@ -63,30 +63,34 @@ def partition(
     ----------
     filename
         A string defining the target filename path.
-    content_type
-        A string defining the file content in MIME type
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    metadata_filename
-        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
+    encoding
+        The character-encoding used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to "utf-8".
     url
         The url for a remote document. Pass in content_type if you want partition to treat
         the document as a specific content_type.
+    headers
+        The headers to be used in conjunction with the HTTP request if URL is set.
+    ssl_verify
+        If the URL parameter is set, determines whether or not partition uses SSL verification
+        in the HTTP request.
+    request_timeout
+        The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
+        requests will block indefinitely.
+    content_type
+        A string defining the file content in MIME type
+    metadata_filename
+        When file is not None, the filename (string) to store in element metadata. E.g. "foo.txt"
     include_page_breaks
         If True, the output will include page breaks if the filetype supports it
     strategy
         The strategy to use for partitioning PDF/image. Uses a layout detection model if set
         to 'hi_res', otherwise partition simply extracts the text from the document
         and processes it.
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
-    headers
-        The headers to be used in conjunction with the HTTP request if URL is set.
     skip_infer_table_types
         The document types that you want to skip table extraction with.
-    ssl_verify
-        If the URL parameter is set, determines whether or not partition uses SSL verification
-        in the HTTP request.
     languages
         The languages present in the document, for use in partitioning and/or OCR. For partitioning
         image or pdf documents with Tesseract, you'll first need to install the appropriate
@@ -127,9 +131,6 @@ def partition(
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
-    request_timeout
-        The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
-        requests will block indefinitely.
     hi_res_model_name
         The layout detection model used when partitioning strategy is set to `hi_res`.
     model_name
