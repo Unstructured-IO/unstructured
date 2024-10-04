@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 import importlib
 import io
-from typing import IO, Any, Callable, Literal, Optional
+from typing import IO, Any, Callable, Optional
 
 import requests
 from typing_extensions import TypeAlias
@@ -34,7 +34,6 @@ def partition(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
     strategy: str = PartitionStrategy.AUTO,
-    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
@@ -328,12 +327,7 @@ def partition(
 
     elif file_type == FileType.TXT:
         partition_text = partitioner_loader.get(file_type)
-        elements = partition_text(
-            filename=filename,
-            file=file,
-            paragraph_grouper=paragraph_grouper,
-            **partitioning_kwargs,
-        )
+        elements = partition_text(filename=filename, file=file, **partitioning_kwargs)
 
     elif file_type in (FileType.XLS, FileType.XLSX):
         partition_xlsx = partitioner_loader.get(file_type)
