@@ -76,6 +76,7 @@ def set_element_hierarchy(
         element_category = getattr(element, "category", None)
         element_category_depth = getattr(element.metadata, "category_depth", 0) or 0
 
+        # -- skip elements without a category --
         if not element_category:
             continue
 

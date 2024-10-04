@@ -62,73 +62,139 @@ class Describe_get_last_modified_date:
 # ================================================================================================
 
 
-def test_set_element_hierarchy():
-    elements_to_set = [
-        Title(text="Title"),  # 0
-        NarrativeText(text="NarrativeText"),  # 1
-        FigureCaption(text="FigureCaption"),  # 2
-        ListItem(text="ListItem"),  # 3
-        ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 4
-        ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 5
-        ListItem(text="ListItem"),  # 6
-        CheckBox(element_id="some-id-1", checked=True),  # 7
-        Title(text="Title 2"),  # 8
-        ListItem(text="ListItem"),  # 9
-        ListItem(text="ListItem"),  # 10
-        Text(text="Text"),  # 11
-    ]
-    elements = set_element_hierarchy(elements_to_set)
+class Describe_set_element_hierarchy:
 
-    assert (
-        elements[1].metadata.parent_id == elements[0].id
-    ), "NarrativeText should be child of Title"
-    assert (
-        elements[2].metadata.parent_id == elements[0].id
-    ), "FigureCaption should be child of Title"
-    assert elements[3].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
-    assert elements[4].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
-    assert elements[5].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
-    assert elements[6].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
-    # NOTE(Hubert): moving the category field to Element, caused this to fail.
-    # Checkboxes will soon be deprecated, then we can remove the test.
-    # assert (
-    #         elements[7].metadata.parent_id is None
-    # ), "CheckBox should be None, as it's not a Text based element"
-    assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
-    assert elements[9].metadata.parent_id == elements[8].id, "ListItem should be child of Title 2"
-    assert elements[10].metadata.parent_id == elements[8].id, "ListItem should be child of Title 2"
-    assert elements[11].metadata.parent_id == elements[8].id, "Text should be child of Title 2"
+    def it_applies_default_ruleset(self):
+        elements = [
+            Title(element_id="0", text="Title0"),
+            Text(element_id="1", text="Text0"),
+            Header(element_id="2", text="Header0"),
+            Text(element_id="3", text="Text1"),
+            Title(element_id="4", text="Title1"),
+            Text(element_id="5", text="Text2"),
+        ]
 
+        result = set_element_hierarchy(elements)
 
-def test_set_element_hierarchy_custom_rule_set():
-    elements_to_set = [
-        Header(text="Header"),  # 0
-        Title(text="Title"),  # 1
-        NarrativeText(text="NarrativeText"),  # 2
-        Text(text="Text"),  # 3
-        Title(text="Title 2"),  # 4
-        FigureCaption(text="FigureCaption"),  # 5
-    ]
+        assert result[0].metadata.parent_id is None
+        assert result[1].metadata.parent_id == "0"  # Text0 is under Title0
+        assert result[2].metadata.parent_id is None  # Header0 is higher than Title0
+        assert result[3].metadata.parent_id == "2"  # Text1 is under Header0
+        assert result[4].metadata.parent_id == "2"  # Title1 is under Header0
+        assert result[5].metadata.parent_id == "4"  # Text2 is under Title1, which is under Header0
 
-    custom_rule_set = {
-        "Header": ["Title", "Text"],
-        "Title": ["NarrativeText", "UncategorizedText", "FigureCaption"],
-    }
+    def it_applies_ruleset_based_on_element_category_regardless_of_depth(self):
+        elements = [
+            Title(element_id="0", text="Title", metadata=ElementMetadata(category_depth=2)),
+            Text(element_id="1", text="Text", metadata=ElementMetadata(category_depth=1)),
+            Header(element_id="2", text="Header", metadata=ElementMetadata(category_depth=2)),
+            Text(element_id="3", text="Text", metadata=ElementMetadata(category_depth=1)),
+        ]
 
-    elements = set_element_hierarchy(
-        elements=elements_to_set,
-        ruleset=custom_rule_set,
-    )
+        result = set_element_hierarchy(elements)
 
-    assert elements[1].metadata.parent_id == elements[0].id, "Title should be child of Header"
-    assert (
-        elements[2].metadata.parent_id == elements[1].id
-    ), "NarrativeText should be child of Title"
-    assert elements[3].metadata.parent_id == elements[1].id, "Text should be child of Title"
-    assert elements[4].metadata.parent_id == elements[0].id, "Title 2 should be child of Header"
-    assert (
-        elements[5].metadata.parent_id == elements[4].id
-    ), "FigureCaption should be child of Title 2"
+        assert result[1].metadata.parent_id == "0"  # Text is under Title despite category_depth
+        assert result[3].metadata.parent_id == "2"  # Text is under Header despite category_depth
+
+    def but_it_applies_category_depth_when_element_category_is_the_same(self):
+        elements = [
+            Title(element_id="0", text="Title0", metadata=ElementMetadata(category_depth=1)),
+            Text(element_id="1", text="Text0", metadata=ElementMetadata(category_depth=0)),
+            Text(element_id="2", text="Text1", metadata=ElementMetadata(category_depth=1)),
+            Text(element_id="3", text="Text2", metadata=ElementMetadata(category_depth=0)),
+        ]
+
+        result = set_element_hierarchy(elements)
+
+        assert result[0].metadata.parent_id is None
+        assert result[1].metadata.parent_id == "0"
+        assert result[2].metadata.parent_id == "1"
+        assert result[3].metadata.parent_id == "0"
+
+    def it_skips_elements_with_pre_existing_parent_id(self):
+        elements = [
+            Title(element_id="0", text="Title", metadata=ElementMetadata(parent_id="10")),
+            Title(element_id="1", text="Title"),
+            Text(element_id="2", text="Text"),
+        ]
+
+        result = set_element_hierarchy(elements)
+
+        # Parent ID should not change and element is skipped in figuring out other elements' parents
+        assert result[0].metadata.parent_id == "10"
+        assert result[1].metadata.parent_id is None
+        assert result[2].metadata.parent_id == "1"
+
+    def test_set_element_hierarchy(self):
+        elements_to_set = [
+            Title(text="Title"),  # 0
+            NarrativeText(text="NarrativeText"),  # 1
+            FigureCaption(text="FigureCaption"),  # 2
+            ListItem(text="ListItem"),  # 3
+            ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 4
+            ListItem(text="ListItem", metadata=ElementMetadata(category_depth=1)),  # 5
+            ListItem(text="ListItem"),  # 6
+            CheckBox(element_id="some-id-1", checked=True),  # 7
+            Title(text="Title 2"),  # 8
+            ListItem(text="ListItem"),  # 9
+            ListItem(text="ListItem"),  # 10
+            Text(text="Text"),  # 11
+        ]
+        elements = set_element_hierarchy(elements_to_set)
+
+        assert (
+            elements[1].metadata.parent_id == elements[0].id
+        ), "NarrativeText should be child of Title"
+        assert (
+            elements[2].metadata.parent_id == elements[0].id
+        ), "FigureCaption should be child of Title"
+        assert elements[3].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+        assert elements[4].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
+        assert elements[5].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
+        assert elements[6].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
+        # NOTE(Hubert): moving the category field to Element, caused this to fail.
+        # Checkboxes will soon be deprecated, then we can remove the test.
+        # assert (
+        #         elements[7].metadata.parent_id is None
+        # ), "CheckBox should be None, as it's not a Text based element"
+        assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
+        assert (
+            elements[9].metadata.parent_id == elements[8].id
+        ), "ListItem should be child of Title 2"
+        assert (
+            elements[10].metadata.parent_id == elements[8].id
+        ), "ListItem should be child of Title 2"
+        assert elements[11].metadata.parent_id == elements[8].id, "Text should be child of Title 2"
+
+    def it_applies_custom_rule_set(self):
+        elements_to_set = [
+            Header(text="Header"),  # 0
+            Title(text="Title"),  # 1
+            NarrativeText(text="NarrativeText"),  # 2
+            Text(text="Text"),  # 3
+            Title(text="Title 2"),  # 4
+            FigureCaption(text="FigureCaption"),  # 5
+        ]
+
+        custom_rule_set = {
+            "Header": ["Title", "Text"],
+            "Title": ["NarrativeText", "UncategorizedText", "FigureCaption"],
+        }
+
+        elements = set_element_hierarchy(
+            elements=elements_to_set,
+            ruleset=custom_rule_set,
+        )
+
+        assert elements[1].metadata.parent_id == elements[0].id, "Title should be child of Header"
+        assert (
+            elements[2].metadata.parent_id == elements[1].id
+        ), "NarrativeText should be child of Title"
+        assert elements[3].metadata.parent_id == elements[1].id, "Text should be child of Title"
+        assert elements[4].metadata.parent_id == elements[0].id, "Title 2 should be child of Header"
+        assert (
+            elements[5].metadata.parent_id == elements[4].id
+        ), "FigureCaption should be child of Title 2"
 
 
 # ================================================================================================
