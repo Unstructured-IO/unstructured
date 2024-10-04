@@ -185,6 +185,20 @@ def partition(
 
     partitioner_loader = _PartitionerLoader()
 
+    # -- extracting this post-processing to allow multiple exit-points from function --
+    def augment_metadata(elements: list[Element]) -> list[Element]:
+        """Add some metadata fields to each element."""
+        for element in elements:
+            element.metadata.url = url
+            element.metadata.data_source = data_source_metadata
+            if content_type is not None:
+                out_filetype = FileType.from_mime_type(content_type)
+                element.metadata.filetype = out_filetype.mime_type if out_filetype else None
+            else:
+                element.metadata.filetype = file_type.mime_type
+
+        return elements
+
     if file_type == FileType.CSV:
         partition_csv = partitioner_loader.get(file_type)
         elements = partition_csv(
@@ -435,16 +449,7 @@ def partition(
             f"{msg}. The {file_type} file type is not supported in partition."
         )
 
-    for element in elements:
-        element.metadata.url = url
-        element.metadata.data_source = data_source_metadata
-        if content_type is not None:
-            out_filetype = FileType.from_mime_type(content_type)
-            element.metadata.filetype = out_filetype.mime_type if out_filetype is not None else None
-        else:
-            element.metadata.filetype = file_type.mime_type
-
-    return elements
+    return augment_metadata(elements)
 
 
 def file_and_type_from_url(
