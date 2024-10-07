@@ -1235,7 +1235,7 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
     partition_fn = getattr(module, partition_fn_name)
 
     # -- partition the example-doc for this filetype --
-    elements = partition_fn(file_path)
+    elements = partition_fn(file_path, process_attachments=False)
 
     assert elements
     assert all(

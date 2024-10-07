@@ -32,7 +32,7 @@ def partition_email(
     content_source: str = "text/html",
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
-    process_attachments: bool = False,
+    process_attachments: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an .eml file into document elements.
