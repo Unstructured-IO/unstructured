@@ -119,6 +119,7 @@ def test_partition_email_partitions_an_html_part_with_quoted_printable_encoded_I
     elements = partition_email(
         example_doc_path("eml/email-no-utf8-2014-03-17.111517.eml"),
         content_source="text/html",
+        process_attachments=False,
     )
 
     assert len(elements) == 1
@@ -135,15 +136,21 @@ def test_partition_email_accepts_a_whitespace_only_file():
 
 
 def test_partition_email_can_partition_an_empty_email():
-    assert partition_email(example_doc_path("eml/mime-no-body.eml")) == []
+    assert (
+        partition_email(example_doc_path("eml/mime-no-body.eml"), process_attachments=False) == []
+    )
 
 
 def test_partition_email_does_not_break_on_an_encrypted_message():
-    assert partition_email(example_doc_path("eml/fake-encrypted.eml")) == []
+    assert (
+        partition_email(example_doc_path("eml/fake-encrypted.eml"), process_attachments=False) == []
+    )
 
 
 def test_partition_email_finds_content_when_it_is_marked_with_content_disposition_inline():
-    elements = partition_email(example_doc_path("eml/email-inline-content-disposition.eml"))
+    elements = partition_email(
+        example_doc_path("eml/email-inline-content-disposition.eml"), process_attachments=False
+    )
 
     assert len(elements) == 1
     e = elements[0]

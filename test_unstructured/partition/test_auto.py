@@ -1230,7 +1230,8 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(file_type
     extensions = file_type._extensions
     for file in pathlib.Path(doc_path).iterdir():
         if file.is_file() and file.suffix in extensions:
-            elements = partition_fn(str(file))
+            # -- attachments get the MIME-type of the attachment, not the email they were in --
+            elements = partition_fn(str(file), process_attachments=False)
             break
 
     assert elements

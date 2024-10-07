@@ -24,7 +24,7 @@ def partition_msg(
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    process_attachments: bool = False,
+    process_attachments: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a MSFT Outlook .msg file
