@@ -1,0 +1,7 @@
+From: sender@example.com
+To: recipient@example.com
+Subject: =?UTF-8?B?U2ltcGxlIGVtYWlsIHdpdGgg4pi44pi/IFVuaWNvZGUgc3ViamVjdA==?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+This is a simple email message with Unicode characters in the subject.
