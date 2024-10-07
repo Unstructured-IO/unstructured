@@ -44,7 +44,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --download-dir "$DOWNLOAD_DIR" \
   --box-app-config "$BOX_APP_CONFIG_PATH" \
   --remote-url box://utic-test-ingest-fixtures \
-  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.data_source.filesize_bytes,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --output-dir "$OUTPUT_DIR" \
   --num-processes "$max_processes" \
   --preserve-downloads \
