@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from google.cloud.vision import Image, ImageAnnotatorClient, Paragraph, TextAnnotation
+from google.cloud.vision import Image, ImageAnnotatorClient, ImageContext, Paragraph, TextAnnotation
 
 from unstructured.logger import logger, trace_logger
 from unstructured.partition.utils.config import env_config
@@ -19,7 +19,8 @@ if TYPE_CHECKING:
 class OCRAgentGoogleVision(OCRAgent):
     """OCR service implementation for Google Vision API."""
 
-    def __init__(self) -> None:
+    def __init__(self, language: Optional[str] = None) -> None:
+        self.language = language
         client_options = {}
         api_endpoint = env_config.GOOGLEVISION_API_ENDPOINT
         if api_endpoint:
@@ -32,40 +33,40 @@ class OCRAgentGoogleVision(OCRAgent):
     def is_text_sorted(self) -> bool:
         return True
 
-    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+    def get_text_from_image(self, image: PILImage.Image) -> str:
+        image_context = ImageContext(language_hints=[self.language]) if self.language else None
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
-            response = self.client.document_text_detection(image=Image(content=buffer.getvalue()))
+            response = self.client.document_text_detection(
+                image=Image(content=buffer.getvalue()), image_context=image_context
+            )
         document = response.full_text_annotation
         assert isinstance(document, TextAnnotation)
         return document.text
 
-    def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
         trace_logger.detail("Processing entire page OCR with Google Vision API...")
+        image_context = ImageContext(language_hints=[self.language]) if self.language else None
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
-            response = self.client.document_text_detection(image=Image(content=buffer.getvalue()))
+            response = self.client.document_text_detection(
+                image=Image(content=buffer.getvalue()), image_context=image_context
+            )
         document = response.full_text_annotation
         assert isinstance(document, TextAnnotation)
         regions = self._parse_regions(document)
         return regions
 
-    def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[LayoutElement]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
         )
 
         ocr_regions = self.get_layout_from_image(
             image,
-            ocr_languages=ocr_languages,
         )
         ocr_text = self.get_text_from_image(
             image,
-            ocr_languages=ocr_languages,
         )
         layout_elements = build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
