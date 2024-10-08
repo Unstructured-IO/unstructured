@@ -232,8 +232,8 @@ def google_vision_client(google_vision_text_annotation):
 
     class OCRAgentFakeGoogleVision(OCRAgentGoogleVision):
         def __init__(self, language: Optional[str] = None):
-            super().__init__(language=language)
             self.client = FakeGoogleVisionClient()
+            self.language = language
 
     return OCRAgentFakeGoogleVision()
 
