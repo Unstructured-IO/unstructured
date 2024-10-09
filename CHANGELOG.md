@@ -1,6 +1,8 @@
-## 0.15.14-dev13
+## 0.15.14-dev14
 
 ### Enhancements
+
+* **Bump `unstructured-inference` to 0.7.38** and upgrade other dependencies
 
 ### Features
 
