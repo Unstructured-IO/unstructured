@@ -35,7 +35,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --embedding-provider "langchain-voyageai" \
+  --embedding-provider "voyageai" \
   --embedding-api-key "$VOYAGE_API_KEY" \
   --embedding-model-name "voyage-large-2"
 

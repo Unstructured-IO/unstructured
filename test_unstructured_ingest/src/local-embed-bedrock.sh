@@ -34,7 +34,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --embedding-provider "langchain-aws-bedrock" \
+  --embedding-provider "aws-bedrock" \
   --embedding-aws-access-key-id "$AWS_ACCESS_KEY_ID" \
   --embedding-aws-secret-access-key "$AWS_SECRET_ACCESS_KEY"
 

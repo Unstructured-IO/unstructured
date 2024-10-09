@@ -35,7 +35,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --embedding-provider "langchain-vertexai" \
+  --embedding-provider "vertexai" \
   --embedding-api-key "$GCP_INGEST_SERVICE_KEY" \
   --embedding-model-name "textembedding-gecko@001"
 
