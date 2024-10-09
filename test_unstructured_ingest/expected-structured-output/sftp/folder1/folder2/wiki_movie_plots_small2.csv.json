@@ -15,9 +15,7 @@
         "record_locator": {
           "protocol": "sftp",
           "remote_file_path": "sftp://localhost:47474/upload/"
-        },
-        "date_created": "1728454715.0",
-        "date_modified": "1728454715.0"
+        }
       }
     }
   }
