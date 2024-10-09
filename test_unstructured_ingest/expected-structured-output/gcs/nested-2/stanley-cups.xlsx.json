@@ -12,15 +12,14 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973",
-        "filesize_bytes": 6339
+        "date_modified": "1687304904.973"
       }
     }
   },
@@ -38,15 +37,14 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973",
-        "filesize_bytes": 6339
+        "date_modified": "1687304904.973"
       }
     }
   },
@@ -63,15 +61,14 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973",
-        "filesize_bytes": 6339
+        "date_modified": "1687304904.973"
       }
     }
   },
@@ -89,15 +86,14 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
           "file_id": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx/1687304904970987"
         },
         "date_created": "1687304904.973",
-        "date_modified": "1687304904.973",
-        "filesize_bytes": 6339
+        "date_modified": "1687304904.973"
       }
     }
   }

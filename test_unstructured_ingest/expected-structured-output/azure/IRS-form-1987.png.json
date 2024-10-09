@@ -11,14 +11,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -34,14 +33,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -57,14 +55,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -80,14 +77,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -103,14 +99,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -126,14 +121,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -149,14 +143,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -172,14 +165,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -195,14 +187,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -218,14 +209,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -241,14 +231,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -264,14 +253,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -287,14 +275,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -310,14 +297,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -333,14 +319,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -356,14 +341,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -379,14 +363,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -402,14 +385,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -425,14 +407,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -448,14 +429,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -471,14 +451,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -494,14 +473,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -517,14 +495,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -540,14 +517,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -563,14 +539,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -586,14 +561,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -609,14 +583,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -632,14 +605,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -655,14 +627,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -678,14 +649,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -701,14 +671,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -724,14 +693,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -747,14 +715,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -770,14 +737,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -793,14 +759,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -816,14 +781,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -839,14 +803,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -862,14 +825,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -885,14 +847,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -908,14 +869,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   },
@@ -931,14 +891,13 @@
       "page_number": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.png",
-        "version": "178514357676599756686300559820761454543",
+        "version": "0x8DB214C1B270B0D",
         "record_locator": {
           "protocol": "abfs",
           "remote_file_path": "abfs://container1/"
         },
         "date_created": "1678441495.0",
-        "date_modified": "1678441495.0",
-        "filesize_bytes": 712624
+        "date_modified": "1678441495.0"
       }
     }
   }

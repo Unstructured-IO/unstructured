@@ -17,8 +17,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   },
@@ -40,8 +39,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   },
@@ -63,8 +61,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   },
@@ -86,8 +83,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   },
@@ -109,8 +105,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   },
@@ -132,8 +127,7 @@
           "server_relative_path": "utic-test-ingest-fixtures/fake-text.txt"
         },
         "date_created": "1692846009.0",
-        "date_modified": "1692846009.0",
-        "filesize_bytes": 169
+        "date_modified": "1692846009.0"
       }
     }
   }
