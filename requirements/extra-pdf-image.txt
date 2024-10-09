@@ -16,7 +16,7 @@ cffi==1.17.1
     # via
     #   -c ./base.txt
     #   cryptography
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./base.txt
     #   pdfminer-six
@@ -42,13 +42,13 @@ filelock==3.16.1
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.53.1
+fonttools==4.54.1
     # via matplotlib
 fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.20.0
+google-api-core[grpc]==2.21.0
     # via google-cloud-vision
 google-auth==2.35.0
     # via
@@ -60,14 +60,14 @@ googleapis-common-protos==1.65.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.66.1
+grpcio==1.66.2
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.25.0
+huggingface-hub==0.25.2
     # via
     #   timm
     #   tokenizers
@@ -93,7 +93,7 @@ lxml==5.3.0
     # via
     #   -c ./base.txt
     #   pikepdf
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via jinja2
 matplotlib==3.9.2
     # via
@@ -117,9 +117,10 @@ numpy==1.26.4
     #   scipy
     #   torchvision
     #   transformers
+    #   unstructured-inference
 omegaconf==2.3.0
     # via effdet
-onnx==1.16.2
+onnx==1.17.0
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
@@ -138,7 +139,7 @@ packaging==24.1
     #   pikepdf
     #   transformers
     #   unstructured-pytesseract
-pandas==2.2.2
+pandas==2.2.3
     # via layoutparser
 pdf2image==1.17.0
     # via
@@ -152,7 +153,7 @@ pdfplumber==0.11.4
     # via layoutparser
 pi-heif==0.18.0
     # via -r ./extra-pdf-image.in
-pikepdf==9.2.1
+pikepdf==9.3.0
     # via -r ./extra-pdf-image.in
 pillow==10.4.0
     # via
@@ -194,18 +195,18 @@ pycparser==2.22
     #   cffi
 pyparsing==3.1.4
     # via matplotlib
-pypdf==5.0.0
+pypdf==5.0.1
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
-python-dateutil==2.9.0.post0
+python-dateutil==2.8.2
     # via
     #   -c ./base.txt
     #   matplotlib
     #   pandas
-python-multipart==0.0.9
+python-multipart==0.0.12
     # via unstructured-inference
 pytz==2024.2
     # via pandas
@@ -216,7 +217,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.7
+rapidfuzz==3.10.0
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -279,9 +280,9 @@ typing-extensions==4.12.2
     #   iopath
     #   pypdf
     #   torch
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
-unstructured-inference==0.7.36
+unstructured-inference==0.7.38.dev0
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in

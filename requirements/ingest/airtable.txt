@@ -5,12 +5,14 @@
 #    pip-compile ./ingest/airtable.in
 #
 annotated-types==0.7.0
-    # via pydantic
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
 certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -23,9 +25,13 @@ inflection==0.5.1
 pyairtable==2.3.3
     # via -r ./ingest/airtable.in
 pydantic==2.9.2
-    # via pyairtable
+    # via
+    #   -c ./ingest/../base.txt
+    #   pyairtable
 pydantic-core==2.23.4
-    # via pydantic
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
 requests==2.32.3
     # via
     #   -c ./ingest/../base.txt

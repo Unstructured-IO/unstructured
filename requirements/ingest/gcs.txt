@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/gcs.in
 #
-aiohappyeyeballs==2.4.0
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.9
     # via gcsfs
 aiosignal==1.3.1
     # via aiohttp
@@ -26,7 +26,7 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -42,7 +42,7 @@ fsspec==2024.9.0
     #   gcsfs
 gcsfs==2024.9.0.post1
     # via -r ./ingest/gcs.in
-google-api-core==2.20.0
+google-api-core==2.21.0
     # via
     #   google-cloud-core
     #   google-cloud-storage
@@ -78,6 +78,8 @@ multidict==6.1.0
     #   yarl
 oauthlib==3.2.2
     # via requests-oauthlib
+propcache==0.2.0
+    # via yarl
 proto-plus==1.24.0
     # via google-api-core
 protobuf==4.25.5
@@ -116,5 +118,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.11.1
+yarl==1.14.0
     # via aiohttp
