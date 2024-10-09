@@ -10,13 +10,13 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
-google-api-core==2.20.0
+google-api-core==2.21.0
     # via google-api-python-client
-google-api-python-client==2.146.0
+google-api-python-client==2.149.0
     # via -r ./ingest/google-drive.in
 google-auth==2.35.0
     # via

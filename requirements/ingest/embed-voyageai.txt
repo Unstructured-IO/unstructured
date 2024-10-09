@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/embed-voyageai.in
 #
-aiohappyeyeballs==2.4.0
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.9
     # via
     #   langchain
     #   voyageai
@@ -15,8 +15,10 @@ aiolimiter==1.1.0
 aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
-    # via pydantic
-anyio==4.5.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
+anyio==4.6.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -32,7 +34,7 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -48,7 +50,7 @@ h11==0.14.0
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
-httpcore==1.0.5
+httpcore==1.0.6
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -67,9 +69,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.3.0
+langchain==0.3.3
     # via -r ./ingest/embed-voyageai.in
-langchain-core==0.3.2
+langchain-core==0.3.10
     # via
     #   langchain
     #   langchain-text-splitters
@@ -78,7 +80,7 @@ langchain-text-splitters==0.3.0
     # via langchain
 langchain-voyageai==0.1.2
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.125
+langsmith==0.1.132
     # via
     #   langchain
     #   langchain-core
@@ -97,14 +99,19 @@ packaging==24.1
     # via
     #   -c ./ingest/../base.txt
     #   langchain-core
+propcache==0.2.0
+    # via yarl
 pydantic==2.9.2
     # via
+    #   -c ./ingest/../base.txt
     #   langchain
     #   langchain-core
     #   langchain-voyageai
     #   langsmith
 pydantic-core==2.23.4
-    # via pydantic
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
 pyyaml==6.0.2
     # via
     #   langchain
@@ -114,7 +121,12 @@ requests==2.32.3
     #   -c ./ingest/../base.txt
     #   langchain
     #   langsmith
+    #   requests-toolbelt
     #   voyageai
+requests-toolbelt==1.0.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   langsmith
 sniffio==1.3.1
     # via
     #   -c ./ingest/../base.txt
@@ -143,5 +155,5 @@ urllib3==1.26.20
     #   requests
 voyageai==0.2.3
     # via langchain-voyageai
-yarl==1.11.1
+yarl==1.14.0
     # via aiohttp
