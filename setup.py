@@ -56,7 +56,7 @@ rst_reqs = load_requirements("requirements/extra-pandoc.in")
 tsv_reqs = load_requirements("requirements/extra-csv.in")
 xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
 
-all_doc_reqs = list(
+all_doc_reqs = sorted(
     set(
         csv_reqs
         + docx_reqs
