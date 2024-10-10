@@ -4,19 +4,17 @@
 #
 #    pip-compile ./ingest/embed-aws-bedrock.in
 #
-aiohappyeyeballs==2.4.3
+aiohappyeyeballs==2.4.0
     # via aiohttp
-aiohttp==3.10.9
+aiohttp==3.10.5
     # via
     #   langchain
     #   langchain-community
 aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
-    # via
-    #   -c ./ingest/../base.txt
-    #   pydantic
-anyio==4.6.0
+    # via pydantic
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -39,7 +37,7 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -59,7 +57,7 @@ h11==0.14.0
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
-httpcore==1.0.6
+httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -82,18 +80,18 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.3.3
+langchain==0.3.0
     # via langchain-community
-langchain-community==0.3.2
+langchain-community==0.3.0
     # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.3.10
+langchain-core==0.3.2
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.3.0
     # via langchain
-langsmith==0.1.132
+langsmith==0.1.125
     # via
     #   langchain
     #   langchain-community
@@ -122,22 +120,17 @@ packaging==24.1
     #   -c ./ingest/../base.txt
     #   langchain-core
     #   marshmallow
-propcache==0.2.0
-    # via yarl
 pydantic==2.9.2
     # via
-    #   -c ./ingest/../base.txt
     #   langchain
     #   langchain-core
     #   langsmith
     #   pydantic-settings
 pydantic-core==2.23.4
-    # via
-    #   -c ./ingest/../base.txt
-    #   pydantic
+    # via pydantic
 pydantic-settings==2.5.2
     # via langchain-community
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   botocore
@@ -154,12 +147,7 @@ requests==2.32.3
     #   langchain
     #   langchain-community
     #   langsmith
-    #   requests-toolbelt
-requests-toolbelt==1.0.0
-    # via
-    #   -c ./ingest/../base.txt
-    #   langsmith
-s3transfer==0.10.3
+s3transfer==0.10.2
     # via boto3
 six==1.16.0
     # via
@@ -199,5 +187,5 @@ urllib3==1.26.20
     #   -c ./ingest/../deps/constraints.txt
     #   botocore
     #   requests
-yarl==1.14.0
+yarl==1.11.1
     # via aiohttp

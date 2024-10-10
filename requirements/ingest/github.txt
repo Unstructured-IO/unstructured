@@ -13,7 +13,7 @@ cffi==1.17.1
     #   -c ./ingest/../base.txt
     #   cryptography
     #   pynacl
-charset-normalizer==3.4.0
+charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests

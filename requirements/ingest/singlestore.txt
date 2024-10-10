@@ -4,13 +4,13 @@
 #
 #    pip-compile ./ingest/singlestore.in
 #
-build==1.2.2.post1
+build==1.2.2
     # via singlestoredb
 certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -30,7 +30,7 @@ parsimonious==0.10.0
     # via singlestoredb
 pyjwt==2.9.0
     # via singlestoredb
-pyproject-hooks==1.2.0
+pyproject-hooks==1.1.0
     # via build
 regex==2024.9.11
     # via
@@ -40,11 +40,11 @@ requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   singlestoredb
-singlestoredb==1.7.1
+singlestoredb==1.6.3
     # via -r ./ingest/singlestore.in
 sqlparams==6.1.0
     # via singlestoredb
-tomli==2.0.2
+tomli==2.0.1
     # via
     #   build
     #   singlestoredb

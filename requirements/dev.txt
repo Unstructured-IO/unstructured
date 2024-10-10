@@ -4,7 +4,7 @@
 #
 #    pip-compile ./dev.in
 #
-build==1.2.2.post1
+build==1.2.2
     # via pip-tools
 cfgv==3.4.0
     # via pre-commit
@@ -13,7 +13,7 @@ click==8.1.7
     #   -c ./base.txt
     #   -c ./test.txt
     #   pip-tools
-distlib==0.3.9
+distlib==0.3.8
     # via virtualenv
 filelock==3.16.1
     # via virtualenv
@@ -36,9 +36,9 @@ platformdirs==4.3.6
     # via
     #   -c ./test.txt
     #   virtualenv
-pre-commit==4.0.1
+pre-commit==3.8.0
     # via -r ./dev.in
-pyproject-hooks==1.2.0
+pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
@@ -46,12 +46,12 @@ pyyaml==6.0.2
     # via
     #   -c ./test.txt
     #   pre-commit
-tomli==2.0.2
+tomli==2.0.1
     # via
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.26.6
+virtualenv==20.26.5
     # via pre-commit
 wheel==0.44.0
     # via pip-tools

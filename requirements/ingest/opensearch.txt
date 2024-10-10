@@ -9,7 +9,7 @@ certifi==2024.8.30
     #   -c ./ingest/../base.txt
     #   opensearch-py
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -21,7 +21,7 @@ idna==3.10
     #   requests
 opensearch-py==2.7.1
     # via -r ./ingest/opensearch.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   opensearch-py

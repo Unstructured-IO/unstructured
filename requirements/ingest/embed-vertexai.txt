@@ -4,19 +4,17 @@
 #
 #    pip-compile ./ingest/embed-vertexai.in
 #
-aiohappyeyeballs==2.4.3
+aiohappyeyeballs==2.4.0
     # via aiohttp
-aiohttp==3.10.9
+aiohttp==3.10.5
     # via
     #   langchain
     #   langchain-community
 aiosignal==1.3.1
     # via aiohttp
 annotated-types==0.7.0
-    # via
-    #   -c ./ingest/../base.txt
-    #   pydantic
-anyio==4.6.0
+    # via pydantic
+anyio==4.5.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -34,7 +32,7 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -52,7 +50,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-google-api-core[grpc]==2.21.0
+google-api-core[grpc]==2.20.0
     # via
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
@@ -67,9 +65,9 @@ google-auth==2.35.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.70.0
+google-cloud-aiplatform==1.67.1
     # via langchain-google-vertexai
-google-cloud-bigquery==3.26.0
+google-cloud-bigquery==3.25.0
     # via google-cloud-aiplatform
 google-cloud-core==2.4.1
     # via
@@ -96,7 +94,7 @@ googleapis-common-protos[grpc]==1.65.0
     #   grpcio-status
 grpc-google-iam-v1==0.13.1
     # via google-cloud-resource-manager
-grpcio==1.66.2
+grpcio==1.66.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   google-api-core
@@ -109,7 +107,7 @@ h11==0.14.0
     # via
     #   -c ./ingest/../base.txt
     #   httpcore
-httpcore==1.0.6
+httpcore==1.0.5
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -131,23 +129,23 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.3.3
+langchain==0.3.0
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.3.2
+langchain-community==0.3.0
     # via -r ./ingest/embed-vertexai.in
-langchain-core==0.3.10
+langchain-core==0.3.2
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==2.0.4
+langchain-google-vertexai==2.0.1
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.3.0
     # via langchain
-langsmith==0.1.132
+langsmith==0.1.125
     # via
     #   langchain
     #   langchain-community
@@ -179,8 +177,6 @@ packaging==24.1
     #   google-cloud-bigquery
     #   langchain-core
     #   marshmallow
-propcache==0.2.0
-    # via yarl
 proto-plus==1.24.0
     # via
     #   google-api-core
@@ -204,7 +200,6 @@ pyasn1-modules==0.4.1
     # via google-auth
 pydantic==2.9.2
     # via
-    #   -c ./ingest/../base.txt
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
@@ -212,12 +207,10 @@ pydantic==2.9.2
     #   langsmith
     #   pydantic-settings
 pydantic-core==2.23.4
-    # via
-    #   -c ./ingest/../base.txt
-    #   pydantic
+    # via pydantic
 pydantic-settings==2.5.2
     # via langchain-community
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   google-cloud-bigquery
@@ -236,11 +229,6 @@ requests==2.32.3
     #   google-cloud-storage
     #   langchain
     #   langchain-community
-    #   langsmith
-    #   requests-toolbelt
-requests-toolbelt==1.0.0
-    # via
-    #   -c ./ingest/../base.txt
     #   langsmith
 rsa==4.9
     # via google-auth
@@ -283,5 +271,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-yarl==1.14.0
+yarl==1.11.1
     # via aiohttp
