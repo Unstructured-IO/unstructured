@@ -66,7 +66,7 @@ def build_layout_elements_from_ocr_regions(
             for r in regions:
                 ocr_regions.remove(r)
 
-            grouped_regions.append(regions)
+            grouped_regions.append(TextRegions.from_list(regions))
     else:
         grouped_regions = partition_groups_from_regions(TextRegions.from_list(ocr_regions))
 
