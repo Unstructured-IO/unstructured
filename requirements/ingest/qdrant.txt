@@ -5,8 +5,10 @@
 #    pip-compile ./ingest/qdrant.in
 #
 annotated-types==0.7.0
-    # via pydantic
-anyio==4.5.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
+anyio==4.6.0
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -19,7 +21,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.66.1
+grpcio==1.66.2
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
@@ -34,7 +36,7 @@ h2==4.1.0
     # via httpx
 hpack==4.0.0
     # via h2
-httpcore==1.0.5
+httpcore==1.0.6
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -60,10 +62,14 @@ protobuf==4.25.5
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
 pydantic==2.9.2
-    # via qdrant-client
+    # via
+    #   -c ./ingest/../base.txt
+    #   qdrant-client
 pydantic-core==2.23.4
-    # via pydantic
-qdrant-client==1.11.2
+    # via
+    #   -c ./ingest/../base.txt
+    #   pydantic
+qdrant-client==1.12.0
     # via -r ./ingest/qdrant.in
 sniffio==1.3.1
     # via

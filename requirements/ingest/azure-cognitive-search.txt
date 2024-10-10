@@ -14,7 +14,7 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -22,7 +22,7 @@ idna==3.10
     # via
     #   -c ./ingest/../base.txt
     #   requests
-isodate==0.6.1
+isodate==0.7.2
     # via azure-search-documents
 requests==2.32.3
     # via
@@ -32,7 +32,6 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
-    #   isodate
 typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt

@@ -6,9 +6,9 @@
 #
 aiobotocore==2.13.3
     # via s3fs
-aiohappyeyeballs==2.4.0
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.9
     # via
     #   aiobotocore
     #   s3fs
@@ -42,7 +42,9 @@ multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
-python-dateutil==2.9.0.post0
+propcache==0.2.0
+    # via yarl
+python-dateutil==2.8.2
     # via
     #   -c ./ingest/../base.txt
     #   botocore
@@ -66,5 +68,5 @@ wrapt==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   aiobotocore
-yarl==1.11.1
+yarl==1.14.0
     # via aiohttp

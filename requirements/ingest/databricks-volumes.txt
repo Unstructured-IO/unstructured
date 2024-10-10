@@ -10,11 +10,11 @@ certifi==2024.8.30
     # via
     #   -c ./ingest/../base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./ingest/../base.txt
     #   requests
-databricks-sdk==0.32.3
+databricks-sdk==0.34.0
     # via -r ./ingest/databricks-volumes.in
 google-auth==2.35.0
     # via databricks-sdk
