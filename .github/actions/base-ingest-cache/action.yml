@@ -39,6 +39,7 @@ runs:
           python -m pip install --upgrade setuptools
         fi
         make install-ci
+        make install-nltk-models
         make install-all-ingest
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
