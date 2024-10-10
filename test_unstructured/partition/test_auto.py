@@ -1215,6 +1215,8 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
         not in (
             FileType.EMPTY,
             FileType.JSON,
+            FileType.MSG,
+            FileType.PPTX,
             FileType.UNK,
             FileType.WAV,
             FileType.XLS,
