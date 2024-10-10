@@ -237,7 +237,7 @@ urllib3==1.26.20
     #   -c ./ingest/../deps/constraints.txt
     #   kubernetes
     #   requests
-uvicorn[standard]==0.31.0
+uvicorn[standard]==0.31.1
     # via chromadb
 uvloop==0.20.0
     # via uvicorn
