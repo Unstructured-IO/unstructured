@@ -10,13 +10,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -36,13 +38,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -62,13 +66,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -82,13 +88,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -102,13 +110,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -122,13 +132,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -142,13 +154,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -162,13 +176,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -182,13 +198,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -202,13 +220,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -222,13 +242,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -242,13 +264,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -262,13 +286,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -282,13 +308,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   },
@@ -303,13 +331,15 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "url": "dropbox:///test-input/handbook-1p.docx",
-        "version": "134700592086487568162605251521926324397",
+        "url": "dropbox://test-input/handbook-1p.docx",
+        "version": "2ddaae143b824b304ab42bb607d0cd4a96e2d0d0a60a30025e4ce749a53a0b8e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACQ"
-        }
+        },
+        "date_created": "1687394168.0",
+        "date_modified": "1697632567.0"
       }
     }
   }

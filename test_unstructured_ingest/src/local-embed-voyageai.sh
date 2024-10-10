@@ -25,7 +25,7 @@ if [ -z "$VOYAGE_API_KEY" ]; then
   exit 8
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \
@@ -35,7 +35,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --embedding-provider "langchain-voyageai" \
+  --embedding-provider "voyageai" \
   --embedding-api-key "$VOYAGE_API_KEY" \
   --embedding-model-name "voyage-large-2"
 

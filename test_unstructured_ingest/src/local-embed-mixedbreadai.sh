@@ -22,10 +22,8 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-# Define the run script
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
-
 # Run the ingestion script with the specified parameters
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \

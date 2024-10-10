@@ -12,7 +12,7 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
@@ -37,7 +37,7 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
@@ -61,7 +61,7 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",
@@ -86,7 +86,7 @@
       "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "data_source": {
         "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "25646232132200560657189097157576319365",
+        "version": "COul9MuE0/8CEAE=",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/",

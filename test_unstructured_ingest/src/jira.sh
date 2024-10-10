@@ -50,7 +50,7 @@ fi
 # Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   jira \
   --download-dir "$DOWNLOAD_DIR" \

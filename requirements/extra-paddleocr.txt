@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==4.5.0
+anyio==4.6.0
     # via
     #   -c ./base.txt
     #   httpx
@@ -32,13 +32,13 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
-fonttools==4.53.1
+fonttools==4.54.1
     # via matplotlib
 h11==0.14.0
     # via
     #   -c ./base.txt
     #   httpcore
-httpcore==1.0.5
+httpcore==1.0.6
     # via
     #   -c ./base.txt
     #   httpx
@@ -127,7 +127,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.9.7
+rapidfuzz==3.10.0
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr

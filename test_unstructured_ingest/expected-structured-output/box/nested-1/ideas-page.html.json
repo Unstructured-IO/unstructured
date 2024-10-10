@@ -11,7 +11,7 @@
       "filetype": "text/html",
       "data_source": {
         "url": "box:///utic-test-ingest-fixtures/nested-1/ideas-page.html",
-        "version": "77943175838335685751163845636763163681",
+        "version": "1255892530552",
         "record_locator": {
           "protocol": "box",
           "remote_file_path": "box://utic-test-ingest-fixtures",

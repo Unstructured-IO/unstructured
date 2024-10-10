@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.5.0
+anyio==4.6.0
     # via
     #   -c ./base.txt
     #   httpx
@@ -50,7 +50,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.66.1
+grpcio==1.66.2
     # via
     #   -c ././deps/constraints.txt
     #   -r ./test.in
@@ -58,7 +58,7 @@ h11==0.14.0
     # via
     #   -c ./base.txt
     #   httpcore
-httpcore==1.0.5
+httpcore==1.0.6
     # via
     #   -c ./base.txt
     #   httpx
@@ -115,7 +115,7 @@ packaging==24.1
     #   -c ./base.txt
     #   black
     #   pytest
-pandas==2.2.2
+pandas==2.2.3
     # via label-studio-sdk
 pathspec==0.12.1
     # via black
@@ -185,7 +185,7 @@ sniffio==1.3.1
     #   httpx
 toml==0.10.2
     # via liccheck
-tomli==2.0.1
+tomli==2.0.2
     # via
     #   autoflake
     #   black
@@ -216,7 +216,7 @@ typing-extensions==4.12.2
     #   mypy
     #   pydantic
     #   pydantic-core
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
 ujson==5.10.0
     # via label-studio-sdk
@@ -234,7 +234,7 @@ wrapt==1.16.0
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.11.1
+yarl==1.13.1
     # via vcrpy
 
 # The following packages are considered to be unsafe in a requirements file:

@@ -37,7 +37,7 @@ fi
 # are being provided at the same time, which is a wrong way to use the connector.
 
 # We expect the test to ignore --confluence-num-of-spaces and use --confluence-list-of-spaces.
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   confluence \
   --download-dir "$DOWNLOAD_DIR" \

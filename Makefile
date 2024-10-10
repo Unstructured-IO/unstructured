@@ -99,171 +99,9 @@ install-xlsx:
 .PHONY: install-all-docs
 install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
 
-.PHONY: install-all-ingest
-install-all-ingest:
-	find requirements/ingest -type f -name "*.txt" -exec ${PYTHON} -m pip install -r '{}' ';'
-
-
-.PHONY: install-ingest-google-drive
-install-ingest-google-drive:
-	${PYTHON} -m pip install -r requirements/ingest/google-drive.txt
-
-## install-ingest-s3:       install requirements for the s3 connector
-.PHONY: install-ingest-s3
-install-ingest-s3:
-	${PYTHON} -m pip install -r requirements/ingest/s3.txt
-
-.PHONY: install-ingest-gcs
-install-ingest-gcs:
-	${PYTHON} -m pip install -r requirements/ingest/gcs.txt
-
-.PHONY: install-ingest-dropbox
-install-ingest-dropbox:
-	${PYTHON} -m pip install -r requirements/ingest/dropbox.txt
-
-.PHONY: install-ingest-azure
-install-ingest-azure:
-	${PYTHON} -m pip install -r requirements/ingest/azure.txt
-
-.PHONY: install-ingest-box
-install-ingest-box:
-	${PYTHON} -m pip install -r requirements/ingest/box.txt
-
-.PHONY: install-ingest-delta-table
-install-ingest-delta-table:
-	${PYTHON} -m pip install -r requirements/ingest/delta-table.txt
-
-.PHONY: install-ingest-discord
-install-ingest-discord:
-	${PYTHON} -m pip install -r requirements/ingest/discord.txt
-
-.PHONY: install-ingest-github
-install-ingest-github:
-	${PYTHON} -m pip install -r requirements/ingest/github.txt
-
-.PHONY: install-ingest-biomed
-install-ingest-biomed:
-	${PYTHON} -m pip install -r requirements/ingest/biomed.txt
-
-.PHONY: install-ingest-gitlab
-install-ingest-gitlab:
-	${PYTHON} -m pip install -r requirements/ingest/gitlab.txt
-
-.PHONY: install-ingest-onedrive
-install-ingest-onedrive:
-	${PYTHON} -m pip install -r requirements/ingest/onedrive.txt
-
-.PHONY: install-ingest-outlook
-install-ingest-outlook:
-	${PYTHON} -m pip install -r requirements/ingest/outlook.txt
-
-.PHONY: install-ingest-reddit
-install-ingest-reddit:
-	${PYTHON} -m pip install -r requirements/ingest/reddit.txt
-
-.PHONY: install-ingest-slack
-install-ingest-slack:
-	${PYTHON} -m pip install -r requirements/ingest/slack.txt
-
-.PHONY: install-ingest-kafka
-install-ingest-kafka:
-	${PYTHON} -m pip install -r requirements/ingest/kafka.txt
-
-.PHONY: install-ingest-wikipedia
-install-ingest-wikipedia:
-	${PYTHON} -m pip install -r requirements/ingest/wikipedia.txt
-
-.PHONY: install-ingest-elasticsearch
-install-ingest-elasticsearch:
-	${PYTHON} -m pip install -r requirements/ingest/elasticsearch.txt
-
-.PHONY: install-ingest-opensearch
-install-ingest-opensearch:
-	${PYTHON} -m pip install -r requirements/ingest/opensearch.txt
-
-.PHONY: install-ingest-confluence
-install-ingest-confluence:
-	${PYTHON} -m pip install -r requirements/ingest/confluence.txt
-
-.PHONY: install-ingest-airtable
-install-ingest-airtable:
-	${PYTHON} -m pip install -r requirements/ingest/airtable.txt
-
-.PHONY: install-ingest-sharepoint
-install-ingest-sharepoint:
-	${PYTHON} -m pip install -r requirements/ingest/sharepoint.txt
-
-.PHONY: install-ingest-singlestore
-install-ingest-singlestore:
-	${PYTHON} -m pip install -r requirements/ingest/singlestore.txt
-
-.PHONY: install-ingest-weaviate
-install-ingest-weaviate:
-	${PYTHON} -m pip install -r requirements/ingest/weaviate.txt
-
-.PHONY: install-ingest-local
-install-ingest-local:
-	echo "no unique dependencies for local connector"
-
-.PHONY: install-ingest-notion
-install-ingest-notion:
-	${PYTHON} -m pip install -r requirements/ingest/notion.txt
-
-.PHONY: install-ingest-salesforce
-install-ingest-salesforce:
-	${PYTHON} -m pip install -r requirements/ingest/salesforce.txt
-
-.PHONY: install-ingest-jira
-install-ingest-jira:
-	${PYTHON} -m pip install -r requirements/ingest/jira.txt
-
-.PHONY: install-ingest-hubspot
-install-ingest-hubspot:
-	${PYTHON} -m pip install -r requirements/ingest/hubspot.txt
-
-.PHONY: install-ingest-sftp
-install-ingest-sftp:
-	${PYTHON} -m pip install -r requirements/ingest/sftp.txt
-
-.PHONY: install-ingest-pinecone
-install-ingest-pinecone:
-	${PYTHON} -m pip install -r requirements/ingest/pinecone.txt
-
-.PHONY: install-ingest-qdrant
-install-ingest-qdrant:
-	${PYTHON} -m pip install -r requirements/ingest/qdrant.txt
-
-.PHONY: install-ingest-chroma
-install-ingest-chroma:
-	${PYTHON} -m pip install -r requirements/ingest/chroma.txt
-
-.PHONY: install-ingest-postgres
-install-ingest-postgres:
-	${PYTHON} -m pip install -r requirements/ingest/postgres.txt
-
-.PHONY: install-ingest-mongodb
-install-ingest-mongodb:
-	${PYTHON} -m pip install -r requirements/ingest/mongodb.txt
-
-.PHONY: install-ingest-databricks-volumes
-install-ingest-databricks-volumes:
-	${PYTHON} -m pip install -r requirements/ingest/databricks-volumes.txt
-
-.PHONY: install-ingest-astradb
-install-ingest-astradb:
-	${PYTHON} -m pip install -r requirements/ingest/astradb.txt
-
-.PHONY: install-ingest-clarifai
-install-ingest-clarifai:
-	${PYTHON} -m pip install -r requirements/ingest/clarifai.txt
-
-.PHONY: install-embed-huggingface
-install-embed-huggingface:
-	${PYTHON} -m pip install -r requirements/ingest/embed-huggingface.txt
-
-.PHONY: install-unstructured-inference
-install-unstructured-inference:
-	${PYTHON} -m pip install -r requirements/ingest/local-inference.txt
+.PHONY: install-ingest
+install-ingest:
+	python3 -m pip install -r requirements/ingest/ingest.txt
 
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
@@ -367,7 +205,7 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version check-flake8-print
+check: check-ruff check-black check-flake8 check-version
 
 .PHONY: check-shfmt
 check-shfmt:
@@ -384,12 +222,6 @@ check-flake8:
 .PHONY: check-licenses
 check-licenses:
 	@scripts/check-licenses.sh
-
-# Check for print statements in ingest since anything going to console should be using the ingest logger
-# as it has a built in filter to redact sensitive information
-.PHONY: check-flake8-print
-check-flake8-print:
-	flake8 --per-file-ignores "" ./unstructured/ingest
 
 .PHONY: check-ruff
 check-ruff:

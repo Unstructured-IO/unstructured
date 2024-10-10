@@ -10,13 +10,15 @@
       ],
       "filetype": "text/html",
       "data_source": {
-        "url": "dropbox:///test-input/nested-1/ideas-page.html",
-        "version": "67356979305728150851855820427694668063",
+        "url": "dropbox://test-input/nested-1/ideas-page.html",
+        "version": "7a31fe250cc57a9733f8d50e61b9b265c53f5dd12faedf4829e559e2c3a8845e",
         "record_locator": {
           "protocol": "dropbox",
           "remote_file_path": "dropbox://test-input/",
           "file_id": "id:De4ZYtDd-JoAAAAAAAAACw"
-        }
+        },
+        "date_created": "1687394194.0",
+        "date_modified": "1697632566.0"
       }
     }
   }

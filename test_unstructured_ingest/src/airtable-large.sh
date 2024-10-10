@@ -38,7 +38,7 @@ fi
 # shellcheck disable=SC1091
 source ./scripts/airtable-test-helpers/component_ids.sh
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   airtable \
   --download-dir "$DOWNLOAD_DIR" \

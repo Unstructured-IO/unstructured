@@ -35,7 +35,7 @@ if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
   exit 8
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   airtable \
   --download-dir "$DOWNLOAD_DIR" \
@@ -47,7 +47,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --work-dir "$WORK_DIR" \
-  --max-retry-time 10 \
   --verbose
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

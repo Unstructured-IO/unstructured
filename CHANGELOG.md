@@ -1,3 +1,8 @@
+## 0.16.0
+
+### Enhancements
+* **Remove ingest implementation**
+
 ## 0.15.14
 
 ### Enhancements

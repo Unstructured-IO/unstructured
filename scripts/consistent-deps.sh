@@ -16,7 +16,7 @@ function join_by {
 }
 
 # NOTE(alan): Add any dependency files here we don't want to include in the resolution.
-excludefiles=("requirements//build.txt")
+excludefiles=("requirements/ingest/ingest.txt")
 
 # Build an array of requirements files.
 shopt -s nullglob
@@ -39,6 +39,8 @@ reqstring=$(join_by ' -r ' "${reqfiles[@]}")
 reqstring="-r ${reqstring}"
 # This pip command will attempt to resolve the dependencies without installing anything.
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
+echo "dry run install of the following req files:"
+echo "${pipcommand}"
 if $pipcommand >>/dev/null; then
   echo "Everything looks fine!"
 else

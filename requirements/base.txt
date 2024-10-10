@@ -4,7 +4,7 @@
 #
 #    pip-compile ./base.in
 #
-anyio==4.5.0
+anyio==4.6.0
     # via httpx
 backoff==2.2.1
     # via -r ./base.in
@@ -36,7 +36,7 @@ dataclasses-json==0.6.7
     #   unstructured-client
 deepdiff==8.0.1
     # via unstructured-client
-emoji==2.13.0
+emoji==2.14.0
     # via -r ./base.in
 exceptiongroup==1.2.2
     # via anyio
@@ -44,7 +44,7 @@ filetype==1.2.0
     # via -r ./base.in
 h11==0.14.0
     # via httpcore
-httpcore==1.0.5
+httpcore==1.0.6
     # via httpx
 httpx==0.27.2
     # via unstructured-client
@@ -88,7 +88,7 @@ psutil==6.0.0
     # via -r ./base.in
 pycparser==2.22
     # via cffi
-pypdf==5.0.0
+pypdf==5.0.1
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
@@ -98,7 +98,7 @@ python-magic==0.4.27
     # via -r ./base.in
 python-oxmsg==0.0.1
     # via -r ./base.in
-rapidfuzz==3.9.7
+rapidfuzz==3.10.0
     # via -r ./base.in
 regex==2024.9.11
     # via nltk
@@ -130,7 +130,6 @@ typing-extensions==4.12.2
     # via
     #   -r ./base.in
     #   anyio
-    #   emoji
     #   pypdf
     #   python-oxmsg
     #   typing-inspect
@@ -140,7 +139,9 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.25.9
-    # via -r ./base.in
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in
 urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt

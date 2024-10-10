@@ -31,7 +31,7 @@ if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
 fi
 
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   sharepoint \
   --download-dir "$DOWNLOAD_DIR" \
