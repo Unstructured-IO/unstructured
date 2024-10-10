@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from unstructured_inference.constants import Source
-from unstructured_inference.inference.elements import TextRegion
+from unstructured_inference.inference.elements import TextRegion, TextRegions
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
@@ -68,7 +68,7 @@ def build_layout_elements_from_ocr_regions(
 
             grouped_regions.append(regions)
     else:
-        grouped_regions = partition_groups_from_regions(ocr_regions)
+        grouped_regions = partition_groups_from_regions(TextRegions.from_list(ocr_regions))
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
@@ -79,12 +79,12 @@ def build_layout_elements_from_ocr_regions(
     ]
 
 
-def merge_text_regions(regions: list[TextRegion]) -> TextRegion:
+def merge_text_regions(regions: TextRegions) -> TextRegion:
     """
     Merge a list of TextRegion objects into a single TextRegion.
 
     Parameters:
-    - group (list[TextRegion]): A list of TextRegion objects to be merged.
+    - group (TextRegions): A group of TextRegion objects to be merged.
 
     Returns:
     - TextRegion: A single merged TextRegion object.
@@ -93,13 +93,12 @@ def merge_text_regions(regions: list[TextRegion]) -> TextRegion:
     if not regions:
         raise ValueError("The text regions to be merged must be provided.")
 
-    min_x1 = min([tr.bbox.x1 for tr in regions])
-    min_y1 = min([tr.bbox.y1 for tr in regions])
-    max_x2 = max([tr.bbox.x2 for tr in regions])
-    max_y2 = max([tr.bbox.y2 for tr in regions])
+    min_x1 = regions.x1.min()
+    min_y1 = regions.y1.min()
+    max_x2 = regions.x2.max()
+    max_y2 = regions.y2.max()
 
-    merged_text = " ".join([tr.text for tr in regions if tr.text])
-    sources = [tr.source for tr in regions]
-    source = sources[0] if all(s == sources[0] for s in sources) else None
+    merged_text = " ".join(regions.texts)
+    source = regions.source
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
