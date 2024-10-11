@@ -73,7 +73,7 @@ langchain-core==0.3.10
     # via langchain-huggingface
 langchain-huggingface==0.1.0
     # via -r ./ingest/embed-huggingface.in
-langsmith==0.1.133
+langsmith==0.1.134
     # via langchain-core
 markupsafe==3.0.1
     # via jinja2
@@ -134,7 +134,7 @@ scipy==1.13.1
     # via
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==3.1.1
+sentence-transformers==3.2.0
     # via langchain-huggingface
 sniffio==1.3.1
     # via

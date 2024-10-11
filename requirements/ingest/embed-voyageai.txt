@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.9
+aiohttp==3.10.10
     # via
     #   langchain
     #   voyageai
@@ -80,7 +80,7 @@ langchain-text-splitters==0.3.0
     # via langchain
 langchain-voyageai==0.1.2
     # via -r ./ingest/embed-voyageai.in
-langsmith==0.1.133
+langsmith==0.1.134
     # via
     #   langchain
     #   langchain-core

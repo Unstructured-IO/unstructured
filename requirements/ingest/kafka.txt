@@ -4,5 +4,5 @@
 #
 #    pip-compile ./ingest/kafka.in
 #
-confluent-kafka==2.5.3
+confluent-kafka==2.6.0
     # via -r ./ingest/kafka.in

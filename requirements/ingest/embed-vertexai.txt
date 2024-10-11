@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.9
+aiohttp==3.10.10
     # via
     #   langchain
     #   langchain-community
@@ -143,11 +143,11 @@ langchain-core==0.3.10
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==2.0.4
+langchain-google-vertexai==2.0.5
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.3.0
     # via langchain
-langsmith==0.1.133
+langsmith==0.1.134
     # via
     #   langchain
     #   langchain-community

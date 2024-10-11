@@ -58,7 +58,7 @@ langchain-core==0.3.10
     # via langchain-openai
 langchain-openai==0.2.2
     # via -r ./ingest/embed-openai.in
-langsmith==0.1.133
+langsmith==0.1.134
     # via langchain-core
 openai==1.51.2
     # via langchain-openai
