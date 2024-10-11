@@ -1,7 +1,11 @@
 ## 0.16.0
 
 ### Enhancements
-* **Remove ingest implementation**
+
+* **Remove ingest implementation.** The deprecated ingest functionality has been removed, as it is now maintained in the separate [unstructured-ingest](https://github.com/Unstructured-IO/unstructured-ingest) repository.
+  * Replace extras in `requirements/ingest` directory with a new `ingest.txt` extra for installing the `unstructured-ingest` library.
+  * Remove the `unstructured.ingest` submodule.
+  * Delete all shell scripts previously used for destination ingest tests.
 
 ## 0.15.14
 
