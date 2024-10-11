@@ -1,8 +1,18 @@
-## 0.15.14-dev14
+## 0.15.15-dev0
 
 ### Enhancements
 
-* **Bump `unstructured-inference` to 0.7.38** and upgrade other dependencies
+* **Bump `unstructured-inference` to 0.7.39** and upgrade other dependencies
+
+### Features
+
+* **Add (but do not install) a new post-partitioning decorator to handle metadata added for all file-types, like `.filename`, `.filetype` and `.languages`.** This will be installed in a closely following PR to replace the four currently being used for this purpose.
+
+### Fixes
+
+## 0.15.14
+
+### Enhancements
 
 ### Features
 
@@ -20,6 +30,7 @@
 * **Remove obsolete min_partition/max_partition args from TXT and EML.** The legacy `min_partition` and `max_partition` parameters were an initial rough implementation of chunking but now interfere with chunking and are unused. Remove those parameters from `partition_text()` and `partition_email()`.
 * **Remove double-decoration on EML and MSG.** Refactor these partitioners to rely on the new `@apply_metadata()` decorator operating on partitioners they delegate to (TXT, HTML, and all others for attachments) and remove direct decoration from EML and MSG.
 * **Remove double-decoration for PPT.** Remove decorators from the delegating PPT partitioner.
+* **Quick-fix CI error in auto test-filetype.** Better fix to follow shortly.
 
 ## 0.15.13
 
