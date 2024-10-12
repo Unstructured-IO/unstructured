@@ -68,9 +68,10 @@ def build_layout_elements_from_ocr_regions(
 
             grouped_regions.append(regions)
     else:
-        grouped_regions = partition_groups_from_regions(ocr_regions)
+        text_regions = TextRegions.from_list(ocr_regions)
+        grouped_regions = partition_groups_from_regions(text_regions)
 
-    merged_regions = [merge_text_regions(group) for group in grouped_regions]
+    merged_regions = [merge_text_regions(group.as_list()) for group in grouped_regions]
     return [
         build_layout_element(
             bbox=r.bbox, text=r.text, source=r.source, element_type=ElementType.UNCATEGORIZED_TEXT
