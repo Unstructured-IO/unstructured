@@ -1,4 +1,14 @@
-## 0.15.14-dev14
+## 0.15.15-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Add language parameter to `OCRAgentGoogleVision`.**  Introduces an optional language parameter in the `OCRAgentGoogleVision` constructor to serve as a language hint for `document_text_detection`. This ensures compatibility with the OCRAgent's `get_instance` method and resolves errors when parsing PDFs with Google Cloud Vision as the OCR agent.
+
+## 0.15.14
 
 ### Enhancements
 
@@ -18,7 +28,7 @@
 * **Remove obsolete min_partition/max_partition args from TXT and EML.** The legacy `min_partition` and `max_partition` parameters were an initial rough implementation of chunking but now interfere with chunking and are unused. Remove those parameters from `partition_text()` and `partition_email()`.
 * **Remove double-decoration on EML and MSG.** Refactor these partitioners to rely on the new `@apply_metadata()` decorator operating on partitioners they delegate to (TXT, HTML, and all others for attachments) and remove direct decoration from EML and MSG.
 * **Remove double-decoration for PPT.** Remove decorators from the delegating PPT partitioner.
-* **Add language parameter to `OCRAgentGoogleVision`.**  Introduces an optional language parameter in the `OCRAgentGoogleVision` constructor to serve as a language hint for `document_text_detection`. This ensures compatibility with the OCRAgent's `get_instance` method and resolves errors when parsing PDFs with Google Cloud Vision as the OCR agent.
+* **Quick-fix CI error in auto test-filetype.** Better fix to follow shortly.
 
 ## 0.15.13
 
