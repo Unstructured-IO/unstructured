@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 def process_data_with_ocr(
     data: bytes | IO[bytes],
-    out_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
@@ -37,16 +36,14 @@ def process_data_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-) -> "DocumentLayout":
+) -> List[List["TextRegion"]]:
     """
-    Process OCR data from a given data and supplement the output DocumentLayout
-    from unstructured_inference with ocr.
+    Process OCR data from a given data and supplement the output extracted layout
+    from pdfminer with ocr.
 
     Parameters:
     - data (Union[bytes, BinaryIO]): The input file data,
         which can be either bytes or a BinaryIO object.
-
-    - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -65,7 +62,7 @@ def process_data_with_ocr(
     - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
 
     Returns:
-        DocumentLayout: The merged layout information obtained after OCR processing.
+        List[list["TextRegion"]]: The merged extracted layout information obtained after OCR processing.
     """
     data_bytes = data if isinstance(data, bytes) else data.read()
 
@@ -76,7 +73,6 @@ def process_data_with_ocr(
 
         merged_layouts = process_file_with_ocr(
             filename=tmp_file_path,
-            out_layout=out_layout,
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
@@ -92,7 +88,6 @@ def process_data_with_ocr(
 @requires_dependencies("unstructured_inference")
 def process_file_with_ocr(
     filename: str,
-    out_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
@@ -100,15 +95,13 @@ def process_file_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-) -> "DocumentLayout":
+) -> List[List["TextRegion"]]:
     """
-    Process OCR data from a given file and supplement the output DocumentLayout
-    from unstructured-inference with ocr.
+    Process OCR data from a given file and supplement the output extracted layout
+    from pdfminer with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
-
-    - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -125,7 +118,7 @@ def process_file_with_ocr(
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
 
     Returns:
-        DocumentLayout: The merged layout information obtained after OCR processing.
+        List[List["TextRegion"]]: The merged extracted layout information obtained after OCR processing.
     """
 
     from unstructured_inference.inference.layout import DocumentLayout
@@ -140,7 +133,6 @@ def process_file_with_ocr(
                     image.format = image_format
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        page_layout=out_layout.pages[i],
                         image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
@@ -149,7 +141,7 @@ def process_file_with_ocr(
                         ocr_layout_dumper=ocr_layout_dumper,
                     )
                     merged_page_layouts.append(merged_page_layout)
-                return DocumentLayout.from_pages(merged_page_layouts)
+                return merged_page_layouts
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
                 _image_paths = pdf2image.convert_from_path(
@@ -163,7 +155,6 @@ def process_file_with_ocr(
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout=out_layout.pages[i],
                             image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
@@ -172,7 +163,7 @@ def process_file_with_ocr(
                             ocr_layout_dumper=ocr_layout_dumper,
                         )
                         merged_page_layouts.append(merged_page_layout)
-                return DocumentLayout.from_pages(merged_page_layouts)
+                return merged_page_layouts
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):
             raise e

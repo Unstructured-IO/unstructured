@@ -617,16 +617,10 @@ def _partition_pdf_or_image_local(
                         layout=extracted_layout,
                     )
                     ocr_layout_dumper = OCRLayoutDumper()
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = merge_inferred_with_extracted_layout(
-                inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
-                hi_res_model_name=hi_res_model_name,
-            )
 
-            final_document_layout = process_file_with_ocr(
+            #NOTE(christine): merged_layout = extracted_layout + ocr_layout
+            merged_layout = process_file_with_ocr(
                 filename,
-                merged_document_layout,
                 extracted_layout=extracted_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
@@ -634,6 +628,13 @@ def _partition_pdf_or_image_local(
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_layout_dumper=ocr_layout_dumper,
+            )
+
+            # NOTE(christine): final_document_layout = merged_layout + inferred_layout
+            final_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
             )
     else:
         inferred_document_layout = process_data_with_model(
@@ -675,18 +676,13 @@ def _partition_pdf_or_image_local(
                     )
                     ocr_layout_dumper = OCRLayoutDumper()
 
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = merge_inferred_with_extracted_layout(
-                inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
-                hi_res_model_name=hi_res_model_name,
-            )
 
             if hasattr(file, "seek"):
                 file.seek(0)
-            final_document_layout = process_data_with_ocr(
+
+            # Note(christine): merged_layout = extracted_layout + ocr_layout
+            merged_layout = process_data_with_ocr(
                 file,
-                merged_document_layout,
                 extracted_layout=extracted_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
@@ -694,6 +690,13 @@ def _partition_pdf_or_image_local(
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_layout_dumper=ocr_layout_dumper,
+            )
+
+            # NOTE(christine): final_document_layout = merged_layout + inferred_layout
+            final_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
