@@ -132,7 +132,7 @@ def process_file_with_ocr(
                     image = image.convert("RGB")
                     image.format = image_format
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    merged_page_layout = supplement_page_layout_with_ocr(
+                    merged_page_layout = supplement_extracted_layout_with_ocr(
                         image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
@@ -154,7 +154,7 @@ def process_file_with_ocr(
                 for i, image_path in enumerate(image_paths):
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
-                        merged_page_layout = supplement_page_layout_with_ocr(
+                        merged_page_layout = supplement_extracted_layout_with_ocr(
                             image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
@@ -172,20 +172,19 @@ def process_file_with_ocr(
 
 
 @requires_dependencies("unstructured_inference")
-def supplement_page_layout_with_ocr(
-    page_layout: "PageLayout",
+def supplement_extracted_layout_with_ocr(
     image: PILImage.Image,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-) -> "PageLayout":
+) -> List["TextRegion"]:
     """
-    Supplement an PageLayout with OCR results depending on OCR mode.
+    Supplement an extracted_regions with OCR results depending on OCR mode.
     If mode is "entire_page", we get the OCR layout for the entire image and
-    merge it with PageLayout.
-    If mode is "individual_blocks", we find the elements from PageLayout
+    merge it with extracted_regions.
+    If mode is "individual_blocks", we find the elements from extracted_regions
     with no text and add text from OCR to each element.
     """
 
@@ -194,12 +193,12 @@ def supplement_page_layout_with_ocr(
         ocr_layout = ocr_agent.get_layout_from_image(image)
         if ocr_layout_dumper:
             ocr_layout_dumper.add_ocred_page(ocr_layout)
-        page_layout.elements[:] = merge_out_layout_with_ocr_layout(
-            out_layout=cast(List["LayoutElement"], page_layout.elements),
+        extracted_regions = merge_out_regions_with_ocr_layout(
+            out_regions=extracted_regions,
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
-        for element in page_layout.elements:
+        for element in extracted_regions:
             if not element.text:
                 padding = env_config.IMAGE_CROP_PAD
                 padded_element = pad_element_bboxes(element, padding=padding)
@@ -221,23 +220,23 @@ def supplement_page_layout_with_ocr(
             "must be set to `entire_page` or `individual_blocks`.",
         )
 
-    # Note(yuming): use the OCR data from entire page OCR for table extraction
-    if infer_table_structure:
-        from unstructured_inference.models import tables
+    # # Note(yuming): use the OCR data from entire page OCR for table extraction
+    # if infer_table_structure:
+    #     from unstructured_inference.models import tables
+    #
+    #     tables.load_agent()
+    #     if tables.tables_agent is None:
+    #         raise RuntimeError("Unable to load table extraction agent.")
+    #
+    #     page_layout.elements[:] = supplement_element_with_table_extraction(
+    #         elements=cast(List["LayoutElement"], page_layout.elements),
+    #         image=image,
+    #         tables_agent=tables.tables_agent,
+    #         ocr_agent=ocr_agent,
+    #         extracted_regions=extracted_regions,
+    #     )
 
-        tables.load_agent()
-        if tables.tables_agent is None:
-            raise RuntimeError("Unable to load table extraction agent.")
-
-        page_layout.elements[:] = supplement_element_with_table_extraction(
-            elements=cast(List["LayoutElement"], page_layout.elements),
-            image=image,
-            tables_agent=tables.tables_agent,
-            ocr_agent=ocr_agent,
-            extracted_regions=extracted_regions,
-        )
-
-    return page_layout
+    return extracted_regions
 
 
 @requires_dependencies("unstructured_inference")
@@ -326,21 +325,21 @@ def get_table_tokens(
     return table_tokens
 
 
-def merge_out_layout_with_ocr_layout(
-    out_layout: List["LayoutElement"],
+def merge_out_regions_with_ocr_layout(
+    out_regions: List["TextRegion"],
     ocr_layout: List["TextRegion"],
     supplement_with_ocr_elements: bool = True,
-) -> List["LayoutElement"]:
+) -> List["TextRegion"]:
     """
-    Merge the out layout with the OCR-detected text regions on page level.
+    Merge the out regions with the OCR-detected text regions on page level.
 
-    This function iterates over each out layout element and aggregates the associated text from
-    the OCR layout using the specified threshold. The out layout's text attribute is then updated
-    with this aggregated text. If `supplement_with_ocr_elements` is `True`, the out layout will be
+    This function iterates over each out regions element and aggregates the associated text from
+    the OCR layout using the specified threshold. The out regions's text attribute is then updated
+    with this aggregated text. If `supplement_with_ocr_elements` is `True`, the out regions will be
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in out_layout if not valid_text(region.text)]
+    out_regions_without_text = [region for region in out_regions if not valid_text(region.text)]
 
     for out_region in out_regions_without_text:
         out_region.text = aggregate_ocr_text_by_block(
@@ -349,9 +348,9 @@ def merge_out_layout_with_ocr_layout(
         )
 
     final_layout = (
-        supplement_layout_with_ocr_elements(out_layout, ocr_layout)
+        supplement_regions_with_ocr_elements(out_regions, ocr_layout)
         if supplement_with_ocr_elements
-        else out_layout
+        else out_regions
     )
 
     return final_layout
@@ -379,34 +378,32 @@ def aggregate_ocr_text_by_block(
 
 
 @requires_dependencies("unstructured_inference")
-def supplement_layout_with_ocr_elements(
-    layout: List["LayoutElement"],
+def supplement_regions_with_ocr_elements(
+    out_regions: List["LayoutElement"],
     ocr_layout: List["TextRegion"],
     subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> List["LayoutElement"]:
     """
-    Supplement the existing layout with additional OCR-derived elements.
+    Supplement the existing regions with additional OCR-derived elements.
 
-    This function takes two lists: one list of pre-existing layout elements (`layout`)
+    This function takes two lists: one list of extracted text regions (`pdfminer`)
     and another list of OCR-detected text regions (`ocr_layout`). It identifies OCR regions
     that are subregions of the elements in the existing layout and removes them from the
-    OCR-derived list. Then, it appends the remaining OCR-derived regions to the existing layout.
+    OCR-derived list. Then, it appends the remaining OCR-derived regions to the existing regions.
 
     Parameters:
-    - layout (List[LayoutElement]): A list of existing layout elements, each of which is
-                                    an instance of `LayoutElement`.
+    - layout (List[TextRegion]): A list of existing extracted text regions, each of which is
+                                    an instance of `TextRegion`.
     - ocr_layout (List[TextRegion]): A list of OCR-derived text regions, each of which is
                                      an instance of `TextRegion`.
 
     Returns:
-    - List[LayoutElement]: The final combined layout consisting of both the original layout
+    - List[TextRegion]: The final combined regions consisting of both the original regions
                            elements and the new OCR-derived elements.
 
     Note:
     - The function relies on `is_almost_subregion_of()` method to determine if an OCR region
       is a subregion of an existing layout element.
-    - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to
-     layout elements.
     - The env_config `OCR_LAYOUT_SUBREGION_THRESHOLD` is used to specify the subregion matching
      threshold.
     """
@@ -417,9 +414,9 @@ def supplement_layout_with_ocr_elements(
 
     ocr_regions_to_remove: list[TextRegion] = []
     for ocr_region in ocr_layout:
-        for el in layout:
+        for region in out_regions:
             ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(
-                el.bbox,
+                region.bbox,
                 subregion_threshold,
             )
             if ocr_region_is_subregion_of_out_el:
@@ -429,8 +426,8 @@ def supplement_layout_with_ocr_elements(
     ocr_regions_to_add = [region for region in ocr_layout if region not in ocr_regions_to_remove]
     if ocr_regions_to_add:
         ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
-        final_layout = layout + ocr_elements_to_add
+        final_layout = out_regions + ocr_elements_to_add
     else:
-        final_layout = layout
+        final_layout = out_regions
 
     return final_layout
