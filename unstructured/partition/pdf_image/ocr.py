@@ -31,7 +31,6 @@ def process_data_with_ocr(
     data: bytes | IO[bytes],
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
-    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
@@ -47,8 +46,6 @@ def process_data_with_ocr(
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
-
-    - infer_table_structure (bool, optional):  If true, extract the table content.
 
     - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
 
@@ -75,7 +72,6 @@ def process_data_with_ocr(
             filename=tmp_file_path,
             extracted_layout=extracted_layout,
             is_image=is_image,
-            infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
@@ -90,7 +86,6 @@ def process_file_with_ocr(
     filename: str,
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
-    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
@@ -106,8 +101,6 @@ def process_file_with_ocr(
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
 
-    - infer_table_structure (bool, optional):  If true, extract the table content.
-
     - ocr_languages (str, optional): The languages for OCR processing. Defaults to "eng" (English).
 
     - ocr_mode (str, optional): The OCR processing mode, e.g., "entire_page" or "individual_blocks".
@@ -121,9 +114,7 @@ def process_file_with_ocr(
         List[List["TextRegion"]]: The merged extracted layout information obtained after OCR processing.
     """
 
-    from unstructured_inference.inference.layout import DocumentLayout
-
-    merged_page_layouts: list[PageLayout] = []
+    merged_page_layouts: list = []
     try:
         if is_image:
             with PILImage.open(filename) as images:
@@ -134,7 +125,6 @@ def process_file_with_ocr(
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     merged_page_layout = supplement_extracted_layout_with_ocr(
                         image=image,
-                        infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                         extracted_regions=extracted_regions,
@@ -156,7 +146,6 @@ def process_file_with_ocr(
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_extracted_layout_with_ocr(
                             image=image,
-                            infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
@@ -174,7 +163,6 @@ def process_file_with_ocr(
 @requires_dependencies("unstructured_inference")
 def supplement_extracted_layout_with_ocr(
     image: PILImage.Image,
-    infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
@@ -220,22 +208,6 @@ def supplement_extracted_layout_with_ocr(
             "must be set to `entire_page` or `individual_blocks`.",
         )
 
-    # # Note(yuming): use the OCR data from entire page OCR for table extraction
-    # if infer_table_structure:
-    #     from unstructured_inference.models import tables
-    #
-    #     tables.load_agent()
-    #     if tables.tables_agent is None:
-    #         raise RuntimeError("Unable to load table extraction agent.")
-    #
-    #     page_layout.elements[:] = supplement_element_with_table_extraction(
-    #         elements=cast(List["LayoutElement"], page_layout.elements),
-    #         image=image,
-    #         tables_agent=tables.tables_agent,
-    #         ocr_agent=ocr_agent,
-    #         extracted_regions=extracted_regions,
-    #     )
-
     return extracted_regions
 
 
@@ -245,7 +217,6 @@ def supplement_element_with_table_extraction(
     image: PILImage.Image,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_agent,
-    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata fields "text_as_html" where
@@ -269,7 +240,6 @@ def supplement_element_with_table_extraction(
         table_tokens = get_table_tokens(
             table_element_image=cropped_image,
             ocr_agent=ocr_agent,
-            extracted_regions=extracted_regions,
             table_element=padded_element,
         )
         tatr_cells = tables_agent.predict(
@@ -292,7 +262,6 @@ def supplement_element_with_table_extraction(
 def get_table_tokens(
     table_element_image: PILImage.Image,
     ocr_agent: OCRAgent,
-    extracted_regions: Optional[List["TextRegion"]] = None,
     table_element: Optional["LayoutElement"] = None,
 ) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""

@@ -5,19 +5,22 @@ import copy
 import io
 import os
 import re
+import tempfile
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, cast
+from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import numpy as np
+import pdf2image
 import wrapt
 from pdfminer import psparser
 from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
-from PIL import Image as PILImage
+from PIL import Image as PILImage, ImageSequence
 from pypdf import PdfReader
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -623,7 +626,6 @@ def _partition_pdf_or_image_local(
                 filename,
                 extracted_layout=extracted_layout,
                 is_image=is_image,
-                infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
@@ -633,9 +635,18 @@ def _partition_pdf_or_image_local(
             # NOTE(christine): final_document_layout = merged_layout + inferred_layout
             final_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
+                extracted_layout=merged_layout,
                 hi_res_model_name=hi_res_model_name,
             )
+
+            if infer_table_structure:
+                final_document_layout = process_file_with_table_extraction(
+                    filename=filename,
+                    out_layout=final_document_layout,
+                    is_image=is_image,
+                    ocr_languages=ocr_languages,
+                    pdf_image_dpi=pdf_image_dpi,
+                )
     else:
         inferred_document_layout = process_data_with_model(
             file,
@@ -685,7 +696,6 @@ def _partition_pdf_or_image_local(
                 file,
                 extracted_layout=extracted_layout,
                 is_image=is_image,
-                infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
@@ -695,9 +705,18 @@ def _partition_pdf_or_image_local(
             # NOTE(christine): final_document_layout = merged_layout + inferred_layout
             final_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
+                extracted_layout=merged_layout,
                 hi_res_model_name=hi_res_model_name,
             )
+
+            if infer_table_structure:
+                final_document_layout = process_data_with_table_extraction(
+                    file,
+                    out_layout=final_document_layout,
+                    is_image=is_image,
+                    ocr_languages=ocr_languages,
+                    pdf_image_dpi=pdf_image_dpi,
+                )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
@@ -1422,3 +1441,92 @@ def try_argmin(array: np.ndarray) -> int:
         return int(np.argmin(array))
     except IndexError:
         return -1
+
+def process_data_with_table_extraction(
+    data: bytes | IO[bytes],
+    out_layout: "DocumentLayout",
+    is_image: bool=False,
+    ocr_languages: str = "eng",
+    pdf_image_dpi: int = 200,
+) -> "DocumentLayout":
+    data_bytes = data if isinstance(data, bytes) else data.read()
+
+    with tempfile.TemporaryDirectory() as tmp_dir_path:
+        tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
+        with open(tmp_file_path, "wb") as tmp_file:
+            tmp_file.write(data_bytes)
+        final_layouts = process_file_with_table_extraction(
+            filename=tmp_file_path,
+            out_layout=out_layout,
+            is_image=is_image,
+            ocr_languages=ocr_languages,
+            pdf_image_dpi=pdf_image_dpi,
+        )
+    return final_layouts
+def process_file_with_table_extraction(
+    filename: str,
+    out_layout: "DocumentLayout",
+    is_image: bool=False,
+    ocr_languages: str = "eng",
+    pdf_image_dpi: int = 200,
+) -> "DocumentLayout":
+    merged_page_layouts: list[PageLayout] = []
+    try:
+        if is_image:
+            with PILImage.open(filename) as images:
+                image_format = images.format
+                for i, image in enumerate(ImageSequence.Iterator(images)):
+                    image = image.convert("RGB")
+                    image.format = image_format
+                    merged_page_layout = _supplement_element_with_table_extraction(
+                        page_layout=out_layout.pages[i],
+                        image=image,
+                        ocr_languages=ocr_languages
+                    )
+                    merged_page_layouts.append(merged_page_layout)
+                return DocumentLayout.from_pages(merged_page_layouts)
+        else:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                _image_paths = pdf2image.convert_from_path(
+                    filename,
+                    dpi=pdf_image_dpi,
+                    output_folder=temp_dir,
+                    paths_only=True,
+                )
+                image_paths = cast(List[str], _image_paths)
+                for i, image_path in enumerate(image_paths):
+                    with PILImage.open(image_path) as image:
+                        merged_page_layout = _supplement_element_with_table_extraction(
+                            page_layout=out_layout.pages[i],
+                            image=image,
+                            ocr_languages=ocr_languages
+                        )
+                        merged_page_layouts.append(merged_page_layout)
+                return DocumentLayout.from_pages(merged_page_layouts)
+    except Exception as e:
+        if os.path.isdir(filename) or os.path.isfile(filename):
+            raise e
+        else:
+            raise FileNotFoundError(f'File "{filename}" not found!') from e
+
+def _supplement_element_with_table_extraction(
+    page_layout: "PageLayout",
+    image: PILImage.Image,
+    ocr_languages: str = "eng",
+) -> "PageLayout":
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+    ocr_agent = OCRAgent.get_agent(language=ocr_languages)
+    from unstructured_inference.models import tables
+
+    tables.load_agent()
+    if tables.tables_agent is None:
+        raise RuntimeError("Unable to load table extraction agent.")
+
+    from unstructured.partition.pdf_image.ocr import supplement_element_with_table_extraction
+    page_layout.elements[:] = supplement_element_with_table_extraction(
+        elements=cast(List["LayoutElement"], page_layout.elements),
+        image=image,
+        tables_agent=tables.tables_agent,
+        ocr_agent=ocr_agent,
+    )
+    return page_layout
