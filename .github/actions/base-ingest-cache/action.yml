@@ -39,7 +39,7 @@ runs:
           python -m pip install --upgrade setuptools
         fi
         make install-ci
-        make install-all-ingest
+        make install-ingest
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: ingest-virtualenv-cache-save

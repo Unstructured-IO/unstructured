@@ -57,7 +57,7 @@ python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
   --confluent false \
   --port 29092
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   kafka \
   --bootstrap-server localhost \

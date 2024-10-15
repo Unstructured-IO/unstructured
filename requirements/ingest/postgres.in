@@ -1,3 +1,0 @@
--c ../deps/constraints.txt
--c ../base.txt
-psycopg2-binary
