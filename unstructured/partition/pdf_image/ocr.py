@@ -37,6 +37,7 @@ def process_data_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
+    password: Optional[str] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -64,6 +65,8 @@ def process_data_with_ocr(
 
     - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
 
+    - password (optional): The password to decrypt the PDF file.
+
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
@@ -84,6 +87,7 @@ def process_data_with_ocr(
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
+            password=password,
         )
 
     return merged_layouts
@@ -100,6 +104,7 @@ def process_file_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
+    password: Optional[str] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -123,6 +128,8 @@ def process_file_with_ocr(
         OCR is performed on individual elements by cropping the image.
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
+
+    - password (optional): The password to decrypt the PDF file.
 
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
@@ -157,6 +164,7 @@ def process_file_with_ocr(
                     dpi=pdf_image_dpi,
                     output_folder=temp_dir,
                     paths_only=True,
+                    userpw=password,
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
