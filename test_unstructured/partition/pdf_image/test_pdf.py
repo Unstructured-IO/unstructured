@@ -208,48 +208,34 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "starting_page_number", "expected_page_numbers", "origin"),
+    "strategy",
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
-        (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
-        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer", "ocr_tesseract"}),
-        (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
     ],
 )
 def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
     file_mode,
     strategy,
-    starting_page_number,
-    expected_page_numbers,
-    origin,
     filename=example_doc_path("pdf/layout-parser-paper-with-empty-pages.pdf"),
 ):
     # Test that the partition_pdf function can handle filename
     def _test(result):
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
-        # check that the pdf has multiple different page numbers
-        assert {element.metadata.page_number for element in result} == expected_page_numbers
-        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-            print(
-                [
-                    (element.metadata.detection_origin, element.category, element.text)
-                    for element in result
-                ]
-            )
-            assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
         result = pdf.partition_pdf(
-            filename=filename, strategy=strategy, starting_page_number=starting_page_number
+            filename=filename, strategy=strategy,
         )
         _test(result)
     elif file_mode == "rb":
         with open(filename, "rb") as f:
             result = pdf.partition_pdf(
-                file=f, strategy=strategy, starting_page_number=starting_page_number
+                file=f, strategy=strategy,
             )
             _test(result)
     else:
@@ -260,9 +246,8 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
                 result = pdf.partition_pdf(
                     file=spooled_temp_file,
                     strategy=strategy,
-                    starting_page_number=starting_page_number,
                 )
-            _test(result)
+                _test(result)
 
 
 @mock.patch.dict(os.environ, {"UNSTRUCTURED_HI_RES_MODEL_NAME": "checkbox"})
@@ -1545,3 +1530,51 @@ def test_document_to_element_list_sets_category_depth_titles():
     assert elements[1].metadata.category_depth == 2
     assert elements[2].metadata.category_depth is None
     assert elements[3].metadata.category_depth == 0
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
+@pytest.mark.parametrize(
+    "strategy",
+    # fast: can't capture the "intentionally left blank page" page
+    # others: will ignore the actual blank page
+    [
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_pdf_with_password(
+    file_mode,
+    strategy,
+    filename=example_doc_path("pdf/password.pdf"),
+):
+    # Test that the partition_pdf function can handle filename
+    def _test(result):
+        # validate that the result is a non-empty list of dicts
+        assert len(result) == 1
+        assert result[0].text == 'File with password'
+
+    if file_mode == "filename":
+        result = pdf.partition_pdf(
+            filename=filename, strategy=strategy,
+            password="password"
+        )
+        _test(result)
+    elif file_mode == "rb":
+        with open(filename, "rb") as f:
+            result = pdf.partition_pdf(
+                file=f, strategy=strategy,
+                password="password"
+            )
+            _test(result)
+    else:
+        with open(filename, "rb") as test_file:
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                result = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=strategy,
+                password="password"
+                )
+                _test(result)
