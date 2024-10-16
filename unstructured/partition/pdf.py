@@ -133,6 +133,7 @@ def partition_pdf(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -213,6 +214,7 @@ def partition_pdf(
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
+        password=password,
         **kwargs,
     )
 
@@ -234,6 +236,7 @@ def partition_pdf_or_image(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -262,6 +265,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 **kwargs,
             )
             pdf_text_extractable = any(
@@ -311,6 +315,7 @@ def partition_pdf_or_image(
                 starting_page_number=starting_page_number,
                 extract_forms=extract_forms,
                 form_extraction_skip_tables=form_extraction_skip_tables,
+                password=password,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -336,6 +341,7 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -349,6 +355,7 @@ def extractable_elements(
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    password:Optional[str] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     if isinstance(file, bytes):
@@ -359,6 +366,7 @@ def extractable_elements(
         languages=languages,
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
+        password=password,
         **kwargs,
     )
 
@@ -369,6 +377,7 @@ def _partition_pdf_with_pdfminer(
     languages: list[str],
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
+    password:Optional[str] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -402,6 +411,7 @@ def _partition_pdf_with_pdfminer(
             languages=languages,
             metadata_last_modified=metadata_last_modified,
             starting_page_number=starting_page_number,
+            password=password,
             **kwargs,
         )
 
@@ -416,6 +426,7 @@ def _process_pdfminer_pages(
     metadata_last_modified: Optional[str],
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
+    password: Optional[str] = None,
     **kwargs,
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
@@ -423,7 +434,8 @@ def _process_pdfminer_pages(
     elements = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp), start=starting_page_number
+        open_pdfminer_pages_generator(fp, password=password),
+            start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
 
@@ -545,6 +557,7 @@ def _partition_pdf_or_image_local(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     pdf_hi_res_max_pages: Optional[int] = None,
+    password:Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -586,6 +599,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         if hi_res_model_name.startswith("chipper"):
@@ -594,7 +608,8 @@ def _partition_pdf_or_image_local(
             final_document_layout = inferred_document_layout
         else:
             extracted_layout = (
-                process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
+                process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi,
+                                           password=password)
                 if pdf_text_extractable
                 else []
             )
@@ -634,6 +649,7 @@ def _partition_pdf_or_image_local(
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_layout_dumper=ocr_layout_dumper,
+                password=password,
             )
     else:
         inferred_document_layout = process_data_with_model(
@@ -641,6 +657,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         if hi_res_model_name.startswith("chipper"):
@@ -652,7 +669,8 @@ def _partition_pdf_or_image_local(
                 file.seek(0)
 
             extracted_layout = (
-                process_data_with_pdfminer(file=file, dpi=pdf_image_dpi)
+                process_data_with_pdfminer(file=file, dpi=pdf_image_dpi,
+                                           password=password)
                 if pdf_text_extractable
                 else []
             )
@@ -694,6 +712,7 @@ def _partition_pdf_or_image_local(
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
                 ocr_layout_dumper=ocr_layout_dumper,
+                password=password,
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
@@ -734,6 +753,7 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
             extract_image_block_to_payload=extract_image_block_to_payload,
             output_dir_path=extract_image_block_output_dir,
+            password=password,
         )
 
     for el_type in extract_image_block_types:
@@ -807,6 +827,7 @@ def _partition_pdf_or_image_local(
             draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
             resize=env_config.ANALYSIS_BBOX_RESIZE,
             format=env_config.ANALYSIS_BBOX_FORMAT,
+            password=password,
         )
 
     return out_elements
@@ -845,6 +866,7 @@ def _partition_pdf_or_image_with_ocr(
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    password:Optional[str] = None,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
@@ -869,7 +891,8 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file), start=starting_page_number
+            convert_pdf_to_images(filename, file, password=password),
+                start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
