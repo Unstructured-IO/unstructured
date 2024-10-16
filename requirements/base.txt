@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.6.0
+anyio==4.6.2.post1
     # via httpx
 backoff==2.2.1
     # via -r ./base.in
@@ -129,7 +129,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.26.0
+unstructured-client==0.26.1
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in

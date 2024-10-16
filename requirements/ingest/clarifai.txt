@@ -20,7 +20,7 @@ contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.65.0
     # via clarifai-grpc
-grpcio==1.66.2
+grpcio==1.67.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
@@ -41,7 +41,7 @@ numpy==1.26.4
     #   tritonclient
 pfzy==0.3.4
     # via inquirerpy
-pillow==10.4.0
+pillow==11.0.0
     # via clarifai
 prompt-toolkit==3.0.48
     # via inquirerpy

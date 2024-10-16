@@ -8,7 +8,7 @@ annotated-types==0.7.0
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
-anyio==4.6.0
+anyio==4.6.2.post1
     # via
     #   -c ./ingest/../base.txt
     #   httpx
@@ -21,7 +21,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./ingest/../base.txt
     #   anyio
-grpcio==1.66.2
+grpcio==1.67.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools

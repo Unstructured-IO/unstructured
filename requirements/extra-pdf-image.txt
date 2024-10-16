@@ -60,7 +60,7 @@ googleapis-common-protos==1.65.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.66.2
+grpcio==1.67.0
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -155,7 +155,7 @@ pi-heif==0.18.0
     # via -r ./extra-pdf-image.in
 pikepdf==9.3.0
     # via -r ./extra-pdf-image.in
-pillow==10.4.0
+pillow==11.0.0
     # via
     #   layoutparser
     #   matplotlib
@@ -193,7 +193,7 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pyparsing==3.1.4
+pyparsing==3.2.0
     # via matplotlib
 pypdf==5.0.1
     # via
@@ -247,7 +247,7 @@ sympy==1.13.3
     # via
     #   onnxruntime
     #   torch
-timm==1.0.9
+timm==1.0.10
     # via
     #   effdet
     #   unstructured-inference
@@ -282,7 +282,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.2
     # via pandas
-unstructured-inference==0.7.40
+unstructured-inference==0.7.41
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in

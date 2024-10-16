@@ -34,5 +34,5 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   multidict
-yarl==1.14.0
+yarl==1.15.4
     # via aiohttp

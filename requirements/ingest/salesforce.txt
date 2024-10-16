@@ -68,5 +68,5 @@ urllib3==1.26.20
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-zeep==4.2.1
+zeep==4.3.1
     # via simple-salesforce
