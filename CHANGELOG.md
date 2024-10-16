@@ -1,4 +1,4 @@
-## 0.15.15-dev0
+## 0.16.1-dev1
 
 ### Enhancements
 
@@ -6,10 +6,26 @@
 
 ### Features
 
-* **Add (but do not install) a new post-partitioning decorator to handle metadata added for all file-types, like `.filename`, `.filetype` and `.languages`.** This will be installed in a closely following PR to replace the four currently being used for this purpose.
+### Fixes
+
+* **Rewrite of `partition.email` module and tests.** Use modern Python stdlib `email` module interface to parse email messages and attachments. This change shortens and simplifies the code, and makes it more robust and maintainable. Several historical problems were remedied in the process.
+
+## 0.16.0
+
+### Enhancements
+
+* **Remove ingest implementation.** The deprecated ingest functionality has been removed, as it is now maintained in the separate [unstructured-ingest](https://github.com/Unstructured-IO/unstructured-ingest) repository.
+  * Replace extras in `requirements/ingest` directory with a new `ingest.txt` extra for installing the `unstructured-ingest` library.
+  * Remove the `unstructured.ingest` submodule.
+  * Delete all shell scripts previously used for destination ingest tests.
+
+### Features
 
 ### Fixes
 
+* **Add language parameter to `OCRAgentGoogleVision`.**  Introduces an optional language parameter in the `OCRAgentGoogleVision` constructor to serve as a language hint for `document_text_detection`. This ensures compatibility with the OCRAgent's `get_instance` method and resolves errors when parsing PDFs with Google Cloud Vision as the OCR agent.
+
+>>>>>>> origin/main
 ## 0.15.14
 
 ### Enhancements

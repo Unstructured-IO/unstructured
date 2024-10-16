@@ -14,6 +14,7 @@ from test_unstructured.unit_utils import (
     Mock,
     assert_round_trips_through_JSON,
     example_doc_path,
+    function_mock,
     property_mock,
 )
 from unstructured.chunking.title import chunk_by_title
@@ -21,8 +22,10 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     NarrativeText,
+    Text,
     Title,
 )
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.msg import MsgPartitionerOptions, partition_msg
 
 EXPECTED_MSG_OUTPUT = [
@@ -113,6 +116,9 @@ def test_partition_msg_raises_with_neither():
         partition_msg()
 
 
+# -- attachments ---------------------------------------------------------------------------------
+
+
 def test_partition_msg_can_process_attachments():
     elements = partition_msg(
         example_doc_path("fake-email-multiple-attachments.msg"), process_attachments=True
@@ -152,6 +158,27 @@ def test_partition_msg_can_process_attachments():
         "ListItem",
         "ListItem",
         "ListItem",
+    ]
+
+
+def test_partition_msg_silently_skips_attachments_it_cannot_partition(request: FixtureRequest):
+    function_mock(
+        request, "unstructured.partition.auto.partition", side_effect=UnsupportedFileFormatError()
+    )
+
+    elements = partition_msg(
+        example_doc_path("fake-email-multiple-attachments.msg"), process_attachments=True
+    )
+
+    # -- no exception is raised --
+    assert elements == [
+        # -- the email body is partitioned --
+        NarrativeText("Here are those documents."),
+        Text("--"),
+        Title("Mallori Harrell"),
+        Title("Unstructured Technologies"),
+        Title("Data Scientist"),
+        # -- no elements appear for the attachment(s) --
     ]
 
 

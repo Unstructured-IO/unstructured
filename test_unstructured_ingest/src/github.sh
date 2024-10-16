@@ -37,7 +37,7 @@ elif [[ "$CI" == "true" ]]; then
   echo
 fi
 
-RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
 #shellcheck disable=SC2086
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   github \

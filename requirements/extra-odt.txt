@@ -8,7 +8,7 @@ lxml==5.3.0
     # via
     #   -c ./base.txt
     #   python-docx
-pypandoc==1.14
+pypandoc==1.13
     # via -r ./extra-odt.in
 python-docx==1.1.2
     # via -r ./extra-odt.in

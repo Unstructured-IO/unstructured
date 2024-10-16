@@ -1,0 +1,10 @@
+From: sender@example.com
+To: recipient@example.com
+Date: Tue, 01 Oct 2024 12:34:56 -0500
+Subject: Example RFC 822 Email
+
+This is an RFC 822 email message.
+
+An RFC 822 message is characterized by its simple, text-based format, which includes a header and a body. The header contains structured fields such as "From", "To", "Date", and "Subject", each followed by a colon and the corresponding information. The body follows the header, separated by a blank line, and contains the main content of the email.
+
+The structure ensures compatibility and readability across different email systems and clients, adhering to the standards set by the Internet Engineering Task Force (IETF).
