@@ -182,27 +182,27 @@ def get_retries_config(
     ):
         default_retries_initial_interval = (
             default_retries_config.backoff.initial_interval
-            if default_retries_config
+            if default_retries_config and default_retries_config.backoff.initial_interval
             else DEFAULT_RETRIES_INITIAL_INTERVAL_SEC
         )
         default_retries_max_interval = (
             default_retries_config.backoff.max_interval
-            if default_retries_config
+            if default_retries_config and default_retries_config.backoff.max_interval
             else DEFAULT_RETRIES_MAX_INTERVAL_SEC
         )
         default_retries_exponent = (
             default_retries_config.backoff.exponent
-            if default_retries_config
+            if default_retries_config and default_retries_config.backoff.exponent
             else DEFAULT_RETRIES_EXPONENT
         )
         default_retries_max_elapsed_time = (
             default_retries_config.backoff.max_elapsed_time
-            if default_retries_config
+            if default_retries_config and default_retries_config.backoff.max_elapsed_time
             else DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
         )
         default_retries_connneciton_errors = (
             default_retries_config.retry_connection_errors
-            if default_retries_config
+            if default_retries_config and default_retries_config.retry_connection_errors
             else DEFAULT_RETRIES_CONNECTION_ERRORS
         )
 
