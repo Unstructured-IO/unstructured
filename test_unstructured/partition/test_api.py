@@ -4,6 +4,7 @@ import json
 import os
 import pathlib
 from typing import Any
+from unittest.mock import Mock
 
 import pytest
 import requests
@@ -11,9 +12,15 @@ from unstructured_client.general import General
 from unstructured_client.models import shared
 from unstructured_client.models.operations import PartitionRequest
 from unstructured_client.models.shared import PartitionParameters
+from unstructured_client.utils import retries
 
 from unstructured.documents.elements import ElementType, NarrativeText
-from unstructured.partition.api import partition_multiple_via_api, partition_via_api
+from unstructured.partition.api import (
+    DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC,
+    get_retries_config,
+    partition_multiple_via_api,
+    partition_via_api,
+)
 
 from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
@@ -180,11 +187,106 @@ def test_partition_via_api_image_block_extraction():
         assert isinstance(image_data, bytes)
 
 
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+def test_partition_via_api_retries_config():
+    elements = partition_via_api(
+        filename=example_doc_path("pdf/embedded-images-tables.pdf"),
+        strategy="fast",
+        api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url=API_URL,
+        retries_initial_interval=5,
+        retries_max_interval=15,
+        retries_max_elapsed_time=100,
+        retries_connection_errors=True,
+        retries_exponent=1.5,
+    )
+
+    assert len(elements) > 0
+
+
 # Note(austin) - This test is way too noisy against the hosted api
 # def test_partition_via_api_invalid_request_data_kwargs():
 #     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 #     with pytest.raises(SDKError):
 #         partition_via_api(filename=filename, strategy="not_a_strategy")
+
+
+def test_retries_config_with_parameters_set():
+    sdk = Mock()
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=1.75,
+        retries_initial_interval=20,
+        retries_max_elapsed_time=1000,
+        retries_max_interval=100,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.75
+    assert retries_config.backoff.initial_interval == 20
+    assert retries_config.backoff.max_elapsed_time == 1000
+    assert retries_config.backoff.max_interval == 100
+
+
+def test_retries_config_none_parameters_return_empty_config():
+    sdk = Mock()
+    retries_config = get_retries_config(
+        retries_connection_errors=None,
+        retries_exponent=None,
+        retries_initial_interval=None,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config is None
+
+
+def test_retries_config_with_no_parameters_set():
+    retry_config = retries.RetryConfig(
+        "backoff", retries.BackoffStrategy(3000, 720000, 1.88, 1800000), True
+    )
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = retry_config
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=None,
+        retries_initial_interval=None,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.88
+    assert retries_config.backoff.initial_interval == 3000
+    assert retries_config.backoff.max_elapsed_time == 1800000
+    assert retries_config.backoff.max_interval == 720000
+
+
+def test_retries_config_cascade():
+    retry_config = retries.RetryConfig(
+        "backoff", retries.BackoffStrategy(3000, 720000, 1.88, None), True
+    )
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = retry_config
+    retries_config = get_retries_config(
+        retries_connection_errors=False,
+        retries_exponent=1.75,
+        retries_initial_interval=20,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert not retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.75
+    assert retries_config.backoff.initial_interval == 20
+    assert retries_config.backoff.max_elapsed_time == DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
+    assert retries_config.backoff.max_interval == 720000
 
 
 def test_partition_multiple_via_api_with_single_filename(request: FixtureRequest):
