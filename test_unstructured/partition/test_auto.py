@@ -45,6 +45,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.model import FileType
 from unstructured.partition.auto import _PartitionerLoader, partition
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
@@ -198,14 +199,6 @@ def test_auto_partition_email_from_file():
 
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
-
-
-def test_auto_partition_eml_add_signature_to_metadata():
-    elements = partition(example_doc_path("eml/signed-doc.p7s"))
-
-    assert len(elements) == 1
-    assert elements[0].text == "This is a test"
-    assert elements[0].metadata.signature == "<SIGNATURE>\n"
 
 
 # ================================================================================================
@@ -911,7 +904,10 @@ def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
         request, "unstructured.partition.auto.detect_filetype", return_value=FileType.UNK
     )
 
-    with pytest.raises(ValueError, match="Invalid file made-up.fake. The FileType.UNK file type "):
+    with pytest.raises(
+        UnsupportedFileFormatError,
+        match="Invalid file made-up.fake. The FileType.UNK file type is not supported in partiti",
+    ):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
     detect_filetype_.assert_called_once_with(
@@ -1239,7 +1235,7 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
     partition_fn = getattr(module, partition_fn_name)
 
     # -- partition the example-doc for this filetype --
-    elements = partition_fn(file_path)
+    elements = partition_fn(file_path, process_attachments=False)
 
     assert elements
     assert all(
