@@ -179,6 +179,12 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected_page_numbers
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            print(
+                [
+                    (element.metadata.detection_origin, element.category, element.text)
+                    for element in result
+                ]
+            )
             assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":

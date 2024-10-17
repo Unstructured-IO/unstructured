@@ -16,7 +16,7 @@ openpyxl==3.1.5
     # via -r ./extra-xlsx.in
 pandas==2.2.3
     # via -r ./extra-xlsx.in
-python-dateutil==2.9.0.post0
+python-dateutil==2.8.2
     # via
     #   -c ./base.txt
     #   pandas
