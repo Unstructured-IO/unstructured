@@ -218,7 +218,7 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
-@pytest.mark.parametrize("model_name", ["checkbox", "yolox", "chipper"])
+@pytest.mark.parametrize("model_name", ["checkbox", "yolox"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
     model_name,

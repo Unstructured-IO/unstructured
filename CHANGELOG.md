@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* **Remove unsupported chipper model**
 * **Rewrite of `partition.email` module and tests.** Use modern Python stdlib `email` module interface to parse email messages and attachments. This change shortens and simplifies the code, and makes it more robust and maintainable. Several historical problems were remedied in the process.
 
 ## 0.16.0
