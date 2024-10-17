@@ -624,4 +624,5 @@ def expected_call_():
                 xml_keep_tags=False,
             )
         ),
+        None,  # retries kwarg
     ]
