@@ -176,10 +176,6 @@ def merge_inferred_with_extracted_layout(
     )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
-    # If the model is a chipper model, we don't want to order the
-    # elements, as they are already ordered
-    order_elements = not hi_res_model_name.startswith("chipper")
-
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
         zip(inferred_pages, extracted_layout)
@@ -206,10 +202,7 @@ def merge_inferred_with_extracted_layout(
             **threshold_kwargs,
         )
 
-        if order_elements:
-            merged_layout = sort_text_regions(
-                cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC
-            )
+        merged_layout = sort_text_regions(cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC)
 
         elements = []
         for layout_el in merged_layout:
