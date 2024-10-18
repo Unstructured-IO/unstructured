@@ -8,7 +8,6 @@ from unittest.mock import Mock
 
 import pytest
 import requests
-from partition.api import DEFAULT_RETRIES_MAX_INTERVAL_SEC
 from unstructured_client.general import General
 from unstructured_client.models import shared
 from unstructured_client.models.operations import PartitionRequest
@@ -18,6 +17,7 @@ from unstructured_client.utils import retries
 from unstructured.documents.elements import ElementType, NarrativeText
 from unstructured.partition.api import (
     DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC,
+    DEFAULT_RETRIES_MAX_INTERVAL_SEC,
     get_retries_config,
     partition_multiple_via_api,
     partition_via_api,
