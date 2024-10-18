@@ -59,16 +59,17 @@ def partition_via_api(
         The API key to pass to the Unstructured API.
     retries_initial_interval
         Defines the time interval (in seconds) to wait before the first retry in case of a request
-        failure. Defaults to 3000.
+        failure. Defaults to 3000. If set should be > 0.
     retries_max_interval
         Defines the maximum time interval (in seconds) to wait between retries (the interval
         between retries is increased as using exponential increase algorithm
-        - this setting limits it). Defaults to 720000.
+        - this setting limits it). Defaults to 720000. If set should be > 0.
     retries_exponent
         Defines the exponential factor to increase the interval between retries. Defaults to 1.5.
+        If set should be > 0.0.
     retries_max_elapsed_time
         Defines the maximum time (in seconds) to wait for retries. If exceeded, the original
-        exception is raised. Defaults to 1800000.
+        exception is raised. Defaults to 1800000. If set should be > 0.
     retries_connection_errors
         Defines whether to retry on connection errors. Defaults to True.
     request_kwargs
@@ -156,20 +157,25 @@ def get_retries_config(
     Parameters
     ----------
     retries_connection_errors
-        Defines whether to retry on connection errors.
+        Defines whether to retry on connection errors. If not set the
+        DEFAULT_RETRIES_CONNECTION_ERRORS constant is used.
     retries_exponent
         Defines the exponential factor to increase the interval between retries.
+        If set, should be > 0.0 (otherwise the DEFAULT_RETRIES_EXPONENT constant is used)
     retries_initial_interval
         Defines the time interval to wait before the first retry in case of a request failure.
+        If set, should be > 0 (otherwise the DEFAULT_RETRIES_INITIAL_INTERVAL_SEC constant is used)
     retries_max_elapsed_time
         Defines the maximum time to wait for retries. If exceeded, the original exception is raised.
+        If set, should be > 0 (otherwise the DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC constant is used)
     retries_max_interval
-        Defines the maximum time interval to wait between retries.
+        Defines the maximum time interval to wait between retries. If set, should be > 0
+        (otherwise the DEFAULT_RETRIES_MAX_INTERVAL_SEC constant is used)
     sdk
         The UnstructuredClient object to take the default values from.
     """
     retries_config = None
-    default_retries_config = sdk.sdk_configuration.retry_config
+    sdk_default_retries_config = sdk.sdk_configuration.retry_config
     if any(
         setting is not None
         for setting in (
@@ -180,37 +186,35 @@ def get_retries_config(
             retries_connection_errors,
         )
     ):
-        default_retries_initial_interval = (
-            default_retries_config.backoff.initial_interval
-            if default_retries_config and default_retries_config.backoff.initial_interval
-            else DEFAULT_RETRIES_INITIAL_INTERVAL_SEC
-        )
-        default_retries_max_interval = (
-            default_retries_config.backoff.max_interval
-            if default_retries_config and default_retries_config.backoff.max_interval
-            else DEFAULT_RETRIES_MAX_INTERVAL_SEC
-        )
-        default_retries_exponent = (
-            default_retries_config.backoff.exponent
-            if default_retries_config and default_retries_config.backoff.exponent
-            else DEFAULT_RETRIES_EXPONENT
-        )
-        default_retries_max_elapsed_time = (
-            default_retries_config.backoff.max_elapsed_time
-            if default_retries_config and default_retries_config.backoff.max_elapsed_time
-            else DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
-        )
+
+        def get_backoff_default(setting_name: str, default_value: Any) -> Any:
+            if sdk_default_retries_config:  # noqa: SIM102
+                if setting_value := getattr(sdk_default_retries_config.backoff, setting_name):
+                    return setting_value
+            return default_value
+
         default_retries_connneciton_errors = (
-            default_retries_config.retry_connection_errors
-            if default_retries_config and default_retries_config.retry_connection_errors
+            sdk_default_retries_config.retry_connection_errors
+            if sdk_default_retries_config.retry_connection_errors is not None
             else DEFAULT_RETRIES_CONNECTION_ERRORS
         )
 
         backoff_strategy = retries.BackoffStrategy(
-            initial_interval=retries_initial_interval or default_retries_initial_interval,
-            max_interval=retries_max_interval or default_retries_max_interval,
-            exponent=retries_exponent or default_retries_exponent,
-            max_elapsed_time=retries_max_elapsed_time or default_retries_max_elapsed_time,
+            initial_interval=(
+                retries_initial_interval
+                or get_backoff_default("initial_interval", DEFAULT_RETRIES_INITIAL_INTERVAL_SEC)
+            ),
+            max_interval=(
+                retries_max_interval
+                or get_backoff_default("max_interval", DEFAULT_RETRIES_MAX_INTERVAL_SEC)
+            ),
+            exponent=(
+                retries_exponent or get_backoff_default("exponent", DEFAULT_RETRIES_EXPONENT)
+            ),
+            max_elapsed_time=(
+                retries_max_elapsed_time
+                or get_backoff_default("max_elapsed_time", DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC)
+            ),
         )
         retries_config = retries.RetryConfig(
             strategy="backoff",

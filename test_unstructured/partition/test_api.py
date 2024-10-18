@@ -8,6 +8,7 @@ from unittest.mock import Mock
 
 import pytest
 import requests
+from partition.api import DEFAULT_RETRIES_MAX_INTERVAL_SEC
 from unstructured_client.general import General
 from unstructured_client.models import shared
 from unstructured_client.models.operations import PartitionRequest
@@ -268,8 +269,10 @@ def test_retries_config_with_no_parameters_set():
 
 
 def test_retries_config_cascade():
+    # notice max_interval is set to 0 which is incorrect - so the DEFAULT_RETRIES_MAX_INTERVAL_SEC
+    # should be used
     retry_config = retries.RetryConfig(
-        "backoff", retries.BackoffStrategy(3000, 720000, 1.88, None), True
+        "backoff", retries.BackoffStrategy(3000, 0, 1.88, None), True
     )
     sdk = Mock()
     sdk.sdk_configuration.retry_config = retry_config
@@ -286,7 +289,7 @@ def test_retries_config_cascade():
     assert retries_config.backoff.exponent == 1.75
     assert retries_config.backoff.initial_interval == 20
     assert retries_config.backoff.max_elapsed_time == DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
-    assert retries_config.backoff.max_interval == 720000
+    assert retries_config.backoff.max_interval == DEFAULT_RETRIES_MAX_INTERVAL_SEC
 
 
 def test_partition_multiple_via_api_with_single_filename(request: FixtureRequest):
