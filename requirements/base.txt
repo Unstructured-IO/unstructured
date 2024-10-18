@@ -72,7 +72,7 @@ olefile==0.47
     # via python-oxmsg
 packaging==24.1
     # via marshmallow
-psutil==6.0.0
+psutil==6.1.0
     # via -r ./base.in
 pycparser==2.22
     # via cffi

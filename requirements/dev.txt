@@ -51,7 +51,7 @@ tomli==2.0.2
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.26.6
+virtualenv==20.27.0
     # via pre-commit
 wheel==0.44.0
     # via pip-tools
