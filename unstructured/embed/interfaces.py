@@ -15,7 +15,6 @@ class EmbeddingConfig(BaseModel):
 class BaseEmbeddingEncoder(ABC):
     config: EmbeddingConfig
 
-    @abstractmethod
     def initialize(self):
         """Initializes the embedding encoder class. Should also validate the instance
         is properly configured: e.g., embed a single a element"""
