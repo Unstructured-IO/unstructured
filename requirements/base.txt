@@ -27,7 +27,7 @@ click==8.1.7
     # via
     #   nltk
     #   python-oxmsg
-cryptography==43.0.1
+cryptography==43.0.3
     # via unstructured-client
 dataclasses-json==0.6.7
     # via -r ./base.in

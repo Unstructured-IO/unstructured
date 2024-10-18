@@ -98,7 +98,7 @@ def merge_text_regions(regions: TextRegions) -> TextRegion:
     max_x2 = regions.x2.max().astype(float)
     max_y2 = regions.y2.max().astype(float)
 
-    merged_text = " ".join(regions.texts)
+    merged_text = " ".join([text for text in regions.texts if text])
     source = regions.source
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)

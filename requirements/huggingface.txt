@@ -43,7 +43,7 @@ langdetect==1.0.9
     # via
     #   -c ./base.txt
     #   -r ./huggingface.in
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via jinja2
 mpmath==1.3.0
     # via sympy
