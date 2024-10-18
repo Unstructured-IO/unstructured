@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Bump `unstructured-inference` to 0.7.39** and upgrade other dependencies
+
 ### Features
 
 ### Fixes
@@ -27,6 +29,7 @@
 
 * **Add language parameter to `OCRAgentGoogleVision`.**  Introduces an optional language parameter in the `OCRAgentGoogleVision` constructor to serve as a language hint for `document_text_detection`. This ensures compatibility with the OCRAgent's `get_instance` method and resolves errors when parsing PDFs with Google Cloud Vision as the OCR agent.
 
+>>>>>>> origin/main
 ## 0.15.14
 
 ### Enhancements
