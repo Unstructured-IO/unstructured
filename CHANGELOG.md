@@ -1,8 +1,9 @@
-## 0.16.1-dev0
+## 0.16.1-dev1
 
 ### Enhancements
 
 ### Features
+* POC for parsing HTML to Unstructured Elements and back
 
 ### Fixes
 
