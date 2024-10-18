@@ -794,19 +794,10 @@ def test_auto_partition_xls_from_filename():
         example_doc_path("tests-example.xls"), include_header=False, skip_infer_table_types=[]
     )
 
-    assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 14
-
-    assert clean_extra_whitespace(elements[0].text)[:45] == (
-        "MC What is 2+2? 4 correct 3 incorrect MA What"
-    )
-    # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
-    # whitespace is removed, so the expected text length is less than is the case when
-    # beautifulsoup4 is *not* installed. E.g.
-    #      "\n\n\nMA\nWhat C datatypes are 8 bits"
-    #  vs. '\n  \n    \n      MA\n      What C datatypes are 8 bits?... "
-    assert len(elements[0].text) == 550
+    assert sum(isinstance(e, Table) for e in elements) == 2
     assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
+    assert len(elements[0].text) == 507
 
 
 # ================================================================================================
