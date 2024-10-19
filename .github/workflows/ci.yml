@@ -220,6 +220,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
+        make install-${{ matrix.extra }}
         make test-extra-${{ matrix.extra }} CI=true
 
   setup_ingest:
@@ -320,6 +321,8 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
+        make install-all-docs
+        make install-ingest
         ./test_unstructured_ingest/test-ingest-src.sh
 
 
