@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 
 import pytest
 
@@ -311,32 +310,6 @@ def test_catch_overlapping_and_nested_bboxes_non_overlapping_case():
     )
     assert overlapping_flag is False
     assert overlapping_cases == []
-
-
-def test_validate_data_args():
-    assert utils.validate_date_args("2020-10-10") is True
-
-    with pytest.raises(ValueError):
-        utils.validate_date_args("blah")
-
-    with pytest.raises(ValueError):
-        utils.validate_date_args(None)
-
-
-@pytest.mark.parametrize(
-    "date", ["1990-12-01", "2050-01-01T00:00:00", "2050-01-01+00:00:00", "2022-02-12T14:30:00-0500"]
-)
-def test_validate_date_args_accepts_standard_formats(date):
-    assert utils.validate_date_args(date)
-
-
-@pytest.mark.parametrize("date", [None, "not a date", "1990-12-33"])
-def test_validate_date_args_raises_for_invalid_formats(date):
-    pattern1 = re.compile(r"The argument.*?(?:is None).*")
-    pattern2 = re.compile(r"The argument.*?(?:does not satisfy the format: YYYY-MM-DD).*")
-    combined_pattern = re.compile(f"({pattern1.pattern}|{pattern2.pattern})")
-    with pytest.raises(ValueError, match=combined_pattern):
-        assert utils.validate_date_args(date)
 
 
 def test_only_returns_singleton_iterable():

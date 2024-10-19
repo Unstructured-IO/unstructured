@@ -10,17 +10,17 @@ babel==2.13.1
     # via sphinx
 beautifulsoup4==4.12.2
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   furo
 certifi==2023.11.17
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   -c constraints.in
     #   -r build.in
     #   requests
 charset-normalizer==3.3.2
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   requests
 docutils==0.18.1
     # via
@@ -32,7 +32,7 @@ furo==2023.7.26
     # via -r build.in
 idna==3.6
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   requests
 imagesize==1.4.1
     # via sphinx
@@ -56,7 +56,7 @@ myst-parser==2.0.0
     # via -r build.in
 packaging==23.2
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   sphinx
 pygments==2.17.2
     # via
@@ -69,13 +69,13 @@ pyyaml==6.0.1
     # via myst-parser
 requests==2.31.0
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   sphinx
 snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.5
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   beautifulsoup4
 sphinx==6.2.1
     # via
@@ -118,7 +118,7 @@ sphinxcontrib-serializinghtml==1.1.5
     #   sphinx
 urllib3==1.26.18
     # via
-    #   -c base.txt
+    #   -c ./deps/base.txt
     #   -c constraints.in
     #   requests
 zipp==3.17.0

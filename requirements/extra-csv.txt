@@ -8,7 +8,7 @@ numpy==1.26.4
     # via
     #   -c ./base.txt
     #   pandas
-pandas==2.2.2
+pandas==2.2.3
     # via -r ./extra-csv.in
 python-dateutil==2.9.0.post0
     # via
@@ -20,5 +20,5 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-tzdata==2024.1
+tzdata==2024.2
     # via pandas

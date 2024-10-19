@@ -45,6 +45,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.model import FileType
 from unstructured.partition.auto import _PartitionerLoader, partition
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
@@ -198,14 +199,6 @@ def test_auto_partition_email_from_file():
 
     assert len(elements) > 0
     assert elements == EXPECTED_EMAIL_OUTPUT
-
-
-def test_auto_partition_eml_add_signature_to_metadata():
-    elements = partition(example_doc_path("eml/signed-doc.p7s"))
-
-    assert len(elements) == 1
-    assert elements[0].text == "This is a test"
-    assert elements[0].metadata.signature == "<SIGNATURE>\n"
 
 
 # ================================================================================================
@@ -801,19 +794,10 @@ def test_auto_partition_xls_from_filename():
         example_doc_path("tests-example.xls"), include_header=False, skip_infer_table_types=[]
     )
 
-    assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 14
-
-    assert clean_extra_whitespace(elements[0].text)[:45] == (
-        "MC What is 2+2? 4 correct 3 incorrect MA What"
-    )
-    # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
-    # whitespace is removed, so the expected text length is less than is the case when
-    # beautifulsoup4 is *not* installed. E.g.
-    #      "\n\n\nMA\nWhat C datatypes are 8 bits"
-    #  vs. '\n  \n    \n      MA\n      What C datatypes are 8 bits?... "
-    assert len(elements[0].text) == 550
+    assert sum(isinstance(e, Table) for e in elements) == 2
     assert elements[0].metadata.text_as_html == EXPECTED_XLS_TABLE
+    assert len(elements[0].text) == 507
 
 
 # ================================================================================================
@@ -911,7 +895,10 @@ def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
         request, "unstructured.partition.auto.detect_filetype", return_value=FileType.UNK
     )
 
-    with pytest.raises(ValueError, match="Invalid file made-up.fake. The FileType.UNK file type "):
+    with pytest.raises(
+        UnsupportedFileFormatError,
+        match="Invalid file made-up.fake. The FileType.UNK file type is not supported in partiti",
+    ):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
     detect_filetype_.assert_called_once_with(
@@ -1207,35 +1194,39 @@ def test_auto_partition_overwrites_any_filetype_applied_by_file_specific_partiti
 
 
 @pytest.mark.parametrize(
-    "file_type",
+    ("file_name", "file_type"),
     [
-        t
-        for t in FileType
-        if t
-        not in (
-            FileType.EMPTY,
-            FileType.JSON,
-            FileType.UNK,
-            FileType.WAV,
-            FileType.XLS,
-            FileType.ZIP,
-        )
-        and t.partitioner_shortname != "image"
+        ("stanley-cups.csv", FileType.CSV),
+        ("simple.doc", FileType.DOC),
+        ("simple.docx", FileType.DOCX),
+        ("fake-email.eml", FileType.EML),
+        ("simple.epub", FileType.EPUB),
+        ("fake-html.html", FileType.HTML),
+        ("README.md", FileType.MD),
+        ("fake-email.msg", FileType.MSG),
+        ("simple.odt", FileType.ODT),
+        ("pdf/DA-1p.pdf", FileType.PDF),
+        ("fake-power-point.ppt", FileType.PPT),
+        ("simple.pptx", FileType.PPTX),
+        ("README.rst", FileType.RST),
+        ("fake-doc.rtf", FileType.RTF),
+        ("stanley-cups.tsv", FileType.TSV),
+        ("fake-text.txt", FileType.TXT),
+        ("tests-example.xls", FileType.XLSX),
+        ("stanley-cups.xlsx", FileType.XLSX),
+        ("factbook.xml", FileType.XML),
     ],
 )
-def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(file_type: FileType):
+def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
+    file_name: str, file_type: FileType
+):
+    file_path = example_doc_path(file_name)
     partition_fn_name = file_type.partitioner_function_name
     module = import_module(file_type.partitioner_module_qname)
     partition_fn = getattr(module, partition_fn_name)
 
-    # -- partition the first example-doc with the extension for this filetype --
-    elements: list[Element] = []
-    doc_path = example_doc_path("pdf") if file_type == FileType.PDF else example_doc_path("")
-    extensions = file_type._extensions
-    for file in pathlib.Path(doc_path).iterdir():
-        if file.is_file() and file.suffix in extensions:
-            elements = partition_fn(str(file))
-            break
+    # -- partition the example-doc for this filetype --
+    elements = partition_fn(file_path, process_attachments=False)
 
     assert elements
     assert all(

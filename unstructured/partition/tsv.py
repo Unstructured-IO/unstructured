@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import IO, Any, Optional
 
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.chunking import add_chunking_strategy
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
@@ -42,22 +42,23 @@ def partition_tsv(
     header = 0 if include_header else None
 
     if filename:
-        table = pd.read_csv(filename, sep="\t", header=header)
+        dataframe = pd.read_csv(filename, sep="\t", header=header)
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
-        table = pd.read_csv(f, sep="\t", header=header)
+        dataframe = pd.read_csv(f, sep="\t", header=header)
 
-    html_text = table.to_html(index=False, header=include_header, na_rep="")
-    text = soupparser_fromstring(html_text).text_content()
+    html_table = HtmlTable.from_html_text(
+        dataframe.to_html(index=False, header=include_header, na_rep="")
+    )
 
     metadata = ElementMetadata(
-        text_as_html=html_text,
         filename=filename,
         last_modified=get_last_modified_date(filename) if filename else None,
+        text_as_html=html_table.html,
     )
     metadata.detection_origin = DETECTION_ORIGIN
 
-    return [Table(text=text, metadata=metadata)]
+    return [Table(text=html_table.text, metadata=metadata)]

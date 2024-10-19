@@ -1,4 +1,0 @@
--c ../deps/constraints.txt
--c ../base.txt
-deltalake<=0.19.1
-fsspec

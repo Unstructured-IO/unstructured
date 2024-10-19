@@ -22,8 +22,8 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
 
     mock_client.embeddings.side_effect = mock_embeddings
 
-    # Mock create_client to return our mock_client
-    mocker.patch.object(MixedbreadAIEmbeddingEncoder, "create_client", return_value=mock_client)
+    # Mock get_client to return our mock_client
+    mocker.patch.object(MixedbreadAIEmbeddingConfig, "get_client", return_value=mock_client)
 
     encoder = MixedbreadAIEmbeddingEncoder(
         config=MixedbreadAIEmbeddingConfig(

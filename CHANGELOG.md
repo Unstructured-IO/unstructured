@@ -1,4 +1,34 @@
-## 0.15.14-dev13
+## 0.16.1-dev3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Remove unsupported chipper model**
+* **Rewrite of `partition.email` module and tests.** Use modern Python stdlib `email` module interface to parse email messages and attachments. This change shortens and simplifies the code, and makes it more robust and maintainable. Several historical problems were remedied in the process.
+* **Minify text_as_html from DOCX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `tabulate` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+* **Fall back to filename extension-based file-type detection for unidentified OLE files.** Resolves a problem where a DOC file that could not be detected as such by `filetype` was incorrectly identified as a MSG file.
+* **Minify text_as_html from XLSX.** Previously `.metadata.text_as_html` for DOCX tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+* **Minify text_as_html from CSV.** Previously `.metadata.text_as_html` for CSV tables was "bloated" with whitespace and noise elements introduced by `pandas` that produced over-chunking and lower "semantic density" of elements. Reduce HTML to minimum character count without preserving all text.
+
+## 0.16.0
+
+### Enhancements
+
+* **Remove ingest implementation.** The deprecated ingest functionality has been removed, as it is now maintained in the separate [unstructured-ingest](https://github.com/Unstructured-IO/unstructured-ingest) repository.
+  * Replace extras in `requirements/ingest` directory with a new `ingest.txt` extra for installing the `unstructured-ingest` library.
+  * Remove the `unstructured.ingest` submodule.
+  * Delete all shell scripts previously used for destination ingest tests.
+
+### Features
+
+### Fixes
+
+* **Add language parameter to `OCRAgentGoogleVision`.**  Introduces an optional language parameter in the `OCRAgentGoogleVision` constructor to serve as a language hint for `document_text_detection`. This ensures compatibility with the OCRAgent's `get_instance` method and resolves errors when parsing PDFs with Google Cloud Vision as the OCR agent.
+
+## 0.15.14
 
 ### Enhancements
 
@@ -18,6 +48,7 @@
 * **Remove obsolete min_partition/max_partition args from TXT and EML.** The legacy `min_partition` and `max_partition` parameters were an initial rough implementation of chunking but now interfere with chunking and are unused. Remove those parameters from `partition_text()` and `partition_email()`.
 * **Remove double-decoration on EML and MSG.** Refactor these partitioners to rely on the new `@apply_metadata()` decorator operating on partitioners they delegate to (TXT, HTML, and all others for attachments) and remove direct decoration from EML and MSG.
 * **Remove double-decoration for PPT.** Remove decorators from the delegating PPT partitioner.
+* **Quick-fix CI error in auto test-filetype.** Better fix to follow shortly.
 
 ## 0.15.13
 

@@ -25,9 +25,10 @@ fi
 # astradb dependencies.
 # ref: https://pymongo.readthedocs.io/en/stable/installation.html
 python -m pip uninstall -y bson pymongo
-make install-ingest-mongodb
+pip install "unstructured-ingest[mongodb]"
 
-PYTHONPATH=. ./unstructured/ingest/main.py \
+RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   mongodb \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
