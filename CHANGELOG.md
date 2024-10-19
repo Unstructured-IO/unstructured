@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Round coordinates**
+
 ### Features
 
 ### Fixes
