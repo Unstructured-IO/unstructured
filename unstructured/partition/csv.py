@@ -5,9 +5,9 @@ import csv
 from typing import IO, Any, Iterator
 
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.chunking import add_chunking_strategy
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -46,7 +46,6 @@ def partition_csv(
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
     """
-
     ctx = _CsvPartitioningContext.load(
         file_path=filename,
         file=file,
@@ -58,17 +57,18 @@ def partition_csv(
     with ctx.open() as file:
         dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=encoding)
 
-    html_text = dataframe.to_html(index=False, header=include_header, na_rep="")
-    text = soupparser_fromstring(html_text).text_content()
+    html_table = HtmlTable.from_html_text(
+        dataframe.to_html(index=False, header=include_header, na_rep="")
+    )
 
     metadata = ElementMetadata(
         filename=filename,
         last_modified=ctx.last_modified,
-        text_as_html=html_text if infer_table_structure else None,
+        text_as_html=html_table.html if infer_table_structure else None,
     )
 
     # -- a CSV file becomes a single `Table` element --
-    return [Table(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+    return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
 
 
 class _CsvPartitioningContext:
