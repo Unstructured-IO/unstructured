@@ -18,7 +18,7 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt', 'requirements/*.txt') }}
         lookup-only: ${{ inputs.check-only }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
@@ -40,6 +40,7 @@ runs:
         fi
         make install-ci
         make install-nltk-models
+        make install-all-docs
         make install-ingest
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
@@ -49,5 +50,5 @@ runs:
         path: |
           .venv
           nltk_data
-        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt') }}-${{ hashFiles('requirements/*.txt') }}
+        key: unstructured-ingest-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/ingest/*.txt', 'requirements/*.txt') }}
 
