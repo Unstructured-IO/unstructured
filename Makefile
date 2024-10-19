@@ -233,6 +233,10 @@ install-ingest-pinecone:
 install-ingest-qdrant:
 	${PYTHON} -m pip install -r requirements/ingest/qdrant.txt
 
+.PHONY: install-ingest-lancedb
+install-ingest-lancedb:
+	${PYTHON} -m pip install -r requirements/ingest/lancedb.txt
+
 .PHONY: install-ingest-chroma
 install-ingest-chroma:
 	${PYTHON} -m pip install -r requirements/ingest/chroma.txt

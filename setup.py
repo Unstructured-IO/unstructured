@@ -150,6 +150,7 @@ setup(
         "opensearch": load_requirements("requirements/ingest/opensearch.in"),
         "outlook": load_requirements("requirements/ingest/outlook.in"),
         "pinecone": load_requirements("requirements/ingest/pinecone.in"),
+        "lancedb": load_requirements("requirements/ingest/lancedb.in"),
         "postgres": load_requirements("requirements/ingest/postgres.in"),
         "qdrant": load_requirements("requirements/ingest/qdrant.in"),
         "reddit": load_requirements("requirements/ingest/reddit.in"),
