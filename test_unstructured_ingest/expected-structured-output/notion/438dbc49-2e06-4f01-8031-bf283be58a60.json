@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "7b544ee99a84930c8049d5c91f8e7541",
+    "element_id": "b21b7e1a9374c90fad7b4ca0571a9a35",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -9,14 +9,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "New Page",
     "type": "Title"
   },
   {
-    "element_id": "be23aed1a36d4a5aa33b4dc454eff351",
+    "element_id": "6c9a1c66c3f1ef2814be722d6ff431b1",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -25,10 +24,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
-    "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you.",
+    "text": "Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you.",
     "type": "NarrativeText"
   }
 ]
