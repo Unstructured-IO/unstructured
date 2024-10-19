@@ -12,14 +12,15 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  NLTK_DATA: ${{ github.workspace }}/nltk_data
+
 jobs:
   setup:
     strategy:
       matrix:
         python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/base-cache
