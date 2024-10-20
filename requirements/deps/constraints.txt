@@ -18,7 +18,3 @@ botocore<1.34.132
 importlib-metadata>=8.5.0
 # (austin): Versions below this have a different interface for passing parameters
 unstructured-client>=0.23.0
-# (yao): torchvision 0.20 deprecates `extension`
-torchvision<0.20.0
-# (yao): torchvision 0.19.x requires torch 2.4.1
-torch<=2.4.1

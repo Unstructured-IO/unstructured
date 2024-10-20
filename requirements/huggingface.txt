@@ -82,16 +82,14 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.13.3
+sympy==1.13.1
     # via torch
 tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.1
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./huggingface.in
+torch==2.5.0
+    # via -r ./huggingface.in
 tqdm==4.66.5
     # via
     #   -c ./base.txt

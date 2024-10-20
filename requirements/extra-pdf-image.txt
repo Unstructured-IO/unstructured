@@ -151,7 +151,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.4
     # via layoutparser
-pi-heif==0.18.0
+pi-heif==0.20.0
     # via -r ./extra-pdf-image.in
 pikepdf==9.3.0
     # via -r ./extra-pdf-image.in
@@ -243,7 +243,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.13.3
+sympy==1.13.1
     # via
     #   onnxruntime
     #   torch
@@ -255,16 +255,14 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.1
+torch==2.5.0
     # via
-    #   -c ././deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.19.1
+torchvision==0.20.0
     # via
-    #   -c ././deps/constraints.txt
     #   effdet
     #   timm
 tqdm==4.66.5

@@ -19,8 +19,8 @@ from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-# NOTE(crag): point to freemium API for now
-API_URL = "https://api.unstructured.io/general/v0/general"
+# NOTE(yao): point to paid API for now
+API_URL = "https://api.unstructuredapp.io/general/v0/general"
 
 is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
