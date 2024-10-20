@@ -1,8 +1,8 @@
-## 0.16.1-dev4
+## 0.16.1-dev5
 
 ### Enhancements
 
-* **Round coordinates**
+* **Round coordinates** Round coordinates when computing bounding box overlaps in `pdfminer_processing.py` to nearest machine precision. This can help reduce underterministic behavior from machine precision that affects which bounding boxes to combine.
 
 ### Features
 
