@@ -1,0 +1,170 @@
+[
+  {
+    "type": "UncategorizedText",
+    "element_id": "127585a1914bd1ae38acced4f4ad22bb",
+    "text": "1908",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "0b55941362343ce910c3802b550b0743",
+    "text": "The Fight for Freedom",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "fde748a21a8cf5a745a226c690ee7fc6",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "df3501d28b75a13688004689bf309152",
+    "text": "D. W. Griffith",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8100c07d4ae2fee23005e5e16266c098",
+    "text": "Florence Auer, John G. Adolfi",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "9de21915e66988e57ca4415cbccb3081",
+    "text": "western",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "2c5ed5302ad8ff4e4c7504aafc7383fc",
+    "text": "https://en.wikipedia.org/wiki/The_Fight_for_Freedom",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a77097f8ccd050951925e64f138050e5",
+    "text": "The film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b9.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b9"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 790
+      }
+    }
+  }
+]
