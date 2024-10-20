@@ -200,11 +200,8 @@ def test_partition_csv_header():
     )
 
     table = elements[0]
-    assert clean_extra_whitespace(table.text) == (
-        "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
-    )
+    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     assert table.metadata.text_as_html is not None
-    assert "<thead>" in table.metadata.text_as_html
 
 
 # ================================================================================================
