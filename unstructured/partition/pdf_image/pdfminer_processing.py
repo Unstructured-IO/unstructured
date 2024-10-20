@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 
 
 EPSILON_AREA = 0.01
+# rounding floating point to nearest machine precision
+DEFAULT_ROUND = 15
 
 
 def process_file_with_pdfminer(
@@ -115,7 +117,7 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
     )
 
 
-def get_coords_from_bboxes(bboxes, round_to: int = 6) -> np.ndarray:
+def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
     # preallocate memory
     coords = np.zeros((len(bboxes), 4), dtype=np.float32)
@@ -127,7 +129,7 @@ def get_coords_from_bboxes(bboxes, round_to: int = 6) -> np.ndarray:
 
 
 def areas_of_boxes_and_intersection_area(
-    coords1: np.ndarray, coords2: np.ndarray, round_to: int = 6
+    coords1: np.ndarray, coords2: np.ndarray, round_to: int = DEFAULT_ROUND
 ):
     """compute intersection area and own areas for two groups of bounding boxes"""
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
@@ -143,7 +145,7 @@ def areas_of_boxes_and_intersection_area(
 
 
 def bboxes1_is_almost_subregion_of_bboxes2(
-    bboxes1, bboxes2, threshold: float = 0.5, round_to: int = 6
+    bboxes1, bboxes2, threshold: float = 0.5, round_to: int = DEFAULT_ROUND
 ) -> np.ndarray:
     """compute if each element from bboxes1 is almost a subregion of one or more elements in
     bboxes2"""
@@ -159,7 +161,7 @@ def bboxes1_is_almost_subregion_of_bboxes2(
     )
 
 
-def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = 6) -> np.ndarray:
+def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """compute iou for a group of elements"""
     coords = get_coords_from_bboxes(bboxes, round_to=round_to)
 
