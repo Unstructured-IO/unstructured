@@ -201,7 +201,7 @@ pypdf==5.0.1
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   matplotlib

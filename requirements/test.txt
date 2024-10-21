@@ -5,9 +5,7 @@
 #    pip-compile ./test.in
 #
 annotated-types==0.7.0
-    # via
-    #   -c ./base.txt
-    #   pydantic
+    # via pydantic
 anyio==4.6.2.post1
     # via
     #   -c ./base.txt
@@ -35,7 +33,7 @@ click==8.1.7
     #   -c ./base.txt
     #   black
     #   nltk
-coverage[toml]==7.6.3
+coverage[toml]==7.6.4
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -97,7 +95,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.1.0
     # via yarl
-mypy==1.12.0
+mypy==1.12.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -135,13 +133,10 @@ pycodestyle==2.12.1
     #   flake8-print
 pydantic==2.9.2
     # via
-    #   -c ./base.txt
     #   -r ./test.in
     #   label-studio-sdk
 pydantic-core==2.23.4
-    # via
-    #   -c ./base.txt
-    #   pydantic
+    # via pydantic
 pyflakes==3.2.0
     # via
     #   autoflake
@@ -156,7 +151,7 @@ pytest-cov==5.0.0
     # via -r ./test.in
 pytest-mock==3.14.0
     # via -r ./test.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
