@@ -1,0 +1,170 @@
+[
+  {
+    "type": "UncategorizedText",
+    "element_id": "21703082899d3aaf8d91f0a8184ec54d",
+    "text": "1901",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "6652c306435022b5e069af3c9a019d68",
+    "text": "Kansas Saloon Smashers",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "25a471985ce05a91f31ec65d7ce055be",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f6e049cdc142a95526d4b46fabd7c13e",
+    "text": "Unknown",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "cca1789215d3d1a7b153fd69adb69acb",
+    "text": "nan",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "63aac142fce6a6f98097d0899cfe5322",
+    "text": "unknown",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "5dbf97352fff14dd8ad14b682aa4d0e1",
+    "text": "https://en.wikipedia.org/wiki/Kansas_Saloon_Smashers",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "585979c5b838e8b3fc6b5152053e3069",
+    "text": "A bartender is working at a saloon, serving drinks to customers. After he fills a stereotypically Irish man's bucket with beer, Carrie Nation and her followers burst inside. They assault the Irish man, pulling his hat over his eyes and then dumping the beer over his head. The group then begin wrecking the bar, smashing the fixtures, mirrors, and breaking the cash register. The bartender then sprays seltzer water in Nation's face before a group of policemen appear and order everybody to leave.[1]",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filename": "659daefa21dd8c9054b084b6.txt",
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "database": "ingest-test-db",
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b6"
+        },
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "filesize_bytes": 610
+      }
+    }
+  }
+]
