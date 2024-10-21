@@ -19,13 +19,17 @@ from unstructured.documents.mappings import (
 from unstructured.documents.ontology import (
     ElementTypeEnum,
     OntologyElement,
+    Page,
     Paragraph,
     UncategorizedText,
 )
 
 
 def ontology_to_unstructured_elements(
-    ontology_element: OntologyElement, parent_id=None
+    ontology_element: OntologyElement,
+    parent_id: str = None,
+    page_number: int = None,
+    depth: int = 0,
 ) -> list[Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
@@ -44,28 +48,36 @@ def ontology_to_unstructured_elements(
     Args:
         ontology_element (OntologyElement): The ontology element to be converted.
         parent_id (str, optional): The ID of the parent element. Defaults to None.
+        page_number (int, optional): The page number of the element. Defaults to None.
+        depth (int, optional): The depth of the element in the hierarchy. Defaults to 0.
 
     Returns:
         list[Element]: A list of unstructured Element objects.
     """
     elements_to_return = []
     if ontology_element.elementType == ElementTypeEnum.layout:
+
+        if page_number is None and isinstance(ontology_element, Page):
+            page_number = ontology_element.page_number
+
         elements_to_return += [
             Text(
                 text="",
                 element_id=ontology_element.id,
                 detection_origin="vlm_partitioner",
                 metadata=ElementMetadata(
-                    parent_id=parent_id, text_as_html=ontology_element.to_html(add_children=False)
+                    parent_id=parent_id,
+                    text_as_html=ontology_element.to_html(add_children=False),
+                    page_number=page_number,
+                    category_depth=depth,
                 ),
             )
         ]
+
         for child in ontology_element.children:
             elements_to_return += ontology_to_unstructured_elements(
-                child, parent_id=ontology_element.id
+                child, parent_id=ontology_element.id, page_number=page_number, depth=depth + 1
             )
-
-        # TODO (Pluto): Add page break
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
@@ -80,7 +92,10 @@ def ontology_to_unstructured_elements(
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                parent_id=parent_id, text_as_html=html_code_of_ontology_element
+                parent_id=parent_id,
+                text_as_html=html_code_of_ontology_element,
+                page_number=page_number,
+                category_depth=depth,
             ),
         )
         elements_to_return = [unstructured_element]

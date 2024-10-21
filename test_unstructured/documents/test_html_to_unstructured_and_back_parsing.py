@@ -241,8 +241,6 @@ def test_multiple_pages():
                 text_as_html='<p class="Paragraph" id="2">Some text </p>', parent_id="1"
             ),
         ),
-        # # PageBreak(text=""),# TODO (Pluto): Add PageBreak Elements
-        #
         Text(
             text="",
             element_id="3",

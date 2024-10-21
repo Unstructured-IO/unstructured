@@ -98,6 +98,15 @@ class OntologyElement(BaseModel):
     def id(self) -> str | None:
         return self.additional_attributes.get("id", None)
 
+    @property
+    def page_number(self) -> int | None:
+        if "data-page-number" in self.additional_attributes:
+            try:
+                return int(self.additional_attributes.get("data-page-number"))
+            except ValueError:
+                return None
+        return None
+
 
 # Define specific elements
 class Document(OntologyElement):

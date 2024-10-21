@@ -352,7 +352,7 @@ def test_broken_cell_is_not_raising_error():
     assert parsed_ontology == expected_html
 
 
-def test_table():  # TODO: add test for table
+def test_table():
     # language=HTML
     base_html = _wrap_with_body(
         """
