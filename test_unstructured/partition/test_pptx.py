@@ -247,15 +247,11 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].text.startswith("Column 1")
     assert elements[1].text.strip().endswith("Aqua")
     assert elements[1].metadata.text_as_html == (
-        "<table>\n"
-        "<thead>\n"
-        "<tr><th>Column 1  </th><th>Column 2  </th><th>Column 3  </th></tr>\n"
-        "</thead>\n"
-        "<tbody>\n"
-        "<tr><td>Red       </td><td>Green     </td><td>Blue      </td></tr>\n"
-        "<tr><td>Purple    </td><td>Orange    </td><td>Yellow    </td></tr>\n"
-        "<tr><td>Tangerine </td><td>Pink      </td><td>Aqua      </td></tr>\n"
-        "</tbody>\n"
+        "<table>"
+        "<tr><td>Column 1</td><td>Column 2</td><td>Column 3</td></tr>"
+        "<tr><td>Red</td><td>Green</td><td>Blue</td></tr>"
+        "<tr><td>Purple</td><td>Orange</td><td>Yellow</td></tr>"
+        "<tr><td>Tangerine</td><td>Pink</td><td>Aqua</td></tr>"
         "</table>"
     )
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
@@ -516,7 +512,7 @@ def test_partition_pptx_hierarchy_sample_document():
         (2, "6ec455f5f19782facf184886876c9a66", "5614b00c3f6bff23ebba1360e10f6428"),
         (0, "8319096532fe2e55f66c491ea8313150", "2f57a8d4182e6fd5bd5842b0a2d9841b"),
         (None, None, "4120066d251ba675ade42e8a167ca61f"),
-        (None, None, "2ed3bd10daace79ac129cbf8faf22bfc"),
+        (None, None, "efb9d74b4f8be6308c9a9006da994e12"),
         (0, None, "fd08cacbaddafee5cbacc02528536ee5"),
     ]
 

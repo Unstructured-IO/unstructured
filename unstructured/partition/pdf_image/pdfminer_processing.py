@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 
 
 EPSILON_AREA = 0.01
+# rounding floating point to nearest machine precision
+DEFAULT_ROUND = 15
 
 
 def process_file_with_pdfminer(
@@ -115,7 +117,7 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
     )
 
 
-def get_coords_from_bboxes(bboxes) -> np.ndarray:
+def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
     # preallocate memory
     coords = np.zeros((len(bboxes), 4), dtype=np.float32)
@@ -123,11 +125,11 @@ def get_coords_from_bboxes(bboxes) -> np.ndarray:
     for i, bbox in enumerate(bboxes):
         coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
 
-    return coords
+    return coords.round(round_to)
 
 
 def areas_of_boxes_and_intersection_area(
-    coords1: np.ndarray, coords2: np.ndarray, threshold: float = 0.5
+    coords1: np.ndarray, coords2: np.ndarray, round_to: int = DEFAULT_ROUND
 ):
     """compute intersection area and own areas for two groups of bounding boxes"""
     x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
@@ -139,26 +141,33 @@ def areas_of_boxes_and_intersection_area(
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
 
-    return inter_area, boxa_area, boxb_area
+    return inter_area.round(round_to), boxa_area.round(round_to), boxb_area.round(round_to)
 
 
-def bboxes1_is_almost_subregion_of_bboxes2(bboxes1, bboxes2, threshold: float = 0.5) -> np.ndarray:
+def bboxes1_is_almost_subregion_of_bboxes2(
+    bboxes1, bboxes2, threshold: float = 0.5, round_to: int = DEFAULT_ROUND
+) -> np.ndarray:
     """compute if each element from bboxes1 is almost a subregion of one or more elements in
     bboxes2"""
-    coords1, coords2 = get_coords_from_bboxes(bboxes1), get_coords_from_bboxes(bboxes2)
+    coords1 = get_coords_from_bboxes(bboxes1, round_to=round_to)
+    coords2 = get_coords_from_bboxes(bboxes2, round_to=round_to)
 
-    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords1, coords2)
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
+        coords1, coords2, round_to=round_to
+    )
 
     return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
         boxa_area <= boxb_area.T
     )
 
 
-def boxes_self_iou(bboxes, threshold: float = 0.5) -> np.ndarray:
+def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """compute iou for a group of elements"""
-    coords = get_coords_from_bboxes(bboxes)
+    coords = get_coords_from_bboxes(bboxes, round_to=round_to)
 
-    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(coords, coords)
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
+        coords, coords, round_to=round_to
+    )
 
     return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
 
