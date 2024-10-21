@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     Text,
 )
+from unstructured.documents.html_utils import indent_html
 from unstructured.documents.mappings import (
     CSS_CLASS_TO_ELEMENT_TYPE_MAP,
     EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP,
@@ -157,17 +158,25 @@ def parse_html_to_ontology(html_code: str) -> OntologyElement:
     Raises:
         ValueError: If no <body class="Document"> element is found in the HTML.
     """
-    html_code = remove_empty_divs_from_html_content(html_code)
+    safe_parse_first = indent_html(html_code, html_parser="html5lib")
+    html_code = remove_empty_divs_from_html_content(safe_parse_first)
+    html_code = remove_empty_tags_from_html_content(html_code)
     soup = BeautifulSoup(html_code, "html.parser")
     document = soup.find("body", class_="Document")
     if not document:
-        raise ValueError("No <body class='Document'> element found in the HTML.")
+        document = soup.find("div", class_="Page")
+
+    if not document:
+        raise ValueError(
+            "No <body class='Document'> or <div class='Page'> element found in the HTML."
+        )
+
     document_element = parse_html_to_ontology_element(document)
     return document_element
 
 
 def remove_empty_divs_from_html_content(html_content: str) -> str:
-    soup = BeautifulSoup(html_content, "html5lib")
+    soup = BeautifulSoup(html_content, "html.parser")
     divs = soup.find_all("div")
     for div in reversed(divs):
         if not div.attrs:
@@ -175,7 +184,36 @@ def remove_empty_divs_from_html_content(html_content: str) -> str:
     return str(soup)
 
 
-def parse_html_to_ontology_element(soup: Tag) -> OntologyElement:
+def remove_empty_tags_from_html_content(html_content: str) -> str:
+    soup = BeautifulSoup(html_content, "html.parser")
+
+    def is_empty(tag):
+        # Remove only specific tags, omit self-closing ones
+        if tag.name not in ["p", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6"]:
+            return False
+
+        if tag.find():
+            return False
+
+        if tag.attrs:
+            return False
+
+        if not tag.get_text(strip=True):
+            return True
+
+        return False
+
+    def remove_empty_tags(soup):
+        for tag in soup.find_all():
+            if is_empty(tag):
+                tag.decompose()
+
+    remove_empty_tags(soup)
+
+    return str(soup)
+
+
+def parse_html_to_ontology_element(soup: Tag) -> OntologyElement | None:
     """
     Converts a BeautifulSoup Tag object into an OntologyElement object. This function is recursive.
     First tries to recognize a class from Unstructured Ontology, then if class is matched tries
@@ -189,11 +227,16 @@ def parse_html_to_ontology_element(soup: Tag) -> OntologyElement:
     Returns:
         OntologyElement: The converted OntologyElement object.
     """
-    if soup.name == "br":  # Note(Pluto) should it be <br class="UncategorizedText">?
-        return Paragraph(text="", css_class_name=None, html_tag_name="br")
-
     ontology_html_tag, ontology_class = extract_tag_and_ontology_class_from_tag(soup)
     escaped_attrs = get_escaped_attributes(soup)
+
+    if soup.name == "br":  # Note(Pluto) should it be <br class="UncategorizedText">?
+        return Paragraph(
+            text="",
+            css_class_name=None,
+            html_tag_name="br",
+            additional_attributes=escaped_attrs,
+        )
 
     has_children = (ontology_class != UncategorizedText) and any(
         isinstance(content, Tag) for content in soup.contents
@@ -264,7 +307,7 @@ def extract_tag_and_ontology_class_from_tag(soup: Tag) -> tuple[str, Type[Ontolo
         # TODO (Pluto): Sometimes we could infer that from parent type and soup.name
         #  e.g. parent=FormField soup.name=input -> element=FormFieldInput
 
-        html_tag = soup.name
+        html_tag = "span"
         element_class = UncategorizedText
 
     return html_tag, element_class

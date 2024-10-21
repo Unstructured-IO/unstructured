@@ -90,9 +90,12 @@ class OntologyElement(BaseModel):
 
         if text or children_html:
             # This is either one or another, never both
-            return f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
+            result_html = (
+                f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
+            )
         else:
-            return f"<{self.html_tag_name} {attr_str} />"
+            result_html = f"<{self.html_tag_name} {attr_str} />"
+        return result_html
 
     @property
     def id(self) -> str | None:

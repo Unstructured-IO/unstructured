@@ -22,7 +22,7 @@ def test_when_class_is_missing_it_can_be_inferred_from_type():
     base_html = _wrap_with_body(
         """
     <div class="Page">
-        <aside></aside>
+        <aside>Some text</aside>
     </div>
     """
     )
@@ -33,7 +33,7 @@ def test_when_class_is_missing_it_can_be_inferred_from_type():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <aside class='Sidebar'></aside>
+        <aside class='Sidebar'>Some text</aside>
     </div>
     """
     )
@@ -50,7 +50,7 @@ def test_when_class_is_wrong_tag_name_is_overwritten():
     base_html = _wrap_with_body(
         """
     <div class="Page">
-        <p class='Sidebar'></p>
+        <p class='Sidebar'>Some text</p>
     </div>
     """
     )
@@ -61,7 +61,7 @@ def test_when_class_is_wrong_tag_name_is_overwritten():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <aside class='Sidebar'></aside>
+        <aside class='Sidebar'>Some text</aside>
     </div>
     """
     )
@@ -78,7 +78,7 @@ def test_when_tag_not_supported_by_ontology_and_wrong_then_consider_them_text():
     base_html = _wrap_with_body(
         """
     <div class="Page">
-        <newtag class="wrongclass">
+        <newtag class="wrongclass">Some text
         </newtag>
     </div>
     """
@@ -92,8 +92,8 @@ def test_when_tag_not_supported_by_ontology_and_wrong_then_consider_them_text():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <newtag class="UncategorizedText">
-        </newtag>
+        <span class="UncategorizedText">Some text
+        </span>
     </div>
     """
     )
@@ -284,7 +284,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
-                <input class="UncategorizedText" type="radio" name="option1" value="2" checked>
+                <span class="UncategorizedText" type="radio" name="option1" value="2" checked>
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
@@ -352,7 +352,7 @@ def test_broken_cell_is_not_raising_error():
     assert parsed_ontology == expected_html
 
 
-def test_table():
+def test_table():  # TODO: add test for table
     # language=HTML
     base_html = _wrap_with_body(
         """
