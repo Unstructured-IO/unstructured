@@ -12,14 +12,15 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  NLTK_DATA: ${{ github.workspace }}/nltk_data
+
 jobs:
   setup:
     strategy:
       matrix:
         python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/base-cache
@@ -78,8 +79,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9","3.10","3.11"]
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     runs-on: ubuntu-latest
     needs: [setup, changelog]
     steps:
@@ -185,8 +184,6 @@ jobs:
         python-version: ["3.10"]
         extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint, test_unit_no_extras]
     steps:
     - uses: actions/checkout@v4
@@ -220,6 +217,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
+        make install-${{ matrix.extra }}
         make test-extra-${{ matrix.extra }} CI=true
 
   setup_ingest:
@@ -227,8 +225,6 @@ jobs:
       matrix:
         python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
     steps:
       - uses: actions/checkout@v4
@@ -307,7 +303,6 @@ jobs:
         MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
-        NLTK_DATA: ${{ github.workspace }}/nltk_data
         PYTHON: python${{ matrix.python-version }}
       run: |
         source .venv/bin/activate
@@ -320,6 +315,8 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
+        make install-all-docs
+        make install-ingest
         ./test_unstructured_ingest/test-ingest-src.sh
 
 
@@ -329,8 +326,6 @@ jobs:
         # NOTE(yuming): Unstructured API only use Python 3.10
         python-version: ["3.10"]
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4

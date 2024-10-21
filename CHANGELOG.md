@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Bump `unstructured-inference` to 0.7.39** and upgrade other dependencies
+
 ### Features
 
 ### Fixes

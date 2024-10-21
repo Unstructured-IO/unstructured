@@ -6,7 +6,7 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.6.0
+anyio==4.6.2.post1
     # via
     #   -c ./base.txt
     #   httpx
@@ -16,7 +16,7 @@ attrs==24.2.0
     # via jsonschema
 autoflake==2.3.1
     # via -r ./test.in
-black==24.8.0
+black==24.10.0
     # via -r ./test.in
 certifi==2024.8.30
     # via
@@ -24,7 +24,7 @@ certifi==2024.8.30
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./base.txt
     #   requests
@@ -33,7 +33,7 @@ click==8.1.7
     #   -c ./base.txt
     #   black
     #   nltk
-coverage[toml]==7.6.1
+coverage[toml]==7.6.4
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -50,7 +50,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.66.2
+grpcio==1.67.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./test.in
@@ -95,7 +95,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.1.0
     # via yarl
-mypy==1.11.2
+mypy==1.12.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -119,12 +119,14 @@ pandas==2.2.3
     # via label-studio-sdk
 pathspec==0.12.1
     # via black
-pillow==10.4.0
+pillow==11.0.0
     # via label-studio-sdk
 platformdirs==4.3.6
     # via black
 pluggy==1.5.0
     # via pytest
+propcache==0.2.0
+    # via yarl
 pycodestyle==2.12.1
     # via
     #   flake8
@@ -226,7 +228,7 @@ urllib3==1.26.20
     #   -c ./base.txt
     #   requests
     #   vcrpy
-vcrpy==6.0.1
+vcrpy==6.0.2
     # via -r ./test.in
 wrapt==1.16.0
     # via
@@ -234,7 +236,7 @@ wrapt==1.16.0
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.13.1
+yarl==1.15.5
     # via vcrpy
 
 # The following packages are considered to be unsafe in a requirements file:

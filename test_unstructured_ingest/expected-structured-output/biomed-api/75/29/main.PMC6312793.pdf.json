@@ -598,20 +598,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "448de3300a8c7e2cfdd2028dd0bb4171",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "and",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "b13807f59ac7c6647ee0aee74f9b0dd3",
+    "element_id": "db6ff60cbdb77adc14a6b9491af8d161",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -624,7 +611,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "db480e847a5703b19be6b79223e1ee03",
+    "element_id": "9f6ef223a141a5381951eff39b3af039",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -637,7 +624,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "326c44638a881f86474b82cc244896f9",
+    "element_id": "5c67842128e14fc16344beaa2aa0111e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",

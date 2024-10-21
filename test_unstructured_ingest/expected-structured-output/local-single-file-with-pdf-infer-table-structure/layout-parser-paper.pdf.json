@@ -1277,8 +1277,74 @@
     }
   },
   {
+    "type": "ListItem",
+    "element_id": "53b448c75f1556b1f60b4e3324bd0724",
+    "text": "1 import layoutparser as lp",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a002e13c7ea2613b2eabb9ea3501856d",
+    "text": "3 model = lp . De t e c tro n2 Lay outM odel (",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "366c05fd7babc86bf01d690b9df755da",
+    "text": "5 layout = model . detect ( image )",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "59171bb0b4a32c9ec1b0e1d327ddb88f",
+    "element_id": "f888c5e8f5b1339f2af75612ea13c719",
     "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering di\ufb00erent languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are signi\ufb01cantly di\ufb00erent from the training dataset. As document structures and layouts vary greatly in di\ufb00erent domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name lp://<dataset-name>/<model-architecture-name>.",
     "metadata": {
       "filetype": "application/pdf",
