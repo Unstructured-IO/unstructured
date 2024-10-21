@@ -1,7 +1,8 @@
-## 0.16.1-dev5
+## 0.16.1-dev6
 
 ### Enhancements
 
+* **Bump `unstructured-inference` to 0.7.39** and upgrade other dependencies
 * **Round coordinates** Round coordinates when computing bounding box overlaps in `pdfminer_processing.py` to nearest machine precision. This can help reduce underterministic behavior from machine precision that affects which bounding boxes to combine.
 
 ### Features
