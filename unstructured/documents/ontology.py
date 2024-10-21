@@ -73,7 +73,6 @@ class OntologyElement(BaseModel):
             del additional_attrs["class"]
 
         # TODO(Pluto) Add support for multiple classes
-
         attrs = " ".join(
             f'{key}="{value}"' if value else f"{key}" for key, value in additional_attrs.items()
         )

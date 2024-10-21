@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 
-def indent_html(html_string: str, html_parser="html5lib") -> str:
+def indent_html(html_string: str, html_parser="html.parser") -> str:
     """
     Formats / indents HTML.
 

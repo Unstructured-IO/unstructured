@@ -10,7 +10,6 @@ from unstructured.documents.elements import (
     ElementMetadata,
     Text,
 )
-from unstructured.documents.html_utils import indent_html
 from unstructured.documents.mappings import (
     CSS_CLASS_TO_ELEMENT_TYPE_MAP,
     EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP,
@@ -88,6 +87,8 @@ def ontology_to_unstructured_elements(
         element_text = (
             BeautifulSoup(html_code_of_ontology_element, "html.parser").get_text().strip()
         )
+        # TODO value attribute from form input should be added to the text
+
         unstructured_element = element_class(
             text=element_text,
             element_id=ontology_element.id,
@@ -140,10 +141,6 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     return root_element
 
 
-# Note (Pluto): Code below comes from parsing HTML to OntologyElement
-#  It was already reviewed
-
-
 def parse_html_to_ontology(html_code: str) -> OntologyElement:
     """
     Parses the given HTML code and converts it into an Element object.
@@ -158,8 +155,7 @@ def parse_html_to_ontology(html_code: str) -> OntologyElement:
     Raises:
         ValueError: If no <body class="Document"> element is found in the HTML.
     """
-    safe_parse_first = indent_html(html_code, html_parser="html5lib")
-    html_code = remove_empty_divs_from_html_content(safe_parse_first)
+    html_code = remove_empty_divs_from_html_content(html_code)
     html_code = remove_empty_tags_from_html_content(html_code)
     soup = BeautifulSoup(html_code, "html.parser")
     document = soup.find("body", class_="Document")

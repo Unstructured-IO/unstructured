@@ -10,11 +10,37 @@ def _wrap_with_body(html: str) -> str:
 
 
 def remove_all_ids(html_str):
-    soup = BeautifulSoup(html_str, "html5lib")
+    soup = BeautifulSoup(html_str, "html.parser")
     for tag in soup.find_all(True):
         if tag.has_attr("id"):
             del tag["id"]
     return str(soup)
+
+
+def test_wrong_html_parser_causes_paragraph_to_be_nested_in_div():
+    # This test would fail if html5lib parser would be applied on the input HTML.
+    # It would result in Page: <p></p> <address></address>
+    #         instead of Page: <p><address></address></p>
+
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <p class="NarrativeText">
+     <address class="Address">
+      Mountain View, California
+     </address>
+    </p>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    narrative_text = page.children[0]
+
+    assert len(narrative_text.children) == 1
+    address = narrative_text.children[0]
+
+    assert address.text == "Mountain View, California"
 
 
 def test_when_class_is_missing_it_can_be_inferred_from_type():
@@ -285,6 +311,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
         <form class="Form">
             <label class="FormField" for="option1">
                 <span class="UncategorizedText" type="radio" name="option1" value="2" checked>
+                </span>
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
@@ -352,7 +379,7 @@ def test_broken_cell_is_not_raising_error():
     assert parsed_ontology == expected_html
 
 
-def test_table():  # TODO: add test for table
+def test_table():
     # language=HTML
     base_html = _wrap_with_body(
         """
@@ -476,7 +503,7 @@ def test_table_and_time():
 
 def test_malformed_html():
     # language=HTML
-    base_html = """
+    input_html = """
     <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     <html>
       <head>
@@ -498,17 +525,20 @@ def test_malformed_html():
       </div>
     </html>
     """
-    base_html = indent_html(base_html)
+
+    # Such malformed HTML won't be returned by html_partitioning as it uses html5lib parser
+    # to imitate the same behaviour it will be first parsed the same way
+
+    input_html = indent_html(input_html, html_parser="html5lib")
 
     # Ontology has 1 element and everything inside is just Text
     # language=HTML
     expected_html = """
     <body class="Document">
-      Unclosed comment
-      <div class="">
-       <p>
-        Paragraph with missing closing angle bracket
-       </p>
+     Unclosed comment
+     <div class="">
+      <p>
+       Paragraph with missing closing angle bracket
        <div>
         <span>
          <p>
@@ -516,19 +546,20 @@ def test_malformed_html():
          </p>
         </span>
        </div>
-       <script>
-        var x = "Unclosed script tag example;
-       </script>
-       <p>
-        Paragraph with invalid characters: � � �
-       </p>
-      </div>
-    </div>
+      </p>
+     </div>
+     <script>
+      var x = "Unclosed script tag example;
+     </script>
+     <p>
+      Paragraph with invalid characters: � � �
+     </p>
+    </body>
     """
 
     expected_html = indent_html(expected_html)
 
-    ontology: OntologyElement = parse_html_to_ontology(base_html)
+    ontology: OntologyElement = parse_html_to_ontology(input_html)
     parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
 
     assert parsed_ontology == expected_html
