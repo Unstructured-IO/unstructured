@@ -150,7 +150,7 @@ HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP: Dict[tuple[str, str], Type[OntologyEl
     for tag in element_type().allowed_tags
 }
 CSS_CLASS_TO_ELEMENT_TYPE_MAP: Dict[str, Type[OntologyElement]] = {
-    f"{element_type().css_class_name}": element_type
+    element_type().css_class_name: element_type
     for element_type in ALL_ONTOLOGY_ELEMENT_TYPES
     for tag in element_type().allowed_tags
 }

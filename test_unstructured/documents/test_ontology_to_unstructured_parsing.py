@@ -5,11 +5,12 @@ import pytest
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.ontology import Column, Document, Page, Paragraph
-from unstructured.documents.transformations import (
+from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
+from unstructured.partition.html import partition_html
+from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
-from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_from_json
 
@@ -159,3 +160,20 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
         # The partitioning output comes from PDF file, so only stem is compared
         # as the suffix is different .pdf != .json
         assert Path(elements[i].metadata.filename).stem == Path(json_file_path).stem
+
+
+@pytest.mark.parametrize(
+    ("html_file_path", "json_file_path"),
+    [
+        ("html_files/example.html", "unstructured_json_output/example.json"),
+    ],
+)
+def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_path):
+    expected_json_elements = elements_from_json(json_file_path)
+    html_code = Path(html_file_path).read_text()
+
+    predicted_elements = partition_html(text=html_code, contains_ontology_schema=True)
+    assert len(expected_json_elements) == len(predicted_elements)
+
+    for i in range(len(expected_json_elements)):
+        assert expected_json_elements[i] == expected_json_elements[i]

@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.html_utils import indent_html
 from unstructured.documents.ontology import OntologyElement
-from unstructured.documents.transformations import parse_html_to_ontology
+from unstructured.partition.html.html_utils import indent_html
+from unstructured.partition.html.transformations import parse_html_to_ontology
 
 
 def _wrap_with_body(html: str) -> str:

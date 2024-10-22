@@ -8,8 +8,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html_utils import indent_html
-from unstructured.documents.transformations import (
+from unstructured.partition.html.html_utils import indent_html
+from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology_element,
     unstructured_elements_to_ontology,
@@ -487,7 +487,3 @@ def test_ordered_list():
         )
     ]
     _assert_elements_equal(unstructured_elements, expected_elements)
-
-
-# TODO (Pluto): Add metadata.category_depth
-# TODO (Pluto): Add metadata.page_number

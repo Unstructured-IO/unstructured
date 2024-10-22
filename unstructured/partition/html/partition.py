@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Any, Iterator, Optional, cast
+from typing import IO, Any, Iterator, List, Optional, cast
 
 import requests
 from lxml import etree
@@ -15,6 +15,10 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.html.parser import Flow, html_parser
+from unstructured.partition.html.transformations import (
+    ontology_to_unstructured_elements,
+    parse_html_to_ontology,
+)
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 
@@ -31,6 +35,7 @@ def partition_html(
     ssl_verify: bool = True,
     skip_headers_and_footers: bool = False,
     detection_origin: Optional[str] = None,
+    contains_ontology_schema: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -71,6 +76,7 @@ def partition_html(
         ssl_verify=ssl_verify,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
+        contains_ontology_schema=contains_ontology_schema,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -91,6 +97,7 @@ class HtmlPartitionerOptions:
         ssl_verify: bool,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
+        contains_ontology_schema: bool,
     ):
         self._file_path = file_path
         self._file = file
@@ -101,6 +108,7 @@ class HtmlPartitionerOptions:
         self._ssl_verify = ssl_verify
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
+        self._contains_ontology_schema = contains_ontology_schema
 
     @lazyproperty
     def detection_origin(self) -> str | None:
@@ -155,6 +163,11 @@ class HtmlPartitionerOptions:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
 
+    @lazyproperty
+    def contains_ontology_schema(self) -> bool:
+        """When True, HTML elements follow ontology schema."""
+        return self._contains_ontology_schema
+
 
 class _HtmlPartitioner:
     """Partition HTML document into document-elements."""
@@ -172,7 +185,13 @@ class _HtmlPartitioner:
 
         Elements appear in document order.
         """
-        for e in self._main.iter_elements():
+        elements_iter = (
+            self._from_ontology
+            if self._opts.contains_ontology_schema
+            else self._main.iter_elements()
+        )
+
+        for e in elements_iter:
             e.metadata.last_modified = self._opts.last_modified
             e.metadata.detection_origin = self._opts.detection_origin
             yield e
@@ -210,3 +229,11 @@ class _HtmlPartitioner:
         if (body := root.find(".//body")) is not None:
             return cast(Flow, body)
         return cast(Flow, root)
+
+    @lazyproperty
+    def _from_ontology(self) -> List[Element]:
+        """Convert an ontology elements represented in HTML to an ontology element."""
+        html_text = self._opts.html_text
+        ontology = parse_html_to_ontology(html_text)
+        unstructured_elements = ontology_to_unstructured_elements(ontology)
+        return unstructured_elements

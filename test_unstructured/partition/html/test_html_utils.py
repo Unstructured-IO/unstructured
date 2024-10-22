@@ -1,6 +1,6 @@
 import pytest
 
-from unstructured.documents.transformations import remove_empty_tags_from_html_content
+from unstructured.partition.html.transformations import remove_empty_tags_from_html_content
 
 
 @pytest.mark.parametrize(
