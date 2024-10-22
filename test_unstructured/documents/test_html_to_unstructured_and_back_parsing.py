@@ -26,13 +26,7 @@ def _wrap_in_body_and_page(html_code):
     )
 
 
-_body_and_page_elements = [
-    Text(
-        text="",
-        element_id="0",
-        detection_origin="vlm_partitioner",
-        metadata=ElementMetadata(text_as_html='<body class="Document" id="0" />'),
-    ),
+_page_elements = [
     Text(
         text="",
         element_id="1",
@@ -87,7 +81,7 @@ def test_simple_narrative_text_with_id():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         NarrativeText(
             text="DEALER ONLY",
             element_id="73cd7b4a-2444-4910-87a4-138117dfaab9",
@@ -118,7 +112,7 @@ def test_input_with_radio_button_checked():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         Text(
             text="",
             detection_origin="vlm_partitioner",
@@ -156,7 +150,7 @@ def test_multiple_elements():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         NarrativeText(
             text="About the same",
             detection_origin="vlm_partitioner",
@@ -219,14 +213,6 @@ def test_multiple_pages():
     expected_elements = [
         Text(
             text="",
-            element_id="0",
-            detection_origin="vlm_partitioner",
-            metadata=ElementMetadata(
-                text_as_html='<body class="Document" id="0" />',
-            ),
-        ),
-        Text(
-            text="",
             element_id="1",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
@@ -284,7 +270,7 @@ def test_forms():
     expected_html = indent_html(html_as_str, html_parser="html.parser")
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         Text(
             text="Option 1 (Checked)",
             element_id="2",
@@ -332,7 +318,7 @@ def test_table():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         Table(
             text="Fair Value1 Fair Value2",
             detection_origin="vlm_partitioner",
@@ -389,7 +375,7 @@ def test_very_nested_structure_is_preserved():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         Text(
             text="",
             element_id="11",
@@ -481,7 +467,7 @@ def test_ordered_list():
     parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
     assert expected_html == parsed_html
-    expected_elements = _body_and_page_elements + [
+    expected_elements = _page_elements + [
         Text(
             text="Item 1 Item 2 Item 3",
             element_id="2",

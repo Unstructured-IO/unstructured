@@ -27,7 +27,7 @@ def test_page_number_is_passed_correctly():
         ]
     )
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    body, page1, p1, page2, p2 = unstructured_elements
+    page1, p1, page2, p2 = unstructured_elements
     assert p1.metadata.page_number == 1
     assert p2.metadata.page_number == 2
 
@@ -42,7 +42,7 @@ def test_invalid_page_number_is_not_passed():
         ]
     )
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    body, page1, p1 = unstructured_elements
+    page1, p1 = unstructured_elements
     assert not p1.metadata.page_number
 
 
@@ -60,19 +60,18 @@ def test_depth_is_passed_correctly():
     )
 
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    body, page1, p1, page2, c1, p2, c2, p3 = unstructured_elements
-    assert body.metadata.category_depth == 0
+    page1, p1, page2, c1, p2, c2, p3 = unstructured_elements
 
-    assert page1.metadata.category_depth == 1
-    assert page2.metadata.category_depth == 1
+    assert page1.metadata.category_depth == 0
+    assert page2.metadata.category_depth == 0
 
-    assert p1.metadata.category_depth == 2
+    assert p1.metadata.category_depth == 1
 
-    assert c2.metadata.category_depth == 2
-    assert c1.metadata.category_depth == 2
+    assert c2.metadata.category_depth == 1
+    assert c1.metadata.category_depth == 1
 
-    assert p2.metadata.category_depth == 3
-    assert p3.metadata.category_depth == 3
+    assert p2.metadata.category_depth == 2
+    assert p3.metadata.category_depth == 2
 
 
 def test_chunking_is_applied_on_elements():
@@ -112,7 +111,7 @@ def test_embeddings_are_applied_on_elements(mocker):
     unstructured_elements = ontology_to_unstructured_elements(ontology)
     # Mocked client with the desired behavior for embed_documents
     mock_client = mocker.MagicMock()
-    mock_client.embed_documents.return_value = [1, 2, 3, 4, 5, 6, 7, 8]
+    mock_client.embed_documents.return_value = [1, 2, 3, 4, 5, 6, 7]
 
     # Mock get_client to return our mock_client
     mocker.patch.object(OpenAIEmbeddingConfig, "get_client", return_value=mock_client)
@@ -122,13 +121,13 @@ def test_embeddings_are_applied_on_elements(mocker):
         elements=unstructured_elements,
     )
 
-    assert len(elements) == 8
+    assert len(elements) == 7
 
-    document, page1, p1, page2, c1, p2, c2, p3 = elements
+    page1, p1, page2, c1, p2, c2, p3 = elements
 
-    assert p1.embeddings == 3
-    assert p2.embeddings == 6
-    assert p3.embeddings == 8
+    assert p1.embeddings == 2
+    assert p2.embeddings == 5
+    assert p3.embeddings == 7
 
 
 @pytest.mark.parametrize(

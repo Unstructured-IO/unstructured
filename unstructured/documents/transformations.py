@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import html
 from collections import OrderedDict
 from typing import Sequence, Type
@@ -17,6 +19,7 @@ from unstructured.documents.mappings import (
     ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME,
 )
 from unstructured.documents.ontology import (
+    Document,
     ElementTypeEnum,
     OntologyElement,
     Page,
@@ -60,23 +63,27 @@ def ontology_to_unstructured_elements(
         if page_number is None and isinstance(ontology_element, Page):
             page_number = ontology_element.page_number
 
-        elements_to_return += [
-            Text(
-                text="",
-                element_id=ontology_element.id,
-                detection_origin="vlm_partitioner",
-                metadata=ElementMetadata(
-                    parent_id=parent_id,
-                    text_as_html=ontology_element.to_html(add_children=False),
-                    page_number=page_number,
-                    category_depth=depth,
-                ),
-            )
-        ]
+        if not isinstance(ontology_element, Document):
+            elements_to_return += [
+                Text(
+                    text="",
+                    element_id=ontology_element.id,
+                    detection_origin="vlm_partitioner",
+                    metadata=ElementMetadata(
+                        parent_id=parent_id,
+                        text_as_html=ontology_element.to_html(add_children=False),
+                        page_number=page_number,
+                        category_depth=depth,
+                    ),
+                )
+            ]
 
         for child in ontology_element.children:
             elements_to_return += ontology_to_unstructured_elements(
-                child, parent_id=ontology_element.id, page_number=page_number, depth=depth + 1
+                child,
+                parent_id=ontology_element.id,
+                page_number=page_number,
+                depth=0 if isinstance(ontology_element, Document) else depth + 1,
             )
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
@@ -122,6 +129,11 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
         OntologyElement: The converted OntologyElement object.
     """
     id_to_element_mapping = OrderedDict()
+
+    document_element_id = unstructured_elements[0].metadata.parent_id
+    id_to_element_mapping[document_element_id] = Document(
+        additional_attributes={"id": document_element_id}
+    )
 
     for element in unstructured_elements:
         html_as_tag = BeautifulSoup(element.metadata.text_as_html, "html.parser").find()
