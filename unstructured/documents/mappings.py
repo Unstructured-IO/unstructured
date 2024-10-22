@@ -1,3 +1,10 @@
+"""
+This module contains mapping between:
+HTML Tags <-> Elements Ontology <-> Unstructured Element classes
+They are used to simplify transformations between different representations
+of parsed documents
+"""
+
 from collections import defaultdict
 from typing import Any, Dict, Type
 
