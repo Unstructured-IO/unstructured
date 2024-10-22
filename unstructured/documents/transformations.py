@@ -33,6 +33,7 @@ def ontology_to_unstructured_elements(
     parent_id: str = None,
     page_number: int = None,
     depth: int = 0,
+    filename: str | None = None,
 ) -> list[Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
@@ -74,6 +75,7 @@ def ontology_to_unstructured_elements(
                         text_as_html=ontology_element.to_html(add_children=False),
                         page_number=page_number,
                         category_depth=depth,
+                        filename=filename,
                     ),
                 )
             ]
@@ -84,6 +86,7 @@ def ontology_to_unstructured_elements(
                 parent_id=ontology_element.id,
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, Document) else depth + 1,
+                filename=filename,
             )
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
@@ -105,6 +108,7 @@ def ontology_to_unstructured_elements(
                 text_as_html=html_code_of_ontology_element,
                 page_number=page_number,
                 category_depth=depth,
+                filename=filename,
             ),
         )
         elements_to_return = [unstructured_element]

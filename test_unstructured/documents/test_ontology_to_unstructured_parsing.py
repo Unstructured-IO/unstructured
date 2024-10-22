@@ -10,6 +10,7 @@ from unstructured.documents.transformations import (
     parse_html_to_ontology,
 )
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
+from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_from_json
 
 
@@ -133,13 +134,28 @@ def test_embeddings_are_applied_on_elements(mocker):
 @pytest.mark.parametrize(
     ("html_file_path", "json_file_path"),
     [
-        ("html_files/example.html", "structured_jsons/example.json"),
+        ("html_files/example.html", "unstructured_json_output/example.json"),
     ],
 )
 def test_ingest(html_file_path, json_file_path):
     html_code = Path(html_file_path).read_text()
-    expected_json_elements = elements_from_json(str(Path(json_file_path)))
+    expected_json_elements = elements_from_json(json_file_path)
 
     ontology = parse_html_to_ontology(html_code)
     unstructured_elements = ontology_to_unstructured_elements(ontology)
     assert unstructured_elements == expected_json_elements
+
+
+@pytest.mark.parametrize("json_file_path", ["unstructured_json_output/example.json"])
+def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
+    expected_json_elements = elements_from_json(json_file_path)
+
+    json_elements_text = Path(json_file_path).read_text()
+    elements = partition_json(text=json_elements_text)
+
+    assert len(elements) == len(expected_json_elements)
+    for i in range(len(elements)):
+        assert elements[i] == expected_json_elements[i]
+        # The partitioning output comes from PDF file, so only stem is compared
+        # as the suffix is different .pdf != .json
+        assert Path(elements[i].metadata.filename).stem == Path(json_file_path).stem
