@@ -21,11 +21,11 @@ filelock==3.16.1
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.10.0
+fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.26.1
+huggingface-hub==0.26.0
     # via
     #   tokenizers
     #   transformers

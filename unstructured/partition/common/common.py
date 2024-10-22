@@ -9,7 +9,6 @@ from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
 import psutil
-from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
 from unstructured.documents.elements import (
@@ -28,9 +27,6 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.utils import dependency_exists, first
-
-if dependency_exists("pptx") and dependency_exists("pptx.table"):
-    from pptx.table import Table as PptxTable
 
 if dependency_exists("numpy") and dependency_exists("cv2"):
     from unstructured.partition.utils.sorting import sort_page_elements
@@ -394,27 +390,6 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
             return f.read()
 
     raise ValueError("Invalid file-like object type")
-
-
-def convert_ms_office_table_to_text(table: PptxTable, as_html: bool = True) -> str:
-    """Convert a PPTX table object to an HTML table string using the tabulate library.
-
-    Args:
-        table (Table): A pptx.table.Table object.
-        as_html (bool): Whether to return the table as an HTML string (True) or a
-            plain text string (False)
-
-    Returns:
-        str: An table string representation of the input table.
-    """
-    rows = list(table.rows)
-
-    if not rows:
-        return ""
-
-    headers = [cell.text for cell in rows[0].cells]
-    data = [[cell.text for cell in row.cells] for row in rows[1:]]
-    return tabulate(data, headers=headers, tablefmt="html" if as_html else "plain")
 
 
 def contains_emoji(s: str) -> bool:

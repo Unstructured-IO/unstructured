@@ -44,7 +44,7 @@ flatbuffers==24.3.25
     # via onnxruntime
 fonttools==4.54.1
     # via matplotlib
-fsspec==2024.10.0
+fsspec==2024.9.0
     # via
     #   huggingface-hub
     #   torch
@@ -67,7 +67,7 @@ grpcio==1.67.0
     #   grpcio-status
 grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.26.1
+huggingface-hub==0.26.0
     # via
     #   timm
     #   tokenizers
@@ -117,6 +117,7 @@ numpy==1.26.4
     #   scipy
     #   torchvision
     #   transformers
+    #   unstructured-inference
 omegaconf==2.3.0
     # via effdet
 onnx==1.17.0
@@ -200,7 +201,7 @@ pypdf==5.0.1
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.0
     # via pdfplumber
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   matplotlib
@@ -281,7 +282,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.2
     # via pandas
-unstructured-inference==0.7.36
+unstructured-inference==0.8.0
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
