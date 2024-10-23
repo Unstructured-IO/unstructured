@@ -139,8 +139,11 @@ def test_embeddings_are_applied_on_elements(mocker):
     ],
 )
 def test_ingest(html_file_path, json_file_path):
-    html_code = Path(html_file_path).read_text()
-    expected_json_elements = elements_from_json(json_file_path)
+    html_file_path = Path(__file__).parent / html_file_path
+    json_file_path = Path(__file__).parent / json_file_path
+
+    html_code = html_file_path.read_text()
+    expected_json_elements = elements_from_json(str(json_file_path))
 
     ontology = parse_html_to_ontology(html_code)
     unstructured_elements = ontology_to_unstructured_elements(ontology)
@@ -149,9 +152,11 @@ def test_ingest(html_file_path, json_file_path):
 
 @pytest.mark.parametrize("json_file_path", ["unstructured_json_output/example.json"])
 def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
-    expected_json_elements = elements_from_json(json_file_path)
+    json_file_path = Path(__file__).parent / json_file_path
 
-    json_elements_text = Path(json_file_path).read_text()
+    expected_json_elements = elements_from_json(str(json_file_path))
+
+    json_elements_text = json_file_path.read_text()
     elements = partition_json(text=json_elements_text)
 
     assert len(elements) == len(expected_json_elements)
@@ -159,7 +164,7 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
         assert elements[i] == expected_json_elements[i]
         # The partitioning output comes from PDF file, so only stem is compared
         # as the suffix is different .pdf != .json
-        assert Path(elements[i].metadata.filename).stem == Path(json_file_path).stem
+        assert Path(elements[i].metadata.filename).stem == json_file_path.stem
 
 
 @pytest.mark.parametrize(
@@ -169,8 +174,11 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
     ],
 )
 def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_path):
-    expected_json_elements = elements_from_json(json_file_path)
-    html_code = Path(html_file_path).read_text()
+    html_file_path = Path(__file__).parent / html_file_path
+    json_file_path = Path(__file__).parent / json_file_path
+
+    expected_json_elements = elements_from_json(str(json_file_path))
+    html_code = html_file_path.read_text()
 
     predicted_elements = partition_html(text=html_code, html_parser_version="v2")
     assert len(expected_json_elements) == len(predicted_elements)
