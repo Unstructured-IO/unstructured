@@ -172,7 +172,7 @@ def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_p
     expected_json_elements = elements_from_json(json_file_path)
     html_code = Path(html_file_path).read_text()
 
-    predicted_elements = partition_html(text=html_code, contains_ontology_schema=True)
+    predicted_elements = partition_html(text=html_code, html_parser_version="v2")
     assert len(expected_json_elements) == len(predicted_elements)
 
     for i in range(len(expected_json_elements)):

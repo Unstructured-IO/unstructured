@@ -13,6 +13,8 @@ TODO (Pluto): OntologyElement is the only needed class. It could contains data a
  allowed html tags, css classes and descriptions as metadata.
 """
 
+from __future__ import annotations
+
 import uuid
 from copy import copy
 from enum import Enum

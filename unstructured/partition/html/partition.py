@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Any, Iterator, List, Optional, cast
+from typing import IO, Any, Iterator, List, Literal, Optional, cast
 
 import requests
 from lxml import etree
@@ -35,7 +35,7 @@ def partition_html(
     ssl_verify: bool = True,
     skip_headers_and_footers: bool = False,
     detection_origin: Optional[str] = None,
-    contains_ontology_schema: bool = False,
+    html_parser_version: Literal["v1", "v2"] = "v1",
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -61,6 +61,10 @@ def partition_html(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
+
+    html_parser_version (Literal['v1', 'v2']):
+        The version of the HTML parser to use. The default is 'v1'. For 'v2' the parser will
+        use the ontology schema to parse the HTML document.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
@@ -76,7 +80,7 @@ def partition_html(
         ssl_verify=ssl_verify,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
-        contains_ontology_schema=contains_ontology_schema,
+        html_parser_version=html_parser_version,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -97,7 +101,7 @@ class HtmlPartitionerOptions:
         ssl_verify: bool,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
-        contains_ontology_schema: bool,
+        html_parser_version: Literal["v1", "v2"] = "v1",
     ):
         self._file_path = file_path
         self._file = file
@@ -108,7 +112,7 @@ class HtmlPartitionerOptions:
         self._ssl_verify = ssl_verify
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
-        self._contains_ontology_schema = contains_ontology_schema
+        self._html_parser_version = html_parser_version
 
     @lazyproperty
     def detection_origin(self) -> str | None:
@@ -164,9 +168,9 @@ class HtmlPartitionerOptions:
         return self._skip_headers_and_footers
 
     @lazyproperty
-    def contains_ontology_schema(self) -> bool:
-        """When True, HTML elements follow ontology schema."""
-        return self._contains_ontology_schema
+    def html_parser_version(self) -> Literal["v1", "v2"]:
+        """When html_parser_version=='v2', HTML elements follow ontology schema."""
+        return self._html_parser_version
 
 
 class _HtmlPartitioner:
@@ -186,9 +190,9 @@ class _HtmlPartitioner:
         Elements appear in document order.
         """
         elements_iter = (
-            self._from_ontology
-            if self._opts.contains_ontology_schema
-            else self._main.iter_elements()
+            self._main.iter_elements()
+            if self._opts.html_parser_version == "v2"
+            else self._from_ontology
         )
 
         for e in elements_iter:
