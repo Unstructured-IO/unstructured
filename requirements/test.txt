@@ -236,7 +236,7 @@ wrapt==1.16.0
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.15.5
+yarl==1.16.0
     # via vcrpy
 
 # The following packages are considered to be unsafe in a requirements file:

@@ -1,4 +1,4 @@
-## 0.16.1-dev7
+## 0.16.1-dev8
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * **Request retry parameters in `partition_via_api` function.** Expose retry-mechanism related parameters in the `partition_via_api` function to allow users to configure the retry behavior of the API requests.
 
 ### Features
+
+* **Parsing HTML to Unstructured Elements and back**
 
 ### Fixes
 

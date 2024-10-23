@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Any, Iterator, Optional, cast
+from typing import IO, Any, Iterator, List, Literal, Optional, cast
 
 import requests
 from lxml import etree
@@ -15,6 +15,10 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.html.parser import Flow, html_parser
+from unstructured.partition.html.transformations import (
+    ontology_to_unstructured_elements,
+    parse_html_to_ontology,
+)
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 
@@ -31,6 +35,7 @@ def partition_html(
     ssl_verify: bool = True,
     skip_headers_and_footers: bool = False,
     detection_origin: Optional[str] = None,
+    html_parser_version: Literal["v1", "v2"] = "v1",
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -56,6 +61,10 @@ def partition_html(
         The encoding method used to decode the text input. If None, utf-8 will be used.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
+
+    html_parser_version (Literal['v1', 'v2']):
+        The version of the HTML parser to use. The default is 'v1'. For 'v2' the parser will
+        use the ontology schema to parse the HTML document.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
@@ -71,6 +80,7 @@ def partition_html(
         ssl_verify=ssl_verify,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
+        html_parser_version=html_parser_version,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -91,6 +101,7 @@ class HtmlPartitionerOptions:
         ssl_verify: bool,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
+        html_parser_version: Literal["v1", "v2"] = "v1",
     ):
         self._file_path = file_path
         self._file = file
@@ -101,6 +112,7 @@ class HtmlPartitionerOptions:
         self._ssl_verify = ssl_verify
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
+        self._html_parser_version = html_parser_version
 
     @lazyproperty
     def detection_origin(self) -> str | None:
@@ -155,6 +167,11 @@ class HtmlPartitionerOptions:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
 
+    @lazyproperty
+    def html_parser_version(self) -> Literal["v1", "v2"]:
+        """When html_parser_version=='v2', HTML elements follow ontology schema."""
+        return self._html_parser_version
+
 
 class _HtmlPartitioner:
     """Partition HTML document into document-elements."""
@@ -172,7 +189,13 @@ class _HtmlPartitioner:
 
         Elements appear in document order.
         """
-        for e in self._main.iter_elements():
+        elements_iter = (
+            self._main.iter_elements()
+            if self._opts.html_parser_version == "v1"
+            else self._from_ontology
+        )
+
+        for e in elements_iter:
             e.metadata.last_modified = self._opts.last_modified
             e.metadata.detection_origin = self._opts.detection_origin
             yield e
@@ -210,3 +233,11 @@ class _HtmlPartitioner:
         if (body := root.find(".//body")) is not None:
             return cast(Flow, body)
         return cast(Flow, root)
+
+    @lazyproperty
+    def _from_ontology(self) -> List[Element]:
+        """Convert an ontology elements represented in HTML to an ontology element."""
+        html_text = self._opts.html_text
+        ontology = parse_html_to_ontology(html_text)
+        unstructured_elements = ontology_to_unstructured_elements(ontology)
+        return unstructured_elements
