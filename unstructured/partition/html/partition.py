@@ -191,7 +191,7 @@ class _HtmlPartitioner:
         """
         elements_iter = (
             self._main.iter_elements()
-            if self._opts.html_parser_version == "v2"
+            if self._opts.html_parser_version == "v1"
             else self._from_ontology
         )
 
