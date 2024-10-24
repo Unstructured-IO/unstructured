@@ -106,20 +106,30 @@ def test_calculate_edit_distance():
 
 
 @pytest.mark.parametrize(
-    ("filename", "expected_score", "expected_distance"),
+    ("filename", "standardize_whitespaces", "expected_score", "expected_distance"),
     [
-        ("fake-text.txt", 0.78, 38),
+        ("fake-text.txt", False, 0.78, 38),
+        ("fake-text.txt", True, 0.92, 12),
     ],
 )
-def test_calculate_edit_distance_with_filename(filename, expected_score, expected_distance):
+def test_calculate_edit_distance_with_filename(
+    filename, standardize_whitespaces, expected_score, expected_distance
+):
     with open("example-docs/fake-text.txt") as f:
         source_cct = f.read()
 
     elements = partition(filename=f"example-docs/{filename}")
     output_cct = "\n".join([str(el) for el in elements])
 
-    score = text_extraction.calculate_edit_distance(output_cct, source_cct, return_as="score")
-    distance = text_extraction.calculate_edit_distance(output_cct, source_cct, return_as="distance")
+    score = text_extraction.calculate_edit_distance(
+        output_cct, source_cct, return_as="score", standardize_whitespaces=standardize_whitespaces
+    )
+    distance = text_extraction.calculate_edit_distance(
+        output_cct,
+        source_cct,
+        return_as="distance",
+        standardize_whitespaces=standardize_whitespaces,
+    )
 
     assert score >= 0
     assert score <= 1.0
