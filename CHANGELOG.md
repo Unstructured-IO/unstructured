@@ -1,8 +1,18 @@
-## 0.16.2-dev
+## 0.16.2-dev2
 
 ### Features
 
 * **Whitespace-invariant CCT distance metric.** CCT Levenshtein distance for strings is by default computed with standardized whitespaces.
+
+## 0.16.2-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fixed retry config settings for partition_via_api function** If the SDK's default retry config is not set the retry config getter function does not fail anymore.
 
 ## 0.16.1
 
