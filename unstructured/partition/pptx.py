@@ -22,6 +22,7 @@ from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking import add_chunking_strategy
+from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -34,7 +35,6 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common.common import convert_ms_office_table_to_text
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
@@ -213,38 +213,6 @@ class _PptxPartitioner:
         PicturePartitionerCls = self._opts.picture_partitioner
         yield from PicturePartitionerCls.iter_elements(picture, self._opts)
 
-    def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
-        """Generate Title element for each paragraph in title `shape`.
-
-        Text is most likely a title, but in the rare case that the title shape was used
-        for the slide body text, also check for bulleted paragraphs."""
-        if self._shape_is_off_slide(shape):
-            return
-
-        depth = 0
-        for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
-            if text.strip() == "":
-                continue
-
-            if self._is_bulleted_paragraph(paragraph):
-                bullet_depth = paragraph.level or 0
-                yield ListItem(
-                    text=text,
-                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
-                    detection_origin=DETECTION_ORIGIN,
-                )
-            elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
-            else:
-                # increment the category depth by the paragraph increment in the shape
-                yield Title(
-                    text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
-                    detection_origin=DETECTION_ORIGIN,
-                )
-                depth += 1  # Cannot enumerate because we want to skip empty paragraphs
-
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
         if self._shape_is_off_slide(shape):
@@ -280,17 +248,54 @@ class _PptxPartitioner:
 
         An empty table does not produce an element.
         """
-        text_table = convert_ms_office_table_to_text(graphfrm.table, as_html=False).strip()
-        if not text_table:
+        if not (rows := list(graphfrm.table.rows)):
             return
-        html_table = None
-        if self._opts.infer_table_structure:
-            html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
-        yield Table(
-            text=text_table,
-            metadata=self._opts.table_metadata(html_table),
-            detection_origin=DETECTION_ORIGIN,
+
+        html_text = htmlify_matrix_of_cell_texts(
+            [[cell.text for cell in row.cells] for row in rows]
         )
+        html_table = HtmlTable.from_html_text(html_text)
+
+        if not html_table.text:
+            return
+
+        metadata = self._opts.table_metadata(
+            html_table.html if self._opts.infer_table_structure else None
+        )
+
+        yield Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
+        """Generate Title element for each paragraph in title `shape`.
+
+        Text is most likely a title, but in the rare case that the title shape was used
+        for the slide body text, also check for bulleted paragraphs."""
+        if self._shape_is_off_slide(shape):
+            return
+
+        depth = 0
+        for paragraph in shape.text_frame.paragraphs:
+            text = paragraph.text
+            if text.strip() == "":
+                continue
+
+            if self._is_bulleted_paragraph(paragraph):
+                bullet_depth = paragraph.level or 0
+                yield ListItem(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+            elif is_email_address(text):
+                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+            else:
+                # increment the category depth by the paragraph increment in the shape
+                yield Title(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+                depth += 1  # Cannot enumerate because we want to skip empty paragraphs
 
     def _order_shapes(self, slide: Slide) -> tuple[Shape | None, Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
