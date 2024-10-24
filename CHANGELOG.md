@@ -3,6 +3,7 @@
 ### Enhancements
 
 ### Features
+- **Use password** to load PDF with all modes
 
 ### Fixes
 - **Fix an issue with multiple values for `infer_table_structure`** when paritioning email with image attachements the kwarg calls into `partition` to partition the image already contains `infer_table_structure`. Now `partition` function checks if the `kwarg` has `infer_table_structure` already

@@ -410,6 +410,7 @@ def _partition_pdf_with_pdfminer(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 **kwargs,
             )
 
