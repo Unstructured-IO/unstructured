@@ -1,21 +1,10 @@
-## 0.16.2-dev2
+## 0.16.2
 
-<<<<<<< HEAD
-=======
 ### Enhancements
 
-### Features
-
->>>>>>> 81635a89 (resolve conflicts)
 ### Features
 
 * **Whitespace-invariant CCT distance metric.** CCT Levenshtein distance for strings is by default computed with standardized whitespaces.
-
-## 0.16.2-dev1
-
-### Enhancements
-
-### Features
 
 ### Fixes
 
