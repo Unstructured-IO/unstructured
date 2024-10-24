@@ -219,7 +219,7 @@ def test_inline_elements_are_squeezed():
     assert text1.text == "Hyperlink1 Hyperlink2 Hyperlink3"
 
 
-def test_text_elements_are_not_squeezed():
+def test_text_elements_are_squeezed():
     ontology = Document(
         children=[
             Page(
@@ -231,11 +231,10 @@ def test_text_elements_are_not_squeezed():
         ]
     )
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    assert len(unstructured_elements) == 3
+    assert len(unstructured_elements) == 2
 
-    page, text1, text2 = unstructured_elements
-    assert text1.text == "Paragraph1"
-    assert text2.text == "Paragraph2"
+    page, text1 = unstructured_elements
+    assert text1.text == "Paragraph1 Paragraph2"
 
 
 def test_inline_elements_are_squeezed_when_image():
@@ -255,12 +254,11 @@ def test_inline_elements_are_squeezed_when_image():
         ]
     )
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    assert len(unstructured_elements) == 5
+    assert len(unstructured_elements) == 4
 
-    page, text1, image, text2, text3 = unstructured_elements
+    page, text1, image, text2 = unstructured_elements
     assert text1.text == "Paragraph1 Hyperlink1"
-    assert text2.text == "Hyperlink2 Hyperlink3 Paragraph2"
-    assert text3.text == "Paragraph3"
+    assert text2.text == "Hyperlink2 Hyperlink3 Paragraph2 Paragraph3"
 
     assert '<a class="Hyperlink"' in text1.metadata.text_as_html
     assert '<p class="Paragraph"' in text1.metadata.text_as_html
@@ -286,11 +284,10 @@ def test_inline_elements_are_squeezed_when_table():
         ]
     )
     unstructured_elements = ontology_to_unstructured_elements(ontology)
-    assert len(unstructured_elements) == 5
+    assert len(unstructured_elements) == 4
 
-    page, text1, text2, table1, text3 = unstructured_elements
-    assert text1.text == "Hyperlink1 Paragraph1"
-    assert text2.text == "Paragraph2"
+    page, text1, table1, text3 = unstructured_elements
+    assert text1.text == "Hyperlink1 Paragraph1 Paragraph2"
     assert table1.text == "Table1"
     assert text3.text == "Paragraph2 Hyperlink2 Hyperlink3"
 

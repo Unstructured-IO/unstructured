@@ -174,9 +174,7 @@ def can_unstructured_elements_be_merged(current_element: Element, next_element: 
     Elements can be merged when:
     - They are on the same level in the HTML tree
     - Neither of them has children
-    - All elements are inline elements or maximum one text element is present:
-        - We do not want to merge two seperated paragraphs
-        - But we want to merge inline text with paragraph and vice versa
+    - All elements are inline elements or text element
     """
     if current_element.metadata.category_depth != next_element.metadata.category_depth:
         return False
@@ -193,16 +191,8 @@ def can_unstructured_elements_be_merged(current_element: Element, next_element: 
         for html_tag in chain(current_html_tags, next_html_tags)
     ]
 
-    has_text_flag = False
     for ontology_element in ontology_elements:
         if ontology_element.children:
-            return False
-
-        if is_text_element(ontology_element) and not has_text_flag:
-            has_text_flag = True
-            continue
-
-        if is_text_element(ontology_element) and has_text_flag:
             return False
 
         if not (is_inline_element(ontology_element) or is_text_element(ontology_element)):
