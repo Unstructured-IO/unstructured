@@ -66,6 +66,7 @@ def save_analysis_artifiacts(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    password: Optional[str] = None,
 ):
     """Save the analysis artifacts for a given file. Loads some settings from
     the environment configuration.
@@ -109,6 +110,7 @@ def save_analysis_artifiacts(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            password=password,
         )
 
         for layout_dumper in layout_dumpers:
@@ -125,6 +127,7 @@ def render_bboxes_for_file(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    password: Optional[str] = None,
 ):
     """Render the bounding boxes for a given layout dimp file.
     To be used for analysis after the partition is performed for
@@ -183,6 +186,7 @@ def render_bboxes_for_file(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            passwork=password,
         )
 
         for drawer in layout_drawers:

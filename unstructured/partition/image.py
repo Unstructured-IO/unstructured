@@ -32,6 +32,7 @@ def partition_image(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    password:Optional[str]=None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses an image into a list of interpreted elements.
@@ -91,6 +92,8 @@ def partition_image(
         (results in adding FormKeysValues elements to output).
     form_extraction_skip_tables
         Whether the form extraction logic should ignore regions designated as Tables.
+    password
+        The password to decrypt the PDF file.
     """
     exactly_one(filename=filename, file=file)
 
@@ -113,5 +116,6 @@ def partition_image(
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
+        password=password,
         **kwargs,
     )
