@@ -1,3 +1,12 @@
+## 0.16.3-dev1
+
+### Enhancements
+* **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
+
+### Features
+
+### Fixes
+
 ## 0.16.2
 
 ### Enhancements
