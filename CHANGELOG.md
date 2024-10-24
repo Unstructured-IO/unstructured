@@ -1,3 +1,9 @@
+## 0.16.2-dev
+
+### Features
+
+* **Whitespace-invariant CCT distance metric.** CCT Levenshtein distance for strings is by default computed with standardized whitespaces.
+
 ## 0.16.1
 
 ### Enhancements
@@ -308,7 +314,6 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
-
 * **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
@@ -355,7 +360,7 @@
 
 * **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
 * **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
-    serverless will work version versions >=0.14.2, but hadn't been tested until now.
+  serverless will work version versions >=0.14.2, but hadn't been tested until now.
 
 ### Features
 
@@ -438,6 +443,7 @@
 * **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
 
 ### Features
+
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
 
 ### Fixes
@@ -615,8 +621,8 @@
 ### Enhancements
 
 ### Features
-* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 
+* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
@@ -634,7 +640,6 @@
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
 * **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
-
 
 ## 0.12.4
 
@@ -663,7 +668,6 @@
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add title to Vectara upload - was not separated out from initial connector **
 * **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
-
 
 ## 0.12.3
 
@@ -717,6 +721,7 @@
 * **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
 
 ### Features
+
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
 * **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
 
@@ -964,8 +969,8 @@
 * **Update `ocr_only` strategy in `partition_pdf()`** Adds the functionality to get accurate coordinate data when partitioning PDFs and Images with the `ocr_only` strategy.
 
 ### Fixes
-* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
 
+* **Fixed SharePoint permissions for the fetching to be opt-in** Problem: Sharepoint permissions were trying to be fetched even when no reletad cli params were provided, and this gave an error due to values for those keys not existing. Fix: Updated getting keys to be with .get() method and changed the "skip-check" to check individual cli params rather than checking the existance of a config object.
 * **Fixes issue where tables from markdown documents were being treated as text** Problem: Tables from markdown documents were being treated as text, and not being extracted as tables. Solution: Enable the `tables` extension when instantiating the `python-markdown` object. Importance: This will allow users to extract structured data from tables in markdown documents.
 * **Fix wrong logger for paddle info** Replace the logger from unstructured-inference with the logger from unstructured for paddle_ocr.py module.
 * **Fix ingest pipeline to be able to use chunking and embedding together** Problem: When ingest pipeline was using chunking and embedding together, embedding outputs were empty and the outputs of chunking couldn't be re-read into memory and be forwarded to embeddings. Fix: Added CompositeElement type to TYPE_TO_TEXT_ELEMENT_MAP to be able to process CompositeElements with unstructured.staging.base.isd_to_elements
@@ -1018,7 +1023,7 @@
 ### Features
 
 * **Table OCR refactor** support Table OCR with pre-computed OCR data to ensure we only do one OCR for entrie document. User can specify
-ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the entire document.
+  ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the entire document.
 * **Adds accuracy function** The accuracy scoring was originally an option under `calculate_edit_distance`. For easy function call, it is now a wrapper around the original function that calls edit_distance and return as "score".
 * **Adds HuggingFaceEmbeddingEncoder** The HuggingFace Embedding Encoder uses a local embedding model as opposed to using an API.
 * **Add AWS bedrock embedding connector** `unstructured.embed.bedrock` now provides a connector to use AWS bedrock's `titan-embed-text` model to generate embeddings for elements. This features requires valid AWS bedrock setup and an internet connectionto run.
@@ -1049,7 +1054,7 @@ ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the en
 ### Fixes
 
 * **Fix paddle model file not discoverable** Fixes issue where ocr_models/paddle_ocr.py file is not discoverable on PyPI by adding
-an `__init__.py` file under the folder.
+  an `__init__.py` file under the folder.
 * **Chipper v2 Fixes** Includes fix for a memory leak and rare last-element bbox fix. (unstructured-inference==0.7.7)
 * **Fix image resizing issue** Includes fix related to resizing images in the tables pipeline. (unstructured-inference==0.7.6)
 
@@ -1111,12 +1116,13 @@ an `__init__.py` file under the folder.
 * **Applies `max_characters=<n>` argument to all element types in `add_chunking_strategy` decorator** Previously this argument was only utilized in chunking Table elements and now applies to all partitioned elements if `add_chunking_strategy` decorator is utilized, further preparing the elements for downstream processing.
 * **Add common retry strategy utilities for unstructured-ingest** Dynamic retry strategy with exponential backoff added to Notion source connector.
 *
+
 ### Features
 
 * **Adds `bag_of_words` and `percent_missing_text` functions** In order to count the word frequencies in two input texts and calculate the percentage of text missing relative to the source document.
 * **Adds `edit_distance` calculation metrics** In order to benchmark the cleaned, extracted text with unstructured, `edit_distance` (`Levenshtein distance`) is included.
 * **Adds detection_origin field to metadata** Problem: Currently isn't an easy way to find out how an element was created. With this change that information is added. Importance: With this information the developers and users are now able to know how an element was created to make decisions on how to use it. In order tu use this feature
-setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
+  setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 * **Adds a function that calculates frequency of the element type and its depth** To capture the accuracy of element type extraction, this function counts the occurrences of each unique element type with its depth for use in element metrics.
 
 ### Fixes
@@ -1126,10 +1132,9 @@ setting UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true is needed.
 * **Fixes category_depth None value for Title elements** Problem: `Title` elements from `chipper` get `category_depth`= None even when `Headline` and/or `Subheadline` elements are present in the same page. Fix: all `Title` elements with `category_depth` = None should be set to have a depth of 0 instead iff there are `Headline` and/or `Subheadline` element-types present. Importance: `Title` elements should be equivalent html `H1` when nested headings are present; otherwise, `category_depth` metadata can result ambiguous within elements in a page.
 * **Tweak `xy-cut` ordering output to be more column friendly** This results in the order of elements more closely reflecting natural reading order which benefits downstream applications. While element ordering from `xy-cut` is usually mostly correct when ordering multi-column documents, sometimes elements from a RHS column will appear before elements in a LHS column. Fix: add swapped `xy-cut` ordering by sorting by X coordinate first and then Y coordinate.
 * **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
-should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
-allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+  should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
+  allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 * **Fixes pdf uri error** An error was encountered when URI type of `GoToR` which refers to pdf resources outside of its own was detected since no condition catches such case. The code is fixing the issue by initialize URI before any condition check.
-
 
 ## 0.10.19
 
@@ -1207,7 +1212,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ## 0.10.15
 
-
 ### Enhancements
 
 * **Support for better element categories from the next-generation image-to-text model ("chipper").** Previously, not all of the classifications from Chipper were being mapped to proper `unstructured` element categories so the consumer of the library would see many `UncategorizedText` elements. This fixes the issue, improving the granularity of the element categories outputs for better downstream processing and chunking. The mapping update is:
@@ -1281,7 +1285,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Add Jira Connector to be able to pull issues from a Jira organization
 * Add `clean_ligatures` function to expand ligatures in text
 
-
 ### Fixes
 
 * `partition_html` breaks on `<br>` elements.
@@ -1299,13 +1302,11 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
   * Support for yolox_quantized layout detection model (0.5.20)
 * YoloX element types added
 
-
 ### Features
 
 * Add Salesforce Connector to be able to pull Account, Case, Campaign, EmailMessage, Lead
 
 ### Fixes
-
 
 * Bump unstructured-inference
   * Avoid divide-by-zero errors swith `safe_division` (0.5.21)
@@ -1427,15 +1428,18 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Adds ability to reuse connections per process in unstructured-ingest
 
 ### Features
+
 * Add delta table connector
 
 ### Fixes
 
 ## 0.10.4
+
 * Pass ocr_mode in partition_pdf and set the default back to individual pages for now
 * Add diagrams and descriptions for ingest design in the ingest README
 
 ### Features
+
 * Supports multipage TIFF image partitioning
 
 ### Fixes
@@ -1443,6 +1447,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ## 0.10.2
 
 ### Enhancements
+
 * Bump unstructured-inference==0.5.13:
   - Fix extracted image elements being included in layout merge, addresses the issue
     where an entire-page image in a PDF was not passed to the layout model when using hi_res.
@@ -1454,6 +1459,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ## 0.10.1
 
 ### Enhancements
+
 * Bump unstructured-inference==0.5.12:
   - fix to avoid trace for certain PDF's (0.5.12)
   - better defaults for DPI for hi_res and  Chipper (0.5.11)
@@ -1504,7 +1510,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Fix email attachment filenames which had `=` in the filename itself
 
 ## 0.9.2
-
 
 ### Enhancements
 
@@ -1684,7 +1689,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Adjust encoding recognition threshold value in `detect_file_encoding`
 * Fix KeyError when `isd_to_elements` doesn't find a type
 * Fix `_output_filename` for local connector, allowing single files to be written correctly to the disk
-
 * Fix for cases where an invalid encoding is extracted from an email header.
 
 ### BREAKING CHANGES
@@ -1696,6 +1700,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ### Enhancements
 
 * Adds `include_metadata` kwarg to `partition_doc`, `partition_docx`, `partition_email`, `partition_epub`, `partition_json`, `partition_msg`, `partition_odt`, `partition_org`, `partition_pdf`, `partition_ppt`, `partition_pptx`, `partition_rst`, and `partition_rtf`
+
 ### Features
 
 * Add Elasticsearch connector for ingest cli to pull specific fields from all documents in an index.
@@ -1930,9 +1935,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Features
 
-
 ### Fixes
-
 
 ## 0.6.10
 
@@ -2030,7 +2033,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 ### Fixes
 
-
 ## 0.6.4
 
 ### Enhancements
@@ -2066,7 +2068,6 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 
 * Added logic to `partition_pdf` for detecting copy protected PDFs and falling back
   to the hi res strategy when necessary.
-
 
 ### Features
 
@@ -2138,8 +2139,8 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * Added method to utils to allow date time format validation
 
 ### Features
-* Add Slack connector to pull messages for a specific channel
 
+* Add Slack connector to pull messages for a specific channel
 * Add --partition-by-api parameter to unstructured-ingest
 * Added `partition_rtf` for processing rich text files.
 * `partition` now accepts a `url` kwarg in addition to `file` and `filename`.
@@ -2269,7 +2270,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 ### Features
 
 * Add `AzureBlobStorageConnector` based on its `fsspec` implementation inheriting
-from `FsspecConnector`
+  from `FsspecConnector`
 * Add `partition_epub` for partitioning e-books in EPUB3 format.
 
 ### Fixes
@@ -2302,16 +2303,16 @@ from `FsspecConnector`
 
 * Fully move from printing to logging.
 * `unstructured-ingest` now uses a default `--download_dir` of `$HOME/.cache/unstructured/ingest`
-rather than a "tmp-ingest-" dir in the working directory.
+  rather than a "tmp-ingest-" dir in the working directory.
 
 ### Features
 
 ### Fixes
 
 * `setup_ubuntu.sh` no longer fails in some contexts by interpreting
-`DEBIAN_FRONTEND=noninteractive` as a command
+  `DEBIAN_FRONTEND=noninteractive` as a command
 * `unstructured-ingest` no longer re-downloads files when --preserve-downloads
-is used without --download-dir.
+  is used without --download-dir.
 * Fixed an issue that was causing text to be skipped in some HTML documents.
 
 ## 0.5.1
@@ -2488,7 +2489,7 @@ is used without --download-dir.
 * Add ability to extract document metadata from `.docx`, `.xlsx`, and `.jpg` files.
 * Helper functions for identifying and extracting phone numbers
 * Add new function `extract_attachment_info` that extracts and decodes the attachment
-of an email.
+  of an email.
 * Staging brick to convert a list of `Element`s to a `pandas` dataframe.
 * Add plain text functionality to `partition_email`
 
