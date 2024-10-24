@@ -98,8 +98,9 @@ def ontology_to_unstructured_elements(
                 filename=filename,
             )
             children += child
-        squeezed_children = squeeze_inline_elements(children)
-        elements_to_return += squeezed_children
+
+        combined_children = combine_inline_elements(children)
+        elements_to_return += combined_children
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
@@ -128,7 +129,25 @@ def ontology_to_unstructured_elements(
     return elements_to_return
 
 
-def squeeze_inline_elements(elements: list[Element]) -> list[Element]:
+def combine_inline_elements(elements: list[Element]) -> list[Element]:
+    """
+    Combines consecutive inline elements into a single element. Inline elements
+    can be also combined with text elements.
+
+    Combined elements contains multiple HTML tags together eg.
+    {
+        'text': "Text from element 1 Text from element 2",
+        'metadata': {
+            'text_as_html': "<p>Text from element 1</p><a>Text from element 2</a>"
+        }
+    }
+
+    Args:
+        elements (list[Element]): A list of elements to be combined.
+
+    Returns:
+        list[Element]: A list of combined elements.
+    """
     result_elements = []
 
     current_element = None
@@ -138,10 +157,8 @@ def squeeze_inline_elements(elements: list[Element]) -> list[Element]:
             continue
 
         if can_unstructured_elements_be_merged(current_element, next_element):
-            current_element.text += " " + next_element.text  # append here
-            current_element.metadata.text_as_html += (
-                " " + next_element.metadata.text_as_html
-            )  # append here
+            current_element.text += " " + next_element.text
+            current_element.metadata.text_as_html += " " + next_element.metadata.text_as_html
         else:
             result_elements.append(current_element)
             current_element = next_element
@@ -154,17 +171,22 @@ def squeeze_inline_elements(elements: list[Element]) -> list[Element]:
 
 def can_unstructured_elements_be_merged(current_element: Element, next_element: Element) -> bool:
     """
-    Elements can be merged when (remember they can be already after some merging):
-    - Neither of them has children (only first HTML tag in text_as_html has to considered;
-      if they were merged already they didn't have children)
-    - We do not want to merge two text elements, only inline element with text so there
-      is no two text elements
-    - and all other elements are inline elements
+    Elements can be merged when:
+    - They are on the same level in the HTML tree
+    - Neither of them has children
+    - All elements are inline elements or maximum one text element is present:
+        - We do not want to merge two seperated paragraphs
+        - But we want to merge inline text with paragraph and vice versa
     """
+    if current_element.metadata.category_depth != next_element.metadata.category_depth:
+        return False
+
     current_html_tags = BeautifulSoup(
         current_element.metadata.text_as_html, "html.parser"
-    ).find_all()
-    next_html_tags = BeautifulSoup(next_element.metadata.text_as_html, "html.parser").find_all()
+    ).find_all(recursive=False)
+    next_html_tags = BeautifulSoup(next_element.metadata.text_as_html, "html.parser").find_all(
+        recursive=False
+    )
 
     ontology_elements = [
         parse_html_to_ontology_element(html_tag)
@@ -190,6 +212,8 @@ def can_unstructured_elements_be_merged(current_element: Element, next_element: 
 
 
 def is_text_element(ontology_element: OntologyElement) -> bool:
+    """Categories or classes that we want to combine with inline text"""
+
     text_classes = [
         NarrativeText,
         Quote,
@@ -212,6 +236,8 @@ def is_text_element(ontology_element: OntologyElement) -> bool:
 
 
 def is_inline_element(ontology_element: OntologyElement) -> bool:
+    """Categories or classes that we want to combine with text elements"""
+
     inline_classes = [Hyperlink]
     inline_categories = [ElementTypeEnum.specialized_text, ElementTypeEnum.annotation]
 

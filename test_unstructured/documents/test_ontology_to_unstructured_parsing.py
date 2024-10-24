@@ -11,6 +11,7 @@ from unstructured.documents.ontology import (
     Image,
     Page,
     Paragraph,
+    Section,
     Table,
 )
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
@@ -292,3 +293,37 @@ def test_inline_elements_are_squeezed_when_table():
     assert text2.text == "Paragraph2"
     assert table1.text == "Table1"
     assert text3.text == "Paragraph2 Hyperlink2 Hyperlink3"
+
+
+def test_inline_elements_are_on_many_depths():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Hyperlink(text="Hyperlink1"),
+                    Paragraph(text="Paragraph1"),
+                    Section(
+                        children=[
+                            Section(
+                                children=[
+                                    Hyperlink(text="Hyperlink2"),
+                                    Hyperlink(text="Hyperlink3"),
+                                ]
+                            ),
+                            Paragraph(text="Paragraph2"),
+                            Hyperlink(text="Hyperlink4"),
+                        ]
+                    ),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+
+    assert len(unstructured_elements) == 6
+
+    page, text1, section1, section2, text2, text3 = unstructured_elements
+
+    assert text1.text == "Hyperlink1 Paragraph1"
+    assert text2.text == "Hyperlink2 Hyperlink3"
+    assert text3.text == "Paragraph2 Hyperlink4"
