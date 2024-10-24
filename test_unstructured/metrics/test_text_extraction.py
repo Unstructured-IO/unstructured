@@ -294,11 +294,11 @@ def test_bag_of_words(text, expected):
     ("text", "expected"),
     [
         (
-            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow",
+            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow\n\n",
             "The dog loved the cat, but the cat loved the cow",
         ),
         (
-            "Hello    my\tname\tis H a r p e r, \nwhat's your\vname?",
+            "\n\nHello    my\tname\tis H a r p e r, \nwhat's your\vname?",
             "Hello my name is H a r p e r, what's your name?",
         ),
         (
