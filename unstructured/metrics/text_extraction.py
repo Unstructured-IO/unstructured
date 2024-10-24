@@ -22,6 +22,7 @@ def calculate_edit_distance(
     source: Optional[str],
     weights: Tuple[int, int, int] = (2, 1, 1),
     return_as: str = "distance",
+    standardize_whitespaces: bool = False,
 ) -> float:
     """
     Calculates edit distance using Levenshtein distance between two strings.
@@ -56,8 +57,8 @@ def calculate_edit_distance(
     return_types = ["score", "distance"]
     if return_as not in return_types:
         raise ValueError("Invalid return value type. Expected one of: %s" % return_types)
-    output = _prepare_str(output)
-    source = _prepare_str(source)
+    output = prepare_str(output, standardize_whitespaces)
+    source = prepare_str(source, standardize_whitespaces)
     distance = Levenshtein.distance(output, source, weights=weights)  # type: ignore
     # lower bounded the char length for source string at 1.0 because to avoid division by zero
     # in the case where source string is empty, the distance should be at 100%
@@ -127,8 +128,8 @@ def calculate_percent_missing_text(
 
     Returns the percentage of missing text represented as a decimal between 0 and 1.
     """
-    output = _prepare_str(output)
-    source = _prepare_str(source)
+    output = prepare_str(output)
+    source = prepare_str(source)
     output_bow = bag_of_words(output)
     source_bow = bag_of_words(source)
 
@@ -153,7 +154,9 @@ def calculate_percent_missing_text(
     return min(fraction_missing, 1)  # limit to 100%
 
 
-def _prepare_str(string: Optional[str]) -> str:
+def prepare_str(string: Optional[str], standardize_whitespaces: bool = False) -> str:
     if not string:
         return ""
+    if standardize_whitespaces:
+        return " ".join(string.split())
     return str(string)  # type: ignore

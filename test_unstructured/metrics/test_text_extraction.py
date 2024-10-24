@@ -129,6 +129,96 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
 
 
 @pytest.mark.parametrize(
+    ("text1", "text2"),
+    [
+        (
+            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow",
+            "The dog loved the cat, but the cat loved the cow",
+        ),
+        (
+            "Hello    my\tname\tis H a r p e r, \nwhat's your\vname?",
+            "Hello my name is H a r p e r, what's your name?",
+        ),
+        (
+            "I have a\t\n\tdog and a\tcat,\fI love my\n\n\n\ndog.",
+            "I have a dog and a cat, I love my dog.",
+        ),
+        (
+            """
+            Name    Age City           Occupation
+            Alice   30  New York       Engineer
+            Bob     25  Los Angeles    Designer
+            Charlie 35  Chicago        Teacher
+            David   40  San Francisco  Developer
+            """,
+            """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """,
+        ),
+        (
+            """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """,
+            "Name\tAge\tCity\tOccupation\n\n \nAlice\t30\tNew York\tEngineer\nBob\t25\tLos Angeles\tDesigner\nCharlie\t35\tChicago\tTeacher\nDavid\t40\tSan Francisco\tDeveloper",  # noqa: E501
+        ),
+    ],
+)
+def test_calculate_edit_distance_with_various_whitespace_1(text1, text2):
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="score", standardize_whitespaces=True
+        )
+        == 1.0
+    )
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="distance", standardize_whitespaces=True
+        )
+        == 0
+    )
+    assert text_extraction.calculate_edit_distance(text1, text2, return_as="score") < 1.0
+    assert text_extraction.calculate_edit_distance(text1, text2, return_as="distance") > 0
+
+
+def test_calculate_edit_distance_with_various_whitespace_2():
+    source_cct_tabs = """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """
+    source_cct_with_borders = """
+
+            | Name    | Age | City         | Occupation     |
+            |---------|-----|--------------|----------------|
+            | Alice   | 30  | New York     | Engineer       |
+            | Bob     | 25  | Los Angeles  | Designer       |
+            | Charlie | 35  | Chicago      | Teacher        |
+            | David   | 40  | San Francisco| Developer      |
+
+            """
+    assert text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="score", standardize_whitespaces=True
+    ) > text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="score"
+    )
+    assert text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="distance", standardize_whitespaces=True
+    ) < text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="distance"
+    )
+
+
+@pytest.mark.parametrize(
     ("text", "expected"),
     [
         (
@@ -185,6 +275,46 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
 )
 def test_bag_of_words(text, expected):
     assert text_extraction.bag_of_words(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow",
+            "The dog loved the cat, but the cat loved the cow",
+        ),
+        (
+            "Hello    my\tname\tis H a r p e r, \nwhat's your\vname?",
+            "Hello my name is H a r p e r, what's your name?",
+        ),
+        (
+            "I have a\t\n\tdog and a\tcat,\fI love my\n\n\n\ndog.",
+            "I have a dog and a cat, I love my dog.",
+        ),
+        (
+            """L     is for the way you look at me
+            O    is for the only one I see
+            V    is very, very extraordinary
+            E    is even more than anyone that you adore can""",
+            "L is for the way you look at me O is for the only one I see V is very, very extraordinary E is even more than anyone that you adore can",  # noqa: E501
+        ),
+        (
+            """
+            | Name    | Age | City         | Occupation     |
+            |---------|-----|--------------|----------------|
+            | Alice   | 30  | New York     | Engineer       |
+            | Bob     | 25  | Los Angeles  | Designer       |
+            | Charlie | 35  | Chicago      | Teacher        |
+            | David   | 40  | San Francisco| Developer      |
+            """,
+            "| Name | Age | City | Occupation | |---------|-----|--------------|----------------| | Alice | 30 | New York | Engineer | | Bob | 25 | Los Angeles | Designer | | Charlie | 35 | Chicago | Teacher | | David | 40 | San Francisco| Developer |",  # noqa: E501
+        ),
+    ],
+)
+def test_prepare_string(text, expected):
+    assert text_extraction.prepare_str(text, standardize_whitespaces=True) == expected
+    assert text_extraction.prepare_str(text) == text
 
 
 @pytest.mark.parametrize(
