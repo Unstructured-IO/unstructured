@@ -22,7 +22,7 @@ def calculate_edit_distance(
     source: Optional[str],
     weights: Tuple[int, int, int] = (2, 1, 1),
     return_as: str = "distance",
-    standardize_whitespaces: bool = False,
+    standardize_whitespaces: bool = True,
 ) -> float:
     """
     Calculates edit distance using Levenshtein distance between two strings.

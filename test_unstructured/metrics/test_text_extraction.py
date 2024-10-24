@@ -184,8 +184,18 @@ def test_calculate_edit_distance_with_various_whitespace_1(text1, text2):
         )
         == 0
     )
-    assert text_extraction.calculate_edit_distance(text1, text2, return_as="score") < 1.0
-    assert text_extraction.calculate_edit_distance(text1, text2, return_as="distance") > 0
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="score", standardize_whitespaces=False
+        )
+        < 1.0
+    )
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="distance", standardize_whitespaces=False
+        )
+        > 0
+    )
 
 
 def test_calculate_edit_distance_with_various_whitespace_2():
@@ -209,12 +219,15 @@ def test_calculate_edit_distance_with_various_whitespace_2():
     assert text_extraction.calculate_edit_distance(
         source_cct_tabs, source_cct_with_borders, return_as="score", standardize_whitespaces=True
     ) > text_extraction.calculate_edit_distance(
-        source_cct_tabs, source_cct_with_borders, return_as="score"
+        source_cct_tabs, source_cct_with_borders, return_as="score", standardize_whitespaces=False
     )
     assert text_extraction.calculate_edit_distance(
         source_cct_tabs, source_cct_with_borders, return_as="distance", standardize_whitespaces=True
     ) < text_extraction.calculate_edit_distance(
-        source_cct_tabs, source_cct_with_borders, return_as="distance"
+        source_cct_tabs,
+        source_cct_with_borders,
+        return_as="distance",
+        standardize_whitespaces=False,
     )
 
 
