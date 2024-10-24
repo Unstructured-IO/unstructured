@@ -5,6 +5,7 @@
 * **Bump `unstructured-inference` to 0.7.39** and upgrade other dependencies
 * **Round coordinates** Round coordinates when computing bounding box overlaps in `pdfminer_processing.py` to nearest machine precision. This can help reduce underterministic behavior from machine precision that affects which bounding boxes to combine.
 * **Request retry parameters in `partition_via_api` function.** Expose retry-mechanism related parameters in the `partition_via_api` function to allow users to configure the retry behavior of the API requests.
+* **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
 
 ### Features
 
