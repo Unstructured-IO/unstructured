@@ -13,7 +13,6 @@ import numpy as np
 import wrapt
 from pdfminer import psparser
 from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
-from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
@@ -69,6 +68,7 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_inner_elements,
+    get_uris,
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
@@ -1074,119 +1074,6 @@ def check_coords_within_boundary(
     ) and (coordinates.points[0][1] > boundary_y_min - (vertical_threshold * line_height))
 
     return x_within_boundary and y_within_boundary
-
-
-def get_uris(
-    annots: PDFObjRef | list[PDFObjRef],
-    height: float,
-    coordinate_system: PixelSpace | PointSpace,
-    page_number: int,
-) -> list[dict[str, Any]]:
-    """
-    Extracts URI annotations from a single or a list of PDF object references on a specific page.
-    The type of annots (list or not) depends on the pdf formatting. The function detectes the type
-    of annots and then pass on to get_uris_from_annots function as a list.
-
-    Args:
-        annots (PDFObjRef | list[PDFObjRef]): A single or a list of PDF object references
-            representing annotations on the page.
-        height (float): The height of the page in the specified coordinate system.
-        coordinate_system (PixelSpace | PointSpace): The coordinate system used to represent
-            the annotations' coordinates.
-        page_number (int): The page number from which to extract annotations.
-
-    Returns:
-        list[dict]: A list of dictionaries, each containing information about a URI annotation,
-        including its coordinates, bounding box, type, URI link, and page number.
-    """
-    if isinstance(annots, list):
-        return get_uris_from_annots(annots, height, coordinate_system, page_number)
-    resolved_annots = annots.resolve()
-    if resolved_annots is None:
-        return []
-    return get_uris_from_annots(resolved_annots, height, coordinate_system, page_number)
-
-
-def get_uris_from_annots(
-    annots: list[PDFObjRef],
-    height: int | float,
-    coordinate_system: PixelSpace | PointSpace,
-    page_number: int,
-) -> list[dict[str, Any]]:
-    """
-    Extracts URI annotations from a list of PDF object references.
-
-    Args:
-        annots (list[PDFObjRef]): A list of PDF object references representing annotations on
-            a page.
-        height (int | float): The height of the page in the specified coordinate system.
-        coordinate_system (PixelSpace | PointSpace): The coordinate system used to represent
-            the annotations' coordinates.
-        page_number (int): The page number from which to extract annotations.
-
-    Returns:
-        list[dict]: A list of dictionaries, each containing information about a URI annotation,
-        including its coordinates, bounding box, type, URI link, and page number.
-    """
-    annotation_list = []
-    for annotation in annots:
-        # Check annotation is valid for extraction
-        annotation_dict = try_resolve(annotation)
-        if not isinstance(annotation_dict, dict):
-            continue
-        subtype = annotation_dict.get("Subtype", None)
-        if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
-            continue
-        # Extract bounding box and update coordinates
-        rect = annotation_dict.get("Rect", None)
-        if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
-            continue
-        x1, y1, x2, y2 = rect_to_bbox(rect, height)
-        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-        coordinates_metadata = CoordinatesMetadata(
-            points=points,
-            system=coordinate_system,
-        )
-        # Extract type
-        if "A" not in annotation_dict:
-            continue
-        uri_dict = try_resolve(annotation_dict["A"])
-        if not isinstance(uri_dict, dict):
-            continue
-        uri_type = None
-        if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
-            uri_type = str(uri_dict["S"])
-        # Extract URI link
-        uri = None
-        try:
-            if uri_type == "/'URI'":
-                uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
-            if uri_type == "/'GoTo'":
-                uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
-        except Exception:
-            pass
-
-        annotation_list.append(
-            {
-                "coordinates": coordinates_metadata,
-                "bbox": (x1, y1, x2, y2),
-                "type": uri_type,
-                "uri": uri,
-                "page_number": page_number,
-            },
-        )
-    return annotation_list
-
-
-def try_resolve(annot: PDFObjRef):
-    """
-    Attempt to resolve a PDF object reference. If successful, returns the resolved object;
-    otherwise, returns the original reference.
-    """
-    try:
-        return annot.resolve()
-    except Exception:
-        return annot
 
 
 def calculate_intersection_area(
