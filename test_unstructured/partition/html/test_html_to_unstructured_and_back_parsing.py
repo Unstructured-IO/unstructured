@@ -487,3 +487,44 @@ def test_ordered_list():
         )
     ]
     _assert_elements_equal(unstructured_elements, expected_elements)
+
+
+def test_squeezed_elements_are_parsed_back():
+    # language=HTML
+    html_as_str = _wrap_in_body_and_page(
+        """
+       <p class="NarrativeText" id="2">
+        Table of Contents
+       </p>
+       <address class="Address" id="3">
+        68 Prince Street Palmdale, CA 93550
+       </address>
+       <a class="Hyperlink" id="4">
+        www.google.com
+       </a>
+    """
+    )
+
+    unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
+        html_as_str
+    )
+    expected_html = indent_html(html_as_str, html_parser="html.parser")
+    parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
+
+    assert expected_html == parsed_html
+    expected_elements = _page_elements + [
+        NarrativeText(
+            text="Table of Contents 68 Prince Street Palmdale, CA 93550 www.google.com",
+            element_id="2",
+            detection_origin="vlm_partitioner",
+            metadata=ElementMetadata(
+                text_as_html='<p class="NarrativeText" id="2">Table of Contents </p> '
+                '<address class="Address" id="3">'
+                "68 Prince Street Palmdale, CA 93550 "
+                "</address> "
+                '<a class="Hyperlink" id="4">www.google.com </a>',
+                parent_id="1",
+            ),
+        )
+    ]
+    _assert_elements_equal(unstructured_elements, expected_elements)

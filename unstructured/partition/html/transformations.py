@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 from collections import OrderedDict
+from itertools import chain
 from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
@@ -19,11 +20,19 @@ from unstructured.documents.mappings import (
     ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME,
 )
 from unstructured.documents.ontology import (
+    Bibliography,
+    Citation,
     Document,
     ElementTypeEnum,
+    Footnote,
+    FootnoteReference,
+    Glossary,
+    Hyperlink,
+    NarrativeText,
     OntologyElement,
     Page,
     Paragraph,
+    Quote,
     UncategorizedText,
 )
 
@@ -79,15 +88,18 @@ def ontology_to_unstructured_elements(
                     ),
                 )
             ]
-
+        children = []
         for child in ontology_element.children:
-            elements_to_return += ontology_to_unstructured_elements(
+            child = ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, Document) else depth + 1,
                 filename=filename,
             )
+            children += child
+        squeezed_children = squeeze_inline_elements(children)
+        elements_to_return += squeezed_children
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
@@ -116,6 +128,102 @@ def ontology_to_unstructured_elements(
     return elements_to_return
 
 
+def squeeze_inline_elements(elements: list[Element]) -> list[Element]:
+    result_elements = []
+
+    current_element = None
+    for next_element in elements:
+        if current_element is None:
+            current_element = next_element
+            continue
+
+        if can_unstructured_elements_be_merged(current_element, next_element):
+            current_element.text += " " + next_element.text  # append here
+            current_element.metadata.text_as_html += (
+                " " + next_element.metadata.text_as_html
+            )  # append here
+        else:
+            result_elements.append(current_element)
+            current_element = next_element
+
+    if current_element is not None:
+        result_elements.append(current_element)
+
+    return result_elements
+
+
+def can_unstructured_elements_be_merged(current_element: Element, next_element: Element) -> bool:
+    """
+    Elements can be merged when (remember they can be already after some merging):
+    - Neither of them has children (only first HTML tag in text_as_html has to considered;
+      if they were merged already they didn't have children)
+    - We do not want to merge two text elements, only inline element with text so there
+      is no two text elements
+    - and all other elements are inline elements
+    """
+    current_html_tags = BeautifulSoup(
+        current_element.metadata.text_as_html, "html.parser"
+    ).find_all()
+    next_html_tags = BeautifulSoup(next_element.metadata.text_as_html, "html.parser").find_all()
+
+    ontology_elements = [
+        parse_html_to_ontology_element(html_tag)
+        for html_tag in chain(current_html_tags, next_html_tags)
+    ]
+
+    has_text_flag = False
+    for ontology_element in ontology_elements:
+        if ontology_element.children:
+            return False
+
+        if is_text_element(ontology_element) and not has_text_flag:
+            has_text_flag = True
+            continue
+
+        if is_text_element(ontology_element) and has_text_flag:
+            return False
+
+        if not (is_inline_element(ontology_element) or is_text_element(ontology_element)):
+            return False
+
+    return True
+
+
+def is_text_element(ontology_element: OntologyElement) -> bool:
+    text_classes = [
+        NarrativeText,
+        Quote,
+        Paragraph,
+        Footnote,
+        FootnoteReference,
+        Citation,
+        Bibliography,
+        Glossary,
+    ]
+    text_categories = [ElementTypeEnum.metadata]
+
+    if any(isinstance(ontology_element, class_) for class_ in text_classes):
+        return True
+
+    if any(ontology_element.elementType == category for category in text_categories):
+        return True
+
+    return False
+
+
+def is_inline_element(ontology_element: OntologyElement) -> bool:
+    inline_classes = [Hyperlink]
+    inline_categories = [ElementTypeEnum.specialized_text, ElementTypeEnum.annotation]
+
+    if any(isinstance(ontology_element, class_) for class_ in inline_classes):
+        return True
+
+    if any(ontology_element.elementType == category for category in inline_categories):
+        return True
+
+    return False
+
+
 def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) -> OntologyElement:
     """
     Converts a sequence of unstructured Element objects to an OntologyElement object.
@@ -140,18 +248,21 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     )
 
     for element in unstructured_elements:
-        html_as_tag = BeautifulSoup(element.metadata.text_as_html, "html.parser").find()
-        ontology_element = parse_html_to_ontology_element(html_as_tag)
-        # Note: Each HTML of non-terminal Element doesn't have children in HTML
-        # So we just add Ontology Element with tag and class, later children are appended by
-        # parent_id.
-        # For terminal Elements entire HTML is added to text_as_html, thus it allows us to
-        # recreate the entire HTML structure
+        html_as_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
+            recursive=False
+        )
+        for html_as_tag in html_as_tags:
+            ontology_element = parse_html_to_ontology_element(html_as_tag)
+            # Note: Each HTML of non-terminal Element doesn't have children in HTML
+            # So we just add Ontology Element with tag and class, later children are appended by
+            # parent_id.
+            # For terminal Elements entire HTML is added to text_as_html, thus it allows us to
+            # recreate the entire HTML structure
 
-        id_to_element_mapping[ontology_element.id] = ontology_element
+            id_to_element_mapping[ontology_element.id] = ontology_element
 
-        if element.metadata.parent_id and element.metadata.parent_id in id_to_element_mapping:
-            id_to_element_mapping[element.metadata.parent_id].children.append(ontology_element)
+            if element.metadata.parent_id and element.metadata.parent_id in id_to_element_mapping:
+                id_to_element_mapping[element.metadata.parent_id].children.append(ontology_element)
 
     root_id, root_element = id_to_element_mapping.popitem(last=False)
     return root_element
