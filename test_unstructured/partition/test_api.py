@@ -246,6 +246,25 @@ def test_retries_config_none_parameters_return_empty_config():
     assert retries_config is None
 
 
+def test_retry_config_with_empty_sdk_retry_config_returns_default():
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = None
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=1.88,
+        retries_initial_interval=3000,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.88
+    assert retries_config.backoff.initial_interval == 3000
+    assert retries_config.backoff.max_elapsed_time == DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
+    assert retries_config.backoff.max_interval == DEFAULT_RETRIES_MAX_INTERVAL_SEC
+
+
 def test_retries_config_with_no_parameters_set():
     retry_config = retries.RetryConfig(
         "backoff", retries.BackoffStrategy(3000, 720000, 1.88, 1800000), True

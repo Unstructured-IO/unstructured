@@ -195,7 +195,8 @@ def get_retries_config(
 
         default_retries_connneciton_errors = (
             sdk_default_retries_config.retry_connection_errors
-            if sdk_default_retries_config.retry_connection_errors is not None
+            if sdk_default_retries_config
+            and sdk_default_retries_config.retry_connection_errors is not None
             else DEFAULT_RETRIES_CONNECTION_ERRORS
         )
 

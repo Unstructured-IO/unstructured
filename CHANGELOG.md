@@ -1,3 +1,13 @@
+## 0.16.2-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## **Fixed retry config settings for partition_via_api function** If the SDK's default retry config is not set the retry config getter function does not fail anymore.
+
 ## 0.16.1
 
 ### Enhancements
