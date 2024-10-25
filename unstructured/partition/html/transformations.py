@@ -135,6 +135,11 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     id_to_element_mapping = OrderedDict()
 
     document_element_id = unstructured_elements[0].metadata.parent_id
+
+    if document_element_id is None:
+        document_element_id = OntologyElement.generate_unique_id()
+        unstructured_elements[0].metadata.parent_id = document_element_id
+
     id_to_element_mapping[document_element_id] = Document(
         additional_attributes={"id": document_element_id}
     )
