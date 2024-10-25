@@ -99,8 +99,8 @@ def ontology_to_unstructured_elements(
             )
             children += child
 
-        combined_children = combine_inline_elements(children)
-        elements_to_return += combined_children
+        # combined_children = combine_inline_elements(children)
+        elements_to_return += children
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
