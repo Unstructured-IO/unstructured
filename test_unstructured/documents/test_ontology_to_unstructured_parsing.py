@@ -21,7 +21,7 @@ from unstructured.partition.html.transformations import (
     parse_html_to_ontology,
 )
 from unstructured.partition.json import partition_json
-from unstructured.staging.base import elements_from_json, elements_to_json
+from unstructured.staging.base import elements_from_json
 
 
 def test_page_number_is_passed_correctly():
@@ -179,12 +179,12 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
 @pytest.mark.parametrize(
     ("html_file_path", "json_file_path"),
     [
-        # ("html_files/example.html", "unstructured_json_output/example.json"),
+        ("html_files/example.html", "unstructured_json_output/example.json"),
         ("html_files/example_full_doc.html", "unstructured_json_output/example_full_doc.json"),
-        # (
-        #     "html_files/example_with_inline_fields.html",
-        #     "unstructured_json_output/example_with_inline_fields.json",
-        # ),
+        (
+            "html_files/example_with_inline_fields.html",
+            "unstructured_json_output/example_with_inline_fields.json",
+        ),
     ],
 )
 def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_path):
@@ -197,7 +197,6 @@ def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_p
     predicted_elements = partition_html(
         text=html_code, html_parser_version="v2", unique_element_ids=True
     )
-    elements_to_json(predicted_elements, "test.json")
     assert len(expected_json_elements) == len(predicted_elements)
 
     for i in range(len(expected_json_elements)):
