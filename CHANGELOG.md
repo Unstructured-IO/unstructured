@@ -6,7 +6,9 @@
 ### Features
 
 ### Fixes
-* **V2 elements without first parent ID can be parsed**\
+
+* **V2 elements without first parent ID can be parsed**
+
 
 ## 0.16.2
 
