@@ -8,9 +8,11 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.documents.ontology import Address, Paragraph
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
+    parse_html_to_ontology,
     parse_html_to_ontology_element,
     unstructured_elements_to_ontology,
 )
@@ -528,3 +530,31 @@ def test_squeezed_elements_are_parsed_back():
         )
     ]
     _assert_elements_equal(unstructured_elements, expected_elements)
+
+
+def test_inline_elements_are_squeezed_when_text_wrapped_into_paragraphs():
+    # language=HTML
+    base_html = """
+        <div class="Page">
+            About the same
+            <address class="Address">
+                1356 Hornor Avenue Oklahoma
+            </address>
+            Some text
+        </div>
+        """
+    # Such HTML is transformed into Page: [Pargraph, Address, Paragraph]
+    # We would like it to be parsed to UnstructuredElements as [Page, NarrativeText]
+
+    ontology = parse_html_to_ontology(base_html)
+
+    p1, address, p2 = ontology.children
+    assert isinstance(p1, Paragraph)
+    assert isinstance(address, Address)
+    assert isinstance(p2, Paragraph)
+
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+
+    assert len(unstructured_elements) == 2
+    assert isinstance(unstructured_elements[0], Text)
+    assert isinstance(unstructured_elements[1], NarrativeText)
