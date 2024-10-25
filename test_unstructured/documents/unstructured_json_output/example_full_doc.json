@@ -22,40 +22,18 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "24ffe29ea53d82c1887149cc78097c7b",
+        "element_id": "1a5cde6f016097b45cf390ae709818e9",
         "metadata": {
             "category_depth": 2,
             "page_number": 1,
             "parent_id": "d0a9edd181f542f0ba695489f14c4b75",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"2a8866a868414163afee2ef24574fc9b\">Table of Contents </a>"
+            "text_as_html": "<a class=\"Hyperlink\" id=\"2a8866a868414163afee2ef24574fc9b\">Table of Contents </a> <time class=\"Time\" id=\"338375ec733a47f2a9544a74cfb4b11c\">11/7/23, 2:38 PM </time> <a class=\"Hyperlink\" id=\"770e80f0a903490892ee9ff1f1f76718\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
         },
-        "text": "Table of Contents",
+        "text": "Table of Contents 11/7/23, 2:38 PM https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "48fdf8b9b9ab54ebd4129ec8bb0275c0",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 1,
-            "parent_id": "d0a9edd181f542f0ba695489f14c4b75",
-            "text_as_html": "<time class=\"Time\" id=\"338375ec733a47f2a9544a74cfb4b11c\">11/7/23, 2:38 PM </time>"
-        },
-        "text": "11/7/23, 2:38 PM",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "3058c2338e66ebdca34551027749d55e",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 1,
-            "parent_id": "d0a9edd181f542f0ba695489f14c4b75",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"770e80f0a903490892ee9ff1f1f76718\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "055441420dda8c3fd06af25b7e4838cb",
+        "element_id": "593989cb1ba26a3d877ede8eab7682de",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -66,7 +44,7 @@
         "type": "Title"
     },
     {
-        "element_id": "d32c50c8e00b6dffa33a570b7da29f34",
+        "element_id": "8e4ea3a1cb7d18e471252b8be3223960",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -77,7 +55,7 @@
         "type": "Title"
     },
     {
-        "element_id": "6c44792c780a3ff5fa0d9dd003b9d51f",
+        "element_id": "07efd2b376bd91615efaf64c2fe26a37",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -88,7 +66,7 @@
         "type": "Title"
     },
     {
-        "element_id": "15c6b5bb407abeb451d08e1a1e3807b0",
+        "element_id": "ae336a530d477393e8c2cf713a85a17a",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -99,7 +77,7 @@
         "type": "Title"
     },
     {
-        "element_id": "f21519a9a626d0cd6ab1e26fd1c224e2",
+        "element_id": "26af9803c08375b4217096d7a228f859",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -110,7 +88,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "3b69efdced7f05867ea20d3eba447896",
+        "element_id": "76b356520ef59ef881f1a5941b16d7f3",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -121,7 +99,7 @@
         "type": "Table"
     },
     {
-        "element_id": "67bd8abdc27551170d1e88c70c43a941",
+        "element_id": "f256e77e3745f9f5d4de5d6461af95fa",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -132,7 +110,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "e6e9364f95e408ebc76fcf88ff0a5375",
+        "element_id": "b4917cb904318e2945e22dfbf73bbe37",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -143,7 +121,7 @@
         "type": "Table"
     },
     {
-        "element_id": "43c823d00c597ab296825b4d61fced40",
+        "element_id": "8f389a9a78df3615d3286083f87a5062",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -154,7 +132,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "b769b15ba3e6df4df3cc70ec21ebfcbc",
+        "element_id": "24b4a7559cdce81d37ad744b5b7ca15d",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -165,7 +143,7 @@
         "type": "Table"
     },
     {
-        "element_id": "f2fcac5a61ebd3b5fc0a2919bd5beb38",
+        "element_id": "472c872e29e142146d79fcee79a3f9ce",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -176,7 +154,7 @@
         "type": "Title"
     },
     {
-        "element_id": "6a9081c2013d7d0b5c0e5b92ce445c7f",
+        "element_id": "b5a0dd67befb8a162908b5aa5c7a54ad",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -187,7 +165,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "23d80950a5d9ff6a8ddd9a2fe4776716",
+        "element_id": "baaad0d248103819b0f3e276250efa76",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -198,7 +176,7 @@
         "type": "PageNumber"
     },
     {
-        "element_id": "83401ae16cd4e94296d9ca5ec4fed298",
+        "element_id": "2b197afb72e1da282cb0d2b4c26f507a",
         "metadata": {
             "category_depth": 1,
             "page_number": 1,
@@ -209,7 +187,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "51c63b57315fd3c6757b3f7a668f5ae2",
+        "element_id": "5e9bfc5b18927ffb73c15fb87abcdd28",
         "metadata": {
             "category_depth": 2,
             "page_number": 1,
@@ -319,95 +297,18 @@
         "type": "Table"
     },
     {
-        "element_id": "bb8ae5bfe8d09c840387c5e37ade8486",
+        "element_id": "9514b22065e255f9cf5b48ddebd1b726",
         "metadata": {
             "category_depth": 1,
             "page_number": 2,
             "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"468681e82f604eab8e6f6ae15a53a96a\">(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met). </div>"
+            "text_as_html": "<div class=\"Footnote\" id=\"468681e82f604eab8e6f6ae15a53a96a\">(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met). </div> <div class=\"Footnote\" id=\"f2d6c8f9760e4a4a8e3b6e0a50a8f60c\">(2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met). </div> <div class=\"Footnote\" id=\"0280310ce7fc4eab8cd05127c685ed1c\">(3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%. </div> <div class=\"Footnote\" id=\"8c733077ea2147b0a3b9ed43876f9316\">(4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%. </div> <div class=\"Footnote\" id=\"bca23b4745474ffb90edf3360164f8c9\">(5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%. </div> <div class=\"Footnote\" id=\"8420cc5f756948dea5629e3f9f76e2b1\">(6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%. </div> <div class=\"Footnote\" id=\"252fdbcf2a604555b2574c8ca3de20e7\">(7) </div> <a class=\"Hyperlink\" id=\"4a3cac0a4757441e8cc7b3cffa989403\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
         },
-        "text": "(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met).",
+        "text": "(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met). (2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met). (3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%. (4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%. (5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%. (6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%. (7) https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "05f0d28b010f3ba158761b5dcbddc557",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"f2d6c8f9760e4a4a8e3b6e0a50a8f60c\">(2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met). </div>"
-        },
-        "text": "(2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met).",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "1f152b73e06d3ea8cd0394dcdac255b3",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"0280310ce7fc4eab8cd05127c685ed1c\">(3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%. </div>"
-        },
-        "text": "(3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%.",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "30051d6421ef2513013733ed6f22c370",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"8c733077ea2147b0a3b9ed43876f9316\">(4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%. </div>"
-        },
-        "text": "(4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%.",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "d7b2be96040457f6bafc610ac84b9586",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"bca23b4745474ffb90edf3360164f8c9\">(5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%. </div>"
-        },
-        "text": "(5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%.",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "ba1ee8d5fcb56320ddff2026c88aa724",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"8420cc5f756948dea5629e3f9f76e2b1\">(6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%. </div>"
-        },
-        "text": "(6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%.",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "b77c5208c722af87b1fb6544c52580aa",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"252fdbcf2a604555b2574c8ca3de20e7\">(7) </div>"
-        },
-        "text": "(7)",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "f84e053cb63ce0cf92164c6ac14a8f68",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"4a3cac0a4757441e8cc7b3cffa989403\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "69a6e104286f0a2e7c58949143ba0687",
+        "element_id": "4d22029caac15c98dec107972ac9fdc5",
         "metadata": {
             "category_depth": 1,
             "page_number": 2,
@@ -440,29 +341,18 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "f405b89a8b971f389d0e700d52bf5deb",
+        "element_id": "5c74116a6365a43d3db5d652d1f007c5",
         "metadata": {
             "category_depth": 2,
             "page_number": 3,
             "parent_id": "7ed5284de8d648269ad87c964e41ac99",
-            "text_as_html": "<time class=\"Time\" id=\"2b7fa432d3d1435eb14b0085692fdb17\">11/7/23, 2:38 PM </time>"
+            "text_as_html": "<time class=\"Time\" id=\"2b7fa432d3d1435eb14b0085692fdb17\">11/7/23, 2:38 PM </time> <a class=\"Hyperlink\" id=\"24d5d5cf160c4935aa73d0955234b32d\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
         },
-        "text": "11/7/23, 2:38 PM",
+        "text": "11/7/23, 2:38 PM sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "86752e6e761d54918a97b5ebc861bbcc",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 3,
-            "parent_id": "7ed5284de8d648269ad87c964e41ac99",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"24d5d5cf160c4935aa73d0955234b32d\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "b18a9c4f799c9af5db00509a333b8da6",
+        "element_id": "ad2e53cf75b1ae02f814aa016c3ef09b",
         "metadata": {
             "category_depth": 1,
             "page_number": 3,
@@ -473,7 +363,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "e85c5db46a98d451725bea00bbe9814f",
+        "element_id": "7245c71403d482c6f68e3dec0ac820c2",
         "metadata": {
             "category_depth": 1,
             "page_number": 3,
@@ -484,7 +374,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "fd61d61609e4c613a276a11eda3f86bf",
+        "element_id": "ffb97c729608d56b29409fd3bef50bb1",
         "metadata": {
             "category_depth": 1,
             "page_number": 3,
@@ -495,7 +385,7 @@
         "type": "PageNumber"
     },
     {
-        "element_id": "56d806263943d2060d33455b34ac17c5",
+        "element_id": "284ca765012d3b961f1ac984098e2b90",
         "metadata": {
             "category_depth": 1,
             "page_number": 3,
@@ -506,7 +396,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "33c9a590eb72ef999e9a53ae22c47a8f",
+        "element_id": "8cb16610710e16541d27647f91345efc",
         "metadata": {
             "category_depth": 2,
             "page_number": 3,
@@ -517,7 +407,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "2f20a606fb1eab9e5ab69947d0b46b96",
+        "element_id": "a4e9f383a7cf61ac888b03252b91e4cf",
         "metadata": {
             "category_depth": 2,
             "page_number": 3,
@@ -638,29 +528,18 @@
         "type": "Table"
     },
     {
-        "element_id": "7d8c81291bb07b77fc2ead2a07ecb217",
+        "element_id": "7e1dffcbe29177be80e02c430771a545",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
             "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"47bfd9fcb41945d08892088e02f8e361\">Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings. </p>"
+            "text_as_html": "<p class=\"NarrativeText\" id=\"47bfd9fcb41945d08892088e02f8e361\">Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings. </p> <p class=\"NarrativeText\" id=\"3e49b69a0dcf43d8949cf607f3dae2cc\">In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us. </p>"
         },
-        "text": "Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings.",
+        "text": "Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings. In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "5db35e1042352b0e5b5b3efe87f2d326",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"3e49b69a0dcf43d8949cf607f3dae2cc\">In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us. </p>"
-        },
-        "text": "In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "0f1c02eeb7e8ab20ee2732c6c3d4afaf",
+        "element_id": "c5d145e854a305256e1e7feafcba9abf",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
@@ -671,7 +550,7 @@
         "type": "Title"
     },
     {
-        "element_id": "91dc07c8c2d623e7d2382eeb07e84380",
+        "element_id": "e597f6b1f3bc94f49ecfca9acfe39019",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
@@ -682,7 +561,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "f43c80764fbf90d29037759edab7fbe8",
+        "element_id": "9512859f7213fa8ce46aa07edf96ebe6",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
@@ -693,7 +572,7 @@
         "type": "Table"
     },
     {
-        "element_id": "efe00c6aae666b9b3c133ebc41cebcaa",
+        "element_id": "befd66ac1b58003ee81ce6752b315b7d",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
@@ -704,7 +583,7 @@
         "type": "PageNumber"
     },
     {
-        "element_id": "0179bd2a03d488d59fc511cbda0993d1",
+        "element_id": "e1e6e1c47f8d41cd140aea1395e72390",
         "metadata": {
             "category_depth": 1,
             "page_number": 4,
@@ -803,51 +682,18 @@
         "type": "Title"
     },
     {
-        "element_id": "0602944ff2ceda6fef5376ee9e63085a",
+        "element_id": "771867a5bdab71f1af079c4c6d02257f",
         "metadata": {
             "category_depth": 2,
             "page_number": 5,
             "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"3d64cd42b70e477a97ff3ad97449855e\">In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. </p>"
+            "text_as_html": "<p class=\"NarrativeText\" id=\"3d64cd42b70e477a97ff3ad97449855e\">In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. </p> <p class=\"NarrativeText\" id=\"570b3d9642a14861bb8b91bb1d3961f5\">Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p> <p class=\"NarrativeText\" id=\"56d9b05b20224314bd4a70a64211ff06\">The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p> <p class=\"NarrativeText\" id=\"b4cfb3e1a3ca49818c82337a3f2072fe\">EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
         },
-        "text": "In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement.",
+        "text": "In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "0cf3e08e2be4753998432d706c5f9d3c",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"570b3d9642a14861bb8b91bb1d3961f5\">Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p>"
-        },
-        "text": "Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "a3665913622f76321e3e73d50abb2584",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"56d9b05b20224314bd4a70a64211ff06\">The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p>"
-        },
-        "text": "The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "af5ff2b359a83f063777fef098eb2253",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"b4cfb3e1a3ca49818c82337a3f2072fe\">EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
-        },
-        "text": "EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "efb8cc89546fb3da3fb0d2872fa40823",
+        "element_id": "02eedc7b0fea6553ae849dbc875b5f10",
         "metadata": {
             "category_depth": 1,
             "page_number": 5,
@@ -858,7 +704,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "6e44343688f9558596a54755a2c72fc5",
+        "element_id": "fdc6b58ff67018520adcfca0cf694bff",
         "metadata": {
             "category_depth": 2,
             "page_number": 5,
@@ -869,51 +715,18 @@
         "type": "Title"
     },
     {
-        "element_id": "b96324c2da749da684f6b7d95e497086",
+        "element_id": "de685e7a7a89b03ec589d16d06853de5",
         "metadata": {
             "category_depth": 2,
             "page_number": 5,
             "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"f7b22f8600604980bc6a26728ef072f8\">In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. </p>"
+            "text_as_html": "<p class=\"NarrativeText\" id=\"f7b22f8600604980bc6a26728ef072f8\">In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. </p> <p class=\"NarrativeText\" id=\"e444e4e4f3e743be89d70025d89a5811\">Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p> <p class=\"NarrativeText\" id=\"3b72e18541fb4bf7af2dcc3b986fea0c\">The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p> <p class=\"NarrativeText\" id=\"ff8ccdef860749a9b9fe93c92beb598e\">EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
         },
-        "text": "In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement.",
+        "text": "In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "e88da3327fd1f96be8af854200e1cb0a",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"e444e4e4f3e743be89d70025d89a5811\">Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p>"
-        },
-        "text": "Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "336f1bf3edeb77781e8d08ac8b49b0d4",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"3b72e18541fb4bf7af2dcc3b986fea0c\">The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p>"
-        },
-        "text": "The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "06ae92b392e08005518e9f5ae06e32f9",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"ff8ccdef860749a9b9fe93c92beb598e\">EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
-        },
-        "text": "EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "66992d674e5372e74dca05932fb912ac",
+        "element_id": "efb8cc89546fb3da3fb0d2872fa40823",
         "metadata": {
             "category_depth": 1,
             "page_number": 5,
@@ -924,7 +737,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "13114ad28dba4c768d4597bfa491fbbd",
+        "element_id": "dfe2bbdaf699cc505275d24cc6c8bb22",
         "metadata": {
             "category_depth": 2,
             "page_number": 5,
@@ -935,7 +748,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "2f040a8a23820f7d97a2bc055be247cb",
+        "element_id": "e8c7a2056b13fed5e22a90a4d0c2bccc",
         "metadata": {
             "category_depth": 2,
             "page_number": 5,
@@ -1023,29 +836,18 @@
         "type": "Title"
     },
     {
-        "element_id": "13a3d683ed6b55c80dab3f27d4f8f52d",
+        "element_id": "3181d6021aa8ee669d1daa9d04ccccfe",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
             "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"e33761e8b88546f28c56c248058ea575\">In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program). </p>"
+            "text_as_html": "<p class=\"NarrativeText\" id=\"e33761e8b88546f28c56c248058ea575\">In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program). </p> <p class=\"NarrativeText\" id=\"b079ed55f0934d0abba8ca5bc4283074\">Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis. </p>"
         },
-        "text": "In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program).",
+        "text": "In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program). Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "236a1605a251f92de3185199e932ac7b",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"b079ed55f0934d0abba8ca5bc4283074\">Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis. </p>"
-        },
-        "text": "Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "f898cacce684a2cc21d68a24b90cbe52",
+        "element_id": "37242c53b914d3e2e09e26fbbe4d2c0d",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1056,7 +858,7 @@
         "type": "Title"
     },
     {
-        "element_id": "3aa048fe430c760167eaac9600544878",
+        "element_id": "715c9a209147104172c1025d32eceec7",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1067,7 +869,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "046738ae8df51450040dbc7bbb0314c7",
+        "element_id": "5923ece00dc2e5e3c918a2d8780c9c8b",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1078,7 +880,7 @@
         "type": "Title"
     },
     {
-        "element_id": "a1627774ef6efc34bd0926ca7f54a35e",
+        "element_id": "20297e361bcd5ef140f68fd2b2b72b04",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1089,7 +891,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "5d847469411db36dbbae2d65e09b9db9",
+        "element_id": "2cee8df8bd57d70507270f73ef6e7779",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1100,7 +902,7 @@
         "type": "Title"
     },
     {
-        "element_id": "34564675622d0f5bf18a6c7ba0b2c61e",
+        "element_id": "42305b0acf0a7914b5056f81876d8806",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1111,7 +913,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "e3cdfd6e853b4f305f199f7ac3ad192c",
+        "element_id": "8db0cf7d7b8cdb6f892fbab4819e5f19",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1122,7 +924,7 @@
         "type": "Title"
     },
     {
-        "element_id": "d8a6dd46863939b8169c53ecbd8c78e7",
+        "element_id": "8074446a2d47df37fda98545820502a4",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1133,7 +935,7 @@
         "type": "Title"
     },
     {
-        "element_id": "f823e6fa7a3b1020273fe4195a012fd2",
+        "element_id": "a6d3b2209ccf23019a80c1e77e21277e",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1144,7 +946,7 @@
         "type": "NarrativeText"
     },
     {
-        "element_id": "eb85c0b2d5667bf049defaae997ba981",
+        "element_id": "04aa2c0d5f9dec216c67864ec31b5cf1",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1155,7 +957,7 @@
         "type": "Table"
     },
     {
-        "element_id": "967feba19dfd7f9095c04b9b3345d6d4",
+        "element_id": "d8af039ac8a2136046e3fde1f3172ceb",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1166,40 +968,18 @@
         "type": "Title"
     },
     {
-        "element_id": "c962cc098e607f0423c30dd3926d6d36",
+        "element_id": "e66721124f41cd33b8ede536ba7221e9",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
             "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"c72e9e5f207541dbaaff035a7352652f\">We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively. </p>"
+            "text_as_html": "<p class=\"NarrativeText\" id=\"c72e9e5f207541dbaaff035a7352652f\">We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively. </p> <p class=\"NarrativeText\" id=\"f0435fa594c4478faf396f599d8d3f4e\">In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023. </p> <p class=\"NarrativeText\" id=\"b007a2e3e13f416d9bff83091081b852\">We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments. </p>"
         },
-        "text": "We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively.",
+        "text": "We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively. In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023. We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "8690483ebe02828a3dc46ab527a4778d",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"f0435fa594c4478faf396f599d8d3f4e\">In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023. </p>"
-        },
-        "text": "In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "38e5ca1225ceb01fa41fbac635e65eea",
-        "metadata": {
-            "category_depth": 1,
-            "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"b007a2e3e13f416d9bff83091081b852\">We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments. </p>"
-        },
-        "text": "We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments.",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "5d41893961b9984c78eaa32071d14607",
+        "element_id": "318605e5a06b36e745f0196234a76847",
         "metadata": {
             "category_depth": 1,
             "page_number": 6,
@@ -1210,7 +990,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "3011cb226bf4bc875ea42391822eb0fa",
+        "element_id": "788b7e673fe764b44610ab2d5fcf7a64",
         "metadata": {
             "category_depth": 2,
             "page_number": 6,
@@ -1221,7 +1001,7 @@
         "type": "PageNumber"
     },
     {
-        "element_id": "ff0ae641b0aacba2bedaa5097c76f232",
+        "element_id": "045e435d6c50763cd1dafdb864b207bc",
         "metadata": {
             "category_depth": 2,
             "page_number": 6,
@@ -1232,7 +1012,7 @@
         "type": "UncategorizedText"
     },
     {
-        "element_id": "a8717a6394315f6cd11e50b6dec2e8f6",
+        "element_id": "e34b3c8cce981f68b64f3176553dc4b1",
         "metadata": {
             "category_depth": 2,
             "page_number": 6,
