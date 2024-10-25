@@ -79,15 +79,17 @@ def ontology_to_unstructured_elements(
                     ),
                 )
             ]
-
+        childreen = []
         for child in ontology_element.children:
-            elements_to_return += ontology_to_unstructured_elements(
+            childreen += ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, Document) else depth + 1,
                 filename=filename,
             )
+
+        elements_to_return += childreen
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
@@ -98,7 +100,6 @@ def ontology_to_unstructured_elements(
             BeautifulSoup(html_code_of_ontology_element, "html.parser").get_text().strip()
         )
         # TODO value attribute from form input should be added to the text
-
         unstructured_element = element_class(
             text=element_text,
             element_id=ontology_element.id,
@@ -255,8 +256,10 @@ def parse_html_to_ontology_element(soup: Tag) -> OntologyElement | None:
             additional_attributes=escaped_attrs,
         )
 
-    has_children = (ontology_class != UncategorizedText) and any(
-        isinstance(content, Tag) for content in soup.contents
+    has_children = (
+        (ontology_class != UncategorizedText)
+        and any(isinstance(content, Tag) for content in soup.contents)
+        or ontology_class().elementType == ElementTypeEnum.layout
     )
 
     if has_children:
