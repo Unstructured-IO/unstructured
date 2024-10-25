@@ -1,4 +1,4 @@
-## 0.16.3-dev1
+## 0.16.3-dev2
 
 ### Enhancements
 * **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
@@ -6,6 +6,7 @@
 ### Features
 
 ### Fixes
+* **V2 elements without first parent ID can be parsed**\
 
 ## 0.16.2
 
