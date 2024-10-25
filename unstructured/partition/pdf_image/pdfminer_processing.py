@@ -60,12 +60,38 @@ def process_data_with_pdfminer(
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page, page_layout in open_pdfminer_pages_generator(file):
-        height = page_layout.height
+    for page_number, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
+        width, height = page_layout.width, page_layout.height
 
         text_layout = []
         image_layout = []
+        annotation_list = []
+
+        coordinate_system = PixelSpace(
+            width=width,
+            height=height,
+        )
+        if page.annots:
+            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+
+        annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
+
         for obj in page_layout:
+            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            bbox = (x1, y1, x2, y2)
+
+            urls_metadata: list[dict[str, Any]] = []
+            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
+                annotations_within_element = check_annotations_within_element(
+                    annotation_list,
+                    bbox,
+                    page_number,
+                    annotation_threshold,
+                )
+                _, words = get_word_bounding_box_from_element(obj, height)
+                for annot in annotations_within_element:
+                    urls_metadata.append(map_bbox_and_index(words, annot))
+
             if hasattr(obj, "get_text"):
                 inner_text_objects = extract_text_objects(obj)
                 for inner_obj in inner_text_objects:
