@@ -67,7 +67,11 @@ class OntologyElement(BaseModel):
         if self.html_tag_name == "":
             self.html_tag_name = self.allowed_tags[0]
         if "id" not in self.additional_attributes:
-            self.additional_attributes["id"] = str(uuid.uuid4()).replace("-", "")
+            self.additional_attributes["id"] = self.generate_unique_id()
+
+    @staticmethod
+    def generate_unique_id() -> str:
+        return str(uuid.uuid4()).replace("-", "")
 
     def to_html(self, add_children=True) -> str:
         additional_attrs = copy(self.additional_attributes)

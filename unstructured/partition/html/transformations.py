@@ -5,7 +5,6 @@ from collections import OrderedDict
 from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
-from utic_vlm.utils.parsing import generate_unique_id
 
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -138,7 +137,7 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     document_element_id = unstructured_elements[0].metadata.parent_id
 
     if document_element_id is None:
-        document_element_id = generate_unique_id()
+        document_element_id = OntologyElement.generate_unique_id()
         unstructured_elements[0].metadata.parent_id = document_element_id
 
     id_to_element_mapping[document_element_id] = Document(
