@@ -584,10 +584,10 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        extracted_layout = (
+        extracted_layout, layouts_urls_metadata = (
             process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
             if pdf_text_extractable
-            else []
+            else ([], [])
         )
 
         if analysis:
@@ -637,8 +637,8 @@ def _partition_pdf_or_image_local(
         if hasattr(file, "seek"):
             file.seek(0)
 
-        extracted_layout = (
-            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else []
+        extracted_layout, layouts_urls_metadata = (
+            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else ([], [])
         )
 
         if analysis:

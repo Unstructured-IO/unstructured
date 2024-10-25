@@ -34,21 +34,21 @@ DEFAULT_ROUND = 15
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
-) -> List[List["TextRegion"]]:
+) -> tuple[List[List["TextRegion"]], List[List[dict[str, Any]]]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
-        extracted_layout = process_data_with_pdfminer(
+        extracted_layout, layouts_urls_metadata = process_data_with_pdfminer(
             file=fp,
             dpi=dpi,
         )
-        return extracted_layout
+        return extracted_layout, layouts_urls_metadata
 
 
 @requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-) -> List[List["TextRegion"]]:
+) -> tuple[List[List["TextRegion"]], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
@@ -58,6 +58,7 @@ def process_data_with_pdfminer(
     )
 
     layouts = []
+    layouts_urls_metadata = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
@@ -66,7 +67,7 @@ def process_data_with_pdfminer(
         text_layout = []
         image_layout = []
         annotation_list = []
-
+        urls_metadatas = []
         coordinate_system = PixelSpace(
             width=width,
             height=height,
@@ -91,7 +92,7 @@ def process_data_with_pdfminer(
                 _, words = get_word_bounding_box_from_element(obj, height)
                 for annot in annotations_within_element:
                     urls_metadata.append(map_bbox_and_index(words, annot))
-
+            urls_metadatas.append(urls_metadata)
             if hasattr(obj, "get_text"):
                 inner_text_objects = extract_text_objects(obj)
                 for inner_obj in inner_text_objects:
@@ -133,8 +134,8 @@ def process_data_with_pdfminer(
         layout = sort_text_regions(layout)
 
         layouts.append(layout)
-
-    return layouts
+        layouts_urls_metadata.append(urls_metadatas)
+    return layouts, layouts_urls_metadata
 
 
 def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
