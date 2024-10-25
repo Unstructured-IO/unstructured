@@ -8,7 +8,7 @@
 
 * **V2 elements without first parent ID can be parsed**
 * **Fix missing elements when layout element parsed in V2 ontology**
-* updated unstructured-inference to be 0.8.1 in requirements/extra-pdf-image.in
+* updated **unstructured-inference** to be **0.8.1** in requirements/extra-pdf-image.in
 
 
 ## 0.16.2

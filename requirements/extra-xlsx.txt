@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-xlsx.in
 #
-et-xmlfile==1.1.0
+et-xmlfile==2.0.0
     # via openpyxl
 networkx==3.2.1
     # via -r ./extra-xlsx.in

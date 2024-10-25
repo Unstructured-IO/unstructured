@@ -127,7 +127,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.10.0
+rapidfuzz==3.10.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
