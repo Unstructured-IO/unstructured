@@ -697,6 +697,7 @@ def _partition_pdf_or_image_local(
         infer_list_items=False,
         languages=languages,
         starting_page_number=starting_page_number,
+        layouts_urls_metadata=layouts_urls_metadata,
         **kwargs,
     )
 
