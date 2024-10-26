@@ -59,7 +59,7 @@ def test_when_class_is_missing_it_can_be_inferred_from_type():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <aside class='Sidebar'>Some text</aside>
+        <aside class='Sidebar'><p class='Paragraph'>Some text</p></aside>
     </div>
     """
     )
@@ -87,7 +87,7 @@ def test_when_class_is_wrong_tag_name_is_overwritten():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <aside class='Sidebar'>Some text</aside>
+        <aside class='Sidebar'><p class='Paragraph'>Some text</p></aside>
     </div>
     """
     )
@@ -535,6 +535,8 @@ def test_malformed_html():
     # language=HTML
     expected_html = """
     <body class="Document">
+
+      <p class="Paragraph">
      Unclosed comment
      <div class="">
       <p>
@@ -554,12 +556,41 @@ def test_malformed_html():
      <p>
       Paragraph with invalid characters: � � �
      </p>
+     </p>
     </body>
     """
 
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(input_html)
+    parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
+
+    assert parsed_ontology == expected_html
+
+
+def test_text_is_wrapped_inside_layout_element():
+    # language=HTML
+    base_html = _wrap_with_body(
+        """
+    <div class="Page">
+        Text
+    </div>
+    """
+    )
+    base_html = indent_html(base_html)
+
+    # language=HTML
+    expected_html = _wrap_with_body(
+        """
+    <div class="Page">
+        <p class='Paragraph'>Text</p>
+    </div>
+    """
+    )
+
+    expected_html = indent_html(expected_html)
+
+    ontology: OntologyElement = parse_html_to_ontology(base_html)
     parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
 
     assert parsed_ontology == expected_html

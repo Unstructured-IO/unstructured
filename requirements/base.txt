@@ -100,7 +100,7 @@ python-magic==0.4.27
     # via -r ./base.in
 python-oxmsg==0.0.1
     # via -r ./base.in
-rapidfuzz==3.10.0
+rapidfuzz==3.10.1
     # via -r ./base.in
 regex==2024.9.11
     # via nltk
