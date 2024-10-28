@@ -1,3 +1,14 @@
+## 0.16.4-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **`value` attribute in `<input/>` element is parsed to `OntologyElement.text` in ontology**
+
+
 ## 0.16.3
 
 ### Enhancements
