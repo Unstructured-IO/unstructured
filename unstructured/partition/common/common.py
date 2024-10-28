@@ -466,7 +466,7 @@ def document_to_element_list(
 
         translation_mapping: list[tuple["LayoutElement", Element]] = []
 
-        links = layouts_links[page_number - 1]
+        links = layouts_links[page_number - 1] if layouts_links and layouts_links[0] else None
 
         for layout_element in page.elements:
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
@@ -489,7 +489,10 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
-                element.metadata.links = _get_links_in_element(links, layout_element.bbox)
+
+                element.metadata.links = (
+                    _get_links_in_element(links, layout_element.bbox) if links else []
+                )
 
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
