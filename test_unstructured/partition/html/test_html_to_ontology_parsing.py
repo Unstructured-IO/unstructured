@@ -594,3 +594,18 @@ def test_text_is_wrapped_inside_layout_element():
     parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
 
     assert parsed_ontology == expected_html
+
+
+def test_text_in_form_field_value():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <input class="FormFieldValue" value="Random Input Value"/>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    form_field_value = page.children[0]
+    print(page)
+    assert form_field_value.text == "Random Input Value"
