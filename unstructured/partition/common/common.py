@@ -466,7 +466,11 @@ def document_to_element_list(
 
         translation_mapping: list[tuple["LayoutElement", Element]] = []
 
-        links = layouts_links[page_number - 1] if layouts_links and layouts_links[0] else None
+        links = (
+            layouts_links[page_number - starting_page_number]
+            if layouts_links and layouts_links[0]
+            else None
+        )
 
         for layout_element in page.elements:
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
