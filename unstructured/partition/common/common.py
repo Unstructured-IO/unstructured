@@ -9,6 +9,7 @@ from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
 import psutil
+from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
 from unstructured.documents.elements import (
@@ -464,6 +465,9 @@ def document_to_element_list(
         image_height = page_image_metadata.get("height")
 
         translation_mapping: list[tuple["LayoutElement", Element]] = []
+
+        links = layouts_links[page_number - 1]
+
         for layout_element in page.elements:
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
@@ -485,6 +489,8 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
+                element.metadata.links = _get_links_in_element(links, layout_element.bbox)
+
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
@@ -539,6 +545,24 @@ def document_to_element_list(
 
     return elements
 
+def _get_links_in_element(
+        page_links: list,
+        region: Rectangle
+) -> list:
+    from unstructured.partition.pdf_image.pdfminer_processing import bboxes1_is_almost_subregion_of_bboxes2
+
+    links_bboxes = [Rectangle(*link.get('bbox')) for link in page_links]
+    results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
+    links = [
+        {
+            "text": page_links[idx].get("text"),
+            "url": page_links[idx].get("url"),
+            "start_index": page_links[idx].get("start_index"),
+        }
+        for idx, result in enumerate(results) if any(result)
+    ]
+
+    return links
 
 def ocr_data_to_elements(
     ocr_data: list["LayoutElement"],
