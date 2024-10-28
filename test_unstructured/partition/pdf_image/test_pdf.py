@@ -787,11 +787,14 @@ def test_combine_numbered_list(filename):
 
 
 @pytest.mark.parametrize(
-    "filename",
-    [example_doc_path("pdf/layout-parser-paper-fast.pdf")],
+    ("filename", "strategy"),
+    [
+        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "fast"),
+        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "hi_res"),
+    ],
 )
-def test_partition_pdf_hyperlinks(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
+def test_partition_pdf_hyperlinks(filename, strategy):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
     links = [
         {
             "text": "8",
@@ -813,11 +816,14 @@ def test_partition_pdf_hyperlinks(filename):
 
 
 @pytest.mark.parametrize(
-    "filename",
-    [example_doc_path("pdf/embedded-link.pdf")],
+    ("filename", "strategy"),
+    [
+        (example_doc_path("pdf/embedded-link.pdf"), "fast"),
+        (example_doc_path("pdf/embedded-link.pdf"), "hi_res"),
+    ],
 )
-def test_partition_pdf_hyperlinks_multiple_lines(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
+def test_partition_pdf_hyperlinks_multiple_lines(filename, strategy):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
     assert elements[-1].metadata.links[-1]["text"] == "capturing"
     assert len(elements[-1].metadata.links) == 2
 
