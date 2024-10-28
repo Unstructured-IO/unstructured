@@ -442,6 +442,10 @@ class FormFieldValue(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["input"], frozen=True)
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.text = self.additional_attributes.get("value", "")
+
 
 class Checkbox(OntologyElement):
     description: str = Field("A small box that can be checked or unchecked", frozen=True)
