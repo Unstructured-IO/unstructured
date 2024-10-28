@@ -54,7 +54,7 @@ google-auth==2.35.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.7.4
+google-cloud-vision==3.8.0
     # via -r ./extra-pdf-image.in
 googleapis-common-protos==1.65.0
     # via
@@ -167,7 +167,7 @@ pillow==11.0.0
     #   unstructured-pytesseract
 portalocker==2.10.1
     # via iopath
-proto-plus==1.24.0
+proto-plus==1.25.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -217,7 +217,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.10.0
+rapidfuzz==3.10.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -282,7 +282,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.2
     # via pandas
-unstructured-inference==0.8.0
+unstructured-inference==0.8.1
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
