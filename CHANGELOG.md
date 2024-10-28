@@ -1,3 +1,13 @@
+## 0.16.4-dev0
+
+### Enhancements
+
+### Features
+
+* **Add support for link extraction in pdf hi_res strategy.** The `partition_pdf()` function now supports link extraction when using the `hi_res` strategy, allowing users to extract hyperlinks from PDF documents more effectively. 
+
+### Fixes
+
 ## 0.16.3
 
 ### Enhancements
