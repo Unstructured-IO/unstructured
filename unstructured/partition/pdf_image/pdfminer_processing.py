@@ -119,7 +119,7 @@ def process_data_with_pdfminer(
                         image_layout.append(text_region)
         links = [
             {
-                "bbox": list(map(lambda x: x * coef, metadata["bbox"])),
+                "bbox": [x * coef for x in metadata["bbox"]],
                 "text": metadata["text"],
                 "url": metadata["uri"],
                 "start_index": metadata["start_index"],
