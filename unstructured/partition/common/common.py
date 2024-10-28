@@ -448,7 +448,7 @@ def document_to_element_list(
     sort_mode: str = SORT_MODE_XY_CUT,
     languages: Optional[list[str]] = None,
     starting_page_number: int = 1,
-    layouts_urls_metadata: Optional[list[dict[str, Any]]] = None,
+    layouts_links: Optional[list[list]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""

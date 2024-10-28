@@ -584,7 +584,7 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        extracted_layout, layouts_urls_metadata = (
+        extracted_layout, layouts_links = (
             process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
             if pdf_text_extractable
             else ([], [])
@@ -637,7 +637,7 @@ def _partition_pdf_or_image_local(
         if hasattr(file, "seek"):
             file.seek(0)
 
-        extracted_layout, layouts_urls_metadata = (
+        extracted_layout, layouts_links = (
             process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else ([], [])
         )
 
@@ -697,7 +697,7 @@ def _partition_pdf_or_image_local(
         infer_list_items=False,
         languages=languages,
         starting_page_number=starting_page_number,
-        layouts_urls_metadata=layouts_urls_metadata,
+        layouts_links=layouts_links,
         **kwargs,
     )
 

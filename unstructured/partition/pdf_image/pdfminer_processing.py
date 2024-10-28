@@ -34,14 +34,14 @@ DEFAULT_ROUND = 15
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
-) -> tuple[List[List["TextRegion"]], List[List[dict[str, Any]]]]:
+) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
-        extracted_layout, layouts_urls_metadata = process_data_with_pdfminer(
+        extracted_layout, layouts_links = process_data_with_pdfminer(
             file=fp,
             dpi=dpi,
         )
-        return extracted_layout, layouts_urls_metadata
+        return extracted_layout, layouts_links
 
 
 @requires_dependencies("unstructured_inference")
@@ -58,7 +58,7 @@ def process_data_with_pdfminer(
     )
 
     layouts = []
-    layouts_urls_metadata = []
+    layouts_links = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
@@ -76,12 +76,12 @@ def process_data_with_pdfminer(
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
+        urls_metadata: list[dict[str, Any]] = []
 
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
 
-            urls_metadata: list[dict[str, Any]] = []
             if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
                 annotations_within_element = check_annotations_within_element(
                     annotation_list,
@@ -92,7 +92,7 @@ def process_data_with_pdfminer(
                 _, words = get_word_bounding_box_from_element(obj, height)
                 for annot in annotations_within_element:
                     urls_metadata.append(map_bbox_and_index(words, annot))
-            urls_metadatas.append(urls_metadata)
+
             if hasattr(obj, "get_text"):
                 inner_text_objects = extract_text_objects(obj)
                 for inner_obj in inner_text_objects:
@@ -118,6 +118,15 @@ def process_data_with_pdfminer(
                     )
                     if text_region.bbox is not None and text_region.bbox.area > 0:
                         image_layout.append(text_region)
+        links = [
+            {
+                "bbox": list(map(lambda x: x * coef, metadata["bbox"])),
+                "text": metadata["text"],
+                "url": metadata["uri"],
+                "start_index": metadata["start_index"],
+            }
+            for metadata in urls_metadata
+        ]
 
         clean_text_layout = remove_duplicate_elements(
             text_layout, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
@@ -134,8 +143,8 @@ def process_data_with_pdfminer(
         layout = sort_text_regions(layout)
 
         layouts.append(layout)
-        layouts_urls_metadata.append(urls_metadatas)
-    return layouts, layouts_urls_metadata
+        layouts_links.append(links)
+    return layouts, layouts_links
 
 
 def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
