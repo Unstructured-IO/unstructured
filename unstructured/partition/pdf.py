@@ -67,10 +67,12 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
     save_elements,
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    check_annotations_within_element,
     clean_pdfminer_inner_elements,
     get_uris,
-    merge_inferred_with_extracted_layout, check_annotations_within_element, get_word_bounding_box_from_element,
+    get_word_bounding_box_from_element,
     map_bbox_and_index,
+    merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
@@ -638,7 +640,9 @@ def _partition_pdf_or_image_local(
             file.seek(0)
 
         extracted_layout, layouts_links = (
-            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else ([], [])
+            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi)
+            if pdf_text_extractable
+            else ([], [])
         )
 
         if analysis:

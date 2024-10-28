@@ -545,13 +545,13 @@ def document_to_element_list(
 
     return elements
 
-def _get_links_in_element(
-        page_links: list,
-        region: Rectangle
-) -> list:
-    from unstructured.partition.pdf_image.pdfminer_processing import bboxes1_is_almost_subregion_of_bboxes2
 
-    links_bboxes = [Rectangle(*link.get('bbox')) for link in page_links]
+def _get_links_in_element(page_links: list, region: Rectangle) -> list:
+    from unstructured.partition.pdf_image.pdfminer_processing import (
+        bboxes1_is_almost_subregion_of_bboxes2,
+    )
+
+    links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
     results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
     links = [
         {
@@ -559,10 +559,12 @@ def _get_links_in_element(
             "url": page_links[idx].get("url"),
             "start_index": page_links[idx].get("start_index"),
         }
-        for idx, result in enumerate(results) if any(result)
+        for idx, result in enumerate(results)
+        if any(result)
     ]
 
     return links
+
 
 def ocr_data_to_elements(
     ocr_data: list["LayoutElement"],

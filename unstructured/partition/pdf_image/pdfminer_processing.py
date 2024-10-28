@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, BinaryIO, List, Optional, Union, cast
 
 import numpy as np
+from pdfminer.layout import LTChar, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
-from pdfminer.layout import LTChar, LTTextBox
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata
@@ -67,7 +67,6 @@ def process_data_with_pdfminer(
         text_layout = []
         image_layout = []
         annotation_list = []
-        urls_metadatas = []
         coordinate_system = PixelSpace(
             width=width,
             height=height,
@@ -462,6 +461,7 @@ def try_resolve(annot: PDFObjRef):
     except Exception:
         return annot
 
+
 def check_annotations_within_element(
     annotation_list: list[dict[str, Any]],
     element_bbox: tuple[float, float, float, float],
@@ -603,6 +603,7 @@ def map_bbox_and_index(words: list[dict[str, Any]], annot: dict[str, Any]):
     annot["start_index"] = words[closest_start]["start_index"]
     return annot
 
+
 def calculate_intersection_area(
     bbox1: tuple[float, float, float, float],
     bbox2: tuple[float, float, float, float],
@@ -651,6 +652,7 @@ def calculate_bbox_area(bbox: tuple[float, float, float, float]) -> float:
     x1, y1, x2, y2 = bbox
     area = (x2 - x1) * (y2 - y1)
     return area
+
 
 def try_argmin(array: np.ndarray) -> int:
     """
