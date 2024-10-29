@@ -324,13 +324,13 @@ def test_table():
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html='<table class="Table" id="2"> '
-                '<tbody class="TableBody" id="3"> '
-                '<tr class="TableRow" id="4"> '
-                '<td class="TableCell" id="5">'
+                text_as_html="<table> "
+                "<tbody> "
+                "<tr> "
+                "<td>"
                 "Fair Value1 "
                 "</td>"
-                '<th class="TableCellHeader" rowspan="2" id="6">'
+                '<th rowspan="2">'
                 "Fair Value2 "
                 "</th></tr></tbody></table>",
                 parent_id="1",

@@ -355,13 +355,13 @@ def test_broken_cell_is_not_raising_error():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                   <td class="TableCell" tablecell&quot;="">
+        <table>
+            <tbody>
+                <tr>
+                   <td tablecell&quot;="">
                     83.64 GiB
                    </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value
                  </th>
                </tr>
@@ -405,13 +405,13 @@ def test_table():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                  <td class="TableCell">
+        <table>
+            <tbody>
+                <tr>
+                  <td>
                     Fair Value1
                   </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value2
                  </th>
                </tr>
@@ -466,23 +466,23 @@ def test_table_and_time():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table class="Table">
-            <thead class='TableHeader'>
-                <tr class="TableRow">
-                    <th class="TableCellHeader"  colspan="6">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="6">
                         Carrying Value
                     </th>
                 </tr>
             </thead>
-            <tbody class='TableBody'>
-                <tr class="TableRow">
-                    <td class="TableCell" colspan="5">
-                        <time class="CalendarDate">
+            <tbody>
+                <tr>
+                    <td colspan="5">
+                        <time>
                             June 30, 2023
                         </time>
                     </td>
-                <td class="TableCell">
-                    <span class="Currency">
+                <td>
+                    <span>
                         $—
                     </span>
                 </td>
