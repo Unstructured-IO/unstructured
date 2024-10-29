@@ -1,4 +1,4 @@
-## 0.16.3-dev2
+## 0.16.4-dev0
 
 ### Enhancements
 * **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
@@ -7,7 +7,17 @@
 
 ### Fixes
 
+## 0.16.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
 * **V2 elements without first parent ID can be parsed**
+* **Fix missing elements when layout element parsed in V2 ontology**
+* updated **unstructured-inference** to be **0.8.1** in requirements/extra-pdf-image.in
 
 
 ## 0.16.2
