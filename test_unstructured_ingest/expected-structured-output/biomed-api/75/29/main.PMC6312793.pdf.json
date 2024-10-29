@@ -7,6 +7,13 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 0,
+          "text": "DatainBrief22 ( 2019 ) 484 –",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        }
+      ],
       "page_number": 1
     },
     "text": "Data in Brief 22 (2019) 484–487",
@@ -33,6 +40,13 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": -1,
+          "text": "",
+          "url": "www.sciencedirect.com/science/journal/23523409"
+        }
+      ],
       "page_number": 1
     },
     "text": "Contents lists available at ScienceDirect",
@@ -58,6 +72,13 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 18,
+          "text": "www . elsevier . com / locate /",
+          "url": "www.elsevier.com/locate/dib"
+        }
       ],
       "page_number": 1
     },
@@ -332,6 +353,23 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 25,
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 . nCorrespondingauthorat",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007"
+        },
+        {
+          "start_index": 25,
+          "text": "https",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007"
+        },
+        {
+          "start_index": 25,
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 .",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007"
+        }
+      ],
       "page_number": 1
     },
     "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007",
@@ -345,6 +383,13 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 16,
+          "text": "sarangkulkarni @ iitb . ac . in",
+          "url": "mailto:sarangkulkarni@iitb.ac.in"
+        }
+      ],
       "page_number": 1
     },
     "text": "n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India. E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni).",
@@ -357,6 +402,23 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 0,
+          "text": "https",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        },
+        {
+          "start_index": 0,
+          "text": "https",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        },
+        {
+          "start_index": 0,
+          "text": "https :// doi . org / 10 . 1016 / j . dib . 2018 . 12 .",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        }
       ],
       "page_number": 1
     },
@@ -409,6 +471,13 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 444,
+          "text": ".,",
+          "url": "https://orlib.uqcloud.net/"
+        }
       ],
       "page_number": 2
     },
@@ -513,6 +582,13 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 509,
+          "text": "2500 , and3000 . size , ðm ; nÞ , ﬁveinstancesareprovided . Thedatasetcanbedownloadedfromhttps :// orlib . uqcloud . net",
+          "url": "https://orlib.uqcloud.net"
+        }
       ],
       "page_number": 2
     },
@@ -930,6 +1006,18 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 94,
+          "text": ":// doi",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        },
+        {
+          "start_index": 0,
+          "text": "org / 10 . 1016 / j . dib . 2018 . 12 . 055",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055"
+        }
+      ],
       "page_number": 4
     },
     "text": "Transparency document associated with this article can be found in the online version at https://doi. org/10.1016/j.dib.2018.12.055.",
@@ -956,6 +1044,23 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 4,
+          "text": "G . Carpaneto , M . Dell ' Amico , M . Fischetti , P . Toth ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1"
+        },
+        {
+          "start_index": 0,
+          "text": "problem , Networks19 ( 5 )( 1989 ) 531 –",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1"
+        },
+        {
+          "start_index": 0,
+          "text": "problem , Networks19 ( 5 )( 1989 ) 531 – 548",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1"
+        }
+      ],
       "page_number": 4
     },
     "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling problem, Networks 19 (5) (1989) 531–548.",
@@ -968,6 +1073,23 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 4,
+          "text": "N . Kliewer , T . Mellouli , L . Suhl , Atime – spacenetworkbasedexactoptimizationmodelformulti - depotbusscheduling , Eur",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2"
+        },
+        {
+          "start_index": 0,
+          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 –",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2"
+        },
+        {
+          "start_index": 0,
+          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 – 1627",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2"
+        }
       ],
       "page_number": 4
     },
@@ -982,6 +1104,23 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 4,
+          "text": "S . Kulkarni , M . Krishnamoorthy , A . Ranade , A . T . Ernst , R . Patil , Anewformulationandacolumngeneration -",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3"
+        },
+        {
+          "start_index": 0,
+          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 –",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3"
+        },
+        {
+          "start_index": 0,
+          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 – 487",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3"
+        }
+      ],
       "page_number": 4
     },
     "text": "[3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457–487.",
@@ -995,6 +1134,18 @@
       "languages": [
         "eng"
       ],
+      "links": [
+        {
+          "start_index": 4,
+          "text": "A . S . Pepin , G . Desaulniers , A . Hertz , D . Huisman ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4"
+        },
+        {
+          "start_index": 0,
+          "text": "problem , J . Sched . 12 ( 1 )( 2009 ) 17",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4"
+        }
+      ],
       "page_number": 4
     },
     "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of ﬁve heuristics for the multiple depot vehicle scheduling problem, J. Sched. 12 (1) (2009) 17.",
@@ -1007,6 +1158,23 @@
       "filetype": "application/pdf",
       "languages": [
         "eng"
+      ],
+      "links": [
+        {
+          "start_index": 4,
+          "text": "C . C . Ribeiro , F . Soumis , Acolumngenerationapproachtothemultiple - depotvehicleschedulingproblem , Oper . Res . 42 ( 1",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5"
+        },
+        {
+          "start_index": 0,
+          "text": "( 1994 ) 41 –",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5"
+        },
+        {
+          "start_index": 0,
+          "text": "( 1994 ) 41 – 52",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5"
+        }
       ],
       "page_number": 4
     },
