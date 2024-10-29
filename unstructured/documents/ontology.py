@@ -477,24 +477,8 @@ class FormFieldValue(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["input"], frozen=True)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.text = self.additional_attributes.get("value", "")
-
-    def to_html(self, add_children=True) -> str:
-        additional_attrs = copy(self.additional_attributes)
-        additional_attrs.pop("class", None)
-
-        attr_str = self._construct_attribute_string(additional_attrs)
-
-        class_attr = f'class="{self.css_class_name}"' if self.css_class_name else ""
-
-        combined_attr_str = f"{class_attr} {attr_str}".strip()
-
-        return f"<{self.html_tag_name} {combined_attr_str} />"
-
     def to_text(self, add_children=True) -> str:
-        return super().to_text() + self.text
+        return super().to_text() + self.additional_attributes.get("value", "")
 
 
 class Checkbox(OntologyElement):
