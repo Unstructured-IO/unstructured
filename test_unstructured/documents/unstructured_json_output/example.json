@@ -56,7 +56,7 @@
             "parent_id": "3a6b156a81764e17be128264241f8136",
             "text_as_html": "<form class=\"Form\" id=\"637c2f6935fb4353a5f73025ce04619d\"> <label class=\"FormField\" for=\"company-name\" id=\"50027cccbe1948c9853ce0de37b635c2\">From field name </label><input class=\"FormFieldValue\" id=\"0032242af75c4b37984ea7fea9aac74c\" value=\"Example value\" /></form>"
         },
-        "text": "From field name",
+        "text": "From field name Example value",
         "type": "UncategorizedText"
     },
     {

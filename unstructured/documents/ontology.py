@@ -456,6 +456,18 @@ class Form(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["form"], frozen=True)
 
+    def to_text(self, add_children=True) -> str:
+        # Start with the text of the current element
+        texts = [self.text] if self.text else []
+
+        # If add_children is True, recursively get text from children
+        if add_children:
+            for child in self.children:
+                texts.append(child.to_text(add_children=True))
+
+        # Join all text parts and return as a single string
+        return " ".join(filter(None, texts)).strip()
+
 
 class FormField(OntologyElement):
     description: str = Field("A property value of a form", frozen=True)
