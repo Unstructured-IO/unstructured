@@ -275,7 +275,7 @@ class Table(OntologyElement):
         for tag in soup.find_all(True):
             if "id" in tag.attrs:
                 del tag.attrs["id"]
-            if "class" in tag.attrs:
+            if "class" in tag.attrs and tag.name != "table":
                 del tag.attrs["class"]
 
         return str(soup)

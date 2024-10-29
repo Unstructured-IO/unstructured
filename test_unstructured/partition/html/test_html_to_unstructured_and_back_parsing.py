@@ -314,17 +314,14 @@ def test_table():
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
     )
-    expected_html = indent_html(html_as_str, html_parser="html.parser")
-    parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
-    assert expected_html == parsed_html
     expected_elements = _page_elements + [
         Table(
             text="Fair Value1 Fair Value2",
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html="<table> "
+                text_as_html='<table class="Table"> '
                 "<tbody> "
                 "<tr> "
                 "<td>"

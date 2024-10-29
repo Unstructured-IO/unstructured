@@ -355,7 +355,7 @@ def test_broken_cell_is_not_raising_error():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table>
+        <table class="Table">
             <tbody>
                 <tr>
                    <td tablecell&quot;="">
@@ -405,7 +405,7 @@ def test_table():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table>
+        <table class="Table">
             <tbody>
                 <tr>
                   <td>
@@ -466,7 +466,7 @@ def test_table_and_time():
     expected_html = _wrap_with_body(
         """
     <div class="Page">
-        <table>
+        <table class="Table">
             <thead>
                 <tr>
                     <th colspan="6">
