@@ -607,4 +607,5 @@ def test_text_in_form_field_value():
 
     assert len(page.children) == 1
     form_field_value = page.children[0]
-    assert form_field_value.text == "Random Input Value"
+    assert form_field_value.text == ""
+    assert form_field_value.to_text() == "Random Input Value"
