@@ -9,7 +9,6 @@ from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
 import psutil
-from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
 from unstructured.documents.elements import (
@@ -22,18 +21,12 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
-    Title,
 )
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
-from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
-from unstructured.utils import dependency_exists, first
-
-if dependency_exists("numpy") and dependency_exists("cv2"):
-    from unstructured.partition.utils.sorting import sort_page_elements
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+    from unstructured_inference.inference.layout import PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
 
@@ -407,7 +400,7 @@ def contains_emoji(s: str) -> bool:
     return bool(emoji.emoji_count(s))
 
 
-def _get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
+def get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
     """Retrieve image metadata and coordinate system from a page."""
 
     image = getattr(page, "image", None)
@@ -431,146 +424,6 @@ def _get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
         "width": image_width,
         "height": image_height,
     }
-
-
-# FIXME: document here can be either DocumentLayout or HTMLDocument; HTMLDocument is defined in
-# unstructured.documents.html, which imports this module so we can't import the class for type
-# hints. Moreover, those two types of documents have different lists of attributes
-# UPDATE(scanny): HTMLDocument no longer exists, so this function can be optimized for use by
-# DocumentLayout only.
-def document_to_element_list(
-    document: DocumentLayout,
-    sortable: bool = False,
-    include_page_breaks: bool = False,
-    last_modification_date: Optional[str] = None,
-    infer_list_items: bool = True,
-    source_format: Optional[str] = None,
-    detection_origin: Optional[str] = None,
-    sort_mode: str = SORT_MODE_XY_CUT,
-    languages: Optional[list[str]] = None,
-    starting_page_number: int = 1,
-    layouts_links: Optional[list[list]] = None,
-    **kwargs: Any,
-) -> list[Element]:
-    """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: list[Element] = []
-
-    num_pages = len(document.pages)
-    for page_number, page in enumerate(document.pages, start=starting_page_number):
-        page_elements: list[Element] = []
-
-        page_image_metadata = _get_page_image_metadata(page)
-        image_format = page_image_metadata.get("format")
-        image_width = page_image_metadata.get("width")
-        image_height = page_image_metadata.get("height")
-
-        translation_mapping: list[tuple["LayoutElement", Element]] = []
-
-        links = (
-            layouts_links[page_number - starting_page_number]
-            if layouts_links and layouts_links[0]
-            else None
-        )
-
-        for layout_element in page.elements:
-            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
-                coordinate_system = PixelSpace(width=image_width, height=image_height)
-            else:
-                coordinate_system = None
-
-            element = normalize_layout_element(
-                layout_element,
-                coordinate_system=coordinate_system,
-                infer_list_items=infer_list_items,
-                source_format=source_format if source_format else "html",
-            )
-            if isinstance(element, list):
-                for el in element:
-                    if last_modification_date:
-                        el.metadata.last_modified = last_modification_date
-                    el.metadata.page_number = page_number
-                page_elements.extend(element)
-                translation_mapping.extend([(layout_element, el) for el in element])
-                continue
-            else:
-
-                element.metadata.links = (
-                    _get_links_in_element(links, layout_element.bbox) if links else []
-                )
-
-                if last_modification_date:
-                    element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
-                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
-                # FIXME: here the elements in a page can be either:
-                # 1. LayoutElement if the document is LayoutDocument (if the partition is on a
-                #   pdf/image);
-                # 2. Element if the document is HTMLDocument (if the partition is on an html file)
-                # this discrepency is due to Element class defined in unstructured and LayoutElement
-                # class defined in unstructured_inference do not have the same list of attributes
-                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
-                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
-                ):
-                    element.metadata.category_depth = 0
-
-                page_elements.append(element)
-                translation_mapping.append((layout_element, element))
-            coordinates = (
-                element.metadata.coordinates.points if element.metadata.coordinates else None
-            )
-
-            el_image_path = (
-                layout_element.image_path if hasattr(layout_element, "image_path") else None
-            )
-
-            add_element_metadata(
-                element,
-                page_number=page_number,
-                filetype=image_format,
-                coordinates=coordinates,
-                coordinate_system=coordinate_system,
-                category_depth=element.metadata.category_depth,
-                image_path=el_image_path,
-                detection_origin=detection_origin,
-                languages=languages,
-                **kwargs,
-            )
-
-        for layout_element, element in translation_mapping:
-            if hasattr(layout_element, "parent") and layout_element.parent is not None:
-                element_parent = first(
-                    (el for l_el, el in translation_mapping if l_el is layout_element.parent),
-                )
-                element.metadata.parent_id = element_parent.id
-        sorted_page_elements = page_elements
-        if sortable and sort_mode != SORT_MODE_DONT:
-            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-
-        if include_page_breaks and page_number < num_pages + starting_page_number:
-            sorted_page_elements.append(PageBreak(text=""))
-        elements.extend(sorted_page_elements)
-
-    return elements
-
-
-def _get_links_in_element(page_links: list, region: Rectangle) -> list:
-    from unstructured.partition.pdf_image.pdfminer_processing import (
-        bboxes1_is_almost_subregion_of_bboxes2,
-    )
-
-    links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
-    results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
-    links = [
-        {
-            "text": page_links[idx].get("text"),
-            "url": page_links[idx].get("url"),
-            "start_index": page_links[idx].get("start_index"),
-        }
-        for idx, result in enumerate(results)
-        if any(result)
-    ]
-
-    return links
 
 
 def ocr_data_to_elements(

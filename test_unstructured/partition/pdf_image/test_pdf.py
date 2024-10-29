@@ -5,6 +5,7 @@ import logging
 import math
 import os
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -14,6 +15,8 @@ from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -35,6 +38,9 @@ from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_DONT,
+    SORT_MODE_XY_CUT,
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
 )
@@ -95,12 +101,51 @@ class MockPageLayout(layout.PageLayout):
         ]
 
 
+class MockSinglePageLayout(layout.PageLayout):
+    def __init__(self, number: int, image: Image.Image):
+        self.number = number
+        self.image = image
+
+    @property
+    def elements(self):
+        return [
+            LayoutElement(
+                type="Headline",
+                text="Charlie Brown and the Great Pumpkin",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Subheadline",
+                text="The Beginning",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Text",
+                text="This time Charlie Brown had it really tricky...",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Title",
+                text="Another book title in the same page",
+                bbox=None,
+            ),
+        ]
+
+
 class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
             MockPageLayout(number=0, image=Image.new("1", (1, 1))),
             MockPageLayout(number=1, image=Image.new("1", (1, 1))),
+        ]
+
+
+class MockSinglePageDocumentLayout(layout.DocumentLayout):
+    @property
+    def pages(self):
+        return [
+            MockSinglePageLayout(number=1, image=Image.new("1", (1, 1))),
         ]
 
 
@@ -1398,3 +1443,75 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
                 pdf_hi_res_max_pages=pdf_hi_res_max_pages,
                 is_image=is_image,
             )
+
+
+def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
+    layout_elem_absent_coordinates = MockSinglePageDocumentLayout()
+    for page in layout_elem_absent_coordinates.pages:
+        for el in page.elements:
+            el.bbox = None
+    elements = pdf.document_to_element_list(layout_elem_absent_coordinates)
+    assert elements[0].metadata.coordinates is None
+
+
+@dataclass
+class MockImage:
+    width = 640
+    height = 480
+    format = "JPG"
+
+
+def test_document_to_element_list_handles_parent():
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    el1, el2 = pdf.document_to_element_list(doc)
+    assert el2.metadata.parent_id == el1.id
+
+
+@pytest.mark.parametrize(
+    ("sort_mode", "call_count"),
+    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
+)
+def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    with mock.patch.object(pdf, "sort_page_elements") as mock_sort_page_elements:
+        pdf.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
+    assert mock_sort_page_elements.call_count == call_count
+
+
+def test_document_to_element_list_sets_category_depth_titles():
+    layout_with_hierarchies = MockSinglePageDocumentLayout()
+    elements = pdf.document_to_element_list(layout_with_hierarchies)
+    assert elements[0].metadata.category_depth == 1
+    assert elements[1].metadata.category_depth == 2
+    assert elements[2].metadata.category_depth is None
+    assert elements[3].metadata.category_depth == 0

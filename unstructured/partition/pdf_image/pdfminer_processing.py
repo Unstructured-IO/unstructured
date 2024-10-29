@@ -6,6 +6,7 @@ import numpy as np
 from pdfminer.layout import LTChar, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
+from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata
@@ -347,6 +348,23 @@ def aggregate_embedded_text_by_block(
 
     text = " ".join([obj.text for i, obj in enumerate(pdf_objects) if (mask[i] and obj.text)])
     return text
+
+
+def get_links_in_element(page_links: list, region: Rectangle) -> list:
+
+    links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
+    results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
+    links = [
+        {
+            "text": page_links[idx].get("text"),
+            "url": page_links[idx].get("url"),
+            "start_index": page_links[idx].get("start_index"),
+        }
+        for idx, result in enumerate(results)
+        if any(result)
+    ]
+
+    return links
 
 
 def get_uris(

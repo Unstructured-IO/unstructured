@@ -17,6 +17,8 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
+from unstructured_inference.inference.layout import DocumentLayout
+from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -34,6 +36,7 @@ from unstructured.documents.elements import (
     ListItem,
     PageBreak,
     Text,
+    Title,
     process_metadata,
 )
 from unstructured.errors import PageCountExceededError
@@ -42,8 +45,10 @@ from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common.common import (
-    document_to_element_list,
+    add_element_metadata,
     exactly_one,
+    get_page_image_metadata,
+    normalize_layout_element,
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
@@ -69,6 +74,7 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
     clean_pdfminer_inner_elements,
+    get_links_in_element,
     get_uris,
     get_word_bounding_box_from_element,
     map_bbox_and_index,
@@ -91,7 +97,7 @@ from unstructured.partition.utils.constants import (
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
-from unstructured.utils import requires_dependencies
+from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     pass
@@ -1080,3 +1086,113 @@ def check_coords_within_boundary(
     ) and (coordinates.points[0][1] > boundary_y_min - (vertical_threshold * line_height))
 
     return x_within_boundary and y_within_boundary
+
+
+def document_to_element_list(
+    document: DocumentLayout,
+    sortable: bool = False,
+    include_page_breaks: bool = False,
+    last_modification_date: Optional[str] = None,
+    infer_list_items: bool = True,
+    source_format: Optional[str] = None,
+    detection_origin: Optional[str] = None,
+    sort_mode: str = SORT_MODE_XY_CUT,
+    languages: Optional[list[str]] = None,
+    starting_page_number: int = 1,
+    layouts_links: Optional[list[list]] = None,
+    **kwargs: Any,
+) -> list[Element]:
+    """Converts a DocumentLayout object to a list of unstructured elements."""
+    elements: list[Element] = []
+
+    num_pages = len(document.pages)
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
+        page_elements: list[Element] = []
+
+        page_image_metadata = get_page_image_metadata(page)
+        image_format = page_image_metadata.get("format")
+        image_width = page_image_metadata.get("width")
+        image_height = page_image_metadata.get("height")
+
+        translation_mapping: list[tuple["LayoutElement", Element]] = []
+
+        links = (
+            layouts_links[page_number - starting_page_number]
+            if layouts_links and layouts_links[0]
+            else None
+        )
+
+        for layout_element in page.elements:
+            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
+                coordinate_system = PixelSpace(width=image_width, height=image_height)
+            else:
+                coordinate_system = None
+
+            element = normalize_layout_element(
+                layout_element,
+                coordinate_system=coordinate_system,
+                infer_list_items=infer_list_items,
+                source_format=source_format if source_format else "html",
+            )
+            if isinstance(element, list):
+                for el in element:
+                    if last_modification_date:
+                        el.metadata.last_modified = last_modification_date
+                    el.metadata.page_number = page_number
+                page_elements.extend(element)
+                translation_mapping.extend([(layout_element, el) for el in element])
+                continue
+            else:
+
+                element.metadata.links = (
+                    get_links_in_element(links, layout_element.bbox) if links else []
+                )
+
+                if last_modification_date:
+                    element.metadata.last_modified = last_modification_date
+                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
+                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
+
+                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
+                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
+                ):
+                    element.metadata.category_depth = 0
+
+                page_elements.append(element)
+                translation_mapping.append((layout_element, element))
+            coordinates = (
+                element.metadata.coordinates.points if element.metadata.coordinates else None
+            )
+
+            el_image_path = (
+                layout_element.image_path if hasattr(layout_element, "image_path") else None
+            )
+
+            add_element_metadata(
+                element,
+                page_number=page_number,
+                filetype=image_format,
+                coordinates=coordinates,
+                coordinate_system=coordinate_system,
+                category_depth=element.metadata.category_depth,
+                image_path=el_image_path,
+                detection_origin=detection_origin,
+                languages=languages,
+                **kwargs,
+            )
+
+        for layout_element, element in translation_mapping:
+            if hasattr(layout_element, "parent") and layout_element.parent is not None:
+                element_parent = first(
+                    (el for l_el, el in translation_mapping if l_el is layout_element.parent),
+                )
+                element.metadata.parent_id = element_parent.id
+        sorted_page_elements = page_elements
+        if sortable and sort_mode != SORT_MODE_DONT:
+            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
+
+        if include_page_breaks and page_number < num_pages + starting_page_number:
+            sorted_page_elements.append(PageBreak(text=""))
+        elements.extend(sorted_page_elements)
+
+    return elements
