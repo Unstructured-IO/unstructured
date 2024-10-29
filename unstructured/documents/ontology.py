@@ -89,6 +89,9 @@ class OntologyElement(BaseModel):
 
         return result_html
 
+    def to_text(self, add_children=True) -> str:
+        return BeautifulSoup(self.to_html(), "html.parser").get_text().strip()
+
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
             f'{key}="{value}"' if value else f"{key}" for key, value in attributes.items()
@@ -480,6 +483,9 @@ class FormFieldValue(OntologyElement):
         combined_attr_str = f"{class_attr} {attr_str}".strip()
 
         return f"<{self.html_tag_name} {combined_attr_str} />"
+
+    def to_text(self, add_children=True) -> str:
+        return super().to_text() + self.text
 
 
 class Checkbox(OntologyElement):
