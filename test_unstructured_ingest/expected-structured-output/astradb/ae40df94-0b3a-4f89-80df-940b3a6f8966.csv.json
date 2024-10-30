@@ -1,0 +1,20 @@
+[
+  {
+    "type": "Table",
+    "element_id": "7fc0ff06c2ca00682b8070d6f8668bc6",
+    "text": "_id title reviewid creationdate criticname originalscore reviewstate reviewtext ae40df94-0b3a-4f89-80df-940b3a6f8966 Dangerous Men 2504681 2018-08-29 Pat Padua fresh Its clumsy determination is endearing and sometimes wildly entertaining",
+    "metadata": {
+      "text_as_html": "<table><tr><td>_id</td><td>title</td><td>reviewid</td><td>creationdate</td><td>criticname</td><td>originalscore</td><td>reviewstate</td><td>reviewtext</td></tr><tr><td>ae40df94-0b3a-4f89-80df-940b3a6f8966</td><td>Dangerous Men</td><td>2504681</td><td>2018-08-29</td><td>Pat Padua</td><td/><td>fresh</td><td>Its clumsy determination is endearing and sometimes wildly entertaining</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/csv",
+      "data_source": {
+        "record_locator": {
+          "document_id": "ae40df94-0b3a-4f89-80df-940b3a6f8966"
+        },
+        "filesize_bytes": 241
+      }
+    }
+  }
+]
