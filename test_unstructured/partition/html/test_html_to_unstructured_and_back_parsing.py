@@ -321,14 +321,14 @@ def test_table():
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html='<table class="Table"> '
+                text_as_html='<table class="Table" id="2"> '
                 "<tbody> "
                 "<tr> "
                 "<td>"
-                "Fair Value1 "
+                "Fair Value1"
                 "</td>"
                 '<th rowspan="2">'
-                "Fair Value2 "
+                "Fair Value2"
                 "</th></tr></tbody></table>",
                 parent_id="1",
             ),

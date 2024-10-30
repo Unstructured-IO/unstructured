@@ -90,7 +90,7 @@ class OntologyElement(BaseModel):
         return result_html
 
     def to_text(self, add_children=True) -> str:
-        return BeautifulSoup(self.to_html(), "html.parser").get_text().strip()
+        return " ".join(BeautifulSoup(self.to_html(add_children), "html.parser").stripped_strings)
 
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
@@ -263,20 +263,14 @@ class Table(OntologyElement):
     allowed_tags: List[str] = Field(["table"], frozen=True)
 
     def to_html(self, add_children=True) -> str:
-        raw_html = super().to_html(add_children=add_children)
-
-        cleaned_html = self._remove_ids_and_classes(raw_html)
-
-        return cleaned_html
-
-    def _remove_ids_and_classes(self, html: str) -> str:
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
 
         for tag in soup.find_all(True):
-            if "id" in tag.attrs:
-                del tag.attrs["id"]
-            if "class" in tag.attrs and tag.name != "table":
-                del tag.attrs["class"]
+            if tag.name != "table":
+                tag.attrs.pop("class", None)
+                tag.attrs.pop("id", None)
+            if tag.name in ["td", "th"]:
+                tag.string = " ".join(tag.stripped_strings)
 
         return str(soup)
 

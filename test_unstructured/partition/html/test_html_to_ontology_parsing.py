@@ -477,14 +477,10 @@ def test_table_and_time():
             <tbody>
                 <tr>
                     <td colspan="5">
-                        <time>
                             June 30, 2023
-                        </time>
                     </td>
                 <td>
-                    <span>
                         $—
-                    </span>
                 </td>
                 </tr>
             </tbody>
