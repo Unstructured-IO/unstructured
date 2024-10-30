@@ -314,9 +314,9 @@
     "metadata": {
       "links": [
         {
-          "text": ":// layout - parser . github . io",
+          "text": "https :// layout - parser . github . io",
           "url": "https://layout-parser.github.io",
-          "start_index": 1477
+          "start_index": 1472
         }
       ],
       "filetype": "application/pdf",
@@ -719,9 +719,9 @@
     "metadata": {
       "links": [
         {
-          "text": "]",
+          "text": "5",
           "url": "section.1.5",
-          "start_index": 307
+          "start_index": 155
         },
         {
           "text": "37",
@@ -758,29 +758,29 @@
     "metadata": {
       "links": [
         {
-          "text": ",",
+          "text": "2",
           "url": "section.1.2",
-          "start_index": 138
+          "start_index": 55
         },
         {
-          "text": ",",
+          "text": "3",
           "url": "section.1.3",
-          "start_index": 196
+          "start_index": 195
         },
         {
-          "text": ".",
+          "text": "4",
           "url": "section.1.4",
-          "start_index": 269
+          "start_index": 268
         },
         {
-          "text": ",",
+          "text": "5",
           "url": "section.1.5",
-          "start_index": 357
+          "start_index": 279
         },
         {
-          "text": ",",
+          "text": "6",
           "url": "section.1.6",
-          "start_index": 138
+          "start_index": 371
         }
       ],
       "filetype": "application/pdf",
@@ -898,9 +898,9 @@
     "metadata": {
       "links": [
         {
-          "text": ";",
+          "text": "6 ;",
           "url": "Hfootnote.1",
-          "start_index": 176
+          "start_index": 175
         },
         {
           "text": ",",
@@ -913,19 +913,19 @@
           "start_index": 450
         },
         {
-          "text": "andprovidesnosupportsforrecentDLmodels TheDocumentLayoutAnalysisproject8focusesonprocessingborn - documentsviaanalyzingthestoredPDFdata",
+          "text": "focuses",
           "url": "Hfootnote.3",
-          "start_index": 506
+          "start_index": 589
         },
         {
-          "text": "2",
+          "text": "on",
           "url": "Hfootnote.4",
-          "start_index": 930
+          "start_index": 774
         },
         {
-          "text": "DAE",
+          "text": "stored PDF data . Repositories like DeepLayout9 and Detectron2 - PubLayNet10",
           "url": "Hfootnote.5",
-          "start_index": 885
+          "start_index": 656
         },
         {
           "text": "15",
@@ -943,14 +943,14 @@
           "start_index": 1065
         },
         {
-          "text": "),",
+          "text": "and",
           "url": "Hfootnote.6",
-          "start_index": 996
+          "start_index": 1080
         },
         {
-          "text": "arenotactivelymaintained",
+          "text": "usually",
           "url": "Hfootnote.7",
-          "start_index": 1008
+          "start_index": 1096
         }
       ],
       "filetype": "application/pdf",
@@ -1434,27 +1434,27 @@
     "metadata": {
       "links": [
         {
-          "text": "[ 38",
+          "text": "[ 38 ]",
           "url": "cite.zhong2019publaynet",
           "start_index": 10
         },
         {
-          "text": "[ 3",
+          "text": "[ 3 ]",
           "url": "cite.antonacopoulos2009realistic",
           "start_index": 21
         },
         {
-          "text": "[ 17",
+          "text": "[ 17 ]",
           "url": "cite.newspaper_navigator_dataset",
           "start_index": 35
         },
         {
-          "text": "[ 18",
+          "text": "[ 18 ]",
           "url": "cite.li2019tablebank",
           "start_index": 50
         },
         {
-          "text": "[ 31",
+          "text": "[ 31 ]",
           "url": "cite.shen2020large",
           "start_index": 65
         }
@@ -1489,12 +1489,12 @@
           "start_index": 229
         },
         {
-          "text": "[ 28",
+          "text": "[ 28 ]",
           "url": "cite.ren2015faster",
           "start_index": 315
         },
         {
-          "text": "[ 12",
+          "text": "[ 12 ]",
           "url": "cite.he2017mask",
           "start_index": 339
         }
@@ -1811,9 +1811,9 @@
     "metadata": {
       "links": [
         {
-          "text": ",",
+          "text": "1",
           "url": "table.caption.3",
-          "start_index": 16
+          "start_index": 15
         }
       ],
       "filetype": "application/pdf",
@@ -1906,19 +1906,19 @@
     "metadata": {
       "links": [
         {
-          "text": ".",
+          "text": "2",
           "url": "figure.caption.5",
-          "start_index": 165
+          "start_index": 164
         },
         {
-          "text": "_",
+          "text": "2",
           "url": "table.caption.6",
-          "start_index": 893
+          "start_index": 1062
         },
         {
-          "text": ". detaileddescriptionoftheseoperations13",
+          "text": ".",
           "url": "Hfootnote.8",
-          "start_index": 1034
+          "start_index": 1117
         }
       ],
       "filetype": "application/pdf",
@@ -2200,9 +2200,9 @@
     "metadata": {
       "links": [
         {
-          "text": "[",
+          "text": "14",
           "url": "Hfootnote.9",
-          "start_index": 308
+          "start_index": 230
         },
         {
           "text": "38",
@@ -2215,9 +2215,9 @@
           "start_index": 334
         },
         {
-          "text": ". 5",
+          "text": "3 . 5",
           "url": "subsection.1.3.5",
-          "start_index": 375
+          "start_index": 374
         }
       ],
       "filetype": "application/pdf",
@@ -2244,9 +2244,9 @@
     "metadata": {
       "links": [
         {
-          "text": ",",
+          "text": "3",
           "url": "figure.caption.8",
-          "start_index": 615
+          "start_index": 614
         }
       ],
       "filetype": "application/pdf",
@@ -2761,9 +2761,9 @@
     "metadata": {
       "links": [
         {
-          "text": ",",
+          "text": "5",
           "url": "figure.caption.10",
-          "start_index": 433
+          "start_index": 432
         }
       ],
       "filetype": "application/pdf",
@@ -2790,14 +2790,14 @@
     "metadata": {
       "links": [
         {
-          "text": "(",
+          "text": "4",
           "url": "figure.caption.9",
-          "start_index": 21
+          "start_index": 19
         },
         {
-          "text": ",",
+          "text": "15 ,",
           "url": "Hfootnote.10",
-          "start_index": 85
+          "start_index": 83
         }
       ],
       "filetype": "application/pdf",
@@ -2968,9 +2968,9 @@
     "metadata": {
       "links": [
         {
-          "text": "(",
+          "text": "4",
           "url": "figure.caption.9",
-          "start_index": 487
+          "start_index": 485
         }
       ],
       "filetype": "application/pdf",
@@ -3002,14 +3002,14 @@
           "start_index": 766
         },
         {
-          "text": "]. detectsatotalof15possiblecategories , andachievesa0 . a0 . 17averageLevinsteindistances17fortokenpredictiononthetestset",
+          "text": "model detects a total of 15 possible categories , and achieves a 0 . 98 Jaccard score16",
           "url": "Hfootnote.11",
-          "start_index": 767
+          "start_index": 774
         },
         {
-          "text": ",",
+          "text": "for",
           "url": "Hfootnote.12",
-          "start_index": 821
+          "start_index": 901
         }
       ],
       "filetype": "application/pdf",
@@ -3205,9 +3205,9 @@
           "start_index": 160
         },
         {
-          "text": "digitalPDFdocuments",
+          "text": "18",
           "url": "Hfootnote.13",
-          "start_index": 334
+          "start_index": 174
         }
       ],
       "filetype": "application/pdf",
@@ -3244,9 +3244,9 @@
           "start_index": 217
         },
         {
-          "text": ",",
+          "text": "6",
           "url": "figure.caption.11",
-          "start_index": 958
+          "start_index": 957
         }
       ],
       "filetype": "application/pdf",
@@ -3786,12 +3786,12 @@
           "start_index": 288
         },
         {
-          "text": "https :// doi - org . offcampus",
+          "text": "https :// doi - org . offcampus .",
           "url": "https://doi-org.offcampus.lib.washington.edu/10.1145/3379350.3416143",
           "start_index": 329
         },
         {
-          "text": "lib",
+          "text": "lib . washington . edu / 10 . 1145 / 3379350 . 3416143",
           "url": "https://doi-org.offcampus.lib.washington.edu/10.1145/3379350.3416143",
           "start_index": 356
         }
