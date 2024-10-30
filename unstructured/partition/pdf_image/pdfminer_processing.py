@@ -575,6 +575,11 @@ def get_words_from_obj(
                     y2 = height - character.y0
 
                 word += char
+            else:
+                words.append(
+                    {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
+                )
+                word = ""
         text_len += len(text_line)
     return characters, words
 
