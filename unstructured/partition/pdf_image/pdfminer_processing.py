@@ -89,7 +89,7 @@ def process_data_with_pdfminer(
                     page_number,
                     annotation_threshold,
                 )
-                _, words = get_word_bounding_box_from_element(obj, height)
+                _, words = get_words_from_obj(obj, height)
                 for annot in annotations_within_element:
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
@@ -516,7 +516,7 @@ def check_annotations_within_element(
     return annotations_within_element
 
 
-def get_word_bounding_box_from_element(
+def get_words_from_obj(
     obj: LTTextBox,
     height: float,
 ) -> tuple[list[LTChar], list[dict[str, Any]]]:

@@ -76,7 +76,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_inner_elements,
     get_links_in_element,
     get_uris,
-    get_word_bounding_box_from_element,
+    get_words_from_obj,
     map_bbox_and_index,
     merge_inferred_with_extracted_layout,
 )
@@ -459,7 +459,7 @@ def _process_pdfminer_pages(
                     page_number,
                     annotation_threshold,
                 )
-                _, words = get_word_bounding_box_from_element(obj, height)
+                _, words = get_words_from_obj(obj, height)
                 for annot in annotations_within_element:
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
