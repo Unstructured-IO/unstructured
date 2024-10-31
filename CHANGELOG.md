@@ -1,6 +1,10 @@
-## 0.16.4-dev0
+## 0.16.4-dev1
 
 ### Enhancements
+
+* **`value` attribute in `<input/>` element is parsed to `OntologyElement.text` in ontology**
+* **`id` and `class` attributes removed from Table subtags in HTML partitioning**
+* **cleaned `to_html` and newly introduced `to_text` in `OntologyElement`**
 
 ### Features
 
