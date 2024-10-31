@@ -356,12 +356,12 @@ def test_broken_cell_is_not_raising_error():
         """
     <div class="Page">
         <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                   <td class="TableCell" tablecell&quot;="">
+            <tbody>
+                <tr>
+                   <td tablecell&quot;="">
                     83.64 GiB
                    </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value
                  </th>
                </tr>
@@ -406,12 +406,12 @@ def test_table():
         """
     <div class="Page">
         <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                  <td class="TableCell">
+            <tbody>
+                <tr>
+                  <td>
                     Fair Value1
                   </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value2
                  </th>
                </tr>
@@ -467,24 +467,20 @@ def test_table_and_time():
         """
     <div class="Page">
         <table class="Table">
-            <thead class='TableHeader'>
-                <tr class="TableRow">
-                    <th class="TableCellHeader"  colspan="6">
+            <thead>
+                <tr>
+                    <th colspan="6">
                         Carrying Value
                     </th>
                 </tr>
             </thead>
-            <tbody class='TableBody'>
-                <tr class="TableRow">
-                    <td class="TableCell" colspan="5">
-                        <time class="CalendarDate">
+            <tbody>
+                <tr>
+                    <td colspan="5">
                             June 30, 2023
-                        </time>
                     </td>
-                <td class="TableCell">
-                    <span class="Currency">
+                <td>
                         $—
-                    </span>
                 </td>
                 </tr>
             </tbody>
@@ -594,3 +590,18 @@ def test_text_is_wrapped_inside_layout_element():
     parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
 
     assert parsed_ontology == expected_html
+
+
+def test_text_in_form_field_value():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <input class="FormFieldValue" value="Random Input Value"/>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    form_field_value = page.children[0]
+    assert form_field_value.text == ""
+    assert form_field_value.to_text() == "Random Input Value"

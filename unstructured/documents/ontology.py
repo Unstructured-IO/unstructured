@@ -20,6 +20,7 @@ from copy import copy
 from enum import Enum
 from typing import List, Optional
 
+from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
 
 
@@ -75,32 +76,39 @@ class OntologyElement(BaseModel):
 
     def to_html(self, add_children=True) -> str:
         additional_attrs = copy(self.additional_attributes)
-        if "class" in additional_attrs:
-            del additional_attrs["class"]
+        additional_attrs.pop("class", None)
 
-        # TODO(Pluto) Add support for multiple classes
-        attrs = " ".join(
-            f'{key}="{value}"' if value else f"{key}" for key, value in additional_attrs.items()
-        )
-
+        attr_str = self._construct_attribute_string(additional_attrs)
         class_attr = f'class="{self.css_class_name}"' if self.css_class_name else ""
-        attr_str = f"{class_attr} {attrs}".strip()
 
-        children_html = (
-            ("" if not self.children else "".join(child.to_html() for child in self.children))
-            if add_children
-            else ""
+        combined_attr_str = f"{class_attr} {attr_str}".strip()
+
+        children_html = self._generate_children_html(add_children)
+
+        result_html = self._generate_final_html(combined_attr_str, children_html)
+
+        return result_html
+
+    def to_text(self, add_children=True) -> str:
+        return " ".join(BeautifulSoup(self.to_html(add_children), "html.parser").stripped_strings)
+
+    def _construct_attribute_string(self, attributes: dict) -> str:
+        return " ".join(
+            f'{key}="{value}"' if value else f"{key}" for key, value in attributes.items()
         )
-        text = "" if not self.text else self.text
+
+    def _generate_children_html(self, add_children: bool) -> str:
+        if not add_children or not self.children:
+            return ""
+        return "".join(child.to_html() for child in self.children)
+
+    def _generate_final_html(self, attr_str: str, children_html: str) -> str:
+        text = self.text or ""
 
         if text or children_html:
-            # This is either one or another, never both
-            result_html = (
-                f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
-            )
+            return f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
         else:
-            result_html = f"<{self.html_tag_name} {attr_str} />"
-        return result_html
+            return f"<{self.html_tag_name} {attr_str} />"
 
     @property
     def id(self) -> str | None:
@@ -253,6 +261,18 @@ class Table(OntologyElement):
     description: str = Field("A structured set of data", frozen=True)
     elementType: ElementTypeEnum = Field(ElementTypeEnum.table, frozen=True)
     allowed_tags: List[str] = Field(["table"], frozen=True)
+
+    def to_html(self, add_children=True) -> str:
+        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
+
+        for tag in soup.find_all(True):
+            if tag.name != "table":
+                tag.attrs.pop("class", None)
+                tag.attrs.pop("id", None)
+            if tag.name in ["td", "th"]:
+                tag.string = " ".join(tag.stripped_strings)
+
+        return str(soup)
 
 
 class TableBody(OntologyElement):
@@ -430,6 +450,15 @@ class Form(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["form"], frozen=True)
 
+    def to_text(self, add_children=True) -> str:
+        texts = [self.text] if self.text else []
+
+        if add_children:
+            for child in self.children:
+                texts.append(child.to_text(add_children=True))
+
+        return " ".join(filter(None, texts)).strip()
+
 
 class FormField(OntologyElement):
     description: str = Field("A property value of a form", frozen=True)
@@ -441,6 +470,9 @@ class FormFieldValue(OntologyElement):
     description: str = Field("A field for user input", frozen=True)
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["input"], frozen=True)
+
+    def to_text(self, add_children=True) -> str:
+        return super().to_text() + self.additional_attributes.get("value", "")
 
 
 class Checkbox(OntologyElement):

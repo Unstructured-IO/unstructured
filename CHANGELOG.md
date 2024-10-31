@@ -2,11 +2,16 @@
 
 ### Enhancements
 
+* **`value` attribute in `<input/>` element is parsed to `OntologyElement.text` in ontology**
+* **`id` and `class` attributes removed from Table subtags in HTML partitioning**
+* **cleaned `to_html` and newly introduced `to_text` in `OntologyElement`**
+
 ### Features
 
 * **Add support for link extraction in pdf hi_res strategy.** The `partition_pdf()` function now supports link extraction when using the `hi_res` strategy, allowing users to extract hyperlinks from PDF documents more effectively. 
 
 ### Fixes
+
 
 ## 0.16.3
 
