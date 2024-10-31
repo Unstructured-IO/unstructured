@@ -4,7 +4,16 @@ import pytest
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.ontology import Column, Document, Page, Paragraph
+from unstructured.documents.ontology import (
+    Column,
+    Document,
+    Hyperlink,
+    Image,
+    Page,
+    Paragraph,
+    Section,
+    Table,
+)
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.transformations import (
@@ -171,6 +180,11 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
     ("html_file_path", "json_file_path"),
     [
         ("html_files/example.html", "unstructured_json_output/example.json"),
+        ("html_files/example_full_doc.html", "unstructured_json_output/example_full_doc.json"),
+        (
+            "html_files/example_with_inline_fields.html",
+            "unstructured_json_output/example_with_inline_fields.json",
+        ),
     ],
 )
 def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_path):
@@ -180,8 +194,136 @@ def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_p
     expected_json_elements = elements_from_json(str(json_file_path))
     html_code = html_file_path.read_text()
 
-    predicted_elements = partition_html(text=html_code, html_parser_version="v2")
+    predicted_elements = partition_html(
+        text=html_code, html_parser_version="v2", unique_element_ids=True
+    )
     assert len(expected_json_elements) == len(predicted_elements)
 
     for i in range(len(expected_json_elements)):
-        assert expected_json_elements[i] == expected_json_elements[i]
+        assert expected_json_elements[i] == predicted_elements[i]
+
+
+def test_inline_elements_are_squeezed():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Hyperlink(text="Hyperlink1"),
+                    Hyperlink(text="Hyperlink2"),
+                    Hyperlink(text="Hyperlink3"),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+    assert len(unstructured_elements) == 2
+
+    page, text1 = unstructured_elements
+    assert text1.text == "Hyperlink1 Hyperlink2 Hyperlink3"
+
+
+def test_text_elements_are_squeezed():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Paragraph(text="Paragraph1"),
+                    Paragraph(text="Paragraph2"),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+    assert len(unstructured_elements) == 2
+
+    page, text1 = unstructured_elements
+    assert text1.text == "Paragraph1 Paragraph2"
+
+
+def test_inline_elements_are_squeezed_when_image():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Paragraph(text="Paragraph1"),
+                    Hyperlink(text="Hyperlink1"),
+                    Image(text="Image1"),
+                    Hyperlink(text="Hyperlink2"),
+                    Hyperlink(text="Hyperlink3"),
+                    Paragraph(text="Paragraph2"),
+                    Paragraph(text="Paragraph3"),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+    assert len(unstructured_elements) == 4
+
+    page, text1, image, text2 = unstructured_elements
+    assert text1.text == "Paragraph1 Hyperlink1"
+    assert text2.text == "Hyperlink2 Hyperlink3 Paragraph2 Paragraph3"
+
+    assert '<a class="Hyperlink"' in text1.metadata.text_as_html
+    assert '<p class="Paragraph"' in text1.metadata.text_as_html
+
+    assert '<a class="Hyperlink"' in text2.metadata.text_as_html
+    assert '<p class="Paragraph"' in text2.metadata.text_as_html
+
+
+def test_inline_elements_are_squeezed_when_table():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Hyperlink(text="Hyperlink1"),
+                    Paragraph(text="Paragraph1"),
+                    Paragraph(text="Paragraph2"),
+                    Table(text="Table1"),
+                    Paragraph(text="Paragraph2"),
+                    Hyperlink(text="Hyperlink2"),
+                    Hyperlink(text="Hyperlink3"),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+    assert len(unstructured_elements) == 4
+
+    page, text1, table1, text3 = unstructured_elements
+    assert text1.text == "Hyperlink1 Paragraph1 Paragraph2"
+    assert table1.text == "Table1"
+    assert text3.text == "Paragraph2 Hyperlink2 Hyperlink3"
+
+
+def test_inline_elements_are_on_many_depths():
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Hyperlink(text="Hyperlink1"),
+                    Paragraph(text="Paragraph1"),
+                    Section(
+                        children=[
+                            Section(
+                                children=[
+                                    Hyperlink(text="Hyperlink2"),
+                                    Hyperlink(text="Hyperlink3"),
+                                ]
+                            ),
+                            Paragraph(text="Paragraph2"),
+                            Hyperlink(text="Hyperlink4"),
+                        ]
+                    ),
+                ],
+            )
+        ]
+    )
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+
+    assert len(unstructured_elements) == 6
+
+    page, text1, section1, section2, text2, text3 = unstructured_elements
+
+    assert text1.text == "Hyperlink1 Paragraph1"
+    assert text2.text == "Hyperlink2 Hyperlink3"
+    assert text3.text == "Paragraph2 Hyperlink4"

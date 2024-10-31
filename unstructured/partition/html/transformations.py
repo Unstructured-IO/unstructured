@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 from collections import OrderedDict
+from itertools import chain
 from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
@@ -19,11 +20,19 @@ from unstructured.documents.mappings import (
     ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME,
 )
 from unstructured.documents.ontology import (
+    Bibliography,
+    Citation,
     Document,
     ElementTypeEnum,
+    Footnote,
+    FootnoteReference,
+    Glossary,
+    Hyperlink,
+    NarrativeText,
     OntologyElement,
     Page,
     Paragraph,
+    Quote,
     UncategorizedText,
 )
 
@@ -79,17 +88,19 @@ def ontology_to_unstructured_elements(
                     ),
                 )
             ]
-        childreen = []
+        children = []
         for child in ontology_element.children:
-            childreen += ontology_to_unstructured_elements(
+            child = ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, Document) else depth + 1,
                 filename=filename,
             )
+            children += child
 
-        elements_to_return += childreen
+        combined_children = combine_inline_elements(children)
+        elements_to_return += combined_children
     else:
         unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
             ontology_element.__class__.__name__
@@ -113,6 +124,117 @@ def ontology_to_unstructured_elements(
         elements_to_return = [unstructured_element]
 
     return elements_to_return
+
+
+def combine_inline_elements(elements: list[Element]) -> list[Element]:
+    """
+    Combines consecutive inline elements into a single element. Inline elements
+    can be also combined with text elements.
+
+    Combined elements contains multiple HTML tags together eg.
+    {
+        'text': "Text from element 1 Text from element 2",
+        'metadata': {
+            'text_as_html': "<p>Text from element 1</p><a>Text from element 2</a>"
+        }
+    }
+
+    Args:
+        elements (list[Element]): A list of elements to be combined.
+
+    Returns:
+        list[Element]: A list of combined elements.
+    """
+    result_elements = []
+
+    current_element = None
+    for next_element in elements:
+        if current_element is None:
+            current_element = next_element
+            continue
+
+        if can_unstructured_elements_be_merged(current_element, next_element):
+            current_element.text += " " + next_element.text
+            current_element.metadata.text_as_html += " " + next_element.metadata.text_as_html
+        else:
+            result_elements.append(current_element)
+            current_element = next_element
+
+    if current_element is not None:
+        result_elements.append(current_element)
+
+    return result_elements
+
+
+def can_unstructured_elements_be_merged(current_element: Element, next_element: Element) -> bool:
+    """
+    Elements can be merged when:
+    - They are on the same level in the HTML tree
+    - Neither of them has children
+    - All elements are inline elements or text element
+    """
+    if current_element.metadata.category_depth != next_element.metadata.category_depth:
+        return False
+
+    current_html_tags = BeautifulSoup(
+        current_element.metadata.text_as_html, "html.parser"
+    ).find_all(recursive=False)
+    next_html_tags = BeautifulSoup(next_element.metadata.text_as_html, "html.parser").find_all(
+        recursive=False
+    )
+
+    ontology_elements = [
+        parse_html_to_ontology_element(html_tag)
+        for html_tag in chain(current_html_tags, next_html_tags)
+    ]
+
+    for ontology_element in ontology_elements:
+        if ontology_element.children:
+            return False
+
+        if not (is_inline_element(ontology_element) or is_text_element(ontology_element)):
+            return False
+
+    return True
+
+
+def is_text_element(ontology_element: OntologyElement) -> bool:
+    """Categories or classes that we want to combine with inline text"""
+
+    text_classes = [
+        NarrativeText,
+        Quote,
+        Paragraph,
+        Footnote,
+        FootnoteReference,
+        Citation,
+        Bibliography,
+        Glossary,
+    ]
+    text_categories = [ElementTypeEnum.metadata]
+
+    if any(isinstance(ontology_element, class_) for class_ in text_classes):
+        return True
+
+    if any(ontology_element.elementType == category for category in text_categories):
+        return True
+
+    return False
+
+
+def is_inline_element(ontology_element: OntologyElement) -> bool:
+    """Categories or classes that we want to combine with text elements"""
+
+    inline_classes = [Hyperlink]
+    inline_categories = [ElementTypeEnum.specialized_text, ElementTypeEnum.annotation]
+
+    if any(isinstance(ontology_element, class_) for class_ in inline_classes):
+        return True
+
+    if any(ontology_element.elementType == category for category in inline_categories):
+        return True
+
+    return False
 
 
 def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) -> OntologyElement:
@@ -144,18 +266,21 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     )
 
     for element in unstructured_elements:
-        html_as_tag = BeautifulSoup(element.metadata.text_as_html, "html.parser").find()
-        ontology_element = parse_html_to_ontology_element(html_as_tag)
-        # Note: Each HTML of non-terminal Element doesn't have children in HTML
-        # So we just add Ontology Element with tag and class, later children are appended by
-        # parent_id.
-        # For terminal Elements entire HTML is added to text_as_html, thus it allows us to
-        # recreate the entire HTML structure
+        html_as_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
+            recursive=False
+        )
+        for html_as_tag in html_as_tags:
+            ontology_element = parse_html_to_ontology_element(html_as_tag)
+            # Note: Each HTML of non-terminal Element doesn't have children in HTML
+            # So we just add Ontology Element with tag and class, later children are appended by
+            # parent_id.
+            # For terminal Elements entire HTML is added to text_as_html, thus it allows us to
+            # recreate the entire HTML structure
 
-        id_to_element_mapping[ontology_element.id] = ontology_element
+            id_to_element_mapping[ontology_element.id] = ontology_element
 
-        if element.metadata.parent_id and element.metadata.parent_id in id_to_element_mapping:
-            id_to_element_mapping[element.metadata.parent_id].children.append(ontology_element)
+            if element.metadata.parent_id and element.metadata.parent_id in id_to_element_mapping:
+                id_to_element_mapping[element.metadata.parent_id].children.append(ontology_element)
 
     root_id, root_element = id_to_element_mapping.popitem(last=False)
     return root_element
