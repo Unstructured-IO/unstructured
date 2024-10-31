@@ -107,10 +107,8 @@ def ontology_to_unstructured_elements(
         ]
         element_class = TYPE_TO_TEXT_ELEMENT_MAP[unstructured_element_class_name]
         html_code_of_ontology_element = ontology_element.to_html()
-        element_text = (
-            BeautifulSoup(html_code_of_ontology_element, "html.parser").get_text().strip()
-        )
-        # TODO value attribute from form input should be added to the text
+        element_text = ontology_element.to_text()
+
         unstructured_element = element_class(
             text=element_text,
             element_id=ontology_element.id,
