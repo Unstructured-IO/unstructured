@@ -1,14 +1,11 @@
 import pathlib
-from dataclasses import dataclass
 from multiprocessing import Pool
-from unittest import mock
 
 import numpy as np
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
 from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import example_doc_path
@@ -29,7 +26,6 @@ from unstructured.documents.elements import (
     Image as ImageElement,
 )
 from unstructured.partition.common import common
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 
 
 class MockPageLayout(layout.PageLayout):
@@ -399,82 +395,10 @@ def test_contains_emoji(text, expected):
     assert common.contains_emoji(text) is expected
 
 
-def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
-    layout_elem_absent_coordinates = MockDocumentLayout()
-    for page in layout_elem_absent_coordinates.pages:
-        for el in page.elements:
-            el.bbox = None
-    elements = common.document_to_element_list(layout_elem_absent_coordinates)
-    assert elements[0].metadata.coordinates is None
-
-
 def test_get_page_image_metadata_and_coordinate_system():
     doc = MockDocumentLayout()
-    metadata = common._get_page_image_metadata(doc.pages[0])
+    metadata = common.get_page_image_metadata(doc.pages[0])
     assert isinstance(metadata, dict)
-
-
-@dataclass
-class MockImage:
-    width = 640
-    height = 480
-    format = "JPG"
-
-
-def test_document_to_element_list_handles_parent():
-    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
-    block2 = LayoutElement.from_coords(
-        1,
-        2,
-        3,
-        4,
-        text="block 2",
-        parent=block1,
-        type="NarrativeText",
-    )
-    page = PageLayout(
-        number=1,
-        image=MockImage(),
-    )
-    page.elements = [block1, block2]
-    doc = DocumentLayout.from_pages([page])
-    el1, el2 = common.document_to_element_list(doc)
-    assert el2.metadata.parent_id == el1.id
-
-
-@pytest.mark.parametrize(
-    ("sort_mode", "call_count"),
-    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
-)
-def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
-    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
-    block2 = LayoutElement.from_coords(
-        1,
-        2,
-        3,
-        4,
-        text="block 2",
-        parent=block1,
-        type="NarrativeText",
-    )
-    page = PageLayout(
-        number=1,
-        image=MockImage(),
-    )
-    page.elements = [block1, block2]
-    doc = DocumentLayout.from_pages([page])
-    with mock.patch.object(common, "sort_page_elements") as mock_sort_page_elements:
-        common.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
-    assert mock_sort_page_elements.call_count == call_count
-
-
-def test_document_to_element_list_sets_category_depth_titles():
-    layout_with_hierarchies = MockDocumentLayout()
-    elements = common.document_to_element_list(layout_with_hierarchies)
-    assert elements[0].metadata.category_depth == 1
-    assert elements[1].metadata.category_depth == 2
-    assert elements[2].metadata.category_depth is None
-    assert elements[3].metadata.category_depth == 0
 
 
 def test_ocr_data_to_elements(

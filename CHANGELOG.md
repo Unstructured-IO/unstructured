@@ -1,4 +1,4 @@
-## 0.16.4-dev2
+## 0.16.4
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 * **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
 
 ### Features
+
+* **Add support for link extraction in pdf hi_res strategy.** The `partition_pdf()` function now supports link extraction when using the `hi_res` strategy, allowing users to extract hyperlinks from PDF documents more effectively. 
 
 ### Fixes
 
