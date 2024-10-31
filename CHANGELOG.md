@@ -5,6 +5,7 @@
 * **`value` attribute in `<input/>` element is parsed to `OntologyElement.text` in ontology**
 * **`id` and `class` attributes removed from Table subtags in HTML partitioning**
 * **cleaned `to_html` and newly introduced `to_text` in `OntologyElement`**
+* **Elements created from V2 HTML are less granular** Added merging of adjacent text elements and inline html tags in the HTML partitioner to reduce the number of elements created from V2 HTML.
 
 ### Features
 
