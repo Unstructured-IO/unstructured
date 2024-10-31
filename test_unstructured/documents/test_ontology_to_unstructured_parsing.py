@@ -200,7 +200,7 @@ def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_p
     assert len(expected_json_elements) == len(predicted_elements)
 
     for i in range(len(expected_json_elements)):
-        assert expected_json_elements[i] == expected_json_elements[i]
+        assert expected_json_elements[i] == predicted_elements[i]
 
 
 def test_inline_elements_are_squeezed():
