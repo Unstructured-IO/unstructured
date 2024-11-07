@@ -607,6 +607,21 @@ def test_text_in_form_field_value():
     assert form_field_value.to_text() == "Random Input Value"
 
 
+def test_text_in_form_field_value_with_null_value():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <input class="FormFieldValue" value=""/>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    form_field_value = page.children[0]
+    assert form_field_value.text == ""
+    assert form_field_value.to_text() == ""
+
+
 def test_to_text_when_form_field():
     ontology = Page(
         children=[
