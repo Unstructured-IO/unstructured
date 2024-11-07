@@ -42,7 +42,7 @@ class ElementTypeEnum(str, Enum):
 
 
 class OntologyElement(BaseModel):
-    text: Optional[str] = Field(None, description="Text content of the element")
+    text: Optional[str] = Field("", description="Text content of the element")
     css_class_name: Optional[str] = Field(
         default_factory=lambda: "", description="CSS class associated with the element"
     )
@@ -90,7 +90,10 @@ class OntologyElement(BaseModel):
         return result_html
 
     def to_text(self, add_children=True) -> str:
-        return " ".join(BeautifulSoup(self.to_html(add_children), "html.parser").stripped_strings)
+        if self.children and add_children:
+            children_text = " ".join(child.to_text().strip() for child in self.children)
+            return children_text
+        return BeautifulSoup(self.to_html()).get_text().strip()
 
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
@@ -450,15 +453,6 @@ class Form(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["form"], frozen=True)
 
-    def to_text(self, add_children=True) -> str:
-        texts = [self.text] if self.text else []
-
-        if add_children:
-            for child in self.children:
-                texts.append(child.to_text(add_children=True))
-
-        return " ".join(filter(None, texts)).strip()
-
 
 class FormField(OntologyElement):
     description: str = Field("A property value of a form", frozen=True)
@@ -472,7 +466,8 @@ class FormFieldValue(OntologyElement):
     allowed_tags: List[str] = Field(["input"], frozen=True)
 
     def to_text(self, add_children=True) -> str:
-        return super().to_text() + self.additional_attributes.get("value", "")
+        text = super().to_text() + self.additional_attributes.get("value", "")
+        return text.strip()
 
 
 class Checkbox(OntologyElement):

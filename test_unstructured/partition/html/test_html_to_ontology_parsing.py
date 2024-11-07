@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import OntologyElement
+from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
 from unstructured.partition.html.html_utils import indent_html
-from unstructured.partition.html.transformations import parse_html_to_ontology
+from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
 
 def _wrap_with_body(html: str) -> str:
@@ -605,3 +605,52 @@ def test_text_in_form_field_value():
     form_field_value = page.children[0]
     assert form_field_value.text == ""
     assert form_field_value.to_text() == "Random Input Value"
+
+
+def test_to_text_when_form_field():
+    ontology = Page(
+        children=[
+            Form(
+                tag="input",
+                additional_attributes={"value": "Random Input Value"},
+                children=[
+                    FormFieldValue(
+                        tag="input",
+                        additional_attributes={"value": "Random Input Value"},
+                    )
+                ],
+            )
+        ]
+    )
+    assert ontology.to_text(add_children=True) == "Random Input Value"
+
+
+def test_recursion_limit_is_limiting_parsing():
+    # language=HTML
+    broken_html = "some text"
+    for i in range(100):
+        broken_html = f"<p class='Paragraph'>{broken_html}</p>"
+    broken_html = _wrap_with_body(broken_html)
+    ontology = parse_html_to_ontology(broken_html)
+
+    iterator = 1
+    last_child = ontology.children[0]
+    while last_child.children:
+        last_child = last_child.children[0]
+        iterator += 1
+    assert last_child.text.startswith('<p class="Paragraph">')
+    assert iterator == RECURSION_LIMIT
+
+
+def test_get_text_when_recursion_limit_activated():
+    broken_html = "some text"
+    for i in range(100):
+        broken_html = f"<p class='Paragraph'>{broken_html}</p>"
+    broken_html = _wrap_with_body(broken_html)
+    ontology = parse_html_to_ontology(broken_html)
+
+    last_child = ontology.children[0]
+    while last_child.children:
+        last_child = last_child.children[0]
+
+    assert last_child.to_text() == "some text"

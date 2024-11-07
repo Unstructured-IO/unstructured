@@ -36,6 +36,8 @@ from unstructured.documents.ontology import (
     UncategorizedText,
 )
 
+RECURSION_LIMIT = 50
+
 
 def ontology_to_unstructured_elements(
     ontology_element: OntologyElement,
@@ -68,7 +70,7 @@ def ontology_to_unstructured_elements(
         list[Element]: A list of unstructured Element objects.
     """
     elements_to_return = []
-    if ontology_element.elementType == ElementTypeEnum.layout:
+    if ontology_element.elementType == ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
 
         if page_number is None and isinstance(ontology_element, Page):
             page_number = ontology_element.page_number
@@ -354,7 +356,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
     return str(soup)
 
 
-def parse_html_to_ontology_element(soup: Tag) -> OntologyElement | None:
+def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> OntologyElement | None:
     """
     Converts a BeautifulSoup Tag object into an OntologyElement object. This function is recursive.
     First tries to recognize a class from Unstructured Ontology, then if class is matched tries
@@ -364,6 +366,7 @@ def parse_html_to_ontology_element(soup: Tag) -> OntologyElement | None:
 
     Args:
         soup (Tag): The BeautifulSoup Tag object to be converted.
+        recursion_depth (int): Flag to control limit of recursion depth.
 
     Returns:
         OntologyElement: The converted OntologyElement object.
@@ -384,12 +387,13 @@ def parse_html_to_ontology_element(soup: Tag) -> OntologyElement | None:
         and any(isinstance(content, Tag) for content in soup.contents)
         or ontology_class().elementType == ElementTypeEnum.layout
     )
+    should_unwrap_html = has_children and recursion_depth <= RECURSION_LIMIT
 
-    if has_children:
+    if should_unwrap_html:
         text = ""
         children = [
             (
-                parse_html_to_ontology_element(child)
+                parse_html_to_ontology_element(child, recursion_depth=recursion_depth + 1)
                 if isinstance(child, Tag)
                 else Paragraph(text=str(child).strip())
             )

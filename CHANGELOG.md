@@ -1,3 +1,13 @@
+## 0.16.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes parsing HTML v2 parser** Now max recursion limit is set and value is correctly extracted from ontology element
+
+
 ## 0.16.4
 
 ### Enhancements
@@ -9,7 +19,7 @@
 
 ### Features
 
-* **Add support for link extraction in pdf hi_res strategy.** The `partition_pdf()` function now supports link extraction when using the `hi_res` strategy, allowing users to extract hyperlinks from PDF documents more effectively. 
+* **Add support for link extraction in pdf hi_res strategy.** The `partition_pdf()` function now supports link extraction when using the `hi_res` strategy, allowing users to extract hyperlinks from PDF documents more effectively.
 
 ### Fixes
 
