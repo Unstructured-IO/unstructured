@@ -42,7 +42,7 @@ class ElementTypeEnum(str, Enum):
 
 
 class OntologyElement(BaseModel):
-    text: Optional[str] = Field(None, description="Text content of the element")
+    text: Optional[str] = Field("", description="Text content of the element")
     css_class_name: Optional[str] = Field(
         default_factory=lambda: "", description="CSS class associated with the element"
     )
@@ -452,15 +452,6 @@ class Form(OntologyElement):
     description: str = Field("A document section with interactive controls", frozen=True)
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["form"], frozen=True)
-
-    def to_text(self, add_children=True) -> str:
-        texts = [self.text] if self.text else []
-
-        if add_children:
-            for child in self.children:
-                texts.append(child.to_text(add_children=True))
-
-        return " ".join(filter(None, texts)).strip()
 
 
 class FormField(OntologyElement):
