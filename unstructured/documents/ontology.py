@@ -90,7 +90,10 @@ class OntologyElement(BaseModel):
         return result_html
 
     def to_text(self, add_children=True) -> str:
-        return " ".join(BeautifulSoup(self.to_html(add_children), "html.parser").stripped_strings)
+        if self.children and add_children:
+            children_text = " ".join(child.to_text().strip() for child in self.children)
+            return children_text
+        return self.text.strip()
 
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
@@ -472,7 +475,8 @@ class FormFieldValue(OntologyElement):
     allowed_tags: List[str] = Field(["input"], frozen=True)
 
     def to_text(self, add_children=True) -> str:
-        return super().to_text() + self.additional_attributes.get("value", "")
+        text = super().to_text() + self.additional_attributes.get("value", "")
+        return text.strip()
 
 
 class Checkbox(OntologyElement):

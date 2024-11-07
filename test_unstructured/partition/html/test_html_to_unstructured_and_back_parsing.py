@@ -274,7 +274,7 @@ def test_forms():
     assert expected_html == parsed_html
     expected_elements = _page_elements + [
         Text(
-            text="Option 1 (Checked)",
+            text="2 Option 1 (Checked)",
             element_id="2",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(

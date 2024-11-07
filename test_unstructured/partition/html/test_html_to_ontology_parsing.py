@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import OntologyElement
+from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import parse_html_to_ontology
 
@@ -605,3 +605,21 @@ def test_text_in_form_field_value():
     form_field_value = page.children[0]
     assert form_field_value.text == ""
     assert form_field_value.to_text() == "Random Input Value"
+
+
+def test_to_text_when_form_field():
+    ontology = Page(
+        children=[
+            Form(
+                tag="input",
+                additional_attributes={"value": "Random Input Value"},
+                children=[
+                    FormFieldValue(
+                        tag="input",
+                        additional_attributes={"value": "Random Input Value"},
+                    )
+                ],
+            )
+        ]
+    )
+    assert ontology.to_text(add_children=True) == "Random Input Value"
