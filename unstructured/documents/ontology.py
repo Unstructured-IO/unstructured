@@ -470,7 +470,7 @@ class FormFieldValue(OntologyElement):
         value = self.additional_attributes.get("value", "")
         if not value:
             return text
-        return f"{text} {value}"
+        return f"{text} {value}".strip()
 
 
 class Checkbox(OntologyElement):
