@@ -387,7 +387,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> Ontol
         and any(isinstance(content, Tag) for content in soup.contents)
         or ontology_class().elementType == ElementTypeEnum.layout
     )
-    should_unwrap_html = has_children and recursion_depth < RECURSION_LIMIT
+    should_unwrap_html = has_children and recursion_depth <= RECURSION_LIMIT
 
     if should_unwrap_html:
         text = ""

@@ -93,7 +93,7 @@ class OntologyElement(BaseModel):
         if self.children and add_children:
             children_text = " ".join(child.to_text().strip() for child in self.children)
             return children_text
-        return self.text.strip()
+        return BeautifulSoup(self.to_html()).get_text().strip()
 
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
