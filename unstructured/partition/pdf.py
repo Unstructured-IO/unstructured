@@ -86,6 +86,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
+    OCR_AGENT_CLARIFAI,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
@@ -920,7 +921,8 @@ def _partition_pdf_or_image_with_ocr_from_image(
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
-
+    
+    os.environ['OCR_AGENT'] = OCR_AGENT_CLARIFAI
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `pytesseract.image_to_string()` returns sorted text

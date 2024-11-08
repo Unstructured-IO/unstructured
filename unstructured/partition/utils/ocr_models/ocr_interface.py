@@ -31,7 +31,7 @@ class OCRAgent(ABC):
 
         The OCR package used by the agent is determined by the `OCR_AGENT` environment variable.
         """
-        ocr_agent_cls_qname = OCR_AGENT_CLARIFAI
+        ocr_agent_cls_qname = cls._get_ocr_agent_cls_qname()
         try:
             return cls.get_instance(ocr_agent_cls_qname, language)
         except (ImportError, AttributeError):

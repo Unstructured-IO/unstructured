@@ -9,5 +9,6 @@ pypdf
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
 unstructured-inference==0.7.36
+unstructured.pytesseract>=0.3.12
 # unstructured fork of pytesseract that provides an interface to allow for multiple output formats
 # from one tesseract call
