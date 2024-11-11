@@ -1,3 +1,12 @@
+## 0.16.6-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **ElementMetadata consolidation** Now `text_as_html` metadata is combined across all elements in CompositeElement when chunking HTML output
+
 ## 0.16.5
 
 ### Enhancements
