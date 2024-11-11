@@ -458,6 +458,9 @@ class ConsolidationStrategy(enum.Enum):
     FIRST = "first"
     """Use the first value encountered, omit if not present in any elements."""
 
+    CONCATENATE = "concatenate"
+    """Combine the values of this field across elements. Only suitable for string type fields."""
+
     LIST_CONCATENATE = "LIST_CONCATENATE"
     """Concatenate the list values across elements. Only suitable for fields of `List` type."""
 
@@ -507,7 +510,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "text_as_html": cls.CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
             "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --
