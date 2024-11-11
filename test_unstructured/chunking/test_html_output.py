@@ -17,7 +17,7 @@ def test_combining_html_metadata_when_multiple_elements_in_composite_element(chu
     metadata_2 = '<time class="CalendarDate" id="2">Date: October 30, 2023 </time>'
     metadata_3 = (
         '<form class="Form" id="3"> '
-        '<label class="FormField" for="company-name" id="4">From field name </label>'
+        '<label class="FormField" for="company-name" id="4">Form field name </label>'
         '<input class="FormFieldValue" id="5" value="Example value" />'
         "</form>"
     )
@@ -27,7 +27,7 @@ def test_combining_html_metadata_when_multiple_elements_in_composite_element(chu
         Title(text="Header", metadata=ElementMetadata(text_as_html=metadata_1)),
         Text(text="Date: October 30, 2023", metadata=ElementMetadata(text_as_html=metadata_2)),
         Text(
-            text="From field name Example value", metadata=ElementMetadata(text_as_html=metadata_3)
+            text="Form field name Example value", metadata=ElementMetadata(text_as_html=metadata_3)
         ),
     ]
     chunks = chunking_fn(elements)
