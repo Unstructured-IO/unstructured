@@ -16,8 +16,9 @@ def test_combining_html_metadata_when_multiple_elements_in_composite_element(chu
     metadata_1 = '<h1 class="Title" id="1">Header </h1>'
     metadata_2 = '<time class="CalendarDate" id="2">Date: October 30, 2023 </time>'
     metadata_3 = (
-        '<form class="Form" id="3"> <label class="FormField" for="company-name" id="4">'
-        'From field name </label><input class="FormFieldValue" id="5" value="Example value" />'
+        '<form class="Form" id="3"> '
+        '<label class="FormField" for="company-name" id="4">From field name </label>'
+        '<input class="FormFieldValue" id="5" value="Example value" />'
         "</form>"
     )
     combined_metadata = metadata_1 + metadata_2 + metadata_3
