@@ -7,44 +7,24 @@ from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
 
-from unstructured.documents.elements import (
-    Element,
-    ElementMetadata,
-    Text,
-)
+from unstructured.documents import elements, ontology
 from unstructured.documents.mappings import (
     CSS_CLASS_TO_ELEMENT_TYPE_MAP,
     HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP,
     HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP,
     ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE,
 )
-from unstructured.documents.ontology import (
-    Bibliography,
-    Citation,
-    Document,
-    ElementTypeEnum,
-    Footnote,
-    FootnoteReference,
-    Glossary,
-    Hyperlink,
-    NarrativeText,
-    OntologyElement,
-    Page,
-    Paragraph,
-    Quote,
-    UncategorizedText,
-)
 
 RECURSION_LIMIT = 50
 
 
 def ontology_to_unstructured_elements(
-    ontology_element: OntologyElement,
+    ontology_element: ontology.OntologyElement,
     parent_id: str = None,
     page_number: int = None,
     depth: int = 0,
     filename: str | None = None,
-) -> list[Element]:
+) -> list[elements.Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
 
@@ -69,18 +49,18 @@ def ontology_to_unstructured_elements(
         list[Element]: A list of unstructured Element objects.
     """
     elements_to_return = []
-    if ontology_element.elementType == ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
+    if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
 
-        if page_number is None and isinstance(ontology_element, Page):
+        if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
 
-        if not isinstance(ontology_element, Document):
+        if not isinstance(ontology_element, ontology.Document):
             elements_to_return += [
-                Text(
+                elements.Text(
                     text="",
                     element_id=ontology_element.id,
                     detection_origin="vlm_partitioner",
-                    metadata=ElementMetadata(
+                    metadata=elements.ElementMetadata(
                         parent_id=parent_id,
                         text_as_html=ontology_element.to_html(add_children=False),
                         page_number=page_number,
@@ -95,7 +75,7 @@ def ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
-                depth=0 if isinstance(ontology_element, Document) else depth + 1,
+                depth=0 if isinstance(ontology_element, ontology.Document) else depth + 1,
                 filename=filename,
             )
             children += child
@@ -111,7 +91,7 @@ def ontology_to_unstructured_elements(
             text=element_text,
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
-            metadata=ElementMetadata(
+            metadata=elements.ElementMetadata(
                 parent_id=parent_id,
                 text_as_html=html_code_of_ontology_element,
                 page_number=page_number,
@@ -124,7 +104,7 @@ def ontology_to_unstructured_elements(
     return elements_to_return
 
 
-def combine_inline_elements(elements: list[Element]) -> list[Element]:
+def combine_inline_elements(elements: list[elements.Element]) -> list[elements.Element]:
     """
     Combines consecutive inline elements into a single element. Inline elements
     can be also combined with text elements.
@@ -164,7 +144,9 @@ def combine_inline_elements(elements: list[Element]) -> list[Element]:
     return result_elements
 
 
-def can_unstructured_elements_be_merged(current_element: Element, next_element: Element) -> bool:
+def can_unstructured_elements_be_merged(
+    current_element: elements.Element, next_element: elements.Element
+) -> bool:
     """
     Elements can be merged when:
     - They are on the same level in the HTML tree
@@ -196,20 +178,20 @@ def can_unstructured_elements_be_merged(current_element: Element, next_element: 
     return True
 
 
-def is_text_element(ontology_element: OntologyElement) -> bool:
+def is_text_element(ontology_element: ontology.OntologyElement) -> bool:
     """Categories or classes that we want to combine with inline text"""
 
     text_classes = [
-        NarrativeText,
-        Quote,
-        Paragraph,
-        Footnote,
-        FootnoteReference,
-        Citation,
-        Bibliography,
-        Glossary,
+        ontology.NarrativeText,
+        ontology.Quote,
+        ontology.Paragraph,
+        ontology.Footnote,
+        ontology.FootnoteReference,
+        ontology.Citation,
+        ontology.Bibliography,
+        ontology.Glossary,
     ]
-    text_categories = [ElementTypeEnum.metadata]
+    text_categories = [ontology.ElementTypeEnum.metadata]
 
     if any(isinstance(ontology_element, class_) for class_ in text_classes):
         return True
@@ -220,11 +202,14 @@ def is_text_element(ontology_element: OntologyElement) -> bool:
     return False
 
 
-def is_inline_element(ontology_element: OntologyElement) -> bool:
+def is_inline_element(ontology_element: ontology.OntologyElement) -> bool:
     """Categories or classes that we want to combine with text elements"""
 
-    inline_classes = [Hyperlink]
-    inline_categories = [ElementTypeEnum.specialized_text, ElementTypeEnum.annotation]
+    inline_classes = [ontology.Hyperlink]
+    inline_categories = [
+        ontology.ElementTypeEnum.specialized_text,
+        ontology.ElementTypeEnum.annotation,
+    ]
 
     if any(isinstance(ontology_element, class_) for class_ in inline_classes):
         return True
@@ -235,7 +220,9 @@ def is_inline_element(ontology_element: OntologyElement) -> bool:
     return False
 
 
-def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) -> OntologyElement:
+def unstructured_elements_to_ontology(
+    unstructured_elements: Sequence[elements.Element],
+) -> ontology.OntologyElement:
     """
     Converts a sequence of unstructured Element objects to an OntologyElement object.
 
@@ -256,10 +243,10 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     document_element_id = unstructured_elements[0].metadata.parent_id
 
     if document_element_id is None:
-        document_element_id = OntologyElement.generate_unique_id()
+        document_element_id = ontology.OntologyElement.generate_unique_id()
         unstructured_elements[0].metadata.parent_id = document_element_id
 
-    id_to_element_mapping[document_element_id] = Document(
+    id_to_element_mapping[document_element_id] = ontology.Document(
         additional_attributes={"id": document_element_id}
     )
 
@@ -284,7 +271,7 @@ def unstructured_elements_to_ontology(unstructured_elements: Sequence[Element]) 
     return root_element
 
 
-def parse_html_to_ontology(html_code: str) -> OntologyElement:
+def parse_html_to_ontology(html_code: str) -> ontology.OntologyElement:
     """
     Parses the given HTML code and converts it into an Element object.
 
@@ -352,7 +339,9 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
     return str(soup)
 
 
-def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> OntologyElement | None:
+def parse_html_to_ontology_element(
+    soup: Tag, recursion_depth: int = 1
+) -> ontology.OntologyElement | None:
     """
     Converts a BeautifulSoup Tag object into an OntologyElement object. This function is recursive.
     First tries to recognize a class from Unstructured Ontology, then if class is matched tries
@@ -371,7 +360,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> Ontol
     escaped_attrs = get_escaped_attributes(soup)
 
     if soup.name == "br":  # Note(Pluto) should it be <br class="UncategorizedText">?
-        return Paragraph(
+        return ontology.Paragraph(
             text="",
             css_class_name=None,
             html_tag_name="br",
@@ -379,9 +368,9 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> Ontol
         )
 
     has_children = (
-        (ontology_class != UncategorizedText)
+        (ontology_class != ontology.UncategorizedText)
         and any(isinstance(content, Tag) for content in soup.contents)
-        or ontology_class().elementType == ElementTypeEnum.layout
+        or ontology_class().elementType == ontology.ElementTypeEnum.layout
     )
     should_unwrap_html = has_children and recursion_depth <= RECURSION_LIMIT
 
@@ -391,7 +380,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> Ontol
             (
                 parse_html_to_ontology_element(child, recursion_depth=recursion_depth + 1)
                 if isinstance(child, Tag)
-                else Paragraph(text=str(child).strip())
+                else ontology.Paragraph(text=str(child).strip())
             )
             for child in soup.children
             if str(child).strip()
@@ -410,7 +399,9 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> Ontol
     return output_element
 
 
-def extract_tag_and_ontology_class_from_tag(soup: Tag) -> tuple[str, Type[OntologyElement]]:
+def extract_tag_and_ontology_class_from_tag(
+    soup: Tag,
+) -> tuple[str, Type[ontology.OntologyElement]]:
     """
     Extracts the HTML tag and corresponding ontology class
     from a BeautifulSoup Tag object. The CSS class is prioritized over
@@ -451,7 +442,7 @@ def extract_tag_and_ontology_class_from_tag(soup: Tag) -> tuple[str, Type[Ontolo
         #  e.g. parent=FormField soup.name=input -> element=FormFieldInput
 
         html_tag = "span"
-        element_class = UncategorizedText
+        element_class = ontology.UncategorizedText
 
     return html_tag, element_class
 
