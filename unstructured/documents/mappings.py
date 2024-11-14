@@ -8,7 +8,7 @@ of parsed documents
 from collections import defaultdict
 from typing import Any, Dict, Type
 
-from unstructured.documents.ontology import OntologyElement
+from unstructured.documents.ontology import OntologyElement, Table
 
 
 def get_all_subclasses(cls) -> list[Any]:
@@ -156,4 +156,8 @@ CSS_CLASS_TO_ELEMENT_TYPE_MAP: Dict[str, Type[OntologyElement]] = {
 }
 
 EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP: Dict[str, Type[OntologyElement]] = get_exclusive_html_tags()
+EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP["table"] = Table
+# Table is not exclusive, but we can by default assume that <table> is indeed predicted to be Table
+# In future we may want to specify default class for each tag,
+# not only for class which are exclusive
 ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME = get_ontology_to_unstructured_type_mapping()
