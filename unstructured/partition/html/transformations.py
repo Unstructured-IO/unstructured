@@ -8,16 +8,15 @@ from typing import Sequence, Type
 from bs4 import BeautifulSoup, Tag
 
 from unstructured.documents.elements import (
-    TYPE_TO_TEXT_ELEMENT_MAP,
     Element,
     ElementMetadata,
     Text,
 )
 from unstructured.documents.mappings import (
     CSS_CLASS_TO_ELEMENT_TYPE_MAP,
-    EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP,
     HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP,
-    ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME,
+    HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP,
+    ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE,
 )
 from unstructured.documents.ontology import (
     Bibliography,
@@ -104,10 +103,7 @@ def ontology_to_unstructured_elements(
         combined_children = combine_inline_elements(children)
         elements_to_return += combined_children
     else:
-        unstructured_element_class_name = ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME[
-            ontology_element.__class__.__name__
-        ]
-        element_class = TYPE_TO_TEXT_ELEMENT_MAP[unstructured_element_class_name]
+        element_class = ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE[ontology_element.__class__]
         html_code_of_ontology_element = ontology_element.to_html()
         element_text = ontology_element.to_text()
 
@@ -445,8 +441,8 @@ def extract_tag_and_ontology_class_from_tag(soup: Tag) -> tuple[str, Type[Ontolo
         html_tag = element_class().allowed_tags[0]
 
     # Scenario 3: CSS class incorrect, but HTML tag correct and exclusive in ontology
-    if not element_class and soup.name in EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP:
-        html_tag, element_class = soup.name, EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP[soup.name]
+    if not element_class and soup.name in HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP:
+        html_tag, element_class = soup.name, HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP[soup.name]
 
     # Scenario 4: CSS class incorrect, HTML tag incorrect
     # Fallback to default UncategorizedText
