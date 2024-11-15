@@ -1,3 +1,12 @@
+## 0.16.6-dev0
+
+### Enhancements
+- **Every <table> tag is considered to be ontology.Table** Added special handling for tables in HTML partitioning. This change is made to improve the accuracy of table extraction from HTML documents.
+
+### Features
+
+### Fixes
+
 ## 0.16.5
 
 ### Enhancements
