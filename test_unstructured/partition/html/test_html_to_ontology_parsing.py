@@ -310,8 +310,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
-                <span class="UncategorizedText" type="radio" name="option1" value="2" checked>
-                </span>
+                <input class="Checkbox" type="radio" name="option1" value="2" checked />
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
