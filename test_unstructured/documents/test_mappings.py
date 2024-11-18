@@ -11,16 +11,18 @@ from unstructured.documents.mappings import (
 from unstructured.documents.ontology import OntologyElement
 
 
-def test_if_all_html_tags_has_default_to_ontology_types():
-    html_tag_to_allowed_tags: dict[str, list[Type[ontology.OntologyElement]]] = defaultdict(list)
+def test_if_all_html_tags_have_default_ontology_type():
+    html_tag_to_possible_ontology_classes: dict[str, list[Type[ontology.OntologyElement]]] = (
+        defaultdict(list)
+    )
 
-    for element_type in ALL_ONTOLOGY_ELEMENT_TYPES:
-        for tag in element_type().allowed_tags:
-            html_tag_to_allowed_tags[tag].append(element_type)
+    for ontology_class in ALL_ONTOLOGY_ELEMENT_TYPES:
+        for tag in ontology_class().allowed_tags:
+            html_tag_to_possible_ontology_classes[tag].append(ontology_class)
 
-    for html_tag, allowed_ontology_classes in html_tag_to_allowed_tags.items():
+    for html_tag, possible_ontology_classes in html_tag_to_possible_ontology_classes.items():
         assert html_tag in HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP
-        assert HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP[html_tag] in allowed_ontology_classes + [
+        assert HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP[html_tag] in possible_ontology_classes + [
             ontology.UncategorizedText
         ]  # In some cases it is better to use unknown type than assign incorrect type
 
