@@ -20,7 +20,7 @@ from copy import copy
 from enum import Enum
 from typing import List, Optional
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from pydantic import BaseModel, Field
 
 
@@ -125,6 +125,16 @@ class OntologyElement(BaseModel):
             except ValueError:
                 return None
         return None
+
+
+def remove_ids_and_class_from_table(soup: Tag):
+    for tag in soup.find_all(True):
+        if tag.name != "table":
+            tag.attrs.pop("class", None)
+            tag.attrs.pop("id", None)
+        if tag.name in ["td", "th"]:
+            tag.string = " ".join(tag.stripped_strings)
+    return soup
 
 
 # Define specific elements
@@ -267,14 +277,7 @@ class Table(OntologyElement):
 
     def to_html(self, add_children=True) -> str:
         soup = BeautifulSoup(super().to_html(add_children), "html.parser")
-
-        for tag in soup.find_all(True):
-            if tag.name != "table":
-                tag.attrs.pop("class", None)
-                tag.attrs.pop("id", None)
-            if tag.name in ["td", "th"]:
-                tag.string = " ".join(tag.stripped_strings)
-
+        soup = remove_ids_and_class_from_table(soup)
         return str(soup)
 
 
@@ -438,8 +441,13 @@ class TableOfContents(OntologyElement):
         "Header Row: L1,L2,...Ln,Value",
         frozen=True,
     )
-    elementType: ElementTypeEnum = Field(ElementTypeEnum.navigation, frozen=True)
+    elementType: ElementTypeEnum = Field(ElementTypeEnum.table, frozen=True)
     allowed_tags: List[str] = Field(["table"], frozen=True)
+
+    def to_html(self, add_children=True) -> str:
+        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
+        soup = remove_ids_and_class_from_table(soup)
+        return str(soup)
 
 
 class Index(OntologyElement):
