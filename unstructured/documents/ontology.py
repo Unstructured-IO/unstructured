@@ -127,6 +127,16 @@ class OntologyElement(BaseModel):
         return None
 
 
+def remove_ids_and_class_from_table(soup: Tag):
+    for tag in soup.find_all(True):
+        if tag.name != "table":
+            tag.attrs.pop("class", None)
+            tag.attrs.pop("id", None)
+        if tag.name in ["td", "th"]:
+            tag.string = " ".join(tag.stripped_strings)
+    return soup
+
+
 # Define specific elements
 class Document(OntologyElement):
     description: str = Field("Root element of the document", frozen=True)
@@ -258,16 +268,6 @@ class ListItem(OntologyElement):
     description: str = Field("An item in a list", frozen=True)
     elementType: ElementTypeEnum = Field(ElementTypeEnum.list, frozen=True)
     allowed_tags: List[str] = Field(["li"], frozen=True)
-
-
-def remove_ids_and_class_from_table(soup: Tag):
-    for tag in soup.find_all(True):
-        if tag.name != "table":
-            tag.attrs.pop("class", None)
-            tag.attrs.pop("id", None)
-        if tag.name in ["td", "th"]:
-            tag.string = " ".join(tag.stripped_strings)
-    return soup
 
 
 class Table(OntologyElement):
