@@ -775,7 +775,7 @@ class TextPreChunk:
                     ordered_unique_keys = {key: None for val_list in values for key in val_list}
                     yield field_name, list(ordered_unique_keys.keys())
                 elif strategy is CS.STRING_CONCATENATE:
-                    yield field_name, "".join(values)
+                    yield field_name, " ".join(val.strip() for val in values)
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

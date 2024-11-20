@@ -21,7 +21,7 @@ def test_combining_html_metadata_when_multiple_elements_in_composite_element(chu
         '<input class="FormFieldValue" id="5" value="Example value" />'
         "</form>"
     )
-    combined_metadata = metadata_1 + metadata_2 + metadata_3
+    combined_metadata = " ".join([metadata_1, metadata_2, metadata_3])
 
     elements = [
         Title(text="Header", metadata=ElementMetadata(text_as_html=metadata_1)),
@@ -71,7 +71,7 @@ def test_combining_html_metadata_with_nested_relationship_between_elements(chunk
     assert chunks[0].text == "First"
     assert chunks[1].text == "Second"
 
-    assert chunks[0].metadata.text_as_html == metadata_1 + metadata_2
+    assert chunks[0].metadata.text_as_html == metadata_1 + " " + metadata_2
     assert chunks[1].metadata.text_as_html == metadata_3
 
 
