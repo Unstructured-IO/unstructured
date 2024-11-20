@@ -1,8 +1,9 @@
-## 0.16.6-dev1
+## 0.16.6-dev2
 
 ### Enhancements
 - **Every <table> tag is considered to be ontology.Table** Added special handling for tables in HTML partitioning. This change is made to improve the accuracy of table extraction from HTML documents.
 - **Every HTML has default ontology class assigned** When parsing HTML to ontology each defined HTML in the Ontology has assigned default ontology class. This way it is possible to assign ontology class instead of UncategorizedText when the HTML tag is predicted correctly without class assigned class
+- **Use (number of actual table) weighted average for table metrics** In evaluating table metrics the mean aggregation now uses the actual number of tables in a document to weight the metric scores
 
 ### Features
 
