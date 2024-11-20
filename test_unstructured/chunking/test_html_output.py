@@ -41,8 +41,8 @@ def test_combining_html_metadata_with_nested_relationship_between_elements(chunk
     <Document>
         <Page>
             <Section>
-                <p>First </p>
-                <p>Second </p>
+                <p>First</p>
+                <p>Second</p>
             </Section>
         </Page>
     </Document>
