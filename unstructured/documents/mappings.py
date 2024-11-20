@@ -99,7 +99,7 @@ def get_ontology_to_unstructured_type_mapping() -> dict[str, Element]:
         ontology.Keywords: elements.Text,
         ontology.Abstract: elements.NarrativeText,
         ontology.Hyperlink: elements.Text,
-        ontology.TableOfContents: elements.Text,
+        ontology.TableOfContents: elements.Table,
         ontology.Index: elements.Text,
         ontology.Form: elements.Text,
         ontology.FormField: elements.Text,

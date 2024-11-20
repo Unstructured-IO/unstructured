@@ -181,6 +181,7 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
     [
         ("html_files/example.html", "unstructured_json_output/example.json"),
         ("html_files/example_full_doc.html", "unstructured_json_output/example_full_doc.json"),
+        ("html_files/three_tables.html", "unstructured_json_output/three_tables.json"),
         (
             "html_files/example_with_inline_fields.html",
             "unstructured_json_output/example_with_inline_fields.json",
