@@ -38,7 +38,6 @@ CREATE TABLE elements (
     emphasized_text_contents VARCHAR [],
     emphasized_text_tags VARCHAR [],
     text_as_html TEXT,
-    regex_metadata TEXT,
     detection_class_prob DECIMAL
 );
 

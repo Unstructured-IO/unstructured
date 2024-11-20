@@ -1,531 +1,429 @@
+"""Provides `partition_email()` function.
+
+Suitable for use with `.eml` files, which can be exported from many email clients.
+"""
+
 from __future__ import annotations
 
-import copy
-import datetime
+import datetime as dt
 import email
+import email.policy
+import email.utils
+import io
 import os
-import re
-import sys
-from email.message import Message
-from functools import partial
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import IO, Any, Callable, Optional
+from email.message import EmailMessage, MIMEPart
+from typing import IO, Any, Final, Iterator, cast
 
-from unstructured.file_utils.encoding import (
-    COMMON_ENCODINGS,
-    format_encoding_str,
-    read_txt_file,
-    validate_encoding,
-)
-from unstructured.logger import logger
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
-
-from unstructured.chunking import add_chunking_strategy
-from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
-from unstructured.cleaners.extract import (
-    extract_datetimetz,
-    extract_email_address,
-    extract_ip_address,
-    extract_ip_address_name,
-    extract_mapi_id,
-)
-from unstructured.documents.elements import (
-    Element,
-    ElementMetadata,
-    Image,
-    NarrativeText,
-    Text,
-    Title,
-    process_metadata,
-)
-from unstructured.documents.email_elements import (
-    MetaData,
-    ReceivedInfo,
-    Recipient,
-    Sender,
-    Subject,
-)
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
+from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.file_utils.model import FileType
+from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
+from unstructured.utils import lazyproperty
 
-VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
-DETECTION_ORIGIN: str = "email"
-
-
-def _parse_received_data(data: str) -> list[Element]:
-    ip_address_names = extract_ip_address_name(data)
-    ip_addresses = extract_ip_address(data)
-    mapi_id = extract_mapi_id(data)
-    datetimetz = extract_datetimetz(data)
-
-    elements: list[Element] = []
-    if ip_address_names and ip_addresses:
-        for name, ip in zip(ip_address_names, ip_addresses):
-            elements.append(ReceivedInfo(name=name, text=ip))
-    if mapi_id:
-        elements.append(ReceivedInfo(name="mapi_id", text=mapi_id[0]))
-    if datetimetz:
-        elements.append(
-            ReceivedInfo(
-                name="received_datetimetz",
-                text=str(datetimetz),
-                datestamp=datetimetz,
-            ),
-        )
-    return elements
+VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
 
 
-def _parse_email_address(data: str) -> tuple[str, str]:
-    email_address = extract_email_address(data)
-
-    PATTERN = r"<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
-    name = re.split(PATTERN, data.lower())[0].title().strip()
-
-    return name, email_address[0]
-
-
-def partition_email_header(msg: Message) -> list[Element]:
-    elements: list[Element] = []
-    for item in msg.raw_items():
-        if item[0] == "To":
-            text = _parse_email_address(item[1])
-            elements.append(Recipient(name=text[0], text=text[1]))
-        elif item[0] == "From":
-            text = _parse_email_address(item[1])
-            elements.append(Sender(name=text[0], text=text[1]))
-        elif item[0] == "Subject":
-            elements.append(Subject(text=item[1]))
-        elif item[0] == "Received":
-            elements += _parse_received_data(item[1])
-        else:
-            elements.append(MetaData(name=item[0], text=item[1]))
-
-    return elements
-
-
-def find_signature(msg: Message) -> Optional[str]:
-    """Extracts the signature from an email message, if it's available."""
-    payload = msg.get_payload()
-    if not isinstance(payload, list):
-        return None
-
-    for item in payload:
-        if item.get_content_type().endswith("signature"):
-            return item.get_payload()
-
-    return None
-
-
-def build_email_metadata(
-    msg: Message,
-    filename: Optional[str],
-    metadata_last_modified: Optional[str] = None,
-    last_modification_date: Optional[str] = None,
-) -> ElementMetadata:
-    """Creates an ElementMetadata object from the header information in the email."""
-    signature = find_signature(msg)
-
-    header_dict = dict(msg.raw_items())
-    email_date = header_dict.get("Date")
-    if email_date is not None:
-        email_date = convert_to_iso_8601(email_date)
-
-    sent_from = header_dict.get("From")
-    if sent_from is not None:
-        sent_from = [sender.strip() for sender in sent_from.split(",")]
-
-    sent_to = header_dict.get("To")
-    if sent_to is not None:
-        sent_to = [recipient.strip() for recipient in sent_to.split(",")]
-
-    element_metadata = ElementMetadata(
-        sent_to=sent_to,
-        sent_from=sent_from,
-        subject=header_dict.get("Subject"),
-        signature=signature,
-        last_modified=metadata_last_modified or email_date or last_modification_date,
-        filename=filename,
-    )
-    element_metadata.detection_origin = DETECTION_ORIGIN
-    return element_metadata
-
-
-def convert_to_iso_8601(time: str) -> Optional[str]:
-    """Converts the datetime from the email output to ISO-8601 format."""
-    cleaned_time = clean_extra_whitespace(time)
-    regex_match = EMAIL_DATETIMETZ_PATTERN_RE.search(cleaned_time)
-    if regex_match is None:
-        logger.warning(
-            f"{time} did not match RFC-2822 format. Unable to extract the time.",
-        )
-        return None
-
-    start, end = regex_match.span()
-    dt_string = cleaned_time[start:end]
-    datetime_object = datetime.datetime.strptime(dt_string, "%a, %d %b %Y %H:%M:%S %z")
-    return datetime_object.isoformat()
-
-
-def extract_attachment_info(
-    message: Message,
-    output_dir: Optional[str] = None,
-) -> list[dict[str, str]]:
-    list_attachments = []
-
-    for part in message.walk():
-        if "content-disposition" in part:
-            cdisp = part["content-disposition"].split(";")
-            cdisp = [clean_extra_whitespace(item) for item in cdisp]
-
-            attachment_info = {}
-            for item in cdisp:
-                if item.lower() in ("attachment", "inline"):
-                    continue
-                key, value = item.split("=", 1)
-                key = clean_extra_whitespace(key.replace('"', ""))
-                value = clean_extra_whitespace(value.replace('"', ""))
-                attachment_info[clean_extra_whitespace(key)] = clean_extra_whitespace(
-                    value,
-                )
-            attachment_info["payload"] = part.get_payload(decode=True)
-            list_attachments.append(attachment_info)
-
-            for idx, attachment in enumerate(list_attachments):
-                if output_dir:
-                    if "filename" in attachment:
-                        filename = output_dir + "/" + attachment["filename"]
-                        with open(filename, "wb") as f:
-                            # Note(harrell) mypy wants to just us `w` when opening the file but this
-                            # causes an error since the payloads are bytes not str
-                            f.write(attachment["payload"])  # type: ignore
-                    else:
-                        with NamedTemporaryFile(
-                            mode="wb",
-                            dir=output_dir,
-                            delete=False,
-                        ) as f:
-                            list_attachments[idx]["filename"] = os.path.basename(f.name)
-                            f.write(attachment["payload"])  # type: ignore
-
-    return list_attachments
-
-
-def has_embedded_image(element):
-    PATTERN = re.compile(r"\[image: .+\]")
-    return PATTERN.search(element.text)
-
-
-def find_embedded_image(
-    element: NarrativeText | Title, indices: re.Match
-) -> tuple[Element, Element]:
-    start, end = indices.start(), indices.end()
-
-    image_raw_info = element.text[start:end]
-    image_info = clean_extra_whitespace(image_raw_info.split(":")[1])
-    element.text = element.text.replace("[image: " + image_info[:-1] + "]", "")
-    return Image(text=image_info[:-1], detection_origin="email"), element
-
-
-def parse_email(
-    filename: Optional[str] = None, file: Optional[IO[bytes]] = None
-) -> tuple[Optional[str], Message]:
-    if filename is not None:
-        with open(filename, "rb") as f:
-            msg = email.message_from_binary_file(f)
-    elif file is not None:
-        f_bytes = convert_to_bytes(file)
-        msg = email.message_from_bytes(f_bytes)
-    else:
-        raise ValueError("Either 'filename' or 'file' must be provided.")
-
-    encoding = None
-    charsets = msg.get_charsets() or []
-    for charset in charsets:
-        if charset and charset.strip() and validate_encoding(charset):
-            encoding = charset
-            break
-
-    formatted_encoding = format_encoding_str(encoding) if encoding else None
-
-    return formatted_encoding, msg
-
-
-@process_metadata()
-@add_metadata_with_filetype(FileType.EML)
-@add_chunking_strategy
 def partition_email(
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    text: Optional[str] = None,
+    filename: str | None = None,
+    *,
+    file: IO[bytes] | None = None,
     content_source: str = "text/html",
-    encoding: Optional[str] = None,
-    include_headers: bool = False,
-    max_partition: Optional[int] = 1500,
-    include_metadata: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
-    process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
-    min_partition: Optional[int] = 0,
-    chunking_strategy: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
+    metadata_filename: str | None = None,
+    metadata_last_modified: str | None = None,
+    process_attachments: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
-    """Partitions an .eml documents into its constituent elements.
-    Parameters
-    ----------
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object using "r" mode --> open(filename, "r").
-    text
-        The string representation of the .eml document.
-    content_source
-        default: "text/html"
-        other: "text/plain"
-    encoding
-        The encoding method used to decode the text input. If None, utf-8 will be used.
-    max_partition
-        The maximum number of characters to include in a partition. If None is passed,
-        no maximum is applied. Only applies if processing the text/plain content.
-    metadata_filename
-        The filename to use for the metadata.
-    metadata_last_modified
-        The last modified date for the document.
-    process_attachments
-        If True, partition_email will process email attachments in addition to
-        processing the content of the email itself.
-    attachment_partitioner
-        The partitioning function to use to process attachments.
-    min_partition
-        The minimum number of characters to include in a partition. Only applies if
-        processing the text/plain content.
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True and inference
-        from message header failed, attempt to infer last_modified metadata from bytes,
-        otherwise set it to None.
+    """Partitions an .eml file into document elements.
+
+    Args:
+        filename: str path of the target file.
+        file: A file-like object open for reading bytes (not str) e.g. --> open(filename, "rb").
+        content_source: The preferred message body. Many emails contain both a plain-text and an
+            HTML version of the message body. By default, the HTML version will be used when
+            available. Specifying "text/plain" will cause the plain-text version to be preferred.
+            When the preferred version is not available, the other version will be used.
+        metadata_filename: The file-path to use for metadata purposes. Useful when the target file
+            is specified as a file-like object or when `filename` is a temporary file and the
+            original file-path is known or a more meaningful file-path is desired.
+        metadata_last_modified: The last-modified timestamp to be applied in metadata. Useful when
+            a file-like object (which can have no last-modified date) target is used. The
+            last-modified metadata is otherwise drawn from the filesystem when a path is provided.
+        process_attachments: When True, also partition any attachments in the message after
+            partitioning the message body. All document elements appear in the single returned
+            element list. The filename of the attachment, when available, is used as the
+            `filename` metadata value for elements arising from the attachment.
+
+    Note that all global keyword arguments such as `unique_element_ids`, `language` and
+    `chunking_strategy` can be used and will be passed along to the decorators that implement
+    those functions. Further, any keyword arguments applicable to HTML will be passed along to the
+    HTML partitioner when processing an HTML message body.
     """
-    if content_source not in VALID_CONTENT_SOURCES:
-        raise ValueError(
-            f"{content_source} is not a valid value for content_source. "
-            f"Valid content sources are: {VALID_CONTENT_SOURCES}",
-        )
-
-    if text is not None and text.strip() == "" and not file and not filename:
-        return []
-
-    # Verify that only one of the arguments was provided
-    exactly_one(filename=filename, file=file, text=text)
-    detected_encoding = "utf-8"
-    if filename is not None:
-        extracted_encoding, msg = parse_email(filename=filename)
-        if extracted_encoding:
-            detected_encoding = extracted_encoding
-        else:
-            detected_encoding, file_text = read_txt_file(
-                filename=filename,
-                encoding=encoding,
-            )
-            msg = email.message_from_string(file_text)
-    elif file is not None:
-        extracted_encoding, msg = parse_email(file=file)
-        if extracted_encoding:
-            detected_encoding = extracted_encoding
-        else:
-            detected_encoding, file_text = read_txt_file(file=file, encoding=encoding)
-            msg = email.message_from_string(file_text)
-    elif text is not None:
-        _text: str = str(text)
-        msg = email.message_from_string(_text)
-    if not encoding:
-        encoding = detected_encoding
-
-    is_encrypted = False
-    content_map: dict[str, str] = {}
-    for part in msg.walk():
-        # NOTE(robinson) - content dispostiion is None for the content of the email itself.
-        # Other dispositions include "attachment" for attachments
-        if part.get_content_disposition() is not None:
-            continue
-        content_type = part.get_content_type()
-
-        # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted
-        # content is multipart/encrypted
-        # ref: https://www.ietf.org/rfc/rfc2015.txt
-        if content_type.endswith("encrypted"):
-            is_encrypted = True
-
-        # NOTE(andymli) - we can determine if text is base64 encoded via the
-        # content-transfer-encoding property of a part
-        # https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html
-        if (
-            part.get_content_maintype() == "text"
-            and part.get("content-transfer-encoding", None) == "base64"
-        ):
-            try:
-                content_map[content_type] = part.get_payload(decode=True).decode(encoding)
-            except (UnicodeDecodeError, UnicodeError):
-                content_map[content_type] = part.get_payload()
-        else:
-            content_map[content_type] = part.get_payload()
-
-    if content_source in content_map:
-        content = content_map.get(content_source)
-    # NOTE(robinson) - If the chosen content source is not available and there is
-    # another valid content source, fall back to the other valid source
-    else:
-        for _content_source in VALID_CONTENT_SOURCES:
-            content = content_map.get(_content_source, "")
-            if content:
-                logger.warning(
-                    f"{content_source} was not found. Falling back to {_content_source}."
-                )
-                break
-
-    elements: list[Element] = []
-
-    if is_encrypted:
-        logger.warning(
-            "Encrypted email detected. Partition function will return an empty list.",
-        )
-
-    elif not content:
-        pass
-
-    elif content_source == "text/html":
-        # NOTE(robinson) - In the .eml files, the HTML content gets stored in a format that
-        # looks like the following, resulting in extraneous "=" characters in the output if
-        # you don't clean it up
-        # <ul> =
-        #    <li>Item 1</li>=
-        #    <li>Item 2<li>=
-        # </ul>
-        list_content = content.split("=\n")
-        content = "".join(list_content)
-        elements = partition_html(
-            text=content,
-            include_metadata=False,
-            metadata_filename=metadata_filename,
-            languages=[""],
-            detection_origin="email",
-        )
-        for element in elements:
-            if isinstance(element, Text):
-                _replace_mime_encodings = partial(
-                    replace_mime_encodings,
-                    encoding=encoding,
-                )
-                try:
-                    element.apply(_replace_mime_encodings)
-                except (UnicodeDecodeError, UnicodeError):
-                    # If decoding fails, try decoding through common encodings
-                    common_encodings = []
-                    for x in COMMON_ENCODINGS:
-                        _x = format_encoding_str(x)
-                        if _x != encoding:
-                            common_encodings.append(_x)
-
-                    for enc in common_encodings:
-                        try:
-                            _replace_mime_encodings = partial(
-                                replace_mime_encodings,
-                                encoding=enc,
-                            )
-                            element.apply(_replace_mime_encodings)
-                            break
-                        except (UnicodeDecodeError, UnicodeError):
-                            continue
-
-    elif content_source == "text/plain":
-        elements = partition_text(
-            text=content,
-            encoding=encoding,
-            max_partition=max_partition,
-            min_partition=min_partition,
-            languages=[""],
-            include_metadata=False,  # metadata is overwritten later, so no need to compute it here
-            detection_origin="email",
-        )
-
-    for idx, element in enumerate(elements):
-        indices = has_embedded_image(element)
-        if (isinstance(element, (NarrativeText, Title))) and indices:
-            image_info, clean_element = find_embedded_image(element, indices)
-            elements[idx] = clean_element
-            elements.insert(idx + 1, image_info)
-
-    header: list[Element] = []
-    if include_headers:
-        header = partition_email_header(msg)
-    all_elements = header + elements
-
-    last_modification_date = None
-    if filename is not None:
-        last_modification_date = get_last_modified_date(filename)
-    elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-
-    metadata = build_email_metadata(
-        msg,
-        filename=metadata_filename or filename,
+    ctx = EmailPartitioningContext.load(
+        file_path=filename,
+        file=file,
+        content_source=content_source,
+        metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
-        last_modification_date=last_modification_date,
+        process_attachments=process_attachments,
+        kwargs=kwargs,
     )
-    for element in all_elements:
-        element.metadata = copy.deepcopy(metadata)
 
-    if process_attachments:
-        with TemporaryDirectory() as tmpdir:
-            extract_attachment_info(msg, tmpdir)
-            attached_files = os.listdir(tmpdir)
-            for attached_file in attached_files:
-                attached_filename = os.path.join(tmpdir, attached_file)
-                if attachment_partitioner is None:
-                    raise ValueError(
-                        "Specify the attachment_partitioner kwarg to process attachments.",
-                    )
-                attached_elements = attachment_partitioner(
-                    filename=attached_filename,
-                    metadata_last_modified=metadata_last_modified,
-                    max_partition=max_partition,
-                    min_partition=min_partition,
+    return list(_EmailPartitioner.iter_elements(ctx=ctx))
+
+
+class EmailPartitioningContext:
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
+
+    def __init__(
+        self,
+        file_path: str | None = None,
+        file: IO[bytes] | None = None,
+        content_source: str = "text/html",
+        metadata_file_path: str | None = None,
+        metadata_last_modified: str | None = None,
+        process_attachments: bool = False,
+        kwargs: dict[str, Any] = {},
+    ):
+        self._file_path = file_path
+        self._file = file
+        self._content_source = content_source
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+        self._process_attachments = process_attachments
+        self._kwargs = kwargs
+
+    @classmethod
+    def load(
+        cls,
+        file_path: str | None,
+        file: IO[bytes] | None,
+        content_source: str,
+        metadata_file_path: str | None,
+        metadata_last_modified: str | None,
+        process_attachments: bool,
+        kwargs: dict[str, Any],
+    ) -> EmailPartitioningContext:
+        """Construct and validate an instance."""
+        return cls(
+            file_path=file_path,
+            file=file,
+            content_source=content_source,
+            metadata_file_path=metadata_file_path,
+            metadata_last_modified=metadata_last_modified,
+            process_attachments=process_attachments,
+            kwargs=kwargs,
+        )._validate()
+
+    @lazyproperty
+    def bcc_addresses(self) -> list[str] | None:
+        """The "blind carbon-copy" Bcc: addresses of the message."""
+        bccs = self.msg.get_all("Bcc")
+        if not bccs:
+            return None
+        addrs = email.utils.getaddresses(bccs)
+        return [email.utils.formataddr(addr) for addr in addrs]
+
+    @lazyproperty
+    def body_part(self) -> MIMEPart | None:
+        """The message part containing the actual textual email message.
+
+        This is as opposed to attachments or "related" parts like an image that appears in the
+        message etc.
+        """
+        return self.msg.get_body(preferencelist=self.content_type_preference)
+
+    @lazyproperty
+    def cc_addresses(self) -> list[str] | None:
+        """The "carbon-copy" Cc: addresses of the message."""
+        ccs = self.msg.get_all("Cc")
+        if not ccs:
+            return None
+        addrs = email.utils.getaddresses(ccs)
+        return [email.utils.formataddr(addr) for addr in addrs]
+
+    @lazyproperty
+    def content_type_preference(self) -> tuple[str, ...]:
+        """Whether to prefer HTML or plain-text body when message-body has both.
+
+        The default order of preference is `("html", "plain")`. The order can be switched by
+        specifying `"text/plain"` as the `content_source` arg value.
+        """
+        return ("plain", "html") if self._content_source == "text/plain" else ("html", "plain")
+
+    @lazyproperty
+    def email_metadata(self) -> ElementMetadata:
+        """The email-specific metadata fields for this message.
+
+        Suitable for use with `.metadata.update()` on the base metadata applied to message body
+        elements by delegate partitioners for text and HTML.
+        """
+        return ElementMetadata(
+            bcc_recipient=self.bcc_addresses,
+            cc_recipient=self.cc_addresses,
+            email_message_id=self.message_id,
+            sent_from=[self.from_address] if self.from_address else None,
+            sent_to=self.to_addresses,
+            subject=self.subject,
+        )
+
+    @lazyproperty
+    def from_address(self) -> str | None:
+        """The address of the message sender."""
+        froms = self.msg.get_all("From")
+        if not froms:
+            # -- this should never occur because the From: header is mandatory per RFC 5322 --
+            return None
+        addrs = email.utils.getaddresses(froms)
+        formatted_addrs = [email.utils.formataddr(addr) for addr in addrs]
+        return formatted_addrs[0]
+
+    @lazyproperty
+    def message_id(self) -> str | None:
+        """The value of the Message-ID: header, when present."""
+        raw_id = self.msg.get("Message-ID")
+        if not raw_id:
+            return None
+        return raw_id.strip().strip("<>")
+
+    @lazyproperty
+    def metadata_file_path(self) -> str | None:
+        """The best available file-path information for this email message.
+
+        It's value is computed according to these rules, applied in order:
+
+          - The `metadata_filename` arg value when one was provided to `partition_email()`.
+          - The `file_path` value when one was provided.
+          - None otherwise.
+
+        This value is used as the `filename` metadata value for elements produced by partitioning
+        the email message (but not those from its attachments).
+        """
+        return self._metadata_file_path or self._file_path or None
+
+    @lazyproperty
+    def metadata_last_modified(self) -> str | None:
+        """The best available last-modified date for this message, as an ISO8601 string.
+
+        It's value is computed according to these rules, applied in order:
+
+          - The `metadata_last_modified` arg value when one was provided to `partition_email()`.
+          - The date-time in the `Sent:` header of the message, when present.
+          - The last-modified date recorded on the filesystem for `file_path` when it was provided.
+          - None otherwise.
+
+        This value is used as the `last_modified` metadata value for all elements produced by
+        partitioning this email message, including any attachments.
+        """
+        return self._metadata_last_modified or self._sent_date or self._filesystem_last_modified
+
+    @lazyproperty
+    def msg(self) -> EmailMessage:
+        """The Python stdlib `email.message.EmailMessage` object parsed from the EML file."""
+        if self._file_path is not None:
+            with open(self._file_path, "rb") as f:
+                return cast(
+                    EmailMessage, email.message_from_binary_file(f, policy=email.policy.default)
                 )
-                for element in attached_elements:
-                    element.metadata.filename = attached_file
-                    element.metadata.file_directory = None
-                    element.metadata.attached_to_filename = metadata_filename or filename
-                    all_elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=all_elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-        ),
-    )
+        assert self._file is not None
 
-    return elements
+        file_bytes = self._file.read()
+
+        return cast(EmailMessage, email.message_from_bytes(file_bytes, policy=email.policy.default))
+
+    @lazyproperty
+    def partitioning_kwargs(self) -> dict[str, Any]:
+        """The "extra" keyword arguments received by `partition_email()`.
+
+        These are passed along to delegate partitioners which extract keyword args like
+        `chunking_strategy` etc. in their decorators to control metadata behaviors, etc.
+        """
+        return self._kwargs
+
+    @lazyproperty
+    def process_attachments(self) -> bool:
+        """When True, partition attachments in addition to the email message body.
+
+        Any attachment having file-format that cannot be partitioned by unstructured is silently
+        skipped.
+        """
+        return self._process_attachments
+
+    @lazyproperty
+    def subject(self) -> str | None:
+        """The value of the Subject: header, when present."""
+        subject = self.msg.get("Subject")
+        if not subject:
+            return None
+        return subject
+
+    @lazyproperty
+    def to_addresses(self) -> list[str] | None:
+        """The To: addresses of the message."""
+        tos = self.msg.get_all("To")
+        if not tos:
+            return None
+        addrs = email.utils.getaddresses(tos)
+        return [email.utils.formataddr(addr) for addr in addrs]
+
+    @lazyproperty
+    def _filesystem_last_modified(self) -> str | None:
+        """Last-modified retrieved from filesystem when a file-path was provided, None otherwise."""
+        return get_last_modified_date(self._file_path) if self._file_path else None
+
+    @lazyproperty
+    def _sent_date(self) -> str | None:
+        """ISO-8601 str representation of message sent-date, if available."""
+        date_str = self.msg.get("Date")
+        if not date_str:
+            return None
+        sent_date = email.utils.parsedate_to_datetime(date_str)
+        return sent_date.astimezone(dt.timezone.utc).isoformat(timespec="seconds")
+
+    def _validate(self) -> EmailPartitioningContext:
+        """Raise on first invalid option, return self otherwise."""
+        if not self._file_path and not self._file:
+            raise ValueError(
+                "no document specified; either a `filename` or `file` argument must be provided."
+            )
+
+        if self._file:
+            if not isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                self._file.read(0), bytes
+            ):
+                raise ValueError("file object must be opened in binary mode")
+            self._file.seek(0)
+
+        if self._content_source not in VALID_CONTENT_SOURCES:
+            raise ValueError(
+                f"{repr(self._content_source)} is not a valid value for content_source;"
+                f" must be one of: {VALID_CONTENT_SOURCES}",
+            )
+
+        return self
+
+
+class _EmailPartitioner:
+    """Encapsulates the partitioning logic for email documents."""
+
+    def __init__(self, ctx: EmailPartitioningContext):
+        self._ctx = ctx
+
+    @classmethod
+    def iter_elements(cls, ctx: EmailPartitioningContext) -> Iterator[Element]:
+        """Generate the document elements for the email described by `ctx`."""
+        return cls(ctx=ctx)._iter_elements()
+
+    def _iter_elements(self) -> Iterator[Element]:
+        """Generate the document elements for the email described in the partitioning context.
+
+        This optionally includes elements generated by partitioning any partitionable attachments
+        in the message as well.
+        """
+        for e in self._iter_email_body_elements():
+            e.metadata.update(self._ctx.email_metadata)
+            yield e
+
+        if not self._ctx.process_attachments:
+            return
+
+        for attachment in self._ctx.msg.iter_attachments():
+            yield from _AttachmentPartitioner.iter_elements(attachment, self._ctx)
+
+    def _iter_email_body_elements(self) -> Iterator[Element]:
+        """Generate document elements from the email body."""
+        body_part = self._ctx.body_part
+
+        # -- it's possible to have no body part; that translates to zero elements --
+        if body_part is None:
+            return
+
+        content_type = body_part.get_content_type()
+        content = body_part.get_content()
+        assert isinstance(content, str)
+
+        if content_type == "text/html":
+            yield from partition_html(
+                text=content,
+                metadata_filename=self._ctx.metadata_file_path,
+                metadata_file_type=FileType.EML,
+                metadata_last_modified=self._ctx.metadata_last_modified,
+                **self._ctx.partitioning_kwargs,
+            )
+        else:
+            yield from partition_text(
+                text=content,
+                metadata_filename=self._ctx.metadata_file_path,
+                metadata_file_type=FileType.EML,
+                metadata_last_modified=self._ctx.metadata_last_modified,
+                **self._ctx.partitioning_kwargs,
+            )
+
+
+class _AttachmentPartitioner:
+    """Partitions an attachment to a MSG file."""
+
+    def __init__(self, attachment: EmailMessage, ctx: EmailPartitioningContext):
+        self._attachment = attachment
+        self._ctx = ctx
+
+    @classmethod
+    def iter_elements(
+        cls, attachment: EmailMessage, ctx: EmailPartitioningContext
+    ) -> Iterator[Element]:
+        """Partition an attachment MIME-part from a MIME email message (.eml file)."""
+        return cls(attachment, ctx)._iter_elements()
+
+    def _iter_elements(self) -> Iterator[Element]:
+        """Partition the byte-stream in the attachment MIME-part into elements.
+
+        Generates zero elements if the attachment is not partitionable.
+        """
+        # -- `auto.partition()` imports this module, so we need to defer the import to here to
+        # -- avoid a circular import.
+        from unstructured.partition.auto import partition
+
+        file = io.BytesIO(self._file_bytes)
+
+        # -- partition the attachment --
+        try:
+            elements = partition(
+                file=file,
+                metadata_filename=self._attachment_file_name,
+                metadata_last_modified=self._ctx.metadata_last_modified,
+                **self._ctx.partitioning_kwargs,
+            )
+        except UnsupportedFileFormatError:
+            # -- indicates `auto.partition()` has no partitioner for this file-format;
+            # -- silently skip the attachment
+            return
+
+        for e in elements:
+            e.metadata.attached_to_filename = self._attached_to_filename
+            yield e
+
+    @lazyproperty
+    def _attached_to_filename(self) -> str | None:
+        """The file-name (no path) of the message. `None` if not available."""
+        file_path = self._ctx.metadata_file_path
+        if file_path is None:
+            return None
+        return os.path.basename(file_path)
+
+    @lazyproperty
+    def _attachment_file_name(self) -> str | None:
+        """The original name of the attached file, `None` if not present in the MIME part."""
+        return self._attachment.get_filename()
+
+    @lazyproperty
+    def _file_bytes(self) -> bytes:
+        """The bytes of the attached file."""
+        content = self._attachment.get_content()
+
+        if isinstance(content, str):
+            return content.encode("utf-8")
+
+        assert isinstance(content, bytes)
+        return content

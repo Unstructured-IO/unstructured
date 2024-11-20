@@ -17,9 +17,10 @@ from unstructured.staging.weaviate import (
 )
 
 is_in_docker = os.path.exists("/.dockerenv")
+is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 
 
-def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"):
+def test_stage_for_weaviate():
     element_dict = {
         "element_id": "015301d4f56aa4b20ec10ac889d2343f",
         "text": "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis",
@@ -53,6 +54,7 @@ def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"
     }
 
 
+@pytest.mark.skipif(not is_in_ci, reason="Integration test that depends on having secret keys")
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_weaviate_schema_is_valid():
     unstructured_class = create_unstructured_weaviate_class()

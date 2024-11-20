@@ -13,10 +13,10 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
-from unstructured.partition.pdf_image.analysis.bbox_visualisation import OCRLayoutDrawer
+from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
+from unstructured.partition.utils.constants import OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
@@ -36,7 +36,7 @@ def process_data_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
-    ocr_drawer: Optional[OCRLayoutDrawer] = None,
+    ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -62,19 +62,20 @@ def process_data_with_ocr(
 
     - pdf_image_dpi (int, optional): DPI (dots per inch) for processing PDF images. Defaults to 200.
 
+    - ocr_layout_dumper (OCRLayoutDumper, optional): The OCR layout dumper to save the OCR layout.
+
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    file_name = ""
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-        data_bytes = data if isinstance(data, bytes) else data.read()
-        tmp_file.write(data_bytes)
-        tmp_file.flush()
-        file_name = tmp_file.name
+    data_bytes = data if isinstance(data, bytes) else data.read()
 
-    try:
+    with tempfile.TemporaryDirectory() as tmp_dir_path:
+        tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
+        with open(tmp_file_path, "wb") as tmp_file:
+            tmp_file.write(data_bytes)
+
         merged_layouts = process_file_with_ocr(
-            filename=file_name,
+            filename=tmp_file_path,
             out_layout=out_layout,
             extracted_layout=extracted_layout,
             is_image=is_image,
@@ -82,11 +83,8 @@ def process_data_with_ocr(
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
-            ocr_drawer=ocr_drawer,
+            ocr_layout_dumper=ocr_layout_dumper,
         )
-    finally:
-        if os.path.isfile(file_name):
-            os.remove(file_name)
 
     return merged_layouts
 
@@ -101,7 +99,7 @@ def process_file_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
-    ocr_drawer: Optional[OCRLayoutDrawer] = None,
+    ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -148,7 +146,7 @@ def process_file_with_ocr(
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                         extracted_regions=extracted_regions,
-                        ocr_drawer=ocr_drawer,
+                        ocr_layout_dumper=ocr_layout_dumper,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -171,7 +169,7 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
-                            ocr_drawer=ocr_drawer,
+                            ocr_layout_dumper=ocr_layout_dumper,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -190,7 +188,7 @@ def supplement_page_layout_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
-    ocr_drawer: Optional[OCRLayoutDrawer] = None,
+    ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -200,14 +198,11 @@ def supplement_page_layout_with_ocr(
     with no text and add text from OCR to each element.
     """
 
-    ocr_agent = OCRAgent.get_agent()
+    ocr_agent = OCRAgent.get_agent(language=ocr_languages)
     if ocr_mode == OCRMode.FULL_PAGE.value:
-        ocr_layout = ocr_agent.get_layout_from_image(
-            image,
-            ocr_languages=ocr_languages,
-        )
-        if ocr_drawer:
-            ocr_drawer.add_ocred_page(ocr_layout)
+        ocr_layout = ocr_agent.get_layout_from_image(image)
+        if ocr_layout_dumper:
+            ocr_layout_dumper.add_ocred_page(ocr_layout)
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
@@ -227,10 +222,7 @@ def supplement_page_layout_with_ocr(
                 )
                 # Note(yuming): instead of getting OCR layout, we just need
                 # the text extraced from OCR for individual elements
-                text_from_ocr = ocr_agent.get_text_from_image(
-                    cropped_image,
-                    ocr_languages=ocr_languages,
-                )
+                text_from_ocr = ocr_agent.get_text_from_image(cropped_image)
                 element.text = text_from_ocr
     else:
         raise ValueError(
@@ -250,7 +242,6 @@ def supplement_page_layout_with_ocr(
             elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
             tables_agent=tables.tables_agent,
-            ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
             extracted_regions=extracted_regions,
         )
@@ -263,8 +254,7 @@ def supplement_element_with_table_extraction(
     elements: List["LayoutElement"],
     image: PILImage.Image,
     tables_agent: "UnstructuredTableTransformerModel",
-    ocr_languages: str = "eng",
-    ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    ocr_agent,
     extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
@@ -288,7 +278,6 @@ def supplement_element_with_table_extraction(
         )
         table_tokens = get_table_tokens(
             table_element_image=cropped_image,
-            ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
             extracted_regions=extracted_regions,
             table_element=padded_element,
@@ -312,17 +301,13 @@ def supplement_element_with_table_extraction(
 
 def get_table_tokens(
     table_element_image: PILImage.Image,
-    ocr_languages: str = "eng",
-    ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    ocr_agent: OCRAgent,
     extracted_regions: Optional[List["TextRegion"]] = None,
     table_element: Optional["LayoutElement"] = None,
 ) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
-    ocr_layout = ocr_agent.get_layout_from_image(
-        image=table_element_image,
-        ocr_languages=ocr_languages,
-    )
+    ocr_layout = ocr_agent.get_layout_from_image(image=table_element_image)
     table_tokens = []
     for ocr_region in ocr_layout:
         table_tokens.append(

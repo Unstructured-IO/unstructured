@@ -1,0 +1,20 @@
+[
+  {
+    "type": "Table",
+    "element_id": "29fba2aa35cbdea208791e942ac3c40c",
+    "text": "_id title reviewid creationdate criticname originalscore reviewstate reviewtext 25b75f1d-a2ea-4c97-b75f-1da2eadc97f7 City Hunter: Shinjuku Private Eyes 2558908 2019-02-14 Matt Schley 2.5/5 rotten The film's out-of-touch attempts at humor may find them hunting for the reason the franchise was so popular in the first place.",
+    "metadata": {
+      "text_as_html": "<table><tr><td>_id</td><td>title</td><td>reviewid</td><td>creationdate</td><td>criticname</td><td>originalscore</td><td>reviewstate</td><td>reviewtext</td></tr><tr><td>25b75f1d-a2ea-4c97-b75f-1da2eadc97f7</td><td>City Hunter: Shinjuku Private Eyes</td><td>2558908</td><td>2019-02-14</td><td>Matt Schley</td><td>2.5/5</td><td>rotten</td><td>The film's out-of-touch attempts at humor may find them hunting for the reason the franchise was so popular in the first place.</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/csv",
+      "data_source": {
+        "record_locator": {
+          "document_id": "25b75f1d-a2ea-4c97-b75f-1da2eadc97f7"
+        },
+        "filesize_bytes": 326
+      }
+    }
+  }
+]

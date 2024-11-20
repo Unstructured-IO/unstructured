@@ -1,8 +1,9 @@
+import os
 import tempfile
-from typing import Any, BinaryIO, List, Tuple
+from typing import BinaryIO, List, Tuple
 
 from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTContainer, LTImage
+from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PSSyntaxError
@@ -20,39 +21,30 @@ def init_pdfminer():
     return device, interpreter
 
 
-def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:
-    """
-    Recursively extracts LTImage objects from a PDF layout element.
+def extract_image_objects(parent_object: LTItem) -> List[LTImage]:
+    """Recursively extracts image objects from a given parent object in a PDF document."""
+    objects = []
 
-    This function takes a PDF layout element (could be LTImage or LTContainer) and recursively
-    extracts all LTImage objects contained within it.
+    if isinstance(parent_object, LTImage):
+        objects.append(parent_object)
+    elif isinstance(parent_object, LTContainer):
+        for child in parent_object:
+            objects.extend(extract_image_objects(child))
 
-    Parameters:
-    - layout_object (Any): The PDF layout element to extract images from.
+    return objects
 
-    Returns:
-    - List[LTImage]: A list of LTImage objects extracted from the layout object.
 
-    Note:
-    - This function recursively traverses through the layout_object to find and accumulate all
-     LTImage objects.
-    - If the input layout_object is an LTImage, it will be included in the returned list.
-    - If the input layout_object is an LTContainer, the function will recursively search its
-     children for LTImage objects.
-    - If the input layout_object is neither LTImage nor LTContainer, an empty list will be
-     returned.
-    """
+def extract_text_objects(parent_object: LTItem) -> List[LTTextLine]:
+    """Recursively extracts text objects from a given parent object in a PDF document."""
+    objects = []
 
-    # recursively locate Image objects in layout_object
-    if isinstance(layout_object, LTImage):
-        return [layout_object]
-    if isinstance(layout_object, LTContainer):
-        img_list: List[LTImage] = []
-        for child in layout_object:
-            img_list = img_list + get_images_from_pdf_element(child)
-        return img_list
-    else:
-        return []
+    if isinstance(parent_object, LTTextLine):
+        objects.append(parent_object)
+    elif isinstance(parent_object, LTContainer):
+        for child in parent_object:
+            objects.extend(extract_text_objects(child))
+
+    return objects
 
 
 def rect_to_bbox(
@@ -89,35 +81,35 @@ def open_pdfminer_pages_generator(
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
     device, interpreter = init_pdfminer()
-    try:
-        pages = PDFPage.get_pages(fp)
-        # Detect invalid dictionary construct for entire PDF
-        for i, page in enumerate(pages):
-            try:
-                # Detect invalid dictionary construct for one page
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-            except PSSyntaxError:
-                logger.info("Detected invalid dictionary construct for PDFminer")
-                logger.info(f"Repairing the PDF page {i+1} ...")
-                # find the error page from binary data fp
-                error_page_data = get_page_data(fp, page_number=i)
-                # repair the error page with pikepdf
-                with tempfile.NamedTemporaryFile() as tmp:
-                    with pikepdf.Pdf.open(error_page_data) as pdf:
-                        pdf.save(tmp.name)
-                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
+    with tempfile.TemporaryDirectory() as tmp_dir_path:
+        tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
+        try:
+            pages = PDFPage.get_pages(fp)
+            # Detect invalid dictionary construct for entire PDF
+            for i, page in enumerate(pages):
+                try:
+                    # Detect invalid dictionary construct for one page
                     interpreter.process_page(page)
                     page_layout = device.get_result()
-            yield page, page_layout
-    except PSSyntaxError:
-        logger.info("Detected invalid dictionary construct for PDFminer")
-        logger.info("Repairing the PDF document ...")
-        # repair the entire doc with pikepdf
-        with tempfile.NamedTemporaryFile() as tmp:
+                except PSSyntaxError:
+                    logger.info("Detected invalid dictionary construct for PDFminer")
+                    logger.info(f"Repairing the PDF page {i+1} ...")
+                    # find the error page from binary data fp
+                    error_page_data = get_page_data(fp, page_number=i)
+                    # repair the error page with pikepdf
+                    with pikepdf.Pdf.open(error_page_data) as pdf:
+                        pdf.save(tmp_file_path)
+                    page = next(PDFPage.get_pages(open(tmp_file_path, "rb")))  # noqa: SIM115
+                    interpreter.process_page(page)
+                    page_layout = device.get_result()
+                yield page, page_layout
+        except PSSyntaxError:
+            logger.info("Detected invalid dictionary construct for PDFminer")
+            logger.info("Repairing the PDF document ...")
+            # repair the entire doc with pikepdf
             with pikepdf.Pdf.open(fp) as pdf:
-                pdf.save(tmp.name)
-            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
+                pdf.save(tmp_file_path)
+            pages = PDFPage.get_pages(open(tmp_file_path, "rb"))  # noqa: SIM115
             for page in pages:
                 interpreter.process_page(page)
                 page_layout = device.get_result()

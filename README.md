@@ -253,7 +253,7 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
 | [Documentation](https://docs.unstructured.io/) | Full API documentation |
-| [Batch Processing](unstructured/ingest/README.md) | Ingesting batches of documents through Unstructured |
+| [Batch Processing](https://github.com/Unstructured-IO/unstructured-ingest) | Ingesting batches of documents through Unstructured |
 
 ## :chart_with_upwards_trend: Analytics
 

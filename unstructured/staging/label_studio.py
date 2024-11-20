@@ -2,7 +2,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union
 
-from unstructured.documents.elements import Text
+from unstructured.documents.elements import Element
 
 LABEL_STUDIO_TYPE = List[Dict[str, Dict[str, str]]]
 
@@ -110,7 +110,7 @@ class LabelStudioPrediction(LabelStudioAnnotation):
 
 
 def stage_for_label_studio(
-    elements: List[Text],
+    elements: List[Element],
     annotations: Optional[List[List[LabelStudioAnnotation]]] = None,
     predictions: Optional[List[List[LabelStudioPrediction]]] = None,
     text_field: str = "text",

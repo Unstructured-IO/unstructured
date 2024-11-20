@@ -16,7 +16,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
 )
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
 
 if dependency_exists("pandas"):
@@ -133,10 +133,12 @@ def elements_to_json(
     filename: Optional[str] = None,
     indent: int = 4,
     encoding: str = "utf-8",
-) -> Optional[str]:
-    """Saves a list of elements to a JSON file if filename is specified.
+) -> str:
+    """Serialize `elements` to a JSON array.
 
-    Otherwise, return the list of elements as a string.
+    Also writes the JSON to `filename` if it is provided, encoded using `encoding`.
+
+    The JSON is returned as a string.
     """
     # -- serialize `elements` as a JSON array (str) --
     precision_adjusted_elements = _fix_metadata_field_precision(elements)
@@ -146,7 +148,6 @@ def elements_to_json(
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
             f.write(json_str)
-        return None
 
     return json_str
 
@@ -271,13 +272,7 @@ def flatten_dict(
 
 
 def _get_table_fieldnames(rows: list[dict[str, Any]]):
-    table_fieldnames = list(TABLE_FIELDNAMES)
-    for row in rows:
-        metadata = row["metadata"]
-        for key in flatten_dict(metadata):
-            if key.startswith("regex_metadata") and key not in table_fieldnames:
-                table_fieldnames.append(key)
-    return table_fieldnames
+    return list(TABLE_FIELDNAMES)
 
 
 def convert_to_csv(elements: Iterable[Element]) -> str:
@@ -336,7 +331,6 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "emphasized_text_contents": object,  # Optional[list[str]]
         "emphasized_text_tags": object,  # Optional[list[str]]
         "text_as_html": pd.StringDtype(),  # Optional[str]  # type: ignore
-        "regex_metadata": object,
         "max_characters": "Int64",  # Optional[int]
         "is_continuation": "boolean",  # Optional[bool]
         "detection_class_prob": float,  # Optional[float],
@@ -353,7 +347,6 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "data_source_date_processed": pd.StringDtype(),  # Optional[str]  # type: ignore
         "data_source_permissions_data": object,
         "embeddings": object,
-        "regex_metadata_key": object,
     }
 
 

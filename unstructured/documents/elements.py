@@ -8,7 +8,6 @@ import functools
 import hashlib
 import os
 import pathlib
-import re
 import uuid
 from itertools import groupby
 from types import MappingProxyType
@@ -127,14 +126,6 @@ class CoordinatesMetadata:
         return cls(points=points, system=system)
 
 
-class RegexMetadata(TypedDict):
-    """Metadata that is extracted from a document element via regex."""
-
-    text: str
-    start: int
-    end: int
-
-
 class Link(TypedDict):
     """Metadata related to extracted links"""
 
@@ -202,10 +193,11 @@ class ElementMetadata:
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
     parent_id: Optional[str]
-    # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
-    regex_metadata: Optional[dict[str, list[RegexMetadata]]]
 
     # -- e-mail specific metadata fields --
+    bcc_recipient: Optional[list[str]]
+    cc_recipient: Optional[list[str]]
+    email_message_id: Optional[str]
     sent_from: Optional[list[str]]
     sent_to: Optional[list[str]]
     subject: Optional[str]
@@ -224,7 +216,9 @@ class ElementMetadata:
     def __init__(
         self,
         attached_to_filename: Optional[str] = None,
+        bcc_recipient: Optional[list[str]] = None,
         category_depth: Optional[int] = None,
+        cc_recipient: Optional[list[str]] = None,
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
@@ -244,11 +238,11 @@ class ElementMetadata:
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
         links: Optional[list[Link]] = None,
+        email_message_id: Optional[str] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
         parent_id: Optional[str] = None,
-        regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
@@ -258,7 +252,9 @@ class ElementMetadata:
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
+        self.bcc_recipient = bcc_recipient
         self.category_depth = category_depth
+        self.cc_recipient = cc_recipient
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
@@ -286,11 +282,11 @@ class ElementMetadata:
         self.link_urls = link_urls
         self.link_start_indexes = link_start_indexes
         self.links = links
+        self.email_message_id = email_message_id
         self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
         self.parent_id = parent_id
-        self.regex_metadata = regex_metadata
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
@@ -462,14 +458,14 @@ class ConsolidationStrategy(enum.Enum):
     FIRST = "first"
     """Use the first value encountered, omit if not present in any elements."""
 
+    STRING_CONCATENATE = "string_concatenate"
+    """Combine the values of this field across elements. Only suitable for fields of `str` type."""
+
     LIST_CONCATENATE = "LIST_CONCATENATE"
     """Concatenate the list values across elements. Only suitable for fields of `List` type."""
 
     LIST_UNIQUE = "list_unique"
     """Union list values across elements, preserving order. Only suitable for `List` fields."""
-
-    REGEX = "regex"
-    """Combine regex-metadata of elements, adjust start and stop offsets for concatenated text."""
 
     @classmethod
     def field_consolidation_strategies(cls) -> dict[str, ConsolidationStrategy]:
@@ -481,6 +477,8 @@ class ConsolidationStrategy(enum.Enum):
         """
         return {
             "attached_to_filename": cls.FIRST,
+            "cc_recipient": cls.FIRST,
+            "bcc_recipient": cls.FIRST,
             "category_depth": cls.DROP,
             "coordinates": cls.DROP,
             "data_source": cls.FIRST,
@@ -502,17 +500,17 @@ class ConsolidationStrategy(enum.Enum):
             "link_urls": cls.LIST_CONCATENATE,
             "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
+            "email_message_id": cls.FIRST,
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
-            "regex_metadata": cls.REGEX,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
             "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --
@@ -538,7 +536,7 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     # -- generate sequence number for each element on a page --
     page_numbers = [e.metadata.page_number for e in elements]
     page_seq_pairs = [
-        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
+        seq_on_page for _, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
     ]
 
     # -- assign hash IDs to elements --
@@ -550,7 +548,7 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     # -- map old parent IDs to new ones --
     for e in elements:
         parent_id = e.metadata.parent_id
-        if not parent_id:
+        if not parent_id or parent_id not in old_to_new_mapping:
             continue
         e.metadata.parent_id = old_to_new_mapping[parent_id]
 
@@ -562,14 +560,13 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
 
     This decorator adds a post-processing step to a document partitioner.
 
-    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
-    - Adds `.metadata.regex-metadata` when `regex_metadata` keyword-argument is provided.
+    - Adds `metadata_filename` parameter to docstring if not present.
     - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
 
     """
 
     def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
-        if func.__doc__:
+        if func.__doc__:  # noqa: SIM102
             if (
                 "metadata_filename" in func.__code__.co_varnames
                 and "metadata_filename" not in func.__doc__
@@ -578,27 +575,11 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
                     "\nMetadata Parameters:\n\tmetadata_filename:"
                     + "\n\t\tThe filename to use in element metadata."
                 )
-            if (
-                "include_metadata" in func.__code__.co_varnames
-                and "include_metadata" not in func.__doc__
-            ):
-                func.__doc__ += (
-                    "\n\tinclude_metadata:"
-                    + """\n\t\tDetermines whether or not metadata is included in the metadata
-                    attribute on the elements in the output."""
-                )
 
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
             call_args = get_call_args_applying_defaults(func, *args, **kwargs)
-
-            regex_metadata: dict["str", "str"] = call_args.get("regex_metadata", {})
-            # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
-            # -- requested, otherwise it will serialize (because it's not None) when it has no
-            # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
-            if regex_metadata:
-                elements = _add_regex_metadata(elements, regex_metadata)
 
             unique_element_ids: bool = call_args.get("unique_element_ids", False)
             if unique_element_ids is False:
@@ -609,36 +590,6 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
         return wrapper
 
     return decorator
-
-
-def _add_regex_metadata(
-    elements: list[Element],
-    regex_metadata: dict[str, str] = {},
-) -> list[Element]:
-    """Adds metadata based on a user provided regular expression.
-
-    The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
-    """
-    for element in elements:
-        if isinstance(element, Text):
-            _regex_metadata: dict["str", list[RegexMetadata]] = {}
-            for field_name, pattern in regex_metadata.items():
-                results: list[RegexMetadata] = []
-                for result in re.finditer(pattern, element.text):
-                    start, end = result.span()
-                    results.append(
-                        {
-                            "text": element.text[start:end],
-                            "start": start,
-                            "end": end,
-                        },
-                    )
-                if len(results) > 0:
-                    _regex_metadata[field_name] = results
-
-            element.metadata.regex_metadata = _regex_metadata
-
-    return elements
 
 
 class ElementType:
@@ -726,9 +677,7 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if element_id is not None and not isinstance(
-            element_id, str
-        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+        if element_id is not None and not isinstance(element_id, str):  # type: ignore
             raise ValueError("element_id must be of type str or None.")
 
         self._element_id = element_id
@@ -1063,7 +1012,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
 }
 
 
-def _kvform_rehydrate_internal_elements(kv_pairs: list[dict]) -> list[FormKeyValuePair]:
+def _kvform_rehydrate_internal_elements(kv_pairs: list[dict[str, Any]]) -> list[FormKeyValuePair]:
     """
     The key_value_pairs metadata field contains (in the vast majority of cases)
     nested Text elements. Those need to be turned from dicts into Elements explicitly,
@@ -1081,17 +1030,17 @@ def _kvform_rehydrate_internal_elements(kv_pairs: list[dict]) -> list[FormKeyVal
             (kv_pair["value"]["custom_element"],) = elements_from_dicts(
                 [kv_pair["value"]["custom_element"]]
             )
-    return kv_pairs
+    return cast(list[FormKeyValuePair], kv_pairs)
 
 
-def _kvform_pairs_to_dict(kv_pairs: list[FormKeyValuePair]) -> list[dict]:
+def _kvform_pairs_to_dict(orig_kv_pairs: list[FormKeyValuePair]) -> list[dict[str, Any]]:
     """
     The key_value_pairs metadata field contains (in the vast majority of cases)
     nested Text elements. Those need to be turned from Elements to dicts recursively,
     e.g. when FormKeysValues.to_dict() is used.
 
     """
-    kv_pairs: list[dict] = copy.deepcopy(kv_pairs)
+    kv_pairs: list[dict[str, Any]] = copy.deepcopy(orig_kv_pairs)  # type: ignore
     for kv_pair in kv_pairs:
         if kv_pair["key"]["custom_element"] is not None:
             kv_pair["key"]["custom_element"] = kv_pair["key"]["custom_element"].to_dict()

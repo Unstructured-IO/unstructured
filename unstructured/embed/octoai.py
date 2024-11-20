@@ -2,57 +2,57 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
+from pydantic import Field, SecretStr
 
 from unstructured.documents.elements import (
     Element,
 )
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
-from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from openai import OpenAI
 
-OCTOAI_BASE_URL = "https://text.octoai.run/v1"
 
-
-@dataclass
 class OctoAiEmbeddingConfig(EmbeddingConfig):
-    api_key: str = enhanced_field(sensitive=True)
-    model_name: str = "thenlper/gte-large"
+    api_key: SecretStr
+    model_name: str = Field(default="thenlper/gte-large")
+    base_url: str = Field(default="https://text.octoai.run/v1")
+
+    @requires_dependencies(
+        ["openai", "tiktoken"],
+        extras="embed-octoai",
+    )
+    def get_client(self) -> "OpenAI":
+        """Creates an OpenAI python client to embed elements. Uses the OpenAI SDK."""
+        from openai import OpenAI
+
+        return OpenAI(api_key=self.api_key.get_secret_value(), base_url=self.base_url)
 
 
 @dataclass
 class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
     config: OctoAiEmbeddingConfig
     # Uses the OpenAI SDK
-    _client: Optional["OpenAI"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
 
-    @property
-    def client(self) -> "OpenAI":
-        if self._client is None:
-            self._client = self.create_client()
-        return self._client
-
-    @property
-    def exemplary_embedding(self) -> List[float]:
-        if self._exemplary_embedding is None:
-            self._exemplary_embedding = self.embed_query("Q")
-        return self._exemplary_embedding
+    def get_exemplary_embedding(self) -> List[float]:
+        return self.embed_query("Q")
 
     def initialize(self):
         pass
 
     def num_of_dimensions(self):
-        return np.shape(self.exemplary_embedding)
+        exemplary_embedding = self.get_exemplary_embedding()
+        return np.shape(exemplary_embedding)
 
     def is_unit_vector(self):
-        return np.isclose(np.linalg.norm(self.exemplary_embedding), 1.0)
+        exemplary_embedding = self.get_exemplary_embedding()
+        return np.isclose(np.linalg.norm(exemplary_embedding), 1.0)
 
     def embed_query(self, query):
-        response = self.client.embeddings.create(input=str(query), model=self.config.model_name)
+        client = self.config.get_client()
+        response = client.embeddings.create(input=str(query), model=self.config.model_name)
         return response.data[0].embedding
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
@@ -67,14 +67,3 @@ class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
         return elements
-
-    @EmbeddingEncoderConnectionError.wrap
-    @requires_dependencies(
-        ["openai", "tiktoken"],
-        extras="embed-octoai",
-    )
-    def create_client(self) -> "OpenAI":
-        """Creates an OpenAI python client to embed elements. Uses the OpenAI SDK."""
-        from openai import OpenAI
-
-        return OpenAI(api_key=self.config.api_key, base_url=OCTOAI_BASE_URL)

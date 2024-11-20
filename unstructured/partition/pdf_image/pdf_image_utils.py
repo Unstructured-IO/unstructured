@@ -17,16 +17,12 @@ from PIL import Image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
@@ -125,10 +121,10 @@ def save_elements(
     element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO]] = None,
+    file: bytes | IO[bytes] | None = None,
     is_image: bool = False,
     extract_image_block_to_payload: bool = False,
-    output_dir_path: Optional[str] = None,
+    output_dir_path: str | None = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -139,24 +135,31 @@ def save_elements(
     a specified directory or embedded into the element's payload as a base64-encoded string.
     """
 
-    if not output_dir_path:
-        if env_config.GLOBAL_WORKING_DIR_ENABLED:
-            output_dir_path = str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
-        else:
-            output_dir_path = str(Path.cwd() / "figures")
-    os.makedirs(output_dir_path, exist_ok=True)
+    # Determine the output directory path
+    if not extract_image_block_to_payload:
+        output_dir_path = output_dir_path or (
+            str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
+            if env_config.GLOBAL_WORKING_DIR_ENABLED
+            else str(Path.cwd() / "figures")
+        )
+
+        os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         if is_image:
             if file is None:
                 image_paths = [filename]
             else:
-                if hasattr(file, "seek"):
+                if isinstance(file, bytes):
+                    file_data = file
+                else:
                     file.seek(0)
-                temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir)
-                temp_file.write(file.read() if hasattr(file, "read") else file)
-                temp_file.flush()
-                image_paths = [temp_file.name]
+                    file_data = file.read()
+
+                tmp_file_path = os.path.join(temp_dir, "tmp_file")
+                with open(tmp_file_path, "wb") as tmp_file:
+                    tmp_file.write(file_data)
+                image_paths = [tmp_file_path]
         else:
             _image_paths = convert_pdf_to_image(
                 filename,
@@ -188,16 +191,12 @@ def save_elements(
             # The page number in the metadata may have been offset
             # by starting_page_number. Make sure we use the right
             # value for indexing!
+            assert el.metadata.page_number
             metadata_page_number = el.metadata.page_number
             page_index = metadata_page_number - starting_page_number
 
             figure_number += 1
             try:
-                basename = "table" if el.category == ElementType.TABLE else "figure"
-                output_f_path = os.path.join(
-                    output_dir_path,
-                    f"{basename}-{metadata_page_number}-{figure_number}.jpg",
-                )
                 image_path = image_paths[page_index]
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
@@ -209,6 +208,12 @@ def save_elements(
                     el.metadata.image_base64 = img_base64_str
                     el.metadata.image_mime_type = "image/jpeg"
                 else:
+                    basename = "table" if el.category == ElementType.TABLE else "figure"
+                    assert output_dir_path
+                    output_f_path = os.path.join(
+                        output_dir_path,
+                        f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                    )
                     write_image(cropped_image, output_f_path)
                     # add image path to element metadata
                     el.metadata.image_path = output_f_path
@@ -412,21 +417,6 @@ def convert_pdf_to_images(
 
         for image in chunk_images:
             yield image
-
-
-def get_the_last_modification_date_pdf_or_img(
-    file: Optional[bytes | IO[bytes]] = None,
-    filename: Optional[str] = "",
-    date_from_file_object: bool = False,
-) -> str | None:
-    last_modification_date = None
-    if not file and filename:
-        last_modification_date = get_last_modified_date(filename=filename)
-    elif not filename and file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-    return last_modification_date
 
 
 def remove_control_characters(text: str) -> str:

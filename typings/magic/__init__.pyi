@@ -1,0 +1,6 @@
+from __future__ import annotations
+
+from os import PathLike
+
+def from_buffer(buffer: bytes | str, mime: bool = ...) -> str: ...
+def from_file(filename: bytes | str | PathLike[str], mime: bool = ...) -> str: ...

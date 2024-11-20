@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import Optional
 from unittest.mock import patch
 
 import numpy as np
@@ -21,6 +22,7 @@ from unstructured.partition.utils.constants import (
     Source,
 )
 from unstructured.partition.utils.ocr_models.google_vision_ocr import OCRAgentGoogleVision
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.partition.utils.ocr_models.paddle_ocr import OCRAgentPaddle
 from unstructured.partition.utils.ocr_models.tesseract_ocr import (
     OCRAgentTesseract,
@@ -85,10 +87,7 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = OCRAgentTesseract()
-    ocr_layout = ocr_agent.get_layout_from_image(
-        image,
-        ocr_languages="eng",
-    )
+    ocr_layout = ocr_agent.get_layout_from_image(image)
 
     expected_layout = [
         TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_TESSERACT),
@@ -128,7 +127,7 @@ def mock_ocr(*args, **kwargs):
     ]
 
 
-def monkeypatch_load_agent(language: str):
+def monkeypatch_load_agent(*args):
     class MockAgent:
         def __init__(self):
             self.ocr = mock_ocr
@@ -145,10 +144,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     image = Image.new("RGB", (100, 100))
 
-    ocr_layout = OCRAgentPaddle().get_layout_from_image(
-        image,
-        ocr_languages="eng",
-    )
+    ocr_layout = OCRAgentPaddle().get_layout_from_image(image)
 
     expected_layout = [
         TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_PADDLE),
@@ -168,10 +164,7 @@ def test_get_ocr_text_from_image_tesseract(monkeypatch):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = OCRAgentTesseract()
-    ocr_text = ocr_agent.get_text_from_image(
-        image,
-        ocr_languages="eng",
-    )
+    ocr_text = ocr_agent.get_text_from_image(image)
 
     assert ocr_text == "Hello World"
 
@@ -186,10 +179,7 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = OCRAgentPaddle()
-    ocr_text = ocr_agent.get_text_from_image(
-        image,
-        ocr_languages="eng",
-    )
+    ocr_text = ocr_agent.get_text_from_image(image)
 
     assert ocr_text == "Hello\n\nWorld\n\n!"
 
@@ -237,12 +227,13 @@ def google_vision_client(google_vision_text_annotation):
     Response = namedtuple("Response", "full_text_annotation")
 
     class FakeGoogleVisionClient:
-        def document_text_detection(self, image):
+        def document_text_detection(self, image, image_context):
             return Response(full_text_annotation=google_vision_text_annotation)
 
     class OCRAgentFakeGoogleVision(OCRAgentGoogleVision):
-        def __init__(self):
+        def __init__(self, language: Optional[str] = None):
             self.client = FakeGoogleVisionClient()
+            self.language = language
 
     return OCRAgentFakeGoogleVision()
 
@@ -251,7 +242,7 @@ def test_get_ocr_from_image_google_vision(google_vision_client):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = google_vision_client
-    ocr_text = ocr_agent.get_text_from_image(image, ocr_languages="eng")
+    ocr_text = ocr_agent.get_text_from_image(image)
 
     assert ocr_text == "Hello World!"
 
@@ -260,7 +251,7 @@ def test_get_layout_from_image_google_vision(google_vision_client):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = google_vision_client
-    regions = ocr_agent.get_layout_from_image(image, ocr_languages="eng")
+    regions = ocr_agent.get_layout_from_image(image)
     assert len(regions) == 1
     assert regions[0].text == "Hello World!"
     assert regions[0].source == Source.OCR_GOOGLEVISION
@@ -274,7 +265,7 @@ def test_get_layout_elements_from_image_google_vision(google_vision_client):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = google_vision_client
-    layout_elements = ocr_agent.get_layout_elements_from_image(image, ocr_languages="eng")
+    layout_elements = ocr_agent.get_layout_elements_from_image(image)
     assert len(layout_elements) == 1
 
 
@@ -428,7 +419,8 @@ def mock_ocr_layout():
 
 def test_get_table_tokens(mock_ocr_layout):
     with patch.object(OCRAgentTesseract, "get_layout_from_image", return_value=mock_ocr_layout):
-        table_tokens = ocr.get_table_tokens(table_element_image=None)
+        ocr_agent = OCRAgent.get_agent(language="eng")
+        table_tokens = ocr.get_table_tokens(table_element_image=None, ocr_agent=ocr_agent)
         expected_tokens = [
             {
                 "bbox": [15, 25, 35, 45],

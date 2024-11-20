@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, Optional, Protocol, Sequence
+from typing import IO, Any, Iterator, Protocol, Sequence
 
 import pptx
 from pptx.presentation import Presentation
@@ -22,6 +22,7 @@ from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
 from unstructured.chunking import add_chunking_strategy
+from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -32,15 +33,9 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    convert_ms_office_table_to_text,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.file_utils.model import FileType
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_email_address,
     is_possible_narrative_text,
@@ -82,21 +77,15 @@ class AbstractPicturePartitioner(Protocol):
 # ================================================================================================
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.PPTX)
+@apply_metadata(FileType.PPTX)
 @add_chunking_strategy
 def partition_pptx(
-    filename: Optional[str] = None,
+    filename: str | None = None,
     *,
-    file: Optional[IO[bytes]] = None,
-    date_from_file_object: bool = False,
-    detect_language_per_element: bool = False,
+    file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
-    include_slide_notes: Optional[bool] = None,
+    include_slide_notes: bool | None = None,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
@@ -111,12 +100,6 @@ def partition_pptx(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
-    metadata_filename
-        The filename to use for the metadata. Relevant because partition_ppt() converts its
-        (legacy) .ppt document to .pptx before partition. We want the filename of the original
-        .ppt source file in the metadata.
-    metadata_last_modified
-        The last modified date for the document.
     include_slide_notes
         If True, includes the slide notes as element
     infer_table_structure
@@ -125,41 +108,22 @@ def partition_pptx(
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
         Indicates what page number should be assigned to the first slide in the presentation.
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """
     opts = PptxPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
         include_slide_notes=include_slide_notes,
         infer_table_structure=infer_table_structure,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
         strategy=strategy,
         starting_page_number=starting_page_number,
     )
 
-    elements = _PptxPartitioner.iter_presentation_elements(opts)
-    elements = apply_lang_metadata(
-        elements=elements,
-        languages=languages,
-        detect_language_per_element=detect_language_per_element,
-    )
-    return list(elements)
+    return list(_PptxPartitioner.iter_presentation_elements(opts))
 
 
 class _PptxPartitioner:
@@ -249,38 +213,6 @@ class _PptxPartitioner:
         PicturePartitionerCls = self._opts.picture_partitioner
         yield from PicturePartitionerCls.iter_elements(picture, self._opts)
 
-    def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
-        """Generate Title element for each paragraph in title `shape`.
-
-        Text is most likely a title, but in the rare case that the title shape was used
-        for the slide body text, also check for bulleted paragraphs."""
-        if self._shape_is_off_slide(shape):
-            return
-
-        depth = 0
-        for paragraph in shape.text_frame.paragraphs:
-            text = paragraph.text
-            if text.strip() == "":
-                continue
-
-            if self._is_bulleted_paragraph(paragraph):
-                bullet_depth = paragraph.level or 0
-                yield ListItem(
-                    text=text,
-                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
-                    detection_origin=DETECTION_ORIGIN,
-                )
-            elif is_email_address(text):
-                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
-            else:
-                # increment the category depth by the paragraph increment in the shape
-                yield Title(
-                    text=text,
-                    metadata=self._opts.text_metadata(category_depth=depth),
-                    detection_origin=DETECTION_ORIGIN,
-                )
-                depth += 1  # Cannot enumerate because we want to skip empty paragraphs
-
     def _iter_shape_elements(self, shape: Shape) -> Iterator[Element]:
         """Generate Text or subtype element for each paragraph in `shape`."""
         if self._shape_is_off_slide(shape):
@@ -316,19 +248,56 @@ class _PptxPartitioner:
 
         An empty table does not produce an element.
         """
-        text_table = convert_ms_office_table_to_text(graphfrm.table, as_html=False).strip()
-        if not text_table:
+        if not (rows := list(graphfrm.table.rows)):
             return
-        html_table = None
-        if self._opts.infer_table_structure:
-            html_table = convert_ms_office_table_to_text(graphfrm.table, as_html=True)
-        yield Table(
-            text=text_table,
-            metadata=self._opts.table_metadata(html_table),
-            detection_origin=DETECTION_ORIGIN,
+
+        html_text = htmlify_matrix_of_cell_texts(
+            [[cell.text for cell in row.cells] for row in rows]
+        )
+        html_table = HtmlTable.from_html_text(html_text)
+
+        if not html_table.text:
+            return
+
+        metadata = self._opts.table_metadata(
+            html_table.html if self._opts.infer_table_structure else None
         )
 
-    def _order_shapes(self, slide: Slide) -> tuple[Optional[Shape], Sequence[BaseShape]]:
+        yield Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
+
+    def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
+        """Generate Title element for each paragraph in title `shape`.
+
+        Text is most likely a title, but in the rare case that the title shape was used
+        for the slide body text, also check for bulleted paragraphs."""
+        if self._shape_is_off_slide(shape):
+            return
+
+        depth = 0
+        for paragraph in shape.text_frame.paragraphs:
+            text = paragraph.text
+            if text.strip() == "":
+                continue
+
+            if self._is_bulleted_paragraph(paragraph):
+                bullet_depth = paragraph.level or 0
+                yield ListItem(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=bullet_depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+            elif is_email_address(text):
+                yield EmailAddress(text=text, detection_origin=DETECTION_ORIGIN)
+            else:
+                # increment the category depth by the paragraph increment in the shape
+                yield Title(
+                    text=text,
+                    metadata=self._opts.text_metadata(category_depth=depth),
+                    detection_origin=DETECTION_ORIGIN,
+                )
+                depth += 1  # Cannot enumerate because we want to skip empty paragraphs
+
+    def _order_shapes(self, slide: Slide) -> tuple[Shape | None, Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
 
         Returns the title shape if it exists and the ordered shapes."""
@@ -372,25 +341,19 @@ class PptxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
-        file: Optional[IO[bytes]],
-        file_path: Optional[str],
+        file: IO[bytes] | None,
+        file_path: str | None,
         include_page_breaks: bool,
-        include_slide_notes: Optional[bool],
+        include_slide_notes: bool | None,
         infer_table_structure: bool,
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
         strategy: str,
         starting_page_number: int = 1,
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._include_slide_notes = include_slide_notes
         self._infer_table_structure = infer_table_structure
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number - 1
@@ -423,7 +386,13 @@ class PptxPartitionerOptions:
             return
         # -- only emit page-breaks when enabled --
         if self._include_page_breaks:
-            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
+            yield PageBreak(
+                "",
+                detection_origin=DETECTION_ORIGIN,
+                metadata=ElementMetadata(
+                    last_modified=self.last_modified, page_number=self.page_number - 1
+                ),
+            )
 
     @lazyproperty
     def infer_table_structure(self) -> bool:
@@ -431,34 +400,19 @@ class PptxPartitionerOptions:
         return self._infer_table_structure
 
     @lazyproperty
-    def last_modified(self) -> Optional[str]:
+    def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format, and any last-modified date for the file
-        # -- would be just now.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
+        if not self._file_path:
+            return None
 
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
-
-        return None
+        return (
+            None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
+        )
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @property
     def page_number(self) -> int:

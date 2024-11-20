@@ -1,7 +1,5 @@
 -c ./deps/constraints.txt
 -c base.txt
 -c test.txt
-jupyter
-ipython
 pip-tools
 pre-commit

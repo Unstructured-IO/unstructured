@@ -3,4 +3,4 @@
 set -e
 
 # $1 is the path for chroma to write the contents to. The symbol "&" runs process in background
-chroma run --path "$1" &
+python "$VIRTUAL_ENV/bin/chroma" run --path "$1" &

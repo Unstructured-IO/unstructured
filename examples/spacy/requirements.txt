@@ -1,2 +1,0 @@
-unstructured[local-inference]
-spacy

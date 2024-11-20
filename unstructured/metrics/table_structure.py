@@ -4,6 +4,7 @@ from PIL import Image
 
 from unstructured.partition.pdf import convert_pdf_to_images
 from unstructured.partition.pdf_image.ocr import get_table_tokens
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 
@@ -21,8 +22,10 @@ def image_or_pdf_to_dataframe(filename: str) -> pd.DataFrame:
     else:
         image = Image.open(filename).convert("RGB")
 
+    ocr_agent = OCRAgent.get_agent(language="eng")
+
     return tables_agent.run_prediction(
-        image, ocr_tokens=get_table_tokens(image), result_format="dataframe"
+        image, ocr_tokens=get_table_tokens(image, ocr_agent), result_format="dataframe"
     )
 
 

@@ -140,13 +140,9 @@ def test_partition_docx_processes_table():
     assert isinstance(elements[0], Table)
     assert elements[0].text == ("Header Col 1 Header Col 2 Lorem ipsum A Link example")
     assert elements[0].metadata.text_as_html == (
-        "<table>\n"
-        "<thead>\n"
-        "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
-        "</thead>\n"
-        "<tbody>\n"
-        "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
-        "</tbody>\n"
+        "<table>"
+        "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>A Link example</td></tr>"
         "</table>"
     )
     assert elements[0].metadata.filename == "fake_table.docx"
@@ -214,22 +210,6 @@ def test_partition_docx_detects_lists():
     assert sum(1 for e in elements if isinstance(e, ListItem)) == 10
 
 
-# -- `include_metadata` arg ----------------------------------------------------------------------
-
-
-def test_partition_docx_from_filename_excludes_metadata_when_so_instructed():
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_metadata=False)
-    assert all(e.metadata.to_dict() == {} for e in elements)
-
-
-def test_partition_docx_from_file_excludes_metadata_when_so_instructed():
-    with open(example_doc_path("simple.docx"), "rb") as f:
-        assert all(
-            element.metadata.to_dict() == {}
-            for element in partition_docx(file=f, include_metadata=False)
-        )
-
-
 # -- .metadata.filename --------------------------------------------------------------------------
 
 
@@ -247,73 +227,44 @@ def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_docx_metadata_date(mocker: MockFixture):
+def test_partition_docx_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value="2029-07-05T09:24:28"
+        "unstructured.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_docx(example_doc_path("fake.docx"))
 
-    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
+    assert elements[0].metadata.last_modified == filesystem_last_modified
 
 
-def test_partition_docx_metadata_date_with_custom_metadata(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value="2023-11-01T14:13:07"
-    )
-
-    elements = partition_docx(
-        example_doc_path("fake.docx"), metadata_last_modified="2020-07-05T09:24:28"
-    )
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
-
-
-def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2029-07-05T09:24:28",
-    )
-
-    with open(example_doc_path("fake.docx"), "rb") as f:
+def test_partition_docx_from_file_gets_last_modified_None():
+    with open(example_doc_path("simple.docx"), "rb") as f:
         elements = partition_docx(file=f)
 
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture):
+def test_partition_docx_from_file_path_prefers_metadata_last_modified(mocker: MockFixture):
+    filesystem_last_modified = "2023-11-01T14:13:07"
+    metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2029-07-05T09:24:28",
+        "unstructured.partition.docx.get_last_modified_date", return_value=filesystem_last_modified
     )
 
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file=f, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
-
-
-def test_partition_docx_from_file_metadata_date_with_custom_metadata(mocker: MockFixture):
-    mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value="2023-11-01T14:13:07",
+    elements = partition_docx(
+        example_doc_path("fake.docx"), metadata_last_modified=metadata_last_modified
     )
 
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file=f, metadata_last_modified="2020-07-05T09:24:28")
-
-    assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
-def test_partition_docx_from_file_without_metadata_date():
-    """Test partition_docx() with file that are not possible to get last modified date"""
-    with open(example_doc_path("fake.docx"), "rb") as f:
-        sf = tempfile.SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_docx(file=sf, date_from_file_object=True)
+def test_partition_docx_from_file_prefers_metadata_last_modified():
+    metadata_last_modified = "2020-07-05T09:24:28"
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        elements = partition_docx(file=f, metadata_last_modified=metadata_last_modified)
 
-    assert elements[0].metadata.last_modified is None
+    assert elements[0].metadata.last_modified == metadata_last_modified
 
 
 # ------------------------------------------------------------------------------------------------
@@ -511,10 +462,7 @@ def test_partition_docx_respects_languages_arg():
 def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = example_doc_path("handbook-1p.docx")
-        partition_docx(
-            filename=filename,
-            languages="eng",  # pyright: ignore[reportArgumentType]
-        )
+        partition_docx(filename=filename, languages="eng")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -748,13 +696,10 @@ def opts_args() -> dict[str, Any]:
     compact for testing purposes.
     """
     return {
-        "date_from_file_object": False,
         "file": None,
         "file_path": None,
         "include_page_breaks": True,
         "infer_table_structure": True,
-        "metadata_file_path": None,
-        "metadata_last_modified": None,
         "strategy": None,
     }
 
@@ -855,15 +800,7 @@ class DescribeDocxPartitionerOptions:
 
     # -- .last_modified --------------------------
 
-    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        assert opts.last_modified == "2024-03-05T17:02:53"
-
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+    def it_gets_last_modified_from_the_filesystem_when_file_path_is_provided(
         self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
         opts_args["file_path"] = "a/b/document.docx"
@@ -875,51 +812,22 @@ class DescribeDocxPartitionerOptions:
         get_last_modified_date_.assert_called_once_with("a/b/document.docx")
         assert last_modified == "2024-04-02T20:32:35"
 
-    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_no_file_path_is_provided(
+        self, opts_args: dict[str, Any]
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
-        opts_args["date_from_file_object"] = True
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
         opts = DocxPartitionerOptions(**opts_args)
 
-        last_modified = opts.last_modified
-
-        get_last_modified_date_from_file_.assert_called_once_with(file)
-        assert last_modified == "2024-04-02T20:42:07"
-
-    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
-        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
-    ):
-        file = io.BytesIO(b"abcdefg")
-        opts_args["file"] = file
-        opts_args["date_from_file_object"] = False
-        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        last_modified = opts.last_modified
-
-        get_last_modified_date_from_file_.assert_not_called()
-        assert last_modified is None
+        assert opts.last_modified is None
 
     # -- .metadata_file_path ---------------------
 
-    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        opts_args["file_path"] = "x/y/z.docx"
-        opts_args["metadata_file_path"] = "a/b/c.docx"
-        opts = DocxPartitionerOptions(**opts_args)
-
-        assert opts.metadata_file_path == "a/b/c.docx"
-
     @pytest.mark.parametrize("file_path", ["u/v/w.docx", None])
-    def and_it_falls_back_to_the_document_file_path_otherwise(
+    def it_uses_the_file_path_argument_when_provided(
         self, file_path: str | None, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = file_path
-        opts_args["metadata_file_path"] = None
         opts = DocxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == file_path
@@ -1069,12 +977,6 @@ class DescribeDocxPartitionerOptions:
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
         return function_mock(request, "unstructured.partition.docx.get_last_modified_date")
 
-    @pytest.fixture()
-    def get_last_modified_date_from_file_(self, request: FixtureRequest):
-        return function_mock(
-            request, "unstructured.partition.docx.get_last_modified_date_from_file"
-        )
-
 
 class Describe_DocxPartitioner:
     """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
@@ -1086,13 +988,9 @@ class Describe_DocxPartitioner:
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
 
         assert _DocxPartitioner(opts)._convert_table_to_html(table) == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>A link example</td></tr>"
             "</table>"
         )
 
@@ -1118,25 +1016,13 @@ class Describe_DocxPartitioner:
         # -- re.sub() strips out the extra padding inserted by tabulate --
         html = re.sub(r" +<", "<", _DocxPartitioner(opts)._convert_table_to_html(table))
 
-        expected_lines = [
-            "<table>",
-            "<thead>",
-            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
-            "</thead>",
-            "<tbody>",
-            "<tr><td>d</td><td><table>",
-            "<tbody>",
-            "<tr><td>e</td><td>f</td></tr>",
-            "<tr><td>g&amp;t</td><td>h</td></tr>",
-            "</tbody>",
-            "</table></td><td>i</td></tr>",
-            "<tr><td>j</td><td>k</td><td>l</td></tr>",
-            "</tbody>",
-            "</table>",
-        ]
-        actual_lines = html.splitlines()
-        for expected, actual in zip(expected_lines, actual_lines):
-            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
+        assert html == (
+            "<table>"
+            "<tr><td>a</td><td>&gt;b&lt;</td><td>c</td></tr>"
+            "<tr><td>d</td><td>e f g&amp;t h</td><td>i</td></tr>"
+            "<tr><td>j</td><td>k</td><td>l</td></tr>"
+            "</table>"
+        )
 
     def it_can_convert_a_table_to_plain_text(self, opts_args: dict[str, Any]):
         opts = DocxPartitionerOptions(**opts_args)
@@ -1216,10 +1102,7 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
-            "</table>"
+            "<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table>"
         )
         # --
         # ┌───┐
@@ -1231,10 +1114,7 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
-            "</table>"
+            "<table><tr><td>a</td><td/></tr><tr><td>b</td><td>c</td></tr></table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
         # ┌───────┐
@@ -1246,9 +1126,9 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>a</td><td/></tr>"
+            "<tr><td>b</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1261,9 +1141,9 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>b</td><td/></tr>"
+            "<tr><td>a</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # -- late-start, early-end, and >2 rows vertical span --
@@ -1280,14 +1160,11 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "a b c d e f", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
-            "</thead>\n<tbody>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>a</td><td>a</td><td>b</td><td>c</td></tr>"
+            "<tr><td/><td>d</td><td>d</td><td/></tr>"
+            "<tr><td>e</td><td>d</td><td>d</td><td>f</td></tr>"
+            "<tr><td/><td>d</td><td>d</td><td/></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1296,19 +1173,15 @@ class Describe_DocxPartitioner:
         assert type(e).__name__ == "Table"
         assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
-            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
-            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
-            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
-            "</tbody>\n"
+            "<table>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            "<tr><td/><td>More</td><td/></tr>"
+            "<tr><td>Dato</td><td/></tr>"
+            "<tr><td>WTF?</td><td>WTF?</td><td/></tr>"
+            "<tr><td>Strange</td><td>Strange</td><td/></tr>"
+            "<tr><td/><td>Format</td><td>Format</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
 

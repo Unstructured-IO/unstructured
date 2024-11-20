@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import logging
 import re
 
 import pytest
 import vcr
-from label_studio_sdk.client import Client
+from label_studio_sdk import Client
 
 from test_unstructured.unit_utils import assign_hash_ids
-from unstructured.documents.elements import NarrativeText, Title
+from unstructured.documents.elements import Element, NarrativeText, Title
 from unstructured.staging import label_studio
 
 
@@ -19,7 +21,9 @@ def elements():
     "test_unstructured/vcr_fixtures/cassettes/label_studio_upload.yaml",
     allow_playback_repeats=True,
 )
-def test_upload_label_studio_data_with_sdk(caplog, elements):
+def test_upload_label_studio_data_with_sdk(
+    caplog: pytest.LogCaptureFixture, elements: list[Element]
+):
     """
     Testing Instructions
     ====================
@@ -69,7 +73,7 @@ def test_upload_label_studio_data_with_sdk(caplog, elements):
     assert bool(success_posting_tasks_status.search(caplog.text))
 
 
-def test_convert_to_label_studio_data(elements):
+def test_convert_to_label_studio_data(elements: list[Element]):
     label_studio_data = label_studio.stage_for_label_studio(elements)
 
     assert label_studio_data[0]["data"]["text"] == "Title 1"
@@ -79,13 +83,13 @@ def test_convert_to_label_studio_data(elements):
     assert "ref_id" in label_studio_data[1]["data"]
 
 
-def test_specify_text_name(elements):
+def test_specify_text_name(elements: list[Element]):
     label_studio_data = label_studio.stage_for_label_studio(elements, text_field="random_text")
     assert "random_text" in label_studio_data[0]["data"]
     assert label_studio_data[0]["data"]["random_text"] == "Title 1"
 
 
-def test_specify_id_name(elements):
+def test_specify_id_name(elements: list[Element]):
     label_studio_data = label_studio.stage_for_label_studio(elements, id_field="random_id")
     assert "random_id" in label_studio_data[0]["data"]
 
@@ -129,7 +133,7 @@ def test_created_annotation():
         (1.25, True, ValueError),
     ],
 )
-def test_init_prediction(score, raises, exception):
+def test_init_prediction(score: float | None, raises: bool, exception: Exception | None):
     result = [
         label_studio.LabelStudioResult(
             type="choices",

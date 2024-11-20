@@ -4,7 +4,6 @@ filetype
 python-magic
 lxml
 nltk
-tabulate
 requests
 beautifulsoup4
 emoji
@@ -21,3 +20,5 @@ unstructured-client
 wrapt
 tqdm
 psutil
+python-oxmsg
+html5lib

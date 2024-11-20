@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-import html
 import io
 import itertools
 import os
 import tempfile
 import zipfile
-from typing import IO, Any, Iterator, Optional, Protocol, Type
+from typing import IO, Any, Iterator, Protocol, Type
 
-# -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
 from docx.document import Document
 from docx.enum.section import WD_SECTION_START
@@ -23,11 +21,11 @@ from docx.text.hyperlink import Hyperlink
 from docx.text.pagebreak import RenderedPageBreak
 from docx.text.paragraph import Paragraph
 from docx.text.run import Run
-from tabulate import tabulate
 from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -43,14 +41,9 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.file_utils.model import FileType
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -62,6 +55,7 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "docx"
+# -- CT_* stands for "complex-type", an XML element type in docx parlance --
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
 BlockItem: TypeAlias = "Paragraph | DocxTable"
 
@@ -103,22 +97,16 @@ class PicturePartitionerT(Protocol):
 # ================================================================================================
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.DOCX)
+@apply_metadata(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(
-    filename: Optional[str] = None,
+    filename: str | None = None,
     *,
-    date_from_file_object: bool = False,
-    detect_language_per_element: bool = False,
-    file: Optional[IO[bytes]] = None,
+    file: IO[bytes] | None = None,
     include_page_breaks: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
-    strategy: Optional[str] = None,
+    strategy: str | None = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -143,39 +131,21 @@ def partition_docx(
         to .docx before partition. We want the original source filename in the metadata.
     metadata_last_modified
         The last modified date for the document.
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
         Assign this number to the first page of this document and increment the page number from
         there.
     """
     opts = DocxPartitionerOptions.load(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         include_page_breaks=include_page_breaks,
         infer_table_structure=infer_table_structure,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
         strategy=strategy,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
 
-    elements = apply_lang_metadata(
-        elements=elements,
-        languages=languages,
-        detect_language_per_element=detect_language_per_element,
-    )
     return list(elements)
 
 
@@ -195,23 +165,17 @@ class DocxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         file: IO[bytes] | None,
         file_path: str | None,
         include_page_breaks: bool,
         infer_table_structure: bool,
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
         strategy: str | None = None,
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
@@ -254,37 +218,22 @@ class DocxPartitionerOptions:
         return self._infer_table_structure
 
     @lazyproperty
-    def last_modified(self) -> Optional[str]:
+    def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format, and any last-modified date for the file
-        # -- would be just now.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
+        if not self._file_path:
+            return None
 
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
-
-        return None
+        return (
+            None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
+        )
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @property
-    def metadata_page_number(self) -> Optional[int]:
+    def metadata_page_number(self) -> int | None:
         """The current page number to report in metadata, or None if we can't really tell.
 
         Page numbers are not added to element metadata if we can't find any page-breaks in the
@@ -497,7 +446,7 @@ class _DocxPartitioner:
         # NOTE(scanny) - if all that fails we give it the default `Text` element-type
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
-    def _convert_table_to_html(self, table: DocxTable, is_nested: bool = False) -> str:
+    def _convert_table_to_html(self, table: DocxTable) -> str:
         """HTML string version of `table`.
 
         Example:
@@ -519,44 +468,38 @@ class _DocxPartitioner:
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
             """Generate the text of each paragraph or table in `cell` as a separate string.
 
-            A table nested in `cell` is converted to HTML and emitted as that string.
+            A table nested in `cell` is converted to the normalized text it contains.
             """
             for block_item in cell.iter_inner_content():
-                if isinstance(block_item, Paragraph):
+                if isinstance(paragraph := block_item, Paragraph):
                     # -- all docx content is ultimately in a paragraph; a nested table contributes
                     # -- structure only
-                    yield f"{html.escape(block_item.text)}"
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield self._convert_table_to_html(block_item, is_nested=True)
+                    yield paragraph.text
+                elif isinstance(table := block_item, DocxTable):
+                    for row in table.rows:
+                        yield from iter_row_cells_as_text(row)
 
         def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
-            """Generate the text of each cell in `row` as a separate string.
+            """Generate the normalized text of each cell in `row` as a separate string.
 
-            The text of each paragraph within a cell is separated from the next by a newline
-            (`"\n"`). A table nested in a cell is first converted to HTML and then included as a
-            string, also separated by a newline.
+            The text of each paragraph within a cell is not separated. A table nested in a cell is
+            converted to a normalized string of its contents and combined with the text of the
+            cell that contains the table.
             """
-            # -- each omitted cell at the start of the row (pretty rare) gets the empty string --
+            # -- Each omitted cell at the start of the row (pretty rare) gets the empty string.
+            # -- This preserves column alignment when one or more initial cells are omitted.
             for _ in range(row.grid_cols_before):
                 yield ""
 
             for cell in row.cells:
-                yield "\n".join(iter_cell_block_items(cell))
+                cell_text = " ".join(iter_cell_block_items(cell))
+                yield " ".join(cell_text.split())
 
-            # -- each omitted cell at the end of the row (also rare) gets the empty string --
+            # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
                 yield ""
 
-        return tabulate(
-            [list(iter_row_cells_as_text(row)) for row in table.rows],
-            headers=[] if is_nested else "firstrow",
-            # -- tabulate isn't really designed for recursive tables so we have to do any
-            # -- HTML-escaping for ourselves. `unsafehtml` disables tabulate html-escaping of cell
-            # -- contents.
-            tablefmt="unsafehtml",
-        )
+        return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
 
     @lazyproperty
     def _document(self) -> Document:
@@ -946,7 +889,7 @@ class _DocxPartitioner:
         # Other styles
         return 0
 
-    def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+    def _parse_paragraph_text_for_element_type(self, paragraph: Paragraph) -> Type[Text] | None:
         """Attempt to differentiate the element-type by inspecting the raw text."""
         text = paragraph.text.strip()
 
@@ -963,7 +906,7 @@ class _DocxPartitioner:
 
         return None
 
-    def _style_based_element_type(self, paragraph: Paragraph) -> Optional[Type[Text]]:
+    def _style_based_element_type(self, paragraph: Paragraph) -> Type[Text] | None:
         """Element-type for `paragraph` based on its paragraph-style.
 
         Returns `None` when the style doesn't tell us anything useful, including when it

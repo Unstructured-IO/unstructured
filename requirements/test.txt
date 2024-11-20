@@ -6,24 +6,25 @@
 #
 annotated-types==0.7.0
     # via pydantic
+anyio==4.6.2.post1
+    # via
+    #   -c ./base.txt
+    #   httpx
 appdirs==1.4.4
-    # via
-    #   label-studio-sdk
-    #   label-studio-tools
-attrs==23.2.0
-    # via
-    #   jsonschema
-    #   referencing
+    # via label-studio-sdk
+attrs==24.2.0
+    # via jsonschema
 autoflake==2.3.1
     # via -r ./test.in
-black==24.4.2
+black==24.10.0
     # via -r ./test.in
-certifi==2024.7.4
+certifi==2024.8.30
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
+    #   httpcore
+    #   httpx
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./base.txt
     #   requests
@@ -31,15 +32,17 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.5.4
+    #   nltk
+coverage[toml]==7.6.4
     # via
     #   -r ./test.in
     #   pytest-cov
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
+    #   anyio
     #   pytest
-flake8==7.1.0
+flake8==7.1.1
     # via
     #   -r ./test.in
     #   flake8-print
@@ -47,68 +50,100 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.64.1
-    # via -r ./test.in
-idna==3.7
+grpcio==1.67.0
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./test.in
+h11==0.14.0
     # via
     #   -c ./base.txt
-    #   requests
-    #   yarl
-iniconfig==2.0.0
-    # via pytest
-jsonschema==4.23.0
-    # via label-studio-sdk
-jsonschema-specifications==2023.12.1
-    # via jsonschema
-label-studio-sdk==0.0.34
-    # via -r ./test.in
-label-studio-tools==0.0.4
-    # via label-studio-sdk
-lxml==5.2.2
+    #   httpcore
+httpcore==1.0.6
+    # via
+    #   -c ./base.txt
+    #   httpx
+httpx==0.27.2
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-    #   label-studio-tools
+idna==3.10
+    # via
+    #   -c ./base.txt
+    #   anyio
+    #   httpx
+    #   requests
+    #   yarl
+ijson==3.3.0
+    # via label-studio-sdk
+iniconfig==2.0.0
+    # via pytest
+joblib==1.4.2
+    # via
+    #   -c ./base.txt
+    #   nltk
+jsonschema==3.2.0
+    # via label-studio-sdk
+label-studio-sdk==1.0.5
+    # via -r ./test.in
+liccheck==0.9.2
+    # via -r ./test.in
+lxml==5.3.0
+    # via
+    #   -c ./base.txt
+    #   label-studio-sdk
 mccabe==0.7.0
     # via flake8
-multidict==6.0.5
+multidict==6.1.0
     # via yarl
-mypy==1.10.1
+mypy==1.13.0
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
     #   -c ./base.txt
     #   black
     #   mypy
-packaging==23.2
+nltk==3.9.1
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./base.txt
+    #   label-studio-sdk
+numpy==1.26.4
+    # via
+    #   -c ./base.txt
+    #   pandas
+packaging==24.1
+    # via
     #   -c ./base.txt
     #   black
     #   pytest
+pandas==2.2.3
+    # via label-studio-sdk
 pathspec==0.12.1
     # via black
-platformdirs==3.10.0
-    # via
-    #   -c ././deps/constraints.txt
-    #   black
+pillow==11.0.0
+    # via label-studio-sdk
+platformdirs==4.3.6
+    # via black
 pluggy==1.5.0
     # via pytest
-pycodestyle==2.12.0
+propcache==0.2.0
+    # via yarl
+pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.8.2
+pydantic==2.9.2
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
 pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.2.2
+pyrsistent==0.20.0
+    # via jsonschema
+pytest==8.3.3
     # via
     #   pytest-cov
     #   pytest-mock
@@ -120,36 +155,52 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-pyyaml==6.0.1
+    #   pandas
+pytz==2024.2
+    # via pandas
+pyyaml==6.0.2
     # via vcrpy
-referencing==0.35.1
+regex==2024.9.11
     # via
-    #   jsonschema
-    #   jsonschema-specifications
+    #   -c ./base.txt
+    #   nltk
 requests==2.32.3
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-rpds-py==0.19.0
-    # via
-    #   jsonschema
-    #   referencing
+    #   requests-mock
+requests-mock==1.12.1
+    # via label-studio-sdk
 ruff==0.4.10
     # via -r ./test.in
+semantic-version==2.10.0
+    # via liccheck
 six==1.16.0
     # via
     #   -c ./base.txt
+    #   jsonschema
     #   python-dateutil
-tomli==2.0.1
+sniffio==1.3.1
+    # via
+    #   -c ./base.txt
+    #   anyio
+    #   httpx
+toml==0.10.2
+    # via liccheck
+tomli==2.0.2
     # via
     #   autoflake
     #   black
     #   coverage
     #   mypy
     #   pytest
+tqdm==4.66.5
+    # via
+    #   -c ./base.txt
+    #   nltk
 types-click==7.1.8
     # via -r ./test.in
-types-markdown==3.6.0.20240316
+types-markdown==3.7.0.20240822
     # via -r ./test.in
 types-requests==2.31.0.6
     # via -r ./test.in
@@ -160,24 +211,33 @@ types-urllib3==1.26.25.14
 typing-extensions==4.12.2
     # via
     #   -c ./base.txt
+    #   anyio
     #   black
+    #   label-studio-sdk
+    #   multidict
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==1.26.19
+tzdata==2024.2
+    # via pandas
+ujson==5.10.0
+    # via label-studio-sdk
+urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
     #   vcrpy
-vcrpy==6.0.1
+vcrpy==6.0.2
     # via -r ./test.in
 wrapt==1.16.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.9.4
+yarl==1.16.0
     # via vcrpy
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

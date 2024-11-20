@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-xlsx.in
 #
-et-xmlfile==1.1.0
+et-xmlfile==2.0.0
     # via openpyxl
 networkx==3.2.1
     # via -r ./extra-xlsx.in
@@ -14,19 +14,19 @@ numpy==1.26.4
     #   pandas
 openpyxl==3.1.5
     # via -r ./extra-xlsx.in
-pandas==2.2.2
+pandas==2.2.3
     # via -r ./extra-xlsx.in
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   pandas
-pytz==2024.1
+pytz==2024.2
     # via pandas
 six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-tzdata==2024.1
+tzdata==2024.2
     # via pandas
 xlrd==2.0.1
     # via -r ./extra-xlsx.in

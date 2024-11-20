@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import difflib
 import pathlib
+import types
 from typing import Any, List, Optional
 from unittest.mock import (
     ANY,
@@ -203,6 +204,22 @@ def method_mock(
     The patch is reversed after pytest uses it.
     """
     _patch = patch.object(cls, method_name, autospec=autospec, **kwargs)
+    request.addfinalizer(_patch.stop)
+    return _patch.start()
+
+
+def stdlib_fn_mock(
+    request: FixtureRequest,
+    std_mod: types.ModuleType,
+    fn_name: str,
+    autospec: bool = True,
+    **kwargs: Any,
+) -> Mock:
+    """Return mock for function `fn_name` on `std_mod`.
+
+    The patch is reversed after pytest uses it.
+    """
+    _patch = patch.object(std_mod, fn_name, autospec=autospec, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
 

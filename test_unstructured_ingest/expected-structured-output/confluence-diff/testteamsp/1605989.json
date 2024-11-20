@@ -308,7 +308,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9b3f13651bd9c76260e5af72a9178c15",
+    "element_id": "d0b45e375f3a7207caacb7be289ebd62",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -326,11 +326,55 @@
         "fra"
       ]
     },
-    "text": "Testdoc3 List Item 1Testdoc3 List Item 1 Nested Item ATestdoc3 List Item 1 Nested Item B",
-    "type": "ListItem"
+    "text": "Testdoc3 List Item 1",
+    "type": "Title"
   },
   {
-    "element_id": "1d29a4258d918a1ef755a28e6ef99ae0",
+    "element_id": "351fc6ff4a9a491bf863ed7aa20fd5c5",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:56:40.842000",
+        "date_modified": "2023-07-09T12:57:59.173000",
+        "record_locator": {
+          "page_id": "1605989",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "Testdoc3 List Item 1 Nested Item A",
+    "type": "Title"
+  },
+  {
+    "element_id": "6688bffe9c19dca7cb61ee039a6ffa10",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:56:40.842000",
+        "date_modified": "2023-07-09T12:57:59.173000",
+        "record_locator": {
+          "page_id": "1605989",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "Testdoc3 List Item 1 Nested Item B",
+    "type": "Title"
+  },
+  {
+    "element_id": "e50d0b83f51c65bda0620ccec0368a41",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -349,10 +393,10 @@
       ]
     },
     "text": "Testdoc3 List Item 2",
-    "type": "ListItem"
+    "type": "Title"
   },
   {
-    "element_id": "4244e1b92dbb75ce777baf4fb75a17fd",
+    "element_id": "91697f192743d0583d02cb3e232d3c83",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -371,10 +415,10 @@
       ]
     },
     "text": "Testdoc3 List Item 3",
-    "type": "ListItem"
+    "type": "Title"
   },
   {
-    "element_id": "5c9ab1d333c163c4e5974a1b6241f4db",
+    "element_id": "7e1f204c284d5e878639feca87a022c4",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -393,10 +437,10 @@
       ]
     },
     "text": "Testdoc3 List Item 4",
-    "type": "ListItem"
+    "type": "Title"
   },
   {
-    "element_id": "446567ab87e1207a1e90f68a7357ea69",
+    "element_id": "24fc2762132dbbf33824a2c8575f6c14",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -415,10 +459,10 @@
       ]
     },
     "text": "Testdoc3 List Item 5",
-    "type": "ListItem"
+    "type": "Title"
   },
   {
-    "element_id": "fceace3d21355835e0efab1220200754",
+    "element_id": "c8d91bf0f74cf2d7474b81fa319cc0e5",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -434,9 +478,6 @@
       "languages": [
         "eng",
         "fra"
-      ],
-      "link_start_indexes": [
-        0
       ],
       "link_texts": [
         "This is the link for unstructured . io."
@@ -449,7 +490,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3103a93c0b7268907d5f12ec3919630f",
+    "element_id": "ce274d7699a4270e902e3617c7cf6e36",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -461,12 +502,6 @@
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
         "version": "1"
       },
-      "emphasized_text_contents": [
-        "Testdoc3 Checklist Item 1"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ],
       "filetype": "text/html",
       "languages": [
         "eng",
@@ -477,7 +512,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "49e02888ddebdfccb7c5d813d1cd8d80",
+    "element_id": "b54b171c49bbdb6f51308ff765b7f121",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -489,12 +524,6 @@
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
         "version": "1"
       },
-      "emphasized_text_contents": [
-        "Testdoc3 Checklist Item 2 (checked)"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ],
       "filetype": "text/html",
       "languages": [
         "eng",
@@ -505,7 +534,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "623205757930bf68f63245809ab88165",
+    "element_id": "712a4752864712c0ec58730edb76b2f1",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -517,12 +546,6 @@
         "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
         "version": "1"
       },
-      "emphasized_text_contents": [
-        "Testdoc3 Checklist Item 3"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ],
       "filetype": "text/html",
       "languages": [
         "eng",
@@ -533,7 +556,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "4878f87e35a0014ef3b7137a5eb3be37",
+    "element_id": "f2e9daed509db420ecf36984f431900f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -555,7 +578,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "f6d6c30b44ae2ef4a98631d6ab8daec3",
+    "element_id": "3cb5f4888419631affdc50af8f020348",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -571,7 +594,7 @@
         "Testdoc3 bold text"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -583,7 +606,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "181c7bd23470228c174857aaa63ee8f8",
+    "element_id": "9f5d86ea05eeb0bf570d9141a5b8994b",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -599,7 +622,7 @@
         "Testdoc3 italic text"
       ],
       "emphasized_text_tags": [
-        "em"
+        "i"
       ],
       "filetype": "text/html",
       "languages": [
@@ -611,7 +634,7 @@
     "type": "Title"
   },
   {
-    "element_id": "f8aba27556bcc7ec05baf554f302d7be",
+    "element_id": "64ba474681b32c7dbc2a00fb9ec3e757",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -633,7 +656,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7f33bffe06658936ae4a2db0c3475b09",
+    "element_id": "2d4a5727cd260bb321af0f777e2e699f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -655,7 +678,7 @@
     "type": "Title"
   },
   {
-    "element_id": "ac020a7fd396847465e98ade9f72a2be",
+    "element_id": "0a5dc104636145b04136d2eee7c4469b",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -677,7 +700,7 @@
     "type": "Title"
   },
   {
-    "element_id": "3c087dd347cfe41d03590ab09c2d5a0a",
+    "element_id": "470c624d2702678b94685d916908136a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -699,7 +722,7 @@
     "type": "Title"
   },
   {
-    "element_id": "32b6823ad80e7c1ba90f8a4285a1a080",
+    "element_id": "bd8ca6285c9717384bd456685550304b",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -721,7 +744,7 @@
     "type": "Title"
   },
   {
-    "element_id": "2c23de0ced97cc9bcf524905170df223",
+    "element_id": "99613e61c98f3e61b28c98d096524077",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",

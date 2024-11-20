@@ -1,4 +1,0 @@
-jupyter
-tqdm
-weaviate-client
-unstructured[local-inference]

@@ -1,38 +1,30 @@
 from __future__ import annotations
 
-import copy
 import os
+import re
 import tempfile
 from typing import IO, Any, Iterator, Optional
 
 from oxmsg import Message
 from oxmsg.attachment import Attachment
 
-from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, ElementMetadata, process_metadata
-from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
+from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.partition.common import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text import partition_text
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.MSG)
-@add_chunking_strategy
 def partition_msg(
     filename: Optional[str] = None,
     *,
     file: Optional[IO[bytes]] = None,
-    date_from_file_object: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    process_attachments: bool = False,
+    process_attachments: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a MSFT Outlook .msg file
@@ -43,10 +35,6 @@ def partition_msg(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True and inference
-        from message header failed, attempt to infer last_modified metadata from bytes,
-        otherwise set it to None.
     metadata_filename
         The filename to use for the metadata.
     metadata_last_modified
@@ -56,21 +44,15 @@ def partition_msg(
         processing the content of the email itself.
     """
     opts = MsgPartitionerOptions(
-        date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         partition_attachments=process_attachments,
+        kwargs=kwargs,
     )
 
-    return list(
-        apply_lang_metadata(
-            elements=_MsgPartitioner.iter_message_elements(opts),
-            languages=kwargs.get("languages", ["auto"]),
-            detect_language_per_element=kwargs.get("detect_language_per_element", False),
-        )
-    )
+    return list(_MsgPartitioner.iter_message_elements(opts))
 
 
 class MsgPartitionerOptions:
@@ -79,33 +61,65 @@ class MsgPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
         file: IO[bytes] | None,
         file_path: str | None,
         metadata_file_path: str | None,
         metadata_last_modified: str | None,
         partition_attachments: bool,
+        kwargs: dict[str, Any],
     ):
-        self._date_from_file_object = date_from_file_object
         self._file = file
         self._file_path = file_path
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
         self._partition_attachments = partition_attachments
+        self._kwargs = kwargs
+
+    @lazyproperty
+    def extra_msg_metadata(self) -> ElementMetadata:
+        """ElementMetadata suitable for use on an element formed from message content.
+
+        These are only the metadata fields specific to email messages. The remaining metadata
+        fields produced by the delegate partitioner are used as produced.
+
+        None of these metadata fields change based on the element, so we just compute it once.
+        """
+        msg = self.msg
+
+        sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
+        sent_to = [r.email_address for r in msg.recipients] or None
+        bcc_recipient = (
+            [c.strip() for c in bcc.split(",")] if (bcc := msg.message_headers.get("Bcc")) else None
+        )
+        cc_recipient = (
+            [c.strip() for c in cc.split(",")] if (cc := msg.message_headers.get("Cc")) else None
+        )
+        if email_message_id := msg.message_headers.get("Message-Id"):
+            email_message_id = re.sub(r"^<|>$", "", email_message_id)  # Strip angle brackets
+
+        element_metadata = ElementMetadata(
+            bcc_recipient=bcc_recipient,
+            cc_recipient=cc_recipient,
+            email_message_id=email_message_id,
+            sent_from=sent_from,
+            sent_to=sent_to,
+            subject=msg.subject or None,
+        )
+        element_metadata.detection_origin = "msg"
+
+        return element_metadata
 
     @lazyproperty
     def is_encrypted(self) -> bool:
         """True when message is encrypted."""
         # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted content
         # is multipart/encrypted (ref: https://www.ietf.org/rfc/rfc2015.txt)
-        if "encrypted" in self.msg.message_headers.get("Content-Type", ""):
-            return True
-        # -- pretty sure we're going to want to dig deeper to discover messages that are encrypted
-        # -- with something other than PGP.
-        #    - might be able to distinguish based on PID_MESSAGE_CLASS = 'IPM.Note.Signed'
-        #    - Content-Type header might include "application/pkcs7-mime" for Microsoft S/MIME
-        #      encryption.
-        return False
+        # NOTE(scanny) - pretty sure we're going to want to dig deeper to discover messages that are
+        # encrypted with something other than PGP.
+        #   - might be able to distinguish based on PID_MESSAGE_CLASS = 'IPM.Note.Signed'
+        #   - Content-Type header might include "application/pkcs7-mime" for Microsoft S/MIME
+        #     encryption.
+        return "encrypted" in self.msg.message_headers.get("Content-Type", "")
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
@@ -119,21 +133,13 @@ class MsgPartitionerOptions:
     @lazyproperty
     def metadata_last_modified(self) -> str | None:
         """Caller override for `.metadata.last_modified` to be applied to all elements."""
-        return self._metadata_last_modified
+        email_date = sent_date.isoformat() if (sent_date := self.msg.sent_date) else None
+        return self._metadata_last_modified or email_date or self._last_modified
 
     @lazyproperty
     def msg(self) -> Message:
         """The `oxmsg.Message` object loaded from file or filename."""
         return Message.load(self._msg_file)
-
-    @property
-    def msg_metadata(self) -> ElementMetadata:
-        """ElementMetadata suitable for use on an element formed from message content.
-
-        A distinct instance is returned on each reference such that downstream changes to the
-        metadata of one element is not also reflected in another element.
-        """
-        return copy.copy(self._msg_metadata)
 
     @lazyproperty
     def partition_attachments(self) -> bool:
@@ -142,29 +148,20 @@ class MsgPartitionerOptions:
 
     @lazyproperty
     def partitioning_kwargs(self) -> dict[str, Any]:
-        """Partitioning keyword-arguments to be passed along to attachment partitioner."""
-        # TODO: no good reason we can't accept and pass along any file-type specific kwargs
-        # the caller might want to send along.
-        return {}
+        """The "extra" keyword arguments received by `partition_msg()`.
+
+        These are passed along to delegate partitioners which extract keyword args like
+        `chunking_strategy` etc. in their decorators to control metadata behaviors, etc.
+        """
+        return self._kwargs
 
     @lazyproperty
     def _last_modified(self) -> str | None:
         """The best last-modified date available from source-file, None if not available."""
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
+        if not self._file_path or is_temp_file_path(self._file_path):
+            return None
 
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
-
-        return None
+        return get_last_modified_date(self._file_path)
 
     @lazyproperty
     def _msg_file(self) -> str | IO[bytes]:
@@ -176,30 +173,6 @@ class MsgPartitionerOptions:
             return file
 
         raise ValueError("one of `file` or `filename` arguments must be provided")
-
-    @property
-    def _msg_metadata(self) -> ElementMetadata:
-        """ElementMetadata "template" for elements of this message.
-
-        None of these metadata fields change based on the element, so compute it once here and then
-        just make a separate copy for each element.
-        """
-        msg = self.msg
-
-        email_date = sent_date.isoformat() if (sent_date := msg.sent_date) else None
-        sent_from = [s.strip() for s in sender.split(",")] if (sender := msg.sender) else None
-        sent_to = [r.email_address for r in msg.recipients] or None
-
-        element_metadata = ElementMetadata(
-            filename=self.metadata_file_path,
-            last_modified=self._metadata_last_modified or email_date or self._last_modified,
-            sent_from=sent_from,
-            sent_to=sent_to,
-            subject=msg.subject or None,
-        )
-        element_metadata.detection_origin = "msg"
-
-        return element_metadata
 
 
 class _MsgPartitioner:
@@ -237,15 +210,28 @@ class _MsgPartitioner:
         msg = self._opts.msg
 
         if html_body := msg.html_body:
-            elements = partition_html(text=html_body, languages=[""])
+            elements = partition_html(
+                text=html_body,
+                metadata_filename=self._opts.metadata_file_path,
+                metadata_file_type=FileType.MSG,
+                metadata_last_modified=self._opts.metadata_last_modified,
+                **self._opts.partitioning_kwargs,
+            )
         elif msg.body:
-            elements = partition_text(text=msg.body, languages=[""])
+            elements = partition_text(
+                text=msg.body,
+                metadata_filename=self._opts.metadata_file_path,
+                metadata_file_type=FileType.MSG,
+                metadata_last_modified=self._opts.metadata_last_modified,
+                **self._opts.partitioning_kwargs,
+            )
         else:
             elements: list[Element] = []
 
-        # -- replace the element metadata with email-specific values --
+        # -- augment the element metadata with email-specific values --
+        email_specific_metadata = self._opts.extra_msg_metadata
         for e in elements:
-            e.metadata = self._opts.msg_metadata
+            e.metadata.update(email_specific_metadata)
             yield e
 
 
@@ -274,14 +260,19 @@ class _AttachmentPartitioner:
                 f.write(self._file_bytes)
 
             # -- partition the attachment --
-            for element in partition(
-                detached_file_path,
-                metadata_filename=self._attachment_file_name,
-                metadata_last_modified=self._attachment_last_modified,
-                **self._opts.partitioning_kwargs,
-            ):
-                element.metadata.attached_to_filename = self._opts.metadata_file_path
-                yield element
+            try:
+                elements = partition(
+                    detached_file_path,
+                    metadata_filename=self._attachment_file_name,
+                    metadata_last_modified=self._attachment_last_modified,
+                    **self._opts.partitioning_kwargs,
+                )
+            except UnsupportedFileFormatError:
+                return
+
+            for e in elements:
+                e.metadata.attached_to_filename = self._opts.metadata_file_path
+                yield e
 
     @lazyproperty
     def _attachment_file_name(self) -> str:

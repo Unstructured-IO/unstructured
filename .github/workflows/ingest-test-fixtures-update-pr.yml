@@ -35,14 +35,12 @@ jobs:
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest-m
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup_ingest]
     steps:
       # actions/checkout MUST come before auth
       - uses: 'actions/checkout@v4'
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Get full Python version
@@ -96,7 +94,8 @@ jobs:
           AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
-          TABLE_OCR: "tesseract"
+          ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+          ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
           OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
@@ -108,6 +107,7 @@ jobs:
           sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
           sudo apt-get install -y tesseract-ocr
           sudo apt-get install -y tesseract-ocr-kor
+          sudo apt-get install diffstat
           tesseract --version
           ./test_unstructured_ingest/test-ingest-src.sh
 

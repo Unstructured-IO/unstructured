@@ -1,4 +1,4 @@
-from unstructured_inference.inference.elements import TextRegion
+from unstructured_inference.inference.elements import TextRegion, TextRegions
 from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.documents.elements import ElementType
@@ -17,7 +17,7 @@ def test_merge_text_regions(mock_embedded_text_regions):
         text="LayoutParser: A Unified Toolkit for Deep Learning Based Document Image",
     )
 
-    merged_text_region = merge_text_regions(mock_embedded_text_regions)
+    merged_text_region = merge_text_regions(TextRegions.from_list(mock_embedded_text_regions))
     assert merged_text_region == expected
 
 

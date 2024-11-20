@@ -1,3 +1,0 @@
-elasticsearch-dsl
-elasticsearch
-textblob
