@@ -8,7 +8,9 @@
 ### Features
 
 ### Fixes
+
 - **ElementMetadata consolidation** Now `text_as_html` metadata is combined across all elements in CompositeElement when chunking HTML output
+- **Fixed ImportError when `libmagic` library is not installed** File type detection now correctly falls back to using `filetype` if the `magic` module cannot be imported.
 
 ## 0.16.5
 

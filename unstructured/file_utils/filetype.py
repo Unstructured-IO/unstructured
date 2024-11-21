@@ -51,7 +51,17 @@ from unstructured.partition.common.common import add_element_metadata, exactly_o
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
-LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
+# Is the magic *module* available?
+MAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
+
+# Is the libmagic *library* also available?
+LIBMAGIC_AVAILABLE = False
+if MAGIC_AVAILABLE:
+    try:
+        import magic
+        LIBMAGIC_AVAILABLE = True
+    except ImportError:
+        pass
 
 
 def detect_filetype(
@@ -359,8 +369,6 @@ class _FileTypeDetectionContext:
         file_path = self.file_path
 
         if LIBMAGIC_AVAILABLE:
-            import magic
-
             mime_type = (
                 magic.from_file(file_path, mime=True)
                 if file_path
@@ -371,10 +379,16 @@ class _FileTypeDetectionContext:
         mime_type = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
 
         if mime_type is None:
-            logger.warning(
-                "libmagic is unavailable but assists in filetype detection. Please consider"
-                " installing libmagic for better results."
-            )
+            if MAGIC_AVAILABLE:
+                logger.warning(
+                    "The magic module is installed but libmagic is unavailable. Please consider"
+                    " installing libmagic for better filetype detection results."
+                )
+            else:
+                logger.warning(
+                    "The magic module is unavailable but assists in filetype detection. Please consider"
+                    " installing magic for better results."
+                )
             return None
 
         return mime_type.lower()
