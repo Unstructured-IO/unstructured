@@ -19,6 +19,7 @@ CACHE_MAX_SIZE: Final[int] = 128
 NLTK_DATA_FILENAME = "nltk_data_3.8.2.tar.gz"
 NLTK_DATA_URL = f"https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
 NLTK_DATA_SHA256 = "ba2ca627c8fb1f1458c15d5a476377a5b664c19deeb99fd088ebf83e140c1663"
+DOWNLOAD_S3_NLTK_DATA = os.getenv("DOWNLOAD_S3_NLTK_DATA", "false").lower() == "true"
 
 
 # NOTE(robinson) - mimic default dir logic from NLTK
@@ -65,6 +66,12 @@ def get_nltk_data_dir() -> str | None:
 
 
 def download_nltk_packages():
+
+    if not DOWNLOAD_S3_NLTK_DATA:
+        nltk.download("averaged_perceptron_tagger_eng")
+        nltk.download("punkt_tab")
+        return
+
     nltk_data_dir = get_nltk_data_dir()
 
     if nltk_data_dir is None:

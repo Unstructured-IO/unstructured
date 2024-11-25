@@ -27,6 +27,11 @@
 
 ## 0.16.6
 
+### Fixes
+- **Fix NLTK Download** to not download from unstructured S3 Bucket
+
+## 0.16.6
+
 ### Enhancements
 - **Every `<table>` tag is considered to be ontology.Table** Added special handling for tables in HTML partitioning (`html_parser_version=v2`. This change is made to improve the accuracy of table extraction from HTML documents.
 - **Every HTML has default ontology class assigned** When parsing HTML with `html_parser_version=v2` to ontology each defined HTML in the Ontology has assigned default ontology class. This way it is possible to assign ontology class instead of UncategorizedText when the HTML tag is predicted correctly without class assigned class
