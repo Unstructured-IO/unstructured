@@ -68,8 +68,8 @@ def get_nltk_data_dir() -> str | None:
 def download_nltk_packages():
 
     if not DOWNLOAD_S3_NLTK_DATA:
-        nltk.download("averaged_perceptron_tagger_eng")
-        nltk.download("punkt_tab")
+        nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
         return
 
     nltk_data_dir = get_nltk_data_dir()
