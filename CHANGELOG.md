@@ -6,6 +6,8 @@
 
 ### Fixes
 
+- **Fix NLTK Download** to not download from unstructured S3 Bucket
+
 ## 0.16.8
 
 ### Enhancements
@@ -24,11 +26,6 @@
 
 ### Fixes
 
-
-## 0.16.6
-
-### Fixes
-- **Fix NLTK Download** to not download from unstructured S3 Bucket
 
 ## 0.16.6
 
