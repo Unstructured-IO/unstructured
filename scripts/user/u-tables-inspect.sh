@@ -46,6 +46,7 @@ jq -c '.[] | select(.type == "Table") | .metadata.text_as_html' "$JSON_FILE" | w
   # add a border and padding to clearly see cell definition
   # shellcheck disable=SC2001
   HTML_CONTENT=$(echo "$HTML_CONTENT" | sed 's/<table /<table border="1" cellpadding="10" /')
+  # shellcheck disable=SC2001
   HTML_CONTENT=$(echo "$HTML_CONTENT" | sed 's/<table>/<table border="1" cellpadding="10">/')
   # add newlines for readability in the html
   # shellcheck disable=SC2001
