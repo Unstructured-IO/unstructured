@@ -1,9 +1,16 @@
-## 0.16.7
+## 0.16.8
 
 ### Enhancements
 - **Metrics: Weighted table average is optional**
-- **Add image_alt_mode to partition_html** Adds an `image_alt_mode` parameter to `partition_html()` to control how alt text is extracted from images in HTML documents. The parameter can be set to `to_text` to extract alt text as text from <img> html tags
 
+### Features
+
+### Fixes
+
+## 0.16.7
+
+### Enhancements
+- **Add image_alt_mode to partition_html** Adds an `image_alt_mode` parameter to `partition_html()` to control how alt text is extracted from images in HTML documents. The parameter can be set to `to_text` to extract alt text as text from <img> html tags
 
 ### Features
 
