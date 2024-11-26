@@ -1,7 +1,7 @@
 ## 0.16.7
 
 ### Enhancements
-- **Weighted table average is optional**
+- **Metrics: Weighted table average is optional**
 
 ### Features
 
