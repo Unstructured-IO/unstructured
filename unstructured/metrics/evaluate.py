@@ -216,6 +216,8 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     """
 
     cutoff: Optional[float] = None
+    weighted_average: bool = True
+    include_false_positives: bool = True
 
     def __post_init__(self):
         super().__post_init__()
@@ -287,10 +289,19 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
         df = pd.DataFrame(rows, columns=headers)
         df["_table_weights"] = df["total_tables"]
-        # we give false positive tables a 1 table worth of weight in computing table level acc
-        df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+
+        if self.include_false_positives:
+            # we give false positive tables a 1 table worth of weight in computing table level acc
+            df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+
         # filter down to only those with actual and/or predicted tables
         has_tables_df = df[df["_table_weights"] > 0]
+
+        if not self.weighted_average:
+            # for all non zero elements assign them value 1
+            df["_table_weights"] = df["_table_weights"].apply(
+                lambda table_weight: 1 if table_weight != 0 else 0
+            )
 
         if has_tables_df.empty:
             agg_df = pd.DataFrame(

@@ -1,6 +1,15 @@
-## 0.16.8-dev0
+## 0.16.9-dev0
 
 ### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.16.8
+
+### Enhancements
+- **Metrics: Weighted table average is optional**
 
 ### Features
 
@@ -14,6 +23,7 @@
 ### Features
 
 ### Fixes
+
 
 ## 0.16.6
 
