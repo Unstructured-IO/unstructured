@@ -1,3 +1,13 @@
+## 0.16.7
+
+### Enhancements
+- **Weighted table average is optional**
+
+### Features
+
+### Fixes
+
+
 ## 0.16.6
 
 ### Enhancements
