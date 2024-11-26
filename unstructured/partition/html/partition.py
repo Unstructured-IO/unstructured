@@ -11,7 +11,6 @@ from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element
-from unstructured.documents.ontology import Page
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -256,7 +255,3 @@ class _HtmlPartitioner:
             ontology, add_img_alt_text=self._opts.add_img_alt_text
         )
         return unstructured_elements
-
-
-if __name__ == "__main__":
-    Page()
