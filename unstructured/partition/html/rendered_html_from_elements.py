@@ -3,7 +3,7 @@
 """
 Script to render HTML from unstructured elements.
 NOTE: This script is not intended to be used as a module.
-NOTE: This script is only intended to be used with "platinum" strategy of the partitioning pipeline.
+NOTE: For now script is only intended to be used with elements generated with `partition_html(html_parser_version=v2)`
 TODO: It was noted that unstructured_elements_to_ontology func always returns a single page
 This script is using helper functions to handle multiple pages.
 """
