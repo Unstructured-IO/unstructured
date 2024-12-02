@@ -19,7 +19,7 @@ CACHE_MAX_SIZE: Final[int] = 128
 NLTK_DATA_FILENAME = "nltk_data_3.8.2.tar.gz"
 NLTK_DATA_URL = f"https://utic-public-cf.s3.amazonaws.com/{NLTK_DATA_FILENAME}"
 NLTK_DATA_SHA256 = "ba2ca627c8fb1f1458c15d5a476377a5b664c19deeb99fd088ebf83e140c1663"
-DOWNLOAD_S3_NLTK_DATA = os.getenv("DOWNLOAD_S3_NLTK_DATA", "false").lower() == "true"
+DOWNLOAD_S3_NLTK_DATA = os.getenv("DOWNLOAD_S3_NLTK_DATA", "false").lower() in ("true", "1")
 
 
 # NOTE(robinson) - mimic default dir logic from NLTK
@@ -116,10 +116,13 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     try:
         nltk.find(f"{package_category}/{package_name}", paths=paths)
         return True
-    except LookupError:
+    except (LookupError, OSError):
         return False
 
 
+# We cache this because we do not want to attempt
+# downloading the packages multiple times
+@lru_cache()
 def _download_nltk_packages_if_not_present():
     """If required NLTK packages are not available, download them."""
 
