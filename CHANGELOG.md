@@ -1,10 +1,12 @@
-## 0.16.9-dev0
+## 0.16.9
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+- **Fix NLTK Download** to not download from unstructured S3 Bucket
 
 ## 0.16.8
 
