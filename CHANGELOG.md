@@ -1,8 +1,14 @@
-## 0.16.11
+## 0.16.12-dev0
+
+### Enhancements
+
+- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
+
+### Features
 
 ### Fixes
 
-- Fix ipv4 regex to correctly include up to three digit octets.
+## 0.16.11
 
 ### Enhancements
 
@@ -13,6 +19,8 @@
 ### Features
 
 ### Fixes
+
+- Fix ipv4 regex to correctly include up to three digit octets.
 
 ## 0.16.10
 
