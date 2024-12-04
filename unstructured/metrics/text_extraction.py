@@ -163,8 +163,7 @@ def prepare_str(string: Optional[str], standardize_whitespaces: bool = False) ->
 
 def standardize_quotes(text: str) -> str:
     """
-    Converts all starting and ending double quotes to a standard for Unicode conversion,
-    and does the same for single quotes but with a different standard.
+    Converts all unicode quotes to standard ASCII quotes with comprehensive coverage.
 
     Args:
         text (str): The input text to be standardized.
@@ -172,8 +171,69 @@ def standardize_quotes(text: str) -> str:
     Returns:
         str: The text with standardized quotes.
     """
-    # Standardize double quotes
-    text = text.replace('“', '"').replace('”', '"').replace('„', '"')
-    # Standardize single quotes
-    text = text.replace('‘', "'").replace('’', "'").replace('‚', "'")
+    # Double Quotes Dictionary
+    double_quotes = {
+        '"': 'U+0022',    # Standard typewriter/programmer's quote
+        '"': 'U+201C',    # Left double quotation mark
+        '"': 'U+201D',    # Right double quotation mark
+        '„': 'U+201E',    # Double low-9 quotation mark
+        '‟': 'U+201F',    # Double high-reversed-9 quotation mark
+        '«': 'U+00AB',    # Left-pointing double angle quotation mark
+        '»': 'U+00BB',    # Right-pointing double angle quotation mark
+        '❝': 'U+275D',    # Heavy double turned comma quotation mark ornament
+        '❞': 'U+275E',    # Heavy double comma quotation mark ornament
+        '⹂': 'U+2E42',    # Double low-reversed-9 quotation mark
+        '🙶': 'U+1F676',   # SANS-SERIF HEAVY DOUBLE TURNED COMMA QUOTATION MARK ORNAMENT
+        '🙷': 'U+1F677',   # SANS-SERIF HEAVY DOUBLE COMMA QUOTATION MARK ORNAMENT
+        '🙸': 'U+1F678',   # SANS-SERIF HEAVY LOW DOUBLE COMMA QUOTATION MARK ORNAMENT
+        '⠦': 'U+2826',    # Braille double closing quotation mark
+        '⠴': 'U+2834',    # Braille double opening quotation mark
+        '〝': 'U+301D',    # REVERSED DOUBLE PRIME QUOTATION MARK
+        '〞': 'U+301E',    # DOUBLE PRIME QUOTATION MARK
+        '〟': 'U+301F',    # LOW DOUBLE PRIME QUOTATION MARK
+    }
+
+
+
+    # Single Quotes Dictionary
+    single_quotes = {   
+        "'": 'U+0027',    # Standard typewriter/programmer's quote
+        '\'': 'U+2018',    # Left single quotation mark
+        '\'': 'U+2019',    # Right single quotation mark
+        '‚': 'U+201A',    # Single low-9 quotation mark
+        '‛': 'U+201B',    # Single high-reversed-9 quotation mark
+        '‹': 'U+2039',    # Single left-pointing angle quotation mark
+        '›': 'U+203A',    # Single right-pointing angle quotation mark
+        '❛': 'U+275B',    # Heavy single turned comma quotation mark ornament
+        '❜': 'U+275C',    # Heavy single comma quotation mark ornament
+        '「': 'U+300C',    # Left corner bracket
+        '」': 'U+300D',    # Right corner bracket
+        '『': 'U+300E',    # Left white corner bracket
+        '』': 'U+300F',    # Right white corner bracket
+        '﹁': 'U+FE41',  # PRESENTATION FORM FOR VERTICAL LEFT CORNER BRACKET
+        '﹂': 'U+FE42',  # PRESENTATION FORM FOR VERTICAL RIGHT CORNER BRACKET
+        '﹃': 'U+FE43',  # PRESENTATION FORM FOR VERTICAL LEFT WHITE CORNER BRACKET
+        '﹄': 'U+FE44',  # PRESENTATION FORM FOR VERTICAL RIGHT WHITE CORNER BRACKET
+        '＂': 'U+FF02',  # FULLWIDTH QUOTATION MARK
+        '＇': 'U+FF07',  # FULLWIDTH APOSTROPHE
+        '｢': 'U+FF62',  # HALFWIDTH LEFT CORNER BRACKET
+        '｣': 'U+FF63'   # HALFWIDTH RIGHT CORNER BRACKET
+    }
+
+    double_quote_standard = '"'
+    single_quote_standard = "'"
+    
+    # Apply double quote replacements
+    # Apply double quote replacements
+    for unicode_val in double_quotes.values():
+        unicode_char = chr(int(unicode_val.replace('U+', ''), 16))
+        if unicode_char in text:
+            text = text.replace(unicode_char, double_quote_standard)
+
+    # Apply single quote replacements
+    for unicode_val in single_quotes.values():
+        unicode_char = chr(int(unicode_val.replace('U+', ''), 16))
+        if unicode_char in text:
+            text = text.replace(unicode_char, single_quote_standard)
+
     return text
