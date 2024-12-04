@@ -339,68 +339,74 @@ def test_prepare_string(text, expected):
     assert text_extraction.prepare_str(text, standardize_whitespaces=True) == expected
     assert text_extraction.prepare_str(text) == text
 
+
 @pytest.mark.parametrize(
     ("input_text", "expected_output"),
     [
-        # Complex sentences with standard quotes
-        ("\'The journey wasn\'t easy,\' she remarked.", 
-        "\'The journey wasn\'t easy,\' she remarked."),
-        
         # Mixed quotes in longer sentences
-        ('She said "Hello" and then whispered \'Goodbye\' before leaving.', 
-         'She said "Hello" and then whispered \'Goodbye\' before leaving.'),
-        
+        (
+            "She said \"Hello\" and then whispered 'Goodbye' before leaving.",
+            "She said \"Hello\" and then whispered 'Goodbye' before leaving.",
+        ),
         # Double low-9 quotes with complex content
-        ('„To be, or not to be, that is the question" - Shakespeare\'s famous quote.',
-         '"To be, or not to be, that is the question" - Shakespeare\'s famous quote.'),
-        
+        (
+            "„To be, or not to be, that is the question\" - Shakespeare's famous quote.",
+            '"To be, or not to be, that is the question" - Shakespeare\'s famous quote.',
+        ),
         # Angle quotes with nested quotes
-        ('«When he said "life is beautiful," I believed him» wrote Maria.',
-         '"When he said "life is beautiful," I believed him" wrote Maria.'),
-        
+        (
+            '«When he said "life is beautiful," I believed him» wrote Maria.',
+            '"When he said "life is beautiful," I believed him" wrote Maria.',
+        ),
         # Heavy ornament quotes in dialogue
-        ('❝Do you remember when we first met?❞ she asked with a smile.',
-         '"Do you remember when we first met?" she asked with a smile.'),
-        
+        (
+            "❝Do you remember when we first met?❞ she asked with a smile.",
+            '"Do you remember when we first met?" she asked with a smile.',
+        ),
         # Double prime quotes with punctuation
-        ('〝The meeting starts at 10:00, don\'t be late!〟 announced the manager.',
-         '"The meeting starts at 10:00, don\'t be late!" announced the manager.'),
-        
+        (
+            "〝The meeting starts at 10:00, don't be late!〟 announced the manager.",
+            '"The meeting starts at 10:00, don\'t be late!" announced the manager.',
+        ),
         # Corner brackets with nested quotes
-        ('「He told me "This is important" yesterday」, she explained.',
-         '\'He told me "This is important" yesterday\', she explained.'),
-        
+        (
+            '「He told me "This is important" yesterday」, she explained.',
+            "'He told me \"This is important\" yesterday', she explained.",
+        ),
         # White corner brackets with multiple sentences
-        ('『The sun was setting. The birds were singing. It was peaceful.』',
-         '\'The sun was setting. The birds were singing. It was peaceful.\''),
-        
+        (
+            "『The sun was setting. The birds were singing. It was peaceful.』",
+            "'The sun was setting. The birds were singing. It was peaceful.'",
+        ),
         # Vertical corner brackets with numbers and special characters
-        ('﹂Meeting #123 @ 15:00 - Don\'t forget!﹁',
-         '\'Meeting #123 @ 15:00 - Don\'t forget!\''),
-        
+        ("﹂Meeting #123 @ 15:00 - Don't forget!﹁", "'Meeting #123 @ 15:00 - Don't forget!'"),
         # Complex mixed quote types
-        ('「Hello」, ❝World❞, "Test", \'Example\', „Quote", «Final»',
-         '\'Hello\', "World", "Test", \'Example\', "Quote", "Final"'),
-        
+        (
+            '「Hello」, ❝World❞, "Test", \'Example\', „Quote", «Final»',
+            '\'Hello\', "World", "Test", \'Example\', "Quote", "Final"',
+        ),
         # Quotes with multiple apostrophes
-        ('It\'s John\'s book, isn\'t it?',
-         "It's John's book, isn't it?"),
-        
+        ("It's John's book, isn't it?", "It's John's book, isn't it?"),
         # Single angle quotes with nested content
-        ('‹Testing the system\'s capability for "quoted" text›',
-         '\'Testing the system\'s capability for "quoted" text\''),
-        
+        (
+            '‹Testing the system\'s capability for "quoted" text›',
+            "'Testing the system's capability for \"quoted\" text'",
+        ),
         # Heavy single ornament quotes with multiple sentences
-        ('❛First sentence. Second sentence. Third sentence.❜',
-         '\'First sentence. Second sentence. Third sentence.\''),
-        
+        (
+            "❛First sentence. Second sentence. Third sentence.❜",
+            "'First sentence. Second sentence. Third sentence.'",
+        ),
         # Mix of various quote types in complex text
-        ('「Chapter 1」: ❝The Beginning❞ - „A new story" begins «today».',
-         '\'Chapter 1\': "The Beginning" - "A new story" begins "today".')
+        (
+            '「Chapter 1」: ❝The Beginning❞ - „A new story" begins «today».',
+            '\'Chapter 1\': "The Beginning" - "A new story" begins "today".',
+        ),
     ],
 )
 def test_standardize_quotes(input_text, expected_output):
     assert text_extraction.standardize_quotes(input_text) == expected_output
+
 
 @pytest.mark.parametrize(
     ("output_text", "source_text", "expected_percentage"),
