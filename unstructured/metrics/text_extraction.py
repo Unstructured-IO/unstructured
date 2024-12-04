@@ -57,8 +57,8 @@ def calculate_edit_distance(
     return_types = ["score", "distance"]
     if return_as not in return_types:
         raise ValueError("Invalid return value type. Expected one of: %s" % return_types)
-    output = prepare_str(output, standardize_whitespaces)
-    source = prepare_str(source, standardize_whitespaces)
+    output = standardize_quotes(prepare_str(output, standardize_whitespaces))
+    source = standardize_quotes(prepare_str(source, standardize_whitespaces))
     distance = Levenshtein.distance(output, source, weights=weights)  # type: ignore
     # lower bounded the char length for source string at 1.0 because to avoid division by zero
     # in the case where source string is empty, the distance should be at 100%
@@ -160,3 +160,20 @@ def prepare_str(string: Optional[str], standardize_whitespaces: bool = False) ->
     if standardize_whitespaces:
         return " ".join(string.split())
     return str(string)  # type: ignore
+
+def standardize_quotes(text: str) -> str:
+    """
+    Converts all starting and ending double quotes to a standard for Unicode conversion,
+    and does the same for single quotes but with a different standard.
+
+    Args:
+        text (str): The input text to be standardized.
+
+    Returns:
+        str: The text with standardized quotes.
+    """
+    # Standardize double quotes
+    text = text.replace('“', '"').replace('”', '"').replace('„', '"')
+    # Standardize single quotes
+    text = text.replace('‘', "'").replace('’', "'").replace('‚', "'")
+    return text

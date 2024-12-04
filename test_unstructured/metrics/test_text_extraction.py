@@ -339,6 +339,21 @@ def test_prepare_string(text, expected):
     assert text_extraction.prepare_str(text, standardize_whitespaces=True) == expected
     assert text_extraction.prepare_str(text) == text
 
+@pytest.mark.parametrize(
+    ("input_text", "expected_output"),
+    [
+        ('"Hello"', '"Hello"'),  # Basic double quotes
+        ("'Hello'", "'Hello'"),  # Basic single quotes
+        ('„Hello"', '"Hello"'),  # German-style quotes to standard
+        ('"Hello"', '"Hello"'),  # Fancy double quotes to standard
+        ('‚Hello‚', "'Hello'"),  # German-style single quotes to standard
+        ('Hello\'s', "Hello's"),  # Apostrophe standardization
+        ('Mixed "quotes" and \'test\'', 'Mixed "quotes" and \'test\''),  # Mixed quote types
+        ('No quotes here', 'No quotes here'),  # No quotes to change
+    ],
+)
+def test_standardize_quotes(input_text, expected_output):
+    assert text_extraction.standardize_quotes(input_text) == expected_output
 
 @pytest.mark.parametrize(
     ("output_text", "source_text", "expected_percentage"),
