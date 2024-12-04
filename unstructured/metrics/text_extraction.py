@@ -174,9 +174,9 @@ def standardize_quotes(text: str) -> str:
     """
     # Double Quotes Dictionary
     double_quotes = {
-        '"': "U+0022",  # Standard typewriter/programmer's quote
-        '"': "U+201C",  # Left double quotation mark
-        '"': "U+201D",  # Right double quotation mark
+        '"': "U+0022",  # noqa 601 # Standard typewriter/programmer's quote
+        '"': "U+201C",  # noqa 601 # Left double quotation mark
+        '"': "U+201D",  # noqa 601 # Right double quotation mark
         "„": "U+201E",  # Double low-9 quotation mark
         "‟": "U+201F",  # Double high-reversed-9 quotation mark
         "«": "U+00AB",  # Left-pointing double angle quotation mark
@@ -196,9 +196,9 @@ def standardize_quotes(text: str) -> str:
 
     # Single Quotes Dictionary
     single_quotes = {
-        "'": "U+0027",  # Standard typewriter/programmer's quote
-        "'": "U+2018",  # Left single quotation mark
-        "'": "U+2019",  # Right single quotation mark
+        "'": "U+0027",  # noqa 601 # Standard typewriter/programmer's quote
+        "'": "U+2018",  # noqa 601 # Left single quotation mark
+        "'": "U+2019",  # noqa 601 # Right single quotation mark # noqa: W605
         "‚": "U+201A",  # Single low-9 quotation mark
         "‛": "U+201B",  # Single high-reversed-9 quotation mark
         "‹": "U+2039",  # Single left-pointing angle quotation mark
