@@ -343,8 +343,8 @@ def test_prepare_string(text, expected):
     ("input_text", "expected_output"),
     [
         # Complex sentences with standard quotes
-        ('"The quick brown fox jumps over the lazy dog," said the narrator.', 
-         '"The quick brown fox jumps over the lazy dog," said the narrator.'),
+        ("\'The journey wasn\'t easy,\' she remarked.", 
+        "\'The journey wasn\'t easy,\' she remarked."),
         
         # Mixed quotes in longer sentences
         ('She said "Hello" and then whispered \'Goodbye\' before leaving.', 
