@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -50,6 +51,13 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 AGG_HEADERS = ["metric", "average", "sample_sd", "population_sd", "count"]
+AGG_HEADERS_MAPPING = {
+    "index": "metric",
+    "_mean": "average",
+    "_stdev": "sample_sd",
+    "_pstdev": "population_sd",
+    "_count": "count",
+}
 OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
@@ -208,6 +216,8 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     """
 
     cutoff: Optional[float] = None
+    weighted_average: bool = True
+    include_false_positives: bool = True
 
     def __post_init__(self):
         super().__post_init__()
@@ -266,6 +276,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             out_filename,
             doctype,
             connector,
+            report_from_html.total_predicted_tables,
         ] + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
 
     def _generate_dataframes(self, rows):
@@ -273,10 +284,24 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             "filename",
             "doctype",
             "connector",
+            "total_predicted_tables",
         ] + self.supported_metric_names
 
         df = pd.DataFrame(rows, columns=headers)
-        has_tables_df = df[df["total_tables"] > 0]
+        df["_table_weights"] = df["total_tables"]
+
+        if self.include_false_positives:
+            # we give false positive tables a 1 table worth of weight in computing table level acc
+            df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+
+        # filter down to only those with actual and/or predicted tables
+        has_tables_df = df[df["_table_weights"] > 0]
+
+        if not self.weighted_average:
+            # for all non zero elements assign them value 1
+            df["_table_weights"] = df["_table_weights"].apply(
+                lambda table_weight: 1 if table_weight != 0 else 0
+            )
 
         if has_tables_df.empty:
             agg_df = pd.DataFrame(
@@ -286,7 +311,21 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
             element_metrics_results = {}
             for metric in self.supported_metric_names:
                 metric_df = has_tables_df[has_tables_df[metric].notnull()]
-                agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+                agg_metric = metric_df[metric].agg([_stdev, _pstdev, _count]).transpose()
+                if metric.startswith("total_tables"):
+                    agg_metric["_mean"] = metric_df[metric].mean()
+                elif metric.startswith("table_level_acc"):
+                    agg_metric["_mean"] = np.round(
+                        np.average(metric_df[metric], weights=metric_df["_table_weights"]),
+                        3,
+                    )
+                else:
+                    # false positive tables do not contribute to table structure and content
+                    # extraction metrics
+                    agg_metric["_mean"] = np.round(
+                        np.average(metric_df[metric], weights=metric_df["total_tables"]),
+                        3,
+                    )
                 if agg_metric.empty:
                     element_metrics_results[metric] = pd.Series(
                         data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
@@ -294,7 +333,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
                 else:
                     element_metrics_results[metric] = agg_metric
             agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
-        agg_df.columns = AGG_HEADERS
+        agg_df = agg_df.rename(columns=AGG_HEADERS_MAPPING)
         return df, agg_df
 
 

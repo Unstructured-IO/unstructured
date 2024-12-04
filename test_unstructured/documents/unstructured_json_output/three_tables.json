@@ -1,0 +1,44 @@
+[
+    {
+        "element_id": "2428404551304d4db5925f6afee11ed5",
+        "metadata": {
+            "category_depth": 0,
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "parent_id": "517f8559ba594270bdd67e1b02bf19a2",
+            "text_as_html": "<table class=\"Table\" id=\"2428404551304d4db5925f6afee11ed5\"> <tr> <th>Header 1</th><th>Header 2</th></tr><tr> <td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr><tr> <td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr></table>"
+        },
+        "text": "Header 1 Header 2 Row 1, Cell 1 Row 1, Cell 2 Row 2, Cell 1 Row 2, Cell 2",
+        "type": "Table"
+    },
+    {
+        "element_id": "9f91cae321c74b31bb1c83ac86cd7afb",
+        "metadata": {
+            "category_depth": 0,
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "parent_id": "517f8559ba594270bdd67e1b02bf19a2",
+            "text_as_html": "<table class=\"Table\" id=\"9f91cae321c74b31bb1c83ac86cd7afb\"> <tr> <th colspan=\"3\">Big Table Header</th></tr><tr> <td rowspan=\"2\">Merged Cell 1</td><td>Cell 2</td><td>Cell 3</td></tr><tr> <td colspan=\"2\">Merged Cell 4 and 5</td></tr><tr> <td>Cell 6</td><td>Cell 7</td><td>Cell 8</td></tr><tr> <td>Cell 9</td><td colspan=\"2\">A cell with a lot of text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</td></tr><tr> <td>Cell 10</td><td>Cell 11</td><td>Cell 12</td></tr></table>"
+        },
+        "text": "Big Table Header Merged Cell 1 Cell 2 Cell 3 Merged Cell 4 and 5 Cell 6 Cell 7 Cell 8 Cell 9 A cell with a lot of text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cell 10 Cell 11 Cell 12",
+        "type": "Table"
+    },
+    {
+        "element_id": "da6c34391e544b3480e45d68f40870fa",
+        "metadata": {
+            "category_depth": 0,
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "parent_id": "517f8559ba594270bdd67e1b02bf19a2",
+            "text_as_html": "<table class=\"TableOfContents\" id=\"da6c34391e544b3480e45d68f40870fa\"> <tr> <th>Chapter</th><th>Title</th><th>Page</th></tr><tr> <td>1</td><td>Introduction</td><td>1</td></tr><tr> <td>2</td><td>Getting Started</td><td>5</td></tr><tr> <td>3</td><td>Basic Concepts</td><td>12</td></tr><tr> <td>4</td><td>Advanced Topics</td><td>25</td></tr><tr> <td>5</td><td>Conclusion</td><td>40</td></tr></table>"
+        },
+        "text": "Chapter Title Page 1 Introduction 1 2 Getting Started 5 3 Basic Concepts 12 4 Advanced Topics 25 5 Conclusion 40",
+        "type": "Table"
+    }
+]

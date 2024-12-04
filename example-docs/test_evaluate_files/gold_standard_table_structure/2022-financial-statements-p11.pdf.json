@@ -1,0 +1,812 @@
+[
+    {
+        "type": "Header",
+        "text": "I. General Department"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "66f5f15d-273f-43c3-9b51-ec6d28637e12",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "34f5f20a-d2d3-48ed-9c3a-416bca0ff517",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Assets"
+            },
+            {
+                "id": "2330a22c-58d5-4c14-8dcc-7463b1b519f3",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "Usable currencies"
+            },
+            {
+                "id": "c9e62a61-33da-4cf3-a3f7-50e779e432ae",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "Other currencies"
+            },
+            {
+                "id": "9bd02245-2cff-4d72-ac3c-d14bb9f3e240",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "Credit outstanding"
+            },
+            {
+                "id": "3756106b-7b23-48d2-ac7d-af19fc25ff92",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "Total currencies"
+            },
+            {
+                "id": "eff641b2-b568-4492-9e0f-6af2a33fc107",
+                "x": 0,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "SDR holdings"
+            },
+            {
+                "id": "00601fec-6ed4-401c-bf23-40597a6173bd",
+                "x": 0,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "Investments"
+            },
+            {
+                "id": "7a057d2c-a8ad-438e-9e10-a49e7194147a",
+                "x": 0,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "Gold holdings"
+            },
+            {
+                "id": "d4c05f57-ff6d-4d02-a23a-cfc3fb78c3fc",
+                "x": 0,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "Property, plant and equipment and intangible assets"
+            },
+            {
+                "id": "3c99613d-47c7-468c-9745-84fedcddd33c",
+                "x": 0,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "Net assets under retirement benefit plans"
+            },
+            {
+                "id": "9d1b1597-cc83-4b14-b19b-911418f6b7c7",
+                "x": 0,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "Other assets"
+            },
+            {
+                "id": "fcad018e-53b5-43b9-b2ec-1a25dd38427b",
+                "x": 0,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "Total assets"
+            },
+            {
+                "id": "608b3a56-db63-439a-a842-883a8ef3563c",
+                "x": 0,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "Liabilities"
+            },
+            {
+                "id": "a98f2cee-0af4-426b-8990-dd2367721b1f",
+                "x": 0,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "Special Contingent Account"
+            },
+            {
+                "id": "dac6f09f-8d7f-468c-9c58-e8e9cb472322",
+                "x": 0,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "Borrowings"
+            },
+            {
+                "id": "20287888-b7ea-44c0-bd5f-402e32fad446",
+                "x": 0,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "Quota subscriptions"
+            },
+            {
+                "id": "5bdec1a0-8cb2-4399-b078-dccecd64cca0",
+                "x": 0,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "Net liabilities under retirement benefit plans"
+            },
+            {
+                "id": "6a8839cd-8554-4aad-813f-a51add864538",
+                "x": 0,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "Other liabilities"
+            },
+            {
+                "id": "f6c3100d-6b1d-4efa-8bdb-862da646f037",
+                "x": 0,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "Total liabilities"
+            },
+            {
+                "id": "cc43bc34-b7bf-47e2-9036-cd51339f21a8",
+                "x": 0,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "Reserves of the General Resources Account"
+            },
+            {
+                "id": "b2d8455c-4a8a-46fc-b22b-8f6da9d19237",
+                "x": 0,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "Retained earnings of the Investment Account"
+            },
+            {
+                "id": "faf36e7c-34ff-4725-a1e4-7ed5c923d1a4",
+                "x": 0,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "Resources of the Special Disbursement Account"
+            },
+            {
+                "id": "e13ca441-7494-4e72-82c7-235147b02530",
+                "x": 0,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "Total liabilities, reserves, retained earnings, and resources"
+            },
+            {
+                "id": "1ad7df6d-9f31-4f45-8090-769546dd0a65",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Note"
+            },
+            {
+                "id": "2501d35a-f1b5-457a-97cc-31fc903b835f",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "474f2539-07b1-4fbd-be3c-1e81c80d66a5",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "b712f0ec-4c64-49c3-919b-57b87d612450",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "68fac5df-08fd-44ad-afc2-ea4d83b2a5d4",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "5"
+            },
+            {
+                "id": "0c8e5e2a-868e-470d-b95e-b4af1d2b106e",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "b01c4ad4-be06-4e17-b62a-b654dfb703dc",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "6"
+            },
+            {
+                "id": "a4d8eaca-b046-4dd8-80af-03fea8e3e22d",
+                "x": 1,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "7"
+            },
+            {
+                "id": "aa674388-765b-4380-b902-07b25dc071a3",
+                "x": 1,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "9"
+            },
+            {
+                "id": "40524dab-cb00-4b3a-ad1c-e8b084ca2f02",
+                "x": 1,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "10"
+            },
+            {
+                "id": "51fd8888-c373-47b0-aee0-8cbb435f4e80",
+                "x": 1,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "11"
+            },
+            {
+                "id": "8025c648-d9f2-46e2-b297-b47a8e87be02",
+                "x": 1,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "12"
+            },
+            {
+                "id": "913fd95f-50fa-4051-b0cc-f4fda99ca94d",
+                "x": 1,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "17894253-6c15-4bfb-8044-688b48121d6d",
+                "x": 1,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "2985e339-b559-43de-b61e-15e2c44f2261",
+                "x": 1,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "13"
+            },
+            {
+                "id": "32573e9c-98de-4fda-a07d-f4a733bc09ca",
+                "x": 1,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "14"
+            },
+            {
+                "id": "174f56b1-6579-4dce-bb41-54697ad6a672",
+                "x": 1,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "15"
+            },
+            {
+                "id": "aed9448b-5d3a-49d1-98f5-a25b219879e3",
+                "x": 1,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "11"
+            },
+            {
+                "id": "79806387-c606-4e3b-a1c7-14d1df1671fb",
+                "x": 1,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "12"
+            },
+            {
+                "id": "72307eaf-9cfd-4075-97d9-76dab90c2469",
+                "x": 1,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "772534a0-3ef9-43a2-ab60-2e18dd0859ec",
+                "x": 1,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "16"
+            },
+            {
+                "id": "872339e5-8690-4be2-9e96-ce9e7c385eb7",
+                "x": 1,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "f83024d7-8eba-4b72-a1ee-8654a63a4dc8",
+                "x": 1,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "dc0df0e2-1383-4c2c-86e8-3bdfb747969c",
+                "x": 1,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "156eeaae-e606-424b-9918-33e8a4b4edc7",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "2022"
+            },
+            {
+                "id": "d8d77e89-470d-4554-9835-e04d7b2dc42c",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5f2283d0-c3eb-4586-93c0-2da0eee67fff",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "292,280"
+            },
+            {
+                "id": "e263efe7-9c83-4422-8760-d48738724b58",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "69,407"
+            },
+            {
+                "id": "7c30f9c7-677f-455c-8d64-8588a976306e",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "93,031"
+            },
+            {
+                "id": "790d6a30-7dee-4a88-87ab-f906440df5be",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "454,718"
+            },
+            {
+                "id": "c6919305-bbae-40b2-aa61-9c30fb737cf3",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "22,270"
+            },
+            {
+                "id": "2bbf179e-21c9-4464-a9bf-1a06e7b5f1d5",
+                "x": 2,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "25,418"
+            },
+            {
+                "id": "6fd8d460-bc52-4843-a37a-760bc89f90aa",
+                "x": 2,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "3,167"
+            },
+            {
+                "id": "f7dc815c-9d78-45b8-9f11-23c7ec5edf94",
+                "x": 2,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "551"
+            },
+            {
+                "id": "91737fe0-b342-4a63-a423-9187156396c2",
+                "x": 2,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "1,375"
+            },
+            {
+                "id": "336b3b67-3bc2-4df0-b9e0-9bcd3ed8f51f",
+                "x": 2,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "911"
+            },
+            {
+                "id": "a91b131d-27b3-4580-8829-5ef74fd4c83b",
+                "x": 2,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "508,410"
+            },
+            {
+                "id": "f5412732-1008-4272-aab5-8bcc9c2bbf42",
+                "x": 2,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "7f69417a-5100-4698-98cf-00c19e7c20d9",
+                "x": 2,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "\u2014"
+            },
+            {
+                "id": "30b95999-7ab0-4534-aa1a-27a88a72e023",
+                "x": 2,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "2,615"
+            },
+            {
+                "id": "cc53c5a2-a8fe-4e94-b4bd-ba630c1da521",
+                "x": 2,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "476,272"
+            },
+            {
+                "id": "3b8158b7-70ed-45de-970d-cd774d9df25e",
+                "x": 2,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "127"
+            },
+            {
+                "id": "99370fae-c111-4de2-96a9-6cc4298568a8",
+                "x": 2,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "970"
+            },
+            {
+                "id": "1a1810ef-2540-4864-903d-17b54946d812",
+                "x": 2,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "479,984"
+            },
+            {
+                "id": "2fb39f36-409d-4ffe-b26b-7d02b2658b34",
+                "x": 2,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "26,524"
+            },
+            {
+                "id": "068b6e4c-1c7d-4bf9-bd46-4961a93d7828",
+                "x": 2,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "1,902"
+            },
+            {
+                "id": "2366f69b-dc1c-4d09-ba51-ebd2967b7bc0",
+                "x": 2,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "\u2014"
+            },
+            {
+                "id": "d9babc16-6049-4fb0-83f7-93f5f8caff79",
+                "x": 2,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "508,410"
+            },
+            {
+                "id": "c15bffd8-845d-45fe-b06c-2e2f7ed6845a",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "2021"
+            },
+            {
+                "id": "635715bd-ef82-4f2f-af3a-bad37448a647",
+                "x": 3,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "27ea8755-e1ae-4e95-a20e-fa4fe6e5bb7e",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "297,217"
+            },
+            {
+                "id": "08911b39-a522-4578-84f8-ae91f795e063",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "71,651"
+            },
+            {
+                "id": "1857f867-e92d-4a70-85b7-2ca6b9b7d2f8",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "89,788"
+            },
+            {
+                "id": "75436437-bec2-47c2-b2c1-a99159f1311e",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "458,656"
+            },
+            {
+                "id": "82333684-445e-4f4e-8e1b-aeea61d953c5",
+                "x": 3,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "22,203"
+            },
+            {
+                "id": "a8aeacef-99dc-428d-b95c-6ab981bab1cb",
+                "x": 3,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "23,032"
+            },
+            {
+                "id": "74410f40-f4c4-4f44-b7e5-9958c8cb8bab",
+                "x": 3,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "3,167"
+            },
+            {
+                "id": "390d2fc9-f167-4b7b-b611-adb781cf9003",
+                "x": 3,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "555"
+            },
+            {
+                "id": "f2d06cd8-4de0-4c8b-a215-5859d4a22a1f",
+                "x": 3,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "\u2014"
+            },
+            {
+                "id": "59414f75-8b58-4c5b-9656-c27605fe8b29",
+                "x": 3,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "706"
+            },
+            {
+                "id": "1073551b-fca8-45f4-9a1a-4443fbe5ce6a",
+                "x": 3,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "508,319"
+            },
+            {
+                "id": "afe5fcf4-83de-41f3-9c01-9864fd3d104e",
+                "x": 3,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "4d349793-595d-47c2-9d11-613aa78ffdd6",
+                "x": 3,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "1,066"
+            },
+            {
+                "id": "f1942864-03aa-43ac-9196-4a4fce689882",
+                "x": 3,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "5,138"
+            },
+            {
+                "id": "76733d69-53ff-418f-ad04-397c00a1c4af",
+                "x": 3,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "475,808"
+            },
+            {
+                "id": "d3e41ea2-c8ec-44e6-8883-9bd7b0b2eabc",
+                "x": 3,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "205"
+            },
+            {
+                "id": "3774efda-bddb-46ac-a172-004b405b9401",
+                "x": 3,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "761"
+            },
+            {
+                "id": "c2db0a5e-c83e-4537-84c4-1b6916a053ba",
+                "x": 3,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "482,978"
+            },
+            {
+                "id": "20cdfcb8-0691-41fd-97ec-cc1dcbb82695",
+                "x": 3,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "23,350"
+            },
+            {
+                "id": "8ca488c3-bc8c-46b7-a742-7d3de4691aef",
+                "x": 3,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "1,991"
+            },
+            {
+                "id": "fcae272e-ae3d-487a-b143-dbae95e41c56",
+                "x": 3,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "\u2014"
+            },
+            {
+                "id": "b70f8af7-fa14-4ae0-9010-32756d5a6073",
+                "x": 3,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "508,319"
+            }
+        ]
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The accompanying notes are an integral part of these financial statements."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "These financial statements were signed by the Managing Director and the Director of Finance on June 24, 2022."
+    },
+    {
+        "type": "Value"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Kristalina Georgieva /s/ Managing Director"
+    },
+    {
+        "type": "Value"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Bernard Lauwers /s/ Director, Finance Department"
+    },
+    {
+        "type": "PageNumber",
+        "text": 7
+    },
+    {
+        "type": "Footer"
+    }
+]

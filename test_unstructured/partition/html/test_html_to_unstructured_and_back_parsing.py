@@ -8,9 +8,11 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.documents.ontology import Address, Paragraph
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
+    parse_html_to_ontology,
     parse_html_to_ontology_element,
     unstructured_elements_to_ontology,
 )
@@ -272,7 +274,7 @@ def test_forms():
     assert expected_html == parsed_html
     expected_elements = _page_elements + [
         Text(
-            text="Option 1 (Checked)",
+            text="2 Option 1 (Checked)",
             element_id="2",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
@@ -314,10 +316,7 @@ def test_table():
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
     )
-    expected_html = indent_html(html_as_str, html_parser="html.parser")
-    parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
 
-    assert expected_html == parsed_html
     expected_elements = _page_elements + [
         Table(
             text="Fair Value1 Fair Value2",
@@ -325,13 +324,13 @@ def test_table():
             element_id="2",
             metadata=ElementMetadata(
                 text_as_html='<table class="Table" id="2"> '
-                '<tbody class="TableBody" id="3"> '
-                '<tr class="TableRow" id="4"> '
-                '<td class="TableCell" id="5">'
-                "Fair Value1 "
+                "<tbody> "
+                "<tr> "
+                "<td>"
+                "Fair Value1"
                 "</td>"
-                '<th class="TableCellHeader" rowspan="2" id="6">'
-                "Fair Value2 "
+                '<th rowspan="2">'
+                "Fair Value2"
                 "</th></tr></tbody></table>",
                 parent_id="1",
             ),
@@ -487,3 +486,90 @@ def test_ordered_list():
         )
     ]
     _assert_elements_equal(unstructured_elements, expected_elements)
+
+
+def test_squeezed_elements_are_parsed_back():
+    # language=HTML
+    html_as_str = _wrap_in_body_and_page(
+        """
+       <p class="NarrativeText" id="2">
+        Table of Contents
+       </p>
+       <address class="Address" id="3">
+        68 Prince Street Palmdale, CA 93550
+       </address>
+       <a class="Hyperlink" id="4">
+        www.google.com
+       </a>
+    """
+    )
+
+    unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
+        html_as_str
+    )
+    expected_html = indent_html(html_as_str, html_parser="html.parser")
+    parsed_html = indent_html(parsed_ontology.to_html(), html_parser="html.parser")
+
+    assert expected_html == parsed_html
+    expected_elements = _page_elements + [
+        NarrativeText(
+            text="Table of Contents 68 Prince Street Palmdale, CA 93550 www.google.com",
+            element_id="2",
+            detection_origin="vlm_partitioner",
+            metadata=ElementMetadata(
+                text_as_html='<p class="NarrativeText" id="2">Table of Contents </p> '
+                '<address class="Address" id="3">'
+                "68 Prince Street Palmdale, CA 93550 "
+                "</address> "
+                '<a class="Hyperlink" id="4">www.google.com </a>',
+                parent_id="1",
+            ),
+        )
+    ]
+    _assert_elements_equal(unstructured_elements, expected_elements)
+
+
+def test_inline_elements_are_squeezed_when_text_wrapped_into_paragraphs():
+    # language=HTML
+    base_html = """
+        <div class="Page">
+            About the same
+            <address class="Address">
+                1356 Hornor Avenue Oklahoma
+            </address>
+            Some text
+        </div>
+        """
+    # Such HTML is transformed into Page: [Pargraph, Address, Paragraph]
+    # We would like it to be parsed to UnstructuredElements as [Page, NarrativeText]
+
+    ontology = parse_html_to_ontology(base_html)
+
+    p1, address, p2 = ontology.children
+    assert isinstance(p1, Paragraph)
+    assert isinstance(address, Address)
+    assert isinstance(p2, Paragraph)
+
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+
+    assert len(unstructured_elements) == 2
+    assert isinstance(unstructured_elements[0], Text)
+    assert isinstance(unstructured_elements[1], NarrativeText)
+
+
+def test_alternate_text_from_image_is_passed():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <table>
+        <tr>
+            <td rowspan="2">Example image nested in the table:</td>
+            <td rowspan="2"><img src="my-logo.png" alt="ALT TEXT Logo"></td>
+        </tr>
+    </table>
+    </div>add_img_alt_text
+    """
+    page = parse_html_to_ontology(input_html)
+    unstructured_elements = ontology_to_unstructured_elements(page)
+    assert len(unstructured_elements) == 2
+    assert "ALT TEXT Logo" in unstructured_elements[1].text

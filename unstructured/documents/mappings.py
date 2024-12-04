@@ -5,10 +5,10 @@ They are used to simplify transformations between different representations
 of parsed documents
 """
 
-from collections import defaultdict
 from typing import Any, Dict, Type
 
-from unstructured.documents.ontology import OntologyElement
+from unstructured.documents import elements, ontology
+from unstructured.documents.elements import Element
 
 
 def get_all_subclasses(cls) -> list[Any]:
@@ -30,25 +30,9 @@ def get_all_subclasses(cls) -> list[Any]:
     return all_subclasses
 
 
-def get_exclusive_html_tags() -> dict[str, Type[OntologyElement]]:
+def get_ontology_to_unstructured_type_mapping() -> dict[str, Element]:
     """
-    Get a mapping of HTML tags to their exclusive OntologyElement types.
-    """
-    html_tag_to_element_type_mappings: Dict[str, list[Type[OntologyElement]]] = defaultdict(list)
-    for element_type in ALL_ONTOLOGY_ELEMENT_TYPES:
-        for tag in element_type().allowed_tags:
-            html_tag_to_element_type_mappings[tag].append(element_type)
-
-    return {
-        tag: element_types[0]
-        for tag, element_types in html_tag_to_element_type_mappings.items()
-        if len(element_types) == 1
-    }
-
-
-def get_ontology_to_unstructured_type_mapping() -> dict[str, str]:
-    """
-    Get a mapping of ontology element names to unstructured type names.
+    Get a mapping of ontology element to unstructured type.
 
     The dictionary here was created base on ontology mapping json
     Can be generated via the following code:
@@ -63,97 +47,149 @@ def get_ontology_to_unstructured_type_mapping() -> dict[str, str]:
     ```
 
     Returns:
-    dict: A dictionary where keys are ontology element class names
-          and values are unstructured type names.
+    dict: A dictionary where keys are ontology element classes
+          and values are unstructured types.
     """
     ontology_to_unstructured_class_mapping = {
-        "Document": "UncategorizedText",
-        "Section": "UncategorizedText",
-        "Page": "UncategorizedText",
-        "Column": "UncategorizedText",
-        "Paragraph": "NarrativeText",
-        "Header": "Header",
-        "Footer": "Footer",
-        "Sidebar": "UncategorizedText",
-        "PageBreak": "PageBreak",
-        "Title": "Title",
-        "Subtitle": "Title",
-        "Heading": "Title",
-        "NarrativeText": "NarrativeText",
-        "Quote": "NarrativeText",
-        "Footnote": "UncategorizedText",
-        "Caption": "FigureCaption",
-        "PageNumber": "PageNumber",
-        "UncategorizedText": "UncategorizedText",
-        "OrderedList": "UncategorizedText",
-        "UnorderedList": "UncategorizedText",
-        "DefinitionList": "UncategorizedText",
-        "ListItem": "ListItem",
-        "Table": "Table",
-        "TableRow": "Table",
-        "TableCell": "Table",
-        "TableCellHeader": "Table",
-        "TableBody": "Table",
-        "TableHeader": "Table",
-        "Image": "Image",
-        "Figure": "Image",
-        "Video": "UncategorizedText",
-        "Audio": "UncategorizedText",
-        "Barcode": "Image",
-        "QRCode": "Image",
-        "Logo": "Image",
-        "CodeBlock": "CodeSnippet",
-        "InlineCode": "CodeSnippet",
-        "Formula": "Formula",
-        "Equation": "Formula",
-        "FootnoteReference": "UncategorizedText",
-        "Citation": "UncategorizedText",
-        "Bibliography": "UncategorizedText",
-        "Glossary": "UncategorizedText",
-        "Author": "UncategorizedText",
-        "MetaDate": "UncategorizedText",
-        "Keywords": "UncategorizedText",
-        "Abstract": "NarrativeText",
-        "Hyperlink": "UncategorizedText",
-        "TableOfContents": "UncategorizedText",
-        "Index": "UncategorizedText",
-        "Form": "UncategorizedText",
-        "FormField": "UncategorizedText",
-        "FormFieldValue": "UncategorizedText",
-        "Checkbox": "UncategorizedText",
-        "RadioButton": "UncategorizedText",
-        "Button": "UncategorizedText",
-        "Comment": "UncategorizedText",
-        "Highlight": "UncategorizedText",
-        "RevisionInsertion": "UncategorizedText",
-        "RevisionDeletion": "UncategorizedText",
-        "Address": "Address",
-        "EmailAddress": "EmailAddress",
-        "PhoneNumber": "UncategorizedText",
-        "CalendarDate": "UncategorizedText",
-        "Time": "UncategorizedText",
-        "Currency": "UncategorizedText",
-        "Measurement": "UncategorizedText",
-        "Letterhead": "Header",
-        "Signature": "UncategorizedText",
-        "Watermark": "UncategorizedText",
-        "Stamp": "UncategorizedText",
+        ontology.Document: elements.Text,
+        ontology.Section: elements.Text,
+        ontology.Page: elements.Text,
+        ontology.Column: elements.Text,
+        ontology.Paragraph: elements.NarrativeText,
+        ontology.Header: elements.Header,
+        ontology.Footer: elements.Footer,
+        ontology.Sidebar: elements.Text,
+        ontology.PageBreak: elements.PageBreak,
+        ontology.Title: elements.Title,
+        ontology.Subtitle: elements.Title,
+        ontology.Heading: elements.Title,
+        ontology.NarrativeText: elements.NarrativeText,
+        ontology.Quote: elements.NarrativeText,
+        ontology.Footnote: elements.Text,
+        ontology.Caption: elements.FigureCaption,
+        ontology.PageNumber: elements.PageNumber,
+        ontology.UncategorizedText: elements.Text,
+        ontology.OrderedList: elements.Text,
+        ontology.UnorderedList: elements.Text,
+        ontology.DefinitionList: elements.Text,
+        ontology.ListItem: elements.ListItem,
+        ontology.Table: elements.Table,
+        ontology.TableRow: elements.Table,
+        ontology.TableCell: elements.Table,
+        ontology.TableCellHeader: elements.Table,
+        ontology.TableBody: elements.Table,
+        ontology.TableHeader: elements.Table,
+        ontology.Image: elements.Image,
+        ontology.Figure: elements.Image,
+        ontology.Video: elements.Text,
+        ontology.Audio: elements.Text,
+        ontology.Barcode: elements.Image,
+        ontology.QRCode: elements.Image,
+        ontology.Logo: elements.Image,
+        ontology.CodeBlock: elements.CodeSnippet,
+        ontology.InlineCode: elements.CodeSnippet,
+        ontology.Formula: elements.Formula,
+        ontology.Equation: elements.Formula,
+        ontology.FootnoteReference: elements.Text,
+        ontology.Citation: elements.Text,
+        ontology.Bibliography: elements.Text,
+        ontology.Glossary: elements.Text,
+        ontology.Author: elements.Text,
+        ontology.MetaDate: elements.Text,
+        ontology.Keywords: elements.Text,
+        ontology.Abstract: elements.NarrativeText,
+        ontology.Hyperlink: elements.Text,
+        ontology.TableOfContents: elements.Table,
+        ontology.Index: elements.Text,
+        ontology.Form: elements.Text,
+        ontology.FormField: elements.Text,
+        ontology.FormFieldValue: elements.Text,
+        ontology.Checkbox: elements.Text,
+        ontology.RadioButton: elements.Text,
+        ontology.Button: elements.Text,
+        ontology.Comment: elements.Text,
+        ontology.Highlight: elements.Text,
+        ontology.RevisionInsertion: elements.Text,
+        ontology.RevisionDeletion: elements.Text,
+        ontology.Address: elements.Address,
+        ontology.EmailAddress: elements.EmailAddress,
+        ontology.PhoneNumber: elements.Text,
+        ontology.CalendarDate: elements.Text,
+        ontology.Time: elements.Text,
+        ontology.Currency: elements.Text,
+        ontology.Measurement: elements.Text,
+        ontology.Letterhead: elements.Header,
+        ontology.Signature: elements.Text,
+        ontology.Watermark: elements.Text,
+        ontology.Stamp: elements.Text,
     }
 
     return ontology_to_unstructured_class_mapping
 
 
-ALL_ONTOLOGY_ELEMENT_TYPES = get_all_subclasses(OntologyElement)
-HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP: Dict[tuple[str, str], Type[OntologyElement]] = {
+ALL_ONTOLOGY_ELEMENT_TYPES = get_all_subclasses(ontology.OntologyElement)
+HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP: Dict[tuple[str, str], Type[ontology.OntologyElement]] = {
     (tag, element_type().css_class_name): element_type
     for element_type in ALL_ONTOLOGY_ELEMENT_TYPES
     for tag in element_type().allowed_tags
 }
-CSS_CLASS_TO_ELEMENT_TYPE_MAP: Dict[str, Type[OntologyElement]] = {
+CSS_CLASS_TO_ELEMENT_TYPE_MAP: Dict[str, Type[ontology.OntologyElement]] = {
     element_type().css_class_name: element_type
     for element_type in ALL_ONTOLOGY_ELEMENT_TYPES
     for tag in element_type().allowed_tags
 }
 
-EXCLUSIVE_HTML_TAG_TO_ELEMENT_TYPE_MAP: Dict[str, Type[OntologyElement]] = get_exclusive_html_tags()
-ONTOLOGY_CLASS_NAME_TO_UNSTRUCTURED_ELEMENT_TYPE_NAME = get_ontology_to_unstructured_type_mapping()
+HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP: Dict[str, Type[ontology.OntologyElement]] = {
+    "a": ontology.Hyperlink,
+    "address": ontology.Address,
+    "aside": ontology.Sidebar,
+    "audio": ontology.Audio,
+    "blockquote": ontology.Quote,
+    "body": ontology.Document,
+    "button": ontology.Button,
+    "cite": ontology.Citation,
+    "code": ontology.CodeBlock,
+    "del": ontology.RevisionDeletion,
+    "div": ontology.UncategorizedText,
+    "dl": ontology.DefinitionList,
+    "figcaption": ontology.Caption,
+    "figure": ontology.Figure,
+    "footer": ontology.Footer,
+    "form": ontology.Form,
+    "h1": ontology.Title,
+    "h2": ontology.Subtitle,
+    "h3": ontology.Heading,
+    "h4": ontology.Heading,
+    "h5": ontology.Heading,
+    "h6": ontology.Heading,
+    "header": ontology.Header,
+    "hr": ontology.PageBreak,
+    "img": ontology.Image,
+    "input": ontology.Checkbox,
+    "ins": ontology.RevisionInsertion,
+    "label": ontology.FormField,
+    "li": ontology.ListItem,
+    "mark": ontology.Highlight,
+    "math": ontology.Equation,
+    "meta": ontology.Keywords,
+    "nav": ontology.Index,
+    "ol": ontology.OrderedList,
+    "p": ontology.Paragraph,
+    "pre": ontology.CodeBlock,
+    "section": ontology.Section,
+    "span": ontology.UncategorizedText,
+    "sub": ontology.FootnoteReference,
+    "svg": ontology.Signature,
+    "table": ontology.Table,
+    "tbody": ontology.TableBody,
+    "td": ontology.TableCell,
+    "th": ontology.TableCellHeader,
+    "thead": ontology.TableHeader,
+    "time": ontology.Time,
+    "tr": ontology.TableRow,
+    "ul": ontology.UnorderedList,
+    "video": ontology.Video,
+}
+
+
+ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE = get_ontology_to_unstructured_type_mapping()

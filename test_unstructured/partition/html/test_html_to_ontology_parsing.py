@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import OntologyElement
+from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
 from unstructured.partition.html.html_utils import indent_html
-from unstructured.partition.html.transformations import parse_html_to_ontology
+from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
 
 def _wrap_with_body(html: str) -> str:
@@ -310,8 +310,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
-                <span class="UncategorizedText" type="radio" name="option1" value="2" checked>
-                </span>
+                <input class="Checkbox" type="radio" name="option1" value="2" checked />
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
@@ -356,12 +355,12 @@ def test_broken_cell_is_not_raising_error():
         """
     <div class="Page">
         <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                   <td class="TableCell" tablecell&quot;="">
+            <tbody>
+                <tr>
+                   <td tablecell&quot;="">
                     83.64 GiB
                    </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value
                  </th>
                </tr>
@@ -406,12 +405,12 @@ def test_table():
         """
     <div class="Page">
         <table class="Table">
-            <tbody class="TableBody">
-                <tr class="TableRow">
-                  <td class="TableCell">
+            <tbody>
+                <tr>
+                  <td>
                     Fair Value1
                   </td>
-                  <th class="TableCellHeader" rowspan="2">
+                  <th rowspan="2">
                     Fair Value2
                  </th>
                </tr>
@@ -467,24 +466,20 @@ def test_table_and_time():
         """
     <div class="Page">
         <table class="Table">
-            <thead class='TableHeader'>
-                <tr class="TableRow">
-                    <th class="TableCellHeader"  colspan="6">
+            <thead>
+                <tr>
+                    <th colspan="6">
                         Carrying Value
                     </th>
                 </tr>
             </thead>
-            <tbody class='TableBody'>
-                <tr class="TableRow">
-                    <td class="TableCell" colspan="5">
-                        <time class="CalendarDate">
+            <tbody>
+                <tr>
+                    <td colspan="5">
                             June 30, 2023
-                        </time>
                     </td>
-                <td class="TableCell">
-                    <span class="Currency">
+                <td>
                         $—
-                    </span>
                 </td>
                 </tr>
             </tbody>
@@ -594,3 +589,82 @@ def test_text_is_wrapped_inside_layout_element():
     parsed_ontology = indent_html(remove_all_ids(ontology.to_html()))
 
     assert parsed_ontology == expected_html
+
+
+def test_text_in_form_field_value():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <input class="FormFieldValue" value="Random Input Value"/>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    form_field_value = page.children[0]
+    assert form_field_value.text == ""
+    assert form_field_value.to_text() == "Random Input Value"
+
+
+def test_text_in_form_field_value_with_null_value():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <input class="FormFieldValue" value=""/>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+
+    assert len(page.children) == 1
+    form_field_value = page.children[0]
+    assert form_field_value.text == ""
+    assert form_field_value.to_text() == ""
+
+
+def test_to_text_when_form_field():
+    ontology = Page(
+        children=[
+            Form(
+                tag="input",
+                additional_attributes={"value": "Random Input Value"},
+                children=[
+                    FormFieldValue(
+                        tag="input",
+                        additional_attributes={"value": "Random Input Value"},
+                    )
+                ],
+            )
+        ]
+    )
+    assert ontology.to_text(add_children=True) == "Random Input Value"
+
+
+def test_recursion_limit_is_limiting_parsing():
+    # language=HTML
+    broken_html = "some text"
+    for i in range(100):
+        broken_html = f"<p class='Paragraph'>{broken_html}</p>"
+    broken_html = _wrap_with_body(broken_html)
+    ontology = parse_html_to_ontology(broken_html)
+
+    iterator = 1
+    last_child = ontology.children[0]
+    while last_child.children:
+        last_child = last_child.children[0]
+        iterator += 1
+    assert last_child.text.startswith('<p class="Paragraph">')
+    assert iterator == RECURSION_LIMIT
+
+
+def test_get_text_when_recursion_limit_activated():
+    broken_html = "some text"
+    for i in range(100):
+        broken_html = f"<p class='Paragraph'>{broken_html}</p>"
+    broken_html = _wrap_with_body(broken_html)
+    ontology = parse_html_to_ontology(broken_html)
+
+    last_child = ontology.children[0]
+    while last_child.children:
+        last_child = last_child.children[0]
+
+    assert last_child.to_text() == "some text"
