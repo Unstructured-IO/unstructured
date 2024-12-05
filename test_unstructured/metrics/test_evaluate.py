@@ -143,37 +143,40 @@ def test_process_document_returns_the_correct_amount_of_values(
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 @pytest.mark.parametrize(
-    ("calculator_class", "output_dirname", "source_dirname", "path"),
+    ("calculator_class", "output_dirname", "source_dirname", "path", "kwargs"),
     [
         (
             TextExtractionMetricsCalculator,
             UNSTRUCTURED_CCT_DIRNAME,
             GOLD_CCT_DIRNAME,
             Path("2310.03502text_to_image_synthesis1-7.pdf.txt"),
+               {"document_type": "txt"},
         ),
         (
             TableStructureMetricsCalculator,
-            UNSTRUCTURED_CCT_DIRNAME,
-            GOLD_CCT_DIRNAME,
-            Path("tablib-627mTABLES-2310.07875-p7.pdf.txt"),
+            UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
+            GOLD_TABLE_STRUCTURE_DIRNAME,
+            Path("tablib-627mTABLES-2310.07875-p7.pdf.json"),
+            {}
         ),
         (
             ElementTypeMetricsCalculator,
-            UNSTRUCTURED_CCT_DIRNAME,
-            GOLD_CCT_DIRNAME,
-            Path("USDC-compression-vit-2310.11117-p7.pdf.txt"),
+            UNSTRUCTURED_OUTPUT_DIRNAME,
+            GOLD_ELEMENT_TYPE_DIRNAME,
+            Path("IRS-form.1987.pdf.json"),
+            {}
   
         ),
     ],
 )
 def test_process_document_returns_the_correct_doctype(
-        calculator_class, output_dirname, source_dirname, path
+        calculator_class, output_dirname, source_dirname, path, kwargs
 ):
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
 
     calculator = calculator_class(
-        documents_dir=output_dir, ground_truths_dir=source_dir
+        documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs
     )
     output_list = calculator._process_document(path)
     assert output_list[1] == ".pdf"

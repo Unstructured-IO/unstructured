@@ -742,7 +742,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
         if src_gt_filename not in self._ground_truth_paths:
             raise ValueError(f"Ground truth file {src_gt_filename} not found in list of GT files")
 
-        doctype = Path(src_gt_filename).suffix
+        doctype = Path(src_gt_filename.stem).suffix[1:]
 
         prediction_file = self.documents_dir / doc
         if not prediction_file.exists():

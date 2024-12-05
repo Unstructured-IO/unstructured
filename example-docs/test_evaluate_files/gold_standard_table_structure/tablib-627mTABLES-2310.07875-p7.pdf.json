@@ -1,0 +1,3602 @@
+[
+    {
+        "type": "OtherText",
+        "text": "arXiv:2310.07875v1 [cs.CL] 11 Oct 2023"
+    },
+    {
+        "type": "MajorTitle",
+        "text": 0
+    },
+    {
+        "type": "NarrativeText",
+        "text": "A PREPRINT"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Gus Eggert, Kevin Huo, Mike Biven, and Justin Waugh"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Approximate Labs*, Boulder, CO, USA"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "October 13, 2023"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "Abstract",
+        "text": "It is well-established that large, diverse datasets play a pivotal role in the performance of modern AI systems for text and image modalities. However, there are no datasets for tabular data of comparable size and diversity to those available for text and images. Thus we present \"TabLib\u201d, a compilation of 627 million tables totaling 69 TiB, along with 867B tokens of context. TabLib was extracted from numerous file formats, including CSV, HTML, SQLite, PDF, Excel, and others, sourced from GitHub and Common Crawl. The size and diversity of TabLib offer considerable promise in the table modality, reminiscent of the original promise of foundational datasets for text and images, such as The Pile and LAION."
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The importance of data in model training has continued to grow [Hoffmann et al., 2022]. Training data volume is now considered to be roughly as important to model performance as model size [Zha et al., 2023a]. This implies that large datasets are promising assets for improving the performance of AI models."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "For example, in 2021 OpenAlI released both CLIP and DALL-E [Radford et al., 2021, Ramesh et al., 2021], which were considered state-of-the-art for image tasks. A large part of their success was due to their training data scale of 400M image-text pairs, whereas previously the largest open dataset for image-text pairs was around 10M\n[Schuhmann et al., 2021]. Even larger training datasets such as LAION-5B [Schuhmann et al. 2022] have fueled subsequent image models\nlike Stable Diffusion [Rombach et al. 2022]. "
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Given the volume and significance of information captured in tabular data, research on applying AI models to tabular data is an area of active research [Badaro et al. 2023] [Jin et al. 2022] [Dong et al. 2022]. Despite this, there are not many large-scale, diverse, and accessible datasets for tabular data. We are aware of only one large scale craw! that exceeds 10M tables (WebTables [Lehmberg et al. 2016]), and only a few additional datasets have more than one million\ntables (WikiTables [Bhagavatula et al., 2015], GitTables [Hulsebos et al., 2023], VizNet [Hu et al., 2019]). Furthermore, the largest of these datasets (WebTables) is composed solely of HTML tables, which differ meaningfully from other common table types such as database tables, suggesting that WebTables may be insufficient for training models for diverse tasks. We believe that a larger and more diverse dataset will accelerate the advancement of tabular AI systems."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Thus, we present \u201c\u201cTabLib\u201d, whose notable characteristics include:"
+    },
+    {
+        "type": "ListItem",
+        "text": "Scale: Over 627 million individual tables totaling 69 TiB"
+    },
+    {
+        "type": "ListItem",
+        "text": "Table metadata: 867B tokens of contextual information, such as filenames, URLs, text before and after the table in the source document, and OpenGraph metadata."
+    },
+    {
+        "type": "ListItem",
+        "text": "Diversity: Across language, category, size, source (Common Craw1 and GitHub2), and format (CSV, HTML, PDF, Excel, SQLite, etc.)"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "*research@approximatelabs.com"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "2 https://commoncrawl.org"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "3 https://github.com"
+    },
+    {
+        "type": "Footer"
+    },
+    {
+        "type": "Header",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "type": "ListItem",
+        "text": "Provenance: Table source and transformation data to enable attribution and validation"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "These characteristics suggest TabLib could be a useful research asset for many fields, which we discuss later in 1.2. Impact. We hope that TabLib will help advance tabular data understanding and catalyze the development of AI models focused on this modality, which we refer to as large data models."
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Numerous open datasets exist for the purpose of training machine learning models to understand and interpret tabular data. Some of the most significant of these datasets are detailed in Table 2 in [Badaro et al. 2023]. While high quality, existing datasets such as Spider, WikiDB, and VizNet [Vogel and Binnig, 2023, Yu et al., 2019 Hu et al., 2019] lack the size and/or diversity necessary to pre-train large data models with broad applicability."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Two data sets have noteworthy volume: WebTables [Cafarella et al. 2008] and GitTables [Hulsebos et al., 2023]."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The latest WebTables corpus contains 233 million tables extracted from HTML pages from Common Crawl4 WebTables contains a large volume of tables, but has limited diversity due to only including HTML tables from web pages."
+    },
+    {
+        "type": "NarrativeText"
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Applying AI to tabular data is an active field of study, and there are many applications and research areas that could significantly benefit from a large, diverse dataset such as TabLib. These include:"
+    },
+    {
+        "type": "ListItem",
+        "text": "Dataset Search: Identifying corresponding tables using a set of keywords that describe the required information [Benjelloun et al., 2020, Chapman et al., 2020, Zhang and Balog, 2018]"
+    },
+    {
+        "type": "ListItem",
+        "text": "Data Integration: Identifying tables that can be joined or unioned within a large corpus of tables. Includes schema mapping. [Dong et al., 2021, Zhang and Balog, 2019, Zhu et al., 2019, Nargesian et al., 2018, Santos et al., 2021, Srinivas et al., 2023, Zhu et al., 2017, Cong et al., 2023a,b]"
+    },
+    {
+        "type": "ListItem",
+        "text": "Data Integration: Identifying tables that can be joined or unioned within a large corpus of tables. Includes schema mapping. [Dong et al., 2021, Zhang and Balog, 2019, Zhu et al., 2019, Nargesian et al., 2018, Santos et al., 2021, Srinivas et al., 2023, Zhu et al., 2017, Cong et al., 2023a,b]"
+    },
+    {
+        "type": "ListItem",
+        "text": "Knowledge Extraction: Interacting with data through natural language, via tasks like question answering and semantic parsing. [Zha et al., 2023b, Cheng et al., 2023, Zhang et al., 2023, Li et al., 2023, Pourreza and Rafiei, 2023, Talmor et al., 2021, Lin et al., 2020]"
+    },
+    {
+        "type": "ListItem",
+        "text": "Table Metadata Prediction: Predicting metadata such as column types, inclusion of personally identifiable information (PII), and data cleanliness. [Zhang, 2017, Parikh et al., 2020, Korini and Bizer, 2023]"
+    },
+    {
+        "type": "ListItem",
+        "text": "Table Representation Learning: Representing tables as a distinct modality of information for training\nmachine learning models [Yin et al., 2020, Deng et al., 2020, Tang et al., 2021, Herzig et al., 2020, Iida et al., 2021]"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "We built a processing pipeline that consumes raw data from data sources, extracts tables into Pandas dataframes [McKinney, 2010], serializes those dataframes into Arrow tables 5, stores each in blob storage and metadata in a SQL database, and then aggregates into Parquet files 6. To orchestrate this process, we used the Ray distributed processing framework [Moritz et al., 2018]."
+    },
+    {
+        "text": "Because parsing tabular data is relatively complex compared to text due to its additional structure and data types (see Formats, Parsing, and Metadata), we encountered some failure scenarios which were difficult to recover gracefully from,",
+        "type": "NarrativeText"
+    },
+    {
+        "text": "4 https://webdatacommons.org/webtables/#results-2015 "
+    },
+    {
+        "type": "NarrativeText",
+        "text": "5 https://arrow.apache.org/"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "6 https://parquet.apache.org/"
+    },
+    {
+        "type": "Footer"
+    },
+    {
+        "type": "PageNumber",
+        "text": 2
+    },
+    {
+        "type": "Header",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "such as out-of-memory errors and catastrophic regular expression backtracking. As such, we isolated each \u201csource\u201d as its own task instead of batching them together."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "This granular task scheduling necessitated scheduling hundreds of millions of tasks. We found Ray\u2019s scheduler problematic for this, so we scheduled these tasks using a PostgreSQL database, and used Ray to maintain long-running tasks which pulled work from the database, extracted the tables and metadata, stored the tables in blob storage, and wrote the metadata back to the DB. A separate Ray actor tracked the progress of these tasks, handled timeouts and retries, occasionally aggregated batches of metadata into Parquet files, and wrote those into blob storage."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Sources Table Extraction Aggregation & Storage"
+    },
+    {
+        "type": "Caption",
+        "text": "Figure 1: Architecture of table extraction pipeline."
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "For data about the number of tables extracted for each data source and file types, see For samples of extracted tables and metadata, see[Sample Datalin the appendix."
+    },
+    {
+        "type": "Title",
+        "text": 3
+    },
+    {
+        "type": "NarrativeText",
+        "text": "To reduce the amount of noise, we skipped all files under node_modules directories, and all JSON and YAML files which are generally configuration files in GitHub. Since files in GitHub often contain extensions like .csv that provide hints for the content type, we used Python\u2019s mimetypes.guess_type() function to see if the file was a supported type; if not then we inspected the file\u2019s bytes using libmagic 7, and if it was still unsupported then the file was skipped. Files larger than 1 GB were also skipped."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Tables extracted from GitHub repos result in the following fields in each table\u2019s context_metadata:"
+    },
+    {
+        "type": "ListItem",
+        "text": "github_repo: the repo name"
+    },
+    {
+        "type": "ListItem",
+        "text": "github_ref: the ref used, such as \u201crefs/heads/master\u201d"
+    },
+    {
+        "type": "ListItem",
+        "text": "github_hash: the shortened Git commit hash"
+    },
+    {
+        "type": "ListItem"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "Title",
+        "text": 3
+    },
+    {
+        "type": "NarrativeText",
+        "text": "We used the latest crawl at the time, which was CC-MAIN-2023-23. Common Crawl results are serialized using the WARC format, which includes \u201crequest\u201d and \u201cresponse\u201d records. We only considered response records. We discarded"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "7 https://www.darwinsys.com/file/"
+    },
+    {
+        "type": "Footer"
+    },
+    {
+        "type": "Header",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "text": "\u201ctruncated\u201d responses which had response lengths that exceed Common Crawl\u2019s limit. If a WARC-Identified-Payload-Type record header was included in the record, then we used its mimetype as a hint for detecting the content type, otherwise we used the Content-Type header in the HTTP response, and followed a similar approach as GitHub (use the mimetype if possible, otherwise use libmagic). About 20% of WARC files were dropped due to issues parsing certain HTML elements with Pandas.",
+        "type": "NarrativeText"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Tables extracted from Common Crawl WARC records result in the following fields in each table\u2019s context_metadata:"
+    },
+    {
+        "type": "ListItem",
+        "text": "warc_path: the path of the WARC file in Common Crawl"
+    },
+    {
+        "type": "ListItem",
+        "text": "warc_record_id: the record ID in the WARC file as specified by WARC-Record-ID"
+    },
+    {
+        "type": "ListItem",
+        "text": "warc_target_uri: the target URI of the HTTP request as specified by WARC-Target-URI"
+    },
+    {
+        "type": "ListItem",
+        "text": "warc_date: the date of the request as specified by WARC-Date"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "In order to efficiently store and manage the large volume of tabular data in TabLib, we implemented a data storage model that consists of two main components: blob storage and manifests. Using this storage model, we can efficiently manage and retrieve the tables based on their metadata and content hash. This allows for easy deduplication, querying, and analysis of the dataset. A final post-processing step was performed which added the serialized tables as a column in the manifests, which is ultimately the TabLib schema, but this paper will focus on the intermediate representation because it is what the analyses are based on."
+    },
+    {
+        "type": "Title",
+        "text": 3
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The manifests contain metadata about the tables and are stored as partitioned Parquet files. The schema for the manifests includes the following fields:"
+    },
+    {
+        "text": "bucket: the blob storage bucket of the table",
+        "type": "ListItem"
+    },
+    {
+        "type": "ListItem",
+        "text": "key: the blob storage key of the table"
+    },
+    {
+        "type": "ListItem",
+        "text": "ref: a human-readable string describing how the table was extracted"
+    },
+    {
+        "type": "ListItem",
+        "text": "ref_id: a base64-encoded sha256 hash of the ref"
+    },
+    {
+        "type": "ListItem",
+        "text": "exec_id: a UUIDv7 generated at the time of table extraction"
+    },
+    {
+        "type": "ListItem",
+        "text": "run_metadata: serialized JSON object containing metadata about the run, including start and end times"
+    },
+    {
+        "type": "ListItem",
+        "text": "context_metadata: serialized JSON object containing metadata about the table, including:"
+    },
+    {
+        "type": "ListItem",
+        "text": "\u2014 extractor: the extractor used for this table (e.g. \u201chtml\u201d, \u201ccsv\u201d, \u201cpdf\u201d, etc.)"
+    },
+    {
+        "type": "ListItem",
+        "text": "\u2014 mime_type: the detected mime type of the bytes that the table was extracted from, e.g. \u201ctext/html\u201d for an HTML page, \u201ctext/csv\u201d for a CSV file, etc."
+    },
+    {
+        "type": "ListItem",
+        "text": "\u2014 <source-specific>: additional fields depending on the source, see Sources"
+    },
+    {
+        "type": "ListItem",
+        "text": "\u2014 <datatype-specific>: additional fields depending on the data type, see Formats, Parsing, and Metadata"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "Title",
+        "text": 3
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Each table in its intermediate form, before the final post-processing step, is stored as a separate blob object. The blob\u2019s content is computed by serializing the Arrow table to bytes, and compressing these bytes with gzip. Each table is assigned a unique key based on the arrow table bytes content hash. The blob storage follows the following key schema:"
+    },
+    {
+        "type": "ListItem",
+        "text": "/manifests/{batch}/manifest.parquet"
+    },
+    {
+        "type": "ListItem",
+        "text": "/tables/{batch}/{base64_sha256_of_arrow_table}"
+    },
+    {
+        "type": "List"
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Parsing tabular data presents unique challenges that are not present when parsing text. Tasks such as inferring column data types and row delimiters are complex and error-prone. Because of this, we reused existing open-source parsers as much as possible, such as those in Pandas and pdfplumber. For most file types, we drop parsed tables with only one column, one row, all empty column names, or only numeric column names."
+    },
+    {
+        "type": "NarrativeText"
+    },
+    {
+        "type": "PageNumber",
+        "text": 4
+    },
+    {
+        "type": "Header",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "ed1ed7d2-2350-48ed-8ff6-184a52a49f65",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Data Type"
+            },
+            {
+                "id": "a45db42c-7531-4dfb-bb66-d69841bcb923",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "HTML"
+            },
+            {
+                "id": "f4b3900b-fa93-4431-ab68-a4349fe7dc7c",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "PDF"
+            },
+            {
+                "id": "fb66a884-427b-44e4-973b-b14d8defd847",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "SQLite"
+            },
+            {
+                "id": "6dae3f48-a359-429d-9517-d42a3202358a",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "Excel"
+            },
+            {
+                "id": "26d454e0-3bec-4d9c-877f-60e8a60fac21",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "Parquet"
+            },
+            {
+                "id": "912c7f0e-ff00-47b3-820c-cb2358254eb8",
+                "x": 0,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "JSON"
+            },
+            {
+                "id": "84331a64-c034-41c1-87dd-dd496252058e",
+                "x": 0,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "YAML"
+            },
+            {
+                "id": "298160e9-b538-4799-abf0-217ca9ed6f4e",
+                "x": 0,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "CSV"
+            },
+            {
+                "id": "15596481-b6e0-455e-8c2b-0d11ed4f0e2b",
+                "x": 0,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "TSV"
+            },
+            {
+                "id": "b1bae869-6cb4-40ac-9c10-78af178b494a",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Method"
+            },
+            {
+                "id": "24952439-c465-4235-b8db-b2cdf473fa62",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Parse with BeautifulSoup using lxml and html5lib parsers. Then extract all <table> elements with pandas.read_html(). Extract HTML metadata with metadata_parser library. Ex- tract \u201cbefore\u201d and \u201cafter\u201d context with BeautifulSoup. Drop <table> elements with colspan values > 1000 to avoid causing out-of-memory errors."
+            },
+            {
+                "id": "bf455981-5bb8-4fc3-a9a3-7446765a4e38",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "Use pdfplumber to extract tables. Only supports text-based tables and not image-based tables, and multi-page tables appear as a separate table per page."
+            },
+            {
+                "id": "1b2be660-c446-466d-879f-49a49a29d434",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "Use a custom SQLite VFS implementation to load the in-memory bytes with apsw, list the tables, and then parse each table with pandas.read_sql()."
+            },
+            {
+                "id": "923fc425-658a-4749-9ad1-db50fd7ce66b",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "There are many Excel formats, mimetypes, and extensions, so ignore specifics and always try parsing as XLSX using openpyxl, and then fall back to XLS using xlrd, using pandas.read_excel(). Parse each sheet as its own table."
+            },
+            {
+                "id": "ab0f5616-47f1-4518-94bb-01e8718bad53",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "pandas.read_parquet()"
+            },
+            {
+                "id": "98b9453c-e037-451e-85d1-1e85369ffe44",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "pandas.read_json(orient=\"records\")"
+            },
+            {
+                "id": "976891f6-30bc-40c9-ac90-58657396bc82",
+                "x": 1,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "Use yaml.safe_load() to convert to JSON, then pandas.read_json(orient=\"records\")."
+            },
+            {
+                "id": "21007809-b14e-4b20-98b7-5c8382ac7e67",
+                "x": 1,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "pandas.read_csv(engine=\"python\")"
+            },
+            {
+                "id": "9aef6a36-27a4-46a1-8bac-c6a386056423",
+                "x": 1,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "pandas.read_csv(engine=\"python\")"
+            },
+            {
+                "id": "9a1042ba-98df-461f-9820-920ba0c1d274",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Context Metadata"
+            },
+            {
+                "id": "af7eddb2-333c-4128-bc6a-913ccd7f11f1",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "html_title html_metadata before after"
+            },
+            {
+                "id": "18d261a4-921c-4640-9e9d-175e76140f62",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "pdf_bbox pdf_page pdf_metadata before after"
+            },
+            {
+                "id": "7f55d6a7-6a4a-491c-9790-0f45577f3c67",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "sqlite_table sqlite_other_tables"
+            },
+            {
+                "id": "f32161e2-c0e3-4960-a2a0-735aa3793f58",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            },
+            {
+                "id": "95a66969-8944-4f2a-bdd7-8e03bd986b2e",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            },
+            {
+                "id": "21f5d845-c488-4543-9bc8-bd378d030ef6",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            },
+            {
+                "id": "801f2c53-b861-4bb3-ae93-641e8a54ebb7",
+                "x": 2,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            },
+            {
+                "id": "3ec6625d-c3e6-4cb4-850d-7156e58e81cc",
+                "x": 2,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            },
+            {
+                "id": "a798c997-c983-4342-ba1a-020cbc3a0877",
+                "x": 2,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "n/a"
+            }
+        ]
+    },
+    {
+        "type": "Caption",
+        "text": "Table 1: Summary of supported data types, and how each was parsed."
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "text": 2,
+        "type": "Title"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "We begin by examining the cardinalities of different keys: exec_id, ref_id, key, and content_hash, as shown in Table 2. Definitions of these values are in Manifest Schema and Blob Storage Key Schema."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The exec_id is unique across the dataset, generated upon line-item creation in the manifest. Any duplication indicates a serialization error."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The ref_id represents a unique source for a table. This should be unique across TabLib, but the current version of TabLib has some repetitions due to a bug in deduping items in the work queue. Future versions will allow tracking external data changes over time via ref _id."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "The number of unique key values is substantial but not as large as unique ref_id values. This discrepancy arises because the same content table can appear multiple times within a batch (e.g., a CSV file stored multiple times in a GitHub repository with different filenames). However, key is not a global content-collision key as it includes the batch."
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "3318c5a9-4567-4dcb-9e27-dd033f1787c2",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Key Type"
+            },
+            {
+                "id": "963d6e49-2801-4973-af0d-9bfde1554d6c",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "exec_id"
+            },
+            {
+                "id": "dccbb0d5-7051-45da-b660-e71efe07eb39",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "ref_id"
+            },
+            {
+                "id": "eeb60833-e8ff-4e2d-95e0-c89a90d9756d",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "key"
+            },
+            {
+                "id": "bb890701-c57f-4b7d-aad1-ff8208f75560",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "content_hash"
+            },
+            {
+                "id": "b0e2ee61-aaf3-4cd9-a38a-4dd359e2b7d6",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Number of Tables"
+            },
+            {
+                "id": "68c92219-d679-434e-ae08-40360b8854f5",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "660840556"
+            },
+            {
+                "id": "6c25addd-d89d-4b93-be69-46031ea39b87",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "627208299"
+            },
+            {
+                "id": "40454d87-0c3c-418a-b7fd-eed248d34e94",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "459022959"
+            },
+            {
+                "id": "45c20130-0bd8-46e8-91a5-34bf619570be",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "201376283"
+            }
+        ]
+    },
+    {
+        "type": "Caption",
+        "text": "Table 2: Unique counts of key-like values, ordered by decreasing uniqueness. Each may be considered some definition of \u201ctable\u201d. We will use ref _id as the definition of \u201ctable\u201d for our analyses."
+    },
+    {
+        "type": "PageNumber",
+        "text": 5
+    },
+    {
+        "type": "Footer"
+    },
+    {
+        "type": "Header",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Table content _hashes are 30.5% the size of exec_id values, indicating that most tables are not globally unique by content. The breakdown of these repeated tables is discussed further in Data Duplication."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "For clarity, the term table henceforth refers to a specific ref_id instance. "
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "We calculate the total number of tables, total uncompressed table bytes, and total columns, broken out by data source and file type. See Table 3 for a summary of the dataset statistics."
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "dd49a82f-ea6d-4805-af95-dcb0e0947d07",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 2,
+                "content": "Source"
+            },
+            {
+                "id": "35d3ab4b-062c-4644-a0de-487fc6edf6b4",
+                "x": 0,
+                "y": 12,
+                "w": 1,
+                "h": 7,
+                "content": "Github"
+            },
+            {
+                "id": "2fd78258-ffa5-4a0d-854e-ffd3912aeff2",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 10,
+                "content": "Common Crawl"
+            },
+            {
+                "id": "8a1e8337-5971-4a27-8efe-c6d3b36edd5e",
+                "x": 0,
+                "y": 19,
+                "w": 1,
+                "h": 10,
+                "content": "Total"
+            },
+            {
+                "id": "a3c72843-f3cf-4aac-9f95-357e5314798c",
+                "x": 1,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "Excel"
+            },
+            {
+                "id": "0c2b74cf-97f5-4b07-af57-d22e8f498f11",
+                "x": 4,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "5,484,049,755"
+            },
+            {
+                "id": "0acb9f50-09d2-4e8a-8019-21111e3b2bf8",
+                "x": 3,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "3.02TiB"
+            },
+            {
+                "id": "458c5f54-212e-4c1f-a63a-821956627e44",
+                "x": 4,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "245,433,510"
+            },
+            {
+                "id": "07521ea6-b2fd-4960-8101-8bca949f88f0",
+                "x": 5,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "7,405,833,692"
+            },
+            {
+                "id": "1ab3745a-186d-4c8c-b3ad-6e6bb0098e6e",
+                "x": 3,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "59.86TIB"
+            },
+            {
+                "id": "484fc374-a52c-4031-97b1-6b11fd2b753f",
+                "x": 1,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "CSV"
+            },
+            {
+                "id": "f24371bf-e2cf-4af2-aa1c-149dc15c5a96",
+                "x": 2,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "15,930,671"
+            },
+            {
+                "id": "c204fe12-c5d9-45e8-b5d1-dbb99dcafc5f",
+                "x": 2,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "122,182,649"
+            },
+            {
+                "id": "e0e074f0-bab8-40e3-84df-162dd6b00883",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 2,
+                "content": "File Type"
+            },
+            {
+                "id": "cf16232f-2911-4cf4-a5ed-471b7ba15bcc",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "CSV"
+            },
+            {
+                "id": "c608c697-9a6d-4dcb-9842-c53cf8d47383",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "Excel"
+            },
+            {
+                "id": "684829f8-78b1-4687-af7d-4596960917c2",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "HTML"
+            },
+            {
+                "id": "e60e07a6-73bb-4b32-a102-4801c92420c1",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "JSON"
+            },
+            {
+                "id": "b9a87c85-6d55-4dc7-af53-8e7a1ce0946a",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "Parquet"
+            },
+            {
+                "id": "b544fa35-812f-4c83-ad33-435f1c589bc0",
+                "x": 1,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "PDF"
+            },
+            {
+                "id": "9b773acb-177a-4587-9270-e4526e0f6c5d",
+                "x": 1,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "SQLite"
+            },
+            {
+                "id": "2d372d83-bcf6-4a78-8a0b-676ea5433cd3",
+                "x": 1,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "TSV"
+            },
+            {
+                "id": "9e5f5cd0-03d0-4314-b5da-e7ea9843a098",
+                "x": 1,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "YAML"
+            },
+            {
+                "id": "bf913398-f507-4bf8-9763-d4a8a0a8d45f",
+                "x": 1,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "Total"
+            },
+            {
+                "id": "454f05ef-a680-4e33-a28f-b1c68167968a",
+                "x": 1,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "CSV"
+            },
+            {
+                "id": "fd064da7-4122-460c-8de9-b641971a3b6c",
+                "x": 1,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "Excel"
+            },
+            {
+                "id": "c0534ed0-1623-4c26-9e0c-023b33f375e9",
+                "x": 1,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "HTML"
+            },
+            {
+                "id": "1c683da9-60f9-4bc8-824d-5891dcee0c4b",
+                "x": 1,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "PDF"
+            },
+            {
+                "id": "3397296d-ab75-4725-a31e-72c6e33d2923",
+                "x": 1,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "SQLite"
+            },
+            {
+                "id": "bba5a49c-da46-4beb-a107-2f66fed5efb6",
+                "x": 1,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "TSV"
+            },
+            {
+                "id": "c700b323-e501-45c9-877b-19eb64d9fb89",
+                "x": 1,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "Total"
+            },
+            {
+                "id": "c26254f2-eed5-4acc-b1c9-549c4b1cc570",
+                "x": 1,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "HTML"
+            },
+            {
+                "id": "f01cde55-d2a4-4045-86c4-69064cd8e6fa",
+                "x": 1,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "JSON"
+            },
+            {
+                "id": "6e7a6556-d656-4f8e-b6ac-3ec2e6cdfbc0",
+                "x": 1,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "Parquet"
+            },
+            {
+                "id": "ca5e3c2d-c019-48c0-b8b0-9bf86a0ae4fe",
+                "x": 1,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "PDF"
+            },
+            {
+                "id": "76b4e9ba-0c6b-49dd-92a7-ab9ebf7ac032",
+                "x": 1,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "SQLite"
+            },
+            {
+                "id": "cb73a0f4-f8cc-4b90-b3b7-af1866505698",
+                "x": 1,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "YAML"
+            },
+            {
+                "id": "52c04720-d455-41b6-976a-238c6bf193ce",
+                "x": 1,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "Total"
+            },
+            {
+                "id": "6fedcec8-2ad4-4a70-be88-1c76901fcbcc",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 2,
+                "content": "Tables"
+            },
+            {
+                "id": "568bf86c-eac2-4cd0-82ee-739ba83ddda5",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "90,667"
+            },
+            {
+                "id": "ed895507-9511-43a6-8edb-fbe37bcd86ae",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "143,012"
+            },
+            {
+                "id": "973b0a36-1cdd-442f-889a-5da075fbfa00",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "219,397,657"
+            },
+            {
+                "id": "6c2dc9ac-882a-4373-b3b5-13926c116e58",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "70,737"
+            },
+            {
+                "id": "6b492b78-803d-41aa-86f6-ef91b0c47de4",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "e4c7a719-eae4-439b-a1bc-77a2b15ccae7",
+                "x": 2,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "11,442,231"
+            },
+            {
+                "id": "92e26509-4f91-4214-aecf-2859b5923c74",
+                "x": 2,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "1,408"
+            },
+            {
+                "id": "944a48bf-ff43-43e5-8d6c-d926e88ccf39",
+                "x": 2,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "4,374"
+            },
+            {
+                "id": "749f3dd3-effc-4e3a-ac68-9fea5e6bf789",
+                "x": 2,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "3,185"
+            },
+            {
+                "id": "5a9aad4f-5333-4909-abb6-89115d45fd4a",
+                "x": 2,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "231,153,272"
+            },
+            {
+                "id": "b75e6ebd-20bc-41cb-a5dd-a3a757231e7f",
+                "x": 2,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "122,091,982"
+            },
+            {
+                "id": "4d4570d9-0983-420b-be84-42fd37057aa3",
+                "x": 2,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "15,787,659"
+            },
+            {
+                "id": "a02bbb4b-d96e-4f13-854a-6f034d67547f",
+                "x": 2,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "199,059,080"
+            },
+            {
+                "id": "87e8d250-6c87-48a3-862f-0e1b6e01ff7b",
+                "x": 2,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "40,022,516"
+            },
+            {
+                "id": "141d9cb0-9339-40a4-a525-1c3a5e224c36",
+                "x": 2,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "14,919,675"
+            },
+            {
+                "id": "734c9b97-aa72-434f-9a5b-3f3ce1c373b1",
+                "x": 2,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "4,174,115"
+            },
+            {
+                "id": "8840be3d-f506-4612-a4c1-e1bd36f02417",
+                "x": 2,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "396,055,027"
+            },
+            {
+                "id": "9533a46b-a411-4a97-ae08-0b1af8cd7528",
+                "x": 2,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "418,456,737"
+            },
+            {
+                "id": "0d2d58af-b841-4ecf-84b8-f59b18ec67d0",
+                "x": 2,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "70,737"
+            },
+            {
+                "id": "5d88d483-71e9-430a-ac5a-d68e6b654312",
+                "x": 2,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "714b8ae1-d7cb-414d-87b9-af244e952766",
+                "x": 2,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "51,464,747"
+            },
+            {
+                "id": "b9ffd1a5-140f-495b-a829-566a301f2705",
+                "x": 2,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "14,921,083"
+            },
+            {
+                "id": "cbf457f2-96d7-43b0-912d-8a8196084496",
+                "x": 2,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "3,185"
+            },
+            {
+                "id": "229929b4-f82e-48cb-92dd-9414855dc4b7",
+                "x": 2,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "627,208,299"
+            },
+            {
+                "id": "810ef05e-ec72-4f6e-aa07-75bdb58a4405",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 2,
+                "content": "Bytes"
+            },
+            {
+                "id": "3218fc12-87fe-4e19-aab7-041e857d52b1",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "3.10GiB"
+            },
+            {
+                "id": "1b780cfa-f3a6-49b1-b61f-5bfdb7086eb3",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "3.26GiB"
+            },
+            {
+                "id": "0b12fe76-cde6-48d4-9cc1-53be689fab3b",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "702.95GiB"
+            },
+            {
+                "id": "4f21f5b3-b385-4218-85c2-c1233a39ec8a",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "1.75GiB"
+            },
+            {
+                "id": "a66da9d6-a895-4cfd-8a30-3b9885895e72",
+                "x": 3,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "4.63MiB"
+            },
+            {
+                "id": "ff1f6b17-9b79-4144-ab85-c67803f82042",
+                "x": 3,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "30.48GiB"
+            },
+            {
+                "id": "ca971c56-ce77-4971-a960-2b2c1e41aa37",
+                "x": 3,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "83.70MiB"
+            },
+            {
+                "id": "a78b8a72-d0dd-4048-9c4c-5e94a9795c78",
+                "x": 3,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "419.82MiB"
+            },
+            {
+                "id": "833e51ab-abfb-4576-960c-b1cf037fe3df",
+                "x": 3,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "67.58MiB"
+            },
+            {
+                "id": "b669c4d1-c56a-4fc1-97c3-151727911f1c",
+                "x": 3,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "742.10GiB"
+            },
+            {
+                "id": "28c7283d-9ef9-44e0-ba5b-4e0c7d44c424",
+                "x": 3,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "59.86TIB"
+            },
+            {
+                "id": "cb4d66d2-57d6-4dfd-98d8-38a1b9a79fd0",
+                "x": 3,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "3.02 TiB"
+            },
+            {
+                "id": "6b01b042-1875-4476-a651-970d27537c45",
+                "x": 3,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "630.31GiB"
+            },
+            {
+                "id": "c5c576e7-fd1c-46b5-aa0d-9962c448f145",
+                "x": 3,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "79.00GiB"
+            },
+            {
+                "id": "8ff79ef6-c05b-4523-90c2-4ff0485da7e2",
+                "x": 3,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "3.52TiB"
+            },
+            {
+                "id": "9e4bc69a-d2d7-4aa2-b717-065b46ec658a",
+                "x": 3,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "154 TB"
+            },
+            {
+                "id": "6b2295c7-132e-4608-b5d6-d263fab7db77",
+                "x": 3,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "68.62TiB"
+            },
+            {
+                "id": "9efd35dd-947b-4807-aab4-a8527ce63975",
+                "x": 3,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "1.30 TiB"
+            },
+            {
+                "id": "6eda4e1d-602c-46f8-ba93-14999f987e69",
+                "x": 3,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "1.75 GiB"
+            },
+            {
+                "id": "9a92acc9-289d-4618-9e45-4b5e24f98263",
+                "x": 3,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "4.63MiB"
+            },
+            {
+                "id": "a7047880-dfed-482e-a7aa-82c7a30671a8",
+                "x": 3,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "109.48GiB"
+            },
+            {
+                "id": "b3479968-2e07-4b60-914a-fe6f96742340",
+                "x": 3,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "3.52 TiB"
+            },
+            {
+                "id": "06535e66-5326-492d-ad7f-866ab20769c5",
+                "x": 3,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "67.58MiB"
+            },
+            {
+                "id": "f47304ea-7e4c-4a94-b5de-242e6e944e72",
+                "x": 3,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "69.35TiB"
+            },
+            {
+                "id": "8fbc8839-69d0-4913-9c33-aea606a4ac2e",
+                "x": 4,
+                "y": 0,
+                "w": 1,
+                "h": 2,
+                "content": "Columns"
+            },
+            {
+                "id": "2fc884b7-e7e4-4e3e-b310-1be3d584ea4c",
+                "x": 4,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "2,265,499"
+            },
+            {
+                "id": "113246b4-f4e8-489e-a56f-8190601c61fd",
+                "x": 4,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "1,836,491"
+            },
+            {
+                "id": "d0505586-5588-4283-9f93-349f91fb77a4",
+                "x": 4,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "1,076,171,440"
+            },
+            {
+                "id": "4d211357-ff79-40be-b4ed-ff9878e97397",
+                "x": 4,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "537,934"
+            },
+            {
+                "id": "76decbb8-c5de-4414-bca1-13c849cb9359",
+                "x": 4,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "13"
+            },
+            {
+                "id": "ac78b7c8-9718-4f79-b265-0b5661d77d1b",
+                "x": 4,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "46,514,046"
+            },
+            {
+                "id": "ecd31d5a-c41b-4f50-abdb-a964d4fab629",
+                "x": 4,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "8,839"
+            },
+            {
+                "id": "615b4240-24eb-431f-924a-bdb5456c25db",
+                "x": 4,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "75,989"
+            },
+            {
+                "id": "4cbee9a4-3aec-4669-8586-7b9dafaf8c4c",
+                "x": 4,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "2,236"
+            },
+            {
+                "id": "b60e7ee5-dc5d-483a-bbaa-0da5654c475d",
+                "x": 4,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "1,127,412,487"
+            },
+            {
+                "id": "787eaed1-623e-4298-9f6f-72f7611a92a1",
+                "x": 4,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "5,481,784,256"
+            },
+            {
+                "id": "58339734-d9cc-4528-a6cb-a20c19b7aaeb",
+                "x": 4,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "243,597,019"
+            },
+            {
+                "id": "1b639a58-c530-4028-9703-035a678d8c1c",
+                "x": 4,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "959,028,450"
+            },
+            {
+                "id": "85a916cb-404e-4d64-8b51-4c4fb350073c",
+                "x": 4,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "144,006,906"
+            },
+            {
+                "id": "71aedae2-7a22-49b5-96bd-ce5e0bf5f328",
+                "x": 4,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "84,554,112"
+            },
+            {
+                "id": "998bc4ad-9787-4afb-a294-fe23f5113af2",
+                "x": 4,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "94,845,931"
+            },
+            {
+                "id": "cdeddfed-5792-4da0-8327-c0f465463fd8",
+                "x": 4,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "7,007,816,674"
+            },
+            {
+                "id": "90463382-457a-4a70-a1a6-7ebe3af59bd5",
+                "x": 4,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "2,035,199,890"
+            },
+            {
+                "id": "64fb26d5-2fc1-46a3-b0dc-4fc7e492c49c",
+                "x": 4,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "537,934"
+            },
+            {
+                "id": "317708e3-ad13-447f-a77a-20a88e9db95c",
+                "x": 4,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "13"
+            },
+            {
+                "id": "6ecdd3b7-d227-4fef-aaef-acb2841c68ad",
+                "x": 4,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "190,520,952"
+            },
+            {
+                "id": "eee17378-7230-4525-8e1d-570703902ecc",
+                "x": 4,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "84,562,951"
+            },
+            {
+                "id": "f4e44abc-c28d-439b-be14-c3a5f4979df5",
+                "x": 4,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "2,236"
+            },
+            {
+                "id": "23bfa7e7-af95-4423-9785-c3f809516790",
+                "x": 4,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "8,135,229,161"
+            },
+            {
+                "id": "50fa4744-b514-483e-8c45-ff657f4ff3f0",
+                "x": 5,
+                "y": 0,
+                "w": 3,
+                "h": 1,
+                "content": "Metadata Tokens "
+            },
+            {
+                "id": "83ffd24f-3b78-4005-a86e-0733355e0cac",
+                "x": 5,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Ref"
+            },
+            {
+                "id": "cb5f6c91-0fa9-4751-8a66-414f0fbb0902",
+                "x": 5,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "15,630,941"
+            },
+            {
+                "id": "fefcd2c7-d9f6-47e5-bcfa-8ef6aa1316c9",
+                "x": 5,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "21,063,876"
+            },
+            {
+                "id": "d84ca2a2-88db-4dca-bc71-e7a09ef97b42",
+                "x": 5,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "29,602,279,431 "
+            },
+            {
+                "id": "54e49a4f-51a9-4f9e-a94b-c4cae1a1f9af",
+                "x": 5,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "2,737,873"
+            },
+            {
+                "id": "f3d4a405-aa9f-4c43-9453-c5d33d91bf7e",
+                "x": 5,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "123"
+            },
+            {
+                "id": "a7c8c0fb-fc92-4c0e-b377-adbad26d51bb",
+                "x": 5,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "1,876,490,940"
+            },
+            {
+                "id": "8f844731-17c6-4e2d-a526-fe35dff299a0",
+                "x": 5,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "186,687"
+            },
+            {
+                "id": "2c345000-03a7-4e2a-a86a-324b73ac9828",
+                "x": 5,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "569,475"
+            },
+            {
+                "id": "8b7e64b4-2083-4c78-9b7f-d097b52a8d86",
+                "x": 5,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "31,849"
+            },
+            {
+                "id": "39e1aa97-0a66-4028-ade3-ea9e60a1555b",
+                "x": 5,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "31,518,991,195"
+            },
+            {
+                "id": "a08893e2-a8a5-4978-8137-74c51057f19f",
+                "x": 5,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "7,390,202,751"
+            },
+            {
+                "id": "b46d6cb8-1786-4c85-9a3c-a5913fb1c6a9",
+                "x": 5,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "951,834,206"
+            },
+            {
+                "id": "04ce45fc-fdd6-42f9-8d1e-d67414af5d8d",
+                "x": 5,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "11,817,543,971"
+            },
+            {
+                "id": "adac1fa5-1640-4654-b275-b6f3cd43301d",
+                "x": 5,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "3,344,243,232"
+            },
+            {
+                "id": "9949e293-2a4b-44f7-b9c7-d4bb93b73035",
+                "x": 5,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "728,970,698"
+            },
+            {
+                "id": "535ccd56-82f2-4847-8be6-5e2bc5c95326",
+                "x": 5,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "256,836,169"
+            },
+            {
+                "id": "89ce1166-fd48-4046-87fd-6644f41c62e7",
+                "x": 5,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "24,489,631,027"
+            },
+            {
+                "id": "6e61f345-f8e6-4c81-b2b0-b849626dbaaf",
+                "x": 5,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "41,419,823,402"
+            },
+            {
+                "id": "c04083e8-7249-45ce-9699-3bfba69fa864",
+                "x": 5,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "2,737,873"
+            },
+            {
+                "id": "e28b14c7-bb81-4937-b427-10f445d02881",
+                "x": 5,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "123"
+            },
+            {
+                "id": "9c310b00-20fe-479c-a191-8bbe6a328770",
+                "x": 5,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "5,220,734,172"
+            },
+            {
+                "id": "12404eeb-9a91-434a-a624-d13fafbf44d5",
+                "x": 5,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "729,157,385"
+            },
+            {
+                "id": "341921f4-269b-471d-8fde-cb9ffbdb28d2",
+                "x": 5,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "31,849"
+            },
+            {
+                "id": "c9c1638d-0978-4e82-95f5-790423ff703f",
+                "x": 5,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "56,008,622,222"
+            },
+            {
+                "id": "a31be674-2c7f-47c6-90d5-0672f2224bfc",
+                "x": 6,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Column Names"
+            },
+            {
+                "id": "dd150f14-ab38-4e67-94ec-74bb857e3c71",
+                "x": 6,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "12,488,110"
+            },
+            {
+                "id": "453a3136-3526-4a80-9cf8-c92c677d1f5a",
+                "x": 6,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "10,579,484"
+            },
+            {
+                "id": "6aaac237-d6fc-44a2-91a4-32f129912346",
+                "x": 6,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "3,686,722,801"
+            },
+            {
+                "id": "7aef6a66-0531-4acd-9f38-6d9ec60af3bc",
+                "x": 6,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "4,826,400"
+            },
+            {
+                "id": "f4bce80f-39d4-44e7-9d3d-e98b92b32d5f",
+                "x": 6,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "30"
+            },
+            {
+                "id": "04085ffe-f69a-4717-a68e-b237b1d30dfd",
+                "x": 6,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "432,038,521"
+            },
+            {
+                "id": "be9e76c8-65b1-40eb-908e-8bf7cb3074f9",
+                "x": 6,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "17,973"
+            },
+            {
+                "id": "4d632d59-3f7b-46ca-97eb-2bf2b3fee511",
+                "x": 6,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "210,506"
+            },
+            {
+                "id": "7bc848c6-1393-40e1-b01d-9707fcc91dbb",
+                "x": 6,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "4,601"
+            },
+            {
+                "id": "e00d75a5-e2c7-4274-ac46-1183426fd278",
+                "x": 7,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "512,095,779,088"
+            },
+            {
+                "id": "24cc311e-1f72-4378-97e5-340cefaba07b",
+                "x": 6,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "36,457,207,467"
+            },
+            {
+                "id": "6de3f1c0-94da-49c5-b18e-0dc975de9c78",
+                "x": 6,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "2,016,629,675"
+            },
+            {
+                "id": "940d185e-57df-4329-9846-dbb247d7d92c",
+                "x": 6,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "2,515,057,895"
+            },
+            {
+                "id": "638d27bd-7cf0-4ca2-999a-eb45be7ca53f",
+                "x": 6,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "854,802,039"
+            },
+            {
+                "id": "530ab19c-8ee6-45e5-abd0-5417c5703b14",
+                "x": 6,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "165,104,490"
+            },
+            {
+                "id": "a0871117-7235-4145-b0fb-e102fd6286af",
+                "x": 6,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "739,989,036"
+            },
+            {
+                "id": "1d365ac5-5104-4d10-a1c7-e3a096ba7638",
+                "x": 6,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "42,748,790,602"
+            },
+            {
+                "id": "45bbeea5-abee-4452-907d-46f3d1045358",
+                "x": 6,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "6,201,780,696"
+            },
+            {
+                "id": "bd0941d3-92c3-4892-bd4e-fa48c6cd5d20",
+                "x": 6,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "4,826,400"
+            },
+            {
+                "id": "7490f667-5944-4607-aa36-73d71f2910b9",
+                "x": 6,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "30"
+            },
+            {
+                "id": "71462c22-ac48-46c7-8c6b-f18c34546ba6",
+                "x": 6,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "1,286,840,560"
+            },
+            {
+                "id": "94336de4-8810-42e0-8df1-e6d44ad26196",
+                "x": 6,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "165,122,463"
+            },
+            {
+                "id": "9ed0fa1c-560c-4fd0-a7de-aea0334b2134",
+                "x": 6,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "4,601"
+            },
+            {
+                "id": "9c24647b-98b7-4fcb-af96-ed9f4fce6353",
+                "x": 6,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "46,895,679,028"
+            },
+            {
+                "id": "99327950-af2d-42e4-a15a-c01b796890fc",
+                "x": 6,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "36,469,695,577"
+            },
+            {
+                "id": "ef0fc333-4b5a-42c1-a865-722fcae041b9",
+                "x": 7,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Context Metadata"
+            },
+            {
+                "id": "41d9da7f-a06c-42e4-9ac9-d56f6c7a7efb",
+                "x": 7,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "17,984,442"
+            },
+            {
+                "id": "9d97d47b-48b1-4ceb-ae5d-f24c40618cd1",
+                "x": 7,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "60,755,137"
+            },
+            {
+                "id": "d557bea9-4dff-40d8-bc7c-86dd91ee91c8",
+                "x": 7,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "493,085,023,697"
+            },
+            {
+                "id": "85b2aa7c-6f35-4c5c-8681-68709383206d",
+                "x": 7,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "3,393,257"
+            },
+            {
+                "id": "a7a0baff-5ac9-43cc-bae4-3b177fb63fe9",
+                "x": 7,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "161"
+            },
+            {
+                "id": "d833bbb8-8eb7-4fd3-8e1c-708f1564b6ac",
+                "x": 7,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "18,927,559,013"
+            },
+            {
+                "id": "a0eacd6d-6365-40a3-a76d-976ea5234523",
+                "x": 7,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "329,783"
+            },
+            {
+                "id": "a80755d5-7c2f-49f7-966d-76fd963fb1f8",
+                "x": 7,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "696,084"
+            },
+            {
+                "id": "62ba9eac-3b2b-4a3b-b974-b5cb8dd0fb87",
+                "x": 7,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "37,514"
+            },
+            {
+                "id": "f23443a8-600b-4dbd-9924-0189c5b8738f",
+                "x": 6,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "4,146,888,426"
+            },
+            {
+                "id": "218c8964-824e-4fd3-9747-7942abcfb919",
+                "x": 7,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "13,912,319,966"
+            },
+            {
+                "id": "84887bc1-dfed-4046-91d8-c42672742543",
+                "x": 7,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "5,775,869,104 "
+            },
+            {
+                "id": "6bc19b5c-b04f-47eb-b3e4-7a90af16461c",
+                "x": 7,
+                "y": 14,
+                "w": 1,
+                "h": 1,
+                "content": "173,115,916,693"
+            },
+            {
+                "id": "f295574e-5dba-4d45-b91f-51c63b41f9ff",
+                "x": 7,
+                "y": 15,
+                "w": 1,
+                "h": 1,
+                "content": "51,385,307,211"
+            },
+            {
+                "id": "aa440f94-f3be-4200-9834-e7566e99cf15",
+                "x": 7,
+                "y": 16,
+                "w": 1,
+                "h": 1,
+                "content": "7,405,534,796"
+            },
+            {
+                "id": "1505dfe1-7245-4fcf-91f5-3d7fd13152e7",
+                "x": 7,
+                "y": 17,
+                "w": 1,
+                "h": 1,
+                "content": "494,089,540"
+            },
+            {
+                "id": "7ab82530-7433-495a-8830-1b623781af1b",
+                "x": 7,
+                "y": 18,
+                "w": 1,
+                "h": 1,
+                "content": "252,089,037,310"
+            },
+            {
+                "id": "ef5e14b0-dc9f-40d9-9807-e11bc4efb399",
+                "x": 7,
+                "y": 21,
+                "w": 1,
+                "h": 1,
+                "content": "666,200,940,390"
+            },
+            {
+                "id": "e0d405b7-ca1c-473d-9386-1d4e1eebb032",
+                "x": 7,
+                "y": 22,
+                "w": 1,
+                "h": 1,
+                "content": "3,393,257"
+            },
+            {
+                "id": "405c00e7-5991-4670-9298-571b2010a9d8",
+                "x": 7,
+                "y": 23,
+                "w": 1,
+                "h": 1,
+                "content": "161 "
+            },
+            {
+                "id": "ebef9cec-ff8f-4cb6-8eb0-2cf2e51821ba",
+                "x": 7,
+                "y": 24,
+                "w": 1,
+                "h": 1,
+                "content": "70,312,866,224"
+            },
+            {
+                "id": "a3f2143d-53e5-47e7-aaf3-650b68e4789e",
+                "x": 7,
+                "y": 25,
+                "w": 1,
+                "h": 1,
+                "content": "7,405,864,579"
+            },
+            {
+                "id": "c6184a23-c43d-4601-befb-840e3626b8d3",
+                "x": 7,
+                "y": 27,
+                "w": 1,
+                "h": 1,
+                "content": "37,514"
+            },
+            {
+                "id": "1c332ade-5fc5-4cbe-84db-c59c5af5c266",
+                "x": 7,
+                "y": 28,
+                "w": 1,
+                "h": 1,
+                "content": "764,184,816,398"
+            },
+            {
+                "id": "16ca9170-d472-4c8f-a797-a95b2e70b801",
+                "x": 7,
+                "y": 19,
+                "w": 1,
+                "h": 1,
+                "content": "13,930,304,408"
+            },
+            {
+                "id": "00efec03-dbb4-4b8e-8a5a-53c2b5a73f79",
+                "x": 6,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "2,027,209,159"
+            },
+            {
+                "id": "e8670979-4dae-496d-a5cc-d039aec0d08d",
+                "x": 5,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "972,898,082"
+            },
+            {
+                "id": "795ed80e-f2cd-4fff-b621-e27826d4f7f7",
+                "x": 7,
+                "y": 20,
+                "w": 1,
+                "h": 1,
+                "content": "5,836,624,241"
+            },
+            {
+                "id": "60e10595-3db1-4ba2-86d5-c5aebc180f00",
+                "x": 1,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "TSV"
+            },
+            {
+                "id": "d184cd43-68f8-4880-a5ff-a5c55ba22ce2",
+                "x": 2,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "4,178,489"
+            },
+            {
+                "id": "ba409f31-583f-4986-860f-abfecaba4107",
+                "x": 3,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "154TB"
+            },
+            {
+                "id": "a8b522d2-ee9d-4d02-9408-89a8abbdb3a8",
+                "x": 4,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "94,921,920"
+            },
+            {
+                "id": "e60bb9b1-ed4a-4f52-baba-c6722fc66321",
+                "x": 5,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "257,405,644"
+            },
+            {
+                "id": "026dc2f1-6a17-475d-877f-080a6449a409",
+                "x": 6,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "740,199,542"
+            },
+            {
+                "id": "94e840e7-d681-4f39-991c-201e4aaa0055",
+                "x": 7,
+                "y": 26,
+                "w": 1,
+                "h": 1,
+                "content": "494,785,624"
+            }
+        ]
+    },
+    {
+        "type": "Caption",
+        "text": "Table 3: Summary statistics table, showing counts of tables, bytes, columns, and tokens across GitHub and Common Crawl and the encountered file types."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "We also consider token counts from metadata fields. We used tiktokenf]to tokenize the ref, space-separated column names, and context_metadata. Because context_metadata has nested JSON, we considered tokenizing the string of recursively-concatenated string values, instead of the serialized JSON itself (which includes JSON syntax such as commas, curly braces, and quotation marks). We compared this on a sample and found ~10% less token counts in the JSON vs non-JSON versions. We decided that was tolerable, so we treated context_metadata as serialized JSON."
+    },
+    {
+        "type": "Title",
+        "text": 2
+    },
+    {
+        "type": "NarrativeText",
+        "text": "In examining TabLib, we found several metrics\u2014including row-count, column-count, and domain-size (column-level unique-count) displaying distributions resembling power-law or Zipfian distributions, common in natural and social phenomena [Newman, 2005]. Such distributions in our data suggest a few tables or columns hold most data, while the majority hold little. This pattern can significantly impact the design and evaluation of machine learning algorithms."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Power-law distributions are characterized by an exponent or Zipf\u2019s coefficient (\u21b5 in P(x) / x-a), guiding the distribution\u2019s decay rate. Our comparison revealed a higher exponent in column-count than in row-count, suggesting a faster decay and affirming the typical practice of constructing tables with rows for entities and columns for entity properties (dimension tables)."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Using the powerlab library [Alstott et al., 2014], we observed exponents below 2 (e.g., arc = 1.5 for row count), which is crucial since distributions with exponents under 2 lack well-defined mean or variance\u2014a hallmark of true"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "8 https://github.com/openai/tiktoken"
+    },
+    {
+        "type": "PageNumber",
+        "text": 6
+    },
+    {
+        "type": "Footer"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "TabLib A PREPRINT"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Total Rows: 11 "
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "d848ab0d-3ff1-47c2-b03b-1c79bc59cc35",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Passengerld"
+            },
+            {
+                "id": "096bb4f2-f825-4851-99fd-bc57301ec799",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "e07945b2-9c18-4430-b8d8-f10c55bc0b2b",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "2"
+            },
+            {
+                "id": "ebb3651f-2e1f-485b-9a0b-65de2b114549",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "3"
+            },
+            {
+                "id": "21fa60f7-f09c-48a4-9b9a-0e470592597e",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "4"
+            },
+            {
+                "id": "a9ba04be-b383-4d2d-a9d2-aaf56dd155ea",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "5"
+            },
+            {
+                "id": "387cbc22-5b09-4ffa-bcb6-df831cf82b1c",
+                "x": 0,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "887"
+            },
+            {
+                "id": "7958073d-58a3-4171-b1ad-6ed74187553c",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": " Survived"
+            },
+            {
+                "id": "b426a680-a3b3-40ed-9e49-2eb33ff60bdd",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0"
+            },
+            {
+                "id": "c47564e9-b8fa-43ac-b766-2a936ac69f95",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "8ba26028-87f0-4801-8aac-87f0387c70fa",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "f6a145d7-5684-4c32-8a77-8ed68a6cbaf3",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "be03aeab-666e-4d27-83a9-51b51109ae69",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0"
+            },
+            {
+                "id": "269eebda-6a49-469f-9a6c-eba42660cd56",
+                "x": 1,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "0"
+            },
+            {
+                "id": "55f22bce-cf9f-43d5-b60b-6793771d20ee",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Pclass"
+            },
+            {
+                "id": "9d655cb7-6abf-45c5-b779-2c13c5e691a9",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "3"
+            },
+            {
+                "id": "08b2128b-e8e2-40a9-b6d0-e67c6f126470",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "e07032a4-dc9d-4117-844e-e3065704c803",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "3"
+            },
+            {
+                "id": "c97bf2e1-33e9-43f8-bf93-0a996a1ac860",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "1"
+            },
+            {
+                "id": "a245c5a0-85ba-4182-8bc8-fbcd37eaf853",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "3"
+            },
+            {
+                "id": "978bcc54-3ced-47bd-95bd-128f32a2c9d5",
+                "x": 2,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "2"
+            },
+            {
+                "id": "26e9037e-af46-482b-8ed8-95023027d2ed",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Name"
+            },
+            {
+                "id": "ae00893d-e796-472d-bab8-018bc62ccf83",
+                "x": 3,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "Braund, Mr. Owen Harris"
+            },
+            {
+                "id": "dcd3e637-6e2f-4db9-b57f-44400b00aa53",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "Cumings, Mrs. John Bradley (Florence Briggs Th... "
+            },
+            {
+                "id": "2937dee4-55e0-4f6f-93b2-0e08190e64c9",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "Heikkinen, Miss. Laina"
+            },
+            {
+                "id": "ad32dec6-73af-4183-927d-07acef4343dc",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "Futrelle, Mrs. Jacques Heath (Lily May Peel)"
+            },
+            {
+                "id": "c5a8d01b-e3d8-4ab4-9864-3e85728b1c78",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "Allen, Mr. William Henry"
+            },
+            {
+                "id": "d90e8455-5872-4b91-a354-c67dd13c9e1a",
+                "x": 3,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "887 0 2 Montvila, Rev. Juozas"
+            },
+            {
+                "id": "2892d843-01d0-4bf9-9392-7b61f5dc3c99",
+                "x": 4,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Sex"
+            },
+            {
+                "id": "cf711f91-c647-4d88-b145-d7b6e9f0049d",
+                "x": 4,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "male"
+            },
+            {
+                "id": "be928756-d7ed-44f0-ade6-d2798839518a",
+                "x": 4,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "female"
+            },
+            {
+                "id": "f6ed829d-5eab-4400-98f7-8c6beafdfb77",
+                "x": 4,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "female"
+            },
+            {
+                "id": "3a45dc61-f46a-4201-b6a6-18a4600d1e10",
+                "x": 4,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "female"
+            },
+            {
+                "id": "8bba6f55-240f-4e15-af4e-46c3d83f0c02",
+                "x": 4,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "male"
+            },
+            {
+                "id": "3e7fe350-22cd-45ac-bea0-d3cfa7dff9ed",
+                "x": 4,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "male"
+            },
+            {
+                "id": "3449d20b-2fee-4007-910e-c437e86bc48d",
+                "x": 5,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Age"
+            },
+            {
+                "id": "8738d980-7d50-455b-be3e-bcfdcb502908",
+                "x": 5,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "22.0"
+            },
+            {
+                "id": "5e976a0a-19e7-4eb7-ba57-9d0592260b07",
+                "x": 5,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "38.0"
+            },
+            {
+                "id": "329ae887-f454-443d-b9b1-13e0d02c38d4",
+                "x": 5,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "26.0"
+            },
+            {
+                "id": "00741057-9b26-47be-8c42-75d965cf0b39",
+                "x": 5,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "35.0"
+            },
+            {
+                "id": "c0810801-57a4-4785-8d96-95dd56da3ed4",
+                "x": 5,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "35.0"
+            },
+            {
+                "id": "c79df8a2-3cb9-4f2a-8381-00e9074fde5b",
+                "x": 5,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "27.0"
+            },
+            {
+                "id": "e9f14956-9112-4bdd-b92d-2ac6efcc6aba",
+                "x": 0,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            },
+            {
+                "id": "375b95da-6e2a-46e4-b733-010e216796a6",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            },
+            {
+                "id": "bb8a737d-d663-4e71-9592-cc722791216f",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            },
+            {
+                "id": "63abf812-4f18-427c-99e2-ba9fc99ca285",
+                "x": 3,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            },
+            {
+                "id": "7d34083a-fab2-471f-b373-e4b227c49ce8",
+                "x": 4,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            },
+            {
+                "id": "a4db625b-1c91-4d1f-ba0e-e97225560cf5",
+                "x": 5,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "..."
+            }
+        ]
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Context metadata for first source:"
+    },
+    {
+        "type": "OtherText",
+        "text": "1{"
+    },
+    {
+        "type": "OtherText",
+        "text": "2 \"github_repo\": \"mdmiqbal/Titanic-dataset\", 3 \"github_ref\": \"refs/heads/main\","
+    },
+    {
+        "type": "OtherText",
+        "text": "3 \"github_ref\": \"refs/heads/main\" ,"
+    },
+    {
+        "type": "OtherText",
+        "text": "4 \"github_hash\": \"d80f02d\","
+    },
+    {
+        "type": "OtherText",
+        "text": "5 \"github_repo_path\": \"Assign 1(titenic data 6 \"extractor\": \"html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "6 \"extractor\": \"html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "7 \"sourceline\": 129,"
+    },
+    {
+        "type": "OtherText",
+        "text": "8 \"sourcepos\": 8,"
+    },
+    {
+        "type": "OtherText",
+        "text": "9 \"before\": \"\\\\n\\\",\\n    \\\"\\\\n\\\",\\n    \\\"     .dataframe tbody tr th:only-of-type {\\\\n\\\",\\n    \\\"    vertical-align:\nmiddle;\\\\n\\\",\\n    \\\"    }\\\\n\\\",\\n    \\\"\\\\n\\\",\\n    \\\"    .dataframe tbody tr th {\\\\n\\\",\\n    \\\"\nvertical-align: top;\\\\n\\\",\\n    \\\"    }\\\\n\\\",\\n    \\\"\\\\n\\\",\\n    \\\"    .dataframe thread th {\\\\n\\\",\\n    \\\"\ntext-align: right;\\\\n\\\",\\n    \\\"    }\\\\n\\\",\\n    \\\"\\\\n\\\",\\n    \\\"\","
+    },
+    {
+        "type": "OtherText",
+        "text": "10 \"after\": \"\\\\n\\\",\\n \\\"891 rows \\u00d7 12 columns \\\\n\\\",\\n"
+    },
+    {
+        "type": "OtherText",
+        "text": "11 \"mime_type\": \"text/html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "12 \"tar_path\": \"mdmiqbal-Titanic-dataset-d80f02d/Assign 1(titenic data set 0).ipynb\""
+    },
+    {
+        "type": "OtherText",
+        "text": "13 }"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Context metadata for second source:"
+    },
+    {
+        "type": "OtherText",
+        "text": "1{"
+    },
+    {
+        "type": "OtherText",
+        "text": "2 \"github_repo\": \"nkaraffa/Intro-to-AI-Machine-Learning-and-Python-basics\", 3 \"github_ref\": \"refs/heads/main\","
+    },
+    {
+        "type": "OtherText",
+        "text": "3 \"github_ref\": \"refs/heads/main\","
+    },
+    {
+        "type": "OtherText",
+        "text": "4 \"github_hash\": \"c45317a\","
+    },
+    {
+        "type": "OtherText",
+        "text": "5 \"github_repo_path\": \"Classification_Model_Titanic.ipynb\","
+    },
+    {
+        "type": "OtherText",
+        "text": "6 \"extractor\": \"html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "7 \"sourceline\": 131,"
+    },
+    {
+        "type": "OtherText",
+        "text": "8 \"sourcepos\": 15,"
+    },
+    {
+        "type": "OtherText",
+        "text": "9 \"before\": \"-type {\\\\n\\\",\\n        \\\"    vertical-align: middle;\\\\n\\\",\\n         \\\"    }\\\\n\\\",\\n\n\\\"\\\\n\\\",\\n        \\\"    .dataframe tbody tr th {\\\\n\\\",\\n        \\\"    vertical-align: top;\\\\n\\\",\\n\n\\\"    }\\\\n\\\",\\n        \\\"\\\\n\",\\n        \\\"    .dataframe thread th {\\\\n\\\",\\n        \\*    text-align:"
+    },
+    {
+        "type": "OtherText",
+        "text": "10 right;\\\\n\\\",\\n        \\\"891 rows \\u00c3\\u2014 12 columns\\\\n\\\",\\n        \\\"\","
+    },
+    {
+        "type": "OtherText",
+        "text": "11 \"mime_type\": \"text/html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "12 \"tar_path\":"
+    },
+    {
+        "type": "OtherText",
+        "text": "13 }"
+    },
+    {
+        "type": "Title",
+        "text": 3
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Below is an example of a table which was classified as \"Unknown\" language. This particular table was entirely numeric, providing no language hints."
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "de90665f-a4b1-4ff1-9725-e2e91bb7ccde",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "2.0"
+            },
+            {
+                "id": "5961a021-561a-46c8-80f0-b09e9a5c3b58",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "2.0"
+            },
+            {
+                "id": "9f061d5b-d4a5-405d-9e7d-0157a8a6ca2d",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "2.0"
+            },
+            {
+                "id": "68ed04c3-488a-4114-a481-435c9dcb08dd",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "3.0"
+            },
+            {
+                "id": "a6ca4c53-4ae8-4a94-83a5-aede8c644940",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "3.0"
+            },
+            {
+                "id": "399750d8-2ea8-4198-8938-44f5fd5bfd11",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "2.0"
+            },
+            {
+                "id": "efd753ef-0025-418b-9608-6dbcadb459c5",
+                "x": 0,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "3.0"
+            },
+            {
+                "id": "c2a9b12d-0976-4a59-be38-024ce81751f0",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "006ac2df-6a11-4c26-88e1-f9b9fc41d5b0",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "0db20bdd-1fc6-48a7-9006-928c5fb5ed99",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "39eef00c-a688-4fff-bc3b-488e071f237c",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.842857"
+            },
+            {
+                "id": "fb5e7826-ba90-4218-8fad-b849dc5ac6ea",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.891892"
+            },
+            {
+                "id": "ee6f8b3f-640a-47bc-a6d2-f6b45f5c1bc0",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "73f890ab-6fb6-403f-b467-6b5c17b2f57e",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.850000"
+            },
+            {
+                "id": "e13af5d5-3a15-462d-991d-ed7d862b231b",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.6363636363636364 "
+            },
+            {
+                "id": "aca45836-0996-4da0-94ff-19952760d960",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.909091"
+            },
+            {
+                "id": "ca42a4ed-5be7-45e7-8043-84a8ac855223",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1.000000"
+            },
+            {
+                "id": "bcef1f9e-d746-4570-b99d-9a6adad847c6",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.085714"
+            },
+            {
+                "id": "e10e60c4-d0ee-492a-a553-0fb217407d1e",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.027027"
+            },
+            {
+                "id": "9a545f47-381f-4441-ae5d-33e00bb26aae",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.909091"
+            },
+            {
+                "id": "b8c3a479-77f2-43af-8b14-a1666be5002a",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.075000"
+            },
+            {
+                "id": "e752af70-ff83-4d4a-a6ed-a307a3e2302c",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "bf0eda2a-e539-41e9-8c9d-f41f9ae24610",
+                "x": 3,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "1.000000 "
+            },
+            {
+                "id": "8c461a80-760c-4178-8ecf-4b3148f5599d",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1.000000"
+            },
+            {
+                "id": "1b72cded-173c-43ed-be5a-edeb54f6f6fd",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.101695"
+            },
+            {
+                "id": "72ffcc06-3a84-4c35-9b54-eb0f0ed31ba0",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.030303"
+            },
+            {
+                "id": "5c0730e3-e9c4-43a7-b4b7-539b472e4660",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "1.000000"
+            },
+            {
+                "id": "411921cd-bc3a-45ee-841d-cf618f32b87b",
+                "x": 3,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.088235"
+            },
+            {
+                "id": "b166f0ef-1a4b-4c23-9b42-17f74333e22e",
+                "x": 4,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0.1 "
+            },
+            {
+                "id": "853ff41e-8f6f-4def-95e3-f1c6ca97156c",
+                "x": 4,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "ced7fc7e-2a51-4cc2-b414-5968daed8cdf",
+                "x": 4,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "c9483305-f645-4e4a-a01b-6310181e528b",
+                "x": 4,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "66fc9b7d-1dae-43a4-8957-09716a09ff4c",
+                "x": 4,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "0a8f5a69-5a8b-416c-855a-db5200d6f7f0",
+                "x": 4,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "7311d78a-38c9-454d-9fb5-25ddd91c50a5",
+                "x": 4,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "ef27bc3b-2420-4caa-acb0-a7d94124d78c",
+                "x": 5,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0.2"
+            },
+            {
+                "id": "42618339-1fda-4bb4-b361-85e670570612",
+                "x": 5,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "6ccc1de9-d722-47d7-86ce-3ada44034861",
+                "x": 5,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "2a0f361e-22e8-4b4c-a4c7-3f3bf1fae796",
+                "x": 5,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.030928"
+            },
+            {
+                "id": "aa658d18-0102-4ba0-ae37-c1dbdaaf8bcf",
+                "x": 5,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.020619"
+            },
+            {
+                "id": "e88919a8-4dff-4d60-a700-12d8c46809dd",
+                "x": 5,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.000000"
+            },
+            {
+                "id": "04699364-3419-4be2-9af1-eb79a5f42f54",
+                "x": 5,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.010309"
+            },
+            {
+                "id": "c7bf0848-fc71-443b-b817-1df220d10b45",
+                "x": 6,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0.3"
+            },
+            {
+                "id": "6ac280aa-a68b-4bf8-834d-51ff67d62a8e",
+                "x": 6,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "629d4c48-ae84-494a-951b-61fe5ab8f959",
+                "x": 6,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "82a63269-7fd5-4bc0-b544-d050a82ac55e",
+                "x": 6,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "198096f5-83bc-45fc-aab2-25f11729d972",
+                "x": 6,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "1235fcd8-0846-471b-8718-b8de99a90bb6",
+                "x": 6,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "2ab2d509-ecef-474f-af75-9bf62cd0253f",
+                "x": 6,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "c42a58fd-37c8-4fdc-8d49-aa9a3c63f66f",
+                "x": 7,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "1.0.1"
+            },
+            {
+                "id": "bf8d919a-1eb2-4bb3-8bce-8ad0710b074f",
+                "x": 7,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "cb90fdba-d7ad-4b2d-9c61-502c4dff5a11",
+                "x": 7,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "23862d40-edbb-499d-b9d4-655f44e3cf05",
+                "x": 7,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "1646a94d-ba6a-4abd-86a4-c3244b5c791f",
+                "x": 7,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "054fcafc-ae53-4c16-b344-8c06ed415e4f",
+                "x": 7,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "404e60f5-370a-409d-ac96-ee78d0de6f85",
+                "x": 7,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "f2a899bd-5b0e-49d1-835f-6f6a15f7b523",
+                "x": 8,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0.4 "
+            },
+            {
+                "id": "fdc20c5c-d6d5-4c5d-8e96-fce9d25daae4",
+                "x": 8,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "866f93b4-a252-41e8-a055-1531f784a84f",
+                "x": 8,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "8b97fda8-9351-4a23-9646-7ac4aa668fa0",
+                "x": 8,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "47197866-1189-4176-ba25-978eb7274859",
+                "x": 8,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "aa0d7ce9-42d0-47ca-83ea-d12f20f9b228",
+                "x": 8,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "8d64c047-f221-4cb1-9a14-ecc4004aba8c",
+                "x": 8,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "104ea88d-0298-474d-8160-a657cb50c3c5",
+                "x": 9,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "1.0.2"
+            },
+            {
+                "id": "b45e8f2a-5124-46b3-aa13-923708be3371",
+                "x": 9,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "861ef16c-551a-4e11-92a6-c16f2ce9f710",
+                "x": 9,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "90daee48-1159-4d2a-a3bb-e4d7e3b1c793",
+                "x": 9,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "dd796425-eefa-414e-b137-789dd60ac009",
+                "x": 9,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "83d24907-12c0-4ae0-8203-c8bd61335e65",
+                "x": 9,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "73f819d1-e44d-438c-a9fb-e4323cf54c1c",
+                "x": 9,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "7c31a40e-0fe1-4b88-b0d3-db4d1294d2d2",
+                "x": 10,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "0.0.5"
+            },
+            {
+                "id": "52422b42-c302-43e3-aa25-db0b41b05de8",
+                "x": 10,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "0.0 "
+            },
+            {
+                "id": "0842911f-5acb-436a-b93e-a13f17d99101",
+                "x": 10,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "0.0 "
+            },
+            {
+                "id": "70b54b6c-6965-4f0f-a071-d11b743bc018",
+                "x": 10,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "b5868704-7adb-4a49-8b20-81ab4f41b74f",
+                "x": 10,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            },
+            {
+                "id": "9f47ba07-bd0a-4da4-886e-1d884cd624e8",
+                "x": 10,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "0.0"
+            },
+            {
+                "id": "25f61fe6-4055-47a6-81fc-4a5a8ac77319",
+                "x": 10,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "1.0"
+            }
+        ]
+    },
+    {
+        "type": "OtherText",
+        "text": "1 {"
+    },
+    {
+        "type": "OtherText",
+        "text": "2 \"github_repo\": \"nkaraffa/Intro-to-AI-Machine-Learning-and-Python-basics\","
+    },
+    {
+        "type": "OtherText",
+        "text": "3 \"github_ref\": \"refs/heads/main\","
+    },
+    {
+        "type": "OtherText",
+        "text": "4 \"github_hash\": \"c45317a\","
+    },
+    {
+        "type": "OtherText",
+        "text": "5 \"github_repo_path\": \"Classification_Model_Titanic.ipynb\","
+    },
+    {
+        "type": "OtherText",
+        "text": "6 \"extractor\": \"html\","
+    },
+    {
+        "type": "OtherText",
+        "text": "7 \"sourceline\": 131,"
+    },
+    {
+        "type": "PageNumber",
+        "text": 22
+    },
+    {
+        "type": "Footer"
+    }
+]
