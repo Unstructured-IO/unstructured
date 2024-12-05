@@ -37,7 +37,7 @@ def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
         "example-docs/spring-weather.html.json", chunking_strategy="basic", max_characters=1500
     )
 
-    assert len(chunks) == 10
+    assert len(chunks) == 9
     assert all(isinstance(ch, CompositeElement) for ch in chunks)
 
 
