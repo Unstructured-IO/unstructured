@@ -288,8 +288,13 @@ class PreChunker:
         pre_chunk_builder = PreChunkBuilder(self._opts)
 
         for element in self._elements:
-            # -- start new pre-chunk when necessary --
-            if self._is_in_new_semantic_unit(element) or not pre_chunk_builder.will_fit(element):
+            # -- start new pre-chunk when necessary to uphold segregation guarantees --
+            if (
+                # -- start new pre-chunk when necessary to uphold segregation guarantees --
+                self._is_in_new_semantic_unit(element)
+                # -- or when next element won't fit --
+                or not pre_chunk_builder.will_fit(element)
+            ):
                 yield from pre_chunk_builder.flush()
 
             # -- add this element to the work-in-progress (WIP) pre-chunk --
