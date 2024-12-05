@@ -28,8 +28,6 @@ GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
 GOLD_TABLE_STRUCTURE_DIRNAME = "gold_standard_table_structure"
 UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
 UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME = "unstructured_output_table_structure"
-ORIGINAL_SOURCE_DIRNAME = "original_files"
-METRIC_OUTPUT_DIRNAME = "metric_output"
 
 DUMMY_DF_CCT = pd.DataFrame(
     {
@@ -145,34 +143,34 @@ def test_process_document_returns_the_correct_amount_of_values(
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 @pytest.mark.parametrize(
-    ("calculator_class", "metric_output_dirname", "original_source_dirname", "path"),
+    ("calculator_class", "output_dirname", "source_dirname", "path"),
     [
         (
             TextExtractionMetricsCalculator,
-            METRIC_OUTPUT_DIRNAME,
-            ORIGINAL_SOURCE_DIRNAME,
-            Path("tablib-627mTABLES-2310.07875-p7.pdf"),
+            UNSTRUCTURED_CCT_DIRNAME,
+            GOLD_CCT_DIRNAME,
+            Path("2310.03502text_to_image_synthesis1-7.pdf.txt"),
         ),
         (
             TableStructureMetricsCalculator,
-            METRIC_OUTPUT_DIRNAME,
-            ORIGINAL_SOURCE_DIRNAME,
-            Path("tablib-627mTABLES-2310.07875-p7.pdf"),
+            UNSTRUCTURED_CCT_DIRNAME,
+            GOLD_CCT_DIRNAME,
+            Path("tablib-627mTABLES-2310.07875-p7.pdf.txt"),
         ),
         (
             ElementTypeMetricsCalculator,
-            METRIC_OUTPUT_DIRNAME,
-            ORIGINAL_SOURCE_DIRNAME,
-            Path("tablib-627mTABLES-2310.07875-p7.pdf"),
+            UNSTRUCTURED_CCT_DIRNAME,
+            GOLD_CCT_DIRNAME,
+            Path("USDC-compression-vit-2310.11117-p7.pdf.txt"),
   
         ),
     ],
 )
 def test_process_document_returns_the_correct_doctype(
-        calculator_class, metric_output_dirname, original_source_dirname, path
+        calculator_class, output_dirname, source_dirname, path
 ):
-    output_dir = Path(TESTING_FILE_DIR) / metric_output_dirname
-    source_dir = Path(TESTING_FILE_DIR) / original_source_dirname
+    output_dir = Path(TESTING_FILE_DIR) / output_dirname
+    source_dir = Path(TESTING_FILE_DIR) / source_dirname
 
     calculator = calculator_class(
         documents_dir=output_dir, ground_truths_dir=source_dir
