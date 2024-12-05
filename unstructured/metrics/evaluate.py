@@ -248,7 +248,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def _process_document(self, doc: Path) -> Optional[list]:
         doc_path = Path(doc)
         out_filename = doc_path.stem
-        doctype = Path(doc_path).suffix
+        doctype = Path(out_filename).suffix
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
@@ -407,7 +407,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
-        doctype = doc.suffixes[-1]
+        doctype = doc.suffixes[-2]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(doc)
@@ -482,7 +482,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
-        doctype = doc.suffixes[-1]
+        doctype = doc.suffixes[-2]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output = get_element_type_frequency(_read_text_file(self.documents_dir / doc))
