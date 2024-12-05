@@ -192,6 +192,8 @@ def standardize_quotes(text: str) -> str:
         "〝": "U+301D",  # REVERSED DOUBLE PRIME QUOTATION MARK
         "〞": "U+301E",  # DOUBLE PRIME QUOTATION MARK
         "〟": "U+301F",  # LOW DOUBLE PRIME QUOTATION MARK
+        "＂": "U+FF02",  # FULLWIDTH QUOTATION MARK
+        ",,": "U+275E",  # LOW HEAVY DOUBLE COMMA ORNAMENT
     }
 
     # Single Quotes Dictionary
@@ -213,7 +215,6 @@ def standardize_quotes(text: str) -> str:
         "﹂": "U+FE42",  # PRESENTATION FORM FOR VERTICAL RIGHT CORNER BRACKET
         "﹃": "U+FE43",  # PRESENTATION FORM FOR VERTICAL LEFT WHITE CORNER BRACKET
         "﹄": "U+FE44",  # PRESENTATION FORM FOR VERTICAL RIGHT WHITE CORNER BRACKET
-        "＂": "U+FF02",  # FULLWIDTH QUOTATION MARK
         "＇": "U+FF07",  # FULLWIDTH APOSTROPHE
         "｢": "U+FF62",  # HALFWIDTH LEFT CORNER BRACKET
         "｣": "U+FF63",  # HALFWIDTH RIGHT CORNER BRACKET
@@ -225,14 +226,27 @@ def standardize_quotes(text: str) -> str:
     # Apply double quote replacements
     # Apply double quote replacements
     for unicode_val in double_quotes.values():
-        unicode_char = chr(int(unicode_val.replace("U+", ""), 16))
+        unicode_char = unicode_to_char(unicode_val)
         if unicode_char in text:
             text = text.replace(unicode_char, double_quote_standard)
 
     # Apply single quote replacements
     for unicode_val in single_quotes.values():
-        unicode_char = chr(int(unicode_val.replace("U+", ""), 16))
+        unicode_char = unicode_to_char(unicode_val)
         if unicode_char in text:
             text = text.replace(unicode_char, single_quote_standard)
 
     return text
+
+
+def unicode_to_char(unicode_val: str) -> str:
+    """
+    Converts a Unicode value to a character.
+
+    Args:
+        unicode_val (str): The Unicode value to convert.
+
+    Returns:
+        str: The character corresponding to the Unicode value.
+    """
+    return chr(int(unicode_val.replace("U+", ""), 16))
