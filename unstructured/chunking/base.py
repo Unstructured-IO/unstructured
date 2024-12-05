@@ -43,9 +43,6 @@ Only operative for "by_title" chunking strategy.
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
 
-PreChunkT: TypeAlias = "_TableChunker | PreChunk"
-"""The kind of object produced by a pre-chunker."""
-
 TextAndHtml: TypeAlias = tuple[str, str]
 
 
@@ -273,11 +270,11 @@ class PreChunker:
     @classmethod
     def iter_pre_chunks(
         cls, elements: Iterable[Element], opts: ChunkingOptions
-    ) -> Iterator[PreChunkT]:
+    ) -> Iterator[PreChunk]:
         """Generate pre-chunks from the element-stream provided on construction."""
         return cls(elements, opts)._iter_pre_chunks()
 
-    def _iter_pre_chunks(self) -> Iterator[PreChunkT]:
+    def _iter_pre_chunks(self) -> Iterator[PreChunk]:
         """Generate pre-chunks from the element-stream provided on construction.
 
         A *pre-chunk* is the largest sub-sequence of elements that will both fit within the
@@ -352,22 +349,20 @@ class PreChunkBuilder:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 
-    def flush(self) -> Iterator[PreChunkT]:
+    def flush(self) -> Iterator[PreChunk]:
         """Generate zero-or-one `PreChunk` object and clear the accumulator.
 
         Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
         boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
         stream.
         """
-        if not self._elements:
+        elements = self._elements
+
+        if not elements:
             return
 
-        pre_chunk = (
-            _TableChunker(self._elements[0], self._overlap_prefix, self._opts)
-            if isinstance(self._elements[0], Table)
-            # -- copy list, don't use original or it may change contents as builder proceeds --
-            else PreChunk(list(self._elements), self._overlap_prefix, self._opts)
-        )
+        # -- copy element list, don't use original or it may change contents as builder proceeds --
+        pre_chunk = PreChunk(elements, self._overlap_prefix, self._opts)
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
         self._reset_state(pre_chunk.overlap_tail)
@@ -388,12 +383,6 @@ class PreChunkBuilder:
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
-        # -- a `Table` will not fit in a non-empty pre-chunk --
-        if isinstance(element, Table):
-            return False
-        # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if isinstance(self._elements[0], Table):
-            return False
         # -- a pre-chunk that already exceeds the soft-max is considered "full" --
         if self._text_length > self._opts.soft_max:
             return False
@@ -433,16 +422,12 @@ class PreChunkBuilder:
 
 
 # ================================================================================================
-# PRE-CHUNK SUB-TYPES
+# PRE-CHUNK
 # ================================================================================================
 
 
 class PreChunk:
-    """A sequence of elements that belong to the same semantic unit within a document.
-
-    The name "section" derives from the idea of a document-section, a heading followed by the
-    paragraphs "under" that heading. That structure is not found in all documents and actual section
-    content can vary, but that's the concept.
+    """Sequence of elements staged to form a single chunk.
 
     This object is purposely immutable.
     """
@@ -481,8 +466,23 @@ class PreChunk:
             opts=self._opts,
         )
 
-    def iter_chunks(self) -> Iterator[CompositeElement]:
-        """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
+    def iter_chunks(self) -> Iterator[CompositeElement | Table | TableChunk]:
+        """Form this pre-chunk into one or more chunk elements maxlen or smaller.
+
+        When the total size of the pre-chunk will fit in the chunking window, a single chunk it
+        emitted. When this prechunk contains an oversized element (always isolated), it is split
+        into two or more chunks that each fit the chunking window.
+        """
+
+        # -- a one-table-only pre-chunk is handled specially, by `TablePreChunk`, mainly because
+        # -- it may need to be split into multiple `TableChunk` elements and that operation is
+        # -- quite specialized.
+        if len(self._elements) == 1 and isinstance(self._elements[0], Table):
+            yield from _TableChunker.iter_chunks(
+                self._elements[0], self._overlap_prefix, self._opts
+            )
+            return
+
         # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
         # -- generate any chunks.
         if not self._text:
@@ -584,9 +584,10 @@ class PreChunk:
         if self._overlap_prefix:
             yield self._overlap_prefix
         for e in self._elements:
-            if not e.text:
+            text = " ".join(e.text.strip().split())
+            if not text:
                 continue
-            yield e.text
+            yield text
 
     @lazyproperty
     def _meta_kwargs(self) -> dict[str, Any]:
@@ -646,23 +647,40 @@ class PreChunk:
 
     @lazyproperty
     def _text(self) -> str:
-        """The concatenated text of all elements in this pre-chunk.
+        """The concatenated text of all elements in this pre-chunk, including any overlap.
 
-        Each element-text is separated from the next by a blank line ("\n\n").
+        Whitespace is normalized to a single space. The text of each element is separated from
+        that of the next by a blank line ("\n\n").
         """
         text_separator = self._opts.text_separator
         return text_separator.join(self._iter_text_segments())
 
 
+# ================================================================================================
+# CHUNKING HELPER/SPLITTERS
+# ================================================================================================
+
+
 class _TableChunker:
-    """A pre-chunk composed of a single Table element."""
+    """Responsible for forming chunks, especially splits, from a single-table pre-chunk.
+
+    Table splitting is specialized because we recursively split on an even row, cell, text
+    boundary. This object encapsulate those details.
+    """
 
     def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
         self._table = table
         self._overlap_prefix = overlap_prefix
         self._opts = opts
 
-    def iter_chunks(self) -> Iterator[Table | TableChunk]:
+    @classmethod
+    def iter_chunks(
+        cls, table: Table, overlap_prefix: str, opts: ChunkingOptions
+    ) -> Iterator[Table | TableChunk]:
+        """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
+        return cls(table, overlap_prefix, opts)._iter_chunks()
+
+    def _iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
         # -- A table with no non-whitespace text produces no chunks --
         if not self._table_text:
@@ -689,17 +707,6 @@ class _TableChunker:
 
         # -- otherwise, form splits with "synchronized" text and html --
         yield from self._iter_text_and_html_table_chunks()
-
-    @lazyproperty
-    def overlap_tail(self) -> str:
-        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
-
-        This value is the empty-string ("") when either the `.overlap` length option is `0` or
-        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
-        trailing whitespace.
-        """
-        overlap = self._opts.inter_chunk_overlap
-        return self._text_with_overlap[-overlap:].strip() if overlap else ""
 
     @lazyproperty
     def _html(self) -> str:
@@ -748,7 +755,11 @@ class _TableChunker:
             yield TableChunk(text=text, metadata=metadata)
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
-        """Split oversized text-only table (no text-as-html) into chunks."""
+        """Split oversized text-only table (no text-as-html) into chunks.
+
+        `.metadata.text_as_html` is optional, not included when `infer_table_structure` is
+        `False`.
+        """
         text_remainder = self._text_with_overlap
         split = self._opts.split
         is_continuation = False
@@ -1125,12 +1136,6 @@ class PreChunkCombiner:
         accum = _PreChunkAccumulator(self._opts)
 
         for pre_chunk in self._pre_chunks:
-            # -- a table pre-chunk is never combined --
-            if isinstance(pre_chunk, _TableChunker):
-                yield from accum.flush()
-                yield pre_chunk
-                continue
-
             # -- finish accumulating pre-chunk when it's full --
             if not accum.will_fit(pre_chunk):
                 yield from accum.flush()
@@ -1208,7 +1213,7 @@ class _PreChunkAccumulator:
 # predicate.
 #
 # These can be mixed and matched to produce different chunking behaviors like "by_title" or left
-# out altogether to produce "by_element" behavior.
+# out altogether to produce "basic-chunking" behavior.
 #
 # The effective lifetime of the function that produce a predicate (rather than directly being one)
 # is limited to a single element-stream because these retain state (e.g. current page number) to
