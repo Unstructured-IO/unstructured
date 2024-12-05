@@ -407,7 +407,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
-        doctype = doc.suffixes[0]
+        doctype = doc.suffixes[-1]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(doc)
