@@ -248,7 +248,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def _process_document(self, doc: Path) -> Optional[list]:
         doc_path = Path(doc)
         out_filename = doc_path.stem
-        doctype = Path(doc_path).suffixes[-1][1:]
+        doctype = Path(doc_path).suffix
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
@@ -742,7 +742,7 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
         if src_gt_filename not in self._ground_truth_paths:
             raise ValueError(f"Ground truth file {src_gt_filename} not found in list of GT files")
 
-        doctype = Path(src_gt_filename).suffixes[-1][1:]
+        doctype = Path(src_gt_filename).suffix
 
         prediction_file = self.documents_dir / doc
         if not prediction_file.exists():
