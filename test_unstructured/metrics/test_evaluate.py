@@ -28,6 +28,7 @@ GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
 GOLD_TABLE_STRUCTURE_DIRNAME = "gold_standard_table_structure"
 UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
 UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME = "unstructured_output_table_structure"
+ORIGINAL_SOURCE_DIRNAME = "original_files"
 
 DUMMY_DF_CCT = pd.DataFrame(
     {
@@ -138,6 +139,44 @@ def test_process_document_returns_the_correct_amount_of_values(
     output_list = calculator._process_document(path)
     assert len(output_list) == expected_length
 
+
+
+
+@pytest.mark.parametrize(
+    ("calculator_class", "output_dirname", "source_dirname", "path"),
+    [
+        (
+            TextExtractionMetricsCalculator,
+            UNSTRUCTURED_CCT_DIRNAME,
+            GOLD_STANDARD_SOURCE_DIRNAME,
+            Path("Bank Good Credit Loan.pptx.txt"),
+        ),
+        (
+            TableStructureMetricsCalculator,
+            UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
+            GOLD_TABLE_STRUCTURE_DIRNAME,
+            Path("IRS-2023-Form-1095-A.pdf.json"),
+        ),
+        (
+            ElementTypeMetricsCalculator,
+            UNSTRUCTURED_OUTPUT_DIRNAME,
+            GOLD_ELEMENT_TYPE_DIRNAME,
+            Path("IRS-form-1987.pdf.json"),
+  
+        ),
+    ],
+)
+def test_process_document_returns_the_correct_doctype(
+        
+):
+    output_dir = Path(TESTING_FILE_DIR) / UNSTRUCTURED_CCT_DIRNAME
+    source_dir = Path(TESTING_FILE_DIR) / GOLD_CCT_DIRNAME
+
+    calculator = TextExtractionMetricsCalculator(
+        documents_dir=output_dir, ground_truths_dir=source_dir
+    )
+    output_list = calculator._process_document(Path("Bank Good Credit Loan.pptx.txt"))
+    assert output_list[-1] == ".txt"
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
