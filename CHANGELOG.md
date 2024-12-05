@@ -6,7 +6,7 @@
 
 ### Fixes
 
-## 0.16.9-dev0
+## 0.16.9
 
 ### Enhancements
 
