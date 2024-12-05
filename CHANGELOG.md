@@ -6,14 +6,6 @@
 
 ### Fixes
 
-## 0.16.9
-
-### Enhancements
-
-### Features
-
-### Fixes
-
 ## 0.16.8
 
 ### Enhancements
