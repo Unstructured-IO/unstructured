@@ -1,3 +1,13 @@
+## 0.16.10-dev0
+
+### Enhancements
+
+- **Enhance quote standardization tests with additional Unicode scenarios
+
+### Features
+
+### Fixes
+
 ## 0.16.9
 
 ### Enhancements
