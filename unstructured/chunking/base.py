@@ -438,172 +438,6 @@ class PreChunkBuilder:
 # ================================================================================================
 
 
-class TablePreChunk:
-    """A pre-chunk composed of a single Table element."""
-
-    def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
-        self._table = table
-        self._overlap_prefix = overlap_prefix
-        self._opts = opts
-
-    def iter_chunks(self) -> Iterator[Table | TableChunk]:
-        """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
-        # -- A table with no non-whitespace text produces no chunks --
-        if not self._table_text:
-            return
-
-        # -- only text-split a table when it's longer than the chunking window --
-        maxlen = self._opts.hard_max
-        if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
-            # -- use the compactified html for .text_as_html, even though we're not splitting --
-            metadata = self._metadata
-            metadata.text_as_html = self._html or None
-            # -- note the overlap-prefix is prepended to its text --
-            yield Table(text=self._text_with_overlap, metadata=metadata)
-            return
-
-        # -- When there's no HTML, split it like a normal element. Also fall back to text-only
-        # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
-        # -- for a chunking window that small because the 33 characterss of HTML overhead for each
-        # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
-        # -- very small chunks.
-        if not self._html or self._opts.hard_max < 50:
-            yield from self._iter_text_only_table_chunks()
-            return
-
-        # -- otherwise, form splits with "synchronized" text and html --
-        yield from self._iter_text_and_html_table_chunks()
-
-    @lazyproperty
-    def overlap_tail(self) -> str:
-        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
-
-        This value is the empty-string ("") when either the `.overlap` length option is `0` or
-        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
-        trailing whitespace.
-        """
-        overlap = self._opts.inter_chunk_overlap
-        return self._text_with_overlap[-overlap:].strip() if overlap else ""
-
-    @lazyproperty
-    def _html(self) -> str:
-        """The compactified HTML for this table when it has text-as-HTML.
-
-        The empty string when table-structure has not been captured, perhaps because
-        `infer_table_structure` was set `False` in the partitioning call.
-        """
-        if not (html_table := self._html_table):
-            return ""
-
-        return html_table.html
-
-    @lazyproperty
-    def _html_table(self) -> HtmlTable | None:
-        """The `lxml` HTML element object for this table.
-
-        `None` when the `Table` element has no `.metadata.text_as_html`.
-        """
-        if (text_as_html := self._table.metadata.text_as_html) is None:
-            return None
-
-        text_as_html = text_as_html.strip()
-        if not text_as_html:  # pragma: no cover
-            return None
-
-        return HtmlTable.from_html_text(text_as_html)
-
-    def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
-        """Split table into chunks where HTML corresponds exactly to text.
-
-        `.metadata.text_as_html` for each chunk is a parsable `<table>` HTML fragment.
-        """
-        if (html_table := self._html_table) is None:  # pragma: no cover
-            raise ValueError("this method is undefined for a table having no .text_as_html")
-
-        is_continuation = False
-
-        for text, html in _TableSplitter.iter_subtables(html_table, self._opts):
-            metadata = self._metadata
-            metadata.text_as_html = html
-            # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
-
-            yield TableChunk(text=text, metadata=metadata)
-
-    def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
-        """Split oversized text-only table (no text-as-html) into chunks."""
-        text_remainder = self._text_with_overlap
-        split = self._opts.split
-        is_continuation = False
-
-        while text_remainder:
-            # -- split off the next chunk-worth of characters into a TableChunk --
-            chunk_text, text_remainder = split(text_remainder)
-            metadata = self._metadata
-            # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
-
-            yield TableChunk(text=chunk_text, metadata=metadata)
-
-    @property
-    def _metadata(self) -> ElementMetadata:
-        """The base `.metadata` value for chunks formed from this pre-chunk.
-
-        The term "base" here means that other metadata fields will be added, depending on the
-        chunk. In particular, `.metadata.text_as_html` will be different for each text-split chunk
-        and `.metadata.is_continuation` must be added for second-and-later text-split chunks.
-
-        Note this is a fresh copy of the metadata on each call since it will need to be mutated
-        differently for each chunk formed from this pre-chunk.
-        """
-        CS = ConsolidationStrategy
-        metadata = copy.deepcopy(self._table.metadata)
-
-        # -- drop metadata fields not appropriate for chunks, in particular
-        # -- parent_id's will not reliably point to an existing element
-        drop_field_names = [
-            field_name
-            for field_name, strategy in CS.field_consolidation_strategies().items()
-            if strategy is CS.DROP
-        ]
-        for field_name in drop_field_names:
-            setattr(metadata, field_name, None)
-
-        if self._opts.include_orig_elements:
-            metadata.orig_elements = self._orig_elements
-        return metadata
-
-    @lazyproperty
-    def _orig_elements(self) -> list[Element]:
-        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
-
-        Note this is not just the `Table` element, it must be adjusted to strip out any
-        `.metadata.orig_elements` value it may have when it is itself a chunk and not a direct
-        product of partitioning.
-        """
-        # -- make a copy because we're going to mutate the `Table` element and it doesn't belong to
-        # -- us (the user may have downstream purposes for it).
-        orig_table = copy.deepcopy(self._table)
-        # -- prevent recursive .orig_elements when `Table` element is a chunk --
-        orig_table.metadata.orig_elements = None
-        return [orig_table]
-
-    @lazyproperty
-    def _table_text(self) -> str:
-        """The text in this table, not including any overlap-prefix or extra whitespace."""
-        return " ".join(self._table.text.split())
-
-    @lazyproperty
-    def _text_with_overlap(self) -> str:
-        """The text for this chunk, including the overlap-prefix when present."""
-        overlap_prefix = self._overlap_prefix
-        table_text = self._table.text.strip()
-        # -- use row-separator between overlap and table-text --
-        return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
-
-
 class TextPreChunk:
     """A sequence of elements that belong to the same semantic unit within a document.
 
@@ -819,6 +653,172 @@ class TextPreChunk:
         """
         text_separator = self._opts.text_separator
         return text_separator.join(self._iter_text_segments())
+
+
+class TablePreChunk:
+    """A pre-chunk composed of a single Table element."""
+
+    def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
+        self._table = table
+        self._overlap_prefix = overlap_prefix
+        self._opts = opts
+
+    def iter_chunks(self) -> Iterator[Table | TableChunk]:
+        """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
+        # -- A table with no non-whitespace text produces no chunks --
+        if not self._table_text:
+            return
+
+        # -- only text-split a table when it's longer than the chunking window --
+        maxlen = self._opts.hard_max
+        if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
+            # -- use the compactified html for .text_as_html, even though we're not splitting --
+            metadata = self._metadata
+            metadata.text_as_html = self._html or None
+            # -- note the overlap-prefix is prepended to its text --
+            yield Table(text=self._text_with_overlap, metadata=metadata)
+            return
+
+        # -- When there's no HTML, split it like a normal element. Also fall back to text-only
+        # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
+        # -- for a chunking window that small because the 33 characters of HTML overhead for each
+        # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
+        # -- very small chunks.
+        if not self._html or self._opts.hard_max < 50:
+            yield from self._iter_text_only_table_chunks()
+            return
+
+        # -- otherwise, form splits with "synchronized" text and html --
+        yield from self._iter_text_and_html_table_chunks()
+
+    @lazyproperty
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text_with_overlap[-overlap:].strip() if overlap else ""
+
+    @lazyproperty
+    def _html(self) -> str:
+        """The compactified HTML for this table when it has text-as-HTML.
+
+        The empty string when table-structure has not been captured, perhaps because
+        `infer_table_structure` was set `False` in the partitioning call.
+        """
+        if not (html_table := self._html_table):
+            return ""
+
+        return html_table.html
+
+    @lazyproperty
+    def _html_table(self) -> HtmlTable | None:
+        """The `lxml` HTML element object for this table.
+
+        `None` when the `Table` element has no `.metadata.text_as_html`.
+        """
+        if (text_as_html := self._table.metadata.text_as_html) is None:
+            return None
+
+        text_as_html = text_as_html.strip()
+        if not text_as_html:  # pragma: no cover
+            return None
+
+        return HtmlTable.from_html_text(text_as_html)
+
+    def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
+        """Split table into chunks where HTML corresponds exactly to text.
+
+        `.metadata.text_as_html` for each chunk is a parsable `<table>` HTML fragment.
+        """
+        if (html_table := self._html_table) is None:  # pragma: no cover
+            raise ValueError("this method is undefined for a table having no .text_as_html")
+
+        is_continuation = False
+
+        for text, html in _TableSplitter.iter_subtables(html_table, self._opts):
+            metadata = self._metadata
+            metadata.text_as_html = html
+            # -- second and later chunks get `.metadata.is_continuation = True` --
+            metadata.is_continuation = is_continuation or None
+            is_continuation = True
+
+            yield TableChunk(text=text, metadata=metadata)
+
+    def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
+        """Split oversized text-only table (no text-as-html) into chunks."""
+        text_remainder = self._text_with_overlap
+        split = self._opts.split
+        is_continuation = False
+
+        while text_remainder:
+            # -- split off the next chunk-worth of characters into a TableChunk --
+            chunk_text, text_remainder = split(text_remainder)
+            metadata = self._metadata
+            # -- second and later chunks get `.metadata.is_continuation = True` --
+            metadata.is_continuation = is_continuation or None
+            is_continuation = True
+
+            yield TableChunk(text=chunk_text, metadata=metadata)
+
+    @property
+    def _metadata(self) -> ElementMetadata:
+        """The base `.metadata` value for chunks formed from this pre-chunk.
+
+        The term "base" here means that other metadata fields will be added, depending on the
+        chunk. In particular, `.metadata.text_as_html` will be different for each text-split chunk
+        and `.metadata.is_continuation` must be added for second-and-later text-split chunks.
+
+        Note this is a fresh copy of the metadata on each call since it will need to be mutated
+        differently for each chunk formed from this pre-chunk.
+        """
+        CS = ConsolidationStrategy
+        metadata = copy.deepcopy(self._table.metadata)
+
+        # -- drop metadata fields not appropriate for chunks, in particular
+        # -- parent_id's will not reliably point to an existing element
+        drop_field_names = [
+            field_name
+            for field_name, strategy in CS.field_consolidation_strategies().items()
+            if strategy is CS.DROP
+        ]
+        for field_name in drop_field_names:
+            setattr(metadata, field_name, None)
+
+        if self._opts.include_orig_elements:
+            metadata.orig_elements = self._orig_elements
+        return metadata
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
+
+        Note this is not just the `Table` element, it must be adjusted to strip out any
+        `.metadata.orig_elements` value it may have when it is itself a chunk and not a direct
+        product of partitioning.
+        """
+        # -- make a copy because we're going to mutate the `Table` element and it doesn't belong to
+        # -- us (the user may have downstream purposes for it).
+        orig_table = copy.deepcopy(self._table)
+        # -- prevent recursive .orig_elements when `Table` element is a chunk --
+        orig_table.metadata.orig_elements = None
+        return [orig_table]
+
+    @lazyproperty
+    def _table_text(self) -> str:
+        """The text in this table, not including any overlap-prefix or extra whitespace."""
+        return " ".join(self._table.text.split())
+
+    @lazyproperty
+    def _text_with_overlap(self) -> str:
+        """The text for this chunk, including the overlap-prefix when present."""
+        overlap_prefix = self._overlap_prefix
+        table_text = self._table.text.strip()
+        # -- use row-separator between overlap and table-text --
+        return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
 
 # ================================================================================================
