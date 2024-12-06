@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import pytest
 
-from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, testfile_path
 from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
@@ -20,10 +20,12 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     Table,
+    TableChunk,
     Text,
     Title,
 )
 from unstructured.partition.html import partition_html
+from unstructured.staging.base import elements_from_json
 
 # ================================================================================================
 # INTEGRATION-TESTS
@@ -33,7 +35,54 @@ from unstructured.partition.html import partition_html
 # ================================================================================================
 
 
-def test_it_splits_a_large_element_into_multiple_chunks():
+@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
+def test_it_chunks_text_followed_by_table_together_when_both_fit():
+    elements = elements_from_json(testfile_path("chunking/title_table_200.json"))
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], CompositeElement)
+
+
+@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
+def test_it_chunks_table_followed_by_text_together_when_both_fit():
+    elements = elements_from_json(testfile_path("chunking/table_text_200.json"))
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], CompositeElement)
+
+
+def test_it_splits_oversized_table():
+    elements = elements_from_json(testfile_path("chunking/table_2000.json"))
+
+    chunks = chunk_by_title(elements)
+
+    assert len(chunks) == 7
+    assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+
+
+def test_it_starts_new_chunk_for_table_after_full_text_chunk():
+    elements = elements_from_json(testfile_path("chunking/long_text_table_200.json"))
+
+    chunks = chunk_by_title(elements, max_characters=250)
+
+    assert len(chunks) == 2
+    assert [type(chunk) for chunk in chunks] == [CompositeElement, Table]
+
+
+def test_it_starts_new_chunk_for_text_after_full_table_chunk():
+    elements = elements_from_json(testfile_path("chunking/full_table_long_text_250.json"))
+
+    chunks = chunk_by_title(elements, max_characters=250)
+
+    assert len(chunks) == 2
+    assert [type(chunk) for chunk in chunks] == [Table, CompositeElement]
+
+
+def test_it_splits_a_large_text_element_into_multiple_chunks():
     elements: list[Element] = [
         Title("Introduction"),
         Text(

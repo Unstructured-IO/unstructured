@@ -1,0 +1,32 @@
+[
+    {
+        "type": "NarrativeText",
+        "element_id": "5bc93ad5828445f98cac824c750cacfd",
+        "text": "Format: CSV file for Export and Download Contact: Charles Stringham cstringham@alsde.edu to arrange secure data transfer OR with technical questions nickey.johnson@alsde.edu for other questions",
+        "metadata": {
+            "category_depth": 2,
+            "page_number": 1,
+            "parent_id": "d8fa364bbfdf42d7b37c7a1dcb90ecf5",
+            "text_as_html": "<p class=\"NarrativeText\" id=\"5bc93ad5828445f98cac824c750cacfd\">Format: CSV file for Export and Download </p> <p class=\"NarrativeText\" id=\"875c1820b6cd4736a7e699571896b568\">Contact: Charles Stringham cstringham@alsde.edu to arrange secure data transfer OR with technical questions </p> <p class=\"NarrativeText\" id=\"ac41c15812e64e918cbb07c2bc68b5d2\">nickey.johnson@alsde.edu for other questions </p>",
+            "languages": [
+                "eng"
+            ],
+            "filetype": "text/html"
+        }
+    },
+    {
+        "type": "Table",
+        "element_id": "ca96108263324e9d865a98f19cf7c940",
+        "text": "RFP Number: 2024-PMO-01 RFP Title: PMO Services RFP RFP Due Date and Time: Number of Pages: #189 05/30/2024 by 5:00pm Central Time",
+        "metadata": {
+            "category_depth": 1,
+            "page_number": 1,
+            "parent_id": "747587de72444235a68c768d544ff5f3",
+            "text_as_html": "<table class=\"Table\" id=\"ca96108263324e9d865a98f19cf7c940\"> <tbody> <tr> <td>RFP Number: 2024-PMO-01</td><td>RFP Title: PMO Services RFP</td></tr><tr> <td>RFP Due Date and Time:</td><td>Number of Pages: #189</td></tr><tr> <td>05/30/2024 by 5:00pm Central Time</td><td></td></tr></tbody></table>",
+            "languages": [
+                "eng"
+            ],
+            "filetype": "text/html"
+        }
+    }
+]
