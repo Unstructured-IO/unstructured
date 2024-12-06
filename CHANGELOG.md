@@ -1,3 +1,13 @@
+## 0.16.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix original file doctype detection** from cct converted file paths for metrics calculation.
+
 ## 0.16.9
 
 ### Enhancements
