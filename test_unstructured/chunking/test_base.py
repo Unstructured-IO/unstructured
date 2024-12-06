@@ -15,10 +15,10 @@ from unstructured.chunking.base import (
     PreChunkBuilder,
     PreChunkCombiner,
     PreChunker,
-    TablePreChunk,
     _CellAccumulator,
     _PreChunkAccumulator,
     _RowAccumulator,
+    _TableChunker,
     _TableSplitter,
     _TextSplitter,
     is_on_next_page,
@@ -326,7 +326,7 @@ class DescribePreChunkBuilder:
         assert builder._text_length == 0
         assert builder._remaining_space == 150
         # -- pre-chunk is a `TablePreChunk` --
-        assert isinstance(pre_chunk, TablePreChunk)
+        assert isinstance(pre_chunk, _TableChunker)
         assert pre_chunk._table == Table("Heading\nCell text")
 
     def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
@@ -351,7 +351,7 @@ class DescribePreChunkBuilder:
         builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
         pre_chunk = list(builder.flush())[0]
 
-        assert isinstance(pre_chunk, TablePreChunk)
+        assert isinstance(pre_chunk, _TableChunker)
         assert pre_chunk._text_with_overlap == (
             "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
         )
@@ -808,8 +808,8 @@ class DescribePreChunk:
         assert pre_chunk._text == expected_value
 
 
-class DescribeTablePreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TablePreChunk` objects."""
+class Describe_TableChunker:
+    """Unit-test suite for `unstructured.chunking.base._TableChunker` objects."""
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
@@ -823,7 +823,7 @@ class DescribeTablePreChunk:
             "</table>"
         )
         text_table = "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="ctus porta volutpat.",
             opts=ChunkingOptions(max_characters=175),
@@ -847,7 +847,7 @@ class DescribeTablePreChunk:
 
     def but_not_when_the_table_is_is_empty_or_contains_only_whitespace(self):
         html_table = "<table><tr><td/><td>  \t  \n   </td></tr></table>"
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table("  \t  \n  ", metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="volutpat.",
             opts=ChunkingOptions(max_characters=175),
@@ -861,7 +861,7 @@ class DescribeTablePreChunk:
     def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
         table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
         opts = ChunkingOptions(include_orig_elements=True)
-        pre_chunk = TablePreChunk(table, "", opts)
+        pre_chunk = _TableChunker(table, "", opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -874,7 +874,7 @@ class DescribeTablePreChunk:
             next(chunk_iter)
 
     def but_not_when_instructed_not_to(self):
-        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
+        pre_chunk = _TableChunker(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
 
         chunk = next(pre_chunk.iter_chunks())
 
@@ -901,7 +901,7 @@ class DescribeTablePreChunk:
             "Nunc aliquam   id enim nec molestie\n"
             "Vivamus quis   nunc ipsum donec ac fermentum"
         )
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="",
             opts=ChunkingOptions(max_characters=100, text_splitting_separators=("\n", " ")),
@@ -951,7 +951,7 @@ class DescribeTablePreChunk:
             metadata=ElementMetadata(text_as_html="<table/>"),
         )
         opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
+        pre_chunk = _TableChunker(table, overlap_prefix="", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -979,7 +979,7 @@ class DescribeTablePreChunk:
     def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
         self, text: str, expected_value: str
     ):
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table(text), overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
         )
         assert pre_chunk.overlap_tail == expected_value
@@ -1002,14 +1002,14 @@ class DescribeTablePreChunk:
     def it_includes_its_overlap_prefix_in_its_text_when_present(
         self, text: str, overlap_prefix: str, expected_value: str
     ):
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
         )
         assert pre_chunk._text_with_overlap == expected_value
 
     def it_computes_metadata_for_each_chunk_to_help(self):
         table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+        pre_chunk = _TableChunker(table, overlap_prefix="", opts=ChunkingOptions())
 
         metadata = pre_chunk._metadata
 
@@ -1021,7 +1021,7 @@ class DescribeTablePreChunk:
         assert pre_chunk._metadata is not metadata
 
     def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
-        pre_chunk = TablePreChunk(
+        pre_chunk = _TableChunker(
             Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
             overlap_prefix="",
             opts=ChunkingOptions(include_orig_elements=False),
@@ -1034,11 +1034,11 @@ class DescribeTablePreChunk:
             "Lorem ipsum",
             metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
         )
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+        pre_chunk = _TableChunker(table, overlap_prefix="", opts=ChunkingOptions())
 
         orig_elements = pre_chunk._orig_elements
 
-        # -- a TablePreChunk always has exactly one original (Table) element --
+        # -- a _TableChunker always has exactly one original (Table) element --
         assert len(orig_elements) == 1
         orig_element = orig_elements[0]
         # -- each item in orig_elements is a copy of the original element so we can mutate it
@@ -1569,7 +1569,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TablePreChunk(Table("Heading\nCell text"), overlap_prefix="", opts=opts),
+            _TableChunker(Table("Heading\nCell text"), overlap_prefix="", opts=opts),
             PreChunk(
                 [
                     Title("Mauris Nec"),
@@ -1592,7 +1592,7 @@ class DescribePreChunkCombiner:
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TablePreChunk)
+        assert isinstance(pre_chunk, _TableChunker)
         assert pre_chunk._table == Table("Heading\nCell text")
         # --
         pre_chunk = next(pre_chunk_iter)

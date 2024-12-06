@@ -43,7 +43,7 @@ Only operative for "by_title" chunking strategy.
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
 
-PreChunkT: TypeAlias = "TablePreChunk | PreChunk"
+PreChunkT: TypeAlias = "_TableChunker | PreChunk"
 """The kind of object produced by a pre-chunker."""
 
 TextAndHtml: TypeAlias = tuple[str, str]
@@ -325,8 +325,7 @@ class PreChunkBuilder:
     the next element in the element stream.
 
     `.flush()` is used to build a PreChunk object from the accumulated elements. This method
-    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
-    used like so:
+    returns an iterator that generates zero-or-one `PreChunk` object and is used like so:
 
         yield from builder.flush()
 
@@ -364,7 +363,7 @@ class PreChunkBuilder:
             return
 
         pre_chunk = (
-            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
+            _TableChunker(self._elements[0], self._overlap_prefix, self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
             else PreChunk(list(self._elements), self._overlap_prefix, self._opts)
@@ -473,7 +472,7 @@ class PreChunk:
         return combined_len <= self._opts.hard_max
 
     def combine(self, other_pre_chunk: PreChunk) -> PreChunk:
-        """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
+        """Return new `PreChunk` that combines this and `other_pre_chunk`."""
         # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
         # -- is automatically incorporated at the end of the first chunk, where it originated.
         return PreChunk(
@@ -655,7 +654,7 @@ class PreChunk:
         return text_separator.join(self._iter_text_segments())
 
 
-class TablePreChunk:
+class _TableChunker:
     """A pre-chunk composed of a single Table element."""
 
     def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
@@ -1122,12 +1121,12 @@ class PreChunkCombiner:
         self._opts = opts
 
     def iter_combined_pre_chunks(self) -> Iterator[PreChunkT]:
-        """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
+        """Generate pre-chunk objects, combining `PreChunk` objects when they'll fit in window."""
         accum = _PreChunkAccumulator(self._opts)
 
         for pre_chunk in self._pre_chunks:
             # -- a table pre-chunk is never combined --
-            if isinstance(pre_chunk, TablePreChunk):
+            if isinstance(pre_chunk, _TableChunker):
                 yield from accum.flush()
                 yield pre_chunk
                 continue
@@ -1142,25 +1141,23 @@ class PreChunkCombiner:
 
 
 class _PreChunkAccumulator:
-    """Accumulates, measures, and combines text pre-chunks.
+    """Accumulates, measures, and combines pre-chunks.
 
     Used for combining pre-chunks for chunking strategies like "by-title" that can potentially
-    produce undersized chunks and offer the `combine_text_under_n_chars` option. Note that only
-    sequential `TextPreChunk` objects can be combined. A `TablePreChunk` is never combined with
-    another pre-chunk.
+    produce undersized chunks and offer the `combine_text_under_n_chars` option.
 
     Provides `.add_pre_chunk()` allowing a pre-chunk to be added to the chunk and provides
     monitoring properties `.remaining_space` and `.text_length` suitable for deciding whether to add
     another pre-chunk.
 
-    `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
-    This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
+    `.flush()` is used to combine the accumulated pre-chunks into a single `PreChunk` object.
+    This method returns an interator that generates zero-or-one `PreChunk` objects and is used
     like so:
 
         yield from accum.flush()
 
-    If no pre-chunks have been accumulated, no `TextPreChunk` is generated. Flushing the builder
-    clears the pre-chunks it contains so it is ready to accept the next text-pre-chunk.
+    If no pre-chunks have been accumulated, no `PreChunk` is generated. Flushing the builder
+    clears the pre-chunks it contains so it is ready to accept the next pre-chunk.
     """
 
     def __init__(self, opts: ChunkingOptions) -> None:
