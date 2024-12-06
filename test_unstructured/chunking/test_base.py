@@ -381,250 +381,6 @@ class DescribePreChunkBuilder:
 # ================================================================================================
 
 
-class DescribeTablePreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TablePreChunk` objects."""
-
-    def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
-        html_table = (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
-            "</tbody>\n"
-            "</table>"
-        )
-        text_table = "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
-        pre_chunk = TablePreChunk(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
-            overlap_prefix="ctus porta volutpat.",
-            opts=ChunkingOptions(max_characters=175),
-        )
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, Table)
-        assert chunk.text == (
-            "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
-        )
-        assert chunk.metadata.text_as_html == (
-            "<table>"
-            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
-            "<tr><td>Lorem ipsum</td><td>adipiscing</td></tr>"
-            "</table>"
-        )
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def but_not_when_the_table_is_is_empty_or_contains_only_whitespace(self):
-        html_table = "<table><tr><td/><td>  \t  \n   </td></tr></table>"
-        pre_chunk = TablePreChunk(
-            Table("  \t  \n  ", metadata=ElementMetadata(text_as_html=html_table)),
-            overlap_prefix="volutpat.",
-            opts=ChunkingOptions(max_characters=175),
-        )
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
-        table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
-        opts = ChunkingOptions(include_orig_elements=True)
-        pre_chunk = TablePreChunk(table, "", opts)
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, Table)
-        assert chunk.metadata.orig_elements == [table]
-        assert chunk.metadata.text_as_html == "<table>foo bar</table>"
-        # --
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def but_not_when_instructed_not_to(self):
-        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
-
-        chunk = next(pre_chunk.iter_chunks())
-
-        assert isinstance(chunk, Table)
-        assert chunk.metadata.orig_elements is None
-
-    def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
-        html_table = """\
-            <table>
-            <thead>
-            <tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
-            </thead>
-            <tbody>
-            <tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
-            <tr><td>Consectetur    </td><td>adipiscing elit</td></tr>
-            <tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>
-            </tbody>
-            </table>
-        """
-        text_table = (
-            "Header Col 1   Header Col 2\n"
-            "Lorem ipsum    dolor sit amet\n"
-            "Consectetur    adipiscing elit\n"
-            "Nunc aliquam   id enim nec molestie\n"
-            "Vivamus quis   nunc ipsum donec ac fermentum"
-        )
-        pre_chunk = TablePreChunk(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
-            overlap_prefix="",
-            opts=ChunkingOptions(max_characters=100, text_splitting_separators=("\n", " ")),
-        )
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Header Col 1 Header Col 2"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Header Col 1</td><td>Header Col 2</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation is None
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Lorem ipsum A Link example"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Lorem ipsum</td><td>A Link example</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Consectetur adipiscing elit"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Consectetur</td><td>adipiscing elit</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Nunc aliquam id enim nec molestie"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Nunc aliquam</td><td>id enim nec molestie</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation
-        # --
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def and_it_includes_the_whole_original_Table_in_each_metadata_when_so_instructed(self):
-        """Even though text and html are split, the orig_elements metadata is not."""
-        table = Table(
-            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
-            metadata=ElementMetadata(text_as_html="<table/>"),
-        )
-        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Header Col 1   Header Col 2"
-        assert chunk.metadata.orig_elements == [table]
-        assert not chunk.metadata.is_continuation
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Lorem ipsum   dolor sit amet"
-        assert chunk.metadata.orig_elements == [table]
-        assert chunk.metadata.is_continuation
-
-    @pytest.mark.parametrize(
-        ("text", "expected_value"),
-        [
-            # -- normally it splits exactly on overlap size  |------- 20 -------|
-            ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
-            # -- but it strips leading whitespace when the tail includes it --
-            ("In rhoncus ipsum sed lectus     porta volutpat.", "porta volutpat."),
-        ],
-    )
-    def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
-        self, text: str, expected_value: str
-    ):
-        pre_chunk = TablePreChunk(
-            Table(text), overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
-        )
-        assert pre_chunk.overlap_tail == expected_value
-
-    @pytest.mark.parametrize(
-        ("text", "overlap_prefix", "expected_value"),
-        [
-            (
-                "In rhoncus ipsum sed lectus porta volutpat.",
-                "",
-                "In rhoncus ipsum sed lectus porta volutpat.",
-            ),
-            (
-                "In rhoncus ipsum sed lectus porta volutpat.",
-                "ctus porta volutpat.",
-                "ctus porta volutpat.\nIn rhoncus ipsum sed lectus porta volutpat.",
-            ),
-        ],
-    )
-    def it_includes_its_overlap_prefix_in_its_text_when_present(
-        self, text: str, overlap_prefix: str, expected_value: str
-    ):
-        pre_chunk = TablePreChunk(
-            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
-        )
-        assert pre_chunk._text_with_overlap == expected_value
-
-    def it_computes_metadata_for_each_chunk_to_help(self):
-        table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
-
-        metadata = pre_chunk._metadata
-
-        assert metadata.text_as_html == "<table/>"
-        # -- opts.include_orig_elements is True by default --
-        assert metadata.orig_elements == [table]
-        # -- it produces a new instance each time it is called so changing one chunk's metadata does
-        # -- not change that of any other chunk.
-        assert pre_chunk._metadata is not metadata
-
-    def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
-        pre_chunk = TablePreChunk(
-            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
-            overlap_prefix="",
-            opts=ChunkingOptions(include_orig_elements=False),
-        )
-
-        assert pre_chunk._metadata.orig_elements is None
-
-    def it_computes_the_original_elements_list_to_help(self):
-        table = Table(
-            "Lorem ipsum",
-            metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
-        )
-        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
-
-        orig_elements = pre_chunk._orig_elements
-
-        # -- a TablePreChunk always has exactly one original (Table) element --
-        assert len(orig_elements) == 1
-        orig_element = orig_elements[0]
-        # -- each item in orig_elements is a copy of the original element so we can mutate it
-        # -- without changing user's data.
-        assert orig_element == table
-        assert orig_element is not table
-        # -- it strips any .metadata.orig_elements from each element to prevent a recursive data
-        # -- structure
-        assert orig_element.metadata.orig_elements is None
-        # -- computation is only on first call, all chunks get exactly the same orig-elements --
-        assert pre_chunk._orig_elements is orig_elements
-
-
 class DescribeTextPreChunk:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
 
@@ -1050,6 +806,250 @@ class DescribeTextPreChunk:
         """
         pre_chunk = TextPreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
+
+
+class DescribeTablePreChunk:
+    """Unit-test suite for `unstructured.chunking.base.TablePreChunk` objects."""
+
+    def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
+        html_table = (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+        text_table = "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        pre_chunk = TablePreChunk(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="ctus porta volutpat.",
+            opts=ChunkingOptions(max_characters=175),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.text == (
+            "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        )
+        assert chunk.metadata.text_as_html == (
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>adipiscing</td></tr>"
+            "</table>"
+        )
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_the_table_is_is_empty_or_contains_only_whitespace(self):
+        html_table = "<table><tr><td/><td>  \t  \n   </td></tr></table>"
+        pre_chunk = TablePreChunk(
+            Table("  \t  \n  ", metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="volutpat.",
+            opts=ChunkingOptions(max_characters=175),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
+        table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
+        opts = ChunkingOptions(include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, "", opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.text_as_html == "<table>foo bar</table>"
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_instructed_not_to(self):
+        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
+
+        chunk = next(pre_chunk.iter_chunks())
+
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements is None
+
+    def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+        html_table = """\
+            <table>
+            <thead>
+            <tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Lorem ipsum    </td><td>A Link example</td></tr>
+            <tr><td>Consectetur    </td><td>adipiscing elit</td></tr>
+            <tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>
+            </tbody>
+            </table>
+        """
+        text_table = (
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliquam   id enim nec molestie\n"
+            "Vivamus quis   nunc ipsum donec ac fermentum"
+        )
+        pre_chunk = TablePreChunk(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="",
+            opts=ChunkingOptions(max_characters=100, text_splitting_separators=("\n", " ")),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Header Col 1 Header Col 2"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Header Col 1</td><td>Header Col 2</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation is None
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Lorem ipsum A Link example"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Lorem ipsum</td><td>A Link example</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Consectetur adipiscing elit"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Consectetur</td><td>adipiscing elit</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Nunc aliquam id enim nec molestie"
+        assert chunk.metadata.text_as_html == (
+            "<table><tr><td>Nunc aliquam</td><td>id enim nec molestie</td></tr></table>"
+        )
+        assert chunk.metadata.is_continuation
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def and_it_includes_the_whole_original_Table_in_each_metadata_when_so_instructed(self):
+        """Even though text and html are split, the orig_elements metadata is not."""
+        table = Table(
+            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<table/>"),
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Header Col 1   Header Col 2"
+        assert chunk.metadata.orig_elements == [table]
+        assert not chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Lorem ipsum   dolor sit amet"
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.is_continuation
+
+    @pytest.mark.parametrize(
+        ("text", "expected_value"),
+        [
+            # -- normally it splits exactly on overlap size  |------- 20 -------|
+            ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
+            # -- but it strips leading whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus     porta volutpat.", "porta volutpat."),
+        ],
+    )
+    def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
+        self, text: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
+        )
+        assert pre_chunk.overlap_tail == expected_value
+
+    @pytest.mark.parametrize(
+        ("text", "overlap_prefix", "expected_value"),
+        [
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "",
+                "In rhoncus ipsum sed lectus porta volutpat.",
+            ),
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "ctus porta volutpat.",
+                "ctus porta volutpat.\nIn rhoncus ipsum sed lectus porta volutpat.",
+            ),
+        ],
+    )
+    def it_includes_its_overlap_prefix_in_its_text_when_present(
+        self, text: str, overlap_prefix: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
+        )
+        assert pre_chunk._text_with_overlap == expected_value
+
+    def it_computes_metadata_for_each_chunk_to_help(self):
+        table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        metadata = pre_chunk._metadata
+
+        assert metadata.text_as_html == "<table/>"
+        # -- opts.include_orig_elements is True by default --
+        assert metadata.orig_elements == [table]
+        # -- it produces a new instance each time it is called so changing one chunk's metadata does
+        # -- not change that of any other chunk.
+        assert pre_chunk._metadata is not metadata
+
+    def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
+        pre_chunk = TablePreChunk(
+            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=False),
+        )
+
+        assert pre_chunk._metadata.orig_elements is None
+
+    def it_computes_the_original_elements_list_to_help(self):
+        table = Table(
+            "Lorem ipsum",
+            metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
+        )
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- a TablePreChunk always has exactly one original (Table) element --
+        assert len(orig_elements) == 1
+        orig_element = orig_elements[0]
+        # -- each item in orig_elements is a copy of the original element so we can mutate it
+        # -- without changing user's data.
+        assert orig_element == table
+        assert orig_element is not table
+        # -- it strips any .metadata.orig_elements from each element to prevent a recursive data
+        # -- structure
+        assert orig_element.metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
 
 
 # ================================================================================================
