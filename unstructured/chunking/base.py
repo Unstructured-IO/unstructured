@@ -43,7 +43,7 @@ Only operative for "by_title" chunking strategy.
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
 
-PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
+PreChunkT: TypeAlias = "TablePreChunk | PreChunk"
 """The kind of object produced by a pre-chunker."""
 
 TextAndHtml: TypeAlias = tuple[str, str]
@@ -273,11 +273,11 @@ class PreChunker:
     @classmethod
     def iter_pre_chunks(
         cls, elements: Iterable[Element], opts: ChunkingOptions
-    ) -> Iterator[PreChunk]:
+    ) -> Iterator[PreChunkT]:
         """Generate pre-chunks from the element-stream provided on construction."""
         return cls(elements, opts)._iter_pre_chunks()
 
-    def _iter_pre_chunks(self) -> Iterator[PreChunk]:
+    def _iter_pre_chunks(self) -> Iterator[PreChunkT]:
         """Generate pre-chunks from the element-stream provided on construction.
 
         A *pre-chunk* is the largest sub-sequence of elements that will both fit within the
@@ -353,7 +353,7 @@ class PreChunkBuilder:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 
-    def flush(self) -> Iterator[PreChunk]:
+    def flush(self) -> Iterator[PreChunkT]:
         """Generate zero-or-one `PreChunk` object and clear the accumulator.
 
         Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
@@ -367,7 +367,7 @@ class PreChunkBuilder:
             TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
+            else PreChunk(list(self._elements), self._overlap_prefix, self._opts)
         )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
@@ -438,7 +438,7 @@ class PreChunkBuilder:
 # ================================================================================================
 
 
-class TextPreChunk:
+class PreChunk:
     """A sequence of elements that belong to the same semantic unit within a document.
 
     The name "section" derives from the idea of a document-section, a heading followed by the
@@ -456,11 +456,11 @@ class TextPreChunk:
         self._opts = opts
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, TextPreChunk):
+        if not isinstance(other, PreChunk):
             return False
         return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
 
-    def can_combine(self, pre_chunk: TextPreChunk) -> bool:
+    def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
@@ -472,11 +472,11 @@ class TextPreChunk:
 
         return combined_len <= self._opts.hard_max
 
-    def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
+    def combine(self, other_pre_chunk: PreChunk) -> PreChunk:
         """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
         # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
         # -- is automatically incorporated at the end of the first chunk, where it originated.
-        return TextPreChunk(
+        return PreChunk(
             self._elements + other_pre_chunk._elements,
             overlap_prefix=self._overlap_prefix,
             opts=self._opts,
@@ -1117,11 +1117,11 @@ class _RowAccumulator:
 class PreChunkCombiner:
     """Filters pre-chunk stream to combine small pre-chunks where possible."""
 
-    def __init__(self, pre_chunks: Iterable[PreChunk], opts: ChunkingOptions):
+    def __init__(self, pre_chunks: Iterable[PreChunkT], opts: ChunkingOptions):
         self._pre_chunks = pre_chunks
         self._opts = opts
 
-    def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
+    def iter_combined_pre_chunks(self) -> Iterator[PreChunkT]:
         """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
         accum = TextPreChunkAccumulator(self._opts)
 
@@ -1165,15 +1165,15 @@ class TextPreChunkAccumulator:
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunk: TextPreChunk | None = None
+        self._pre_chunk: PreChunk | None = None
 
-    def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
+    def add_pre_chunk(self, pre_chunk: PreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
         self._pre_chunk = (
             pre_chunk if self._pre_chunk is None else self._pre_chunk.combine(pre_chunk)
         )
 
-    def flush(self) -> Iterator[TextPreChunk]:
+    def flush(self) -> Iterator[PreChunk]:
         """Generate accumulated pre-chunk as a single combined pre-chunk.
 
         Does not generate a pre-chunk when none has been accumulated.
@@ -1186,7 +1186,7 @@ class TextPreChunkAccumulator:
         # -- and reset the accumulator (to empty) --
         self._pre_chunk = None
 
-    def will_fit(self, pre_chunk: TextPreChunk) -> bool:
+    def will_fit(self, pre_chunk: PreChunk) -> bool:
         """True when there is room for `pre_chunk` in accumulator.
 
         An empty accumulator always has room. Otherwise there is only room when `pre_chunk` can be
