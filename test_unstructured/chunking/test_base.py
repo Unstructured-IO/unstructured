@@ -16,10 +16,10 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     _CellAccumulator,
+    _HtmlTableSplitter,
     _PreChunkAccumulator,
     _RowAccumulator,
     _TableChunker,
-    _TableSplitter,
     _TextSplitter,
     is_on_next_page,
     is_title,
@@ -1053,12 +1053,12 @@ class Describe_TableChunker:
 
 
 # ================================================================================================
-# PRE-CHUNK SPLITTERS
+# HTML SPLITTERS
 # ================================================================================================
 
 
-class Describe_TableSplitter:
-    """Unit-test suite for `unstructured.chunking.base._TableSplitter`."""
+class Describe_HtmlTableSplitter:
+    """Unit-test suite for `unstructured.chunking.base._HtmlTableSplitter`."""
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(150))
@@ -1097,7 +1097,7 @@ class Describe_TableSplitter:
             """
         )
 
-        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
                 "Stanley Cups Team Location Stanley Cups",
                 "<table>"
@@ -1143,7 +1143,7 @@ class Describe_TableSplitter:
             """
         )
 
-        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
                 "Lorem ipsum dolor sit amet. Consectetur adipiscing elit.",
                 "<table><tr>"
@@ -1189,7 +1189,7 @@ class Describe_TableSplitter:
             """
         )
 
-        assert list(_TableSplitter.iter_subtables(html_table, opts)) == [
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do",
                 "<table>"
