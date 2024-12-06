@@ -11,11 +11,11 @@ from lxml.html import fragment_fromstring
 
 from unstructured.chunking.base import (
     ChunkingOptions,
+    PreChunk,
     PreChunkBuilder,
     PreChunkCombiner,
     PreChunker,
     TablePreChunk,
-    TextPreChunk,
     TextPreChunkAccumulator,
     _CellAccumulator,
     _RowAccumulator,
@@ -181,27 +181,27 @@ class DescribePreChunker:
         pre_chunk_iter = PreChunker.iter_pre_chunks(elements, opts=opts)
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Text("Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Ut Enim"),
             Text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi."),
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [Text("Ut aliquip ex ea commodo consequat."), CheckBox()]
         # --
         with pytest.raises(StopIteration):
@@ -290,7 +290,7 @@ class DescribePreChunkBuilder:
         # -- 55 + 2 (separator) + 43 == 100 --
         assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
 
-    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+    def it_generates_a_PreChunk_when_flushed_and_resets_itself_to_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
         builder.add_element(Title("Introduction"))
         builder.add_element(
@@ -302,7 +302,7 @@ class DescribePreChunkBuilder:
 
         pre_chunk = next(builder.flush())
 
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Introduction"),
             Text(
@@ -345,7 +345,7 @@ class DescribePreChunkBuilder:
         builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
         pre_chunk = list(builder.flush())[0]
 
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
 
         builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
@@ -359,7 +359,7 @@ class DescribePreChunkBuilder:
         builder.add_element(Text("Donec semper facilisis metus finibus."))
         pre_chunk = list(builder.flush())[0]
 
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
@@ -381,8 +381,8 @@ class DescribePreChunkBuilder:
 # ================================================================================================
 
 
-class DescribeTextPreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
+class DescribePreChunk:
+    """Unit-test suite for `unstructured.chunking.base.PreChunk` objects."""
 
     @pytest.mark.parametrize(
         ("overlap_pfx", "texts", "other_overlap_pfx", "other_texts", "expected_value"),
@@ -399,7 +399,7 @@ class DescribeTextPreChunk:
             ("", ["bar", "baz"], "foo", ["bah", "dah"], False),
         ],
     )
-    def it_knows_when_it_is_equal_to_another_TextPreChunk_instance(
+    def it_knows_when_it_is_equal_to_another_PreChunk_instance(
         self,
         overlap_pfx: str,
         texts: list[str],
@@ -408,15 +408,15 @@ class DescribeTextPreChunk:
         expected_value: bool,
     ):
         opts = ChunkingOptions()
-        pre_chunk = TextPreChunk([Text(t) for t in texts], overlap_prefix=overlap_pfx, opts=opts)
-        other_pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk([Text(t) for t in texts], overlap_prefix=overlap_pfx, opts=opts)
+        other_pre_chunk = PreChunk(
             [Text(t) for t in other_texts], overlap_prefix=other_overlap_pfx, opts=opts
         )
 
         assert (pre_chunk == other_pre_chunk) is expected_value
 
-    def and_it_knows_it_is_not_equal_to_an_object_that_is_not_a_TextPreChunk(self):
-        pre_chunk = TextPreChunk([], overlap_prefix="", opts=ChunkingOptions())
+    def and_it_knows_it_is_not_equal_to_an_object_that_is_not_a_PreChunk(self):
+        pre_chunk = PreChunk([], overlap_prefix="", opts=ChunkingOptions())
         assert pre_chunk != 42
 
     @pytest.mark.parametrize(
@@ -432,22 +432,22 @@ class DescribeTextPreChunk:
             (99, 73, False),
         ],
     )
-    def it_knows_when_it_can_combine_itself_with_another_TextPreChunk_instance(
+    def it_knows_when_it_can_combine_itself_with_another_PreChunk_instance(
         self, max_characters: int, combine_text_under_n_chars: int, expected_value: bool
     ):
-        """This allows `PreChunkCombiner` to operate without knowing `TextPreChunk` internals."""
+        """This allows `PreChunkCombiner` to operate without knowing `PreChunk` internals."""
         opts = ChunkingOptions(
             max_characters=max_characters,
             combine_text_under_n_chars=combine_text_under_n_chars,
             overlap=20,
             overlap_all=True,
         )
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [Text("Lorem ipsum dolor sit amet consectetur adipiscing.")],  # len == 50
             overlap_prefix="e feugiat efficitur.",  # len == 20
             opts=opts,
         )
-        next_pre_chunk = TextPreChunk(
+        next_pre_chunk = PreChunk(
             [Text("In rhoncus sum sed lectus.")],  # len == 26
             overlap_prefix="sectetur adipiscing.",  # len == 20 but shouldn't come into computation
             opts=opts,
@@ -455,13 +455,13 @@ class DescribeTextPreChunk:
 
         assert pre_chunk.can_combine(next_pre_chunk) is expected_value
 
-    def it_can_combine_itself_with_another_TextPreChunk_instance(self):
+    def it_can_combine_itself_with_another_PreChunk_instance(self):
         """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.
 
         Note that neither the original or other pre_chunk are mutated.
         """
         opts = ChunkingOptions()
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
@@ -469,7 +469,7 @@ class DescribeTextPreChunk:
             overlap_prefix="feugiat efficitur.",
             opts=opts,
         )
-        other_pre_chunk = TextPreChunk(
+        other_pre_chunk = PreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
@@ -484,7 +484,7 @@ class DescribeTextPreChunk:
         # -- overlap-prefix from the existing pre-chunk and the other overlap-prefix is discarded
         # -- (although it's still in there at the end of the first pre-chunk since that's where it
         # -- came from originally).
-        assert new_pre_chunk == TextPreChunk(
+        assert new_pre_chunk == PreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
@@ -496,7 +496,7 @@ class DescribeTextPreChunk:
         )
         # -- Neither pre-chunk used for combining is mutated, so we don't have to worry about who
         # -- else may have been given a reference to them.
-        assert pre_chunk == TextPreChunk(
+        assert pre_chunk == PreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
@@ -504,7 +504,7 @@ class DescribeTextPreChunk:
             overlap_prefix="feugiat efficitur.",
             opts=opts,
         )
-        assert other_pre_chunk == TextPreChunk(
+        assert other_pre_chunk == PreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
@@ -522,7 +522,7 @@ class DescribeTextPreChunk:
             ),
         ]
         opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
-        pre_chunk = TextPreChunk(elements, overlap_prefix="e feugiat efficitur.", opts=opts)
+        pre_chunk = PreChunk(elements, overlap_prefix="e feugiat efficitur.", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -549,7 +549,7 @@ class DescribeTextPreChunk:
             )
         ]
         opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
-        pre_chunk = TextPreChunk(elements, overlap_prefix="", opts=opts)
+        pre_chunk = PreChunk(elements, overlap_prefix="", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -582,7 +582,7 @@ class DescribeTextPreChunk:
             parent_id="f87731e0",
         )
 
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             # --   |--------------------- 48 ---------------------|
             [Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)],
             overlap_prefix="",
@@ -595,7 +595,7 @@ class DescribeTextPreChunk:
 
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [PageBreak("", metadata=metadata)],
             overlap_prefix="",
             opts=ChunkingOptions(),
@@ -618,13 +618,13 @@ class DescribeTextPreChunk:
     def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
         self, text: str, expected_value: str
     ):
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [Text(text)], overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
         )
         assert pre_chunk.overlap_tail == expected_value
 
     def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Title(
                     "Lorem Ipsum",
@@ -678,7 +678,7 @@ class DescribeTextPreChunk:
         )
         metadata_2.quotient = 1.74
 
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Title("Lorem Ipsum", metadata=metadata),
                 Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
@@ -701,7 +701,7 @@ class DescribeTextPreChunk:
         metadata = ElementMetadata(filename="foo.pdf")
         element = Title("Lorem Ipsum", metadata=metadata)
         element_2 = Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)
-        pre_chunk = TextPreChunk([element, element_2], overlap_prefix="", opts=opts)
+        pre_chunk = PreChunk([element, element_2], overlap_prefix="", opts=opts)
 
         consolidated_metadata = pre_chunk._consolidated_metadata
 
@@ -719,7 +719,7 @@ class DescribeTextPreChunk:
         Only non-None fields should appear in the dict and each field value should be the
         consolidation of the values across the pre_chunk elements.
         """
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 PageBreak(""),
                 Title(
@@ -768,7 +768,7 @@ class DescribeTextPreChunk:
             "In rhoncus ipsum sed lectus porta volutpat.",
             metadata=ElementMetadata(orig_elements=[Text("Porta volupat.")]),
         )
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [element, element_2, element_3],
             overlap_prefix="",
             opts=ChunkingOptions(include_orig_elements=True),
@@ -804,7 +804,7 @@ class DescribeTextPreChunk:
         The text-segment contributed by each element is separated from the next by a blank line
         ("\n\n"). An element that contributes no text does not give rise to a separator.
         """
-        pre_chunk = TextPreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
+        pre_chunk = PreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
 
 
@@ -1517,7 +1517,7 @@ class DescribePreChunkCombiner:
     def it_combines_sequential_small_text_pre_chunks(self):
         opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
@@ -1525,7 +1525,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
@@ -1533,7 +1533,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
@@ -1546,7 +1546,7 @@ class DescribePreChunkCombiner:
         pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1561,7 +1561,7 @@ class DescribePreChunkCombiner:
     def but_it_does_not_combine_table_pre_chunks(self):
         opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1570,7 +1570,7 @@ class DescribePreChunkCombiner:
                 opts=opts,
             ),
             TablePreChunk(Table("Heading\nCell text"), overlap_prefix="", opts=opts),
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
@@ -1585,7 +1585,7 @@ class DescribePreChunkCombiner:
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1596,7 +1596,7 @@ class DescribePreChunkCombiner:
         assert pre_chunk._table == Table("Heading\nCell text")
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
@@ -1608,7 +1608,7 @@ class DescribePreChunkCombiner:
     def it_respects_the_specified_combination_threshold(self):
         opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=80)
         pre_chunks = [
-            TextPreChunk(  # 68
+            PreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
@@ -1616,7 +1616,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk(  # 71
+            PreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
@@ -1625,7 +1625,7 @@ class DescribePreChunkCombiner:
                 opts=opts,
             ),
             # -- len == 139
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
@@ -1638,7 +1638,7 @@ class DescribePreChunkCombiner:
         pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1647,7 +1647,7 @@ class DescribePreChunkCombiner:
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
@@ -1659,7 +1659,7 @@ class DescribePreChunkCombiner:
     def it_respects_the_hard_maximum_window_length(self):
         opts = ChunkingOptions(max_characters=200, combine_text_under_n_chars=200)
         pre_chunks = [
-            TextPreChunk(  # 68
+            PreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
@@ -1667,7 +1667,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk(  # 71
+            PreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
@@ -1676,7 +1676,7 @@ class DescribePreChunkCombiner:
                 opts=opts,
             ),
             # -- len == 139
-            TextPreChunk(
+            PreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
@@ -1690,7 +1690,7 @@ class DescribePreChunkCombiner:
         pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1699,7 +1699,7 @@ class DescribePreChunkCombiner:
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
@@ -1712,8 +1712,8 @@ class DescribePreChunkCombiner:
         """Such as occurs when a single element exceeds the window size."""
         opts = ChunkingOptions(max_characters=150, combine_text_under_n_chars=150)
         pre_chunks = [
-            TextPreChunk([Title("Lorem Ipsum")], overlap_prefix="", opts=opts),
-            TextPreChunk(  # 179
+            PreChunk([Title("Lorem Ipsum")], overlap_prefix="", opts=opts),
+            PreChunk(  # 179
                 [
                     Text(
                         "Lorem ipsum dolor sit amet consectetur adipiscing elit."  # 55
@@ -1724,7 +1724,7 @@ class DescribePreChunkCombiner:
                 overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk([Title("Vulputate Consequat")], overlap_prefix="", opts=opts),
+            PreChunk([Title("Vulputate Consequat")], overlap_prefix="", opts=opts),
         ]
 
         pre_chunk_iter = PreChunkCombiner(
@@ -1732,11 +1732,11 @@ class DescribePreChunkCombiner:
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [Title("Lorem Ipsum")]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit."
@@ -1746,7 +1746,7 @@ class DescribePreChunkCombiner:
         ]
         # --
         pre_chunk = next(pre_chunk_iter)
-        assert isinstance(pre_chunk, TextPreChunk)
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [Title("Vulputate Consequat")]
         # --
         with pytest.raises(StopIteration):
@@ -1756,11 +1756,11 @@ class DescribePreChunkCombiner:
 class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
 
-    def it_generates_a_combined_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+    def it_generates_a_combined_PreChunk_when_flushed_and_resets_itself_to_empty(self):
         opts = ChunkingOptions(combine_text_under_n_chars=500)
         accum = TextPreChunkAccumulator(opts=opts)
 
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Title("Lorem Ipsum"),
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1771,7 +1771,7 @@ class DescribeTextPreChunkAccumulator:
         assert accum.will_fit(pre_chunk)
         accum.add_pre_chunk(pre_chunk)
 
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Title("Mauris Nec"),
                 Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
@@ -1782,7 +1782,7 @@ class DescribeTextPreChunkAccumulator:
         assert accum.will_fit(pre_chunk)
         accum.add_pre_chunk(pre_chunk)
 
-        pre_chunk = TextPreChunk(
+        pre_chunk = PreChunk(
             [
                 Title("Sed Orci"),
                 Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
@@ -1799,8 +1799,8 @@ class DescribeTextPreChunkAccumulator:
         pre_chunk = next(pre_chunk_iter)
         with pytest.raises(StopIteration):
             next(pre_chunk_iter)
-        # -- and it is a _TextPreChunk containing all the elements --
-        assert isinstance(pre_chunk, TextPreChunk)
+        # -- and it is a PreChunk containing all the elements --
+        assert isinstance(pre_chunk, PreChunk)
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -1815,7 +1815,7 @@ class DescribeTextPreChunkAccumulator:
         with pytest.raises(StopIteration):
             next(accum.flush())
 
-    def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
+    def but_it_does_not_generate_a_PreChunk_on_flush_when_empty(self):
         accum = TextPreChunkAccumulator(opts=ChunkingOptions(max_characters=150))
         assert list(accum.flush()) == []
 
