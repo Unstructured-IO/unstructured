@@ -2,6 +2,7 @@ import os
 import pathlib
 import shutil
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -55,6 +56,52 @@ DUMMY_DF_ELEMENT_TYPE = pd.DataFrame(
         "element-type-accuracy": [0.812, 0.994, 0.887],
     }
 )
+
+
+@pytest.fixture
+def mock_dependencies():
+    with patch(
+        "unstructured.metrics.evaluate.calculate_accuracy"
+    ) as mock_calculate_accuracy, patch(
+        "unstructured.metrics.evaluate.calculate_percent_missing_text"
+    ) as mock_calculate_percent_missing_text, patch.object(
+        TextExtractionMetricsCalculator, "_get_ccts"
+    ) as mock_get_ccts, patch(
+        "unstructured.metrics.evaluate.get_element_type_frequency"
+    ) as mock_get_element_type_frequency, patch(
+        "unstructured.metrics.evaluate.calculate_element_type_percent_match"
+    ) as mock_calculate_element_type_percent_match, patch(
+        "unstructured.metrics.evaluate._read_text_file"
+    ) as mock_read_text_file, patch.object(
+        Path, "exists"
+    ) as mock_path_exists, patch(
+        "unstructured.metrics.evaluate.TableEvalProcessor.from_json_files"
+    ) as mock_table_eval_processor_from_json_files, patch.object(
+        TableStructureMetricsCalculator, "supported_metric_names"
+    ) as mock_supported_metric_names:
+        mocks = {
+            "mock_calculate_accuracy": mock_calculate_accuracy,
+            "mock_calculate_percent_missing_text": mock_calculate_percent_missing_text,
+            "mock_get_ccts": mock_get_ccts,
+            "mock_get_element_type_frequency": mock_get_element_type_frequency,
+            "mock_read_text_file": mock_read_text_file,
+            "mock_calculate_element_type_percent_match": mock_calculate_element_type_percent_match,
+            "mock_table_eval_processor_from_json_files": mock_table_eval_processor_from_json_files,
+            "mock_supported_metric_names": mock_supported_metric_names,
+            "mock_path_exists": mock_path_exists,
+        }
+
+        # setup mocks
+        mocks["mock_calculate_accuracy"].return_value = 0.5
+        mocks["mock_calculate_percent_missing_text"].return_value = 0.5
+        mocks["mock_get_ccts"].return_value = ["output_cct", "source_cct"]
+        mocks["mock_get_element_type_frequency"].side_effect = [{"ele1": 1}, {"ele2": 3}]
+        mocks["mock_calculate_element_type_percent_match"].return_value = 0.5
+        mocks["mock_supported_metric_names"].return_value = ["table_level_acc"]
+        mocks["mock_path_exists"].return_value = True
+        mocks["mock_read_text_file"].side_effect = ["output_text", "source_text"]
+
+        yield mocks
 
 
 @pytest.fixture()
@@ -140,7 +187,7 @@ def test_process_document_returns_the_correct_amount_of_values(
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.usefixtures("_cleanup_after_test")
+@pytest.mark.usefixtures("_cleanup_after_test", "mock_dependencies")
 @pytest.mark.parametrize(
     ("calculator_class", "output_dirname", "source_dirname", "path", "kwargs"),
     [
@@ -151,6 +198,30 @@ def test_process_document_returns_the_correct_amount_of_values(
             Path("2310.03502text_to_image_synthesis1-7.pdf.txt"),
             {"document_type": "txt"},
         ),
+    ],
+)
+def test_TextExtractionMetricsCalculator_process_document_returns_the_correct_doctype(
+    mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
+):
+
+    output_dir = Path(TESTING_FILE_DIR) / output_dirname
+    source_dir = Path(TESTING_FILE_DIR) / source_dirname
+    mock_calculate_accuracy = mock_dependencies["mock_calculate_accuracy"]
+    mock_calculate_percent_missing_text = mock_dependencies["mock_calculate_percent_missing_text"]
+    mock_get_ccts = mock_dependencies["mock_get_ccts"]
+    calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
+    output_list = calculator._process_document(path)
+    assert output_list[1] == ".pdf"
+    assert mock_calculate_accuracy.call_count == 1
+    assert mock_calculate_percent_missing_text.call_count == 1
+    assert mock_get_ccts.call_count == 1
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test", "mock_dependencies")
+@pytest.mark.parametrize(
+    ("calculator_class", "output_dirname", "source_dirname", "path", "kwargs"),
+    [
         (
             TableStructureMetricsCalculator,
             UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
@@ -158,6 +229,43 @@ def test_process_document_returns_the_correct_amount_of_values(
             Path("tablib-627mTABLES-2310.07875-p7.pdf.json"),
             {},
         ),
+        # (
+        #     ElementTypeMetricsCalculator,
+        #     UNSTRUCTURED_OUTPUT_DIRNAME,
+        #     GOLD_ELEMENT_TYPE_DIRNAME,
+        #     Path("IRS-form.1987.pdf.json"),
+        #     {},
+        # ),
+    ],
+)
+def test_TableStructureMetricsCalculator_process_document_returns_the_correct_doctype(
+    mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
+):
+
+    output_dir = Path(TESTING_FILE_DIR) / output_dirname
+    source_dir = Path(TESTING_FILE_DIR) / source_dirname
+    calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
+    calculator._ground_truths_dir = source_dir
+    calculator._documents_dir = output_dir
+    calculator._ground_truth_paths = [source_dir / path]
+    mock_report = MagicMock()
+    mock_report.total_predicted_tables = 3
+    mock_report.table_evel_acc = 0.83
+    mock_table_eval_processor_from_json_files = mock_dependencies[
+        "mock_table_eval_processor_from_json_files"
+    ]
+    mock_table_eval_processor_from_json_files.return_value.process_file.return_value = mock_report
+
+    output_list = calculator._process_document(path)
+    assert output_list[1] == ".pdf"
+    assert mock_table_eval_processor_from_json_files.call_count == 1
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test", "mock_dependencies")
+@pytest.mark.parametrize(
+    ("calculator_class", "output_dirname", "source_dirname", "path", "kwargs"),
+    [
         (
             ElementTypeMetricsCalculator,
             UNSTRUCTURED_OUTPUT_DIRNAME,
@@ -167,15 +275,23 @@ def test_process_document_returns_the_correct_amount_of_values(
         ),
     ],
 )
-def test_process_document_returns_the_correct_doctype(
-    calculator_class, output_dirname, source_dirname, path, kwargs
+def test_ElementTypeMetricsCalculator_process_document_returns_the_correct_doctype(
+    mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
 ):
+
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
-
     calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
+    mock_element_type_frequency = mock_dependencies["mock_get_element_type_frequency"]
+    mock_read_text_file = mock_dependencies["mock_read_text_file"]
+    mock_calculate_element_type_percent_match = mock_dependencies[
+        "mock_calculate_element_type_percent_match"
+    ]
     output_list = calculator._process_document(path)
     assert output_list[1] == ".pdf"
+    assert mock_read_text_file.call_count == 2
+    assert mock_element_type_frequency.call_count == 2
+    assert mock_calculate_element_type_percent_match.call_count == 1
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
