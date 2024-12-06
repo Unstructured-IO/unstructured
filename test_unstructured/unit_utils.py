@@ -101,6 +101,13 @@ def parse_optional_datetime(datetime_str: Optional[str]) -> Optional[dt.datetime
     return dt.datetime.fromisoformat(datetime_str) if datetime_str else None
 
 
+def testfile_path(rel_path: str) -> str:
+    """Resolve the absolute-path to `rel_path` in the testfiles directory."""
+    testfiles_dir = pathlib.Path(__file__).parent / "testfiles"
+    file_path = testfiles_dir / rel_path
+    return str(file_path.resolve())
+
+
 # ------------------------------------------------------------------------------------------------
 # MOCKING FIXTURES
 # ------------------------------------------------------------------------------------------------
