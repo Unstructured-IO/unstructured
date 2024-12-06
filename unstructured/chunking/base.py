@@ -738,7 +738,7 @@ class _TableChunker:
 
         is_continuation = False
 
-        for text, html in _TableSplitter.iter_subtables(html_table, self._opts):
+        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
             metadata = self._metadata
             metadata.text_as_html = html
             # -- second and later chunks get `.metadata.is_continuation = True` --
@@ -821,11 +821,11 @@ class _TableChunker:
 
 
 # ================================================================================================
-# PRE-CHUNK SPLITTERS
+# HTML SPLITTERS
 # ================================================================================================
 
 
-class _TableSplitter:
+class _HtmlTableSplitter:
     """Produces (text, html) pairs for a `<table>` HtmlElement.
 
     Each chunk contains a whole number of rows whenever possible. An oversized row is split on an
