@@ -1123,7 +1123,7 @@ class PreChunkCombiner:
 
     def iter_combined_pre_chunks(self) -> Iterator[PreChunkT]:
         """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
-        accum = TextPreChunkAccumulator(self._opts)
+        accum = _PreChunkAccumulator(self._opts)
 
         for pre_chunk in self._pre_chunks:
             # -- a table pre-chunk is never combined --
@@ -1141,7 +1141,7 @@ class PreChunkCombiner:
         yield from accum.flush()
 
 
-class TextPreChunkAccumulator:
+class _PreChunkAccumulator:
     """Accumulates, measures, and combines text pre-chunks.
 
     Used for combining pre-chunks for chunking strategies like "by-title" that can potentially

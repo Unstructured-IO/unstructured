@@ -16,8 +16,8 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     TablePreChunk,
-    TextPreChunkAccumulator,
     _CellAccumulator,
+    _PreChunkAccumulator,
     _RowAccumulator,
     _TableSplitter,
     _TextSplitter,
@@ -1753,12 +1753,12 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
 
-class DescribeTextPreChunkAccumulator:
-    """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
+class Describe_PreChunkAccumulator:
+    """Unit-test suite for `unstructured.chunking.base._PreChunkAccumulator`."""
 
     def it_generates_a_combined_PreChunk_when_flushed_and_resets_itself_to_empty(self):
         opts = ChunkingOptions(combine_text_under_n_chars=500)
-        accum = TextPreChunkAccumulator(opts=opts)
+        accum = _PreChunkAccumulator(opts=opts)
 
         pre_chunk = PreChunk(
             [
@@ -1816,7 +1816,7 @@ class DescribeTextPreChunkAccumulator:
             next(accum.flush())
 
     def but_it_does_not_generate_a_PreChunk_on_flush_when_empty(self):
-        accum = TextPreChunkAccumulator(opts=ChunkingOptions(max_characters=150))
+        accum = _PreChunkAccumulator(opts=ChunkingOptions(max_characters=150))
         assert list(accum.flush()) == []
 
 
