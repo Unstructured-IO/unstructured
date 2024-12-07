@@ -1,3 +1,13 @@
+## 0.16.11-dev0
+
+### Enhancements
+
+- **Relax table segregation rule in chunking.** Previously a `Table` element was always segregated into its own pre-chunk such that the `Table` appeared alone in a chunk or was split into multiple `TableChunk` elements, but never combined with `Text`-subtype elements. Allow table elements to be combined with other elements in the same chunk when space allows.
+
+### Features
+
+### Fixes
+
 ## 0.16.10
 
 ### Enhancements
