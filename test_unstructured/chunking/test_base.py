@@ -16,6 +16,7 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     _CellAccumulator,
+    _Chunker,
     _HtmlTableSplitter,
     _PreChunkAccumulator,
     _RowAccumulator,
@@ -498,99 +499,6 @@ class DescribePreChunk:
             opts=opts,
         )
 
-    def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
-        elements = [
-            Title("Introduction"),
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                " lectus porta volutpat.",
-            ),
-        ]
-        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
-        pre_chunk = PreChunk(elements, overlap_prefix="e feugiat efficitur.", opts=opts)
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        chunk = next(chunk_iter)
-        assert chunk == CompositeElement(
-            "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
-            " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
-        )
-        assert chunk.metadata is pre_chunk._consolidated_metadata
-        assert chunk.metadata.orig_elements == elements
-        # --
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
-        # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
-        # -- The pre-chunker will isolate that element in a pre_chunk of its own.
-        elements = [
-            Text(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-                " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
-                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
-                " commodo consequat."
-            )
-        ]
-        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
-        pre_chunk = PreChunk(elements, overlap_prefix="", opts=opts)
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
-        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
-        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
-        # -- `._consolidated_metadata)` for each text-split chunk.
-        chunk = next(chunk_iter)
-        assert chunk == CompositeElement(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-            " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
-            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
-        )
-        assert chunk.metadata is pre_chunk._consolidated_metadata
-        assert chunk.metadata.orig_elements == elements
-        # --
-        chunk = next(chunk_iter)
-        assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
-        assert chunk.metadata is pre_chunk._continuation_metadata
-        assert chunk.metadata.orig_elements == elements
-        # --
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-    def and_it_adds_the_is_continuation_flag_for_second_and_later_split_chunks(self):
-        metadata = ElementMetadata(
-            category_depth=0,
-            filename="foo.docx",
-            languages=["lat"],
-            parent_id="f87731e0",
-        )
-
-        pre_chunk = PreChunk(
-            # --   |--------------------- 48 ---------------------|
-            [Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)],
-            overlap_prefix="",
-            opts=ChunkingOptions(max_characters=20),
-        )
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
-
-    def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
-        metadata = ElementMetadata()
-        pre_chunk = PreChunk(
-            [PageBreak("  ", metadata=metadata)],
-            overlap_prefix="",
-            opts=ChunkingOptions(),
-        )
-
-        chunk_iter = pre_chunk.iter_chunks()
-
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
     @pytest.mark.parametrize(
         ("text", "expected_value"),
         [
@@ -608,33 +516,154 @@ class DescribePreChunk:
         )
         assert pre_chunk.overlap_tail == expected_value
 
-    def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
-        pre_chunk = PreChunk(
-            [
-                Title(
-                    "Lorem Ipsum",
-                    metadata=ElementMetadata(
-                        category_depth=0,
-                        filename="foo.docx",
-                        languages=["lat"],
-                        parent_id="f87731e0",
-                    ),
-                ),
-                Text(
-                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
-                    metadata=ElementMetadata(
-                        category_depth=1,
-                        filename="foo.docx",
-                        image_path="sprite.png",
-                        languages=["lat", "eng"],
-                    ),
-                ),
-            ],
-            overlap_prefix="",
+    @pytest.mark.parametrize(
+        ("elements", "overlap_prefix", "expected_value"),
+        [
+            ([Text("foo"), Text("bar")], "bah da bing.", "bah da bing.\n\nfoo\n\nbar"),
+            ([Text("foo"), PageBreak(""), Text("bar")], "da bang.", "da bang.\n\nfoo\n\nbar"),
+            ([PageBreak(""), Text("foo")], "bah da boom.", "bah da boom.\n\nfoo"),
+            ([Text("foo"), Text("bar"), PageBreak("")], "", "foo\n\nbar"),
+        ],
+    )
+    def it_knows_the_concatenated_text_of_the_pre_chunk_to_help(
+        self, elements: list[Text], overlap_prefix: str, expected_value: str
+    ):
+        """._text is the "joined" text of the pre-chunk elements.
+
+        The text-segment contributed by each element is separated from the next by a blank line
+        ("\n\n"). An element that contributes no text does not give rise to a separator.
+        """
+        pre_chunk = PreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
+        assert pre_chunk._text == expected_value
+
+
+# ================================================================================================
+# CHUNKING HELPER/SPLITTERS
+# ================================================================================================
+
+
+class Describe_Chunker:
+    """Unit-test suite for `unstructured.chunking.base._Chunker` objects."""
+
+    def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
+        elements = [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                " lectus porta volutpat.",
+            ),
+        ]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        chunker = _Chunker(
+            elements,
+            text=(
+                "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
+                " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat."
+            ),
+            opts=opts,
+        )
+
+        chunk_iter = chunker._iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
+            " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
+        )
+        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
+        # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
+        # -- The pre-chunker will automatically isolate that element in a pre_chunk of its own.
+        text = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud"
+            " exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        )
+        elements = [Text(text)]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        chunker = _Chunker(elements, text=text, opts=opts)
+
+        chunk_iter = chunker._iter_chunks()
+
+        # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
+        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
+        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
+        # -- `._consolidated_metadata)` for each text-split chunk.
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+        )
+        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
+        # --
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
+        assert chunk.metadata is chunker._continuation_metadata
+        assert chunk.metadata.orig_elements == elements
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def and_it_adds_the_is_continuation_flag_for_second_and_later_split_chunks(self):
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+        elements = [Text(text, metadata=metadata)]
+
+        chunk_iter = _Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20))
+
+        assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
+
+    def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
+        metadata = ElementMetadata()
+
+        chunk_iter = _Chunker.iter_chunks(
+            [PageBreak("  ", metadata=metadata)],
+            text="",
             opts=ChunkingOptions(),
         )
 
-        assert pre_chunk._all_metadata_values == {
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
+        elements = [
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(
+                    category_depth=0,
+                    filename="foo.docx",
+                    languages=["lat"],
+                    parent_id="f87731e0",
+                ),
+            ),
+            Text(
+                "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                metadata=ElementMetadata(
+                    category_depth=1,
+                    filename="foo.docx",
+                    image_path="sprite.png",
+                    languages=["lat", "eng"],
+                ),
+            ),
+        ]
+        text = "Lorem Ipsum\n\n'Lorem ipsum dolor' means 'Thank you very much' in Latin."
+
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
+
+        assert chunker._all_metadata_values == {
             # -- scalar values are accumulated in a list in element order --
             "category_depth": [0, 1],
             # -- all values are accumulated, not only unique ones --
@@ -662,18 +691,16 @@ class DescribePreChunk:
             languages=["lat", "eng"],
         )
         metadata_2.quotient = 1.74
+        elements = [
+            Title("Lorem Ipsum", metadata=metadata),
+            Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
+        ]
+        text = "Lorem Ipsum\n\n'Lorem ipsum dolor' means 'Thank you very much' in Latin."
 
-        pre_chunk = PreChunk(
-            [
-                Title("Lorem Ipsum", metadata=metadata),
-                Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
-            ],
-            overlap_prefix="",
-            opts=ChunkingOptions(),
-        )
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
 
         # -- ad-hoc fields "coefficient" and "quotient" do not appear --
-        assert pre_chunk._all_metadata_values == {
+        assert chunker._all_metadata_values == {
             "category_depth": [0, 1],
             "filename": ["foo.docx", "foo.docx"],
             "image_path": ["sprite.png"],
@@ -686,9 +713,11 @@ class DescribePreChunk:
         metadata = ElementMetadata(filename="foo.pdf")
         element = Title("Lorem Ipsum", metadata=metadata)
         element_2 = Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)
-        pre_chunk = PreChunk([element, element_2], overlap_prefix="", opts=opts)
+        elements = [element, element_2]
+        text = "Lorem Ipsum\n\n'Lorem ipsum dolor' means 'Thank you very much' in Latin."
+        chunker = _Chunker(elements, text=text, opts=opts)
 
-        consolidated_metadata = pre_chunk._consolidated_metadata
+        consolidated_metadata = chunker._consolidated_metadata
 
         # -- pre-chunk elements are included as metadata --
         orig_elements = consolidated_metadata.orig_elements
@@ -704,40 +733,38 @@ class DescribePreChunk:
         Only non-None fields should appear in the dict and each field value should be the
         consolidation of the values across the pre_chunk elements.
         """
-        pre_chunk = PreChunk(
-            [
-                PageBreak(""),
-                Title(
-                    "Lorem Ipsum",
-                    metadata=ElementMetadata(
-                        filename="foo.docx",
-                        # -- category_depth has DROP strategy so doesn't appear in result --
-                        category_depth=0,
-                        emphasized_text_contents=["Lorem", "Ipsum"],
-                        emphasized_text_tags=["b", "i"],
-                        languages=["lat"],
-                    ),
+        elements = [
+            PageBreak(""),
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(
+                    filename="foo.docx",
+                    # -- category_depth has DROP strategy so doesn't appear in result --
+                    category_depth=0,
+                    emphasized_text_contents=["Lorem", "Ipsum"],
+                    emphasized_text_tags=["b", "i"],
+                    languages=["lat"],
                 ),
-                Text(
-                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
-                    metadata=ElementMetadata(
-                        # -- filename change doesn't happen IRL but demonstrates FIRST strategy --
-                        filename="bar.docx",
-                        # -- emphasized_text_contents has LIST_CONCATENATE strategy, so "Lorem"
-                        # -- appears twice in consolidated-meta (as it should) and length matches
-                        # -- that of emphasized_text_tags both before and after consolidation.
-                        emphasized_text_contents=["Lorem", "ipsum"],
-                        emphasized_text_tags=["i", "b"],
-                        # -- languages has LIST_UNIQUE strategy, so "lat(in)" appears only once --
-                        languages=["eng", "lat"],
-                    ),
+            ),
+            Text(
+                "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                metadata=ElementMetadata(
+                    # -- filename change doesn't happen IRL but demonstrates FIRST strategy --
+                    filename="bar.docx",
+                    # -- emphasized_text_contents has LIST_CONCATENATE strategy, so "Lorem"
+                    # -- appears twice in consolidated-meta (as it should) and length matches
+                    # -- that of emphasized_text_tags both before and after consolidation.
+                    emphasized_text_contents=["Lorem", "ipsum"],
+                    emphasized_text_tags=["i", "b"],
+                    # -- languages has LIST_UNIQUE strategy, so "lat(in)" appears only once --
+                    languages=["eng", "lat"],
                 ),
-            ],
-            overlap_prefix="",
-            opts=ChunkingOptions(),
-        )
+            ),
+        ]
+        text = "Lorem Ipsum\n\n'Lorem ipsum dolor' means 'Thank you very much' in Latin."
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
 
-        meta_kwargs = pre_chunk._meta_kwargs
+        meta_kwargs = chunker._meta_kwargs
 
         assert meta_kwargs == {
             "filename": "foo.docx",
@@ -747,19 +774,21 @@ class DescribePreChunk:
         }
 
     def it_computes_the_original_elements_list_to_help(self):
+        opts = ChunkingOptions(include_orig_elements=True)
         element = Title("Introduction")
         element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
         element_3 = CompositeElement(
             "In rhoncus ipsum sed lectus porta volutpat.",
             metadata=ElementMetadata(orig_elements=[Text("Porta volupat.")]),
         )
-        pre_chunk = PreChunk(
-            [element, element_2, element_3],
-            overlap_prefix="",
-            opts=ChunkingOptions(include_orig_elements=True),
+        elements = [element, element_2, element_3]
+        text = (
+            "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit.\n\nIn"
+            " rhoncus ipsum sed lectus porta volutpat."
         )
+        chunker = _Chunker(elements, text=text, opts=opts)
 
-        orig_elements = pre_chunk._orig_elements
+        orig_elements = chunker._orig_elements
 
         # -- all elements of pre-chunk are included --
         assert orig_elements == [element, element_2, element_3]
@@ -770,32 +799,7 @@ class DescribePreChunk:
         assert orig_elements[2] is not element_3
         assert orig_elements[2].metadata.orig_elements is None
         # -- computation is only on first call, all chunks get exactly the same orig-elements --
-        assert pre_chunk._orig_elements is orig_elements
-
-    @pytest.mark.parametrize(
-        ("elements", "overlap_prefix", "expected_value"),
-        [
-            ([Text("foo"), Text("bar")], "bah da bing.", "bah da bing.\n\nfoo\n\nbar"),
-            ([Text("foo"), PageBreak(""), Text("bar")], "da bang.", "da bang.\n\nfoo\n\nbar"),
-            ([PageBreak(""), Text("foo")], "bah da boom.", "bah da boom.\n\nfoo"),
-            ([Text("foo"), Text("bar"), PageBreak("")], "", "foo\n\nbar"),
-        ],
-    )
-    def it_knows_the_concatenated_text_of_the_pre_chunk_to_help(
-        self, elements: list[Text], overlap_prefix: str, expected_value: str
-    ):
-        """._text is the "joined" text of the pre-chunk elements.
-
-        The text-segment contributed by each element is separated from the next by a blank line
-        ("\n\n"). An element that contributes no text does not give rise to a separator.
-        """
-        pre_chunk = PreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
-        assert pre_chunk._text == expected_value
-
-
-# ================================================================================================
-# CHUNKING HELPER/SPLITTERS
-# ================================================================================================
+        assert chunker._orig_elements is orig_elements
 
 
 class Describe_TableChunker:

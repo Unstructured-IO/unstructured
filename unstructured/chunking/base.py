@@ -481,24 +481,8 @@ class PreChunk:
             yield from _TableChunker.iter_chunks(
                 self._elements[0], self._overlap_prefix, self._opts
             )
-            return
-
-        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
-        # -- generate any chunks.
-        if not self._text:
-            return
-
-        split = self._opts.split
-
-        # -- emit first chunk --
-        s, remainder = split(self._text)
-        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
-
-        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
-        # -- Note these get continuation_metadata which includes is_continuation=True.
-        while remainder:
-            s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=self._continuation_metadata)
+        else:
+            yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
 
     @lazyproperty
     def overlap_tail(self) -> str:
@@ -510,6 +494,76 @@ class PreChunk:
         """
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
+
+    def _iter_text_segments(self) -> Iterator[str]:
+        """Generate overlap text and each element text segment in order.
+
+        Empty text segments are not included.
+        """
+        if self._overlap_prefix:
+            yield self._overlap_prefix
+        for e in self._elements:
+            text = " ".join(e.text.strip().split())
+            if not text:
+                continue
+            yield text
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The concatenated text of all elements in this pre-chunk, including any overlap.
+
+        Whitespace is normalized to a single space. The text of each element is separated from
+        that of the next by a blank line ("\n\n").
+        """
+        return self._opts.text_separator.join(self._iter_text_segments())
+
+
+# ================================================================================================
+# CHUNKING HELPER/SPLITTERS
+# ================================================================================================
+
+
+class _Chunker:
+    """Forms chunks from a pre-chunk other than one containing only a `Table`.
+
+    Produces zero-or-more `CompositeElement` objects.
+    """
+
+    def __init__(self, elements: Iterable[Element], text: str, opts: ChunkingOptions) -> None:
+        self._elements = list(elements)
+        self._text = text
+        self._opts = opts
+
+    @classmethod
+    def iter_chunks(
+        cls, elements: Iterable[Element], text: str, opts: ChunkingOptions
+    ) -> Iterator[CompositeElement]:
+        """Form zero or more chunks from `elements`.
+
+        One `CompositeElement` is produced when all `elements` will fit. Otherwise there is a
+        single `Text`-subtype element and chunks are formed by splitting.
+        """
+        return cls(elements, text, opts)._iter_chunks()
+
+    def _iter_chunks(self) -> Iterator[CompositeElement]:
+        """Form zero or more chunks from `elements`."""
+        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
+        # -- generate any chunks.
+        if not self._text:
+            return
+
+        # -- `split()` is the text-splitting function used to split an oversized element --
+        split = self._opts.split
+
+        # -- emit first chunk --
+        s, remainder = split(self._text)
+        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
+
+        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
+        # -- Note these get continuation_metadata which includes is_continuation=True.
+        while remainder:
+            s, remainder = split(remainder)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata)
 
     @lazyproperty
     def _all_metadata_values(self) -> dict[str, list[Any]]:
@@ -576,19 +630,6 @@ class PreChunk:
         continuation_metadata.is_continuation = True
         return continuation_metadata
 
-    def _iter_text_segments(self) -> Iterator[str]:
-        """Generate overlap text and each element text segment in order.
-
-        Empty text segments are not included.
-        """
-        if self._overlap_prefix:
-            yield self._overlap_prefix
-        for e in self._elements:
-            text = " ".join(e.text.strip().split())
-            if not text:
-                continue
-            yield text
-
     @lazyproperty
     def _meta_kwargs(self) -> dict[str, Any]:
         """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
@@ -644,21 +685,6 @@ class PreChunk:
                 yield orig_element
 
         return list(iter_orig_elements())
-
-    @lazyproperty
-    def _text(self) -> str:
-        """The concatenated text of all elements in this pre-chunk, including any overlap.
-
-        Whitespace is normalized to a single space. The text of each element is separated from
-        that of the next by a blank line ("\n\n").
-        """
-        text_separator = self._opts.text_separator
-        return text_separator.join(self._iter_text_segments())
-
-
-# ================================================================================================
-# CHUNKING HELPER/SPLITTERS
-# ================================================================================================
 
 
 class _TableChunker:
