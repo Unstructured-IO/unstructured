@@ -1153,11 +1153,11 @@ class _RowAccumulator:
 class PreChunkCombiner:
     """Filters pre-chunk stream to combine small pre-chunks where possible."""
 
-    def __init__(self, pre_chunks: Iterable[PreChunkT], opts: ChunkingOptions):
+    def __init__(self, pre_chunks: Iterable[PreChunk], opts: ChunkingOptions):
         self._pre_chunks = pre_chunks
         self._opts = opts
 
-    def iter_combined_pre_chunks(self) -> Iterator[PreChunkT]:
+    def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
         """Generate pre-chunk objects, combining `PreChunk` objects when they'll fit in window."""
         accum = _PreChunkAccumulator(self._opts)
 
