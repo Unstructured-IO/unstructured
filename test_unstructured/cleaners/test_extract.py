@@ -5,7 +5,7 @@ import pytest
 from unstructured.cleaners import extract
 
 EMAIL_META_DATA_INPUT = """from ABC.DEF.local ([ba23::58b5:2236:45g2:88h2]) by
-    \n ABC.DEF.local ([ba23::58b5:2236:45g2:88h2%25]) with mapi id\
+    \n ABC.DEF.local ([68.183.71.12]) with mapi id\
     n 32.88.5467.123; Fri, 26 Mar 2021 11:04:09 +1200"""
 
 
@@ -37,7 +37,7 @@ def test_extract_email_address():
 def test_extract_ip_address():
     assert extract.extract_ip_address(EMAIL_META_DATA_INPUT) == [
         "ba23::58b5:2236:45g2:88h2",
-        "ba23::58b5:2236:45g2:88h2%25",
+        "68.183.71.12",
     ]
 
 

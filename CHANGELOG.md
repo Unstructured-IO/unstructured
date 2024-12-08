@@ -1,3 +1,9 @@
+## 0.16.11-dev0
+
+### Fixes
+
+- Fix ipv4 regex to correctly include up to three digit octets.
+
 ## 0.16.10-dev0
 
 ### Enhancements

@@ -92,9 +92,9 @@ LINE_BREAK_RE = re.compile(LINE_BREAK)
 ONE_LINE_BREAK_PARAGRAPH_PATTERN = r"^(?:(?!\.\s*$).)*$"
 ONE_LINE_BREAK_PARAGRAPH_PATTERN_RE = re.compile(ONE_LINE_BREAK_PARAGRAPH_PATTERN)
 
-# IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
+# IP Address examples: ba23::58b5:2236:45g2:88h2, 10.0.2.01 or 68.183.71.12
 IP_ADDRESS_PATTERN = (
-    r"[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}",
+    r"(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}",
     "[a-z0-9]{4}::[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}%?[0-9]*",
 )
 IP_ADDRESS_PATTERN_RE = re.compile(f"({'|'.join(IP_ADDRESS_PATTERN)})")
