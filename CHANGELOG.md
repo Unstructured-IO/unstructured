@@ -1,12 +1,14 @@
-## 0.16.10
+## 0.16.10-dev0
 
 ### Enhancements
+
+- **Enhance quote standardization tests with additional Unicode scenarios
 
 ### Features
 
 ### Fixes
 
-- Fix ipv4 regex to correctly include up to three digit octets.
+- **Fix original file doctype detection** from cct converted file paths for metrics calculation.
 
 ## 0.16.9
 
