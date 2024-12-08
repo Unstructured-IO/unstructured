@@ -2,7 +2,15 @@
 
 ### Enhancements
 
-- **Enhance quote standardization tests with additional Unicode scenarios
+- **Enhance quote standardization tests** with additional Unicode scenarios
+
+### Features
+
+### Fixes
+
+## 0.16.10
+
+### Enhancements
 
 ### Features
 
