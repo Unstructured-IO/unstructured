@@ -1,8 +1,9 @@
-## 0.16.10-dev0
+## 0.16.10-dev2
 
 ### Enhancements
 
 - **Enhance quote standardization tests with additional Unicode scenarios
+- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
 
 ### Features
 
