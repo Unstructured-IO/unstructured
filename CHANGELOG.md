@@ -2,13 +2,21 @@
 
 ### Enhancements
 
-- **Enhance quote standardization tests with additional Unicode scenarios
+- **Unicode test** to nhance quote standardization tests with additional Unicode scenarios
 
 ### Features
 
 ### Fixes
 
-- **Fix original file doctype detection** from cct converted file paths for metrics calculation.
+## 0.16.10
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix NLTK Download** to not download from unstructured S3 Bucket
 
 ## 0.16.9
 
