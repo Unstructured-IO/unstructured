@@ -854,7 +854,7 @@ def _partition_pdf_or_image_with_ocr(
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted

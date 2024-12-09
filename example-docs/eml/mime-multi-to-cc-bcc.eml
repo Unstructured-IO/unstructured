@@ -1,0 +1,10 @@
+From: sender@example.com
+To: Bob <bob@example.com>, Sue <sue@example.com>
+Cc: Tom <tom@example.com>, Alice <alice@example.com>
+Bcc: John <john@example.com>, Mary <mary@example.com>
+Subject: Example Plain-Text MIME Message
+Message-ID: <2143658709@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+This is a plain-text message.

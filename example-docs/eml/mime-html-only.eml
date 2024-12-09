@@ -1,0 +1,14 @@
+MIME-Version: 1.0
+From: sender@example.com
+To: recipient@example.com
+Date: Tue, 01 Oct 2024 12:34:56 -0500
+Subject: Example HTML Only MIME Email
+Content-Type: text/html; charset="ISO-8859-1"
+Content-Transfer-Encoding: base64
+
+PHA+VGhpcyBpcyBhIHRleHQvaHRtbCBwYXJ0LjwvcD4KPGRpdiBpZD0iY29udGVudCI+PHA+VGhl
+IGZpcnN0IGVtb3RpY29uLCA6KSAsIHdhcyBwcm9wb3NlZCBieSBTY290dCBGYWhsbWFuIGluIDE5
+ODIgdG8gaW5kaWNhdGUganVzdCBvciBzYXJjYXNtIGluIHRleHQgZW1haWxzLjwvcD4KPHA+R21h
+aWwgd2FzIGxhdW5jaGVkIGJ5IEdvb2dsZSBpbiAyMDA0IHdpdGggMSBHQiBvZiBmcmVlIHN0b3Jh
+Z2UsIHNpZ25pZmljYW50bHkgbW9yZSB0aGFuIHdoYXQgb3RoZXIgc2VydmljZXMgb2ZmZXJlZCBh
+dCB0aGUgdGltZS48L3A+PC9kaXY+

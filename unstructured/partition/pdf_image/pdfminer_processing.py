@@ -35,7 +35,7 @@ DEFAULT_ROUND = 15
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
-    password:Optional[str]=None,
+    password: Optional[str] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
@@ -65,7 +65,9 @@ def process_data_with_pdfminer(
     layouts_links = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page_number, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file, password=password)):
+    for page_number, (page, page_layout) in enumerate(
+        open_pdfminer_pages_generator(file, password=password)
+    ):
         width, height = page_layout.width, page_layout.height
 
         text_layout = []

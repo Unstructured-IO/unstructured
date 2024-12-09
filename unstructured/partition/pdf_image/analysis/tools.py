@@ -83,6 +83,7 @@ def save_analysis_artifiacts(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        password (optional): The password to decrypt the PDF file.
     """
     if not filename:
         filename = _generate_filename(is_image)
@@ -147,6 +148,7 @@ def render_bboxes_for_file(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        password (optional): The password to decrypt the PDF file.
     """
     filename_stem = Path(filename).stem
     is_image = not Path(filename).suffix.endswith("pdf")
@@ -186,7 +188,7 @@ def render_bboxes_for_file(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
-            passwork=password,
+            password=password,
         )
 
         for drawer in layout_drawers:
