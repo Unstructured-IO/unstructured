@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import pytest
 
-from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, input_path
 from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
@@ -20,10 +20,12 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ListItem,
     Table,
+    TableChunk,
     Text,
     Title,
 )
 from unstructured.partition.html import partition_html
+from unstructured.staging.base import elements_from_json
 
 # ================================================================================================
 # INTEGRATION-TESTS
@@ -33,7 +35,53 @@ from unstructured.partition.html import partition_html
 # ================================================================================================
 
 
-def test_it_splits_a_large_element_into_multiple_chunks():
+def test_it_chunks_text_followed_by_table_together_when_both_fit():
+    elements = elements_from_json(input_path("chunking/title_table_200.json"))
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], CompositeElement)
+
+
+def test_it_chunks_table_followed_by_text_together_when_both_fit():
+    elements = elements_from_json(input_path("chunking/table_text_200.json"))
+
+    # -- disable chunk combining so we test pre-chunking behavior, not chunk-combining --
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], CompositeElement)
+
+
+def test_it_splits_oversized_table():
+    elements = elements_from_json(input_path("chunking/table_2000.json"))
+
+    chunks = chunk_by_title(elements)
+
+    assert len(chunks) == 5
+    assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+
+
+def test_it_starts_new_chunk_for_table_after_full_text_chunk():
+    elements = elements_from_json(input_path("chunking/long_text_table_200.json"))
+
+    chunks = chunk_by_title(elements, max_characters=250)
+
+    assert len(chunks) == 2
+    assert [type(chunk) for chunk in chunks] == [CompositeElement, Table]
+
+
+def test_it_starts_new_chunk_for_text_after_full_table_chunk():
+    elements = elements_from_json(input_path("chunking/full_table_long_text_250.json"))
+
+    chunks = chunk_by_title(elements, max_characters=250)
+
+    assert len(chunks) == 2
+    assert [type(chunk) for chunk in chunks] == [Table, CompositeElement]
+
+
+def test_it_splits_a_large_text_element_into_multiple_chunks():
     elements: list[Element] = [
         Title("Introduction"),
         Text(
@@ -68,7 +116,7 @@ def test_it_splits_elements_by_title_and_table():
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=True)
 
-    assert len(chunks) == 4
+    assert len(chunks) == 3
     # --
     chunk = chunks[0]
     assert isinstance(chunk, CompositeElement)
@@ -76,13 +124,10 @@ def test_it_splits_elements_by_title_and_table():
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
+        Table("Heading\nCell text"),
     ]
     # --
     chunk = chunks[1]
-    assert isinstance(chunk, Table)
-    assert chunk.metadata.orig_elements == [Table("Heading\nCell text")]
-    # ==
-    chunk = chunks[2]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
@@ -90,7 +135,7 @@ def test_it_splits_elements_by_title_and_table():
         Text("It is rainy outside."),
     ]
     # --
-    chunk = chunks[3]
+    chunk = chunks[2]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("A Bad Day"),
@@ -119,9 +164,8 @@ def test_chunk_by_title():
 
     assert chunks == [
         CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
         ),
-        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -150,10 +194,7 @@ def test_chunk_by_title_separates_by_page_number():
         CompositeElement(
             "A Great Day",
         ),
-        CompositeElement(
-            "Today is a great day.\n\nIt is sunny outside.",
-        ),
-        Table("Heading\nCell text"),
+        CompositeElement("Today is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -178,9 +219,8 @@ def test_chuck_by_title_respects_multipage():
     chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
     assert chunks == [
         CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
         ),
-        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -206,9 +246,8 @@ def test_chunk_by_title_groups_across_pages():
 
     assert chunks == [
         CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
         ),
-        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
