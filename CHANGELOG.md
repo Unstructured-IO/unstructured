@@ -1,5 +1,9 @@
 ## 0.16.11-dev1
 
+### Fixes
+
+- Fix ipv4 regex to correctly include up to three digit octets.
+
 ### Enhancements
 
 - **Enhance quote standardization tests** with additional Unicode scenarios
