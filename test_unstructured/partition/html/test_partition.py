@@ -1232,17 +1232,6 @@ class DescribeHtmlPartitionerOptions:
 
         assert opts.detection_origin == detection_origin
 
-    # -- .encoding -------------------------------
-
-    @pytest.mark.parametrize("encoding", ["utf-8", None])
-    def it_knows_the_caller_provided_encoding(
-        self, encoding: str | None, opts_args: dict[str, Any]
-    ):
-        opts_args["encoding"] = encoding
-        opts = HtmlPartitionerOptions(**opts_args)
-
-        assert opts.encoding == encoding
-
     # -- .html_text ------------------------------
 
     def it_gets_the_HTML_from_the_file_path_when_one_is_provided(self, opts_args: dict[str, Any]):
