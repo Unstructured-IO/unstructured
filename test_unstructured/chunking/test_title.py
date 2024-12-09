@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 import pytest
 
-from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, testfile_path
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, input_path
 from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
@@ -36,7 +36,7 @@ from unstructured.staging.base import elements_from_json
 
 
 def test_it_chunks_text_followed_by_table_together_when_both_fit():
-    elements = elements_from_json(testfile_path("chunking/title_table_200.json"))
+    elements = elements_from_json(input_path("chunking/title_table_200.json"))
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
@@ -45,7 +45,7 @@ def test_it_chunks_text_followed_by_table_together_when_both_fit():
 
 
 def test_it_chunks_table_followed_by_text_together_when_both_fit():
-    elements = elements_from_json(testfile_path("chunking/table_text_200.json"))
+    elements = elements_from_json(input_path("chunking/table_text_200.json"))
 
     # -- disable chunk combining so we test pre-chunking behavior, not chunk-combining --
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
@@ -55,7 +55,7 @@ def test_it_chunks_table_followed_by_text_together_when_both_fit():
 
 
 def test_it_splits_oversized_table():
-    elements = elements_from_json(testfile_path("chunking/table_2000.json"))
+    elements = elements_from_json(input_path("chunking/table_2000.json"))
 
     chunks = chunk_by_title(elements)
 
@@ -64,7 +64,7 @@ def test_it_splits_oversized_table():
 
 
 def test_it_starts_new_chunk_for_table_after_full_text_chunk():
-    elements = elements_from_json(testfile_path("chunking/long_text_table_200.json"))
+    elements = elements_from_json(input_path("chunking/long_text_table_200.json"))
 
     chunks = chunk_by_title(elements, max_characters=250)
 
@@ -73,7 +73,7 @@ def test_it_starts_new_chunk_for_table_after_full_text_chunk():
 
 
 def test_it_starts_new_chunk_for_text_after_full_table_chunk():
-    elements = elements_from_json(testfile_path("chunking/full_table_long_text_250.json"))
+    elements = elements_from_json(input_path("chunking/full_table_long_text_250.json"))
 
     chunks = chunk_by_title(elements, max_characters=250)
 
