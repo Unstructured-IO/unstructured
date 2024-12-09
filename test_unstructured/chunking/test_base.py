@@ -903,27 +903,17 @@ class Describe_TableChunker:
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Header Col 1 Header Col 2"
+        assert chunk.text == (
+            "Header Col 1 Header Col 2 Lorem ipsum A Link example Consectetur adipiscing elit"
+        )
         assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Header Col 1</td><td>Header Col 2</td></tr></table>"
+            "<table>"
+            "<tr><td>Header Col 1</td><td>Header Col 2</td></tr>"
+            "<tr><td>Lorem ipsum</td><td>A Link example</td></tr>"
+            "<tr><td>Consectetur</td><td>adipiscing elit</td></tr>"
+            "</table>"
         )
         assert chunk.metadata.is_continuation is None
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Lorem ipsum A Link example"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Lorem ipsum</td><td>A Link example</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation
-        # --
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, TableChunk)
-        assert chunk.text == "Consectetur adipiscing elit"
-        assert chunk.metadata.text_as_html == (
-            "<table><tr><td>Consectetur</td><td>adipiscing elit</td></tr></table>"
-        )
-        assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -1035,7 +1025,7 @@ class Describe_HtmlTableSplitter:
     """Unit-test suite for `unstructured.chunking.base._HtmlTableSplitter`."""
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
-        opts = ChunkingOptions(max_characters=(150))
+        opts = ChunkingOptions(max_characters=(40))
         html_table = HtmlTable.from_html_text(
             """
             <table border="1" class="dataframe">
@@ -1093,7 +1083,7 @@ class Describe_HtmlTableSplitter:
         ]
 
     def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
-        opts = ChunkingOptions(max_characters=(100))
+        opts = ChunkingOptions(max_characters=(93))
         html_table = HtmlTable.from_html_text(
             """
             <html><body><table>
@@ -1320,15 +1310,13 @@ class Describe_CellAccumulator:
             ("<td>Lorem Ipsum dolor sit amet.</td>", False),
         ],
     )
-    def it_will_fit_a_cell_with_text_shorter_than_maxlen_minus_33_when_empty(
+    def it_will_fit_a_cell_with_text_shorter_than_maxlen_when_empty(
         self, cell_html: str, expected_value: bool
     ):
-        """Cell text must be 22-chars or shorter to fit in 55-char window.
-
-        `<table><tr><td>...</td></tr></table>` overhead is 33 characters.
-        """
-        accum = _CellAccumulator(maxlen=55)
+        accum = _CellAccumulator(maxlen=25)
         cell = HtmlCell(fragment_fromstring(cell_html))
+
+        print(f"{cell.text=}")
 
         assert accum.will_fit(cell) is expected_value
 
@@ -1342,16 +1330,12 @@ class Describe_CellAccumulator:
             ("<td>Lorem Ipsum dolor sit amet.</td>", False),  # -- 27 --
         ],
     )
-    def and_it_will_fit_a_cell_with_text_shorter_than_remaining_space_minus_9_when_not_empty(
+    def and_it_will_fit_a_cell_with_text_shorter_than_remaining_space_when_not_empty(
         self, cell_html: str, expected_value: bool
     ):
-        """Cell text must be 9-chars shorter than remaining space to fit with accumulated cells.
-
-        `<td>...</td>` overhead is 9 characters.
-        """
-        accum = _CellAccumulator(maxlen=85)
+        accum = _CellAccumulator(maxlen=44)
         accum.add_cell(HtmlCell(fragment_fromstring("<td>abcdefghijklmnopqrstuvwxyz</td>")))
-        # -- remaining space is 85 - 26 -33 = 26; max new cell text len is 17 --
+        # -- remaining space is 44 - 26 = 18; max new cell text len is 17 --
         cell = HtmlCell(fragment_fromstring(cell_html))
 
         assert accum.will_fit(cell) is expected_value
@@ -1403,23 +1387,19 @@ class Describe_RowAccumulator:
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
         [
-            ("<tr/>", True),  # -- 5 --
-            ("<tr><td/></tr>", True),  # -- 14 --
-            ("<tr><td>Lorem Ipsum.</td></tr>", True),  # -- 30 --
-            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
-            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
-            ("<tr><td>Lorem Ipsum dolor sit amet.</td></tr>", False),  # -- 45 --
-            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+            ("<tr/>", True),  # -- 0 --
+            ("<tr><td/></tr>", True),  # -- 0 --
+            ("<tr><td>Lorem Ipsum.</td></tr>", True),  # -- 12 --
+            ("<tr><td>Lorem Ipsum dolor sit</td></tr>", True),  # -- 21 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum dolor sit amet.</td></tr>", False),  # -- 27 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 22 --
         ],
     )
-    def it_will_fit_a_row_with_HTML_shorter_than_maxlen_minus_15_when_empty(
+    def it_will_fit_a_row_with_text_shorter_than_maxlen_when_empty(
         self, row_html: str, expected_value: bool
     ):
-        """Row HTML must be 40-chars or shorter to fit in 55-char chunking window.
-
-        `<table>...</table>` overhead is 15 characters.
-        """
-        accum = _RowAccumulator(maxlen=55)
+        accum = _RowAccumulator(maxlen=21)
         row = HtmlRow(fragment_fromstring(row_html))
 
         assert accum.will_fit(row) is expected_value
@@ -1427,22 +1407,22 @@ class Describe_RowAccumulator:
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
         [
-            ("<tr/>", True),  # -- 5 --
-            ("<tr><td/></tr>", True),  # -- 14 --
-            ("<tr><td>Lorem Ipsum dolor sit</td></tr>", True),  # -- 39 --
-            ("<tr><td>Lorem Ipsum dolor sit.</td></tr>", True),  # -- 40 --
-            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 40 --
-            ("<tr><td>Lorem</td><td>Sit amet.</td></tr>", False),  # -- 41 --
-            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 48 --
+            ("<tr/>", True),  # -- 0 --
+            ("<tr><td/></tr>", True),  # -- 0 --
+            ("<tr><td>Lorem Ipsum.</td></tr>", True),  # -- 12 --
+            ("<tr><td>Lorem Ipsum dolor sit</td></tr>", True),  # -- 21 --
+            ("<tr><td>Lorem</td><td>Sit amet</td></tr>", True),  # -- 14 --
+            ("<tr><td>Lorem Ipsum dolor sit amet.</td></tr>", False),  # -- 27 --
+            ("<tr><td>Lorem Ipsum</td><td>Dolor sit.</td></tr>", False),  # -- 22 --
         ],
     )
-    def and_it_will_fit_a_row_with_HTML_shorter_than_remaining_space_when_not_empty(
+    def and_it_will_fit_a_row_with_text_shorter_than_remaining_space_when_not_empty(
         self, row_html: str, expected_value: bool
     ):
         """There is no overhead beyond row HTML for additional rows."""
-        accum = _RowAccumulator(maxlen=99)
+        accum = _RowAccumulator(maxlen=48)
         accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>")))
-        # -- remaining space is 85 - 26 - 33 = 26; max new row HTML len is 40 --
+        # -- remaining space is 48 - 26 = 21 --
         row = HtmlRow(fragment_fromstring(row_html))
 
         assert accum.will_fit(row) is expected_value

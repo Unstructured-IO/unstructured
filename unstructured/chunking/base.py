@@ -1081,7 +1081,7 @@ class _CellAccumulator:
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        return self._remaining_space >= len(cell.html)
+        return self._remaining_space >= len(cell.text)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each accumulated cell as a separate string.
@@ -1095,10 +1095,11 @@ class _CellAccumulator:
 
     @property
     def _remaining_space(self) -> int:
-        """Number of characters remaining when accumulated cells are formed into HTML."""
-        # -- 24 is `len("<table><tr></tr></table>")`, the overhead in addition to `<td>`
-        # -- HTML fragments
-        return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
+        """Number of characters remaining when text of accumulated cells is joined."""
+        # -- separators are one space (" ") at the end of each cell's text, including last one to
+        # -- account for space before prospective next cell.
+        separators_len = len(self._cells)
+        return self._maxlen - separators_len - sum(len(c.text) for c in self._cells)
 
 
 class _RowAccumulator:
@@ -1128,7 +1129,7 @@ class _RowAccumulator:
 
     def will_fit(self, row: HtmlRow) -> bool:
         """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= len(row.html)
+        return self._remaining_space >= row.text_len
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1141,8 +1142,10 @@ class _RowAccumulator:
     @property
     def _remaining_space(self) -> int:
         """Number of characters remaining when accumulated rows are formed into HTML."""
-        # -- 15 is `len("<table></table>")`, the overhead in addition to `<tr>` HTML fragments --
-        return self._maxlen - 15 - sum(len(r.html) for r in self._rows)
+        # -- separators are one space (" ") at the end of each row's text, including last one to
+        # -- account for space before prospective next row.
+        separators_len = len(self._rows)
+        return self._maxlen - separators_len - sum(r.text_len for r in self._rows)
 
 
 # ================================================================================================

@@ -59,7 +59,7 @@ def test_it_splits_oversized_table():
 
     chunks = chunk_by_title(elements)
 
-    assert len(chunks) == 7
+    assert len(chunks) == 5
     assert all(isinstance(chunk, TableChunk) for chunk in chunks)
 
 
