@@ -10,6 +10,24 @@ stubPath = "./typings"
 typeCheckingMode = "strict"
 verboseOutput = true
 
+[tool.pytest.ini_options]
+norecursedirs = [
+    "*.egg-info",
+    ".git",
+    "unstructured",
+]
+python_classes = [
+    "Test",
+    "Describe",
+]
+python_functions = [
+    "test_",
+    "it_",
+    "they_",
+    "but_",
+    "and_",
+]
+
 [tool.ruff]
 line-length = 100
 
