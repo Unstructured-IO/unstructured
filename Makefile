@@ -198,6 +198,10 @@ test-extra-pypandoc:
 test-extra-xlsx:
 	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_xlsx.py
 
+.PHONY: test-text-extraction-evaluate
+test-text-extraction-evaluate:
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/metrics/test_text_extraction.py
+
 ## check:                   runs linters (includes tests)
 .PHONY: check
 check: check-ruff check-black check-flake8 check-version

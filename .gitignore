@@ -190,7 +190,7 @@ tags
 # Persistent undo
 [._]*.un~
 
-.DS_Store
+*.DS_Store
 
 # Ruff cache
 .ruff_cache/

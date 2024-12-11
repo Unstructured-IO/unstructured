@@ -43,9 +43,6 @@ Only operative for "by_title" chunking strategy.
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
 
-PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
-"""The kind of object produced by a pre-chunker."""
-
 TextAndHtml: TypeAlias = tuple[str, str]
 
 
@@ -288,8 +285,13 @@ class PreChunker:
         pre_chunk_builder = PreChunkBuilder(self._opts)
 
         for element in self._elements:
-            # -- start new pre-chunk when necessary --
-            if self._is_in_new_semantic_unit(element) or not pre_chunk_builder.will_fit(element):
+            # -- start new pre-chunk when necessary to uphold segregation guarantees --
+            if (
+                # -- start new pre-chunk when necessary to uphold segregation guarantees --
+                self._is_in_new_semantic_unit(element)
+                # -- or when next element won't fit --
+                or not pre_chunk_builder.will_fit(element)
+            ):
                 yield from pre_chunk_builder.flush()
 
             # -- add this element to the work-in-progress (WIP) pre-chunk --
@@ -320,8 +322,7 @@ class PreChunkBuilder:
     the next element in the element stream.
 
     `.flush()` is used to build a PreChunk object from the accumulated elements. This method
-    returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
-    used like so:
+    returns an iterator that generates zero-or-one `PreChunk` object and is used like so:
 
         yield from builder.flush()
 
@@ -355,15 +356,13 @@ class PreChunkBuilder:
         boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
         stream.
         """
-        if not self._elements:
+        elements = self._elements
+
+        if not elements:
             return
 
-        pre_chunk = (
-            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
-            if isinstance(self._elements[0], Table)
-            # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
-        )
+        # -- copy element list, don't use original or it may change contents as builder proceeds --
+        pre_chunk = PreChunk(elements, self._overlap_prefix, self._opts)
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
         self._reset_state(pre_chunk.overlap_tail)
@@ -384,12 +383,6 @@ class PreChunkBuilder:
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
-        # -- a `Table` will not fit in a non-empty pre-chunk --
-        if isinstance(element, Table):
-            return False
-        # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if isinstance(self._elements[0], Table):
-            return False
         # -- a pre-chunk that already exceeds the soft-max is considered "full" --
         if self._text_length > self._opts.soft_max:
             return False
@@ -429,19 +422,291 @@ class PreChunkBuilder:
 
 
 # ================================================================================================
-# PRE-CHUNK SUB-TYPES
+# PRE-CHUNK
 # ================================================================================================
 
 
-class TablePreChunk:
-    """A pre-chunk composed of a single Table element."""
+class PreChunk:
+    """Sequence of elements staged to form a single chunk.
+
+    This object is purposely immutable.
+    """
+
+    def __init__(
+        self, elements: Iterable[Element], overlap_prefix: str, opts: ChunkingOptions
+    ) -> None:
+        self._elements = list(elements)
+        self._overlap_prefix = overlap_prefix
+        self._opts = opts
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, PreChunk):
+            return False
+        return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
+
+    def can_combine(self, pre_chunk: PreChunk) -> bool:
+        """True when `pre_chunk` can be combined with this one without exceeding size limits."""
+        if len(self._text) >= self._opts.combine_text_under_n_chars:
+            return False
+        # -- avoid duplicating length computations by doing a trial-combine which is just as
+        # -- efficient and definitely more robust than hoping two different computations of combined
+        # -- length continue to get the same answer as the code evolves. Only possible because
+        # -- `.combine()` is non-mutating.
+        combined_len = len(self.combine(pre_chunk)._text)
+
+        return combined_len <= self._opts.hard_max
+
+    def combine(self, other_pre_chunk: PreChunk) -> PreChunk:
+        """Return new `PreChunk` that combines this and `other_pre_chunk`."""
+        # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
+        # -- is automatically incorporated at the end of the first chunk, where it originated.
+        return PreChunk(
+            self._elements + other_pre_chunk._elements,
+            overlap_prefix=self._overlap_prefix,
+            opts=self._opts,
+        )
+
+    def iter_chunks(self) -> Iterator[CompositeElement | Table | TableChunk]:
+        """Form this pre-chunk into one or more chunk elements maxlen or smaller.
+
+        When the total size of the pre-chunk will fit in the chunking window, a single chunk it
+        emitted. When this prechunk contains an oversized element (always isolated), it is split
+        into two or more chunks that each fit the chunking window.
+        """
+
+        # -- a one-table-only pre-chunk is handled specially, by `TablePreChunk`, mainly because
+        # -- it may need to be split into multiple `TableChunk` elements and that operation is
+        # -- quite specialized.
+        if len(self._elements) == 1 and isinstance(self._elements[0], Table):
+            yield from _TableChunker.iter_chunks(
+                self._elements[0], self._overlap_prefix, self._opts
+            )
+        else:
+            yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
+
+    @lazyproperty
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text[-overlap:].strip() if overlap else ""
+
+    def _iter_text_segments(self) -> Iterator[str]:
+        """Generate overlap text and each element text segment in order.
+
+        Empty text segments are not included.
+        """
+        if self._overlap_prefix:
+            yield self._overlap_prefix
+        for e in self._elements:
+            text = " ".join(e.text.strip().split())
+            if not text:
+                continue
+            yield text
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The concatenated text of all elements in this pre-chunk, including any overlap.
+
+        Whitespace is normalized to a single space. The text of each element is separated from
+        that of the next by a blank line ("\n\n").
+        """
+        return self._opts.text_separator.join(self._iter_text_segments())
+
+
+# ================================================================================================
+# CHUNKING HELPER/SPLITTERS
+# ================================================================================================
+
+
+class _Chunker:
+    """Forms chunks from a pre-chunk other than one containing only a `Table`.
+
+    Produces zero-or-more `CompositeElement` objects.
+    """
+
+    def __init__(self, elements: Iterable[Element], text: str, opts: ChunkingOptions) -> None:
+        self._elements = list(elements)
+        self._text = text
+        self._opts = opts
+
+    @classmethod
+    def iter_chunks(
+        cls, elements: Iterable[Element], text: str, opts: ChunkingOptions
+    ) -> Iterator[CompositeElement]:
+        """Form zero or more chunks from `elements`.
+
+        One `CompositeElement` is produced when all `elements` will fit. Otherwise there is a
+        single `Text`-subtype element and chunks are formed by splitting.
+        """
+        return cls(elements, text, opts)._iter_chunks()
+
+    def _iter_chunks(self) -> Iterator[CompositeElement]:
+        """Form zero or more chunks from `elements`."""
+        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
+        # -- generate any chunks.
+        if not self._text:
+            return
+
+        # -- `split()` is the text-splitting function used to split an oversized element --
+        split = self._opts.split
+
+        # -- emit first chunk --
+        s, remainder = split(self._text)
+        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
+
+        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
+        # -- Note these get continuation_metadata which includes is_continuation=True.
+        while remainder:
+            s, remainder = split(remainder)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata)
+
+    @lazyproperty
+    def _all_metadata_values(self) -> dict[str, list[Any]]:
+        """Collection of all populated metadata values across elements.
+
+        The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
+        at least one of the elements in this pre-chunk. The value of that key is a list of all those
+        populated values, in element order, for example:
+
+            {
+                "filename": ["sample.docx", "sample.docx"],
+                "languages": [["lat"], ["lat", "eng"]]
+                ...
+            }
+
+        This preprocessing step provides the input for a specified consolidation strategy that will
+        resolve the list of values for each field to a single consolidated value.
+        """
+
+        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[tuple[str, Any]]:
+            """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
+            return (
+                (field_name, value)
+                for field_name, value in metadata.known_fields.items()
+                if value is not None
+            )
+
+        field_values: DefaultDict[str, list[Any]] = collections.defaultdict(list)
+
+        # -- collect all non-None field values in a list for each field, in element-order --
+        for e in self._elements:
+            for field_name, value in iter_populated_fields(e.metadata):
+                field_values[field_name].append(value)
+
+        return dict(field_values)
+
+    @lazyproperty
+    def _consolidated_metadata(self) -> ElementMetadata:
+        """Metadata applicable to this pre-chunk as a single chunk.
+
+        Formed by applying consolidation rules to all metadata fields across the elements of this
+        pre-chunk.
+
+        For the sake of consistency, the same rules are applied (for example, for dropping values)
+        to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
+        "consolidated".
+        """
+        consolidated_metadata = ElementMetadata(**self._meta_kwargs)
+        if self._opts.include_orig_elements:
+            consolidated_metadata.orig_elements = self._orig_elements
+        return consolidated_metadata
+
+    @lazyproperty
+    def _continuation_metadata(self) -> ElementMetadata:
+        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+
+        The same metadata as the first text-split chunk but includes `.is_continuation = True`.
+        Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+        """
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
+        # -- required though since we're not changing any collection fields.
+        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata.is_continuation = True
+        return continuation_metadata
+
+    @lazyproperty
+    def _meta_kwargs(self) -> dict[str, Any]:
+        """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
+
+        This is where consolidation strategies are actually applied. The output is suitable for use
+        in constructing an `ElementMetadata` object like `ElementMetadata(**self._meta_kwargs)`.
+        """
+        CS = ConsolidationStrategy
+        field_consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
+
+        def iter_kwarg_pairs() -> Iterator[tuple[str, Any]]:
+            """Generate (field-name, value) pairs for each field in consolidated metadata."""
+            for field_name, values in self._all_metadata_values.items():
+                strategy = field_consolidation_strategies.get(field_name)
+                if strategy is CS.FIRST:
+                    yield field_name, values[0]
+                # -- concatenate lists from each element that had one, in order --
+                elif strategy is CS.LIST_CONCATENATE:
+                    yield field_name, sum(values, cast("list[Any]", []))
+                # -- union lists from each element, preserving order of appearance --
+                elif strategy is CS.LIST_UNIQUE:
+                    # -- Python 3.7+ maintains dict insertion order --
+                    ordered_unique_keys = {key: None for val_list in values for key in val_list}
+                    yield field_name, list(ordered_unique_keys.keys())
+                elif strategy is CS.STRING_CONCATENATE:
+                    yield field_name, " ".join(val.strip() for val in values)
+                elif strategy is CS.DROP:
+                    continue
+                else:  # pragma: no cover
+                    # -- not likely to hit this since we have a test in `text_elements.py` that
+                    # -- ensures every ElementMetadata fields has an assigned strategy.
+                    raise NotImplementedError(
+                        f"metadata field {repr(field_name)} has no defined consolidation strategy"
+                    )
+
+        return dict(iter_kwarg_pairs())
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
+
+        def iter_orig_elements():
+            for e in self._elements:
+                if e.metadata.orig_elements is None:
+                    yield e
+                    continue
+                # -- make copy of any element we're going to mutate because these elements don't
+                # -- belong to us (the user may have downstream purposes for them).
+                orig_element = copy.copy(e)
+                # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
+                # -- its own)
+                orig_element.metadata.orig_elements = None
+                yield orig_element
+
+        return list(iter_orig_elements())
+
+
+class _TableChunker:
+    """Responsible for forming chunks, especially splits, from a single-table pre-chunk.
+
+    Table splitting is specialized because we recursively split on an even row, cell, text
+    boundary. This object encapsulate those details.
+    """
 
     def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
         self._table = table
         self._overlap_prefix = overlap_prefix
         self._opts = opts
 
-    def iter_chunks(self) -> Iterator[Table | TableChunk]:
+    @classmethod
+    def iter_chunks(
+        cls, table: Table, overlap_prefix: str, opts: ChunkingOptions
+    ) -> Iterator[Table | TableChunk]:
+        """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
+        return cls(table, overlap_prefix, opts)._iter_chunks()
+
+    def _iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
         # -- A table with no non-whitespace text produces no chunks --
         if not self._table_text:
@@ -459,7 +724,7 @@ class TablePreChunk:
 
         # -- When there's no HTML, split it like a normal element. Also fall back to text-only
         # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
-        # -- for a chunking window that small because the 33 characterss of HTML overhead for each
+        # -- for a chunking window that small because the 33 characters of HTML overhead for each
         # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
         # -- very small chunks.
         if not self._html or self._opts.hard_max < 50:
@@ -468,17 +733,6 @@ class TablePreChunk:
 
         # -- otherwise, form splits with "synchronized" text and html --
         yield from self._iter_text_and_html_table_chunks()
-
-    @lazyproperty
-    def overlap_tail(self) -> str:
-        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
-
-        This value is the empty-string ("") when either the `.overlap` length option is `0` or
-        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
-        trailing whitespace.
-        """
-        overlap = self._opts.inter_chunk_overlap
-        return self._text_with_overlap[-overlap:].strip() if overlap else ""
 
     @lazyproperty
     def _html(self) -> str:
@@ -517,7 +771,7 @@ class TablePreChunk:
 
         is_continuation = False
 
-        for text, html in _TableSplitter.iter_subtables(html_table, self._opts):
+        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
             metadata = self._metadata
             metadata.text_as_html = html
             # -- second and later chunks get `.metadata.is_continuation = True` --
@@ -527,7 +781,11 @@ class TablePreChunk:
             yield TableChunk(text=text, metadata=metadata)
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
-        """Split oversized text-only table (no text-as-html) into chunks."""
+        """Split oversized text-only table (no text-as-html) into chunks.
+
+        `.metadata.text_as_html` is optional, not included when `infer_table_structure` is
+        `False`.
+        """
         text_remainder = self._text_with_overlap
         split = self._opts.split
         is_continuation = False
@@ -599,229 +857,12 @@ class TablePreChunk:
         return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
 
-class TextPreChunk:
-    """A sequence of elements that belong to the same semantic unit within a document.
-
-    The name "section" derives from the idea of a document-section, a heading followed by the
-    paragraphs "under" that heading. That structure is not found in all documents and actual section
-    content can vary, but that's the concept.
-
-    This object is purposely immutable.
-    """
-
-    def __init__(
-        self, elements: Iterable[Element], overlap_prefix: str, opts: ChunkingOptions
-    ) -> None:
-        self._elements = list(elements)
-        self._overlap_prefix = overlap_prefix
-        self._opts = opts
-
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, TextPreChunk):
-            return False
-        return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
-
-    def can_combine(self, pre_chunk: TextPreChunk) -> bool:
-        """True when `pre_chunk` can be combined with this one without exceeding size limits."""
-        if len(self._text) >= self._opts.combine_text_under_n_chars:
-            return False
-        # -- avoid duplicating length computations by doing a trial-combine which is just as
-        # -- efficient and definitely more robust than hoping two different computations of combined
-        # -- length continue to get the same answer as the code evolves. Only possible because
-        # -- `.combine()` is non-mutating.
-        combined_len = len(self.combine(pre_chunk)._text)
-
-        return combined_len <= self._opts.hard_max
-
-    def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
-        """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
-        # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
-        # -- is automatically incorporated at the end of the first chunk, where it originated.
-        return TextPreChunk(
-            self._elements + other_pre_chunk._elements,
-            overlap_prefix=self._overlap_prefix,
-            opts=self._opts,
-        )
-
-    def iter_chunks(self) -> Iterator[CompositeElement]:
-        """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
-        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
-        # -- generate any chunks.
-        if not self._text:
-            return
-
-        split = self._opts.split
-
-        # -- emit first chunk --
-        s, remainder = split(self._text)
-        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
-
-        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
-        # -- Note these get continuation_metadata which includes is_continuation=True.
-        while remainder:
-            s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=self._continuation_metadata)
-
-    @lazyproperty
-    def overlap_tail(self) -> str:
-        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
-
-        This value is the empty-string ("") when either the `.overlap` length option is `0` or
-        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
-        trailing whitespace.
-        """
-        overlap = self._opts.inter_chunk_overlap
-        return self._text[-overlap:].strip() if overlap else ""
-
-    @lazyproperty
-    def _all_metadata_values(self) -> dict[str, list[Any]]:
-        """Collection of all populated metadata values across elements.
-
-        The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
-        at least one of the elements in this pre-chunk. The value of that key is a list of all those
-        populated values, in element order, for example:
-
-            {
-                "filename": ["sample.docx", "sample.docx"],
-                "languages": [["lat"], ["lat", "eng"]]
-                ...
-            }
-
-        This preprocessing step provides the input for a specified consolidation strategy that will
-        resolve the list of values for each field to a single consolidated value.
-        """
-
-        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[tuple[str, Any]]:
-            """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
-            return (
-                (field_name, value)
-                for field_name, value in metadata.known_fields.items()
-                if value is not None
-            )
-
-        field_values: DefaultDict[str, list[Any]] = collections.defaultdict(list)
-
-        # -- collect all non-None field values in a list for each field, in element-order --
-        for e in self._elements:
-            for field_name, value in iter_populated_fields(e.metadata):
-                field_values[field_name].append(value)
-
-        return dict(field_values)
-
-    @lazyproperty
-    def _consolidated_metadata(self) -> ElementMetadata:
-        """Metadata applicable to this pre-chunk as a single chunk.
-
-        Formed by applying consolidation rules to all metadata fields across the elements of this
-        pre-chunk.
-
-        For the sake of consistency, the same rules are applied (for example, for dropping values)
-        to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
-        "consolidated".
-        """
-        consolidated_metadata = ElementMetadata(**self._meta_kwargs)
-        if self._opts.include_orig_elements:
-            consolidated_metadata.orig_elements = self._orig_elements
-        return consolidated_metadata
-
-    @lazyproperty
-    def _continuation_metadata(self) -> ElementMetadata:
-        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
-
-        The same metadata as the first text-split chunk but includes `.is_continuation = True`.
-        Unused for non-oversized pre-chunks since those are not subject to text-splitting.
-        """
-        # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
-        # -- required though since we're not changing any collection fields.
-        continuation_metadata = copy.copy(self._consolidated_metadata)
-        continuation_metadata.is_continuation = True
-        return continuation_metadata
-
-    def _iter_text_segments(self) -> Iterator[str]:
-        """Generate overlap text and each element text segment in order.
-
-        Empty text segments are not included.
-        """
-        if self._overlap_prefix:
-            yield self._overlap_prefix
-        for e in self._elements:
-            if not e.text:
-                continue
-            yield e.text
-
-    @lazyproperty
-    def _meta_kwargs(self) -> dict[str, Any]:
-        """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
-
-        This is where consolidation strategies are actually applied. The output is suitable for use
-        in constructing an `ElementMetadata` object like `ElementMetadata(**self._meta_kwargs)`.
-        """
-        CS = ConsolidationStrategy
-        field_consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
-
-        def iter_kwarg_pairs() -> Iterator[tuple[str, Any]]:
-            """Generate (field-name, value) pairs for each field in consolidated metadata."""
-            for field_name, values in self._all_metadata_values.items():
-                strategy = field_consolidation_strategies.get(field_name)
-                if strategy is CS.FIRST:
-                    yield field_name, values[0]
-                # -- concatenate lists from each element that had one, in order --
-                elif strategy is CS.LIST_CONCATENATE:
-                    yield field_name, sum(values, cast("list[Any]", []))
-                # -- union lists from each element, preserving order of appearance --
-                elif strategy is CS.LIST_UNIQUE:
-                    # -- Python 3.7+ maintains dict insertion order --
-                    ordered_unique_keys = {key: None for val_list in values for key in val_list}
-                    yield field_name, list(ordered_unique_keys.keys())
-                elif strategy is CS.STRING_CONCATENATE:
-                    yield field_name, " ".join(val.strip() for val in values)
-                elif strategy is CS.DROP:
-                    continue
-                else:  # pragma: no cover
-                    # -- not likely to hit this since we have a test in `text_elements.py` that
-                    # -- ensures every ElementMetadata fields has an assigned strategy.
-                    raise NotImplementedError(
-                        f"metadata field {repr(field_name)} has no defined consolidation strategy"
-                    )
-
-        return dict(iter_kwarg_pairs())
-
-    @lazyproperty
-    def _orig_elements(self) -> list[Element]:
-        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
-
-        def iter_orig_elements():
-            for e in self._elements:
-                if e.metadata.orig_elements is None:
-                    yield e
-                    continue
-                # -- make copy of any element we're going to mutate because these elements don't
-                # -- belong to us (the user may have downstream purposes for them).
-                orig_element = copy.copy(e)
-                # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
-                # -- its own)
-                orig_element.metadata.orig_elements = None
-                yield orig_element
-
-        return list(iter_orig_elements())
-
-    @lazyproperty
-    def _text(self) -> str:
-        """The concatenated text of all elements in this pre-chunk.
-
-        Each element-text is separated from the next by a blank line ("\n\n").
-        """
-        text_separator = self._opts.text_separator
-        return text_separator.join(self._iter_text_segments())
-
-
 # ================================================================================================
-# PRE-CHUNK SPLITTERS
+# HTML SPLITTERS
 # ================================================================================================
 
 
-class _TableSplitter:
+class _HtmlTableSplitter:
     """Produces (text, html) pairs for a `<table>` HtmlElement.
 
     Each chunk contains a whole number of rows whenever possible. An oversized row is split on an
@@ -1040,7 +1081,7 @@ class _CellAccumulator:
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        return self._remaining_space >= len(cell.html)
+        return self._remaining_space >= len(cell.text)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each accumulated cell as a separate string.
@@ -1054,10 +1095,11 @@ class _CellAccumulator:
 
     @property
     def _remaining_space(self) -> int:
-        """Number of characters remaining when accumulated cells are formed into HTML."""
-        # -- 24 is `len("<table><tr></tr></table>")`, the overhead in addition to `<td>`
-        # -- HTML fragments
-        return self._maxlen - 24 - sum(len(c.html) for c in self._cells)
+        """Number of characters remaining when text of accumulated cells is joined."""
+        # -- separators are one space (" ") at the end of each cell's text, including last one to
+        # -- account for space before prospective next cell.
+        separators_len = len(self._cells)
+        return self._maxlen - separators_len - sum(len(c.text) for c in self._cells)
 
 
 class _RowAccumulator:
@@ -1087,7 +1129,7 @@ class _RowAccumulator:
 
     def will_fit(self, row: HtmlRow) -> bool:
         """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= len(row.html)
+        return self._remaining_space >= row.text_len
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1100,8 +1142,10 @@ class _RowAccumulator:
     @property
     def _remaining_space(self) -> int:
         """Number of characters remaining when accumulated rows are formed into HTML."""
-        # -- 15 is `len("<table></table>")`, the overhead in addition to `<tr>` HTML fragments --
-        return self._maxlen - 15 - sum(len(r.html) for r in self._rows)
+        # -- separators are one space (" ") at the end of each row's text, including last one to
+        # -- account for space before prospective next row.
+        separators_len = len(self._rows)
+        return self._maxlen - separators_len - sum(r.text_len for r in self._rows)
 
 
 # ================================================================================================
@@ -1117,16 +1161,10 @@ class PreChunkCombiner:
         self._opts = opts
 
     def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
-        """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
-        accum = TextPreChunkAccumulator(self._opts)
+        """Generate pre-chunk objects, combining `PreChunk` objects when they'll fit in window."""
+        accum = _PreChunkAccumulator(self._opts)
 
         for pre_chunk in self._pre_chunks:
-            # -- a table pre-chunk is never combined --
-            if isinstance(pre_chunk, TablePreChunk):
-                yield from accum.flush()
-                yield pre_chunk
-                continue
-
             # -- finish accumulating pre-chunk when it's full --
             if not accum.will_fit(pre_chunk):
                 yield from accum.flush()
@@ -1136,39 +1174,37 @@ class PreChunkCombiner:
         yield from accum.flush()
 
 
-class TextPreChunkAccumulator:
-    """Accumulates, measures, and combines text pre-chunks.
+class _PreChunkAccumulator:
+    """Accumulates, measures, and combines pre-chunks.
 
     Used for combining pre-chunks for chunking strategies like "by-title" that can potentially
-    produce undersized chunks and offer the `combine_text_under_n_chars` option. Note that only
-    sequential `TextPreChunk` objects can be combined. A `TablePreChunk` is never combined with
-    another pre-chunk.
+    produce undersized chunks and offer the `combine_text_under_n_chars` option.
 
     Provides `.add_pre_chunk()` allowing a pre-chunk to be added to the chunk and provides
     monitoring properties `.remaining_space` and `.text_length` suitable for deciding whether to add
     another pre-chunk.
 
-    `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
-    This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
+    `.flush()` is used to combine the accumulated pre-chunks into a single `PreChunk` object.
+    This method returns an interator that generates zero-or-one `PreChunk` objects and is used
     like so:
 
         yield from accum.flush()
 
-    If no pre-chunks have been accumulated, no `TextPreChunk` is generated. Flushing the builder
-    clears the pre-chunks it contains so it is ready to accept the next text-pre-chunk.
+    If no pre-chunks have been accumulated, no `PreChunk` is generated. Flushing the builder
+    clears the pre-chunks it contains so it is ready to accept the next pre-chunk.
     """
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunk: TextPreChunk | None = None
+        self._pre_chunk: PreChunk | None = None
 
-    def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
+    def add_pre_chunk(self, pre_chunk: PreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
         self._pre_chunk = (
             pre_chunk if self._pre_chunk is None else self._pre_chunk.combine(pre_chunk)
         )
 
-    def flush(self) -> Iterator[TextPreChunk]:
+    def flush(self) -> Iterator[PreChunk]:
         """Generate accumulated pre-chunk as a single combined pre-chunk.
 
         Does not generate a pre-chunk when none has been accumulated.
@@ -1181,7 +1217,7 @@ class TextPreChunkAccumulator:
         # -- and reset the accumulator (to empty) --
         self._pre_chunk = None
 
-    def will_fit(self, pre_chunk: TextPreChunk) -> bool:
+    def will_fit(self, pre_chunk: PreChunk) -> bool:
         """True when there is room for `pre_chunk` in accumulator.
 
         An empty accumulator always has room. Otherwise there is only room when `pre_chunk` can be
@@ -1206,7 +1242,7 @@ class TextPreChunkAccumulator:
 # predicate.
 #
 # These can be mixed and matched to produce different chunking behaviors like "by_title" or left
-# out altogether to produce "by_element" behavior.
+# out altogether to produce "basic-chunking" behavior.
 #
 # The effective lifetime of the function that produce a predicate (rather than directly being one)
 # is limited to a single element-stream because these retain state (e.g. current page number) to

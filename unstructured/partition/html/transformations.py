@@ -24,6 +24,7 @@ def ontology_to_unstructured_elements(
     page_number: int = None,
     depth: int = 0,
     filename: str | None = None,
+    add_img_alt_text: bool = True,
 ) -> list[elements.Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
@@ -44,7 +45,9 @@ def ontology_to_unstructured_elements(
         parent_id (str, optional): The ID of the parent element. Defaults to None.
         page_number (int, optional): The page number of the element. Defaults to None.
         depth (int, optional): The depth of the element in the hierarchy. Defaults to 0.
-
+        filename (str, optional): The name of the file the element comes from. Defaults to None.
+        add_img_alt_text (bool): Whether to include the alternative text of images
+                                            in the output. Defaults to True.
     Returns:
         list[Element]: A list of unstructured Element objects.
     """
@@ -77,6 +80,7 @@ def ontology_to_unstructured_elements(
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, ontology.Document) else depth + 1,
                 filename=filename,
+                add_img_alt_text=add_img_alt_text,
             )
             children += child
 
@@ -85,7 +89,7 @@ def ontology_to_unstructured_elements(
     else:
         element_class = ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE[ontology_element.__class__]
         html_code_of_ontology_element = ontology_element.to_html()
-        element_text = ontology_element.to_text()
+        element_text = ontology_element.to_text(add_img_alt_text=add_img_alt_text)
 
         unstructured_element = element_class(
             text=element_text,
@@ -278,7 +282,6 @@ def parse_html_to_ontology(html_code: str) -> ontology.OntologyElement:
     Args:
         html_code (str): The HTML code to be parsed.
             Parsing HTML will start from <div class="Page">.
-
     Returns:
         OntologyElement: The parsed Element object.
 
@@ -352,7 +355,6 @@ def parse_html_to_ontology_element(
     Args:
         soup (Tag): The BeautifulSoup Tag object to be converted.
         recursion_depth (int): Flag to control limit of recursion depth.
-
     Returns:
         OntologyElement: The converted OntologyElement object.
     """

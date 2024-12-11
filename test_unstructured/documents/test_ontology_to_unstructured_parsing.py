@@ -181,6 +181,10 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
     [
         ("html_files/example.html", "unstructured_json_output/example.json"),
         ("html_files/example_full_doc.html", "unstructured_json_output/example_full_doc.json"),
+        (
+            "html_files/example_with_alternative_text.html",
+            "unstructured_json_output/example_with_alternative_text.json",
+        ),
         ("html_files/three_tables.html", "unstructured_json_output/three_tables.json"),
         (
             "html_files/example_with_inline_fields.html",
@@ -191,13 +195,13 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
 def test_parsed_ontology_can_be_serialized_from_html(html_file_path, json_file_path):
     html_file_path = Path(__file__).parent / html_file_path
     json_file_path = Path(__file__).parent / json_file_path
-
     expected_json_elements = elements_from_json(str(json_file_path))
     html_code = html_file_path.read_text()
 
     predicted_elements = partition_html(
         text=html_code, html_parser_version="v2", unique_element_ids=True
     )
+
     assert len(expected_json_elements) == len(predicted_elements)
 
     for i in range(len(expected_json_elements)):

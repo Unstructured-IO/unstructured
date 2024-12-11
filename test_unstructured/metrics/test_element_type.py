@@ -29,6 +29,7 @@ from unstructured.staging.base import elements_to_json
                 ("Title", 0): 4,
                 ("Title", 1): 1,
                 ("NarrativeText", 0): 3,
+                ("PageBreak", None): 3,
                 ("ListItem", 0): 6,
                 ("ListItem", 1): 6,
                 ("ListItem", 2): 3,

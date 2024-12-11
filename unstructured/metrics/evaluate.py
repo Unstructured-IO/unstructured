@@ -216,6 +216,8 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     """
 
     cutoff: Optional[float] = None
+    weighted_average: bool = True
+    include_false_positives: bool = True
 
     def __post_init__(self):
         super().__post_init__()
@@ -246,7 +248,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def _process_document(self, doc: Path) -> Optional[list]:
         doc_path = Path(doc)
         out_filename = doc_path.stem
-        doctype = Path(out_filename).suffix[1:]
+        doctype = Path(out_filename).suffix
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
@@ -287,10 +289,19 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
         df = pd.DataFrame(rows, columns=headers)
         df["_table_weights"] = df["total_tables"]
-        # we give false positive tables a 1 table worth of weight in computing table level acc
-        df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+
+        if self.include_false_positives:
+            # we give false positive tables a 1 table worth of weight in computing table level acc
+            df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+
         # filter down to only those with actual and/or predicted tables
         has_tables_df = df[df["_table_weights"] > 0]
+
+        if not self.weighted_average:
+            # for all non zero elements assign them value 1
+            df["_table_weights"] = df["_table_weights"].apply(
+                lambda table_weight: 1 if table_weight != 0 else 0
+            )
 
         if has_tables_df.empty:
             agg_df = pd.DataFrame(
@@ -396,7 +407,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
-        doctype = doc.suffixes[0]
+        doctype = doc.suffixes[-2]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(doc)
@@ -471,7 +482,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
-        doctype = doc.suffixes[0]
+        doctype = doc.suffixes[-2]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output = get_element_type_frequency(_read_text_file(self.documents_dir / doc))
