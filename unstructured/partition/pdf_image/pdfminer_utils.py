@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Tuple
+from typing import BinaryIO, List, Tuple, Optional
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
@@ -73,6 +73,7 @@ def rect_to_bbox(
 @requires_dependencies(["pikepdf", "pypdf"])
 def open_pdfminer_pages_generator(
     fp: BinaryIO,
+    password:Optional[str]=None,
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
@@ -84,7 +85,7 @@ def open_pdfminer_pages_generator(
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         try:
-            pages = PDFPage.get_pages(fp)
+            pages = PDFPage.get_pages(fp, password=password)
             # Detect invalid dictionary construct for entire PDF
             for i, page in enumerate(pages):
                 try:

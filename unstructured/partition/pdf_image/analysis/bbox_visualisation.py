@@ -546,6 +546,7 @@ class AnalysisDrawer(AnalysisProcessor):
         draw_grid: bool = False,
         resize: Optional[float] = None,
         format: str = "png",
+        password: Optional[str] = None,
     ):
         self.draw_caption = draw_caption
         self.draw_grid = draw_grid
@@ -554,6 +555,7 @@ class AnalysisDrawer(AnalysisProcessor):
         self.format = format
         self.drawers = []
         self.file = file
+        self.password = password
 
         super().__init__(filename, save_dir)
 
@@ -678,6 +680,7 @@ class AnalysisDrawer(AnalysisProcessor):
                         file=self.file,
                         output_folder=temp_dir,
                         path_only=True,
+                        password=self.password,
                     )
                 except Exception as ex:  # noqa: E722
                     print(
