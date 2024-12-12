@@ -1201,6 +1201,7 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
     assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
     assert expected_log in caplog.text
 
+
 @pytest.mark.parametrize(
     ("filename", "expected_log"),
     [
