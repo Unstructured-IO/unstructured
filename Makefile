@@ -254,7 +254,7 @@ tidy-shell:
 
 .PHONY: tidy-python
 tidy-python:
-	ruff . --fix-only || true
+	ruff check . --fix-only || true
 	autoflake --in-place .
 	black --line-length=100 .
 
