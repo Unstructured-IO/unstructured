@@ -11,7 +11,6 @@ from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
 import wrapt
-from pdfminer import psparser
 from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
@@ -96,16 +95,14 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import first, requires_dependencies
+from unstructured.patches.pdfminer import patch_psparser
 
 if TYPE_CHECKING:
     pass
 
-# NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
-# the bug: https://github.com/pdfminer/pdfminer.six/pull/885
-psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 
+patch_psparser()
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
