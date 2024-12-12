@@ -8,6 +8,8 @@
 
 ### Fixes
 
+- **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
+
 ## 0.16.11
 
 ### Enhancements
