@@ -102,7 +102,12 @@ if TYPE_CHECKING:
     pass
 
 
+# Correct a bug that was introduced by a previous patch to
+# pdfminer.six, causing needless and unsuccessful repairing of PDFs
+# which were not actually broken.
 patch_psparser()
+
+
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
