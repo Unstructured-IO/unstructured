@@ -1,13 +1,13 @@
-from typing import Union, Tuple
-
 import functools
+from typing import Tuple, Union
+
 import pdfminer
 from pdfminer.psparser import (
-    PSBaseParser,
-    KWD,
-    PSBaseParserToken,
-    PSEOF,
     END_KEYWORD,
+    KWD,
+    PSEOF,
+    PSBaseParser,
+    PSBaseParserToken,
     PSKeyword,
     log,
 )

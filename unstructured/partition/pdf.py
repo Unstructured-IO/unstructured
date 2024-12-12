@@ -95,8 +95,8 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.utils import first, requires_dependencies
 from unstructured.patches.pdfminer import patch_psparser
+from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     pass
