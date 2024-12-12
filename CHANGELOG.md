@@ -8,6 +8,8 @@
 
 ### Fixes
 
+- **Remind contributors to update the changelog**.  CI fails if you don't add an entry to `CHANGELOG.md` but this is not mentioned in the development documentation.
+
 ## 0.16.11
 
 ### Enhancements
