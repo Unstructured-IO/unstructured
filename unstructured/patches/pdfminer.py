@@ -65,8 +65,10 @@ def nexttoken(self) -> Tuple[int, PSBaseParserToken]:
 
 
 def patch_psparser():
-    """Monkey-patch certain versions of pdfminer.six to avoid breaking
-    tokens across buffers."""
+    """Monkey-patch certain versions of pdfminer.six to avoid dropping
+    tokens at EOF (before 20231228) and splitting tokens at buffer
+    boundaries (20231228 and 20240706).
+    """
     # Presuming the bug will be fixed in the next release
     if pdfminer.__version__ <= "20240706":
         PSBaseParser.seek = seek
