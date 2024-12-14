@@ -1,4 +1,4 @@
-## 0.16.12-dev1
+## 0.16.12-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+- **Upgrade ruff to latest.** Previously the ruff version was pinned to <0.5. Remove that pin and fix the handful of lint items that resulted.
 
 ## 0.16.11
 
