@@ -51,7 +51,11 @@ from unstructured.partition.common.common import add_element_metadata, exactly_o
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
-LIBMAGIC_AVAILABLE = bool(importlib.util.find_spec("magic"))
+try:
+    importlib.import_module("magic")
+    LIBMAGIC_AVAILABLE = True
+except ImportError:
+    LIBMAGIC_AVAILABLE = False  # pyright: ignore[reportConstantRedefinition]
 
 
 def detect_filetype(
@@ -133,43 +137,57 @@ class _FileTypeDetector:
     @property
     def _file_type(self) -> FileType:
         """FileType member corresponding to this document source."""
-        # -- strategy 1: use content-type asserted by caller --
+        # -- An explicit content-type most commonly asserted by the client/SDK and is therefore
+        # -- inherently unreliable. On the other hand, binary file-types can be detected with 100%
+        # -- accuracy. So start with binary types and only then consider an asserted content-type,
+        # -- generally as a last resort.
+
+        # -- strategy 1: most binary types can be detected with 100% accuracy --
+        if file_type := self._known_binary_file_type:
+            return file_type
+
+        # -- strategy 2: use content-type asserted by caller --
         if file_type := self._file_type_from_content_type:
             return file_type
 
-        # -- strategy 2: guess MIME-type using libmagic and use that --
+        # -- strategy 3: guess MIME-type using libmagic and use that --
         if file_type := self._file_type_from_guessed_mime_type:
             return file_type
 
-        # -- strategy 3: use filename-extension, like ".docx" -> FileType.DOCX --
+        # -- strategy 4: use filename-extension, like ".docx" -> FileType.DOCX --
         if file_type := self._file_type_from_file_extension:
             return file_type
 
-        # -- strategy 4: give up and report FileType.UNK --
+        # -- strategy 5: give up and report FileType.UNK --
         return FileType.UNK
 
     # == STRATEGIES ============================================================
 
     @property
+    def _known_binary_file_type(self) -> FileType | None:
+        """Detect file-type for binary types we can positively detect."""
+        if file_type := _OleFileDetector.file_type(self._ctx):
+            return file_type
+
+        self._ctx.rule_out_cfb_content_types()
+
+        if file_type := _ZipFileDetector.file_type(self._ctx):
+            return file_type
+
+        self._ctx.rule_out_zip_content_types()
+
+        return None
+
+    @property
     def _file_type_from_content_type(self) -> FileType | None:
         """Map passed content-type argument to a file-type, subject to certain rules."""
-        content_type = self._ctx.content_type
 
         # -- when no content-type was asserted by caller, this strategy is not applicable --
-        if not content_type:
+        if not self._ctx.content_type:
             return None
 
-        # -- OLE-based file-format content_type values are sometimes unreliable. These are
-        # -- DOC, PPT, XLS, and MSG.
-        if differentiator := _OleFileDifferentiator.applies(self._ctx, content_type):
-            return differentiator.file_type
-
-        # -- MS-Office 2007+ (OpenXML) content_type value is sometimes unreliable --
-        if differentiator := _ZipFileDifferentiator.applies(self._ctx, content_type):
-            return differentiator.file_type
-
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
-        return FileType.from_mime_type(content_type)
+        return FileType.from_mime_type(self._ctx.content_type)
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
@@ -188,22 +206,10 @@ class _FileTypeDetector:
         if mime_type is None:
             return None
 
-        if differentiator := _OleFileDifferentiator.applies(self._ctx, mime_type):
-            return differentiator.file_type
-
         if mime_type.endswith("xml"):
             return FileType.HTML if extension in (".html", ".htm") else FileType.XML
 
         if differentiator := _TextFileDifferentiator.applies(self._ctx):
-            return differentiator.file_type
-
-        # -- applicable to "application/octet-stream", "application/zip", and all Office 2007+
-        # -- document MIME-types, i.e. those for DOCX, PPTX, and XLSX. Note however it does NOT
-        # -- apply to EPUB or ODT documents, even though those are also Zip archives. The zip and
-        # -- octet-stream MIME-types are fed in because they are ambiguous. The MS-Office types are
-        # -- differentiated because they are sometimes mistaken for each other, like DOCX mime-type
-        # -- is actually a PPTX file etc.
-        if differentiator := _ZipFileDifferentiator.applies(self._ctx, mime_type):
             return differentiator.file_type
 
         # -- All source-code files (e.g. *.py, *.js) are classified as plain text for the moment --
@@ -214,14 +220,8 @@ class _FileTypeDetector:
             return FileType.EMPTY
 
         # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
-        if file_type := FileType.from_mime_type(mime_type):
-            return file_type
-
-        logger.warning(
-            f"The MIME type{f' of {self._ctx.file_path!r}' if self._ctx.file_path else ''} is"
-            f" {mime_type!r}. This file type is not currently supported in unstructured.",
-        )
-        return None
+        file_type = FileType.from_mime_type(mime_type)
+        return file_type if file_type != FileType.UNK else None
 
     @lazyproperty
     def _file_type_from_file_extension(self) -> FileType | None:
@@ -235,6 +235,9 @@ class _FileTypeDetector:
 
 class _FileTypeDetectionContext:
     """Provides all arguments to auto-file detection and values derived from them.
+
+    NOTE that `._content_type` is mutable via `.rule_out_*_content_types()` methods, so it should
+    not be assumed to be a constant value across those calls.
 
     This keeps computation of derived values out of the file-detection code but more importantly
     allows the main filetype-detector to pass the full context to any delegates without coupling
@@ -276,7 +279,7 @@ class _FileTypeDetectionContext:
         self._validate()
         return self
 
-    @lazyproperty
+    @property
     def content_type(self) -> str | None:
         """MIME-type asserted by caller; not based on inspection of file by this process.
 
@@ -284,6 +287,8 @@ class _FileTypeDetectionContext:
         present on the response. These are often ambiguous and sometimes just wrong so get some
         further verification. All lower-case when not `None`.
         """
+        # -- Note `._content_type` is mutable via `.invalidate_content_type()` so this cannot be a
+        # -- `@lazyproperty`.
         return self._content_type.lower() if self._content_type else None
 
     @lazyproperty
@@ -328,12 +333,6 @@ class _FileTypeDetectionContext:
         return os.path.realpath(file_path) if os.path.islink(file_path) else file_path
 
     @lazyproperty
-    def is_zipfile(self) -> bool:
-        """True when file is a Zip archive."""
-        with self.open() as file:
-            return zipfile.is_zipfile(file)
-
-    @lazyproperty
     def has_code_mime_type(self) -> bool:
         """True when `mime_type` plausibly indicates a programming language source-code file."""
         mime_type = self.mime_type
@@ -347,8 +346,26 @@ class _FileTypeDetectionContext:
 
         return any(
             lang in mime_type
-            for lang in "c# c++ cpp csharp java javascript php python ruby swift typescript".split()
+            for lang in [
+                "c#",
+                "c++",
+                "cpp",
+                "csharp",
+                "java",
+                "javascript",
+                "php",
+                "python",
+                "ruby",
+                "swift",
+                "typescript",
+            ]
         )
+
+    @lazyproperty
+    def is_zipfile(self) -> bool:
+        """True when file is a Zip archive."""
+        with self.open() as file:
+            return zipfile.is_zipfile(file)
 
     @lazyproperty
     def mime_type(self) -> str | None:
@@ -401,6 +418,38 @@ class _FileTypeDetectionContext:
             file.seek(0)
             yield file
 
+    def rule_out_cfb_content_types(self) -> None:
+        """Invalidate content-type when a legacy MS-Office file-type is asserted.
+
+        Used before returning `None`; at that point we know the file is not one of these formats
+        so if the asserted `content-type` is a legacy MS-Office type we know it's wrong and should
+        not be used as a fallback later in the detection process.
+        """
+        if FileType.from_mime_type(self._content_type) in (
+            FileType.DOC,
+            FileType.MSG,
+            FileType.PPT,
+            FileType.XLS,
+        ):
+            self._content_type = None
+
+    def rule_out_zip_content_types(self) -> None:
+        """Invalidate content-type when an MS-Office 2007+ file-type is asserted.
+
+        Used before returning `None`; at that point we know the file is not one of these formats
+        so if the asserted `content-type` is an MS-Office 2007+ type we know it's wrong and should
+        not be used as a fallback later in the detection process.
+        """
+        if FileType.from_mime_type(self._content_type) in (
+            FileType.DOCX,
+            FileType.EPUB,
+            FileType.ODT,
+            FileType.PPTX,
+            FileType.XLSX,
+            FileType.ZIP,
+        ):
+            self._content_type = None
+
     @lazyproperty
     def text_head(self) -> str:
         """The initial characters of the text file for use with text-format differentiation.
@@ -440,27 +489,23 @@ class _FileTypeDetectionContext:
             raise ValueError("either `file_path` or `file` argument must be provided")
 
 
-class _OleFileDifferentiator:
-    """Refine an OLE-storage package (CFBF) file-type that may not be as specific as it could be.
+class _OleFileDetector:
+    """Detect and differentiate a CFB file, aka. "OLE" file.
 
-    Compound File Binary Format (CFBF), aka. OLE file, is use by Microsoft for legacy MS Office
-    files (DOC, PPT, XLS) as well as for Outlook MSG files. `libmagic` tends to identify these as
-    `"application/x-ole-storage"` which is true but too not specific enough for partitioning
-    purposes.
+    Compound File Binary Format (CFB), aka. OLE file, is use by Microsoft for legacy MS Office
+    files (DOC, PPT, XLS) as well as for Outlook MSG files.
     """
 
     def __init__(self, ctx: _FileTypeDetectionContext):
         self._ctx = ctx
 
     @classmethod
-    def applies(
-        cls, ctx: _FileTypeDetectionContext, mime_type: str
-    ) -> _OleFileDifferentiator | None:
-        """Constructs an instance, but only if this differentiator applies for `mime_type`."""
-        return cls(ctx) if cls._is_ole_file(ctx) else None
+    def file_type(cls, ctx: _FileTypeDetectionContext) -> FileType | None:
+        """Specific file-type when file is a CFB file, `None` otherwise."""
+        return cls(ctx)._file_type
 
     @property
-    def file_type(self) -> FileType | None:
+    def _file_type(self) -> FileType | None:
         """Differentiated file-type for Microsoft Compound File Binary Format (CFBF).
 
         Returns one of:
@@ -468,34 +513,27 @@ class _OleFileDifferentiator:
         - `FileType.PPT`
         - `FileType.XLS`
         - `FileType.MSG`
+        - `None` when the file is not one of these.
         """
-        # -- if this is not a CFBF file then whatever MIME-type was guessed is wrong, so return
-        # -- `None` to trigger fall-back to next strategy.
-        if not self._is_ole_file(self._ctx):
+        # -- all CFB files share common magic number, start with that --
+        if not self._is_ole_file:
             return None
 
-        # -- check storage contents of the ole file for file type markers
-        if (ole_file_type := self._check_ole_file_type(self._ctx)) is not None:
+        # -- check storage contents of the ole file for file-type specific stream names --
+        if (ole_file_type := self._ole_file_type) is not None:
             return ole_file_type
 
-        # -- `filetype` lib is better at legacy MS-Office files than `libmagic`, so we rely on it
-        # -- to differentiate those. Note `filetype` doesn't detect MSG type and won't always
-        # -- detect DOC, PPT, or XLS, returning `None` instead. We let those fall through and we
-        # -- rely on filename-extension to identify those.
+        return None
+
+    @lazyproperty
+    def _is_ole_file(self) -> bool:
+        """True when file has CFB magic first 8 bytes."""
         with self._ctx.open() as file:
-            mime_type = ft.guess_mime(file)
-
-        return FileType.from_mime_type(mime_type) if mime_type else None
-
-    @staticmethod
-    def _is_ole_file(ctx: _FileTypeDetectionContext) -> bool:
-        """True when file has CFBF magic first 8 bytes."""
-        with ctx.open() as file:
             return file.read(8) == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
-    @staticmethod
-    def _check_ole_file_type(ctx: _FileTypeDetectionContext) -> FileType | None:
-        with ctx.open() as f:
+    @lazyproperty
+    def _ole_file_type(self) -> FileType | None:
+        with self._ctx.open() as f:
             ole = OleFileIO(f)  # pyright: ignore[reportUnknownVariableType]
             root_storage = Storage.from_ole(ole)  # pyright: ignore[reportUnknownMemberType]
 
@@ -616,40 +654,28 @@ class _TextFileDifferentiator:
             return False
 
 
-class _ZipFileDifferentiator:
-    """Refine a Zip-packaged file-type that may be ambiguous or swapped."""
+class _ZipFileDetector:
+    """Detect and differentiate a Zip-archive file."""
 
     def __init__(self, ctx: _FileTypeDetectionContext):
         self._ctx = ctx
 
     @classmethod
-    def applies(
-        cls, ctx: _FileTypeDetectionContext, mime_type: str
-    ) -> _ZipFileDifferentiator | None:
-        """Constructs an instance, but only if this differentiator applies for `mime_type`.
+    def file_type(cls, ctx: _FileTypeDetectionContext) -> FileType | None:
+        """Most specific file-type available when file is a Zip file, `None` otherwise.
 
-        Separate `mime_type` argument allows it to be applied to either asserted content-type or
-        guessed mime-type.
+        MS-Office 2007+ files are detected with 100% accuracy. Otherwise this returns `None`, even
+        when we can tell it's a Zip file, so later strategies can have a crack at it. In
+        particular, ODT and EPUB files are Zip archives but are not detected here.
         """
-        return (
-            cls(ctx)
-            if mime_type
-            in (
-                "application/octet-stream",
-                "application/zip",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
-            else None
-        )
+        return cls(ctx)._file_type
 
     @lazyproperty
-    def file_type(self) -> FileType | None:
+    def _file_type(self) -> FileType | None:
         """Differentiated file-type for a Zip archive.
 
-        Returns `None` if the file is not a Zip archive. Otherwise it returns `FileType.DOCX`,
-        `FileType.PPTX`, or `FileType.XLSX` when one of those applies and `FileType.ZIP` otherwise.
+        Returns `FileType.DOCX`, `FileType.PPTX`, or `FileType.XLSX` when one of those applies,
+        `None` otherwise.
         """
         if not self._ctx.is_zipfile:
             return None
@@ -657,19 +683,22 @@ class _ZipFileDifferentiator:
         with self._ctx.open() as file:
             zip = zipfile.ZipFile(file)
 
-            # NOTE(robinson) - .docx and .xlsx files are actually a zip file with a .docx/.xslx
-            # extension. If the MIME type is application/octet-stream, we check if it's a
-            # .docx/.xlsx file by looking for expected filenames within the zip file.
-            filenames = [f.filename for f in zip.filelist]
+            filenames = zip.namelist()
 
-            if all(f in filenames for f in ("word/document.xml",)):
+            if "word/document.xml" in filenames:
                 return FileType.DOCX
 
-            if all(f in filenames for f in ("xl/workbook.xml",)):
+            if "xl/workbook.xml" in filenames:
                 return FileType.XLSX
 
-            if all(f in filenames for f in ("ppt/presentation.xml",)):
+            if "ppt/presentation.xml" in filenames:
                 return FileType.PPTX
+
+            # -- ODT and EPUB files place their MIME-type in `mimetype` in the archive root --
+            if "mimetype" in filenames:
+                with zip.open("mimetype") as f:
+                    mime_type = f.read().decode("utf-8").strip()
+                    return FileType.from_mime_type(mime_type)
 
         return FileType.ZIP
 
