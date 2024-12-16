@@ -171,7 +171,7 @@ requests==2.32.3
     #   requests-mock
 requests-mock==1.12.1
     # via label-studio-sdk
-ruff==0.4.10
+ruff==0.8.3
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck

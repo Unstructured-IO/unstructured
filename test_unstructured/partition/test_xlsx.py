@@ -64,10 +64,12 @@ def test_partition_xlsx_from_filename():
 
 
 def test_partition_xlsx_from_SpooledTemporaryFile_with_emoji():
-    f = tempfile.SpooledTemporaryFile()
-    with open("example-docs/emoji.xlsx", "rb") as g:
-        f.write(g.read())
-    elements = partition_xlsx(file=f, include_header=False)
+    with tempfile.SpooledTemporaryFile() as f:
+        with open("example-docs/emoji.xlsx", "rb") as g:
+            f.write(g.read())
+
+        elements = partition_xlsx(file=f, include_header=False)
+
     assert sum(isinstance(element, Text) for element in elements) == 1
     assert len(elements) == 1
     assert clean_extra_whitespace(elements[0].text) == "🤠😅"
