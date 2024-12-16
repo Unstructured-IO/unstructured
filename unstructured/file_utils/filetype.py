@@ -575,7 +575,20 @@ class _TextFileDifferentiator:
         """
         extension = self._ctx.extension
 
-        if extension in ".csv .eml .html .json .md .org .p7s .rst .rtf .tab .tsv".split():
+        if extension in [
+            ".csv",
+            ".eml",
+            ".html",
+            ".json",
+            ".markdown",
+            ".md",
+            ".org",
+            ".p7s",
+            ".rst",
+            ".rtf",
+            ".tab",
+            ".tsv",
+        ]:
             return FileType.from_extension(extension) or FileType.TXT
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently
