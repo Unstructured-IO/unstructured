@@ -1,4 +1,4 @@
-## 0.16.12-dev2
+## 0.16.12-dev3
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Fixes
 
 - **Upgrade ruff to latest.** Previously the ruff version was pinned to <0.5. Remove that pin and fix the handful of lint items that resulted.
+- **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
 
 ## 0.16.11
 
