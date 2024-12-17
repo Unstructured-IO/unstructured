@@ -25,6 +25,7 @@ from unstructured.file_utils.filetype import (
     _ZipFileDifferentiator,
     detect_filetype,
     is_json_processable,
+    LIBMAGIC_AVAILABLE
 )
 from unstructured.file_utils.model import FileType
 
@@ -298,6 +299,7 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
     assert file_type is expected_value
 
 
+@pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
 @pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
@@ -466,7 +468,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
         detect_filetype(file=f)
 
     assert "WARNING" in caplog.text
-    assert "libmagic is unavailable but assists in filetype detection. Please cons" in caplog.text
+    assert "magic module is installed but libmagic is unavailable. Please cons" in caplog.text
 
 
 # ================================================================================================
@@ -632,10 +634,12 @@ def test_detect_filetype_raises_with_neither_path_or_file_like_object_specified(
         detect_filetype()
 
 
+@pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
 def test_it_detects_EMPTY_from_file_path_to_empty_file():
     assert detect_filetype(example_doc_path("empty.txt")) == FileType.EMPTY
 
 
+@pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
 def test_it_detects_EMPTY_from_empty_file_like_object():
     with open(example_doc_path("empty.txt"), "rb") as f:
         assert detect_filetype(file=f) == FileType.EMPTY
@@ -859,6 +863,7 @@ class Describe_FileTypeDetectionContext:
 
     # -- .mime_type ---------------------------------------------
 
+    @pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
     def it_provides_the_MIME_type_detected_by_libmagic_from_a_file_path(self):
         ctx = _FileTypeDetectionContext(file_path=example_doc_path("norwich-city.txt"))
         assert ctx.mime_type == "text/plain"
@@ -878,6 +883,7 @@ class Describe_FileTypeDetectionContext:
             assert "libmagic is unavailable" in caplog.text
             assert "consider installing libmagic" in caplog.text
 
+    @pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
     def it_provides_the_MIME_type_detected_by_libmagic_from_a_file_like_object(self):
         with open(example_doc_path("norwich-city.txt"), "rb") as f:
             ctx = _FileTypeDetectionContext(file=f)
@@ -1094,6 +1100,7 @@ class Describe_TextFileDifferentiator:
 
     # -- .applies() ---------------------------------------------
 
+    @pytest.mark.skipif(not LIBMAGIC_AVAILABLE, reason="Skipping this test since libmagic is not available")
     def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
         """The constructor determines whether this differentiator is applicable.
 
