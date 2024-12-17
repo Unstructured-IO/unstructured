@@ -18,6 +18,13 @@
         "date_modified": "1718722788.018",
         "permissions_data": [
           {
+            "id": "anyoneWithLink",
+            "type": "anyone",
+            "kind": "drive#permission",
+            "role": "reader",
+            "allowFileDiscovery": false
+          },
+          {
             "id": "18298851591250030956",
             "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "type": "user",
@@ -38,13 +45,6 @@
             "role": "writer",
             "deleted": false,
             "pendingOwner": false
-          },
-          {
-            "id": "anyoneWithLink",
-            "type": "anyone",
-            "kind": "drive#permission",
-            "role": "reader",
-            "allowFileDiscovery": false
           },
           {
             "id": "09147371668407854156",
