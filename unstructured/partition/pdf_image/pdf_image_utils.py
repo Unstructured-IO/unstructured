@@ -58,6 +58,7 @@ def convert_pdf_to_image(
     dpi: int = 200,
     output_folder: Optional[Union[str, PurePath]] = None,
     path_only: bool = False,
+    password:Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
     """Get the image renderings of the pdf pages using pdf2image"""
 
@@ -71,6 +72,7 @@ def convert_pdf_to_image(
             dpi=dpi,
             output_folder=output_folder,
             paths_only=path_only,
+            userpw=password,
         )
     else:
         images = pdf2image.convert_from_path(
@@ -125,6 +127,7 @@ def save_elements(
     is_image: bool = False,
     extract_image_block_to_payload: bool = False,
     output_dir_path: str | None = None,
+    password:Optional[str] = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -167,6 +170,7 @@ def save_elements(
                 pdf_image_dpi,
                 output_folder=temp_dir,
                 path_only=True,
+                password=password,
             )
             image_paths = cast(List[str], _image_paths)
 
@@ -389,15 +393,16 @@ def convert_pdf_to_images(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     chunk_size: int = 10,
+    password:Optional[str] = None,
 ) -> Iterator[Image.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)
     if file is not None:
         f_bytes = convert_to_bytes(file)
-        info = pdf2image.pdfinfo_from_bytes(f_bytes)
+        info = pdf2image.pdfinfo_from_bytes(f_bytes, userpw=password)
     else:
         f_bytes = None
-        info = pdf2image.pdfinfo_from_path(filename)
+        info = pdf2image.pdfinfo_from_path(filename, userpw=password)
 
     total_pages = info["Pages"]
     for start_page in range(1, total_pages + 1, chunk_size):
@@ -407,12 +412,14 @@ def convert_pdf_to_images(
                 f_bytes,
                 first_page=start_page,
                 last_page=end_page,
+                userpw=password,
             )
         else:
             chunk_images = pdf2image.convert_from_path(
                 filename,
                 first_page=start_page,
                 last_page=end_page,
+                userpw=password,
             )
 
         for image in chunk_images:
