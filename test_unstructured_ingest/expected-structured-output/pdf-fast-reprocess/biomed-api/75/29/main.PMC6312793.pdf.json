@@ -9,7 +9,7 @@
       ],
       "links": [
         {
-          "text": "DatainBrief22 ( 2019 ) 484 \u2013",
+          "text": "Data in Brief 22 ( 2019 ) 484 \u2013 487",
           "url": "https://doi.org/10.1016/j.dib.2018.12.055",
           "start_index": 0
         }
@@ -38,9 +38,9 @@
       ],
       "links": [
         {
-          "text": "",
+          "text": "ScienceDirect",
           "url": "www.sciencedirect.com/science/journal/23523409",
-          "start_index": -1
+          "start_index": 28
         }
       ],
       "page_number": 1,
@@ -89,7 +89,7 @@
       ],
       "links": [
         {
-          "text": "www . elsevier . com / locate /",
+          "text": "www . elsevier . com / locate / dib",
           "url": "www.elsevier.com/locate/dib",
           "start_index": 18
         }
@@ -316,7 +316,7 @@
       ],
       "links": [
         {
-          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 . nCorrespondingauthorat",
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 . 007 n Corresponding author at",
           "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007",
           "start_index": 25
         },
@@ -326,7 +326,7 @@
           "start_index": 25
         },
         {
-          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 .",
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 . 007",
           "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007",
           "start_index": 25
         }
@@ -394,7 +394,7 @@
           "start_index": 0
         },
         {
-          "text": "https :// doi . org / 10 . 1016 / j . dib . 2018 . 12 .",
+          "text": "https :// doi . org / 10 . 1016 / j . dib . 2018 . 12 . 055",
           "url": "https://doi.org/10.1016/j.dib.2018.12.055",
           "start_index": 0
         }
@@ -511,9 +511,9 @@
       ],
       "links": [
         {
-          "text": ".,",
+          "text": "https :// orlib . uqcloud . net /",
           "url": "https://orlib.uqcloud.net/",
-          "start_index": 444
+          "start_index": 386
         }
       ],
       "page_number": 2,
@@ -782,9 +782,9 @@
       ],
       "links": [
         {
-          "text": "2500 , and3000 . size , \u00f0m ; n\u00de , \ufb01veinstancesareprovided . Thedatasetcanbedownloadedfromhttps :// orlib . uqcloud . net",
+          "text": "https :// orlib . uqcloud . net",
           "url": "https://orlib.uqcloud.net",
-          "start_index": 509
+          "start_index": 611
         }
       ],
       "page_number": 2,
@@ -2109,9 +2109,9 @@
       ],
       "links": [
         {
-          "text": ":// doi",
+          "text": "https :// doi .",
           "url": "https://doi.org/10.1016/j.dib.2018.12.055",
-          "start_index": 94
+          "start_index": 89
         }
       ],
       "page_number": 4,
@@ -2189,7 +2189,7 @@
       ],
       "links": [
         {
-          "text": "G . Carpaneto , M . Dell ' Amico , M . Fischetti , P . Toth ,",
+          "text": "G . Carpaneto , M . Dell ' Amico , M . Fischetti , P . Toth , A branch and bound algorithm for the multiple depot vehicle scheduling",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
           "start_index": 4
         }
@@ -2218,12 +2218,12 @@
       ],
       "links": [
         {
-          "text": "problem , Networks19 ( 5 )( 1989 ) 531 \u2013",
+          "text": "problem , Networks 19 ( 5 ) ( 1989 ) 531 \u2013",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
           "start_index": 0
         },
         {
-          "text": "problem , Networks19 ( 5 )( 1989 ) 531 \u2013 548",
+          "text": "problem , Networks 19 ( 5 ) ( 1989 ) 531 \u2013 548 .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
           "start_index": 0
         }
@@ -2252,7 +2252,7 @@
       ],
       "links": [
         {
-          "text": "N . Kliewer , T . Mellouli , L . Suhl , Atime \u2013 spacenetworkbasedexactoptimizationmodelformulti - depotbusscheduling , Eur",
+          "text": "N . Kliewer , T . Mellouli , L . Suhl , A time \u2013 space network based exact optimization model for multi - depot bus scheduling , Eur .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
           "start_index": 4
         }
@@ -2281,12 +2281,12 @@
       ],
       "links": [
         {
-          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 \u2013",
+          "text": "J . Oper . Res . 175 ( 3 ) ( 2006 ) 1616 \u2013",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
           "start_index": 0
         },
         {
-          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 \u2013 1627",
+          "text": "J . Oper . Res . 175 ( 3 ) ( 2006 ) 1616 \u2013 1627 .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
           "start_index": 0
         }
@@ -2315,7 +2315,7 @@
       ],
       "links": [
         {
-          "text": "S . Kulkarni , M . Krishnamoorthy , A . Ranade , A . T . Ernst , R . Patil , Anewformulationandacolumngeneration -",
+          "text": "S . Kulkarni , M . Krishnamoorthy , A . Ranade , A . T . Ernst , R . Patil , A new formulation and a column generation - based heuristic",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
           "start_index": 4
         }
@@ -2344,12 +2344,12 @@
       ],
       "links": [
         {
-          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 \u2013",
+          "text": "for the multiple depot vehicle scheduling problem , Transp . Res . Part B Methodol . 118 ( 2018 ) 457 \u2013",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
           "start_index": 0
         },
         {
-          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 \u2013 487",
+          "text": "for the multiple depot vehicle scheduling problem , Transp . Res . Part B Methodol . 118 ( 2018 ) 457 \u2013 487 .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
           "start_index": 0
         }
@@ -2378,7 +2378,7 @@
       ],
       "links": [
         {
-          "text": "A . S . Pepin , G . Desaulniers , A . Hertz , D . Huisman ,",
+          "text": "A . S . Pepin , G . Desaulniers , A . Hertz , D . Huisman , A comparison of \ufb01ve heuristics for the multiple depot vehicle scheduling",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4",
           "start_index": 4
         }
@@ -2407,7 +2407,7 @@
       ],
       "links": [
         {
-          "text": "problem , J . Sched . 12 ( 1 )( 2009 ) 17",
+          "text": "problem , J . Sched . 12 ( 1 ) ( 2009 ) 17 .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4",
           "start_index": 0
         }
@@ -2436,7 +2436,7 @@
       ],
       "links": [
         {
-          "text": "C . C . Ribeiro , F . Soumis , Acolumngenerationapproachtothemultiple - depotvehicleschedulingproblem , Oper . Res . 42 ( 1",
+          "text": "C . C . Ribeiro , F . Soumis , A column generation approach to the multiple - depot vehicle scheduling problem , Oper . Res . 42 ( 1 )",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5",
           "start_index": 4
         }
@@ -2470,7 +2470,7 @@
           "start_index": 0
         },
         {
-          "text": "( 1994 ) 41 \u2013 52",
+          "text": "( 1994 ) 41 \u2013 52 .",
           "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5",
           "start_index": 0
         }

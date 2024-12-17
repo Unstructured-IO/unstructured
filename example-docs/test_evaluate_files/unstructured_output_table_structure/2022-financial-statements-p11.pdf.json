@@ -1,0 +1,2041 @@
+[
+    {
+        "element_id": "65cc604a285e9b4833c3515c205525f1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        164.4,
+                        135.9
+                    ],
+                    [
+                        164.4,
+                        158.2
+                    ],
+                    [
+                        402.1,
+                        158.2
+                    ],
+                    [
+                        402.1,
+                        135.9
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "detection_class_prob": 0.76059,
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "I. General Department",
+        "type": "Header"
+    },
+    {
+        "element_id": "525f06761160ee0502ed343a27144bf3",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        165.0,
+                        281.1
+                    ],
+                    [
+                        165.0,
+                        353.2
+                    ],
+                    [
+                        1281.2,
+                        353.2
+                    ],
+                    [
+                        1281.2,
+                        281.1
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1,
+            "parent_id": "65cc604a285e9b4833c3515c205525f1"
+        },
+        "text": "Statements of Financial Position at April 30, 2022, and 2021 (in millions of SDRs)",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "335f6e936ff6d431fb172bdcb3c45f62",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        178.3,
+                        368.5
+                    ],
+                    [
+                        178.3,
+                        1285.5
+                    ],
+                    [
+                        1565.2,
+                        1285.5
+                    ],
+                    [
+                        1565.2,
+                        368.5
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "detection_class_prob": 0.92937,
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1,
+            "parent_id": "65cc604a285e9b4833c3515c205525f1",
+            "table_as_cells": [
+                {
+                    "content": "Assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "content": "Usable currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 1
+                },
+                {
+                    "content": "Other currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "content": "Credit outstanding",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "content": "Total currencies",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 4
+                },
+                {
+                    "content": "SDR holdings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 5
+                },
+                {
+                    "content": "Investments",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 6
+                },
+                {
+                    "content": "Gold holdings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 7
+                },
+                {
+                    "content": "Property, plant and equipment and intangible assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 8
+                },
+                {
+                    "content": "Net assets under retirement benefit plans",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 9
+                },
+                {
+                    "content": "Other assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 10
+                },
+                {
+                    "content": "Total assets",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 11
+                },
+                {
+                    "content": "Special Contingent Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 13
+                },
+                {
+                    "content": "Borrowings",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 14
+                },
+                {
+                    "content": "Quota subscriptions",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 15
+                },
+                {
+                    "content": "Net liabilities under retirement benefit plans",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 16
+                },
+                {
+                    "content": "Other liabilities",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 17
+                },
+                {
+                    "content": "otal li S",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 18
+                },
+                {
+                    "content": "eserves of the General Resources Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 19
+                },
+                {
+                    "content": "Retained earnings of the Investment Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 20
+                },
+                {
+                    "content": "Resources of the Special Disbursement Account",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 21
+                },
+                {
+                    "content": "otal lial S, reserves, retained earnings, and resources",
+                    "h": 1,
+                    "w": 1,
+                    "x": 0,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 0
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 1
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "content": "5",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 3
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 4
+                },
+                {
+                    "content": "6",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 5
+                },
+                {
+                    "content": "7",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 6
+                },
+                {
+                    "content": "9",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 7
+                },
+                {
+                    "content": "10",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 8
+                },
+                {
+                    "content": "11",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 9
+                },
+                {
+                    "content": "12",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 10
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 11
+                },
+                {
+                    "content": "13",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 13
+                },
+                {
+                    "content": "14",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 14
+                },
+                {
+                    "content": "15",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 15
+                },
+                {
+                    "content": "11",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 16
+                },
+                {
+                    "content": "12",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 17
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 18
+                },
+                {
+                    "content": "16",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 19
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 20
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 21
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 1,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 0
+                },
+                {
+                    "content": "292,280",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 1
+                },
+                {
+                    "content": "69,407",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "content": "93,031",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 3
+                },
+                {
+                    "content": "454,718",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 4
+                },
+                {
+                    "content": "22,270",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 5
+                },
+                {
+                    "content": "25,418",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 6
+                },
+                {
+                    "content": "3,167",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 7
+                },
+                {
+                    "content": "551",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 8
+                },
+                {
+                    "content": "1,375",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 9
+                },
+                {
+                    "content": "911",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 10
+                },
+                {
+                    "content": "508,410",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 11
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 13
+                },
+                {
+                    "content": "2,615",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 14
+                },
+                {
+                    "content": "476,272",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 15
+                },
+                {
+                    "content": "127",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 16
+                },
+                {
+                    "content": "970",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 17
+                },
+                {
+                    "content": "479,984",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 18
+                },
+                {
+                    "content": "26,524",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 19
+                },
+                {
+                    "content": "1,902",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 20
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 21
+                },
+                {
+                    "content": "508,410",
+                    "h": 1,
+                    "w": 1,
+                    "x": 2,
+                    "y": 22
+                },
+                {
+                    "content": "",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "content": "297,217",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 1
+                },
+                {
+                    "content": "71,651",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 2
+                },
+                {
+                    "content": "89,788",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 3
+                },
+                {
+                    "content": "458,656",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 4
+                },
+                {
+                    "content": "22,203",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 5
+                },
+                {
+                    "content": "23,032",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 6
+                },
+                {
+                    "content": "3,167",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 7
+                },
+                {
+                    "content": "555",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 8
+                },
+                {
+                    "content": "_\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 9
+                },
+                {
+                    "content": "706",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 10
+                },
+                {
+                    "content": "508,319",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 11
+                },
+                {
+                    "content": "1,066",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 13
+                },
+                {
+                    "content": "5,138",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 14
+                },
+                {
+                    "content": "475,808",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 15
+                },
+                {
+                    "content": "205",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 16
+                },
+                {
+                    "content": "761",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 17
+                },
+                {
+                    "content": "482,978",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 18
+                },
+                {
+                    "content": "23,350",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 19
+                },
+                {
+                    "content": "1,991",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 20
+                },
+                {
+                    "content": "\u2014",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 21
+                },
+                {
+                    "content": "508,319",
+                    "h": 1,
+                    "w": 1,
+                    "x": 3,
+                    "y": 22
+                },
+                {
+                    "content": "-iabilities",
+                    "h": 1,
+                    "w": 4,
+                    "x": 0,
+                    "y": 12
+                }
+            ],
+            "text_as_html": "<table><tbody><tr><td>Assets</td><td></td><td></td><td></td></tr><tr><td>Usable currencies</td><td></td><td>292,280</td><td>297,217</td></tr><tr><td>Other currencies</td><td></td><td>69,407</td><td>71,651</td></tr><tr><td>Credit outstanding</td><td>5</td><td>93,031</td><td>89,788</td></tr><tr><td>Total currencies</td><td></td><td>454,718</td><td>458,656</td></tr><tr><td>SDR holdings</td><td>6</td><td>22,270</td><td>22,203</td></tr><tr><td>Investments</td><td>7</td><td>25,418</td><td>23,032</td></tr><tr><td>Gold holdings</td><td>9</td><td>3,167</td><td>3,167</td></tr><tr><td>Property, plant and equipment and intangible assets</td><td>10</td><td>551</td><td>555</td></tr><tr><td>Net assets under retirement benefit plans</td><td>11</td><td>1,375</td><td>_\u2014</td></tr><tr><td>Other assets</td><td>12</td><td>911</td><td>706</td></tr><tr><td>Total assets</td><td></td><td>508,410</td><td>508,319</td></tr><tr><td colspan=\"4\">-iabilities</td></tr><tr><td>Special Contingent Account</td><td>13</td><td>\u2014</td><td>1,066</td></tr><tr><td>Borrowings</td><td>14</td><td>2,615</td><td>5,138</td></tr><tr><td>Quota subscriptions</td><td>15</td><td>476,272</td><td>475,808</td></tr><tr><td>Net liabilities under retirement benefit plans</td><td>11</td><td>127</td><td>205</td></tr><tr><td>Other liabilities</td><td>12</td><td>970</td><td>761</td></tr><tr><td>otal li S</td><td></td><td>479,984</td><td>482,978</td></tr><tr><td>eserves of the General Resources Account</td><td>16</td><td>26,524</td><td>23,350</td></tr><tr><td>Retained earnings of the Investment Account</td><td></td><td>1,902</td><td>1,991</td></tr><tr><td>Resources of the Special Disbursement Account</td><td></td><td>\u2014</td><td>\u2014</td></tr><tr><td>otal lial S, reserves, retained earnings, and resources</td><td></td><td>508,410</td><td>508,319</td></tr></tbody></table>"
+        },
+        "text": "Note 2022 2021 Usable currencies 292,280 297,217 Other currencies 69,407 71,651 Credit outstanding 5 93,031 89,788 Total currencies 454,718 458,656 SDR holdings 6 22,270 22,203 Investments 7 25,418 23,032 Gold holdings 9 3,167 3,167 Property, plant and equipment and intangible assets 10 551 555 Net assets under retirement benefit plans 11 1,375 \u2014 Other assets 12 911 706 508,410 508,319 Special Contingent Account 13 \u2014 1,066 Borrowings 14 2,615 5,138 Quota subscriptions 15 476,272 475,808 Net liabilities under retirement benefit plans 11 127 205 Other liabilities 12 970 761 479,984 482,978 16 26,524 23,350 1,902 1,991 \u2014 \u2014 Total liabilities, reserves, retained earnings, and resources 508,410 508,319",
+        "type": "Table"
+    },
+    {
+        "element_id": "83333e79d07d5369c1ea81ac84fece49",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        427.6
+                    ],
+                    [
+                        173.0,
+                        448.4
+                    ],
+                    [
+                        247.1,
+                        448.4
+                    ],
+                    [
+                        247.1,
+                        427.6
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1,
+            "parent_id": "65cc604a285e9b4833c3515c205525f1"
+        },
+        "text": "Assets",
+        "type": "Title"
+    },
+    {
+        "element_id": "477f9805ddecc50afee64c176c77214d",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        453.3
+                    ],
+                    [
+                        163.0,
+                        458.7
+                    ],
+                    [
+                        1581.8,
+                        458.7
+                    ],
+                    [
+                        1581.8,
+                        453.3
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "ae3bfb88b2bce7580b08ba6cf81d2793",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        490.7
+                    ],
+                    [
+                        163.0,
+                        496.0
+                    ],
+                    [
+                        1581.8,
+                        496.0
+                    ],
+                    [
+                        1581.8,
+                        490.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "40d26315a107679ee6ba3a24e6ab3671",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        528.0
+                    ],
+                    [
+                        163.0,
+                        533.3
+                    ],
+                    [
+                        1581.8,
+                        533.3
+                    ],
+                    [
+                        1581.8,
+                        528.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "7c661779574aaac5f64a3896af6927d7",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        565.3
+                    ],
+                    [
+                        163.0,
+                        570.7
+                    ],
+                    [
+                        1581.8,
+                        570.7
+                    ],
+                    [
+                        1581.8,
+                        565.3
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "3547fc946bf088d451ca52fbb2487cac",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        602.7
+                    ],
+                    [
+                        163.0,
+                        608.0
+                    ],
+                    [
+                        1581.8,
+                        608.0
+                    ],
+                    [
+                        1581.8,
+                        602.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "df6263781f356939f404b5174102d255",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        640.2
+                    ],
+                    [
+                        163.0,
+                        645.5
+                    ],
+                    [
+                        1581.8,
+                        645.5
+                    ],
+                    [
+                        1581.8,
+                        640.2
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "dd09db523d1582839b2de71a9a5e8b12",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        677.5
+                    ],
+                    [
+                        163.0,
+                        682.8
+                    ],
+                    [
+                        1581.8,
+                        682.8
+                    ],
+                    [
+                        1581.8,
+                        677.5
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "8f1bb5f226d788b3e90b8f80020bffd2",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        714.8
+                    ],
+                    [
+                        163.0,
+                        720.2
+                    ],
+                    [
+                        1581.8,
+                        720.2
+                    ],
+                    [
+                        1581.8,
+                        714.8
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "764d462609915647d3759b1d83f274c5",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        752.2
+                    ],
+                    [
+                        163.0,
+                        757.5
+                    ],
+                    [
+                        1581.8,
+                        757.5
+                    ],
+                    [
+                        1581.8,
+                        752.2
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "4a56f843b424a3fa37380213b09caa70",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        789.5
+                    ],
+                    [
+                        163.0,
+                        794.8
+                    ],
+                    [
+                        1581.8,
+                        794.8
+                    ],
+                    [
+                        1581.8,
+                        789.5
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "4ab86a74a79c6de7444538a082b6bb1a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        826.8
+                    ],
+                    [
+                        163.0,
+                        832.2
+                    ],
+                    [
+                        1052.3,
+                        832.2
+                    ],
+                    [
+                        1052.3,
+                        826.8
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "871c8a1cf2b1e6c6d00c0b1ba1ee40c6",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        1438.5,
+                        827.5
+                    ],
+                    [
+                        1438.5,
+                        831.5
+                    ],
+                    [
+                        1581.3,
+                        831.5
+                    ],
+                    [
+                        1581.3,
+                        827.5
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "6a23a5778b61a46218258943739d73ae",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        838.6
+                    ],
+                    [
+                        173.0,
+                        859.4
+                    ],
+                    [
+                        299.3,
+                        859.4
+                    ],
+                    [
+                        299.3,
+                        838.6
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Total assets",
+        "type": "Title"
+    },
+    {
+        "element_id": "0caa2844f3a44f1eb9cf1ec9c5b47a2a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        881.9
+                    ],
+                    [
+                        173.0,
+                        902.7
+                    ],
+                    [
+                        275.0,
+                        902.7
+                    ],
+                    [
+                        275.0,
+                        881.9
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Liabilities",
+        "type": "Title"
+    },
+    {
+        "element_id": "0e820672ba8ab9c9a6794b5a5d6d3f77",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        906.2
+                    ],
+                    [
+                        163.0,
+                        911.5
+                    ],
+                    [
+                        1581.8,
+                        911.5
+                    ],
+                    [
+                        1581.8,
+                        906.2
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "f9b633213fd5d561ca3cf1c1a87b05fb",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        943.7
+                    ],
+                    [
+                        163.0,
+                        949.0
+                    ],
+                    [
+                        1581.8,
+                        949.0
+                    ],
+                    [
+                        1581.8,
+                        943.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "522c433f09c8953d1f32c0fdc2de5784",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        981.0
+                    ],
+                    [
+                        163.0,
+                        986.3
+                    ],
+                    [
+                        1581.8,
+                        986.3
+                    ],
+                    [
+                        1581.8,
+                        981.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "5ed918dcb33852f4f4594fc7d0f24f67",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1018.3
+                    ],
+                    [
+                        163.0,
+                        1023.7
+                    ],
+                    [
+                        1581.8,
+                        1023.7
+                    ],
+                    [
+                        1581.8,
+                        1018.3
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "771cbe1b8698a307a53dcb7aa6d9adae",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1055.7
+                    ],
+                    [
+                        163.0,
+                        1061.0
+                    ],
+                    [
+                        1581.8,
+                        1061.0
+                    ],
+                    [
+                        1581.8,
+                        1055.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "abd2d4f5b0f381be46e69dbee1350f68",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1093.0
+                    ],
+                    [
+                        163.0,
+                        1098.3
+                    ],
+                    [
+                        1052.3,
+                        1098.3
+                    ],
+                    [
+                        1052.3,
+                        1093.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "05d62f9687aafdf4e682faf86157d1f5",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        1438.5,
+                        1093.7
+                    ],
+                    [
+                        1438.5,
+                        1097.7
+                    ],
+                    [
+                        1581.3,
+                        1097.7
+                    ],
+                    [
+                        1581.3,
+                        1093.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "64bc16b4cf986ed144be6d53e5ac952b",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        1104.7
+                    ],
+                    [
+                        173.0,
+                        1125.6
+                    ],
+                    [
+                        323.5,
+                        1125.6
+                    ],
+                    [
+                        323.5,
+                        1104.7
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Total liabilities",
+        "type": "Title"
+    },
+    {
+        "element_id": "1e06119c828c6c4389f59b56ea395d34",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        1142.1
+                    ],
+                    [
+                        173.0,
+                        1162.9
+                    ],
+                    [
+                        590.9,
+                        1162.9
+                    ],
+                    [
+                        590.9,
+                        1142.1
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Reserves of the General Resources Account",
+        "type": "Title"
+    },
+    {
+        "element_id": "7dd7d1fd11bc18b1e374549b576d1f29",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1167.8
+                    ],
+                    [
+                        163.0,
+                        1173.2
+                    ],
+                    [
+                        1581.8,
+                        1173.2
+                    ],
+                    [
+                        1581.8,
+                        1167.8
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "26fab233fef39936e212028c23d5e453",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        1179.6
+                    ],
+                    [
+                        173.0,
+                        1200.4
+                    ],
+                    [
+                        594.5,
+                        1200.4
+                    ],
+                    [
+                        594.5,
+                        1179.6
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Retained earnings of the Investment Account",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "d557775a955ec1af6de2e52f473d8419",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1205.2
+                    ],
+                    [
+                        163.0,
+                        1210.5
+                    ],
+                    [
+                        1581.8,
+                        1210.5
+                    ],
+                    [
+                        1581.8,
+                        1205.2
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "f86bcd3d03727122b197d75c4e73720a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        173.0,
+                        1216.9
+                    ],
+                    [
+                        173.0,
+                        1237.7
+                    ],
+                    [
+                        625.6,
+                        1237.7
+                    ],
+                    [
+                        625.6,
+                        1216.9
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Resources of the Special Disbursement Account",
+        "type": "Title"
+    },
+    {
+        "element_id": "7365c6ae9bf82f3638fd89674a017674",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        163.0,
+                        1242.5
+                    ],
+                    [
+                        163.0,
+                        1247.8
+                    ],
+                    [
+                        1052.3,
+                        1247.8
+                    ],
+                    [
+                        1052.3,
+                        1242.5
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "6b982880d0aa2a409eebd8bdad4c5ee7",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        1438.5,
+                        1243.2
+                    ],
+                    [
+                        1438.5,
+                        1247.2
+                    ],
+                    [
+                        1581.3,
+                        1247.2
+                    ],
+                    [
+                        1581.3,
+                        1243.2
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "",
+        "type": "Image"
+    },
+    {
+        "element_id": "a61b273b6924ef539ab19372ec8f9d29",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        165.0,
+                        1300.0
+                    ],
+                    [
+                        165.0,
+                        1339.8
+                    ],
+                    [
+                        1071.4,
+                        1339.8
+                    ],
+                    [
+                        1071.4,
+                        1300.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "The accompanying notes are an integral part of these financial statements. These financial statements were signed by the Managing Director and the Director of Finance on June 24, 2022.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "34420b5b7fa4d3125118bc071d5762e3",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        172.1,
+                        1607.0
+                    ],
+                    [
+                        172.1,
+                        1658.9
+                    ],
+                    [
+                        415.9,
+                        1658.9
+                    ],
+                    [
+                        415.9,
+                        1607.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "detection_class_prob": 0.66378,
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Kristalina Georgieva /s/ Managing Director",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "73c1f3e3b4e289ab4fac59e1c7efb58d",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        992.5,
+                        1607.0
+                    ],
+                    [
+                        992.5,
+                        1659.1
+                    ],
+                    [
+                        1294.8,
+                        1659.1
+                    ],
+                    [
+                        1294.8,
+                        1607.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "detection_class_prob": 0.72551,
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "Bernard Lauwers /s/ Director, Finance Department",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "545721361a36a5a11ede506e3d442ccc",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2250,
+                "layout_width": 1750,
+                "points": [
+                    [
+                        1572.7,
+                        2149.0
+                    ],
+                    [
+                        1572.7,
+                        2171.2
+                    ],
+                    [
+                        1591.2,
+                        2171.2
+                    ],
+                    [
+                        1591.2,
+                        2149.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "/Users/yaoyou/Downloads/mini-holistic-all/src",
+            "filename": "2022-financial-statements-p11.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2024-01-11T09:49:09",
+            "page_number": 1
+        },
+        "text": "7",
+        "type": "UncategorizedText"
+    }
+]

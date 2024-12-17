@@ -4,22 +4,31 @@ import json
 import os
 import pathlib
 from typing import Any
+from unittest.mock import Mock
 
 import pytest
 import requests
 from unstructured_client.general import General
 from unstructured_client.models import shared
+from unstructured_client.models.operations import PartitionRequest
 from unstructured_client.models.shared import PartitionParameters
+from unstructured_client.utils import retries
 
 from unstructured.documents.elements import ElementType, NarrativeText
-from unstructured.partition.api import partition_multiple_via_api, partition_via_api
+from unstructured.partition.api import (
+    DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC,
+    DEFAULT_RETRIES_MAX_INTERVAL_SEC,
+    get_retries_config,
+    partition_multiple_via_api,
+    partition_via_api,
+)
 
 from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-# NOTE(crag): point to freemium API for now
-API_URL = "https://api.unstructured.io/general/v0/general"
+# NOTE(yao): point to paid API for now
+API_URL = "https://api.unstructuredapp.io/general/v0/general"
 
 is_in_ci = os.getenv("CI", "").lower() not in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
@@ -55,7 +64,7 @@ def test_partition_via_api_with_file_correctly_calls_sdk(
 
     # Update the fixture content to match the format passed to partition_via_api
     modified_expected_call = expected_call_[:]
-    modified_expected_call[1].files.content = f
+    modified_expected_call[1].partition_parameters.files.content = f
 
     partition_mock_.assert_called_once_with(*modified_expected_call)
     assert isinstance(partition_mock_.call_args_list[0].args[0], General)
@@ -76,7 +85,7 @@ def test_partition_via_api_warns_with_file_and_filename_and_calls_sdk(
 
     # Update the fixture content to match the format passed to partition_via_api
     modified_expected_call = expected_call_[:]
-    modified_expected_call[1].files.content = f
+    modified_expected_call[1].partition_parameters.files.content = f
 
     partition_mock_.assert_called_once_with(*modified_expected_call)
     assert "WARNING" in caplog.text
@@ -179,11 +188,127 @@ def test_partition_via_api_image_block_extraction():
         assert isinstance(image_data, bytes)
 
 
+@pytest.mark.skipif(not is_in_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+def test_partition_via_api_retries_config():
+    elements = partition_via_api(
+        filename=example_doc_path("pdf/embedded-images-tables.pdf"),
+        strategy="fast",
+        api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url=API_URL,
+        retries_initial_interval=5,
+        retries_max_interval=15,
+        retries_max_elapsed_time=100,
+        retries_connection_errors=True,
+        retries_exponent=1.5,
+    )
+
+    assert len(elements) > 0
+
+
 # Note(austin) - This test is way too noisy against the hosted api
 # def test_partition_via_api_invalid_request_data_kwargs():
 #     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 #     with pytest.raises(SDKError):
 #         partition_via_api(filename=filename, strategy="not_a_strategy")
+
+
+def test_retries_config_with_parameters_set():
+    sdk = Mock()
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=1.75,
+        retries_initial_interval=20,
+        retries_max_elapsed_time=1000,
+        retries_max_interval=100,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.75
+    assert retries_config.backoff.initial_interval == 20
+    assert retries_config.backoff.max_elapsed_time == 1000
+    assert retries_config.backoff.max_interval == 100
+
+
+def test_retries_config_none_parameters_return_empty_config():
+    sdk = Mock()
+    retries_config = get_retries_config(
+        retries_connection_errors=None,
+        retries_exponent=None,
+        retries_initial_interval=None,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config is None
+
+
+def test_retry_config_with_empty_sdk_retry_config_returns_default():
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = None
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=1.88,
+        retries_initial_interval=3000,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.88
+    assert retries_config.backoff.initial_interval == 3000
+    assert retries_config.backoff.max_elapsed_time == DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
+    assert retries_config.backoff.max_interval == DEFAULT_RETRIES_MAX_INTERVAL_SEC
+
+
+def test_retries_config_with_no_parameters_set():
+    retry_config = retries.RetryConfig(
+        "backoff", retries.BackoffStrategy(3000, 720000, 1.88, 1800000), True
+    )
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = retry_config
+    retries_config = get_retries_config(
+        retries_connection_errors=True,
+        retries_exponent=None,
+        retries_initial_interval=None,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.88
+    assert retries_config.backoff.initial_interval == 3000
+    assert retries_config.backoff.max_elapsed_time == 1800000
+    assert retries_config.backoff.max_interval == 720000
+
+
+def test_retries_config_cascade():
+    # notice max_interval is set to 0 which is incorrect - so the DEFAULT_RETRIES_MAX_INTERVAL_SEC
+    # should be used
+    retry_config = retries.RetryConfig(
+        "backoff", retries.BackoffStrategy(3000, 0, 1.88, None), True
+    )
+    sdk = Mock()
+    sdk.sdk_configuration.retry_config = retry_config
+    retries_config = get_retries_config(
+        retries_connection_errors=False,
+        retries_exponent=1.75,
+        retries_initial_interval=20,
+        retries_max_elapsed_time=None,
+        retries_max_interval=None,
+        sdk=sdk,
+    )
+
+    assert not retries_config.retry_connection_errors
+    assert retries_config.backoff.exponent == 1.75
+    assert retries_config.backoff.initial_interval == 20
+    assert retries_config.backoff.max_elapsed_time == DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC
+    assert retries_config.backoff.max_interval == DEFAULT_RETRIES_MAX_INTERVAL_SEC
 
 
 def test_partition_multiple_via_api_with_single_filename(request: FixtureRequest):
@@ -487,36 +612,39 @@ def expected_call_():
         file_bytes = f.read()
     return [
         ANY,
-        PartitionParameters(
-            files=shared.Files(
-                content=file_bytes,
-                file_name=example_doc_path("eml/fake-email.eml"),
-            ),
-            chunking_strategy=None,
-            combine_under_n_chars=None,
-            coordinates=False,
-            encoding=None,
-            extract_image_block_types=None,
-            gz_uncompressed_content_type=None,
-            hi_res_model_name=None,
-            include_orig_elements=None,
-            include_page_breaks=False,
-            languages=None,
-            max_characters=None,
-            multipage_sections=True,
-            new_after_n_chars=None,
-            ocr_languages=None,
-            output_format=shared.OutputFormat.APPLICATION_JSON,
-            overlap=0,
-            overlap_all=False,
-            pdf_infer_table_structure=True,
-            similarity_threshold=None,
-            skip_infer_table_types=None,
-            split_pdf_concurrency_level=5,
-            split_pdf_page=True,
-            starting_page_number=None,
-            strategy=shared.Strategy.AUTO,
-            unique_element_ids=False,
-            xml_keep_tags=False,
+        PartitionRequest(
+            partition_parameters=PartitionParameters(
+                files=shared.Files(
+                    content=file_bytes,
+                    file_name=example_doc_path("eml/fake-email.eml"),
+                ),
+                chunking_strategy=None,
+                combine_under_n_chars=None,
+                coordinates=False,
+                encoding=None,
+                extract_image_block_types=None,
+                gz_uncompressed_content_type=None,
+                hi_res_model_name=None,
+                include_orig_elements=None,
+                include_page_breaks=False,
+                languages=None,
+                max_characters=None,
+                multipage_sections=True,
+                new_after_n_chars=None,
+                ocr_languages=None,
+                output_format=shared.OutputFormat.APPLICATION_JSON,
+                overlap=0,
+                overlap_all=False,
+                pdf_infer_table_structure=True,
+                similarity_threshold=None,
+                skip_infer_table_types=None,
+                split_pdf_concurrency_level=5,
+                split_pdf_page=True,
+                starting_page_number=None,
+                strategy=shared.Strategy.HI_RES,
+                unique_element_ids=False,
+                xml_keep_tags=False,
+            )
         ),
+        None,  # retries kwarg
     ]

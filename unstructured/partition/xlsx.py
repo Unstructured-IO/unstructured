@@ -9,11 +9,11 @@ from typing import IO, Any, Iterator, Optional
 import networkx as nx
 import numpy as np
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
+from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -22,12 +22,9 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
-    process_metadata,
 )
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_possible_narrative_text,
@@ -41,21 +38,15 @@ _CellCoordinate: TypeAlias = "tuple[int, int]"
 DETECTION_ORIGIN: str = "xlsx"
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.XLSX)
+@apply_metadata(FileType.XLSX)
 @add_chunking_strategy
 def partition_xlsx(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
-    include_metadata: bool = True,
-    infer_table_structure: bool = True,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    include_header: bool = False,
     find_subtable: bool = True,
-    date_from_file_object: bool = False,
+    include_header: bool = False,
+    infer_table_structure: bool = True,
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -67,41 +58,25 @@ def partition_xlsx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the output.
+    find_subtable
+        Detect "subtables" on each worksheet and partition each of those as a separate `Table`
+        element. When `False`, each worksheet is partitioned as a single `Table` element. A
+        subtable is a contiguous block of cells with more than two cells in each row.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
         I.e., rows and cells are preserved.
         Whether True or False, the "text" field is always present in any Table element
         and is the text content of the table (no structure).
-    languages
-        User defined value for metadata.languages if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    metadata_last_modified
-        The day of the last modification
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     opts = _XlsxPartitionerOptions(
-        date_from_file_object=date_from_file_object,
-        detect_language_per_element=detect_language_per_element,
-        file=file,
         file_path=filename,
+        file=file,
         find_subtable=find_subtable,
         include_header=include_header,
-        include_metadata=include_metadata,
         infer_table_structure=infer_table_structure,
-        languages=languages,
-        metadata_file_path=metadata_filename,
-        metadata_last_modified=metadata_last_modified,
     )
 
     elements: list[Element] = []
@@ -109,28 +84,21 @@ def partition_xlsx(
         opts.sheets.items(), start=starting_page_number
     ):
         if not opts.find_subtable:
-            html_text = (
+            html_table = HtmlTable.from_html_text(
                 sheet.to_html(index=False, header=opts.include_header, na_rep="")
-                if opts.infer_table_structure
-                else None
             )
-            # XXX: `html_text` can be `None`. What happens on this call in that case?
-            text = soupparser_fromstring(html_text).text_content()
 
-            if opts.include_metadata:
-                metadata = ElementMetadata(
-                    text_as_html=html_text,
-                    page_name=sheet_name,
-                    page_number=page_number,
-                    filename=opts.metadata_file_path,
-                    last_modified=opts.last_modified,
-                )
-                metadata.detection_origin = DETECTION_ORIGIN
-            else:
-                metadata = ElementMetadata()
+            metadata = ElementMetadata(
+                text_as_html=html_table.html if infer_table_structure else None,
+                page_name=sheet_name,
+                page_number=page_number,
+                filename=opts.metadata_file_path,
+                last_modified=opts.last_modified,
+            )
+            metadata.detection_origin = DETECTION_ORIGIN
 
-            table = Table(text=text, metadata=metadata)
-            elements.append(table)
+            elements.append(Table(text=html_table.text, metadata=metadata))
+
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
@@ -144,14 +112,13 @@ def partition_xlsx(
                 # -- emit core-table (if it exists) as a `Table` element --
                 core_table = subtable_parser.core_table
                 if core_table is not None:
-                    html_text = core_table.to_html(
-                        index=False, header=opts.include_header, na_rep=""
+                    html_table = HtmlTable.from_html_text(
+                        core_table.to_html(index=False, header=opts.include_header, na_rep="")
                     )
-                    text = soupparser_fromstring(html_text).text_content()
-                    element = Table(text=text)
+                    element = Table(text=html_table.text)
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     element.metadata.text_as_html = (
-                        html_text if opts.infer_table_structure else None
+                        html_table.html if opts.infer_table_structure else None
                     )
                     elements.append(element)
 
@@ -163,13 +130,6 @@ def partition_xlsx(
                     element.metadata = _get_metadata(sheet_name, page_number, opts)
                     elements.append(element)
 
-    elements = list(
-        apply_lang_metadata(
-            elements=elements,
-            languages=opts.languages,
-            detect_language_per_element=opts.detect_language_per_element,
-        ),
-    )
     return elements
 
 
@@ -179,34 +139,17 @@ class _XlsxPartitionerOptions:
     def __init__(
         self,
         *,
-        date_from_file_object: bool,
-        detect_language_per_element: bool,
-        file: Optional[IO[bytes]],
         file_path: Optional[str],
+        file: Optional[IO[bytes]],
         find_subtable: bool,
         include_header: bool,
-        include_metadata: bool,
         infer_table_structure: bool,
-        languages: Optional[list[str]],
-        metadata_file_path: Optional[str],
-        metadata_last_modified: Optional[str],
     ):
-        self._date_from_file_object = date_from_file_object
-        self._detect_language_per_element = detect_language_per_element
-        self._file = file
         self._file_path = file_path
+        self._file = file
         self._find_subtable = find_subtable
         self._include_header = include_header
-        self._include_metadata = include_metadata
         self._infer_table_structure = infer_table_structure
-        self._languages = languages
-        self._metadata_file_path = metadata_file_path
-        self._metadata_last_modified = metadata_last_modified
-
-    @lazyproperty
-    def detect_language_per_element(self) -> bool:
-        """When True, detect language on element-by-element basis instead of document level."""
-        return self._detect_language_per_element
 
     @lazyproperty
     def find_subtable(self) -> bool:
@@ -227,47 +170,19 @@ class _XlsxPartitionerOptions:
         return self._include_header
 
     @lazyproperty
-    def include_metadata(self) -> bool:
-        """True when partitioner should apply metadata to emitted elements."""
-        return self._include_metadata
-
-    @lazyproperty
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata."""
         return self._infer_table_structure
 
     @lazyproperty
-    def languages(self) -> Optional[list[str]]:
-        """User-specified language(s) of this document.
-
-        When `None`, language is detected using naive Bayesian filter via `langdetect`. Multiple
-        language codes indicate text could be in any of those languages.
-        """
-        return self._languages
-
-    @lazyproperty
     def last_modified(self) -> Optional[str]:
         """The best last-modified date available, None if no sources are available."""
-        # -- value explicitly specified by caller takes precedence --
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        if self._file_path:
-            return get_last_modified_date(self._file_path)
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
-
-        return None
+        return get_last_modified_date(self._file_path) if self._file_path else None
 
     @lazyproperty
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
-        return self._metadata_file_path or self._file_path
+        return self._file_path
 
     @lazyproperty
     def sheets(self) -> dict[str, pd.DataFrame]:
@@ -526,14 +441,9 @@ def _create_element(text: str) -> Element:
 def _get_metadata(
     sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
 ) -> ElementMetadata:
-    """Returns metadata depending on `include_metadata` flag"""
-    return (
-        ElementMetadata(
-            page_name=sheet_name,
-            page_number=page_number,
-            filename=opts.metadata_file_path,
-            last_modified=opts.last_modified,
-        )
-        if opts.include_metadata
-        else ElementMetadata()
+    return ElementMetadata(
+        page_name=sheet_name,
+        page_number=page_number,
+        filename=opts.metadata_file_path,
+        last_modified=opts.last_modified,
     )

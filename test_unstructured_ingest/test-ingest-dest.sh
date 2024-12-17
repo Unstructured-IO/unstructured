@@ -65,6 +65,7 @@ tests_to_ignore=(
   'dropbox.sh'
   'sharepoint.sh'
   'databricks-volumes.sh'
+  'vectara.sh'
 )
 
 for test in "${all_tests[@]}"; do

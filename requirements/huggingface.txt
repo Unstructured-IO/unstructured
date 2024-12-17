@@ -8,7 +8,7 @@ certifi==2024.8.30
     # via
     #   -c ./base.txt
     #   requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -c ./base.txt
     #   requests
@@ -16,20 +16,20 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   sacremoses
-filelock==3.16.0
+filelock==3.16.1
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.9.0
+fsspec==2024.10.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.24.6
+huggingface-hub==0.26.1
     # via
     #   tokenizers
     #   transformers
-idna==3.8
+idna==3.10
     # via
     #   -c ./base.txt
     #   requests
@@ -43,7 +43,7 @@ langdetect==1.0.9
     # via
     #   -c ./base.txt
     #   -r ./huggingface.in
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via jinja2
 mpmath==1.3.0
     # via sympy
@@ -62,7 +62,7 @@ pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   transformers
-regex==2024.7.24
+regex==2024.9.11
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -82,13 +82,13 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   langdetect
-sympy==1.13.2
+sympy==1.13.1
     # via torch
 tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.4.1
+torch==2.5.0
     # via -r ./huggingface.in
 tqdm==4.66.5
     # via

@@ -1,0 +1,122 @@
+[
+    {
+        "element_id": "3a6b156a81764e17be128264241f8136",
+        "metadata": {
+            "category_depth": 0,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "897a8a47377c4ad6aab839a929879537",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"1\" id=\"3a6b156a81764e17be128264241f8136\" />"
+        },
+        "text": "",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "45b3d0053468484ba1c7b53998115412",
+        "metadata": {
+            "category_depth": 1,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "text_as_html": "<header class=\"Header\" id=\"45b3d0053468484ba1c7b53998115412\" />"
+        },
+        "text": "",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "c95473e8a3704fc2b418697f9fddb27b",
+        "metadata": {
+            "category_depth": 2,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "45b3d0053468484ba1c7b53998115412",
+            "text_as_html": "<h1 class=\"Title\" id=\"c95473e8a3704fc2b418697f9fddb27b\">Header </h1>"
+        },
+        "text": "Header",
+        "type": "Title"
+    },
+    {
+        "element_id": "379cbfdc16d44bd6a59e6cfabe6438d5",
+        "metadata": {
+            "category_depth": 2,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "45b3d0053468484ba1c7b53998115412",
+            "text_as_html": "<time class=\"CalendarDate\" id=\"379cbfdc16d44bd6a59e6cfabe6438d5\">Date: October 30, 2023 </time>"
+        },
+        "text": "Date: October 30, 2023",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "637c2f6935fb4353a5f73025ce04619d",
+        "metadata": {
+            "category_depth": 1,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "text_as_html": "<form class=\"Form\" id=\"637c2f6935fb4353a5f73025ce04619d\"> <label class=\"FormField\" for=\"company-name\" id=\"50027cccbe1948c9853ce0de37b635c2\">From field name </label><input class=\"FormFieldValue\" id=\"0032242af75c4b37984ea7fea9aac74c\" value=\"Example value\" /></form>"
+        },
+        "text": "From field name Example value",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "592422373ed741b68a077e2003f8ed81",
+        "metadata": {
+            "category_depth": 1,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "text_as_html": "<section class=\"Section\" id=\"592422373ed741b68a077e2003f8ed81\" />"
+        },
+        "text": "",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "dc3792d4422e444f90876b56d0cfb20d",
+        "metadata": {
+            "category_depth": 2,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "592422373ed741b68a077e2003f8ed81",
+            "text_as_html": "<table class=\"Table\" id=\"dc3792d4422e444f90876b56d0cfb20d\"> <thead> <tr> <th>Description</th><th>Row header</th></tr></thead><tbody> <tr> <td>Value description</td><td>50 $ (1.32 %)</td></tr></tbody></table>"
+        },
+        "text": "Description Row header Value description 50 $ (1.32 %)",
+        "type": "Table"
+    },
+    {
+        "element_id": "1032242af75c4b37984ea7fea9aac74c",
+        "metadata": {
+            "category_depth": 1,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "text_as_html": "<section class=\"Section\" id=\"1032242af75c4b37984ea7fea9aac74c\" />"
+        },
+        "text": "",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "2a4e2c4a689f4f9a8c180b6b521e45c3",
+        "metadata": {
+            "category_depth": 2,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "1032242af75c4b37984ea7fea9aac74c",
+            "text_as_html": "<h2 class=\"Subtitle\" id=\"2a4e2c4a689f4f9a8c180b6b521e45c3\">2. Subtitle </h2>"
+        },
+        "text": "2. Subtitle",
+        "type": "Title"
+    },
+    {
+        "element_id": "5591f7a4df01447e82515ce45f686fbe",
+        "metadata": {
+            "category_depth": 2,
+            "filename": "example.pdf",
+            "page_number": 1,
+            "parent_id": "1032242af75c4b37984ea7fea9aac74c",
+            "text_as_html": "<p class=\"NarrativeText\" id=\"5591f7a4df01447e82515ce45f686fbe\">Paragraph text </p>"
+        },
+        "text": "Paragraph text",
+        "type": "NarrativeText"
+    }
+]

@@ -106,26 +106,139 @@ def test_calculate_edit_distance():
 
 
 @pytest.mark.parametrize(
-    ("filename", "expected_score", "expected_distance"),
+    ("filename", "standardize_whitespaces", "expected_score", "expected_distance"),
     [
-        ("fake-text.txt", 0.78, 38),
+        ("fake-text.txt", False, 0.78, 38),
+        ("fake-text.txt", True, 0.92, 12),
     ],
 )
-def test_calculate_edit_distance_with_filename(filename, expected_score, expected_distance):
+def test_calculate_edit_distance_with_filename(
+    filename, standardize_whitespaces, expected_score, expected_distance
+):
     with open("example-docs/fake-text.txt") as f:
         source_cct = f.read()
 
     elements = partition(filename=f"example-docs/{filename}")
     output_cct = "\n".join([str(el) for el in elements])
 
-    score = text_extraction.calculate_edit_distance(output_cct, source_cct, return_as="score")
-    distance = text_extraction.calculate_edit_distance(output_cct, source_cct, return_as="distance")
+    score = text_extraction.calculate_edit_distance(
+        output_cct, source_cct, return_as="score", standardize_whitespaces=standardize_whitespaces
+    )
+    distance = text_extraction.calculate_edit_distance(
+        output_cct,
+        source_cct,
+        return_as="distance",
+        standardize_whitespaces=standardize_whitespaces,
+    )
 
     assert score >= 0
     assert score <= 1.0
     assert distance >= 0
     assert round(score, 2) == expected_score
     assert distance == expected_distance
+
+
+@pytest.mark.parametrize(
+    ("text1", "text2"),
+    [
+        (
+            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow",
+            "The dog loved the cat, but the cat loved the cow",
+        ),
+        (
+            "Hello    my\tname\tis H a r p e r, \nwhat's your\vname?",
+            "Hello my name is H a r p e r, what's your name?",
+        ),
+        (
+            "I have a\t\n\tdog and a\tcat,\fI love my\n\n\n\ndog.",
+            "I have a dog and a cat, I love my dog.",
+        ),
+        (
+            """
+            Name    Age City           Occupation
+            Alice   30  New York       Engineer
+            Bob     25  Los Angeles    Designer
+            Charlie 35  Chicago        Teacher
+            David   40  San Francisco  Developer
+            """,
+            """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """,
+        ),
+        (
+            """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """,
+            "Name\tAge\tCity\tOccupation\n\n \nAlice\t30\tNew York\tEngineer\nBob\t25\tLos Angeles\tDesigner\nCharlie\t35\tChicago\tTeacher\nDavid\t40\tSan Francisco\tDeveloper",  # noqa: E501
+        ),
+    ],
+)
+def test_calculate_edit_distance_with_various_whitespace_1(text1, text2):
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="score", standardize_whitespaces=True
+        )
+        == 1.0
+    )
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="distance", standardize_whitespaces=True
+        )
+        == 0
+    )
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="score", standardize_whitespaces=False
+        )
+        < 1.0
+    )
+    assert (
+        text_extraction.calculate_edit_distance(
+            text1, text2, return_as="distance", standardize_whitespaces=False
+        )
+        > 0
+    )
+
+
+def test_calculate_edit_distance_with_various_whitespace_2():
+    source_cct_tabs = """
+            Name\tAge\tCity\tOccupation
+            Alice\t30\tNew York\tEngineer
+            Bob\t25\tLos Angeles\tDesigner
+            Charlie\t35\tChicago\tTeacher
+            David\t40\tSan Francisco\tDeveloper
+            """
+    source_cct_with_borders = """
+
+            | Name    | Age | City         | Occupation     |
+            |---------|-----|--------------|----------------|
+            | Alice   | 30  | New York     | Engineer       |
+            | Bob     | 25  | Los Angeles  | Designer       |
+            | Charlie | 35  | Chicago      | Teacher        |
+            | David   | 40  | San Francisco| Developer      |
+
+            """
+    assert text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="score", standardize_whitespaces=True
+    ) > text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="score", standardize_whitespaces=False
+    )
+    assert text_extraction.calculate_edit_distance(
+        source_cct_tabs, source_cct_with_borders, return_as="distance", standardize_whitespaces=True
+    ) < text_extraction.calculate_edit_distance(
+        source_cct_tabs,
+        source_cct_with_borders,
+        return_as="distance",
+        standardize_whitespaces=False,
+    )
 
 
 @pytest.mark.parametrize(
@@ -185,6 +298,114 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
 )
 def test_bag_of_words(text, expected):
     assert text_extraction.bag_of_words(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "The  dog\rloved the cat, but\t\n    the cat\tloved the\n cow\n\n",
+            "The dog loved the cat, but the cat loved the cow",
+        ),
+        (
+            "\n\nHello    my\tname\tis H a r p e r, \nwhat's your\vname?",
+            "Hello my name is H a r p e r, what's your name?",
+        ),
+        (
+            "I have a\t\n\tdog and a\tcat,\fI love my\n\n\n\ndog.",
+            "I have a dog and a cat, I love my dog.",
+        ),
+        (
+            """L     is for the way you look at me
+            O    is for the only one I see
+            V    is very, very extraordinary
+            E    is even more than anyone that you adore can""",
+            "L is for the way you look at me O is for the only one I see V is very, very extraordinary E is even more than anyone that you adore can",  # noqa: E501
+        ),
+        (
+            """
+            | Name    | Age | City         | Occupation     |
+            |---------|-----|--------------|----------------|
+            | Alice   | 30  | New York     | Engineer       |
+            | Bob     | 25  | Los Angeles  | Designer       |
+            | Charlie | 35  | Chicago      | Teacher        |
+            | David   | 40  | San Francisco| Developer      |
+            """,
+            "| Name | Age | City | Occupation | |---------|-----|--------------|----------------| | Alice | 30 | New York | Engineer | | Bob | 25 | Los Angeles | Designer | | Charlie | 35 | Chicago | Teacher | | David | 40 | San Francisco| Developer |",  # noqa: E501
+        ),
+    ],
+)
+def test_prepare_string(text, expected):
+    assert text_extraction.prepare_str(text, standardize_whitespaces=True) == expected
+    assert text_extraction.prepare_str(text) == text
+
+
+@pytest.mark.parametrize(
+    ("input_text", "expected_output"),
+    [
+        # Mixed quotes in longer sentences
+        (
+            "She said \"Hello\" and then whispered 'Goodbye' before leaving.",
+            "She said \"Hello\" and then whispered 'Goodbye' before leaving.",
+        ),
+        # Double low-9 quotes with complex content
+        (
+            "„To be, or not to be, that is the question\" - Shakespeare's famous quote.",
+            '"To be, or not to be, that is the question" - Shakespeare\'s famous quote.',
+        ),
+        # Angle quotes with nested quotes
+        (
+            '«When he said "life is beautiful," I believed him» wrote Maria.',
+            '"When he said "life is beautiful," I believed him" wrote Maria.',
+        ),
+        # Heavy ornament quotes in dialogue
+        (
+            "❝Do you remember when we first met?❞ she asked with a smile.",
+            '"Do you remember when we first met?" she asked with a smile.',
+        ),
+        # Double prime quotes with punctuation
+        (
+            "〝The meeting starts at 10:00, don't be late!〟 announced the manager.",
+            '"The meeting starts at 10:00, don\'t be late!" announced the manager.',
+        ),
+        # Corner brackets with nested quotes
+        (
+            '「He told me "This is important" yesterday」, she explained.',
+            "'He told me \"This is important\" yesterday', she explained.",
+        ),
+        # White corner brackets with multiple sentences
+        (
+            "『The sun was setting. The birds were singing. It was peaceful.』",
+            "'The sun was setting. The birds were singing. It was peaceful.'",
+        ),
+        # Vertical corner brackets with numbers and special characters
+        ("﹂Meeting #123 @ 15:00 - Don't forget!﹁", "'Meeting #123 @ 15:00 - Don't forget!'"),
+        # Complex mixed quote types
+        (
+            '「Hello」, ❝World❞, "Test", \'Example\', „Quote", «Final»',
+            '\'Hello\', "World", "Test", \'Example\', "Quote", "Final"',
+        ),
+        # Quotes with multiple apostrophes
+        ("It's John's book, isn't it?", "It's John's book, isn't it?"),
+        # Single angle quotes with nested content
+        (
+            '‹Testing the system\'s capability for "quoted" text›',
+            "'Testing the system's capability for \"quoted\" text'",
+        ),
+        # Heavy single ornament quotes with multiple sentences
+        (
+            "❛First sentence. Second sentence. Third sentence.❜",
+            "'First sentence. Second sentence. Third sentence.'",
+        ),
+        # Mix of various quote types in complex text
+        (
+            '「Chapter 1」: ❝The Beginning❞ - „A new story" begins «today».',
+            '\'Chapter 1\': "The Beginning" - "A new story" begins "today".',
+        ),
+    ],
+)
+def test_standardize_quotes(input_text, expected_output):
+    assert text_extraction.standardize_quotes(input_text) == expected_output
 
 
 @pytest.mark.parametrize(

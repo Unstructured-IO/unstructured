@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import Optional
 from unittest.mock import patch
 
 import numpy as np
@@ -226,12 +227,13 @@ def google_vision_client(google_vision_text_annotation):
     Response = namedtuple("Response", "full_text_annotation")
 
     class FakeGoogleVisionClient:
-        def document_text_detection(self, image):
+        def document_text_detection(self, image, image_context):
             return Response(full_text_annotation=google_vision_text_annotation)
 
     class OCRAgentFakeGoogleVision(OCRAgentGoogleVision):
-        def __init__(self):
+        def __init__(self, language: Optional[str] = None):
             self.client = FakeGoogleVisionClient()
+            self.language = language
 
     return OCRAgentFakeGoogleVision()
 
@@ -249,7 +251,7 @@ def test_get_layout_from_image_google_vision(google_vision_client):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = google_vision_client
-    regions = ocr_agent.get_layout_from_image(image, ocr_languages="eng")
+    regions = ocr_agent.get_layout_from_image(image)
     assert len(regions) == 1
     assert regions[0].text == "Hello World!"
     assert regions[0].source == Source.OCR_GOOGLEVISION
@@ -263,7 +265,7 @@ def test_get_layout_elements_from_image_google_vision(google_vision_client):
     image = Image.new("RGB", (100, 100))
 
     ocr_agent = google_vision_client
-    layout_elements = ocr_agent.get_layout_elements_from_image(image, ocr_languages="eng")
+    layout_elements = ocr_agent.get_layout_elements_from_image(image)
     assert len(layout_elements) == 1
 
 

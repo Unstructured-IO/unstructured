@@ -14,15 +14,14 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
-    function_mock,
     patch,
     property_mock,
 )
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
-    _OleFileDifferentiator,
+    _OleFileDetector,
     _TextFileDifferentiator,
-    _ZipFileDifferentiator,
+    _ZipFileDetector,
     detect_filetype,
     is_json_processable,
 )
@@ -31,7 +30,41 @@ from unstructured.file_utils.model import FileType
 is_in_docker = os.path.exists("/.dockerenv")
 
 # ================================================================================================
-# STRATEGY #1 - CONTENT-TYPE ASSERTED IN CALL
+# STRATEGY #1 - DIRECT DETECTION OF CFB/ZIP-BASED BINARY FILE TYPES (8 TYPES)
+# ================================================================================================
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [
+        (FileType.DOC, "simple.doc"),
+        (FileType.DOCX, "simple.docx"),
+        (FileType.EPUB, "winter-sports.epub"),
+        (FileType.ODT, "simple.odt"),
+        (FileType.PPT, "fake-power-point.ppt"),
+        (FileType.PPTX, "fake-power-point.pptx"),
+        (FileType.XLS, "tests-example.xls"),
+        (FileType.XLSX, "stanley-cups.xlsx"),
+    ],
+)
+def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direct_inspection(
+    file_name: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- disable other strategies; no content-type, guessed MIME-type or extension --
+    ctx_mime_type_.return_value = None
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file)
+
+    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
+    # -- fall back to MIME-type guessing for any of these test cases.
+    ctx_mime_type_.assert_not_called()
+    assert file_type == expected_value
+
+
+# ================================================================================================
+# STRATEGY #2 - CONTENT-TYPE ASSERTED IN CALL
 # ================================================================================================
 
 
@@ -40,41 +73,21 @@ is_in_docker = os.path.exists("/.dockerenv")
     [
         (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
         (FileType.CSV, "stanley-cups.csv", "text/csv"),
-        (FileType.DOC, "simple.doc", "application/msword"),
-        (
-            FileType.DOCX,
-            "simple.docx",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ),
         (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
-        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
-        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
         (FileType.PNG, "img/DA-1p.png", "image/png"),
-        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
-        (
-            FileType.PPTX,
-            "fake-power-point.pptx",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ),
         (FileType.RST, "README.rst", "text/x-rst"),
         (FileType.RTF, "fake-doc.rtf", "text/rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff", "image/tiff"),
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
-        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
-        (
-            FileType.XLSX,
-            "stanley-cups.xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
     ],
@@ -82,13 +95,13 @@ is_in_docker = os.path.exists("/.dockerenv")
 def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_content_type(
     file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
 ):
-    # -- disable strategy #2, leaving only asserted content-type and extension --
+    # -- disable mime-guessing leaving only asserted content-type and extension --
     ctx_mime_type_.return_value = None
 
     file_type = detect_filetype(example_doc_path(file_name), content_type=content_type)
 
-    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
-    # -- fall back to strategy 2 for any of these test cases.
+    # -- Content-type strategy should not need to refer to guessed MIME-type and detection should
+    # not -- fall back to strategy 2 for any of these test cases.
     ctx_mime_type_.assert_not_called()
     assert file_type == expected_value
 
@@ -98,41 +111,21 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
     [
         (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
         (FileType.CSV, "stanley-cups.csv", "text/csv"),
-        (FileType.DOC, "simple.doc", "application/msword"),
-        (
-            FileType.DOCX,
-            "simple.docx",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ),
         (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
-        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
-        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
         (FileType.PNG, "img/DA-1p.png", "image/png"),
-        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
-        (
-            FileType.PPTX,
-            "fake-power-point.pptx",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ),
         (FileType.RST, "README.rst", "text/x-rst"),
         (FileType.RTF, "fake-doc.rtf", "text/rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff", "image/tiff"),
         (FileType.TSV, "stanley-cups.tsv", "text/tsv"),
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
-        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
-        (
-            FileType.XLSX,
-            "stanley-cups.xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
     ],
@@ -140,93 +133,22 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
 def test_it_detects_correct_file_type_from_file_no_name_with_correct_asserted_content_type(
     file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
 ):
-    # -- disable strategy #2 (guessed mime-type) --
+    # -- disable mime-guessing --
     ctx_mime_type_.return_value = None
-    # -- disable strategy #3 (filename extension) by supplying no source of file name --
+    # -- disable filename extension mapping by supplying no source of file name --
     with open(example_doc_path(file_name), "rb") as f:
         file = io.BytesIO(f.read())
 
     file_type = detect_filetype(file=file, content_type=content_type)
 
-    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
-    # -- fall-back to strategy 2 for any of these test cases.
-    ctx_mime_type_.assert_not_called()
-    assert file_type is expected_value
-
-
-@pytest.mark.parametrize(
-    ("expected_value", "file_name"),
-    [
-        (FileType.DOCX, "simple.docx"),
-        (FileType.PPTX, "fake-power-point.pptx"),
-        (FileType.XLSX, "stanley-cups.xlsx"),
-    ],
-)
-@pytest.mark.parametrize(
-    "content_type",
-    [
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ],
-)
-def test_it_detects_correct_file_type_from_file_no_name_with_swapped_ms_office_content_type(
-    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
-):
-    # -- disable strategies 2 & 3, content-type strategy should get this on its own --
-    ctx_mime_type_.return_value = None
-    with open(example_doc_path(file_name), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    file_type = detect_filetype(file=file, content_type=content_type)
-
-    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
-    # -- fall-back to strategy 2 for any of these test cases.
-    ctx_mime_type_.assert_not_called()
-    assert file_type is expected_value
-
-
-@pytest.mark.parametrize(
-    ("expected_value", "file_name"),
-    [
-        (FileType.DOC, "simple.doc"),
-        (FileType.PPT, "fake-power-point.ppt"),
-        (FileType.XLS, "tests-example.xls"),
-    ],
-)
-@pytest.mark.parametrize(
-    "content_type",
-    [
-        "application/msword",
-        "application/vnd.ms-outlook",
-        "application/vnd.ms-powerpoint",
-        "application/vnd.ms-excel",
-        "anything/else",
-    ],
-)
-def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_content_type(
-    file_name: str, content_type: str, expected_value: FileType, ctx_mime_type_: Mock
-):
-    """Fixes wrong XLS asserted as DOC, PPT, etc.
-
-    Asserted content-type can be anything except `None` and differentiator will fix it if the file
-    is DOC, PPT, or XLS type.
-    """
-    # -- disable strategies 2 & 3, content-type strategy should get this on its own --
-    ctx_mime_type_.return_value = None
-    with open(example_doc_path(file_name), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    file_type = detect_filetype(file=file, content_type=content_type)
-
-    # -- Strategy 1 should not need to refer to guessed MIME-type and detection should not
-    # -- fall-back to strategy 2 for any of these test cases.
+    # -- Content-type strategy should not need to refer to guessed MIME-type and detection should
+    # -- not fall-back to strategy 2 for any of these test cases.
     ctx_mime_type_.assert_not_called()
     assert file_type is expected_value
 
 
 # ================================================================================================
-# STRATEGY #2 - GUESS MIME-TYPE WITH LIBMAGIC
+# STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
 # ================================================================================================
 
 
@@ -237,31 +159,16 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_
         (FileType.CSV, "stanley-cups.csv", "text/csv"),
         (FileType.CSV, "stanley-cups.csv", "application/csv"),
         (FileType.CSV, "stanley-cups.csv", "application/x-csv"),
-        (FileType.DOC, "simple.doc", "application/msword"),
-        (
-            FileType.DOCX,
-            "simple.docx",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ),
         (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
-        (FileType.EPUB, "winter-sports.epub", "application/epub"),
-        (FileType.EPUB, "winter-sports.epub", "application/epub+zip"),
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.MD, "README.md", "text/x-markdown"),
-        (FileType.ODT, "simple.odt", "application/vnd.oasis.opendocument.text"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
         (FileType.PNG, "img/DA-1p.png", "image/png"),
-        (FileType.PPT, "fake-power-point.ppt", "application/vnd.ms-powerpoint"),
-        (
-            FileType.PPTX,
-            "fake-power-point.pptx",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ),
         (FileType.RST, "README.rst", "text/x-rst"),
         (FileType.RTF, "fake-doc.rtf", "text/rtf"),
         (FileType.RTF, "fake-doc.rtf", "application/rtf"),
@@ -270,18 +177,11 @@ def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_asserted_
         (FileType.TXT, "norwich-city.txt", "text/plain"),
         (FileType.TXT, "simple.yaml", "text/yaml"),
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
-        (FileType.XLS, "tests-example.xls", "application/vnd.ms-excel"),
-        (
-            FileType.XLSX,
-            "stanley-cups.xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.XML, "factbook.xml", "text/xml"),
-        (FileType.ZIP, "simple.zip", "application/zip"),
     ],
 )
-def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_recognized_mime_type(
+def test_it_detects_correct_file_type_by_guessed_MIME_when_libmagic_guesses_recognized_mime_type(
     file_name: str, mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
 ):
     # -- libmagic guesses a MIME-type mapped to a `FileType` --
@@ -290,7 +190,7 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
     with open(example_doc_path(file_name), "rb") as f:
         file = io.BytesIO(f.read())
 
-    # -- disable strategy #1 by not asserting a content_type in the call --
+    # -- disable content-type strategy by not asserting a content_type in the call --
     file_type = detect_filetype(file=file)
 
     # -- ctx.mime_type may be referenced multiple times, but at least once --
@@ -303,30 +203,22 @@ def test_it_detects_correct_file_type_using_strategy_2_when_libmagic_guesses_rec
     [
         (FileType.BMP, "img/bmp_24.bmp"),
         (FileType.CSV, "stanley-cups.csv"),
-        (FileType.DOC, "simple.doc"),
-        (FileType.DOCX, "simple.docx"),
         (FileType.EML, "eml/fake-email.eml"),
-        (FileType.EPUB, "winter-sports.epub"),
         (FileType.HEIC, "img/DA-1p.heic"),
         (FileType.HTML, "ideas-page.html"),
         (FileType.JPG, "img/example.jpg"),
         (FileType.JSON, "spring-weather.html.json"),
-        (FileType.ODT, "simple.odt"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
         (FileType.PNG, "img/DA-1p.png"),
-        (FileType.PPT, "fake-power-point.ppt"),
-        (FileType.PPTX, "fake-power-point.pptx"),
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
-        (FileType.XLS, "tests-example.xls"),
-        (FileType.XLSX, "stanley-cups.xlsx"),
         (FileType.XML, "factbook.xml"),
         (FileType.ZIP, "simple.zip"),
     ],
 )
-def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_type_for_itself(
+def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mime_type_for_itself(
     file_name: str, expected_value: FileType
 ):
     """Does not work for all types, in particular:
@@ -339,8 +231,8 @@ def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_
     - ORG is identified as TXT
     - RST is identified as TXT
     """
-    # -- disable strategy #1 by not asserting a content_type in the call --
-    # -- disable strategy #3 (extension) by passing file-like object with no `.name` attribute --
+    # -- disable content-type strategy by not asserting a content_type in the call --
+    # -- disable extension-mapping strategy by passing file-like object with no `.name` attribute --
     with open(example_doc_path(file_name), "rb") as f:
         file = io.BytesIO(f.read())
 
@@ -350,79 +242,15 @@ def test_it_detects_most_file_types_using_strategy_2_when_libmagic_guesses_mime_
 @pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
-        (FileType.DOC, "simple.doc"),
-        (FileType.PPT, "fake-power-point.ppt"),
-        (FileType.XLS, "tests-example.xls"),
-    ],
-)
-@pytest.mark.parametrize(
-    "guessed_mime_type",
-    [
-        "application/msword",
-        "application/vnd.ms-excel",
-        "application/vnd.ms-outlook",
-        "application/vnd.ms-powerpoint",
-        "application/x-ole-storage",
-        "anything/else",
-    ],
-)
-def test_it_detects_correct_file_type_from_OLE_file_no_name_with_wrong_guessed_mime_type(
-    file_name: str, guessed_mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
-):
-    """Fixes XLS wrongly-guessed as DOC, PPT, "application/x-ole-storage" etc.
-
-    It's better than that actually, the OLE differentiator will get the right file-type for any DOC,
-    PPT, XLS, or MSG file, regardless of guessed MIME-type.
-    """
-    ctx_mime_type_.return_value = guessed_mime_type
-    # -- disable strategy 3 by not providing a file-name source --
-    with open(example_doc_path(file_name), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    # -- disable strategy 1 by not asserting a content-type --
-    file_type = detect_filetype(file=file)
-
-    ctx_mime_type_.assert_called_with()
-    assert file_type is expected_value
-
-
-@pytest.mark.parametrize(
-    ("filename", "mime_type", "expected"),
-    [
-        ("fake.doc", "application/vnd.ms-excel", FileType.DOC),
-        ("fake-power-point.ppt", "application/vnd.ms-excel", FileType.PPT),
-        ("tests-example.xls", "application/msword", FileType.XLS),
-        ("fake-email.msg", "application/vnd.ms-excel", FileType.MSG),
-    ],
-)
-def test_ole_file_structure_trusted_over_mime_type_guess(filename, mime_type, expected):
-    def _guess_mime(*args, **kwargs):
-        return mime_type
-
-    with patch("filetype.guess_mime", _guess_mime):
-        detect_filetype(example_doc_path(filename)) == expected
-
-
-@pytest.mark.parametrize(
-    ("expected_value", "file_name"),
-    [
         # -- `filetype` lib recognizes all these binary file-types --
         (FileType.BMP, "img/bmp_24.bmp"),
-        (FileType.DOC, "simple.doc"),
-        (FileType.DOCX, "simple.docx"),
-        (FileType.EPUB, "winter-sports.epub"),
         (FileType.HEIC, "img/DA-1p.heic"),
         (FileType.JPG, "img/example.jpg"),
-        (FileType.ODT, "simple.odt"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
         (FileType.PNG, "img/DA-1p.png"),
-        (FileType.PPT, "fake-power-point.ppt"),
-        (FileType.PPTX, "fake-power-point.pptx"),
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.WAV, "CantinaBand3.wav"),
-        (FileType.XLS, "tests-example.xls"),
-        (FileType.XLSX, "stanley-cups.xlsx"),
         (FileType.ZIP, "simple.zip"),
         # -- but it doesn't recognize textual file-types at all --
         (FileType.UNK, "stanley-cups.csv"),
@@ -435,11 +263,9 @@ def test_ole_file_structure_trusted_over_mime_type_guess(filename, mime_type, ex
         (FileType.UNK, "stanley-cups.tsv"),
         (FileType.UNK, "norwich-city.txt"),
         (FileType.UNK, "factbook.xml"),
-        # -- and it doesn't recognize MSG files --
-        (FileType.UNK, "fake-email.msg"),
     ],
 )
-def test_strategy_2_can_detect_only_binary_file_types_when_libmagic_is_unavailable(
+def test_strategy_mime_guessing_can_detect_only_binary_file_types_when_libmagic_is_unavailable(
     file_name: str, expected_value: FileType, LIBMAGIC_AVAILABLE_False: bool
 ):
     """File-type is detected using `filetype` library when libmagic is not available.
@@ -447,7 +273,7 @@ def test_strategy_2_can_detect_only_binary_file_types_when_libmagic_is_unavailab
     `filetype.guess_mime()` does a good job on binary file types (PDF, images, legacy MS-Office),
     but doesn't even try to guess textual file-types.
     """
-    # -- disable strategy #3 (extension) by passing file-like object with no `.name` attribute --
+    # -- disable detection by extension by passing file-like object with no `.name` attribute --
     with open(example_doc_path(file_name), "rb") as f:
         file = io.BytesIO(f.read())
     # -- simulate libmagic is not available --
@@ -470,7 +296,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
 
 
 # ================================================================================================
-# STRATEGY #3 - MAP FILENAME EXTENSION TO FILETYPE
+# STRATEGY #4 - MAP FILENAME EXTENSION TO FILETYPE
 # ================================================================================================
 
 
@@ -479,35 +305,25 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
     [
         (FileType.BMP, "img/bmp_24.bmp"),
         (FileType.CSV, "stanley-cups.csv"),
-        (FileType.DOC, "simple.doc"),
-        (FileType.DOCX, "simple.docx"),
         (FileType.EML, "eml/fake-email.eml"),
-        (FileType.EPUB, "winter-sports.epub"),
         (FileType.HEIC, "img/DA-1p.heic"),
         (FileType.HTML, "example-10k-1p.html"),
         (FileType.JPG, "img/example.jpg"),
         (FileType.JSON, "spring-weather.html.json"),
         (FileType.MD, "README.md"),
-        (FileType.MSG, "fake-email.msg"),
-        (FileType.ODT, "simple.odt"),
         (FileType.ORG, "README.org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf"),
         (FileType.PNG, "img/DA-1p.png"),
-        (FileType.PPT, "fake-power-point.ppt"),
-        (FileType.PPTX, "fake-power-point.pptx"),
         (FileType.RST, "README.rst"),
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TSV, "stanley-cups.tsv"),
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
-        (FileType.XLS, "tests-example.xls"),
-        (FileType.XLSX, "stanley-cups.xlsx"),
         (FileType.XML, "factbook.xml"),
-        (FileType.ZIP, "simple.zip"),
     ],
 )
-def test_it_detects_correct_file_type_from_strategy_3_when_extension_maps_to_file_type(
+def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_type(
     file_name: str, expected_value: FileType, ctx_mime_type_: Mock
 ):
     # -- disable strategy #2 by making libmagic always guess `None` --
@@ -525,10 +341,8 @@ def test_it_detects_correct_file_type_from_strategy_3_when_extension_maps_to_fil
 @pytest.mark.parametrize(
     ("expected_value", "file_name", "mime_type"),
     [
-        (FileType.BMP, "img/bmp_24.bmp", "application/zip"),
-        (FileType.DOC, "simple.doc", None),
-        (FileType.EPUB, "winter-sports.epub", "application/x-ole-storage"),
-        (FileType.MSG, "fake-email.msg", "application/octet-stream"),
+        (FileType.BMP, "img/bmp_24.bmp", "application/octet-stream"),
+        (FileType.HEIC, "img/DA-1p.heic", "application/octet-stream"),
     ],
 )
 def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
@@ -547,6 +361,12 @@ def test_it_falls_back_to_extension_strategy_when_prior_strategies_fail(
 # ================================================================================================
 
 
+@pytest.mark.parametrize("mime_type", [FileType.XLS.mime_type, FileType.XLSX.mime_type])
+def test_it_ignores_asserted_XLS_content_type_when_file_is_CSV(mime_type: str):
+    file_path = example_doc_path("stanley-cups.csv")
+    assert detect_filetype(file_path, content_type=mime_type) == FileType.CSV
+
+
 @pytest.mark.parametrize("mime_type", ["application/xml", "text/xml"])
 @pytest.mark.parametrize("extension", [".html", ".htm"])
 def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extension(
@@ -561,39 +381,6 @@ def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extensi
 
     ctx_mime_type_.assert_called_with()
     assert file_type is FileType.HTML
-
-
-@pytest.mark.parametrize(
-    "mime_type",
-    [
-        "application/octet-stream",
-        "application/zip",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ],
-)
-@pytest.mark.parametrize(
-    ("expected_value", "file_name"),
-    [
-        (FileType.DOCX, "simple.docx"),
-        (FileType.PPTX, "fake-power-point.pptx"),
-        (FileType.XLSX, "stanley-cups.xlsx"),
-        (FileType.ZIP, "simple.zip"),
-    ],
-)
-def test_it_differentiates_files_when_libmagic_guesses_octet_stream_zip_or_modern_ms_office(
-    mime_type: str, file_name: str, expected_value: FileType, ctx_mime_type_: Mock
-):
-    ctx_mime_type_.return_value = mime_type
-    # -- disable extension-based strategy #3 --
-    with open(example_doc_path(file_name), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    file_type = detect_filetype(file=file)
-
-    ctx_mime_type_.assert_called_with()
-    assert file_type is expected_value
 
 
 @pytest.mark.parametrize(
@@ -1000,29 +787,8 @@ class Describe_FileTypeDetectionContext:
         return property_mock(request, _FileTypeDetectionContext, "mime_type")
 
 
-class Describe_OleFileDifferentiator:
-    """Unit-test suite for `unstructured.file_utils.filetype._OleFileDifferentiator`."""
-
-    # -- .applies() ---------------------------------------------
-
-    def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
-        """The constructor determines whether this differentiator is applicable.
-
-        It returns an instance only when differentiating a CFBF file-type is required, which it
-        judges by inspecting the initial bytes of the file for the CFBF magic-bytes.
-        """
-        ctx = _FileTypeDetectionContext(example_doc_path("simple.doc"))
-
-        differentiator = _OleFileDifferentiator.applies(ctx, "foo/bar")
-
-        assert differentiator is not None
-        assert isinstance(differentiator, _OleFileDifferentiator)
-
-    def and_it_returns_None_when_ole_differentiation_is_not_applicable_to_the_mime_type(self):
-        ctx = _FileTypeDetectionContext(example_doc_path("winter-sports.epub"))
-        assert _OleFileDifferentiator.applies(ctx, "application/epub") is None
-
-    # -- .file_type ---------------------------------------------
+class Describe_OleFileDetector:
+    """Unit-test suite for `unstructured.file_utils.filetype._OleFileDetector`."""
 
     @pytest.mark.parametrize(
         ("file_name", "expected_value"),
@@ -1034,59 +800,15 @@ class Describe_OleFileDifferentiator:
             ("README.org", None),
         ],
     )
-    def it_distinguishes_the_file_type_of_applicable_OLE_files(
+    def it_distinguishes_the_file_type_of_applicable_CFB_files(
         self, file_name: str, expected_value: FileType | None
     ):
         # -- no file-name available, just to make sure we're not relying on an extension --
         with open(example_doc_path(file_name), "rb") as f:
             file = io.BytesIO(f.read())
         ctx = _FileTypeDetectionContext(file=file)
-        differentiator = _OleFileDifferentiator(ctx)
 
-        assert differentiator.file_type is expected_value
-
-    @pytest.mark.parametrize(
-        ("file_name", "expected_value"),
-        [
-            ("simple.doc", FileType.DOC),
-            ("fake-power-point.ppt", FileType.PPT),
-            ("tests-example.xls", FileType.XLS),
-            ("fake-email.msg", FileType.MSG),
-        ],
-    )
-    def it_distinguishes_the_file_type_of_applicable_OLE_files_from_storage_content(
-        self, file_name: str, expected_value: FileType | None
-    ):
-        # -- no file-name available, just to make sure we're not relying on an extension --
-        with open(example_doc_path(file_name), "rb") as f:
-            file = io.BytesIO(f.read())
-        ctx = _FileTypeDetectionContext(file=file)
-        differentiator = _OleFileDifferentiator(ctx)
-
-        assert differentiator._check_ole_file_type(ctx) is expected_value
-
-    def but_it_returns_None_to_engage_fallback_when_filetype_cannot_guess_mime(
-        self, guess_mime_: Mock
-    ):
-        guess_mime_.return_value = None
-        # -- no file-name available, just to make sure we're not relying on an extension --
-        with open(example_doc_path("fake-email.msg"), "rb") as f:
-            file = io.BytesIO(f.read())
-        ctx = _FileTypeDetectionContext(file=file)
-        differentiator = _OleFileDifferentiator(ctx)
-        # -- force method to return None to trigger the mime type being guessed
-        differentiator._check_ole_file_type = lambda ctx: None
-
-        file_type = differentiator.file_type
-
-        guess_mime_.assert_called_once_with(file)
-        assert file_type is None
-
-    # -- fixtures --------------------------------------------------------------------------------
-
-    @pytest.fixture
-    def guess_mime_(self, request: FixtureRequest):
-        return function_mock(request, "unstructured.file_utils.filetype.ft.guess_mime")
+        assert _OleFileDetector.file_type(ctx) is expected_value
 
 
 class Describe_TextFileDifferentiator:
@@ -1164,33 +886,15 @@ class Describe_TextFileDifferentiator:
         assert differentiator._is_json is expected_value
 
 
-class Describe_ZipFileDifferentiator:
-    """Unit-test suite for `unstructured.file_utils.filetype._ZipFileDifferentiator`."""
-
-    # -- .applies() ---------------------------------------------
-
-    def it_provides_a_qualifying_alternate_constructor_which_constructs_when_applicable(self):
-        """The constructor determines whether this differentiator is applicable.
-
-        It returns an instance only when differentiating a zip file-type is required, which it can
-        judge from the mime-type provided by the context (`ctx`).
-        """
-        ctx = _FileTypeDetectionContext(example_doc_path("simple.docx"))
-
-        differentiator = _ZipFileDifferentiator.applies(ctx, "application/zip")
-
-        assert isinstance(differentiator, _ZipFileDifferentiator)
-
-    def and_it_returns_None_when_zip_differentiation_does_not_apply_to_the_detection_context(self):
-        ctx = _FileTypeDetectionContext(example_doc_path("norwich-city.txt"))
-        assert _ZipFileDifferentiator.applies(ctx, "application/epub") is None
-
-    # -- .file_type ---------------------------------------------
+class Describe_ZipFileDetector:
+    """Unit-test suite for `unstructured.file_utils.filetype._ZipFileDetector`."""
 
     @pytest.mark.parametrize(
         ("file_name", "expected_value"),
         [
             ("simple.docx", FileType.DOCX),
+            ("winter-sports.epub", FileType.EPUB),
+            ("simple.odt", FileType.ODT),
             ("picture.pptx", FileType.PPTX),
             ("vodafone.xlsx", FileType.XLSX),
             ("simple.zip", FileType.ZIP),
@@ -1201,6 +905,4 @@ class Describe_ZipFileDifferentiator:
         self, file_name: str, expected_value: FileType | None
     ):
         ctx = _FileTypeDetectionContext(example_doc_path(file_name))
-        differentiator = _ZipFileDifferentiator(ctx)
-
-        assert differentiator.file_type is expected_value
+        assert _ZipFileDetector.file_type(ctx) is expected_value

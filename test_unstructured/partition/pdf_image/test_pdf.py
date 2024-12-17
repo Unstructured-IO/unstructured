@@ -5,6 +5,7 @@ import logging
 import math
 import os
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -12,7 +13,10 @@ from unittest import mock
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
+from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -31,9 +35,12 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
-from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
+from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_DONT,
+    SORT_MODE_XY_CUT,
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
 )
@@ -94,12 +101,51 @@ class MockPageLayout(layout.PageLayout):
         ]
 
 
+class MockSinglePageLayout(layout.PageLayout):
+    def __init__(self, number: int, image: Image.Image):
+        self.number = number
+        self.image = image
+
+    @property
+    def elements(self):
+        return [
+            LayoutElement(
+                type="Headline",
+                text="Charlie Brown and the Great Pumpkin",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Subheadline",
+                text="The Beginning",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Text",
+                text="This time Charlie Brown had it really tricky...",
+                bbox=None,
+            ),
+            LayoutElement(
+                type="Title",
+                text="Another book title in the same page",
+                bbox=None,
+            ),
+        ]
+
+
 class MockDocumentLayout(layout.DocumentLayout):
     @property
     def pages(self):
         return [
             MockPageLayout(number=0, image=Image.new("1", (1, 1))),
             MockPageLayout(number=1, image=Image.new("1", (1, 1))),
+        ]
+
+
+class MockSinglePageDocumentLayout(layout.DocumentLayout):
+    @property
+    def pages(self):
+        return [
+            MockSinglePageLayout(number=1, image=Image.new("1", (1, 1))),
         ]
 
 
@@ -159,7 +205,7 @@ def test_partition_pdf_local_raises_with_no_filename():
     [
         (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
         (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
-        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer"}),
+        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer", "ocr_tesseract"}),
         (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
@@ -178,6 +224,12 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
         # check that the pdf has multiple different page numbers
         assert {element.metadata.page_number for element in result} == expected_page_numbers
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            print(
+                [
+                    (element.metadata.detection_origin, element.category, element.text)
+                    for element in result
+                ]
+            )
             assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
@@ -193,12 +245,14 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
             _test(result)
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            result = pdf.partition_pdf(
-                file=spooled_temp_file, strategy=strategy, starting_page_number=starting_page_number
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                result = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=strategy,
+                    starting_page_number=starting_page_number,
+                )
             _test(result)
 
 
@@ -217,7 +271,7 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
-@pytest.mark.parametrize("model_name", ["checkbox", "yolox", "chipper"])
+@pytest.mark.parametrize("model_name", ["checkbox", "yolox"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
     model_name,
@@ -552,7 +606,7 @@ def test_partition_pdf_with_copy_protection():
     filename = example_doc_path("pdf/copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 2
+    idx = 22
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
     assert elements[idx].metadata.detection_class_prob is not None
@@ -660,40 +714,6 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
         assert element.metadata.filename == "test"
 
 
-@pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize(
-    "strategy",
-    [
-        PartitionStrategy.AUTO,
-        PartitionStrategy.HI_RES,
-        PartitionStrategy.FAST,
-        PartitionStrategy.OCR_ONLY,
-    ],
-)
-def test_partition_pdf_exclude_metadata(
-    file_mode,
-    strategy,
-    filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
-):
-    if file_mode == "filename":
-        elements = pdf.partition_pdf(
-            filename=filename,
-            strategy=strategy,
-            include_metadata=False,
-        )
-    else:
-        with open(filename, "rb") as f:
-            elements = pdf.partition_pdf(
-                file=f,
-                url=None,
-                strategy=strategy,
-                include_metadata=False,
-            )
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
-
-
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
     "strategy",
@@ -704,60 +724,51 @@ def test_partition_pdf_exclude_metadata(
         PartitionStrategy.OCR_ONLY,
     ],
 )
-@pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
-@pytest.mark.parametrize("date_from_file_object", [True, False])
+@pytest.mark.parametrize("metadata_last_modified", [None, "2020-07-05T09:24:28"])
 def test_partition_pdf_metadata_date(
-    mocker,
-    file_mode,
-    strategy,
-    last_modification_date,
-    date_from_file_object,
-    filename=example_doc_path("pdf/copy-protected.pdf"),
+    mocker: MockFixture,
+    file_mode: str,
+    strategy: str,
+    metadata_last_modified: str | None,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = (
-        last_modification_date if last_modification_date else mocked_last_modification_date
+    filename = example_doc_path("pdf/copy-protected.pdf")
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    expected_last_modified = (
+        metadata_last_modified if metadata_last_modified else filesystem_last_modified
     )
-    if not date_from_file_object and not last_modification_date and file_mode != "filename":
-        expected_last_modification_date = None
+    if not metadata_last_modified and file_mode != "filename":
+        expected_last_modified = None
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-    mocker.patch(
-        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.pdf.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     if file_mode == "filename":
         elements = pdf.partition_pdf(
             filename=filename,
             strategy=strategy,
-            metadata_last_modified=last_modification_date,
-            date_from_file_object=date_from_file_object,
+            metadata_last_modified=metadata_last_modified,
         )
     elif file_mode == "rb":
         with open(filename, "rb") as f:
             elements = pdf.partition_pdf(
                 file=f,
                 strategy=strategy,
-                metadata_last_modified=last_modification_date,
-                date_from_file_object=date_from_file_object,
+                metadata_last_modified=metadata_last_modified,
             )
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            elements = pdf.partition_pdf(
-                file=spooled_temp_file,
-                strategy=strategy,
-                metadata_last_modified=last_modification_date,
-                date_from_file_object=date_from_file_object,
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                elements = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=strategy,
+                    metadata_last_modified=metadata_last_modified,
+                )
 
-    assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
+    assert {el.metadata.last_modified for el in elements} == {expected_last_modified}
 
 
 @pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.HI_RES])
@@ -823,11 +834,14 @@ def test_combine_numbered_list(filename):
 
 
 @pytest.mark.parametrize(
-    "filename",
-    [example_doc_path("pdf/layout-parser-paper-fast.pdf")],
+    ("filename", "strategy"),
+    [
+        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "fast"),
+        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "hi_res"),
+    ],
 )
-def test_partition_pdf_hyperlinks(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
+def test_partition_pdf_hyperlinks(filename, strategy):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
     links = [
         {
             "text": "8",
@@ -849,11 +863,14 @@ def test_partition_pdf_hyperlinks(filename):
 
 
 @pytest.mark.parametrize(
-    "filename",
-    [example_doc_path("pdf/embedded-link.pdf")],
+    ("filename", "strategy"),
+    [
+        (example_doc_path("pdf/embedded-link.pdf"), "fast"),
+        (example_doc_path("pdf/embedded-link.pdf"), "hi_res"),
+    ],
 )
-def test_partition_pdf_hyperlinks_multiple_lines(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
+def test_partition_pdf_hyperlinks_multiple_lines(filename, strategy):
+    elements = pdf.partition_pdf(filename=filename, strategy=strategy)
     assert elements[-1].metadata.links[-1]["text"] == "capturing"
     assert len(elements[-1].metadata.links) == 2
 
@@ -1116,15 +1133,15 @@ def test_partition_pdf_with_ocr_only_strategy(
             )
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            elements = pdf.partition_pdf(
-                file=spooled_temp_file,
-                strategy=PartitionStrategy.OCR_ONLY,
-                languages=["eng"],
-                is_image=is_image,
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                elements = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=PartitionStrategy.OCR_ONLY,
+                    languages=["eng"],
+                    is_image=is_image,
+                )
 
     assert elements[0].metadata.languages == ["eng"]
     # check pages
@@ -1428,3 +1445,75 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
                 pdf_hi_res_max_pages=pdf_hi_res_max_pages,
                 is_image=is_image,
             )
+
+
+def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
+    layout_elem_absent_coordinates = MockSinglePageDocumentLayout()
+    for page in layout_elem_absent_coordinates.pages:
+        for el in page.elements:
+            el.bbox = None
+    elements = pdf.document_to_element_list(layout_elem_absent_coordinates)
+    assert elements[0].metadata.coordinates is None
+
+
+@dataclass
+class MockImage:
+    width = 640
+    height = 480
+    format = "JPG"
+
+
+def test_document_to_element_list_handles_parent():
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    el1, el2 = pdf.document_to_element_list(doc)
+    assert el2.metadata.parent_id == el1.id
+
+
+@pytest.mark.parametrize(
+    ("sort_mode", "call_count"),
+    [(SORT_MODE_DONT, 0), (SORT_MODE_BASIC, 1), (SORT_MODE_XY_CUT, 1)],
+)
+def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_count):
+    block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
+    block2 = LayoutElement.from_coords(
+        1,
+        2,
+        3,
+        4,
+        text="block 2",
+        parent=block1,
+        type="NarrativeText",
+    )
+    page = PageLayout(
+        number=1,
+        image=MockImage(),
+    )
+    page.elements = [block1, block2]
+    doc = DocumentLayout.from_pages([page])
+    with mock.patch.object(pdf, "sort_page_elements") as mock_sort_page_elements:
+        pdf.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
+    assert mock_sort_page_elements.call_count == call_count
+
+
+def test_document_to_element_list_sets_category_depth_titles():
+    layout_with_hierarchies = MockSinglePageDocumentLayout()
+    elements = pdf.document_to_element_list(layout_with_hierarchies)
+    assert elements[0].metadata.category_depth == 1
+    assert elements[1].metadata.category_depth == 2
+    assert elements[2].metadata.category_depth is None
+    assert elements[3].metadata.category_depth == 0

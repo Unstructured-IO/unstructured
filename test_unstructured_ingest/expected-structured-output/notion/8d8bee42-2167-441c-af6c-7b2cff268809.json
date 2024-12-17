@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "element_id": "5bcc7126851f18b3a41c951030def658",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-08-02T20:36:00.000Z",
+        "date_modified": "2023-08-08T19:17:00.000Z"
+      },
+      "emphasized_text_contents": [
+        "Planning notes"
+      ],
+      "emphasized_text_tags": [
+        "b"
+      ],
+      "filetype": "text/html",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Planning notes",
+    "type": "NarrativeText"
+  }
+]

@@ -4,7 +4,7 @@ import os
 import tempfile
 from typing import IO
 
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common.common import exactly_one
 from unstructured.utils import requires_dependencies
 
 

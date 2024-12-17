@@ -17,16 +17,12 @@ from PIL import Image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.common import (
-    convert_to_bytes,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.common import convert_to_bytes, exactly_one
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
@@ -421,21 +417,6 @@ def convert_pdf_to_images(
 
         for image in chunk_images:
             yield image
-
-
-def get_the_last_modification_date_pdf_or_img(
-    file: Optional[bytes | IO[bytes]] = None,
-    filename: Optional[str] = "",
-    date_from_file_object: bool = False,
-) -> str | None:
-    last_modification_date = None
-    if not file and filename:
-        last_modification_date = get_last_modified_date(filename=filename)
-    elif not filename and file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-    return last_modification_date
 
 
 def remove_control_characters(text: str) -> str:

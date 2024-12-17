@@ -1,0 +1,20 @@
+[
+  {
+    "type": "Table",
+    "element_id": "58d819acf213d1eb12b54f806e907722",
+    "text": "_id title reviewid creationdate criticname originalscore reviewstate reviewtext 762c0093-2277-4f3e-ac00-932277af3e0e Blood Mask 1636744 2007-06-02 The Foywonder 1/5 rotten It doesn't matter if a movie costs 300 million or only 300 dollars; good is good and bad is bad, and Bloodmask: The Possession of Nicole Lameroux is just plain bad.",
+    "metadata": {
+      "text_as_html": "<table><tr><td>_id</td><td>title</td><td>reviewid</td><td>creationdate</td><td>criticname</td><td>originalscore</td><td>reviewstate</td><td>reviewtext</td></tr><tr><td>762c0093-2277-4f3e-ac00-932277af3e0e</td><td>Blood Mask</td><td>1636744</td><td>2007-06-02</td><td>The Foywonder</td><td>1/5</td><td>rotten</td><td>It doesn't matter if a movie costs 300 million or only 300 dollars; good is good and bad is bad, and Bloodmask: The Possession of Nicole Lameroux is just plain bad.</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/csv",
+      "data_source": {
+        "record_locator": {
+          "document_id": "762c0093-2277-4f3e-ac00-932277af3e0e"
+        },
+        "filesize_bytes": 341
+      }
+    }
+  }
+]

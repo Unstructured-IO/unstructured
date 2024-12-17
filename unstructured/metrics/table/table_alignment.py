@@ -176,5 +176,5 @@ class TableAlignment:
             "col_index_acc": round(np.mean(col_index_acc), 2),
             "row_index_acc": round(np.mean(row_index_acc), 2),
             "col_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
-            "row_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
+            "row_content_acc": round(np.mean(content_diff_rows) / 100.0, 2),
         }

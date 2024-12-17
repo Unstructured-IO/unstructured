@@ -27,7 +27,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Points,
-    RegexMetadata,
     Text,
     Title,
     assign_and_map_hash_ids,
@@ -233,24 +232,6 @@ def test_element_to_dict():
         "text": "",
         "element_id": "awt32t1",
     }
-
-
-def test_regex_metadata_round_trips_through_JSON():
-    """metadata.regex_metadata should appear at full depth in JSON."""
-    regex_metadata = {
-        "mail-stop": [RegexMetadata(text="MS-107", start=18, end=24)],
-        "version": [
-            RegexMetadata(text="current=v1.7.2", start=7, end=21),
-            RegexMetadata(text="supersedes=v1.7.2", start=22, end=40),
-        ],
-    }
-    metadata = ElementMetadata(regex_metadata=regex_metadata)
-
-    metadata_json = json.dumps(metadata.to_dict())
-    deserialized_metadata = ElementMetadata.from_dict(json.loads(metadata_json))
-    reserialized_metadata_json = json.dumps(deserialized_metadata.to_dict())
-
-    assert reserialized_metadata_json == metadata_json
 
 
 class DescribeElementMetadata:
@@ -681,7 +662,7 @@ class DescribeElementMetadata:
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
-    elements = [
+    elements: list[Element] = [
         parent,
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
@@ -704,9 +685,24 @@ def test_hash_ids_are_unique_for_duplicate_elements():
             ), "Parent ID hasn't changed after recalculation"
 
 
+def test_hash_ids_can_handle_duplicated_element_instances():
+    # GIVEN
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    element = Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id))
+    elements: list[Element] = [parent, element, element]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+    ids = [element.id for element in updated_elements]
+
+    # THEN
+    assert len(ids) == len(set(ids)) + 1, "One element is duplicated so uniques should be one less."
+    assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
+
+
 def test_hash_ids_are_deterministic():
     parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
-    elements = [
+    elements: list[Element] = [
         parent,
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
         Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
@@ -739,7 +735,9 @@ def test_hash_ids_are_deterministic():
         ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
     ],
 )
-def test_id_to_hash_calculates(text, sequence_number, filename, page_number, expected_hash):
+def test_id_to_hash_calculates(
+    text: str, sequence_number: int, filename: str, page_number: int | None, expected_hash: str
+):
     element = Text(
         text=text,
         metadata=ElementMetadata(filename=filename, page_number=page_number),
@@ -754,5 +752,5 @@ def test_formskeysvalues_reads_saves():
     tmp_file = io.StringIO()
     json.dump([element.to_dict() for element in as_read], tmp_file)
     tmp_file.seek(0)
-    as_read_2 = partition_json(file=tmp_file)
+    as_read_2 = partition_json(file=tmp_file)  # type: ignore[arg-type]
     assert as_read == as_read_2

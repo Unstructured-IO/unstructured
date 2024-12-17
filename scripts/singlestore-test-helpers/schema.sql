@@ -37,7 +37,6 @@ CREATE TABLE elements (
     emphasized_text_contents TEXT,
     emphasized_text_tags TEXT,
     text_as_html TEXT,
-    regex_metadata TEXT,
     detection_class_prob DECIMAL,
     is_continuation BOOLEAN,
     orig_elements TEXT,

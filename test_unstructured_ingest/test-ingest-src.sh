@@ -4,6 +4,7 @@ set -u -o pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
+PYTHON=${PYTHON:-python}
 # If the file already exists, reset it
 if [ -f "$SKIPPED_FILES_LOG" ]; then
   rm "$SKIPPED_FILES_LOG"
@@ -43,7 +44,8 @@ all_tests=(
   'elasticsearch.sh'
   'confluence-diff.sh'
   'confluence-large.sh'
-  'airtable-diff.sh'
+  # NOTE(christine): This test is disabled because it is triggering 404 client errors to the API
+  # 'airtable-diff.sh'
   # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
   # 'airtable-large.sh'
   'local-single-file.sh'
@@ -92,11 +94,12 @@ function print_last_run() {
 
 trap print_last_run EXIT
 
-python_version=$(python --version 2>&1)
+python_version=$(${PYTHON} --version 2>&1)
 
 tests_to_ignore=(
   'notion.sh'
   'local-embed-mixedbreadai.sh'
+  'hubspot.sh'
 )
 
 for test in "${all_tests[@]}"; do

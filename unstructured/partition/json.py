@@ -19,11 +19,8 @@ from unstructured.file_utils.filetype import (
     add_metadata_with_filetype,
     is_json_processable,
 )
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.staging.base import elements_from_dicts
 
 
@@ -34,10 +31,7 @@ def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
-    include_metadata: bool = True,
-    metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions serialized Unstructured output into its constituent elements.
@@ -52,27 +46,19 @@ def partition_json(
         The string representation of the .json document.
     metadata_last_modified
         The last modified date for the document.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
 
     exactly_one(filename=filename, file=file, text=text)
 
-    last_modification_date = None
+    last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
     if filename is not None:
-        last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:
             file_text = f.read()
 
     elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-
         file_content = file.read()
         file_text = file_content if isinstance(file_content, str) else file_content.decode()
         file.seek(0)
@@ -92,9 +78,6 @@ def partition_json(
         raise ValueError("Not a valid json")
 
     for element in elements:
-        if include_metadata:
-            element.metadata.last_modified = metadata_last_modified or last_modification_date
-    # NOTE(Nathan): in future PR, try extracting items that look like text
-    #               if file_text is a valid json but not an unstructured json
+        element.metadata.last_modified = metadata_last_modified or last_modified
 
     return elements
