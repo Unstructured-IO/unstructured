@@ -12,6 +12,7 @@ class Source(Enum):
 class OCRMode(Enum):
     INDIVIDUAL_BLOCKS = "individual_blocks"
     FULL_PAGE = "entire_page"
+    NONE = "none"
 
 
 class PartitionStrategy:
