@@ -46,7 +46,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN, DICT_PATTERN
+from unstructured.nlp.patterns import DICT_PATTERN, EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -121,6 +121,7 @@ def is_json_processable(
         ).text_head
 
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+
 
 def is_ndjson_processable(
     filename: Optional[str] = None,

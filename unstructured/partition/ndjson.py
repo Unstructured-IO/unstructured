@@ -9,9 +9,10 @@ a document while only incurring partitioning cost once.
 
 from __future__ import annotations
 
-import ndjson
 import json
 from typing import IO, Any, Optional
+
+import ndjson
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata

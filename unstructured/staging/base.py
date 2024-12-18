@@ -4,11 +4,12 @@ import base64
 import csv
 import io
 import json
-import ndjson
 import zlib
 from copy import deepcopy
 from datetime import datetime
 from typing import Any, Iterable, Optional, Sequence, cast
+
+import ndjson
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -151,6 +152,7 @@ def elements_to_json(
             f.write(json_str)
 
     return json_str
+
 
 def elements_to_ndjson(
     elements: Iterable[Element],

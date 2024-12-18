@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 import pathlib
 import tempfile
-import ndjson
 
 import pytest
 from pytest_mock import MockFixture
@@ -15,7 +14,6 @@ from unstructured.documents.elements import CompositeElement
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
-from unstructured.partition.json import partition_json
 from unstructured.partition.ndjson import partition_ndjson
 from unstructured.partition.text import partition_text
 from unstructured.partition.xml import partition_xml
@@ -36,7 +34,9 @@ is_in_docker = os.path.exists("/.dockerenv")
 
 def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
     chunks = partition_ndjson(
-        example_doc_path("spring-weather.html.ndjson"), chunking_strategy="basic", max_characters=1500
+        example_doc_path("spring-weather.html.ndjson"),
+        chunking_strategy="basic",
+        max_characters=1500,
     )
 
     assert len(chunks) == 9
@@ -231,7 +231,8 @@ def test_partition_ndjson_raises_with_too_many_specified():
 def test_partition_ndjson_from_file_path_gets_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.ndjson.get_last_modified_date", return_value=filesystem_last_modified
+        "unstructured.partition.ndjson.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_ndjson(example_doc_path("spring-weather.html.ndjson"))
@@ -259,11 +260,13 @@ def test_partition_ndjson_from_file_path_prefers_metadata_last_modified(mocker: 
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.ndjson.get_last_modified_date", return_value=filesystem_last_modified
+        "unstructured.partition.ndjson.get_last_modified_date",
+        return_value=filesystem_last_modified,
     )
 
     elements = partition_ndjson(
-        example_doc_path("spring-weather.html.ndjson"), metadata_last_modified=metadata_last_modified
+        example_doc_path("spring-weather.html.ndjson"),
+        metadata_last_modified=metadata_last_modified,
     )
 
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)

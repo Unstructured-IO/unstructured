@@ -11,7 +11,11 @@ import requests
 from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import detect_filetype, is_json_processable, is_ndjson_processable
+from unstructured.file_utils.filetype import (
+    detect_filetype,
+    is_json_processable,
+    is_ndjson_processable,
+)
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import UnsupportedFileFormatError
@@ -253,7 +257,6 @@ def partition(
         partition_ndjson = partitioner_loader.get(file_type)
         elements = partition_ndjson(filename=filename, file=file, **kwargs)
         return augment_metadata(elements)
-
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be
     # -- sure it doesn't contain any elements.
