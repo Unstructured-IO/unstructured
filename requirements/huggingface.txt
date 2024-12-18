@@ -4,7 +4,7 @@
 #
 #    pip-compile ./huggingface.in
 #
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -c ./base.txt
     #   requests
@@ -25,7 +25,7 @@ fsspec==2024.10.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.26.1
+huggingface-hub==0.27.0
     # via
     #   tokenizers
     #   transformers
@@ -53,7 +53,7 @@ numpy==1.26.4
     # via
     #   -c ./base.txt
     #   transformers
-packaging==24.1
+packaging==24.2
     # via
     #   -c ./base.txt
     #   huggingface-hub
@@ -62,7 +62,7 @@ pyyaml==6.0.2
     # via
     #   huggingface-hub
     #   transformers
-regex==2024.9.11
+regex==2024.11.6
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -78,7 +78,7 @@ safetensors==0.4.5
     # via transformers
 sentencepiece==0.2.0
     # via -r ./huggingface.in
-six==1.16.0
+six==1.17.0
     # via
     #   -c ./base.txt
     #   langdetect
@@ -88,9 +88,9 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.5.0
+torch==2.5.1
     # via -r ./huggingface.in
-tqdm==4.66.5
+tqdm==4.67.1
     # via
     #   -c ./base.txt
     #   huggingface-hub
