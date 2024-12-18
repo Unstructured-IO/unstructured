@@ -24,6 +24,7 @@ def ontology_to_unstructured_elements(
     page_number: int = None,
     depth: int = 0,
     filename: str | None = None,
+    add_img_alt_text: bool = True,
 ) -> list[elements.Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
@@ -44,13 +45,14 @@ def ontology_to_unstructured_elements(
         parent_id (str, optional): The ID of the parent element. Defaults to None.
         page_number (int, optional): The page number of the element. Defaults to None.
         depth (int, optional): The depth of the element in the hierarchy. Defaults to 0.
-
+        filename (str, optional): The name of the file the element comes from. Defaults to None.
+        add_img_alt_text (bool): Whether to include the alternative text of images
+                                            in the output. Defaults to True.
     Returns:
         list[Element]: A list of unstructured Element objects.
     """
     elements_to_return = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
-
         if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
 
@@ -77,6 +79,7 @@ def ontology_to_unstructured_elements(
                 page_number=page_number,
                 depth=0 if isinstance(ontology_element, ontology.Document) else depth + 1,
                 filename=filename,
+                add_img_alt_text=add_img_alt_text,
             )
             children += child
 
@@ -85,7 +88,7 @@ def ontology_to_unstructured_elements(
     else:
         element_class = ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE[ontology_element.__class__]
         html_code_of_ontology_element = ontology_element.to_html()
-        element_text = ontology_element.to_text()
+        element_text = ontology_element.to_text(add_img_alt_text=add_img_alt_text)
 
         unstructured_element = element_class(
             text=element_text,
@@ -196,10 +199,7 @@ def is_text_element(ontology_element: ontology.OntologyElement) -> bool:
     if any(isinstance(ontology_element, class_) for class_ in text_classes):
         return True
 
-    if any(ontology_element.elementType == category for category in text_categories):
-        return True
-
-    return False
+    return any(ontology_element.elementType == category for category in text_categories)
 
 
 def is_inline_element(ontology_element: ontology.OntologyElement) -> bool:
@@ -214,10 +214,7 @@ def is_inline_element(ontology_element: ontology.OntologyElement) -> bool:
     if any(isinstance(ontology_element, class_) for class_ in inline_classes):
         return True
 
-    if any(ontology_element.elementType == category for category in inline_categories):
-        return True
-
-    return False
+    return any(ontology_element.elementType == category for category in inline_categories)
 
 
 def unstructured_elements_to_ontology(
@@ -278,7 +275,6 @@ def parse_html_to_ontology(html_code: str) -> ontology.OntologyElement:
     Args:
         html_code (str): The HTML code to be parsed.
             Parsing HTML will start from <div class="Page">.
-
     Returns:
         OntologyElement: The parsed Element object.
 
@@ -324,10 +320,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
         if tag.attrs:
             return False
 
-        if not tag.get_text(strip=True):
-            return True
-
-        return False
+        return bool(not tag.get_text(strip=True))
 
     def remove_empty_tags(soup):
         for tag in soup.find_all():
@@ -352,7 +345,6 @@ def parse_html_to_ontology_element(
     Args:
         soup (Tag): The BeautifulSoup Tag object to be converted.
         recursion_depth (int): Flag to control limit of recursion depth.
-
     Returns:
         OntologyElement: The converted OntologyElement object.
     """
@@ -417,8 +409,9 @@ def extract_tag_and_ontology_class_from_tag(
 
     # Scenario 1: Valid Ontology Element
     if soup.attrs.get("class"):
-        html_tag, element_class = soup.name, HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP.get(
-            (soup.name, soup.attrs["class"][0])
+        html_tag, element_class = (
+            soup.name,
+            HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP.get((soup.name, soup.attrs["class"][0])),
         )
 
     # Scenario 2: HTML tag incorrect, CSS class correct

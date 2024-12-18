@@ -36,6 +36,7 @@ def partition_html(
     skip_headers_and_footers: bool = False,
     detection_origin: Optional[str] = None,
     html_parser_version: Literal["v1", "v2"] = "v1",
+    image_alt_mode: Optional[Literal["to_text"]] = "to_text",
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -65,6 +66,9 @@ def partition_html(
     html_parser_version (Literal['v1', 'v2']):
         The version of the HTML parser to use. The default is 'v1'. For 'v2' the parser will
         use the ontology schema to parse the HTML document.
+
+    image_alt_mode (Literal['to_text']):
+        When set 'to_text', the v2 parser will include the alternative text of images in the output.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
@@ -81,6 +85,7 @@ def partition_html(
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
         html_parser_version=html_parser_version,
+        image_alt_mode=image_alt_mode,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -102,6 +107,7 @@ class HtmlPartitionerOptions:
         skip_headers_and_footers: bool,
         detection_origin: str | None,
         html_parser_version: Literal["v1", "v2"] = "v1",
+        image_alt_mode: Optional[Literal["to_text"]] = "to_text",
     ):
         self._file_path = file_path
         self._file = file
@@ -113,19 +119,12 @@ class HtmlPartitionerOptions:
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
         self._html_parser_version = html_parser_version
+        self._image_alt_mode = image_alt_mode
 
     @lazyproperty
     def detection_origin(self) -> str | None:
         """Trace of initial partitioner to be included in metadata for debugging purposes."""
         return self._detection_origin
-
-    @lazyproperty
-    def encoding(self) -> str | None:
-        """Caller-provided encoding used to store HTML character stream as bytes.
-
-        `None` when no encoding was provided and encoding should be auto-detected.
-        """
-        return self._encoding
 
     @lazyproperty
     def html_text(self) -> str:
@@ -171,6 +170,11 @@ class HtmlPartitionerOptions:
     def html_parser_version(self) -> Literal["v1", "v2"]:
         """When html_parser_version=='v2', HTML elements follow ontology schema."""
         return self._html_parser_version
+
+    @lazyproperty
+    def add_img_alt_text(self) -> bool:
+        """When True, the alternative text of images is included in the output."""
+        return self._image_alt_mode == "to_text"
 
 
 class _HtmlPartitioner:
@@ -239,5 +243,7 @@ class _HtmlPartitioner:
         """Convert an ontology elements represented in HTML to an ontology element."""
         html_text = self._opts.html_text
         ontology = parse_html_to_ontology(html_text)
-        unstructured_elements = ontology_to_unstructured_elements(ontology)
+        unstructured_elements = ontology_to_unstructured_elements(
+            ontology, add_img_alt_text=self._opts.add_img_alt_text
+        )
         return unstructured_elements

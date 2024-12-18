@@ -77,14 +77,15 @@ def test_partition_docx_with_spooled_file(
     `python-docx` will NOT accept a `SpooledTemporaryFile` in Python versions before 3.11 so we need
     to ensure the source file is appropriately converted in this case.
     """
-    with open(mock_document_file_path, "rb") as test_file:
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(test_file.read())
+    with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+        with open(mock_document_file_path, "rb") as test_file:
+            spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
+
         elements = partition_docx(file=spooled_temp_file)
-        assert elements == expected_elements
-        for element in elements:
-            assert element.metadata.filename is None
+
+    assert elements == expected_elements
+    assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
@@ -921,16 +922,16 @@ class DescribeDocxPartitionerOptions:
     def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
         self, opts_args: dict[str, Any]
     ):
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(b"abcdefg")
-        opts_args["file"] = spooled_temp_file
-        opts = DocxPartitionerOptions(**opts_args)
+        with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+            spooled_temp_file.write(b"abcdefg")
+            opts_args["file"] = spooled_temp_file
+            opts = DocxPartitionerOptions(**opts_args)
 
-        docx_file = opts._docx_file
+            docx_file = opts._docx_file
 
-        assert docx_file is not spooled_temp_file
-        assert isinstance(docx_file, io.BytesIO)
-        assert docx_file.getvalue() == b"abcdefg"
+            assert docx_file is not spooled_temp_file
+            assert isinstance(docx_file, io.BytesIO)
+            assert docx_file.getvalue() == b"abcdefg"
 
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
         self, opts_args: dict[str, Any]

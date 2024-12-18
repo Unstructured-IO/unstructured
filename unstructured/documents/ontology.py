@@ -20,7 +20,7 @@ from copy import copy
 from enum import Enum
 from typing import List, Optional
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from pydantic import BaseModel, Field
 
 
@@ -89,11 +89,27 @@ class OntologyElement(BaseModel):
 
         return result_html
 
-    def to_text(self, add_children=True) -> str:
+    def to_text(self, add_children=True, add_img_alt_text=True) -> str:
+        """
+        Returns the text representation of the element.
+
+        Args:
+            add_children: If True, the text of the children will be included.
+                            Otherwise, element is represented as single self-closing tag.
+            add_img_alt_text: If True, the alt text of the image will be included.
+        """
         if self.children and add_children:
-            children_text = " ".join(child.to_text().strip() for child in self.children)
+            children_text = " ".join(
+                child.to_text(add_children, add_img_alt_text).strip() for child in self.children
+            )
             return children_text
-        return BeautifulSoup(self.to_html(), "html.parser").get_text().strip()
+
+        text = BeautifulSoup(self.to_html(), "html.parser").get_text().strip()
+
+        if add_img_alt_text and self.html_tag_name == "img" and "alt" in self.additional_attributes:
+            text += f" {self.additional_attributes.get('alt', '')}"
+
+        return text.strip()
 
     def _construct_attribute_string(self, attributes: dict) -> str:
         return " ".join(
@@ -125,6 +141,16 @@ class OntologyElement(BaseModel):
             except ValueError:
                 return None
         return None
+
+
+def remove_ids_and_class_from_table(soup: Tag):
+    for tag in soup.find_all(True):
+        if tag.name != "table":
+            tag.attrs.pop("class", None)
+            tag.attrs.pop("id", None)
+        if tag.name in ["td", "th"]:
+            tag.string = " ".join(tag.stripped_strings)
+    return soup
 
 
 # Define specific elements
@@ -267,14 +293,7 @@ class Table(OntologyElement):
 
     def to_html(self, add_children=True) -> str:
         soup = BeautifulSoup(super().to_html(add_children), "html.parser")
-
-        for tag in soup.find_all(True):
-            if tag.name != "table":
-                tag.attrs.pop("class", None)
-                tag.attrs.pop("id", None)
-            if tag.name in ["td", "th"]:
-                tag.string = " ".join(tag.stripped_strings)
-
+        soup = remove_ids_and_class_from_table(soup)
         return str(soup)
 
 
@@ -438,8 +457,13 @@ class TableOfContents(OntologyElement):
         "Header Row: L1,L2,...Ln,Value",
         frozen=True,
     )
-    elementType: ElementTypeEnum = Field(ElementTypeEnum.navigation, frozen=True)
+    elementType: ElementTypeEnum = Field(ElementTypeEnum.table, frozen=True)
     allowed_tags: List[str] = Field(["table"], frozen=True)
+
+    def to_html(self, add_children=True) -> str:
+        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
+        soup = remove_ids_and_class_from_table(soup)
+        return str(soup)
 
 
 class Index(OntologyElement):
@@ -465,8 +489,8 @@ class FormFieldValue(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.form, frozen=True)
     allowed_tags: List[str] = Field(["input"], frozen=True)
 
-    def to_text(self, add_children=True) -> str:
-        text = super().to_text()
+    def to_text(self, add_children=True, add_img_alt_text=True) -> str:
+        text = super().to_text(add_children, add_img_alt_text)
         value = self.additional_attributes.get("value", "")
         if not value:
             return text

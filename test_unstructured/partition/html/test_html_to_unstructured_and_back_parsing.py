@@ -555,3 +555,21 @@ def test_inline_elements_are_squeezed_when_text_wrapped_into_paragraphs():
     assert len(unstructured_elements) == 2
     assert isinstance(unstructured_elements[0], Text)
     assert isinstance(unstructured_elements[1], NarrativeText)
+
+
+def test_alternate_text_from_image_is_passed():
+    # language=HTML
+    input_html = """
+    <div class="Page">
+    <table>
+        <tr>
+            <td rowspan="2">Example image nested in the table:</td>
+            <td rowspan="2"><img src="my-logo.png" alt="ALT TEXT Logo"></td>
+        </tr>
+    </table>
+    </div>add_img_alt_text
+    """
+    page = parse_html_to_ontology(input_html)
+    unstructured_elements = ontology_to_unstructured_elements(page)
+    assert len(unstructured_elements) == 2
+    assert "ALT TEXT Logo" in unstructured_elements[1].text

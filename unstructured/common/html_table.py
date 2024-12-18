@@ -136,10 +136,14 @@ class HtmlRow:
         for td in self._tr:
             if (text := td.text) is None:
                 continue
-            text = text.strip()
             if not text:
                 continue
             yield text
+
+    @lazyproperty
+    def text_len(self) -> int:
+        """Length of the normalized text, as it would appear in `element.text`."""
+        return len(" ".join(self.iter_cell_texts()))
 
 
 class HtmlCell:
@@ -158,4 +162,4 @@ class HtmlCell:
         """Text inside `<td>` element, empty string when no text."""
         if (text := self._td.text) is None:
             return ""
-        return text.strip()
+        return " ".join(text.strip().split())

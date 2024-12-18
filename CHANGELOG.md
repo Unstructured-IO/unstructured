@@ -1,11 +1,80 @@
-## 0.16.6-dev0
+## 0.16.12-dev3
 
 ### Enhancements
-- **Every <table> tag is considered to be ontology.Table** Added special handling for tables in HTML partitioning. This change is made to improve the accuracy of table extraction from HTML documents.
+
+- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
 
 ### Features
 
 ### Fixes
+
+- **Upgrade ruff to latest.** Previously the ruff version was pinned to <0.5. Remove that pin and fix the handful of lint items that resulted.
+- **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
+
+## 0.16.11
+
+### Enhancements
+
+- **Enhance quote standardization tests** with additional Unicode scenarios
+- **Relax table segregation rule in chunking.** Previously a `Table` element was always segregated into its own pre-chunk such that the `Table` appeared alone in a chunk or was split into multiple `TableChunk` elements, but never combined with `Text`-subtype elements. Allow table elements to be combined with other elements in the same chunk when space allows.
+- **Compute chunk length based solely on `element.text`.** Previously `.metadata.text_as_html` was also considered and since it is always longer that the text (due to HTML tag overhead) it was the effective length criterion. Remove text-as-html from the length calculation such that text-length is the sole criterion for sizing a chunk.
+
+### Features
+
+### Fixes
+
+- Fix ipv4 regex to correctly include up to three digit octets.
+
+## 0.16.10
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix original file doctype detection** from cct converted file paths for metrics calculation.
+
+## 0.16.9
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix NLTK Download** to not download from unstructured S3 Bucket
+
+## 0.16.8
+
+### Enhancements
+- **Metrics: Weighted table average is optional**
+
+### Features
+
+### Fixes
+
+## 0.16.7
+
+### Enhancements
+- **Add image_alt_mode to partition_html** Adds an `image_alt_mode` parameter to `partition_html()` to control how alt text is extracted from images in HTML documents for `html_parser_version=v2` . The parameter can be set to `to_text` to extract alt text as text from `<img>` html tags
+
+### Features
+
+### Fixes
+
+
+## 0.16.6
+
+### Enhancements
+- **Every `<table>` tag is considered to be ontology.Table** Added special handling for tables in HTML partitioning (`html_parser_version=v2`. This change is made to improve the accuracy of table extraction from HTML documents.
+- **Every HTML has default ontology class assigned** When parsing HTML with `html_parser_version=v2` to ontology each defined HTML in the Ontology has assigned default ontology class. This way it is possible to assign ontology class instead of UncategorizedText when the HTML tag is predicted correctly without class assigned class
+- **Use (number of actual table) weighted average for table metrics** In evaluating table metrics the mean aggregation now uses the actual number of tables in a document to weight the metric scores
+
+### Features
+
+### Fixes
+- **ElementMetadata consolidation** Now `text_as_html` metadata is combined across all elements in CompositeElement when chunking HTML output
 
 ## 0.16.5
 
