@@ -1,4 +1,4 @@
-"""Test-suite for `unstructured.partition.json` module."""
+"""Test-suite for `unstructured.partition.ndjson` module."""
 
 from __future__ import annotations
 
