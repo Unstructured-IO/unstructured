@@ -175,7 +175,7 @@ def test_partition_forwards_strategy_arg_to_partition_docx_and_its_brokers(
 
 EXPECTED_EMAIL_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
-    Title(text="Important points:"),
+    Text(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -440,7 +440,7 @@ def test_partition_md_from_url_works_with_embedded_html():
 def test_auto_partition_msg_from_filename():
     assert partition(example_doc_path("fake-email.msg"), strategy=PartitionStrategy.HI_RES) == [
         NarrativeText(text="This is a test email to use for unit tests."),
-        Title(text="Important points:"),
+        Text(text="Important points:"),
         ListItem(text="Roses are red"),
         ListItem(text="Violets are blue"),
     ]

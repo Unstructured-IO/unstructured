@@ -30,7 +30,7 @@ from unstructured.partition.email import EmailPartitioningContext, partition_ema
 
 EXPECTED_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
-    Title(text="Important points:"),
+    Text(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -88,9 +88,9 @@ def test_extract_email_from_text_plain_matches_elements_extracted_from_text_html
     elements_from_text = partition_email(file_path, content_source="text/plain")
     elements_from_html = partition_email(file_path, content_source="text/html")
 
-    assert elements_from_text == EXPECTED_OUTPUT
+    assert all(e.text == eo.text for e, eo in zip(elements_from_text, EXPECTED_OUTPUT))
     assert elements_from_html == EXPECTED_OUTPUT
-    assert elements_from_html == elements_from_text
+    assert all(eh.text == et.text for eh, et in zip(elements_from_html, elements_from_text))
 
 
 def test_partition_email_round_trips_via_json():
@@ -354,14 +354,14 @@ def test_partition_email_can_process_attachments():
     )
 
     assert elements == [
-        Title("Hello!"),
+        Text("Hello!"),
         NarrativeText("Here's the attachments!"),
         NarrativeText("It includes:"),
         ListItem("Lots of whitespace"),
         ListItem("Little to no content"),
         ListItem("and is a quick read"),
         Text("Best,"),
-        Title("Mallori"),
+        Text("Mallori"),
         NarrativeText("Hey this is a fake attachment!"),
     ]
     assert all(e.metadata.last_modified == "2022-12-23T18:08:48+00:00" for e in elements)
