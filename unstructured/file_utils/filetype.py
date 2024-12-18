@@ -46,7 +46,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN, DICT_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -89,7 +89,7 @@ def detect_filetype(
     Raises:
         ValueError: when:
         - `file_path` is specified but does not correspond to a file on the
-          fileesystem.
+          filesystem.
         - Neither `file_path` nor `file` were specified.
     """
     ctx = _FileTypeDetectionContext.new(
@@ -121,6 +121,26 @@ def is_json_processable(
         ).text_head
 
     return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+
+def is_ndjson_processable(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    file_text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
+) -> bool:
+    """True when file looks like a JSON array of objects.
+
+    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
+    file is JSON.
+    """
+    exactly_one(filename=filename, file=file, file_text=file_text)
+
+    if file_text is None:
+        file_text = _FileTypeDetectionContext.new(
+            file_path=filename, file=file, encoding=encoding
+        ).text_head
+
+    return re.match(DICT_PATTERN, file_text) is not None
 
 
 class _FileTypeDetector:

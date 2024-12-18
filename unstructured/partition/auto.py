@@ -11,7 +11,7 @@ import requests
 from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import detect_filetype, is_json_processable
+from unstructured.file_utils.filetype import detect_filetype, is_json_processable, is_ndjson_processable
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import UnsupportedFileFormatError
@@ -243,6 +243,17 @@ def partition(
         partition_json = partitioner_loader.get(file_type)
         elements = partition_json(filename=filename, file=file, **kwargs)
         return augment_metadata(elements)
+
+    if file_type == FileType.NDJSON:
+        if not is_ndjson_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected an NDJSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
+        partition_ndjson = partitioner_loader.get(file_type)
+        elements = partition_ndjson(filename=filename, file=file, **kwargs)
+        return augment_metadata(elements)
+
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be
     # -- sure it doesn't contain any elements.

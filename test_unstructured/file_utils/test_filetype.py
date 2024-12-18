@@ -90,6 +90,7 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
+        (FileType.NDJSON, "spring-weather.html.ndjson", "application/x-ndjson"),
     ],
 )
 def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_content_type(

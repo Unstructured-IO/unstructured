@@ -4,6 +4,7 @@ import base64
 import csv
 import io
 import json
+import ndjson
 import zlib
 from copy import deepcopy
 from datetime import datetime
@@ -150,6 +151,28 @@ def elements_to_json(
             f.write(json_str)
 
     return json_str
+
+def elements_to_ndjson(
+    elements: Iterable[Element],
+    filename: Optional[str] = None,
+    encoding: str = "utf-8",
+) -> str:
+    """Serialize `elements` to a JSON array.
+
+    Also writes the JSON to `filename` if it is provided, encoded using `encoding`.
+
+    The JSON is returned as a string.
+    """
+    # -- serialize `elements` as a JSON array (str) --
+    precision_adjusted_elements = _fix_metadata_field_precision(elements)
+    element_dicts = elements_to_dicts(precision_adjusted_elements)
+    ndjson_str = ndjson.dumps(element_dicts, sort_keys=True)
+
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(ndjson_str)
+
+    return ndjson_str
 
 
 def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
