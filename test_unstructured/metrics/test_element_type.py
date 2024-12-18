@@ -19,7 +19,7 @@ from unstructured.staging.base import elements_to_json
             "fake-email.txt",
             {
                 ("NarrativeText", None): 1,
-                ("Title", 0): 1,
+                ("UncategorizedText", None): 1,
                 ("ListItem", 1): 2,
             },
         ),
@@ -50,7 +50,7 @@ def test_get_element_type_frequency(filename: str, frequency: dict[tuple[str, in
         (
             "fake-email.txt",
             {
-                ("Title", 0): 1,
+                ("UncategorizedText", None): 1,
                 ("ListItem", 1): 2,
                 ("NarrativeText", None): 2,
             },
