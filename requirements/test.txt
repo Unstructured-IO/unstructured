@@ -6,19 +6,25 @@
 #
 annotated-types==0.7.0
     # via pydantic
-anyio==4.6.2.post1
+anyio==4.7.0
     # via
     #   -c ./base.txt
     #   httpx
 appdirs==1.4.4
     # via label-studio-sdk
-attrs==24.2.0
-    # via jsonschema
+argcomplete==3.5.2
+    # via datamodel-code-generator
+attrs==24.3.0
+    # via
+    #   jsonschema
+    #   referencing
 autoflake==2.3.1
     # via -r ./test.in
 black==24.10.0
-    # via -r ./test.in
-certifi==2024.8.30
+    # via
+    #   -r ./test.in
+    #   datamodel-code-generator
+certifi==2024.12.14
     # via
     #   -c ./base.txt
     #   httpcore
@@ -33,15 +39,23 @@ click==8.1.7
     #   -c ./base.txt
     #   black
     #   nltk
-coverage[toml]==7.6.4
+coverage[toml]==7.6.9
     # via
     #   -r ./test.in
     #   pytest-cov
+datamodel-code-generator==0.26.1
+    # via label-studio-sdk
+dnspython==2.7.0
+    # via email-validator
+email-validator==2.2.0
+    # via pydantic
 exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
     #   pytest
+faker==33.1.0
+    # via jsf
 flake8==7.1.1
     # via
     #   -r ./test.in
@@ -50,7 +64,9 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.1
     # via -r ./test.in
-grpcio==1.67.0
+genson==1.3.0
+    # via datamodel-code-generator
+grpcio==1.68.1
     # via
     #   -c ././deps/constraints.txt
     #   -r ./test.in
@@ -58,11 +74,11 @@ h11==0.14.0
     # via
     #   -c ./base.txt
     #   httpcore
-httpcore==1.0.6
+httpcore==1.0.7
     # via
     #   -c ./base.txt
     #   httpx
-httpx==0.27.2
+httpx==0.28.1
     # via
     #   -c ./base.txt
     #   label-studio-sdk
@@ -70,20 +86,33 @@ idna==3.10
     # via
     #   -c ./base.txt
     #   anyio
+    #   email-validator
     #   httpx
     #   requests
     #   yarl
 ijson==3.3.0
     # via label-studio-sdk
+inflect==5.6.2
+    # via datamodel-code-generator
 iniconfig==2.0.0
     # via pytest
+isort==5.13.2
+    # via datamodel-code-generator
+jinja2==3.1.4
+    # via datamodel-code-generator
 joblib==1.4.2
     # via
     #   -c ./base.txt
     #   nltk
-jsonschema==3.2.0
+jsf==0.11.2
     # via label-studio-sdk
-label-studio-sdk==1.0.5
+jsonschema==4.23.0
+    # via
+    #   jsf
+    #   label-studio-sdk
+jsonschema-specifications==2024.10.1
+    # via jsonschema
+label-studio-sdk==1.0.8
     # via -r ./test.in
 liccheck==0.9.2
     # via -r ./test.in
@@ -91,6 +120,8 @@ lxml==5.3.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
+markupsafe==3.0.2
+    # via jinja2
 mccabe==0.7.0
     # via flake8
 multidict==6.1.0
@@ -109,11 +140,13 @@ nltk==3.9.1
 numpy==1.26.4
     # via
     #   -c ./base.txt
+    #   label-studio-sdk
     #   pandas
-packaging==24.1
+packaging==24.2
     # via
     #   -c ./base.txt
     #   black
+    #   datamodel-code-generator
     #   pytest
 pandas==2.2.3
     # via label-studio-sdk
@@ -125,42 +158,49 @@ platformdirs==4.3.6
     # via black
 pluggy==1.5.0
     # via pytest
-propcache==0.2.0
+propcache==0.2.1
     # via yarl
 pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.9.2
+pydantic[email]==2.10.3
     # via
     #   -r ./test.in
+    #   datamodel-code-generator
+    #   jsf
     #   label-studio-sdk
-pydantic-core==2.23.4
+pydantic-core==2.27.1
     # via pydantic
 pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pyrsistent==0.20.0
-    # via jsonschema
-pytest==8.3.3
+pytest==8.3.4
     # via
     #   pytest-cov
     #   pytest-mock
-pytest-cov==5.0.0
+pytest-cov==6.0.0
     # via -r ./test.in
 pytest-mock==3.14.0
     # via -r ./test.in
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
+    #   faker
     #   freezegun
     #   pandas
 pytz==2024.2
     # via pandas
 pyyaml==6.0.2
-    # via vcrpy
-regex==2024.9.11
+    # via
+    #   datamodel-code-generator
+    #   vcrpy
+referencing==0.35.1
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+regex==2024.11.6
     # via
     #   -c ./base.txt
     #   nltk
@@ -169,42 +209,51 @@ requests==2.32.3
     #   -c ./base.txt
     #   label-studio-sdk
     #   requests-mock
+    #   smart-open
 requests-mock==1.12.1
     # via label-studio-sdk
+rpds-py==0.22.3
+    # via
+    #   jsonschema
+    #   referencing
+rstr==3.2.2
+    # via jsf
 ruff==0.8.3
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck
-six==1.16.0
+six==1.17.0
     # via
     #   -c ./base.txt
-    #   jsonschema
     #   python-dateutil
+smart-open[http]==7.1.0
+    # via jsf
 sniffio==1.3.1
     # via
     #   -c ./base.txt
     #   anyio
-    #   httpx
 toml==0.10.2
-    # via liccheck
-tomli==2.0.2
+    # via
+    #   datamodel-code-generator
+    #   liccheck
+tomli==2.2.1
     # via
     #   autoflake
     #   black
     #   coverage
     #   mypy
     #   pytest
-tqdm==4.66.5
+tqdm==4.67.1
     # via
     #   -c ./base.txt
     #   nltk
 types-click==7.1.8
     # via -r ./test.in
-types-markdown==3.7.0.20240822
+types-markdown==3.7.0.20241204
     # via -r ./test.in
 types-requests==2.31.0.6
     # via -r ./test.in
-types-tabulate==0.9.0.20240106
+types-tabulate==0.9.0.20241207
     # via -r ./test.in
 types-urllib3==1.26.25.14
     # via types-requests
@@ -213,6 +262,8 @@ typing-extensions==4.12.2
     #   -c ./base.txt
     #   anyio
     #   black
+    #   faker
+    #   jsf
     #   label-studio-sdk
     #   multidict
     #   mypy
@@ -230,14 +281,12 @@ urllib3==1.26.20
     #   vcrpy
 vcrpy==6.0.2
     # via -r ./test.in
-wrapt==1.16.0
+wrapt==1.17.0
     # via
     #   -c ./base.txt
+    #   smart-open
     #   vcrpy
 xmljson==0.2.1
     # via label-studio-sdk
-yarl==1.16.0
+yarl==1.18.3
     # via vcrpy
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
