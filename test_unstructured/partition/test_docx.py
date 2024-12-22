@@ -627,7 +627,7 @@ def expected_elements() -> list[Text]:
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
         ListItem("Hockey"),
-        Title("Analysis"),
+        Text("Analysis"),
         NarrativeText("This is my first thought. This is my second thought."),
         NarrativeText("This is my third thought."),
         Text("2023"),
@@ -1210,7 +1210,7 @@ class Describe_DocxPartitioner:
         opts_args["file_path"] = example_doc_path("page-breaks.docx")
         opts = DocxPartitionerOptions(**opts_args)
         expected = [
-            # NOTE(scanny) - -- page 1 --
+            # -- page 1 --
             NarrativeText(
                 "First page, tab here:\t"
                 "followed by line-break here:\n"
@@ -1220,28 +1220,28 @@ class Describe_DocxPartitioner:
                 "and hard page-break here>>"
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 2 --
+            # -- page 2 --
             NarrativeText(
                 "<<Text on second page. The font is big so it breaks onto third page--"
                 "------------------here-->> <<but break falls inside link so text stays"
                 " together."
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 3 --
+            # -- page 3 --
             NarrativeText("Continuous section break here>>"),
             NarrativeText("<<followed by text on same page"),
             NarrativeText("Odd-page section break here>>"),
             PageBreak(""),
-            # NOTE(scanny) - -- page 4 --
+            # -- page 4 --
             PageBreak(""),
-            # NOTE(scanny) - -- page 5 --
+            # -- page 5 --
             NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
             NarrativeText(
                 'Then text gets big again so a "natural" rendered page break happens again here>> '
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 6 --
-            Title("<<and then more text proceeds."),
+            # -- page 6 --
+            Text("<<and then more text proceeds."),
         ]
 
         elements = _DocxPartitioner.iter_document_elements(opts)
