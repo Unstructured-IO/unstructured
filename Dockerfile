@@ -10,9 +10,11 @@ COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN chown -R notebook-user:notebook-user /app && \
-    apk add font-ubuntu git && \
-    fc-cache -fv && \
-    if [ ! -e /usr/bin/python3 ]; then ln -s /usr/bin/python3.11 /usr/bin/python3; fi
+  apk add font-ubuntu git && \
+  fc-cache -fv && \
+  if [ "$(readlink -f /usr/bin/python3)" != "/usr/bin/python3.11" ]; then \
+        ln -sf /usr/bin/python3.11 /usr/bin/python3; \
+  fi
 
 USER notebook-user
 
