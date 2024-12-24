@@ -1,9 +1,10 @@
-## 0.16.12-dev5
+## 0.16.12-dev6
 
 ### Enhancements
 
 - **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
 - **Add NDJSON file type support**
+- **Fix NLTK Download** to contain nltk assets in docker image
 
 ### Features
 
