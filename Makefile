@@ -37,10 +37,6 @@ install-huggingface:
 	${PYTHON} -m pip install pip==${PIP_VERSION}
 	${PYTHON} -m pip install -r requirements/huggingface.txt
 
-.PHONY: install-nltk-models
-install-nltk-models:
-	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
-
 .PHONY: install-test
 install-test:
 	${PYTHON} -m pip install -r requirements/test.txt
