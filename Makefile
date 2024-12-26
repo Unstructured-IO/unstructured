@@ -15,17 +15,17 @@ help: Makefile
 
 ## install-base:            installs core requirements needed for text processing bricks
 .PHONY: install-base
-install-base: install-base-pip-packages install-nltk-models
+install-base: install-base-pip-packages
 
 ## install:                 installs all test, dev, and experimental requirements
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
+install: install-base-pip-packages install-dev install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
+install-ci: install-base-pip-packages install-huggingface install-all-docs install-test install-pandoc
 
 .PHONY: install-base-ci
-install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
+install-base-ci: install-base-pip-packages install-test install-pandoc
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
