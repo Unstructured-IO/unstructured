@@ -142,7 +142,7 @@ def test_get_ocr_layout_from_image_tesseract_filters_predictions_below_confidenc
             },
         ),
     )
-    monkeypatch.setenv("TESSERACT_CONFIDENCE_THRESHOLD", confidence_threshold)
+    monkeypatch.setenv("TESSERACT_CONFIDENCE_THRESHOLD", str(confidence_threshold))
 
     image = Image.new("RGB", (100, 100))
 
