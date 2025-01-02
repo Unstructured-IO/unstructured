@@ -92,6 +92,11 @@ class ENVConfig:
         return self._get_int("TESSERACT_MAX_TEXT_HEIGHT", 100)
 
     @property
+    def TESSERACT_CONFIDENCE_THRESHOLD(self) -> int:
+        """Tesseract predictions with confidence below this threshold are ignored"""
+        return self._get_float("TESSERACT_CONFIDENCE_THRESHOLD", 0.0)
+
+    @property
     def TESSERACT_OPTIMUM_TEXT_HEIGHT(self) -> int:
         """optimum text height for tesseract OCR"""
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
