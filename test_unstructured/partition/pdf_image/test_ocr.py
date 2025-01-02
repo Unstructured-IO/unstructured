@@ -98,6 +98,59 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     assert ocr_layout == expected_layout
 
 
+@pytest.mark.parametrize(
+    ("confidence_threshold", "amount_of_expected_elements"),
+    [
+        (0.0, 3),
+        (0.74, 3),
+        (0.75, 3),
+        (0.76, 2),
+        (0.90, 1),
+        (0.96, 0),
+    ],
+)
+def test_get_ocr_layout_from_image_tesseract_filters_predictions_below_confidence_threshold(
+    confidence_threshold, amount_of_expected_elements, monkeypatch
+):
+    monkeypatch.setattr(
+        unstructured_pytesseract,
+        "image_to_data",
+        lambda *args, **kwargs: pd.DataFrame(
+            {
+                "left": [
+                    10,
+                    20,
+                    30,
+                ],
+                "top": [
+                    5,
+                    15,
+                    25,
+                ],
+                "width": [
+                    15,
+                    25,
+                    35,
+                ],
+                "height": [
+                    10,
+                    20,
+                    30,
+                ],
+                "text": ["Hello", "World", "!"],
+                "conf": [95, 80, 75],
+            },
+        ),
+    )
+    monkeypatch.setenv("TESSERACT_CONFIDENCE_THRESHOLD", confidence_threshold)
+
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = OCRAgentTesseract()
+    ocr_layout = ocr_agent.get_layout_from_image(image)
+    assert len(ocr_layout) == amount_of_expected_elements
+
+
 def mock_ocr(*args, **kwargs):
     return [
         [
