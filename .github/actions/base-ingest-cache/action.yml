@@ -39,6 +39,7 @@ runs:
           python -m pip install --upgrade setuptools
         fi
         make install-ci
+        make install-nltk-models
         make install-all-docs
         make install-ingest
     - name: Save Ingest Cache

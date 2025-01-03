@@ -40,6 +40,7 @@ runs:
           python -m pip install --upgrade setuptools
         fi
         make install-ci
+        make install-nltk-models
     - name: Save Cache
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: virtualenv-cache-save

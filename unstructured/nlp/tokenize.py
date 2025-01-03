@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import os
 from functools import lru_cache
 from typing import Final, List, Tuple
@@ -15,6 +16,21 @@ CACHE_MAX_SIZE: Final[int] = 128
 NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
 nltk.data.path.append(NLTK_DATA_PATH)
 
+def copy_nltk_packages():
+    local_path = "../../nltk_data"
+    if os.path.exists(local_path):
+        if not os.path.exists(NLTK_DATA_PATH):
+            os.makedirs(NLTK_DATA_PATH)
+        for item in os.listdir(local_path):
+            s = os.path.join(local_path, item)
+            d = os.path.join(NLTK_DATA_PATH, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, dirs_exist_ok=True)
+            else:
+                shutil.copy2(s, d)
+        print(f"NLTK data copied to {NLTK_DATA_PATH}")
+    else:
+        print(f"Local NLTK data path does not exist: {local_path}")
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the file system."""
