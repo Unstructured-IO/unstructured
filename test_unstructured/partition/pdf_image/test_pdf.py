@@ -602,6 +602,22 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     assert "Layouts of scanned US newspapers from the 20th century" in table[0]
 
 
+def test_partition_pdf_hi_res_ocr_mode_none():
+    filename = example_doc_path("pdf/layout-parser-paper.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        ocr_mode="none",
+        strategy=PartitionStrategy.HI_RES,
+        # FIXME: table structure still requires OCR for no good reason
+        infer_table_structure=False,
+    )
+    fast_elements = pdf.partition_pdf(
+        filename=filename,
+        strategy=PartitionStrategy.FAST,
+    )
+    assert elements != fast_elements
+
+
 def test_partition_pdf_with_copy_protection():
     filename = example_doc_path("pdf/copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
