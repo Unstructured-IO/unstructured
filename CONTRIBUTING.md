@@ -115,7 +115,7 @@ The Unstructured Team
 | Section | Description |
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
-| [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
+| [Documentation](https://docs.unstructured.io/) | Full API documentation |
 | [Working with Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) | About pull requests |
 | [Code of Conduct](https://www.contributor-covenant.org/version/1/4/code-of-conduct/) | Contributor Covenant Code Of Conduct |
 | [Conventional Commits](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/) | How to write better git commit messages |
