@@ -82,7 +82,8 @@ class OCRAgentTesseract(OCRAgent):
                 output_type=Output.DATAFRAME,
             )
             ocr_df = ocr_df.dropna()
-
+        probabilities = ocr_df["conf"].div(100)
+        ocr_df = ocr_df[probabilities.ge(env_config.TESSERACT_CONFIDENCE_THRESHOLD)]
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
         return ocr_regions
