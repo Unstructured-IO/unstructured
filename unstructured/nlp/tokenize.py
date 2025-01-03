@@ -59,6 +59,7 @@ def validate_nltk_assets():
                 f"Ensure it is baked into the Docker image at '{NLTK_DATA_PATH}'."
             )
 
+
 # Validate NLTK assets at import time
 validate_nltk_assets()
 
