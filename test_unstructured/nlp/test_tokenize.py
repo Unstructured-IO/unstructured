@@ -1,27 +1,14 @@
 from typing import List, Tuple
 from unittest.mock import patch
 
-import nltk
-
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
 from unstructured.nlp import tokenize
 
 
-def test_nltk_packages_download_if_not_present():
-    tokenize._download_nltk_packages_if_not_present.cache_clear()
-    with patch.object(nltk, "find", side_effect=LookupError):
-        with patch.object(tokenize, "download_nltk_packages") as mock_download:
-            tokenize._download_nltk_packages_if_not_present()
-
-    mock_download.assert_called_once()
-
-
-def test_nltk_packages_do_not_download_if():
-    tokenize._download_nltk_packages_if_not_present.cache_clear()
-    with patch.object(nltk, "find"), patch.object(nltk, "download") as mock_download:
-        tokenize._download_nltk_packages_if_not_present()
-
-    mock_download.assert_not_called()
+def test_nltk_assets_validation():
+    with patch("unstructured.nlp.tokenize.validate_nltk_assets") as mock_validate:
+        tokenize.validate_nltk_assets()
+        mock_validate.assert_called_once()
 
 
 def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:

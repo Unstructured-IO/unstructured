@@ -39,7 +39,7 @@ install-huggingface:
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
+	${PYTHON} -c "from unstructured.nlp.tokenize import copy_nltk_packages; copy_nltk_packages()"
 
 .PHONY: install-test
 install-test:

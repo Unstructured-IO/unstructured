@@ -456,19 +456,19 @@ class Describe_chunk_by_title:
         ],
     )
     def it_supports_the_include_orig_elements_option(
-        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+        self, kwargs: dict[str, Any], expected_value: bool, chunk_by_title_: Mock
     ):
         # -- this line would raise if "include_orig_elements" was not an available parameter on
         # -- `chunk_by_title()`.
         chunk_by_title([], **kwargs)
 
-        _, opts = _chunk_by_title_.call_args.args
+        _, opts = chunk_by_title_.call_args.args
         assert opts.include_orig_elements is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_by_title_(self, request: FixtureRequest):
+    def chunk_by_title_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.chunking.title._chunk_by_title")
 
 

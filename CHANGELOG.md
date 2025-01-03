@@ -1,9 +1,10 @@
-## 0.16.12-dev5
+## 0.16.12-dev6
 
 ### Enhancements
 
 - **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
 - **Add NDJSON file type support**
+- **Fix NLTK Download** to contain nltk assets in docker image
 
 ### Features
 
@@ -14,6 +15,7 @@
 - **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
 - **Improve element-type mapping for Chinese text.** Fixes bug where Chinese text would produce large numbers of false-positive `Title` elements.
 - **Improve element-type mapping for HTML.** Fixes bug where certain non-title elements were classified as `Title`.
+- **Fix NLTK Download** to use nltk assets in docker image
 
 ## 0.16.11
 
