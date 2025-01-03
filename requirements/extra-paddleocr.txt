@@ -16,7 +16,7 @@ certifi==2024.12.14
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
     #   requests
@@ -58,7 +58,7 @@ imageio==2.36.1
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-resources==6.4.5
+importlib-resources==6.5.1
     # via matplotlib
 kiwisolver==1.4.7
     # via matplotlib
@@ -104,7 +104,7 @@ paddlepaddle==3.0.0b1
     # via -r ./extra-paddleocr.in
 pdf2image==1.17.0
     # via unstructured-paddleocr
-pillow==11.0.0
+pillow==11.1.0
     # via
     #   imageio
     #   imgaug
@@ -119,7 +119,7 @@ protobuf==4.25.5
     #   paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
-pyparsing==3.2.0
+pyparsing==3.2.1
     # via matplotlib
 python-dateutil==2.9.0.post0
     # via
