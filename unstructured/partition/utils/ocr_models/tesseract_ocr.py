@@ -51,6 +51,7 @@ class OCRAgentTesseract(OCRAgent):
             np.array(image),
             lang=self.language,
             output_type=Output.DATAFRAME,
+            # config='--oem 3 --psm 6'
         )
         ocr_df = ocr_df.dropna()
 
@@ -80,10 +81,12 @@ class OCRAgentTesseract(OCRAgent):
                 np.array(zoom_image(image, zoom)),
                 lang=self.language,
                 output_type=Output.DATAFRAME,
+                # config='--oem 3 --psm 6'
             )
             ocr_df = ocr_df.dropna()
         probabilities = ocr_df["conf"].div(100)
         ocr_df = ocr_df[probabilities.ge(env_config.TESSERACT_CONFIDENCE_THRESHOLD)]
+        print("OCR FILTERING")
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
         return ocr_regions
