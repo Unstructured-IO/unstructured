@@ -14,7 +14,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest-m
     env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
+      NLTK_DATA: /home/notebook-user/nltk_data
     steps:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/base-cache
@@ -24,7 +24,7 @@ jobs:
   setup_ingest:
     runs-on: ubuntu-latest
     env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
+      NLTK_DATA: /home/notebook-user/nltk_data
     needs: [setup]
     steps:
       - uses: actions/checkout@v3

@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
+  NLTK_DATA: /home/notebook-user/nltk_data
 
 jobs:
   setup:
