@@ -12,7 +12,7 @@
       ]
     },
     "text": "Getting Started",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "06f9c166ac2e4f5dbb8fb754d833e477",
@@ -42,7 +42,7 @@
       ]
     },
     "text": "The Basics",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "2005f3cccf27dc851ae57fba48531195",
@@ -57,7 +57,7 @@
       ]
     },
     "text": "Create a Page",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "2a7bbcfd5c237889b2fda563db7462cc",
@@ -93,7 +93,7 @@
       ]
     },
     "text": "Headings",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "64f7ee0a4c1563451c22061bb09d339c",
@@ -168,7 +168,7 @@
       ]
     },
     "text": "Toggle Lists",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "94ea1bd8465604db79b8f2c29420f5de",
@@ -198,7 +198,7 @@
       ]
     },
     "text": "Callout Blocks",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "7e96268c98a95ade6f6dceb82fe91d1f",
@@ -234,7 +234,7 @@
       ]
     },
     "text": "Code Blocks",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "534f19a337f8114851ba68a69035da52",
@@ -300,7 +300,7 @@
       ]
     },
     "text": "Organizing Pages",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "db092f68e3263f38d6ed1af651e30e6d",
@@ -330,7 +330,7 @@
       ]
     },
     "text": "Advanced Techniques",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "ed1d5c56b71619eca5b877d0e2dc1e10",

@@ -384,9 +384,8 @@ class DescribeFlow:
         elements = div.iter_elements()
 
         e = next(elements)
-        assert e == Title("Text of div with hierarchical phrasing content before first block item")
+        assert e == Text("Text of div with hierarchical phrasing content before first block item")
         assert e.metadata.to_dict() == {
-            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical", "phrasing"],
             "emphasized_text_tags": ["b", "bi", "b"],
         }
@@ -394,19 +393,17 @@ class DescribeFlow:
         assert e == NarrativeText("Click here to see the blurb for this block item.")
         assert e.metadata.to_dict() == {"link_texts": ["here"], "link_urls": ["http://blurb.io"]}
         e = next(elements)
-        assert e == Title("tail of block item with hierarchical phrasing content")
+        assert e == Text("tail of block item with hierarchical phrasing content")
         assert e.metadata.to_dict() == {
-            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical", "phrasing"],
             "emphasized_text_tags": ["b", "bi", "b"],
         }
         e = next(elements)
-        assert e == Title("second block item")
-        assert e.metadata.to_dict() == {"category_depth": 0}
+        assert e == Text("second block item")
+        assert e.metadata.to_dict() == {}
         e = next(elements)
-        assert e == Title("tail of block item with hierarchical phrasing content")
+        assert e == Text("tail of block item with hierarchical phrasing content")
         assert e.metadata.to_dict() == {
-            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical"],
             "emphasized_text_tags": ["b", "bi"],
         }
@@ -664,7 +661,7 @@ class DescribePhrasing:
         ("html_text", "expected_value"),
         [
             # -- Phrasing with nested block but no text or tail produces only element for block --
-            ("<strong><p>aaa</p></strong>", [Title("aaa")]),
+            ("<strong><p>aaa</p></strong>", [Text("aaa")]),
             # -- Phrasing with text produces annotated text-segment for the text --
             (
                 "<strong>aaa<p>bbb</p></strong>",
@@ -672,14 +669,14 @@ class DescribePhrasing:
                     TextSegment(
                         "aaa", {"emphasized_text_contents": "aaa", "emphasized_text_tags": "b"}
                     ),
-                    Title("bbb"),
+                    Text("bbb"),
                 ],
             ),
             # -- Phrasing with tail produces annotated text-segment for the tail --
             (
                 "<strong><p>aaa</p>bbb</strong>",
                 [
-                    Title("aaa"),
+                    Text("aaa"),
                     TextSegment(
                         "bbb", {"emphasized_text_contents": "bbb", "emphasized_text_tags": "b"}
                     ),
@@ -692,7 +689,7 @@ class DescribePhrasing:
                     TextSegment(
                         "aaa", {"emphasized_text_contents": "aaa", "emphasized_text_tags": "b"}
                     ),
-                    Title("bbb"),
+                    Text("bbb"),
                     TextSegment(
                         "ccc", {"emphasized_text_contents": "ccc", "emphasized_text_tags": "b"}
                     ),
@@ -776,15 +773,15 @@ class DescribePhrasing:
             # -- a phrasing element with no block children produces no elements --
             ("<dfn></dfn>", "", []),
             # -- a child block element produces an element --
-            ("<kbd><p>aaa</p></kbd>", "", [Title("aaa")]),
+            ("<kbd><p>aaa</p></kbd>", "", [Text("aaa")]),
             # -- a child block element with a tail also produces a text-segment for the tail --
-            ("<kbd><p>aaa</p>bbb</kbd>", "", [Title("aaa"), TextSegment("bbb", {})]),
+            ("<kbd><p>aaa</p>bbb</kbd>", "", [Text("aaa"), TextSegment("bbb", {})]),
             # -- and also text-segments for phrasing following the tail --
             (
                 "<kbd><p>aaa</p>bbb<mark>ccc</mark>ddd</kbd>",
                 "",
                 [
-                    Title("aaa"),
+                    Text("aaa"),
                     TextSegment("bbb", {}),
                     TextSegment("ccc", {}),
                     TextSegment("ddd", {}),
@@ -798,7 +795,7 @@ class DescribePhrasing:
                     TextSegment(
                         "aaa", {"emphasized_text_contents": "aaa", "emphasized_text_tags": "b"}
                     ),
-                    Title("bbb"),
+                    Text("bbb"),
                     TextSegment(
                         "ccc", {"emphasized_text_contents": "ccc", "emphasized_text_tags": "b"}
                     ),
@@ -872,7 +869,7 @@ class DescribePhrasing:
                 [
                     TextSegment("aaa", {}),
                     TextSegment("bbb", {}),
-                    Title("ccc"),
+                    Text("ccc"),
                     TextSegment("ddd", {}),
                     TextSegment("eee", {}),
                 ],
@@ -996,7 +993,7 @@ class DescribeAnchor:
                     "link_urls": ["http://eie.io"],
                 },
             ),
-            Title("one with"),
+            Text("one with"),
             TextSegment(
                 " the Force.",
                 {

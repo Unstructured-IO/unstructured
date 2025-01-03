@@ -72,7 +72,7 @@ def test_partition_html_accepts_a_file_path(tmp_path: pathlib.Path):
     assert elements == [
         Title("A Great and Glorious Section"),
         NarrativeText("Dear Leader is the best. He is such a wonderful engineer!"),
-        Title("Another Magnificent paragraph"),
+        Text("Another Magnificent paragraph"),
         NarrativeText("The prior element is a title based on its capitalization patterns!"),
         Table("I'm in a table"),
         Title("A New Beginning"),
@@ -201,7 +201,7 @@ def test_partition_html_processes_chinese_chracters():
 
 def test_emoji_appears_with_emoji_utf8_code():
     assert partition_html(text='<html charset="utf-8"><p>Hello &#128512;</p></html>') == [
-        Title("Hello 😀")
+        Text("Hello 😀")
     ]
 
 
@@ -575,10 +575,10 @@ def test_pre_tag_parsing_respects_order():
             "<div>The Big Blue Bear</div>\n"
         )
     ) == [
-        Title("The Big Brown Bear"),
+        Text("The Big Brown Bear"),
         NarrativeText("The big brown bear is growling."),
         NarrativeText("The big brown bear is sleeping."),
-        Title("The Big Blue Bear"),
+        Text("The Big Blue Bear"),
     ]
 
 
@@ -604,7 +604,7 @@ def test_partition_html_br_tag_parsing():
 
     assert elements == [
         Title("Header 1"),
-        Title("Text"),
+        Text("Text"),
         Title("Header 2"),
         Text(
             "    Param1 = Y\nParam2 = 1\nParam3 = 2\nParam4 = A\n    \nParam5 = A,B,C,D,E\n"
@@ -640,7 +640,7 @@ def test_partition_html_tag_tail_parsing():
 
     elements = partition_html(text=html_text)
 
-    assert elements == [Title("Head"), Title("Nested"), Title("Tail")]
+    assert elements == [Text("Head"), Text("Nested"), Text("Tail")]
 
 
 # -- parsing edge cases --------------------------------------------------------------------------
@@ -731,11 +731,11 @@ def test_containers_with_text_are_processed():
     assert elements == [
         Text("Hi All,"),
         NarrativeText("Get excited for our first annual family day!"),
-        Title("Best."),
+        Text("Best."),
         Text("--"),
-        Title("Dino the Datasaur"),
-        Title("Unstructured Technologies"),
-        Title("Data Scientist"),
+        Text("Dino the Datasaur"),
+        Text("Unstructured Technologies"),
+        Text("Data Scientist"),
         Address("Doylestown, PA 18901"),
         NarrativeText("See you there!"),
     ]
@@ -786,7 +786,7 @@ def test_html_grabs_bulleted_text_in_paras():
 
 def test_joins_tag_text_correctly():
     elements = partition_html(text="<p>Hello again peet mag<i>ic</i>al</p>")
-    assert elements == [Title("Hello again peet magical")]
+    assert elements == [Text("Hello again peet magical")]
 
 
 def test_sample_doc_with_emoji():
@@ -796,17 +796,17 @@ def test_sample_doc_with_emoji():
 
 def test_only_text_and_no_elements_in_body():
     elements = partition_html(text="<body>Hello</body>")
-    assert elements == [Title("Hello")]
+    assert elements == [Text("Hello")]
 
 
 def test_text_before_elements_in_body():
     elements = partition_html(text="<body>Hello<p>World</p></body>")
-    assert elements == [Title("Hello"), Title("World")]
+    assert elements == [Text("Hello"), Text("World")]
 
 
 def test_line_break_in_container():
     elements = partition_html(text="<div>Hello<br/>World</div>")
-    assert elements == [Title("Hello World")]
+    assert elements == [Text("Hello World")]
 
 
 @pytest.mark.parametrize("tag", ["del", "form", "noscript"])
@@ -963,7 +963,7 @@ def test_partition_html_grabs_emphasized_texts():
     assert e.metadata.emphasized_text_contents is None
     assert e.metadata.emphasized_text_tags is None
     e = elements[4]
-    assert e == Title("A lone span text!")
+    assert e == Text("A lone span text!")
     assert e.metadata.emphasized_text_contents is None
     assert e.metadata.emphasized_text_tags is None
 
@@ -1078,7 +1078,7 @@ def test_partition_html_grabs_links():
     assert e.metadata.link_urls is None
     assert e.metadata.link_texts is None
     e = elements[4]
-    assert e == Title("A lone link!")
+    assert e == Text("A lone link!")
     assert e.metadata.link_urls == ["/loner"]
     assert e.metadata.link_texts == ["A lone link!"]
 
@@ -1231,17 +1231,6 @@ class DescribeHtmlPartitionerOptions:
         opts = HtmlPartitionerOptions(**opts_args)
 
         assert opts.detection_origin == detection_origin
-
-    # -- .encoding -------------------------------
-
-    @pytest.mark.parametrize("encoding", ["utf-8", None])
-    def it_knows_the_caller_provided_encoding(
-        self, encoding: str | None, opts_args: dict[str, Any]
-    ):
-        opts_args["encoding"] = encoding
-        opts = HtmlPartitionerOptions(**opts_args)
-
-        assert opts.encoding == encoding
 
     # -- .html_text ------------------------------
 

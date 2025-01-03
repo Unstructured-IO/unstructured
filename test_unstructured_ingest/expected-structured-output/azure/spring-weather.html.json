@@ -1,6 +1,6 @@
 [
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "fb902c5b26b38e2d35a70a55d43a5de6",
     "text": "News Around NOAA",
     "metadata": {
@@ -21,7 +21,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "100233c72890df3d216e2bc2c36f7153",
     "text": "National Program",
     "metadata": {
@@ -63,7 +63,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "6ef25d028f4c859b5d955c777c4c597e",
     "text": "Weather.gov > News Around NOAA > Are You Weather-Ready for the Spring?",
     "metadata": {
@@ -92,7 +92,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "eddf006a8c46b1cda2aac3b820775397",
     "text": "Weather Safety",
     "metadata": {
@@ -659,7 +659,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "0225c2250f787f919e1e69d0f49dceff",
     "text": "Safety Campaigns",
     "metadata": {
@@ -848,7 +848,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "0640346478c8572ccec2dbe32e34a26d",
     "text": "Ambassador",
     "metadata": {
@@ -1199,7 +1199,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "4f18297d6e97fe97131067c4614d0b56",
     "text": "Education",
     "metadata": {
@@ -1496,7 +1496,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "f5121742894f599f7bad9e6c204219cd",
     "text": "Collaboration",
     "metadata": {
@@ -1766,7 +1766,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "556fb42a560167c2cc207d7cb6714bad",
     "text": "News & Events",
     "metadata": {
@@ -1901,7 +1901,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "4fd5499bdc7ef505fbd5ad7808cc15e4",
     "text": "International",
     "metadata": {
@@ -1928,7 +1928,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "aa70c71400e0cbb1efa4a90ffda7b576",
     "text": "About",
     "metadata": {
@@ -2408,7 +2408,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "a8eed54a458923d7f04b9d1641e98d43",
     "text": "Disclaimer Information Quality Help Glossary",
     "metadata": {
@@ -2441,7 +2441,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "b415705c2c1927eda24b454e6e91bea3",
     "text": "Privacy Policy Freedom of Information Act (FOIA) About Us Career Opportunities",
     "metadata": {

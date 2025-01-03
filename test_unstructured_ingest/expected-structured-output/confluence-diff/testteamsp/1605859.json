@@ -87,7 +87,7 @@
       ]
     },
     "text": "Template - Project plan",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "a4badd544200f7ecea78294c7aacc954",
@@ -114,7 +114,7 @@
       ]
     },
     "text": "Template - Meeting notes",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "02a0bfe6b0d146cb2c448c6015a044b3",
@@ -141,7 +141,7 @@
       ]
     },
     "text": "Template - Weekly status report",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "6f4ad946533ed790b0f2b0c14579e408",
@@ -312,7 +312,7 @@
       ]
     },
     "text": "Add team members to your space.",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "93eecf0cb223bb9b38800c595a2c1ce2",
@@ -354,7 +354,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "22731d9c17747fc4708fd7f418e9dd57",
@@ -375,7 +375,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "c4327bb8ec4ea8444a6307fcdf6928cd",
@@ -417,7 +417,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "4bdb6fa86fd59b0729ecb9b6dbbf1ba7",
@@ -438,7 +438,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "07671349c39424db27fcf99634ed95d2",
@@ -480,7 +480,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "a85a7425fe31f85a4aa6ae0a3d5c4251",
@@ -501,7 +501,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "c250d32242e3900d71e3dc6a4a6ac3c4",
@@ -597,7 +597,7 @@
       ]
     },
     "text": "Tickets",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "f98b3b59b55313381052f1cfa1194bc5",
@@ -618,7 +618,7 @@
       ]
     },
     "text": "Jira board",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "a9f4432dce00417cc8a4c304e424c28b",
@@ -639,7 +639,7 @@
       ]
     },
     "text": "#channel",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "3716407dd9d7c3bc756ab8ee46ea7770",
@@ -735,7 +735,7 @@
       ]
     },
     "text": "Add resources for new hires",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "44d083c5ce62947d874c568db0dbc01b",

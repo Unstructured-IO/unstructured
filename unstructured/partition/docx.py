@@ -48,7 +48,6 @@ from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
-    is_possible_title,
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -412,15 +411,15 @@ class _DocxPartitioner:
             )
         )
 
-        # NOTE(scanny) - blank paragraphs are commonly used for spacing between paragraphs and
-        # do not contribute to the document-element stream.
+        # -- blank paragraphs are commonly used for spacing between paragraphs and do not
+        # -- contribute to the document-element stream
         if not text.strip():
             return
 
         metadata = self._paragraph_metadata(paragraph)
 
-        # NOTE(scanny) - a list-item gets some special treatment, mutating the text to remove a
-        # bullet-character if present.
+        # -- a list-item gets some special treatment, mutating the text to remove a
+        # -- bullet-character if present
         if self._is_list_item(paragraph):
             clean_text = clean_bullets(text).strip()
             if clean_text:
@@ -431,19 +430,19 @@ class _DocxPartitioner:
                 )
             return
 
-        # NOTE(scanny) - determine element-type from an explicit Word paragraph-style if possible
+        # -- determine element-type from an explicit Word paragraph-style if possible --
         TextSubCls = self._style_based_element_type(paragraph)
         if TextSubCls:
             yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
-        # NOTE(scanny) - try to recognize the element type by parsing its text
+        # -- try to recognize the element type by parsing its text --
         TextSubCls = self._parse_paragraph_text_for_element_type(paragraph)
         if TextSubCls:
             yield TextSubCls(text=text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
             return
 
-        # NOTE(scanny) - if all that fails we give it the default `Text` element-type
+        # -- if all that fails we give it the default `Text` element-type --
         yield Text(text, metadata=metadata, detection_origin=DETECTION_ORIGIN)
 
     def _convert_table_to_html(self, table: DocxTable) -> str:
@@ -576,20 +575,20 @@ class _DocxPartitioner:
 
             page_break = paragraph.rendered_page_breaks[0]
 
-            # NOTE(scanny)- preceding-fragment is None when first paragraph content is a page-break
+            # -- preceding-fragment is None when first paragraph content is a page-break --
             preceding_paragraph_fragment = page_break.preceding_paragraph_fragment
             if preceding_paragraph_fragment:
                 yield preceding_paragraph_fragment
 
             yield page_break
 
-            # NOTE(scanny) - following-fragment is None when page-break is last paragraph content.
-            # This is probably quite rare (Word moves these to the start of the next paragraph) but
-            # easier to check for it than prove it can't happen.
+            # -- following-fragment is None when page-break is last paragraph content. This is
+            # -- probably quite rare (Word moves these to the start of the next paragraph) but
+            # -- easier to check for it than prove it can't happen.
             following_paragraph_fragment = page_break.following_paragraph_fragment
-            # NOTE(scanny) - the paragraph fragment following a page-break can itself contain
-            # another page-break. This would also be quite rare, but it can happen so we just
-            # recurse into the second fragment the same way we handled the original paragraph.
+            # -- the paragraph fragment following a page-break can itself contain another
+            # -- page-break; this would also be quite rare, but it can happen so we just recurse
+            # -- into the second fragment the same way we handled the original paragraph
             if following_paragraph_fragment:
                 yield from iter_paragraph_items(following_paragraph_fragment)
 
@@ -901,8 +900,6 @@ class _DocxPartitioner:
             return EmailAddress
         if is_possible_narrative_text(text):
             return NarrativeText
-        if is_possible_title(text):
-            return Title
 
         return None
 

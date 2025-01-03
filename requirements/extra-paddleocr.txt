@@ -4,13 +4,13 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==4.6.2.post1
+anyio==4.7.0
     # via
     #   -c ./base.txt
     #   httpx
 astor==0.8.1
     # via paddlepaddle
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -c ./base.txt
     #   httpcore
@@ -32,17 +32,17 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
-fonttools==4.54.1
+fonttools==4.55.3
     # via matplotlib
 h11==0.14.0
     # via
     #   -c ./base.txt
     #   httpcore
-httpcore==1.0.6
+httpcore==1.0.7
     # via
     #   -c ./base.txt
     #   httpx
-httpx==0.27.2
+httpx==0.28.1
     # via
     #   -c ./base.txt
     #   paddlepaddle
@@ -52,7 +52,7 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
-imageio==2.36.0
+imageio==2.36.1
     # via
     #   imgaug
     #   scikit-image
@@ -64,7 +64,7 @@ kiwisolver==1.4.7
     # via matplotlib
 lazy-loader==0.4
     # via scikit-image
-matplotlib==3.9.2
+matplotlib==3.9.4
     # via imgaug
 networkx==3.2.1
     # via
@@ -94,7 +94,7 @@ opencv-python==4.10.0.84
     #   unstructured-paddleocr
 opt-einsum==3.3.0
     # via paddlepaddle
-packaging==24.1
+packaging==24.2
     # via
     #   -c ./base.txt
     #   lazy-loader
@@ -127,7 +127,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.10.1
+rapidfuzz==3.11.0
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -147,7 +147,7 @@ shapely==2.0.6
     # via
     #   imgaug
     #   unstructured-paddleocr
-six==1.16.0
+six==1.17.0
     # via
     #   -c ./base.txt
     #   imgaug
@@ -156,10 +156,9 @@ sniffio==1.3.1
     # via
     #   -c ./base.txt
     #   anyio
-    #   httpx
 tifffile==2024.8.30
     # via scikit-image
-tqdm==4.66.5
+tqdm==4.67.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -175,5 +174,5 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.20.2
+zipp==3.21.0
     # via importlib-resources

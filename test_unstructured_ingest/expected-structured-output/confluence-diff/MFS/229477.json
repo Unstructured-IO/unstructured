@@ -312,7 +312,7 @@
       ]
     },
     "text": "Add team members to your space.",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "8e206800f74b037f87bc91ce09a66587",
@@ -354,7 +354,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "554c2527470d9fea2aaf8cefd8aa8ffc",
@@ -375,7 +375,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "feb3b3be79c77e3d661dc3fa522de26f",
@@ -417,7 +417,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "94d211691238a7f3f74db151876c6734",
@@ -438,7 +438,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "198d8ad5606c445ba4dcafd19926c65e",
@@ -480,7 +480,7 @@
       ]
     },
     "text": "Role",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "7d9faf5ffc93c10998801ec69e82969d",
@@ -501,7 +501,7 @@
       ]
     },
     "text": "Responsibility",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "46bdd16cf46259b25d67480f1467e0b0",
@@ -597,7 +597,7 @@
       ]
     },
     "text": "Tickets",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "c59943bccf5535ffd752fe52a2f6a184",
@@ -618,7 +618,7 @@
       ]
     },
     "text": "Jira board",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "21d150625554235f8fe3270ed63d2921",
@@ -639,7 +639,7 @@
       ]
     },
     "text": "#channel",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "29c4e13f95e215957a8d697601c3d1cc",
@@ -735,7 +735,7 @@
       ]
     },
     "text": "Add resources for new hires",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "ea538f1ebdd2ced67e8c86dcf50bc164",

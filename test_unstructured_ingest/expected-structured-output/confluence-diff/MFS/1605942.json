@@ -18,7 +18,7 @@
       ]
     },
     "text": "Copy and paste this section for each week.",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "0e80063a2a29a298f8f761e73d131d6c",
@@ -45,7 +45,7 @@
       ]
     },
     "text": "Win",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "4669e057140b5179bcccddf030564faf",
@@ -72,7 +72,7 @@
       ]
     },
     "text": "Needs input",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "85e720f616ed2097311e2e844a1e9e37",
@@ -99,7 +99,7 @@
       ]
     },
     "text": "Focus",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "6a881c411fad6112029b96cc9e477d1e",

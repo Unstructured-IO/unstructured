@@ -1,6 +1,6 @@
 [
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "56d531394823d81787d77a04462ed096",
     "text": "Lorem ipsum dolor sit amet.",
     "metadata": {
@@ -17,6 +17,13 @@
         "date_created": "1718722775.76",
         "date_modified": "1718722788.018",
         "permissions_data": [
+          {
+            "id": "anyoneWithLink",
+            "type": "anyone",
+            "kind": "drive#permission",
+            "role": "reader",
+            "allowFileDiscovery": false
+          },
           {
             "id": "18298851591250030956",
             "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
@@ -38,13 +45,6 @@
             "role": "writer",
             "deleted": false,
             "pendingOwner": false
-          },
-          {
-            "id": "anyoneWithLink",
-            "type": "anyone",
-            "kind": "drive#permission",
-            "role": "reader",
-            "allowFileDiscovery": false
           },
           {
             "id": "09147371668407854156",

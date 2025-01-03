@@ -129,8 +129,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
     def combine_text_under_n_chars(self) -> int:
         """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
 
-        - Does not combine table chunks with text chunks even if they would both fit in the
-          chunking window.
         - Does not combine text chunks if together they would exceed the chunking window.
         - Defaults to `max_characters` when not specified.
         - Is reduced to `new_after_n_chars` when it exceeds that value.

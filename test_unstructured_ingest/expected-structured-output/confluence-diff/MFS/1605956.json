@@ -538,7 +538,7 @@
       ]
     },
     "text": "Select Insert",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "04a5e0e0b40cb961c84088dcc67b26b7",
@@ -586,7 +586,7 @@
       ]
     },
     "text": "Introduce the team",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "433789f2b20ca6275f62a944390e3c1d",
@@ -640,7 +640,7 @@
       ]
     },
     "text": "Share news and announcements with your team",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "8b81b2db2cef191090cfa1d4204b8964",

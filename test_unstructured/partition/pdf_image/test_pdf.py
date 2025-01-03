@@ -245,12 +245,14 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
             _test(result)
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            result = pdf.partition_pdf(
-                file=spooled_temp_file, strategy=strategy, starting_page_number=starting_page_number
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                result = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=strategy,
+                    starting_page_number=starting_page_number,
+                )
             _test(result)
 
 
@@ -757,14 +759,14 @@ def test_partition_pdf_metadata_date(
             )
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            elements = pdf.partition_pdf(
-                file=spooled_temp_file,
-                strategy=strategy,
-                metadata_last_modified=metadata_last_modified,
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                elements = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=strategy,
+                    metadata_last_modified=metadata_last_modified,
+                )
 
     assert {el.metadata.last_modified for el in elements} == {expected_last_modified}
 
@@ -1131,15 +1133,15 @@ def test_partition_pdf_with_ocr_only_strategy(
             )
     else:
         with open(filename, "rb") as test_file:
-            spooled_temp_file = SpooledTemporaryFile()
-            spooled_temp_file.write(test_file.read())
-            spooled_temp_file.seek(0)
-            elements = pdf.partition_pdf(
-                file=spooled_temp_file,
-                strategy=PartitionStrategy.OCR_ONLY,
-                languages=["eng"],
-                is_image=is_image,
-            )
+            with SpooledTemporaryFile() as spooled_temp_file:
+                spooled_temp_file.write(test_file.read())
+                spooled_temp_file.seek(0)
+                elements = pdf.partition_pdf(
+                    file=spooled_temp_file,
+                    strategy=PartitionStrategy.OCR_ONLY,
+                    languages=["eng"],
+                    is_image=is_image,
+                )
 
     assert elements[0].metadata.languages == ["eng"]
     # check pages

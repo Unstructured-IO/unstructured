@@ -224,7 +224,6 @@ def standardize_quotes(text: str) -> str:
     single_quote_standard = "'"
 
     # Apply double quote replacements
-    # Apply double quote replacements
     for unicode_val in double_quotes.values():
         unicode_char = unicode_to_char(unicode_val)
         if unicode_char in text:

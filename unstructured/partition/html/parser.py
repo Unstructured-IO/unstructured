@@ -99,7 +99,6 @@ from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
-    is_possible_title,
     is_us_city_state_zip,
 )
 from unstructured.utils import lazyproperty
@@ -884,18 +883,6 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 
     if is_possible_narrative_text(text):
         return NarrativeText
-
-    # NOTE (scanny): Classifying short paragraphs as titles produces noise much more frequently
-    # than it does value. A `Title` element is very consequential in its effect on chunking and
-    # document hierarchy. Classifying any small paragraph as a heading is frequently wrong and
-    # throws off these important downstream processes much more than missing the occasional
-    # heading does. If we want to infer headings, I think we have to be much more intelligent
-    # about it and consider what elements came before and after to see if the text _behaves_ like
-    # a heading, maybe whether it is bold and how many text elements follow it before the next
-    # title and how long since the prior title, whether `h1..h6` are used elsewhere in the
-    # document, etc.
-    if is_possible_title(text):
-        return Title
 
     return Text
 
