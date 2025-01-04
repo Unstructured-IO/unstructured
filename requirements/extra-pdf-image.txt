@@ -16,7 +16,7 @@ cffi==1.17.1
     # via
     #   -c ./base.txt
     #   cryptography
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
     #   pdfminer-six
@@ -40,11 +40,11 @@ filelock==3.16.1
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==24.3.25
+flatbuffers==24.12.23
     # via onnxruntime
 fonttools==4.55.3
     # via matplotlib
-fsspec==2024.10.0
+fsspec==2024.12.0
     # via
     #   huggingface-hub
     #   torch
@@ -79,11 +79,11 @@ idna==3.10
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.4.5
+importlib-resources==6.5.1
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
-jinja2==3.1.4
+jinja2==3.1.5
     # via torch
 kiwisolver==1.4.7
     # via matplotlib
@@ -149,13 +149,13 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.4
+pdfplumber==0.11.5
     # via layoutparser
 pi-heif==0.21.0
     # via -r ./extra-pdf-image.in
-pikepdf==9.4.2
+pikepdf==9.5.0
     # via -r ./extra-pdf-image.in
-pillow==11.0.0
+pillow==11.1.0
     # via
     #   layoutparser
     #   matplotlib
@@ -165,7 +165,7 @@ pillow==11.0.0
     #   pikepdf
     #   torchvision
     #   unstructured-pytesseract
-portalocker==3.0.0
+portalocker==3.1.1
     # via iopath
 proto-plus==1.25.0
     # via
@@ -193,13 +193,13 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pyparsing==3.2.0
+pyparsing==3.2.1
     # via matplotlib
 pypdf==5.1.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
-pypdfium2==4.30.0
+pypdfium2==4.30.1
     # via pdfplumber
 python-dateutil==2.9.0.post0
     # via
@@ -233,7 +233,7 @@ requests==2.32.3
     #   transformers
 rsa==4.9
     # via google-auth
-safetensors==0.4.5
+safetensors==0.5.0
     # via
     #   timm
     #   transformers

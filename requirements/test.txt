@@ -12,7 +12,7 @@ anyio==4.7.0
     #   httpx
 appdirs==1.4.4
     # via label-studio-sdk
-argcomplete==3.5.2
+argcomplete==3.5.3
     # via datamodel-code-generator
 attrs==24.3.0
     # via
@@ -30,16 +30,16 @@ certifi==2024.12.14
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
     #   requests
-click==8.1.7
+click==8.1.8
     # via
     #   -c ./base.txt
     #   black
     #   nltk
-coverage[toml]==7.6.9
+coverage[toml]==7.6.10
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -98,7 +98,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via datamodel-code-generator
-jinja2==3.1.4
+jinja2==3.1.5
     # via datamodel-code-generator
 joblib==1.4.2
     # via
@@ -126,7 +126,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.1.0
     # via yarl
-mypy==1.13.0
+mypy==1.14.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -152,7 +152,7 @@ pandas==2.2.3
     # via label-studio-sdk
 pathspec==0.12.1
     # via black
-pillow==11.0.0
+pillow==11.1.0
     # via label-studio-sdk
 platformdirs==4.3.6
     # via black
@@ -164,13 +164,13 @@ pycodestyle==2.12.1
     # via
     #   flake8
     #   flake8-print
-pydantic[email]==2.10.3
+pydantic[email]==2.10.4
     # via
     #   -r ./test.in
     #   datamodel-code-generator
     #   jsf
     #   label-studio-sdk
-pydantic-core==2.27.1
+pydantic-core==2.27.2
     # via pydantic
 pyflakes==3.2.0
     # via
@@ -218,7 +218,7 @@ rpds-py==0.22.3
     #   referencing
 rstr==3.2.2
     # via jsf
-ruff==0.8.3
+ruff==0.8.5
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck
@@ -279,7 +279,7 @@ urllib3==1.26.20
     #   -c ./base.txt
     #   requests
     #   vcrpy
-vcrpy==6.0.2
+vcrpy==7.0.0
     # via -r ./test.in
 wrapt==1.17.0
     # via
