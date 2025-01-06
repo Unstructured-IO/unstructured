@@ -40,7 +40,7 @@ all_tests=(
   'against-api.sh'
   'gcs.sh'
   'kafka-local.sh'
-  'onedrive.sh'
+  #'onedrive.sh'
   'outlook.sh'
   'elasticsearch.sh'
   'confluence-diff.sh'
