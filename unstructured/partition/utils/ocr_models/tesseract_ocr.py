@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import os
+import re
 from typing import TYPE_CHECKING, List
 
 import cv2
 import numpy as np
 import pandas as pd
 import unstructured_pytesseract
+from bs4 import BeautifulSoup, Tag
 from PIL import Image as PILImage
-from unstructured_pytesseract import Output
 
 from unstructured.logger import trace_logger
 from unstructured.partition.utils.config import env_config
@@ -47,11 +48,10 @@ class OCRAgentTesseract(OCRAgent):
 
         trace_logger.detail("Processing entire page OCR with tesseract...")
         zoom = 1
-        ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
-            np.array(image),
+        ocr_df: pd.DataFrame = self.image_to_data_with_character_confidence_filter(
+            np.array(zoom_image(image, zoom)),
             lang=self.language,
-            output_type=Output.DATAFRAME,
-            # config='--oem 3 --psm 6'
+            character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
         )
         ocr_df = ocr_df.dropna()
 
@@ -77,19 +77,87 @@ class OCRAgentTesseract(OCRAgent):
                 np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
                 max_zoom,
             )
-            ocr_df = unstructured_pytesseract.image_to_data(
+            ocr_df = self.image_to_data_with_character_confidence_filter(
                 np.array(zoom_image(image, zoom)),
                 lang=self.language,
-                output_type=Output.DATAFRAME,
-                # config='--oem 3 --psm 6'
+                character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
             )
             ocr_df = ocr_df.dropna()
-        probabilities = ocr_df["conf"].div(100)
-        ocr_df = ocr_df[probabilities.ge(env_config.TESSERACT_CONFIDENCE_THRESHOLD)]
         print("OCR FILTERING")
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
         return ocr_regions
+
+    def image_to_data_with_character_confidence_filter(
+        self,
+        image: np.ndarray,
+        lang: str = "eng",
+        config: str = "",
+        character_confidence_threshold: float = 0.5,
+    ) -> pd.DataFrame:
+        hocr: pd.DataFrame = unstructured_pytesseract.image_to_pdf_or_hocr(
+            image,
+            lang=lang,
+            config="-c hocr_char_boxes=1 " + config,
+            extension="hocr",
+        )
+        soup = BeautifulSoup(hocr, "html.parser")
+        words = soup.find_all("span", class_="ocrx_word")
+
+        df_entries = []
+        for word in words:
+            text, bbox = self.extract_word_from_hocr(
+                word=word, character_confidence_threshold=character_confidence_threshold
+            )
+            if text and bbox:
+                left, top, right, bottom = bbox
+                df_entries.append(
+                    {
+                        "left": left,
+                        "top": top,
+                        "width": right - left,
+                        "height": bottom - top,
+                        "text": text,
+                    }
+                )
+        ocr_df = pd.DataFrame(df_entries)
+
+        return ocr_df
+
+    @staticmethod
+    def extract_word_from_hocr(
+        word: Tag, character_confidence_threshold: float = 0.0
+    ) -> tuple[str, list[int] | None]:
+        """Extracts a word from an hOCR word tag, filtering out characters with low confidence."""
+        word_text = ""
+        word_bbox = None
+
+        character_spans = word.find_all("span", class_="ocrx_cinfo")
+        for character_span in character_spans:
+            char = character_span.text
+
+            char_title = character_span.get("title", "")
+            conf_match = re.search(r"x_conf (\d+\.\d+)", char_title)
+            bbox_match = re.search(r"x_bboxes (\d+) (\d+) (\d+) (\d+)", char_title)
+
+            if not (char and conf_match and bbox_match):
+                continue
+
+            character_probability = float(conf_match.group(1)) / 100
+            character_bbox = list(map(int, bbox_match.groups()))
+
+            if character_probability >= character_confidence_threshold:
+                word_text += char
+                if word_bbox is None:
+                    word_bbox = character_bbox
+                else:
+                    word_bbox = [
+                        min(word_bbox[0], character_bbox[0]),  # x1 - starts from 0
+                        min(word_bbox[1], character_bbox[1]),  # y1 - starts from 0
+                        max(word_bbox[2], character_bbox[2]),
+                        max(word_bbox[3], character_bbox[3]),
+                    ]
+        return word_text, word_bbox
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> List["LayoutElement"]:
