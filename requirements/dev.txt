@@ -8,7 +8,7 @@ build==1.2.2.post1
     # via pip-tools
 cfgv==3.4.0
     # via pre-commit
-click==8.1.7
+click==8.1.8
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -17,7 +17,7 @@ distlib==0.3.9
     # via virtualenv
 filelock==3.16.1
     # via virtualenv
-identify==2.6.3
+identify==2.6.4
     # via pre-commit
 importlib-metadata==8.5.0
     # via
@@ -51,7 +51,7 @@ tomli==2.2.1
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.28.0
+virtualenv==20.28.1
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
