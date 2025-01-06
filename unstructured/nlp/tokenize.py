@@ -31,7 +31,7 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
 
 # Ensure NLTK data exists in the specified path (pre-baked in Docker)
 def validate_nltk_assets():
-    """Validate that required NLTK packages are preloaded in the image."""
+    """Validate that required NLTK packages are preloaded in the environment."""
     required_assets = [
         ("punkt_tab", "tokenizers"),
         ("averaged_perceptron_tagger_eng", "taggers"),
@@ -40,6 +40,7 @@ def validate_nltk_assets():
         if not check_for_nltk_package(package_name, category):
             raise RuntimeError(
                 f"Required NLTK package '{package_name}' is missing. "
+                f"Please ensure that you have downloaded the package to '{NLTK_DATA_PATH}'. "
                 f"Ensure it is baked into the Docker image at '{NLTK_DATA_PATH}'."
             )
 
