@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 from functools import lru_cache
 from typing import Final, List, Tuple
 
@@ -16,26 +15,6 @@ CACHE_MAX_SIZE: Final[int] = 128
 NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
 nltk.data.path.append(NLTK_DATA_PATH)
 
-PROJECT_NLTK_ASSETS_PATH = os.path.abspath("../../nltk_data")
-
-
-def copy_nltk_packages():
-    if os.path.exists(PROJECT_NLTK_ASSETS_PATH):
-        if not os.path.exists(NLTK_DATA_PATH):
-            os.makedirs(NLTK_DATA_PATH)
-        for item in os.listdir(PROJECT_NLTK_ASSETS_PATH):
-            s = os.path.join(PROJECT_NLTK_ASSETS_PATH, item)
-            d = os.path.join(NLTK_DATA_PATH, item)
-            if os.path.isdir(s):
-                shutil.copytree(s, d, dirs_exist_ok=True)
-            else:
-                shutil.copy2(s, d)
-        print(f"NLTK data copied to {NLTK_DATA_PATH}")
-    else:
-        raise RuntimeError(
-            f"Local NLTK data path does not exist: {PROJECT_NLTK_ASSETS_PATH}"
-        )
-
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the file system."""
@@ -48,8 +27,6 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
 
 # Ensure NLTK data exists in the specified path (pre-baked in Docker)
 def validate_nltk_assets():
-    if not os.path.exists(NLTK_DATA_PATH):
-        copy_nltk_packages()
     """Validate that required NLTK packages are preloaded in the image."""
     required_assets = [
         ("punkt_tab", "tokenizers"),

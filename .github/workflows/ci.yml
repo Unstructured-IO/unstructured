@@ -149,6 +149,7 @@ jobs:
         fi
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
+        make install-nltk-models
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
@@ -317,6 +318,7 @@ jobs:
         tesseract --version
         make install-all-docs
         make install-ingest
+        make install-nltk-models
         ./test_unstructured_ingest/test-ingest-src.sh
 
 
