@@ -98,7 +98,7 @@ class OCRAgentTesseract(OCRAgent):
         hocr: pd.DataFrame = unstructured_pytesseract.image_to_pdf_or_hocr(
             image,
             lang=lang,
-            config="-c hocr_char_boxes=1 " + config,
+            config="-c hocr_char_boxes=1 psm=12" + config,
             extension="hocr",
         )
         soup = BeautifulSoup(hocr, "html.parser")
