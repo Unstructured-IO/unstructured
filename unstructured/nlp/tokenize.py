@@ -16,8 +16,13 @@ nltk.data.path.append(NLTK_DATA_PATH)
 
 
 def download_nltk_packages():
-    nltk.download("averaged_perceptron_tagger_eng", quiet=True)
-    nltk.download("punkt_tab", quiet=True)
+    required_packages = [
+        ("punkt_tab", "tokenizers"),
+        ("averaged_perceptron_tagger_eng", "taggers"),
+    ]
+    for package_name, category in required_packages:
+        if not check_for_nltk_package(package_name, category):
+            nltk.download(package_name, quiet=True)
 
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
@@ -46,6 +51,7 @@ def validate_nltk_assets():
 
 
 # Validate NLTK assets at import time
+download_nltk_packages()
 validate_nltk_assets()
 
 
