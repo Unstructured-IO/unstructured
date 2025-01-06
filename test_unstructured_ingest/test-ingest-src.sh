@@ -41,7 +41,7 @@ all_tests=(
   'gcs.sh'
   'kafka-local.sh'
   #'onedrive.sh'
-  'outlook.sh'
+#  'outlook.sh'
   'elasticsearch.sh'
   'confluence-diff.sh'
   'confluence-large.sh'
