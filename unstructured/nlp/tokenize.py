@@ -16,14 +16,15 @@ CACHE_MAX_SIZE: Final[int] = 128
 NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
 nltk.data.path.append(NLTK_DATA_PATH)
 
+PROJECT_NLTK_ASSETS_PATH = os.path.abspath("../../nltk_data")
+
 
 def copy_nltk_packages():
-    local_path = "../../nltk_data"
-    if os.path.exists(local_path):
+    if os.path.exists(PROJECT_NLTK_ASSETS_PATH):
         if not os.path.exists(NLTK_DATA_PATH):
             os.makedirs(NLTK_DATA_PATH)
-        for item in os.listdir(local_path):
-            s = os.path.join(local_path, item)
+        for item in os.listdir(PROJECT_NLTK_ASSETS_PATH):
+            s = os.path.join(PROJECT_NLTK_ASSETS_PATH, item)
             d = os.path.join(NLTK_DATA_PATH, item)
             if os.path.isdir(s):
                 shutil.copytree(s, d, dirs_exist_ok=True)
@@ -31,7 +32,9 @@ def copy_nltk_packages():
                 shutil.copy2(s, d)
         print(f"NLTK data copied to {NLTK_DATA_PATH}")
     else:
-        print(f"Local NLTK data path does not exist: {local_path}")
+        raise RuntimeError(
+            f"Local NLTK data path does not exist: {PROJECT_NLTK_ASSETS_PATH}"
+        )
 
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
