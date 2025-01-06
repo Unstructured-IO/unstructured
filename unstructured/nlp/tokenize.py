@@ -16,6 +16,11 @@ NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
 nltk.data.path.append(NLTK_DATA_PATH)
 
 
+def download_nltk_packages():
+    nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+    nltk.download("punkt_tab", quiet=True)
+
+
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the file system."""
     try:

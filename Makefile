@@ -39,8 +39,7 @@ install-huggingface:
 
 .PHONY: install-nltk-models
 install-nltk-models:
-    export NLTK_DATA=/home/notebook-user/nltk_data && \
-	${python} -m nltk.downloader punkt_tab averaged_perceptron_tagger_eng
+	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 .PHONY: install-test
 install-test:
