@@ -8,14 +8,9 @@ import nltk
 from nltk import pos_tag as _pos_tag
 from nltk import sent_tokenize as _sent_tokenize
 from nltk import word_tokenize as _word_tokenize
-from pandas.compat import is_ci_environment
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-if not is_ci_environment():
-    # Define the NLTK data path based on the Docker image environment
-    NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
-    nltk.data.path.append(NLTK_DATA_PATH)
 
 def is_ci_environment() -> bool:
     """
@@ -24,17 +19,24 @@ def is_ci_environment() -> bool:
     """
     # Common CI environment variables
     ci_env_vars = [
-        "CI",                   # General CI indicator (e.g., GitHub Actions, GitLab, Travis CI)
-        "GITHUB_ACTIONS",       # GitHub Actions
-        "GITLAB_CI",            # GitLab CI/CD
-        "CIRCLECI",             # CircleCI
-        "TRAVIS",               # Travis CI
-        "JENKINS_HOME",         # Jenkins
+        "CI",  # General CI indicator (e.g., GitHub Actions, GitLab, Travis CI)
+        "GITHUB_ACTIONS",  # GitHub Actions
+        "GITLAB_CI",  # GitLab CI/CD
+        "CIRCLECI",  # CircleCI
+        "TRAVIS",  # Travis CI
+        "JENKINS_HOME",  # Jenkins
         "BITBUCKET_BUILD_NUMBER",  # Bitbucket Pipelines
     ]
 
     # Check if any of the CI environment variables are set
     return any(var in os.environ for var in ci_env_vars)
+
+
+if not is_ci_environment():
+    # Define the NLTK data path based on the Docker image environment
+    NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
+    nltk.data.path.append(NLTK_DATA_PATH)
+
 
 def download_nltk_packages():
     nltk.download("averaged_perceptron_tagger_eng", quiet=True)
