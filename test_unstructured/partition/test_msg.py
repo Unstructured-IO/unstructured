@@ -388,10 +388,10 @@ class DescribeMsgPartitionerOptions:
         opts_args: dict[str, Any],
         filesystem_last_modified: str | None,
         Message_sent_date_: Mock,
-        last_modified_prop_: Mock,
+        _last_modified_prop_: Mock,
     ):
         Message_sent_date_.return_value = None
-        last_modified_prop_.return_value = filesystem_last_modified
+        _last_modified_prop_.return_value = filesystem_last_modified
         opts_args["file_path"] = example_doc_path("fake-email.msg")
         opts = MsgPartitionerOptions(**opts_args)
 
@@ -443,7 +443,7 @@ class DescribeMsgPartitionerOptions:
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture
-    def last_modified_prop_(self, request: FixtureRequest):
+    def _last_modified_prop_(self, request: FixtureRequest):
         return property_mock(request, MsgPartitionerOptions, "_last_modified")
 
     @pytest.fixture

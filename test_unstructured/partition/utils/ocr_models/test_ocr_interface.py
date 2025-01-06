@@ -30,29 +30,29 @@ class DescribeOCRAgent:
     """Unit-test suite for `unstructured.partition.utils...ocr_interface.OCRAgent` class."""
 
     def it_provides_access_to_the_configured_OCR_agent(
-        self, get_ocr_agent_cls_qname_: Mock, get_instance_: Mock, ocr_agent_: Mock
+        self, _get_ocr_agent_cls_qname_: Mock, get_instance_: Mock, ocr_agent_: Mock
     ):
-        get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
         get_instance_.return_value = ocr_agent_
 
         ocr_agent = OCRAgent.get_agent(language="eng")
 
-        get_ocr_agent_cls_qname_.assert_called_once_with()
+        _get_ocr_agent_cls_qname_.assert_called_once_with()
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT, "eng")
         assert ocr_agent is ocr_agent_
 
     def but_it_raises_when_the_requested_agent_is_not_whitelisted(
-        self, get_ocr_agent_cls_qname_: Mock
+        self, _get_ocr_agent_cls_qname_: Mock
     ):
-        get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
+        _get_ocr_agent_cls_qname_.return_value = "Invalid.Ocr.Agent.Qname"
         with pytest.raises(ValueError, match="must be set to a whitelisted module"):
             OCRAgent.get_agent(language="eng")
 
     @pytest.mark.parametrize("exception_cls", [ImportError, AttributeError])
     def and_it_raises_when_the_requested_agent_cannot_be_loaded(
-        self, get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
+        self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
     ):
-        get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
         with patch(
             "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
             side_effect=exception_cls,
@@ -99,7 +99,7 @@ class DescribeOCRAgent:
         return method_mock(request, OCRAgent, "get_instance")
 
     @pytest.fixture()
-    def get_ocr_agent_cls_qname_(self, request: FixtureRequest):
+    def _get_ocr_agent_cls_qname_(self, request: FixtureRequest):
         return method_mock(request, OCRAgent, "_get_ocr_agent_cls_qname")
 
     @pytest.fixture()

@@ -152,17 +152,17 @@ class Describe_chunk_elements:
         ],
     )
     def it_supports_the_include_orig_elements_option(
-        self, kwargs: dict[str, Any], expected_value: bool, chunk_elements_: Mock
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
     ):
         # -- this line would raise if "include_orig_elements" was not an available parameter on
         # -- `chunk_elements()`.
         chunk_elements([], **kwargs)
 
-        _, opts = chunk_elements_.call_args.args
+        _, opts = _chunk_elements_.call_args.args
         assert opts.include_orig_elements is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def chunk_elements_(self, request: FixtureRequest):
+    def _chunk_elements_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.chunking.basic._chunk_elements")
