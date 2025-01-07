@@ -49,7 +49,7 @@ class OCRAgentTesseract(OCRAgent):
         trace_logger.detail("Processing entire page OCR with tesseract...")
         zoom = 1
         ocr_df: pd.DataFrame = self.image_to_data_with_character_confidence_filter(
-            np.array(zoom_image(image, zoom)),
+            np.array(image, zoom),
             lang=self.language,
             character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
         )
