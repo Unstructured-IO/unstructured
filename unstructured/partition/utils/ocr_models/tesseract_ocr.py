@@ -83,7 +83,6 @@ class OCRAgentTesseract(OCRAgent):
                 character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
             )
             ocr_df = ocr_df.dropna()
-        print("OCR FILTERING")
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
         return ocr_regions
@@ -95,12 +94,18 @@ class OCRAgentTesseract(OCRAgent):
         config: str = "",
         character_confidence_threshold: float = 0.5,
     ) -> pd.DataFrame:
-        hocr: pd.DataFrame = unstructured_pytesseract.image_to_pdf_or_hocr(
+        hocr: str = unstructured_pytesseract.image_to_pdf_or_hocr(
             image,
             lang=lang,
-            config="-c hocr_char_boxes=1 psm=12" + config,
+            config="-c hocr_char_boxes=1 " + config,
             extension="hocr",
         )
+        ocr_df = self.hocr_to_dataframe(hocr, character_confidence_threshold)
+        return ocr_df
+
+    def hocr_to_dataframe(
+        self, hocr: str, character_confidence_threshold: float = 0.0
+    ) -> pd.DataFrame:
         soup = BeautifulSoup(hocr, "html.parser")
         words = soup.find_all("span", class_="ocrx_word")
 
@@ -121,7 +126,6 @@ class OCRAgentTesseract(OCRAgent):
                     }
                 )
         ocr_df = pd.DataFrame(df_entries)
-
         return ocr_df
 
     @staticmethod
@@ -129,10 +133,14 @@ class OCRAgentTesseract(OCRAgent):
         word: Tag, character_confidence_threshold: float = 0.0
     ) -> tuple[str, list[int] | None]:
         """Extracts a word from an hOCR word tag, filtering out characters with low confidence."""
+
+        character_spans = word.find_all("span", class_="ocrx_cinfo")
+        if len(character_spans) == 0:
+            return "", None
+
         word_text = ""
         word_bbox = None
 
-        character_spans = word.find_all("span", class_="ocrx_cinfo")
         for character_span in character_spans:
             char = character_span.text
 
@@ -157,6 +165,7 @@ class OCRAgentTesseract(OCRAgent):
                         max(word_bbox[2], character_bbox[2]),
                         max(word_bbox[3], character_bbox[3]),
                     ]
+
         return word_text, word_bbox
 
     @requires_dependencies("unstructured_inference")
