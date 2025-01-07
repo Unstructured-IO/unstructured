@@ -32,41 +32,21 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
         return False
 
 
-# We cache this because we do not want to attempt
-# checking the packages multiple times
-@lru_cache()
-def _ensure_nltk_packages_available():
-    """Ensure required NLTK packages are available, raise an error if not."""
-    tagger_available = check_for_nltk_package(
-        package_category="taggers",
-        package_name="averaged_perceptron_tagger_eng",
-    )
-    tokenizer_available = check_for_nltk_package(
-        package_category="tokenizers",
-        package_name="punkt_tab",
-    )
-
-
-
-
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
-    _ensure_nltk_packages_available()
     return _sent_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
-    _ensure_nltk_packages_available()
     return _word_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    _ensure_nltk_packages_available()
     # Splitting into sentences before tokenizing.
     sentences = _sent_tokenize(text)
     parts_of_speech: list[tuple[str, str]] = []
