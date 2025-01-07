@@ -6,8 +6,8 @@ from unstructured.nlp import tokenize
 
 
 def test_nltk_assets_validation():
-    with patch("unstructured.nlp.tokenize.validate_nltk_assets") as mock_validate:
-        tokenize.validate_nltk_assets()
+    with patch("unstructured.nlp.tokenize._ensure_nltk_packages_available") as mock_validate:
+        tokenize._ensure_nltk_packages_available()
         mock_validate.assert_called_once()
 
 

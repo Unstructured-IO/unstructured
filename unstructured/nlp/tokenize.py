@@ -11,9 +11,6 @@ from nltk import word_tokenize as _word_tokenize
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-NLTK_DATA_PATH = os.getenv("NLTK_DATA", "/home/notebook-user/nltk_data")
-nltk.data.path.append(NLTK_DATA_PATH)
-
 
 def download_nltk_packages():
     nltk.download("averaged_perceptron_tagger_eng", quiet=True)
@@ -22,49 +19,59 @@ def download_nltk_packages():
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the file system."""
+    paths: list[str] = []
+    for path in nltk.data.path:
+        if not path.endswith("nltk_data"):
+            path = os.path.join(path, "nltk_data")
+        paths.append(path)
+
     try:
-        nltk.find(f"{package_category}/{package_name}")
+        nltk.find(f"{package_category}/{package_name}", paths=paths)
         return True
     except (LookupError, OSError):
         return False
 
 
-# Ensure NLTK data exists in the specified path (pre-baked in Docker)
-def validate_nltk_assets():
-    """Validate that required NLTK packages are preloaded in the image."""
-    required_assets = [
-        ("punkt_tab", "tokenizers"),
-        ("averaged_perceptron_tagger_eng", "taggers"),
-    ]
-    for package_name, category in required_assets:
-        if not check_for_nltk_package(package_name, category):
-            raise RuntimeError(
-                f"Required NLTK package '{package_name}' is missing. "
-                f"Ensure it is baked into the Docker image at '{NLTK_DATA_PATH}'."
-            )
+# We cache this because we do not want to attempt
+# checking the packages multiple times
+@lru_cache()
+def _ensure_nltk_packages_available():
+    """Ensure required NLTK packages are available, raise an error if not."""
+    tagger_available = check_for_nltk_package(
+        package_category="taggers",
+        package_name="averaged_perceptron_tagger_eng",
+    )
+    tokenizer_available = check_for_nltk_package(
+        package_category="tokenizers",
+        package_name="punkt_tab",
+    )
 
-
-# Validate NLTK assets at import time
-validate_nltk_assets()
+    if not tagger_available or not tokenizer_available:
+        raise RuntimeError(
+            "Required NLTK packages are not available. "
+            "Ensure the assets are pre-baked into the image."
+        )
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
+    _ensure_nltk_packages_available()
     return _sent_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
+    _ensure_nltk_packages_available()
     return _word_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    # NOTE: Splitting into sentences before tokenizing helps with situations
-    # like "ITEM 1A. PROPERTIES" where tokens can be misinterpreted.
+    _ensure_nltk_packages_available()
+    # Splitting into sentences before tokenizing.
     sentences = _sent_tokenize(text)
     parts_of_speech: list[tuple[str, str]] = []
     for sentence in sentences:
