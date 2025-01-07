@@ -1,14 +1,7 @@
 from typing import List, Tuple
-from unittest.mock import patch
 
 from test_unstructured.nlp.mock_nltk import mock_sent_tokenize, mock_word_tokenize
 from unstructured.nlp import tokenize
-
-
-def test_nltk_assets_validation():
-    with patch("unstructured.nlp.tokenize._ensure_nltk_packages_available") as mock_validate:
-        tokenize._ensure_nltk_packages_available()
-        mock_validate.assert_called_once()
 
 
 def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:

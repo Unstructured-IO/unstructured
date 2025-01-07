@@ -18,7 +18,7 @@ def download_nltk_packages():
 
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
-    """Checks to see if the specified NLTK package exists on the file system."""
+    """Checks to see if the specified NLTK package exists on the image."""
     paths: list[str] = []
     for path in nltk.data.path:
         if not path.endswith("nltk_data"):
