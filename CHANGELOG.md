@@ -1,3 +1,44 @@
+## 0.16.12
+
+### Enhancements
+
+- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
+- **Add NDJSON file type support.**
+
+### Features
+
+### Fixes
+
+- **Base image has been updated.**
+- **Upgrade ruff to latest.** Previously the ruff version was pinned to <0.5. Remove that pin and fix the handful of lint items that resulted.
+- **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
+- **Improve element-type mapping for Chinese text.** Fixes bug where Chinese text would produce large numbers of false-positive `Title` elements.
+- **Improve element-type mapping for HTML.** Fixes bug where certain non-title elements were classified as `Title`.
+
+## 0.16.11
+
+### Enhancements
+
+- **Enhance quote standardization tests** with additional Unicode scenarios
+- **Relax table segregation rule in chunking.** Previously a `Table` element was always segregated into its own pre-chunk such that the `Table` appeared alone in a chunk or was split into multiple `TableChunk` elements, but never combined with `Text`-subtype elements. Allow table elements to be combined with other elements in the same chunk when space allows.
+- **Compute chunk length based solely on `element.text`.** Previously `.metadata.text_as_html` was also considered and since it is always longer that the text (due to HTML tag overhead) it was the effective length criterion. Remove text-as-html from the length calculation such that text-length is the sole criterion for sizing a chunk.
+
+### Features
+
+### Fixes
+
+- Fix ipv4 regex to correctly include up to three digit octets.
+
+## 0.16.10
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix original file doctype detection** from cct converted file paths for metrics calculation.
+
 ## 0.16.9
 
 ### Enhancements

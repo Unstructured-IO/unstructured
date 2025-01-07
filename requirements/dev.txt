@@ -8,7 +8,7 @@ build==1.2.2.post1
     # via pip-tools
 cfgv==3.4.0
     # via pre-commit
-click==8.1.7
+click==8.1.8
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -17,7 +17,7 @@ distlib==0.3.9
     # via virtualenv
 filelock==3.16.1
     # via virtualenv
-identify==2.6.1
+identify==2.6.4
     # via pre-commit
 importlib-metadata==8.5.0
     # via
@@ -25,7 +25,7 @@ importlib-metadata==8.5.0
     #   build
 nodeenv==1.9.1
     # via pre-commit
-packaging==24.1
+packaging==24.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -46,16 +46,16 @@ pyyaml==6.0.2
     # via
     #   -c ./test.txt
     #   pre-commit
-tomli==2.0.2
+tomli==2.2.1
     # via
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.27.0
+virtualenv==20.28.1
     # via pre-commit
-wheel==0.44.0
+wheel==0.45.1
     # via pip-tools
-zipp==3.20.2
+zipp==3.21.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

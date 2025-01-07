@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import json
 import os
 import pathlib
@@ -176,7 +175,7 @@ def test_partition_forwards_strategy_arg_to_partition_docx_and_its_brokers(
 
 EXPECTED_EMAIL_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
-    Title(text="Important points:"),
+    Text(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -441,7 +440,7 @@ def test_partition_md_from_url_works_with_embedded_html():
 def test_auto_partition_msg_from_filename():
     assert partition(example_doc_path("fake-email.msg"), strategy=PartitionStrategy.HI_RES) == [
         NarrativeText(text="This is a test email to use for unit tests."),
-        Title(text="Important points:"),
+        Text(text="Important points:"),
         ListItem(text="Roses are red"),
         ListItem(text="Violets are blue"),
     ]
@@ -561,7 +560,6 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         strategy=PartitionStrategy.FAST,
         languages=None,
         metadata_filename=None,
-        include_page_breaks=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
@@ -897,7 +895,7 @@ def test_auto_partition_raises_with_bad_type(request: FixtureRequest):
 
     with pytest.raises(
         UnsupportedFileFormatError,
-        match="Invalid file made-up.fake. The FileType.UNK file type is not supported in partiti",
+        match="Partitioning is not supported for the FileType.UNK file type.",
     ):
         partition(filename="made-up.fake", strategy=PartitionStrategy.HI_RES)
 
@@ -1035,26 +1033,6 @@ def test_auto_partition_forwards_metadata_filename_via_kwargs():
         elements = partition(file=f, metadata_filename="much-more-interesting-name.txt")
 
     assert all(e.metadata.filename == "much-more-interesting-name.txt" for e in elements)
-
-
-def test_auto_partition_warns_about_file_filename_deprecation(caplog: LogCaptureFixture):
-    file_path = example_doc_path("fake-text.txt")
-
-    with open(file_path, "rb") as f:
-        elements = partition(file=f, file_filename=file_path)
-
-    assert all(e.metadata.filename == "fake-text.txt" for e in elements)
-    assert caplog.records[0].levelname == "WARNING"
-    assert "The file_filename kwarg will be deprecated" in caplog.text
-
-
-def test_auto_partition_raises_when_both_file_filename_and_metadata_filename_args_are_used():
-    file_path = example_doc_path("fake-text.txt")
-    with open(file_path, "rb") as f:
-        file = io.BytesIO(f.read())
-
-    with pytest.raises(ValueError, match="Only one of metadata_filename and file_filename is spe"):
-        partition(file=file, file_filename=file_path, metadata_filename=file_path)
 
 
 # -- ocr_languages --------------------------------------------------------
@@ -1308,7 +1286,7 @@ def expected_docx_elements():
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
         ListItem("Hockey"),
-        Title("Analysis"),
+        Text("Analysis"),
         NarrativeText("This is my first thought. This is my second thought."),
         NarrativeText("This is my third thought."),
         Text("2023"),

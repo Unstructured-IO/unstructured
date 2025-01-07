@@ -23,7 +23,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "5209312022a75a31d95385fdccff68fa",
     "text": "CHAPTER 1",
     "metadata": {
@@ -51,7 +51,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "22a23e29022f32945965002cd734a8f0",
     "text": "INTRODUCTION",
     "metadata": {
@@ -79,7 +79,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "4c175cf543957acc4420221de28d3fca",
     "text": "CHAPTER 1 \u2013 INTRODUCTION",
     "metadata": {
@@ -101,7 +101,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "77022a5264f552b223538977cd40f640",
     "text": "A.\tPURPOSE",
     "metadata": {
@@ -189,7 +189,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "e341ffc123dd2827638aba18149c4175",
     "text": "B.\tROLE OF THE UNITED STATES TRUSTEE",
     "metadata": {
@@ -255,7 +255,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "1b11ebe52652656e0ed8c12e5969de9b",
     "text": "C.\tSTATUTORY DUTIES OF A STANDING TRUSTEE\t",
     "metadata": {

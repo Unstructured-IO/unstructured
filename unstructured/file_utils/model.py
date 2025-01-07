@@ -288,6 +288,15 @@ class FileType(enum.Enum):
         "application/vnd.ms-outlook",
         cast(list[str], []),
     )
+    NDJSON = (
+        "ndjson",
+        "ndjson",
+        ["ndjson"],
+        None,
+        [".ndjson"],
+        "application/x-ndjson",
+        cast(list[str], []),
+    )
     ODT = (
         "odt",
         "odt",

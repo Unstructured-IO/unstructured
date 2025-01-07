@@ -4,13 +4,13 @@
 #
 #    pip-compile ./base.in
 #
-anyio==4.6.2.post1
+anyio==4.7.0
     # via httpx
 backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.12.3
     # via -r ./base.in
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   httpcore
     #   httpx
@@ -20,21 +20,21 @@ cffi==1.17.1
     # via cryptography
 chardet==5.2.0
     # via -r ./base.in
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   requests
     #   unstructured-client
-click==8.1.7
+click==8.1.8
     # via
     #   nltk
     #   python-oxmsg
-cryptography==43.0.3
+cryptography==44.0.0
     # via unstructured-client
 dataclasses-json==0.6.7
     # via
     #   -r ./base.in
     #   unstructured-client
-deepdiff==8.0.1
+deepdiff==8.1.1
     # via unstructured-client
 emoji==2.14.0
     # via -r ./base.in
@@ -46,9 +46,9 @@ h11==0.14.0
     # via httpcore
 html5lib==1.1
     # via -r ./base.in
-httpcore==1.0.6
+httpcore==1.0.7
     # via httpx
-httpx==0.27.2
+httpx==0.28.1
     # via unstructured-client
 idna==3.10
     # via
@@ -64,7 +64,7 @@ langdetect==1.0.9
     # via -r ./base.in
 lxml==5.3.0
     # via -r ./base.in
-marshmallow==3.23.0
+marshmallow==3.23.2
     # via
     #   dataclasses-json
     #   unstructured-client
@@ -72,6 +72,8 @@ mypy-extensions==1.0.0
     # via
     #   typing-inspect
     #   unstructured-client
+ndjson==0.3.1
+    # via -r ./base.in
 nest-asyncio==1.6.0
     # via unstructured-client
 nltk==3.9.1
@@ -80,17 +82,17 @@ numpy==1.26.4
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
-orderly-set==5.2.2
+orderly-set==5.2.3
     # via deepdiff
-packaging==24.1
+packaging==24.2
     # via
     #   marshmallow
     #   unstructured-client
-psutil==6.1.0
+psutil==6.1.1
     # via -r ./base.in
 pycparser==2.22
     # via cffi
-pypdf==5.0.1
+pypdf==5.1.0
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
@@ -100,9 +102,9 @@ python-magic==0.4.27
     # via -r ./base.in
 python-oxmsg==0.0.1
     # via -r ./base.in
-rapidfuzz==3.10.1
+rapidfuzz==3.11.0
     # via -r ./base.in
-regex==2024.9.11
+regex==2024.11.6
     # via nltk
 requests==2.32.3
     # via
@@ -111,19 +113,17 @@ requests==2.32.3
     #   unstructured-client
 requests-toolbelt==1.0.0
     # via unstructured-client
-six==1.16.0
+six==1.17.0
     # via
     #   html5lib
     #   langdetect
     #   python-dateutil
     #   unstructured-client
 sniffio==1.3.1
-    # via
-    #   anyio
-    #   httpx
+    # via anyio
 soupsieve==2.6
     # via beautifulsoup4
-tqdm==4.66.5
+tqdm==4.67.1
     # via
     #   -r ./base.in
     #   nltk
@@ -150,5 +150,5 @@ urllib3==1.26.20
     #   unstructured-client
 webencodings==0.5.1
     # via html5lib
-wrapt==1.16.0
+wrapt==1.17.0
     # via -r ./base.in

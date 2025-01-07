@@ -19,7 +19,7 @@ from unstructured.staging.base import elements_to_json
             "fake-email.txt",
             {
                 ("NarrativeText", None): 1,
-                ("Title", 0): 1,
+                ("UncategorizedText", None): 1,
                 ("ListItem", 1): 2,
             },
         ),
@@ -29,6 +29,7 @@ from unstructured.staging.base import elements_to_json
                 ("Title", 0): 4,
                 ("Title", 1): 1,
                 ("NarrativeText", 0): 3,
+                ("PageBreak", None): 3,
                 ("ListItem", 0): 6,
                 ("ListItem", 1): 6,
                 ("ListItem", 2): 3,
@@ -49,7 +50,7 @@ def test_get_element_type_frequency(filename: str, frequency: dict[tuple[str, in
         (
             "fake-email.txt",
             {
-                ("Title", 0): 1,
+                ("UncategorizedText", None): 1,
                 ("ListItem", 1): 2,
                 ("NarrativeText", None): 2,
             },
@@ -73,20 +74,18 @@ def test_get_element_type_frequency(filename: str, frequency: dict[tuple[str, in
             "handbook-1p.docx",
             {
                 ("Header", None): 1,
-                ("Title", 0): 1,
-                ("Title", 1): 1,
-                ("Title", 2): 1,
+                ("UncategorizedText", 0): 6,
                 ("ListItem", 3): 3,
-                ("NarrativeText", 4): 7,
+                ("NarrativeText", 0): 7,
                 ("Footer", None): 1,
             },
-            (0.43, 0.07, 0.65),
+            (0.78, 0.72, 0.81),
         ),
         (
             "handbook-1p.docx",
             {
                 ("Header", None): 1,
-                ("Title", 0): 6,
+                ("UncategorizedText", 0): 6,
                 ("NarrativeText", 0): 7,
                 ("PageBreak", None): 1,
                 ("Footer", None): 1,

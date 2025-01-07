@@ -74,10 +74,12 @@ def test_partition_pptx_with_spooled_file():
 
     Including one that does not have its read-pointer set to the start.
     """
-    with open(example_doc_path("fake-power-point.pptx"), "rb") as test_file:
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(test_file.read())
+    with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+        with open(example_doc_path("fake-power-point.pptx"), "rb") as test_file:
+            spooled_temp_file.write(test_file.read())
+
         elements = partition_pptx(file=spooled_temp_file)
+
         assert elements == EXPECTED_PPTX_OUTPUT
         for element in elements:
             assert element.metadata.filename is None
@@ -701,16 +703,16 @@ class DescribePptxPartitionerOptions:
     def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
         self, opts_args: dict[str, Any]
     ):
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(b"abcdefg")
-        opts_args["file"] = spooled_temp_file
-        opts = PptxPartitionerOptions(**opts_args)
+        with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+            spooled_temp_file.write(b"abcdefg")
+            opts_args["file"] = spooled_temp_file
+            opts = PptxPartitionerOptions(**opts_args)
 
-        pptx_file = opts.pptx_file
+            pptx_file = opts.pptx_file
 
-        assert pptx_file is not spooled_temp_file
-        assert isinstance(pptx_file, io.BytesIO)
-        assert pptx_file.getvalue() == b"abcdefg"
+            assert pptx_file is not spooled_temp_file
+            assert isinstance(pptx_file, io.BytesIO)
+            assert pptx_file.getvalue() == b"abcdefg"
 
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
         self, opts_args: dict[str, Any]
