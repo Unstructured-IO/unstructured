@@ -46,11 +46,7 @@ def _ensure_nltk_packages_available():
         package_name="punkt_tab",
     )
 
-    if not tagger_available or not tokenizer_available:
-        raise RuntimeError(
-            "Required NLTK packages are not available. "
-            "Ensure the assets are pre-baked into the image."
-        )
+
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
