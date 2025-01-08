@@ -99,7 +99,7 @@ class ENVConfig:
     @property
     def TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD(self) -> int:
         """Tesseract predictions with confidence below this threshold are ignored"""
-        return self._get_float("TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD", 0.0)
+        return self._get_float("TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD", 0.85)
 
     @property
     def GOOGLEVISION_API_ENDPOINT(self) -> str:
