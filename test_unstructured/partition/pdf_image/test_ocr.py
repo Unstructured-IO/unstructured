@@ -72,8 +72,8 @@ def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
 
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
-        unstructured_pytesseract,
-        "image_to_data",
+        OCRAgentTesseract,
+        "image_to_data_with_character_confidence_filter",
         lambda *args, **kwargs: pd.DataFrame(
             {
                 "left": [10, 20, 30, 0],
@@ -446,8 +446,8 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
     monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")
     monkeypatch.setattr(
-        unstructured_pytesseract,
-        "image_to_data",
+        OCRAgentTesseract,
+        "image_to_data_with_character_confidence_filter",
         lambda *args, **kwargs: pd.DataFrame(
             {
                 "left": [10, 20, 30, 0],
