@@ -132,7 +132,7 @@ class OCRAgentTesseract(OCRAgent):
                         "text": text,
                     }
                 )
-        ocr_df = pd.DataFrame(df_entries)
+        ocr_df = pd.DataFrame(df_entries, columns=["left", "top", "width", "height", "text"])
         return ocr_df
 
     @staticmethod

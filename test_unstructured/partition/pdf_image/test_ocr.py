@@ -551,3 +551,14 @@ def test_hocr_to_dataframe():
     assert df["width"].iloc[0] == 60
     assert df["height"].iloc[0] == 13
     assert df["text"].iloc[0] == "word"
+
+
+def test_hocr_to_dataframe_when_no_prediction_empty_df():
+    df = OCRAgentTesseract().hocr_to_dataframe(hocr="")
+
+    assert df.shape == (0, 5)
+    assert "left" in df.columns
+    assert "top" in df.columns
+    assert "width" in df.columns
+    assert "text" in df.columns
+    assert "text" in df.columns
