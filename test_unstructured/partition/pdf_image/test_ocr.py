@@ -487,42 +487,67 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     assert any(element in final_layout for element in ocr_elements)
 
 
+def _create_hocr_word_span(
+    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int]
+) -> Tag:
+    word_span = BeautifulSoup(
+        f"<span class='ocrx_word' title='"
+        f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
+        f"; x_wconf 64'></span>",
+        "html.parser",
+    ).span
+    for char, x_conf in characters:
+        char_span = BeautifulSoup(
+            f"""
+            <span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>
+            """,  # noqa : E501
+            "html.parser",
+        ).span
+        word_span.append(char_span)
+    return word_span
+
+
 def test_extract_word_from_hocr():
-    def _create_hocr_word_span(characters: list[tuple[str, str, list[int]]]) -> Tag:
-        word_span = BeautifulSoup("<span class='ocrx_word'></span>", "html.parser").span
-        for char, x_conf, bbox in characters:
-            char_span = BeautifulSoup(
-                f"""
-                <span class='ocrx_cinfo' title='x_bboxes {bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]}; x_conf {x_conf}'>{char}</span>
-                """,  # noqa : E501
-                "html.parser",
-            ).span
-            word_span.append(char_span)
-        return word_span
-
     characters = [
-        ("w", "99.0", [10, 10, 20, 20]),
-        ("o", "98.5", [21, 9, 29, 20]),
-        ("r", "97.5", [31, 10, 40, 21]),
-        ("d", "96.0", [41, 11, 50, 22]),
-        ("!", "50.0", [51, 10, 60, 20]),
-        ("@", "45.0", [61, 10, 70, 20]),
+        ("w", "99.0"),
+        ("o", "98.5"),
+        ("r", "97.5"),
+        ("d", "96.0"),
+        ("!", "50.0"),
+        ("@", "45.0"),
     ]
+    word_bbox = (10, 9, 70, 22)
+    word_span = _create_hocr_word_span(characters, word_bbox)
 
-    word_span = _create_hocr_word_span(characters)
-
-    text, bbox = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.0)
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.0)
     assert text == "word!@"
-    assert bbox == [10, 9, 70, 22]
 
-    text, bbox = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.960)
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.960)
     assert text == "word"
-    assert bbox == [10, 9, 50, 22]
 
-    text, bbox = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.990)
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.990)
     assert text == "w"
-    assert bbox == [10, 10, 20, 20]
 
-    text, bbox = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.999)
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.999)
     assert text == ""
-    assert bbox is None
+
+
+def test_hocr_to_dataframe():
+    characters = [
+        ("w", "99.0"),
+        ("o", "98.5"),
+        ("r", "97.5"),
+        ("d", "96.0"),
+        ("!", "50.0"),
+        ("@", "45.0"),
+    ]
+    word_bbox = (10, 9, 70, 22)
+    hocr = str(_create_hocr_word_span(characters, word_bbox))
+    df = OCRAgentTesseract().hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
+
+    assert df.shape == (1, 5)
+    assert df["left"].iloc[0] == 10
+    assert df["top"].iloc[0] == 9
+    assert df["width"].iloc[0] == 60
+    assert df["height"].iloc[0] == 13
+    assert df["text"].iloc[0] == "word"

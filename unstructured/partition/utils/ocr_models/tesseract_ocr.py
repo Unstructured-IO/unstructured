@@ -107,15 +107,22 @@ class OCRAgentTesseract(OCRAgent):
         self, hocr: str, character_confidence_threshold: float = 0.0
     ) -> pd.DataFrame:
         soup = BeautifulSoup(hocr, "html.parser")
-        words = soup.find_all("span", class_="ocrx_word")
+        word_spans = soup.find_all("span", class_="ocrx_word")
 
         df_entries = []
-        for word in words:
-            text, bbox = self.extract_word_from_hocr(
-                word=word, character_confidence_threshold=character_confidence_threshold
+        for word_span in word_spans:
+            word_title = word_span.get("title", "")
+            bbox_match = re.search(r"bbox (\d+) (\d+) (\d+) (\d+)", word_title)
+
+            # Note: word bbox is used instead of combining characters together due to tesseract
+            # bug that causes the character bboxes to be outside the word bbox, and they have 0
+            # height or width when text is horizontal
+            text = self.extract_word_from_hocr(
+                word=word_span, character_confidence_threshold=character_confidence_threshold
             )
-            if text and bbox:
-                left, top, right, bottom = bbox
+            if text and bbox_match:
+                word_bbox = list(map(int, bbox_match.groups()))
+                left, top, right, bottom = word_bbox
                 df_entries.append(
                     {
                         "left": left,
@@ -131,42 +138,29 @@ class OCRAgentTesseract(OCRAgent):
     @staticmethod
     def extract_word_from_hocr(
         word: Tag, character_confidence_threshold: float = 0.0
-    ) -> tuple[str, list[int] | None]:
+    ) -> str | None:
         """Extracts a word from an hOCR word tag, filtering out characters with low confidence."""
 
         character_spans = word.find_all("span", class_="ocrx_cinfo")
         if len(character_spans) == 0:
-            return "", None
+            return None
 
         word_text = ""
-        word_bbox = None
-
         for character_span in character_spans:
             char = character_span.text
 
             char_title = character_span.get("title", "")
             conf_match = re.search(r"x_conf (\d+\.\d+)", char_title)
-            bbox_match = re.search(r"x_bboxes (\d+) (\d+) (\d+) (\d+)", char_title)
 
-            if not (char and conf_match and bbox_match):
+            if not (char and conf_match):
                 continue
 
             character_probability = float(conf_match.group(1)) / 100
-            character_bbox = list(map(int, bbox_match.groups()))
 
             if character_probability >= character_confidence_threshold:
                 word_text += char
-                if word_bbox is None:
-                    word_bbox = character_bbox
-                else:
-                    word_bbox = [
-                        min(word_bbox[0], character_bbox[0]),  # x1 - starts from 0
-                        min(word_bbox[1], character_bbox[1]),  # y1 - starts from 0
-                        max(word_bbox[2], character_bbox[2]),
-                        max(word_bbox[3], character_bbox[3]),
-                    ]
 
-        return word_text, word_bbox
+        return word_text
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> List["LayoutElement"]:
