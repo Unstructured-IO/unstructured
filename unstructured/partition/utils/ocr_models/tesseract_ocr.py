@@ -136,14 +136,12 @@ class OCRAgentTesseract(OCRAgent):
         return ocr_df
 
     @staticmethod
-    def extract_word_from_hocr(
-        word: Tag, character_confidence_threshold: float = 0.0
-    ) -> str | None:
+    def extract_word_from_hocr(word: Tag, character_confidence_threshold: float = 0.0) -> str:
         """Extracts a word from an hOCR word tag, filtering out characters with low confidence."""
 
         character_spans = word.find_all("span", class_="ocrx_cinfo")
         if len(character_spans) == 0:
-            return None
+            return ""
 
         word_text = ""
         for character_span in character_spans:
