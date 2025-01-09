@@ -92,7 +92,7 @@ class OCRAgentTesseract(OCRAgent):
         image: np.ndarray,
         lang: str = "eng",
         config: str = "",
-        character_confidence_threshold: float = 0.85,
+        character_confidence_threshold: float = 0.0,
     ) -> pd.DataFrame:
         hocr: str = unstructured_pytesseract.image_to_pdf_or_hocr(
             image,
@@ -104,7 +104,7 @@ class OCRAgentTesseract(OCRAgent):
         return ocr_df
 
     def hocr_to_dataframe(
-        self, hocr: str, character_confidence_threshold: float = 0.85
+        self, hocr: str, character_confidence_threshold: float = 0.0
     ) -> pd.DataFrame:
         soup = BeautifulSoup(hocr, "html.parser")
         word_spans = soup.find_all("span", class_="ocrx_word")
