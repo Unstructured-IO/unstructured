@@ -148,13 +148,15 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     ocr_layout = OCRAgentPaddle().get_layout_from_image(image)
 
-    expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_PADDLE),
-    ]
+    expected_layout = TextRegions(
+        element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
+        texts=np.array(["Hello", "World", "!"]),
+        source=Source.OCR_PADDLE,
+    )
 
-    assert ocr_layout == expected_layout
+    assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
+    np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
+    assert ocr_layout.source == Source.OCR_PADDLE
 
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
