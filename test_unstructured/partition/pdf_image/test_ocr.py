@@ -8,7 +8,7 @@ import pytest
 import unstructured_pytesseract
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
-from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
+from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
 from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
@@ -89,13 +89,15 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_agent = OCRAgentTesseract()
     ocr_layout = ocr_agent.get_layout_from_image(image)
 
-    expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_TESSERACT),
-    ]
+    expected_layout = TextRegions(
+        element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
+        texts=np.array(["Hello", "World", "!"]),
+        source=Source.OCR_TESSERACT,
+    )
 
-    assert ocr_layout == expected_layout
+    assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
+    np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
+    assert ocr_layout.source == Source.OCR_TESSERACT
 
 
 def mock_ocr(*args, **kwargs):
@@ -461,7 +463,7 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     image = Image.new("RGB", (1000, 1000))
     ocr_agent = OCRAgentTesseract()
     # tests that the code can run instead of oom and OCR results make sense
-    assert [region.text for region in ocr_agent.get_layout_from_image(image)] == [
+    assert ocr_agent.get_layout_from_image(image).texts.tolist() == [
         "Hello",
         "World",
         "!",

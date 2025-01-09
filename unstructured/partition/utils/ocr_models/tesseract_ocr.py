@@ -22,7 +22,7 @@ from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.elements import TextRegions
     from unstructured_inference.inference.layoutelement import LayoutElement
 
 # -- force tesseract to be single threaded, otherwise we see major performance problems --
@@ -42,7 +42,7 @@ class OCRAgentTesseract(OCRAgent):
     def get_text_from_image(self, image: PILImage.Image) -> str:
         return unstructured_pytesseract.image_to_string(np.array(image), lang=self.language)
 
-    def get_layout_from_image(self, image: PILImage.Image) -> List[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
         trace_logger.detail("Processing entire page OCR with tesseract...")
@@ -111,7 +111,7 @@ class OCRAgentTesseract(OCRAgent):
         )
 
     @requires_dependencies("unstructured_inference")
-    def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> List["TextRegion"]:
+    def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> TextRegions:
         """Parse the OCR result data to extract a list of TextRegion objects from tesseract.
 
         The function processes the OCR result data frame, looking for bounding
@@ -128,39 +128,33 @@ class OCRAgentTesseract(OCRAgent):
             Default is 1.
 
         Returns:
-        - List[TextRegion]:
-            A list of TextRegion objects, each representing a detected text region
-            within the OCR-ed image.
+        - TextRegions:
+            TextRegions object, containing data from all text regions in numpy arrays; each row
+            represents a detected text region within the OCR-ed image.
 
         Note:
         - An empty string or a None value for the 'text' key in the input
           data frame will result in its associated bounding box being ignored.
         """
 
-        from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
+        from unstructured_inference.inference.elements import TextRegions
 
         if zoom <= 0:
             zoom = 1
 
-        text_regions: list[TextRegion] = []
-        for idtx in ocr_data.itertuples():
-            text = idtx.text
-            if not text:
-                continue
-
-            cleaned_text = str(text) if not isinstance(text, str) else text.strip()
-
-            if cleaned_text:
-                x1 = idtx.left / zoom
-                y1 = idtx.top / zoom
-                x2 = (idtx.left + idtx.width) / zoom
-                y2 = (idtx.top + idtx.height) / zoom
-                text_region = build_text_region_from_coords(
-                    x1, y1, x2, y2, text=cleaned_text, source=Source.OCR_TESSERACT
-                )
-                text_regions.append(text_region)
-
-        return text_regions
+        texts = ocr_data.text.apply(
+            lambda text: str(text) if not isinstance(text, str) else text.strip()
+        ).values
+        mask = texts != ""
+        element_coords = ocr_data[["left", "top", "width", "height"]].values
+        element_coords[:, 2] += element_coords[:, 0]
+        element_coords[:, 3] += element_coords[:, 1]
+        element_coords = element_coords.astype(float) / zoom
+        return TextRegions(
+            element_coords=element_coords[mask],
+            texts=texts[mask],
+            source=Source.OCR_TESSERACT,
+        )
 
 
 def zoom_image(image: PILImage.Image, zoom: float = 1) -> PILImage.Image:
