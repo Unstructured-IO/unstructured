@@ -72,13 +72,14 @@ def build_layout_elements_from_ocr_regions(
     else:
         grouped_regions = partition_groups_from_regions(ocr_regions)
 
-    merged_regions = [merge_text_regions(group) for group in grouped_regions]
-    return [
-        build_layout_element(
-            bbox=r.bbox, text=r.text, source=r.source, element_type=ElementType.UNCATEGORIZED_TEXT
-        )
-        for r in merged_regions
-    ]
+    merged_regions = TextRegions.from_list([merge_text_regions(group) for group in grouped_regions])
+    return LayoutElements(
+        element_coords=merged_regions.element_coords,
+        texts=merged_regions.texts,
+        source=merged_regions.source,
+        element_class_ids=np.zeros(merged_regions.texts.shape),
+        element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT},
+    )
 
 
 def merge_text_regions(regions: TextRegions) -> TextRegion:
