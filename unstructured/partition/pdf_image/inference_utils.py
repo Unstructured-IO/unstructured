@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
+import numpy as np
 from unstructured_inference.constants import Source
 from unstructured_inference.inference.elements import TextRegion, TextRegions
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
+    LayoutElements,
     partition_groups_from_regions,
 )
 
@@ -39,36 +41,36 @@ def build_layout_element(
 
 
 def build_layout_elements_from_ocr_regions(
-    ocr_regions: list[TextRegion],
+    ocr_regions: TextRegions,
     ocr_text: Optional[str] = None,
     group_by_ocr_text: bool = False,
-) -> list[LayoutElement]:
+) -> LayoutElements:
     """
     Get layout elements from OCR regions
     """
 
+    grouped_regions = []
     if group_by_ocr_text:
         text_sections = ocr_text.split("\n\n")
-        grouped_regions = []
+        mask = np.ones(ocr_regions.texts.shape).astype(bool)
+        indices = np.arange(len(mask))
         for text_section in text_sections:
             regions = []
             words = text_section.replace("\n", " ").split()
-            for ocr_region in ocr_regions:
+            for i, text in enumerate(ocr_regions.texts[mask]):
                 if not words:
                     break
-                if ocr_region.text in words:
-                    regions.append(ocr_region)
-                    words.remove(ocr_region.text)
+                if text in words:
+                    regions.append(indices[mask][i])
+                    mask[mask][i] = False
+                    words.remove(text)
 
             if not regions:
                 continue
 
-            for r in regions:
-                ocr_regions.remove(r)
-
-            grouped_regions.append(TextRegions.from_list(regions))
+            grouped_regions.append(ocr_regions.slice(regions))
     else:
-        grouped_regions = partition_groups_from_regions(TextRegions.from_list(ocr_regions))
+        grouped_regions = partition_groups_from_regions(ocr_regions)
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [

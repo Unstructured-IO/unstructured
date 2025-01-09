@@ -12,8 +12,8 @@ from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
 if TYPE_CHECKING:
     from PIL import Image as PILImage
-    from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.elements import TextRegion, TextRegions
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 class OCRAgentGoogleVision(OCRAgent):
@@ -44,7 +44,7 @@ class OCRAgentGoogleVision(OCRAgent):
         assert isinstance(document, TextAnnotation)
         return document.text
 
-    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         trace_logger.detail("Processing entire page OCR with Google Vision API...")
         image_context = ImageContext(language_hints=[self.language]) if self.language else None
         with BytesIO() as buffer:
@@ -57,7 +57,8 @@ class OCRAgentGoogleVision(OCRAgent):
         regions = self._parse_regions(document)
         return regions
 
-    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
+
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
         )
@@ -75,7 +76,9 @@ class OCRAgentGoogleVision(OCRAgent):
         )
         return layout_elements
 
-    def _parse_regions(self, ocr_data: TextAnnotation) -> list[TextRegion]:
+    def _parse_regions(self, ocr_data: TextAnnotation) -> TextRegions:
+        from unstructured_inference.inference.elements import TextRegions
+
         from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
 
         text_regions: list[TextRegion] = []
@@ -94,7 +97,7 @@ class OCRAgentGoogleVision(OCRAgent):
                         source=Source.OCR_GOOGLEVISION,
                     )
                     text_regions.append(text_region)
-        return text_regions
+        return TextRegions.from_list(text_regions)
 
     def _get_text_from_paragraph(self, paragraph: Paragraph) -> str:
         breaks = TextAnnotation.DetectedBreak.BreakType
