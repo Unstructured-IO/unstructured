@@ -69,12 +69,11 @@ class OCRAgentGoogleVision(OCRAgent):
         ocr_text = self.get_text_from_image(
             image,
         )
-        layout_elements = build_layout_elements_from_ocr_regions(
+        return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
             ocr_text=ocr_text,
             group_by_ocr_text=False,
         )
-        return layout_elements
 
     def _parse_regions(self, ocr_data: TextAnnotation) -> TextRegions:
         from unstructured_inference.inference.elements import TextRegions

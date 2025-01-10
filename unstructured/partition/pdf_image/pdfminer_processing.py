@@ -23,7 +23,7 @@ from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.elements import TextRegion, TextRegions
     from unstructured_inference.inference.layout import DocumentLayout
 
 
@@ -56,6 +56,7 @@ def process_data_with_pdfminer(
     from unstructured_inference.inference.elements import (
         EmbeddedTextRegion,
         ImageTextRegion,
+        TextRegions,
     )
 
     layouts = []
@@ -129,12 +130,18 @@ def process_data_with_pdfminer(
         ]
 
         clean_text_layout = remove_duplicate_elements(
-            text_layout, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
+            TextRegions.from_lis(text_layout), env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
         )
         clean_image_layout = remove_duplicate_elements(
-            image_layout, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
+            TextRegions.from_list(image_layout), env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
         )
-        layout = [*clean_text_layout, *clean_image_layout]
+        layout = TextRegions(
+            element_coords=np.concatenate(
+                [clean_text_layout.element_coords, clean_image_layout.element_coords]
+            ),
+            texts=np.concatenate([clean_text_layout.texts, clean_image_layout.texts]),
+            source=clean_text_layout.source,
+        )
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
         layout = sort_text_regions(layout, SORT_MODE_BASIC)
@@ -313,24 +320,15 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
 
 @requires_dependencies("unstructured_inference")
 def remove_duplicate_elements(
-    elements: list["TextRegion"],
+    elements: TextRegions,
     threshold: float = 0.5,
-) -> list["TextRegion"]:
+) -> TextRegions:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
 
-    bboxes = []
-    for i, element in enumerate(elements):
-        bboxes.append(element.bbox)
-
-    iou = boxes_self_iou(bboxes, threshold)
-
-    filtered_elements = []
-    for i, element in enumerate(elements):
-        if iou[i, i + 1 :].any():
-            continue
-        filtered_elements.append(element)
-
-    return filtered_elements
+    iou = boxes_self_iou(elements.element_coords, threshold)
+    # this is equivalent of finding those rows where `not iou[i, i + 1 :].any()`, i.e., any element
+    # that has no overlap above the threshold with any other elements
+    return elements.slice(~np.triu(iou, k=1).any(axis=1))
 
 
 def aggregate_embedded_text_by_block(

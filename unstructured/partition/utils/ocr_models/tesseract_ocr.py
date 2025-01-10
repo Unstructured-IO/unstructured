@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -23,7 +23,7 @@ from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegions
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
 # -- force tesseract to be single threaded, otherwise we see major performance problems --
 if "OMP_THREAD_LIMIT" not in os.environ:
@@ -88,7 +88,7 @@ class OCRAgentTesseract(OCRAgent):
         return ocr_regions
 
     @requires_dependencies("unstructured_inference")
-    def get_layout_elements_from_image(self, image: PILImage.Image) -> List["LayoutElement"]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
         )
