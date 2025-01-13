@@ -236,11 +236,12 @@ def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND
 @requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
-    extracted_layout: List[List["TextRegion"]],
+    extracted_layout: List[TextRegions],
     hi_res_model_name: str,
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
+    from unstructured_inference.inference.layoutelement import LayoutElements
     from unstructured_inference.inference.layoutelement import (
         merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
     )
@@ -265,28 +266,26 @@ def merge_inferred_with_extracted_layout(
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
 
+        # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
+        # vectorized data structure into the merge function
         merged_layout = merge_inferred_with_extracted_page(
             inferred_layout=inferred_layout,
-            extracted_layout=extracted_page_layout,
+            extracted_layout=extracted_page_layout.as_list(),
             page_image_size=image_size,
             **threshold_kwargs,
         )
 
-        merged_layout = sort_text_regions(cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC)
+        merged_layout = sort_text_regions(LayoutElements.from_list(merged_layout), SORT_MODE_BASIC)
 
-        elements = []
-        for layout_el in merged_layout:
-            if layout_el.text is None:
+        for i, text in enumerate(merged_layout.texts):
+            if text is None:
                 text = aggregate_embedded_text_by_block(
-                    text_region=cast("TextRegion", layout_el),
+                    text_region=merged_layout.slice([i]),
                     pdf_objects=extracted_page_layout,
                 )
-            else:
-                text = layout_el.text
-            layout_el.text = remove_control_characters(text)
-            elements.append(layout_el)
+            merged_layout.texts[i] = remove_control_characters(text)
 
-        inferred_page.elements[:] = elements
+        inferred_page.elements[:] = merged_layout.as_list()
 
     return inferred_document_layout
 
@@ -344,19 +343,23 @@ def remove_duplicate_elements(
 
 
 def aggregate_embedded_text_by_block(
-    text_region: "TextRegion",
-    pdf_objects: list["TextRegion"],
+    text_region: TextRegions,
+    pdf_objects: TextRegions,
 ) -> str:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
-    mask = bboxes1_is_almost_subregion_of_bboxes2(
-        [obj.bbox for obj in pdf_objects],
-        [text_region.bbox],
-        env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-    ).sum(axis=1)
+    mask = (
+        bboxes1_is_almost_subregion_of_bboxes2(
+            pdf_objects.element_coords,
+            text_region.element_coords,
+            env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
 
-    text = " ".join([obj.text for i, obj in enumerate(pdf_objects) if (mask[i] and obj.text)])
+    text = " ".join([text for text in pdf_objects.slice(mask).texts if text])
     return text
 
 

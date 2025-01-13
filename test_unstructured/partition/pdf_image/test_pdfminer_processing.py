@@ -138,12 +138,14 @@ elements_without_duplicate_images = [
 
 def test_aggregate_by_block():
     expected = "Inside region1 Inside region2"
-    embedded_regions = [
-        TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
-        TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
-        TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
-    ]
-    target_region = TextRegion.from_coords(0, 0, 300, 300)
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
+            TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
+            TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
+        ]
+    )
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
 
     text = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == expected
