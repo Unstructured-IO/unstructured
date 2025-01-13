@@ -1,8 +1,15 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 from PIL import Image
 from unstructured_inference.constants import Source as InferenceSource
-from unstructured_inference.inference.elements import EmbeddedTextRegion, Rectangle, TextRegion
+from unstructured_inference.inference.elements import (
+    EmbeddedTextRegion,
+    Rectangle,
+    TextRegion,
+    TextRegions,
+)
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -10,6 +17,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
     clean_pdfminer_inner_elements,
+    process_file_with_pdfminer,
     remove_duplicate_elements,
 )
 from unstructured.partition.utils.constants import Source
@@ -195,19 +203,26 @@ def test_boxes_self_iou(coords, threshold, expected):
 
 
 def test_remove_duplicate_elements():
-    sample_elements = [
-        EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 1"),
-        EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 2"),
-        EmbeddedTextRegion(bbox=Rectangle(20, 20, 30, 30), text="Text 3"),
-    ]
+    sample_elements = TextRegions.from_list(
+        [
+            EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 1"),
+            EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 2"),
+            EmbeddedTextRegion(bbox=Rectangle(20, 20, 30, 30), text="Text 3"),
+        ]
+    )
 
     result = remove_duplicate_elements(sample_elements)
 
     # Check that duplicates were removed and only 2 unique elements remain
     assert len(result) == 2
-    assert result[0].text == "Text 2"
-    assert result[1].text == "Text 3"
+    assert result.texts.tolist() == ["Text 2", "Text 3"]
+    assert result.element_coords.tolist() == [[0, 0, 10, 10], [20, 20, 30, 30]]
 
-    # Ensure the duplicate was removed by checking that result contains no redundant bboxes
-    assert result[0].bbox == Rectangle(0, 0, 10, 10)
-    assert result[1].bbox == Rectangle(20, 20, 30, 30)
+
+def test_process_file_with_pdfminer():
+    layout, links = process_file_with_pdfminer(
+        Path(__file__).parents[3] / "example-docs" / "pdf" / "layout-parser-paper-fast.pdf"
+    )
+    assert len(layout)
+    assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
+    assert links[0].url == "https://layout-parser.github.io"

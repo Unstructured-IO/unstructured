@@ -129,18 +129,27 @@ def process_data_with_pdfminer(
             for metadata in urls_metadata
         ]
 
-        clean_text_layout = remove_duplicate_elements(
-            TextRegions.from_lis(text_layout), env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
-        )
-        clean_image_layout = remove_duplicate_elements(
-            TextRegions.from_list(image_layout), env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
-        )
-        layout = TextRegions(
-            element_coords=np.concatenate(
-                [clean_text_layout.element_coords, clean_image_layout.element_coords]
+        if not text_layout and not image_layout:
+            continue
+
+        coords, texts = [], []
+        for _layout, threshold in zip(
+            (text_layout, image_layout),
+            (
+                env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD,
+                env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD,
             ),
-            texts=np.concatenate([clean_text_layout.texts, clean_image_layout.texts]),
-            source=clean_text_layout.source,
+        ):
+            if not _layout:
+                continue
+            clean_layout = remove_duplicate_elements(TextRegions.from_list(_layout), threshold)
+            coords.append(clean_layout.element_coords)
+            texts.append(clean_layout.texts)
+
+        layout = TextRegions(
+            element_coords=np.concatenate(coords),
+            texts=np.concatenate(texts),
+            source=Source.PDFMINER,
         )
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
@@ -168,6 +177,9 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
 
 def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
+    if isinstance(bboxes, np.ndarray):
+        return bboxes.round(round_to)
+
     # preallocate memory
     coords = np.zeros((len(bboxes), 4), dtype=np.float32)
 
