@@ -1,6 +1,7 @@
-## 0.16.13-dev0
+## 0.16.13-dev1
 
 ### Enhancements
+- **Add character-level filtering for tesseract output**. It is controllable via `TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD` environment variable.
 
 ### Features
 
@@ -8,7 +9,7 @@
 
 - **Fix NLTK Download** to use nltk assets in docker image
 - removed the ability to automatically download nltk package if missing
-  
+
 ## 0.16.12
 
 ### Enhancements
