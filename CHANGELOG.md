@@ -1,4 +1,4 @@
-## 0.16.13-dev1
+## 0.16.13
 
 ### Enhancements
 - **Add character-level filtering for tesseract output**. It is controllable via `TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD` environment variable.
