@@ -225,4 +225,4 @@ def test_process_file_with_pdfminer():
     )
     assert len(layout)
     assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
-    assert links[0].url == "https://layout-parser.github.io"
+    assert links[0][0].url == "https://layout-parser.github.io"
