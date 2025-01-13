@@ -127,12 +127,17 @@ class OCRAgentTesseract(OCRAgent):
                     {
                         "left": left,
                         "top": top,
-                        "width": right - left,
-                        "height": bottom - top,
+                        "right": right,
+                        "bottom": bottom,
                         "text": text,
                     }
                 )
-        ocr_df = pd.DataFrame(df_entries, columns=["left", "top", "width", "height", "text"])
+        ocr_df = pd.DataFrame(df_entries, columns=["left", "top", "right", "bottom", "text"])
+
+        ocr_df["width"] = ocr_df["right"] - ocr_df["left"]
+        ocr_df["height"] = ocr_df["bottom"] - ocr_df["top"]
+
+        ocr_df = ocr_df.drop(columns=["right", "bottom"])
         return ocr_df
 
     @staticmethod
