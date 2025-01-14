@@ -60,14 +60,14 @@ googleapis-common-protos==1.66.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.68.1
+grpcio==1.69.0
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.3
     # via google-api-core
-huggingface-hub==0.27.0
+huggingface-hub==0.27.1
     # via
     #   timm
     #   tokenizers
@@ -79,7 +79,7 @@ idna==3.10
     # via
     #   -c ./base.txt
     #   requests
-importlib-resources==6.5.1
+importlib-resources==6.5.2
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -153,7 +153,7 @@ pdfplumber==0.11.5
     # via layoutparser
 pi-heif==0.21.0
     # via -r ./extra-pdf-image.in
-pikepdf==9.5.0
+pikepdf==9.5.1
     # via -r ./extra-pdf-image.in
 pillow==11.1.0
     # via
@@ -212,6 +212,7 @@ pytz==2024.2
     # via pandas
 pyyaml==6.0.2
     # via
+    #   -c ./base.txt
     #   huggingface-hub
     #   layoutparser
     #   omegaconf
@@ -233,7 +234,7 @@ requests==2.32.3
     #   transformers
 rsa==4.9
     # via google-auth
-safetensors==0.5.0
+safetensors==0.5.2
     # via
     #   timm
     #   transformers
@@ -247,7 +248,7 @@ sympy==1.13.1
     # via
     #   onnxruntime
     #   torch
-timm==1.0.12
+timm==1.0.13
     # via
     #   effdet
     #   unstructured-inference
@@ -291,7 +292,7 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-wrapt==1.17.0
+wrapt==1.17.2
     # via
     #   -c ./base.txt
     #   deprecated
