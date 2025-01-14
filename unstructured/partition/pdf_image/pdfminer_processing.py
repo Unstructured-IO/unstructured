@@ -343,23 +343,24 @@ def remove_duplicate_elements(
 
 
 def aggregate_embedded_text_by_block(
-    text_region: TextRegions,
-    pdf_objects: TextRegions,
+    target_region: TextRegions,
+    source_regions: TextRegions,
+    threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
 ) -> str:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
     mask = (
         bboxes1_is_almost_subregion_of_bboxes2(
-            pdf_objects.element_coords,
-            text_region.element_coords,
-            env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+            source_regions.element_coords,
+            target_region.element_coords,
+            threshold,
         )
         .sum(axis=1)
         .astype(bool)
     )
 
-    text = " ".join([text for text in pdf_objects.slice(mask).texts if text])
+    text = " ".join([text for text in source_regions.slice(mask).texts if text])
     return text
 
 

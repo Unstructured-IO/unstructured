@@ -15,15 +15,19 @@ from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    aggregate_embedded_text_by_block,
+    bboxes1_is_almost_subregion_of_bboxes2,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.elements import TextRegion, TextRegions
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
     from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 
@@ -204,7 +208,7 @@ def supplement_page_layout_with_ocr(
         if ocr_layout_dumper:
             ocr_layout_dumper.add_ocred_page(ocr_layout)
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
-            out_layout=cast(List["LayoutElement"], page_layout.elements),
+            out_layout=page_layout.elements_array,
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -336,8 +340,8 @@ def get_table_tokens(
 
 
 def merge_out_layout_with_ocr_layout(
-    out_layout: List["LayoutElement"],
-    ocr_layout: List["TextRegion"],
+    out_layout: LayoutElements,
+    ocr_layout: TextRegions,
     supplement_with_ocr_elements: bool = True,
 ) -> List["LayoutElement"]:
     """
@@ -349,12 +353,12 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in out_layout if not valid_text(region.text)]
+    invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]
 
-    for out_region in out_regions_without_text:
-        out_region.text = aggregate_ocr_text_by_block(
-            ocr_layout,
-            out_region,
+    for idx in invalid_text_indices:
+        out_layout.texts[idx] = aggregate_embedded_text_by_block(
+            target_region=out_layout.slice([idx]),
+            source_regions=ocr_layout,
         )
 
     final_layout = (
@@ -389,8 +393,8 @@ def aggregate_ocr_text_by_block(
 
 @requires_dependencies("unstructured_inference")
 def supplement_layout_with_ocr_elements(
-    layout: List["LayoutElement"],
-    ocr_layout: List["TextRegion"],
+    layout: LayoutElements,
+    ocr_layout: TextRegions,
     subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> List["LayoutElement"]:
     """
@@ -402,10 +406,8 @@ def supplement_layout_with_ocr_elements(
     OCR-derived list. Then, it appends the remaining OCR-derived regions to the existing layout.
 
     Parameters:
-    - layout (List[LayoutElement]): A list of existing layout elements, each of which is
-                                    an instance of `LayoutElement`.
-    - ocr_layout (List[TextRegion]): A list of OCR-derived text regions, each of which is
-                                     an instance of `TextRegion`.
+    - layout (LayoutElements): A collection of existing layout elements in array structures
+    - ocr_layout (TextRegions): A collection of OCR-derived text regions in array structures
 
     Returns:
     - List[LayoutElement]: The final combined layout consisting of both the original layout
@@ -424,22 +426,21 @@ def supplement_layout_with_ocr_elements(
         build_layout_elements_from_ocr_regions,
     )
 
-    ocr_regions_to_remove: list[TextRegion] = []
-    for ocr_region in ocr_layout:
-        for el in layout:
-            ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(
-                el.bbox,
-                subregion_threshold,
-            )
-            if ocr_region_is_subregion_of_out_el:
-                ocr_regions_to_remove.append(ocr_region)
-                break
+    mask = (
+        ~bboxes1_is_almost_subregion_of_bboxes2(
+            ocr_layout.element_coords, layout.element_coords, subregion_threshold
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
 
-    ocr_regions_to_add = [region for region in ocr_layout if region not in ocr_regions_to_remove]
-    if ocr_regions_to_add:
+    # add ocr regions that are not covered by layout
+    ocr_regions_to_add = ocr_layout.slice(mask)
+
+    if sum(mask):
         ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
-        final_layout = layout + ocr_elements_to_add
+        final_layout = layout.as_list() + ocr_elements_to_add.as_list()
     else:
-        final_layout = layout
+        final_layout = layout.as_list()
 
     return final_layout

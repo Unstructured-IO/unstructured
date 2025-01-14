@@ -141,6 +141,7 @@ def test_aggregate_by_block():
     embedded_regions = TextRegions.from_list(
         [
             TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
+            TextRegion.from_coords(20, 20, 80, 80, None),
             TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
             TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
         ]

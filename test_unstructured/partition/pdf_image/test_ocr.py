@@ -12,6 +12,7 @@ from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRe
 from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
+    LayoutElements,
 )
 
 from unstructured.documents.elements import ElementType
@@ -286,7 +287,7 @@ def mock_ocr_regions():
 def mock_out_layout(mock_embedded_text_regions):
     return [
         LayoutElement(
-            text=None,
+            text="",
             source=None,
             type="Text",
             bbox=r.bbox,
@@ -360,13 +361,18 @@ def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
         for r in mock_ocr_regions
     ]
 
-    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
+    final_layout = ocr.merge_out_layout_with_ocr_layout(
+        LayoutElements.from_list(mock_out_layout),
+        TextRegions.from_list(mock_ocr_regions),
+    )
 
     # Check if the out layout's text attribute is updated with aggregated OCR text
     assert final_layout[0].text == mock_ocr_regions[2].text
 
     # Check if the final layout contains both original elements and OCR-derived elements
-    assert all(element in final_layout for element in mock_out_layout)
+    # The first element's text is modified by the ocr regions so it won't be the same as the input
+    assert all(element in final_layout for element in mock_out_layout[1:])
+    assert final_layout[0].bbox == mock_out_layout[0].bbox
     assert any(element in final_layout for element in ocr_elements)
 
 
