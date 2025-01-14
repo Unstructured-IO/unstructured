@@ -313,7 +313,9 @@ def get_table_tokens(
 
     ocr_layout = ocr_agent.get_layout_from_image(image=table_element_image)
     table_tokens = []
-    for ocr_region in ocr_layout:
+    # TODO (yao): need to refactor table token data structure and inference lib to use vectorized
+    # data structure before updating this function to use the vectorized TextRegions
+    for ocr_region in ocr_layout.as_list():
         table_tokens.append(
             {
                 "bbox": [
@@ -354,6 +356,7 @@ def merge_out_layout_with_ocr_layout(
     """
 
     invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]
+    out_layout.texts = out_layout.texts.astype(object)
 
     for idx in invalid_text_indices:
         out_layout.texts[idx] = aggregate_embedded_text_by_block(

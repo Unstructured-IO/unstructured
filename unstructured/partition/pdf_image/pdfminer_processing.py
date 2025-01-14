@@ -276,6 +276,8 @@ def merge_inferred_with_extracted_layout(
         )
 
         merged_layout = sort_text_regions(LayoutElements.from_list(merged_layout), SORT_MODE_BASIC)
+        # so that we can modify the text without worrying about hitting length limit
+        merged_layout.texts = merged_layout.texts.astype(object)
 
         for i, text in enumerate(merged_layout.texts):
             if text is None:
