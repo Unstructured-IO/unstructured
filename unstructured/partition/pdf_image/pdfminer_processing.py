@@ -280,8 +280,8 @@ def merge_inferred_with_extracted_layout(
         for i, text in enumerate(merged_layout.texts):
             if text is None:
                 text = aggregate_embedded_text_by_block(
-                    text_region=merged_layout.slice([i]),
-                    pdf_objects=extracted_page_layout,
+                    target_region=merged_layout.slice([i]),
+                    source_regions=extracted_page_layout,
                 )
             merged_layout.texts[i] = remove_control_characters(text)
 
