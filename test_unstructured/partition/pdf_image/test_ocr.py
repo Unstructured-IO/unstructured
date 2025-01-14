@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import unstructured_pytesseract
+from bs4 import BeautifulSoup, Tag
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
@@ -71,8 +72,8 @@ def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
 
 def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
-        unstructured_pytesseract,
-        "image_to_data",
+        OCRAgentTesseract,
+        "image_to_data_with_character_confidence_filter",
         lambda *args, **kwargs: pd.DataFrame(
             {
                 "left": [10, 20, 30, 0],
@@ -445,8 +446,8 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
     monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")
     monkeypatch.setattr(
-        unstructured_pytesseract,
-        "image_to_data",
+        OCRAgentTesseract,
+        "image_to_data_with_character_confidence_filter",
         lambda *args, **kwargs: pd.DataFrame(
             {
                 "left": [10, 20, 30, 0],
@@ -484,3 +485,80 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # Check if the final layout contains both original elements and OCR-derived elements
     assert all(element in final_layout for element in mock_out_layout)
     assert any(element in final_layout for element in ocr_elements)
+
+
+def _create_hocr_word_span(
+    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int]
+) -> Tag:
+    word_span = BeautifulSoup(
+        f"<span class='ocrx_word' title='"
+        f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
+        f"; x_wconf 64'></span>",
+        "html.parser",
+    ).span
+    for char, x_conf in characters:
+        char_span = BeautifulSoup(
+            f"""
+            <span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>
+            """,  # noqa : E501
+            "html.parser",
+        ).span
+        word_span.append(char_span)
+    return word_span
+
+
+def test_extract_word_from_hocr():
+    characters = [
+        ("w", "99.0"),
+        ("o", "98.5"),
+        ("r", "97.5"),
+        ("d", "96.0"),
+        ("!", "50.0"),
+        ("@", "45.0"),
+    ]
+    word_bbox = (10, 9, 70, 22)
+    word_span = _create_hocr_word_span(characters, word_bbox)
+
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.0)
+    assert text == "word!@"
+
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.960)
+    assert text == "word"
+
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.990)
+    assert text == "w"
+
+    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.999)
+    assert text == ""
+
+
+def test_hocr_to_dataframe():
+    characters = [
+        ("w", "99.0"),
+        ("o", "98.5"),
+        ("r", "97.5"),
+        ("d", "96.0"),
+        ("!", "50.0"),
+        ("@", "45.0"),
+    ]
+    word_bbox = (10, 9, 70, 22)
+    hocr = str(_create_hocr_word_span(characters, word_bbox))
+    df = OCRAgentTesseract().hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
+
+    assert df.shape == (1, 5)
+    assert df["left"].iloc[0] == 10
+    assert df["top"].iloc[0] == 9
+    assert df["width"].iloc[0] == 60
+    assert df["height"].iloc[0] == 13
+    assert df["text"].iloc[0] == "word"
+
+
+def test_hocr_to_dataframe_when_no_prediction_empty_df():
+    df = OCRAgentTesseract().hocr_to_dataframe(hocr="")
+
+    assert df.shape == (0, 5)
+    assert "left" in df.columns
+    assert "top" in df.columns
+    assert "width" in df.columns
+    assert "text" in df.columns
+    assert "text" in df.columns

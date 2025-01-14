@@ -995,11 +995,11 @@ def test_partition_hi_res_model_name_default_to_None():
     [
         (
             PartitionStrategy.HI_RES,
-            "unstructured_pytesseract.image_to_data",
+            "unstructured_pytesseract.image_to_pdf_or_hocr",
         ),
         (
             PartitionStrategy.OCR_ONLY,
-            "unstructured_pytesseract.image_to_data",
+            "unstructured_pytesseract.image_to_pdf_or_hocr",
         ),
         (
             PartitionStrategy.OCR_ONLY,
