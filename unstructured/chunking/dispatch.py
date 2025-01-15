@@ -37,10 +37,12 @@ class Chunker(Protocol):
 
 
 def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
-    """Decorator for chunking text.
+    """Decorator for chunking text in both pre-processing and post-processing way.
 
     Chunks the element sequence produced by the partitioner it decorates when a `chunking_strategy`
     argument is present in the partitioner call and it names an available chunking strategy.
+    The chunking process could be both pre-process and post-process chunking
+
     """
     # -- Patch the docstring of the decorated function to add chunking strategy and
     # -- chunking-related argument documentation. This only applies when `chunking_strategy`
@@ -65,6 +67,25 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
             + "\n\t\t\tof length n characters, a hard max."
         )
+    # -- Patch the docstring of the decorated function to add contexual chunking strategy and
+    # -- contextual_chunking-related argument documentation.
+    # -- This only applies when `contextual_chunking_strategy` is an explicit argument
+    # -- of the decorated function and "contextual_chunking_strategy" is not
+    # -- already mentioned in the docstring.
+    if func.__doc__ and (
+        "contextual_chunking_strategy" in func.__code__.co_varnames
+        and "contextual_chunking_strategy" not in func.__doc__
+    ):
+        func.__doc__ += (
+            "\ncontextual_chunking_strategy"
+            + "\n\tStrategy used to contextualize chunks into chunks with prefixs."
+            + "\n\tDefaults to `None`"
+            + "\n\tAdditional Parameters:"
+            + "\n\t\\service_name"
+            + "\n\t\t\tThe service name that describes the provider and its purpose"
+            + "\n\t\tauth_env"
+            + "\n\t\t\tthe authentication environment var name to get the auth token"
+        )
 
     @functools.wraps(func)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
@@ -82,23 +103,43 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             return elements
 
         # -- otherwise, chunk away :) --
+        # here, chunk() can be both pre-process and post-process chunking
         return chunk(elements, chunking_strategy, **call_args)
 
     return wrapper
 
 
 def chunk(elements: Iterable[Element], chunking_strategy: str, **kwargs: Any) -> list[Element]:
-    """Dispatch chunking of `elements` to the chunking function for `chunking_strategy`."""
+    """Dispatch chunking of `elements` to the chunking function if only `chunking_strategy` present
+    if both `chunking_strategy` and `contextual_chunking_strategy` args are present and None,
+    use the chunketized results and perform contextual chunking function afterwards.
+
+    """
     chunker_spec = _chunker_registry.get(chunking_strategy)
 
     if chunker_spec is None:
         raise ValueError(f"unrecognized chunking strategy {repr(chunking_strategy)}")
+    # extract and remove contextual_chunking_strategy from kwargs if present
+    contextual_chunking_strategy = kwargs.pop("contextual_chunking_strategy", None)
 
     # -- `kwargs` will in general be an omnibus dict of all keyword arguments to the partitioner;
     # -- pick out and use only those supported by this chunker.
     chunking_kwargs = {k: v for k, v in kwargs.items() if k in chunker_spec.kw_arg_names}
+    chunks = chunker_spec.chunker(elements, **chunking_kwargs)
+    if contextual_chunking_strategy:
+        contextual_chunking_spec = _chunker_registry.get(contextual_chunking_strategy)
+        if contextual_chunking_spec is None:
+            raise ValueError(
+                f"unrecognized contextual chunking strategy {repr(contextual_chunking_strategy)}"
+            )
+        # prepare kwargs for the contextual chunkin strategy such as service name, auth env etc
+        contextual_chunking_kwargs = {
+            k: v for k, v in kwargs.items() if k in contextual_chunking_spec.kw_arg_names
+        }
+        # perform post-chunking using contextual_chunking_strategy
+        chunks = contextual_chunking_spec.chunker(chunks, **contextual_chunking_kwargs)
 
-    return chunker_spec.chunker(elements, **chunking_kwargs)
+    return chunks
 
 
 def register_chunking_strategy(name: str, chunker: Chunker) -> None:
