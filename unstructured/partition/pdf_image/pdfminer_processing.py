@@ -130,6 +130,7 @@ def process_data_with_pdfminer(
         ]
 
         if not text_layout and not image_layout:
+            layouts_links.append(links)
             continue
 
         coords, texts = [], []
@@ -287,6 +288,8 @@ def merge_inferred_with_extracted_layout(
                 )
             merged_layout.texts[i] = remove_control_characters(text)
 
+        inferred_page.elements_array = merged_layout
+        # NOTE: once we drop reference to elements we can remove this step below
         inferred_page.elements[:] = merged_layout.as_list()
 
     return inferred_document_layout

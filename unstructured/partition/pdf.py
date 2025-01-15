@@ -613,7 +613,7 @@ def _partition_pdf_or_image_local(
                     model_name=hi_res_model_name,
                 )
                 extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=extracted_layout,
+                    layout=[layout.as_list() for layout in extracted_layout],
                 )
                 ocr_layout_dumper = OCRLayoutDumper()
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
@@ -665,7 +665,7 @@ def _partition_pdf_or_image_local(
                     model_name=hi_res_model_name,
                 )
                 extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=extracted_layout,
+                    layout=[layout.as_list() for layout in extracted_layout],
                 )
                 ocr_layout_dumper = OCRLayoutDumper()
 
@@ -903,8 +903,10 @@ def _partition_pdf_or_image_with_ocr_from_image(
         languages=languages,
     )
 
+    # NOTE (yao): elements for a document is still stored as a list therefore at this step we have
+    # to convert the vector data structured ocr_data into a list
     page_elements = ocr_data_to_elements(
-        ocr_data,
+        ocr_data.as_list(),
         image_size=image.size,
         common_metadata=metadata,
     )

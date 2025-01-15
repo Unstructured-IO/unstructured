@@ -206,12 +206,14 @@ def supplement_page_layout_with_ocr(
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = ocr_agent.get_layout_from_image(image)
         if ocr_layout_dumper:
-            ocr_layout_dumper.add_ocred_page(ocr_layout)
+            ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=page_layout.elements_array,
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
+        # individual block mode still keeps using the list data structure for elements instead of
+        # the vectorized page_layout.elements_array data structure
         for element in page_layout.elements:
             if not element.text:
                 padding = env_config.IMAGE_CROP_PAD
