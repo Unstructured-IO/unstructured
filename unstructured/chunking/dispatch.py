@@ -126,7 +126,7 @@ def chunk(elements: Iterable[Element], chunking_strategy: str, **kwargs: Any) ->
     # -- pick out and use only those supported by this chunker.
     chunking_kwargs = {k: v for k, v in kwargs.items() if k in chunker_spec.kw_arg_names}
     chunks = chunker_spec.chunker(elements, **chunking_kwargs)
-    if contextual_chunking_strategy:
+    if contextual_chunking_strategy == "v1":
         contextual_chunking_spec = _chunker_registry.get(contextual_chunking_strategy)
         if contextual_chunking_spec is None:
             raise ValueError(
