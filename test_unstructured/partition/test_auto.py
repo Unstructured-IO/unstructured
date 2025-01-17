@@ -570,6 +570,20 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
     )
 
 
+@pytest.mark.parametrize("infer_bool", [True, False])
+def test_auto_handles_kwarg_with_infer_table_structure(infer_bool):
+    with patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
+        partition(
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            pdf_infer_table_structure=True,
+            strategy=PartitionStrategy.HI_RES,
+            infer_table_structure=infer_bool,
+        )
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"] is infer_bool
+
+
 def test_auto_partition_pdf_uses_pdf_infer_table_structure_argument():
     with patch(
         "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
