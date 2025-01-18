@@ -1525,10 +1525,9 @@ def test_document_to_element_list_sets_category_depth_titles():
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        (PartitionStrategy.FAST,  {"pdfminer"}),
-        (PartitionStrategy.FAST,  {"pdfminer"}),
+        (PartitionStrategy.FAST, {"pdfminer"}),
         (PartitionStrategy.HI_RES, {"yolox", "pdfminer", "ocr_tesseract"}),
-        (PartitionStrategy.OCR_ONLY,  {"ocr_tesseract"}),
+        (PartitionStrategy.OCR_ONLY, {"ocr_tesseract"}),
     ],
 )
 def test_partition_pdf_with_password(
@@ -1541,20 +1540,14 @@ def test_partition_pdf_with_password(
     def _test(result):
         # validate that the result is a non-empty list of dicts
         assert len(result) == 1
-        assert result[0].text == 'File with password'
+        assert result[0].text == "File with password"
 
     if file_mode == "filename":
-        result = pdf.partition_pdf(
-            filename=filename, strategy=strategy,
-            password="password"
-        )
+        result = pdf.partition_pdf(filename=filename, strategy=strategy, password="password")
         _test(result)
     elif file_mode == "rb":
         with open(filename, "rb") as f:
-            result = pdf.partition_pdf(
-                file=f, strategy=strategy,
-                password="password"
-            )
+            result = pdf.partition_pdf(file=f, strategy=strategy, password="password")
             _test(result)
     else:
         with open(filename, "rb") as test_file:
@@ -1562,7 +1555,6 @@ def test_partition_pdf_with_password(
             spooled_temp_file.write(test_file.read())
             spooled_temp_file.seek(0)
             result = pdf.partition_pdf(
-                file=spooled_temp_file, strategy=strategy,
-                password="password"
+                file=spooled_temp_file, strategy=strategy, password="password"
             )
             _test(result)
