@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Iterable, cast
 
 import numpy as np
 from pydantic import Field, SecretStr
@@ -11,10 +11,16 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from voyageai import Client
 
+DEFAULT_VOYAGE_2_BATCH_SIZE = 72
+DEFAULT_VOYAGE_3_LITE_BATCH_SIZE = 30
+DEFAULT_VOYAGE_3_BATCH_SIZE = 10
+DEFAULT_BATCH_SIZE = 7
+
 
 class VoyageAIEmbeddingConfig(EmbeddingConfig):
     api_key: SecretStr
     model_name: str
+    show_progress_bar: bool = False
     batch_size: Optional[int] = Field(default=None)
     truncation: Optional[bool] = Field(default=None)
     output_dimension: Optional[int] = Field(default=None)
@@ -30,6 +36,18 @@ class VoyageAIEmbeddingConfig(EmbeddingConfig):
         return Client(
             api_key=self.api_key.get_secret_value(),
         )
+
+    def get_batch_size(self):
+        if self.batch_size is None:
+            if self.model_name in ["voyage-2", "voyage-02"]:
+                self.batch_size = DEFAULT_VOYAGE_2_BATCH_SIZE
+            elif self.model_name == "voyage-3-lite":
+                self.batch_size = DEFAULT_VOYAGE_3_LITE_BATCH_SIZE
+            elif self.model_name == "voyage-3":
+                self.batch_size = DEFAULT_VOYAGE_3_BATCH_SIZE
+            else:
+                self.batch_size = DEFAULT_BATCH_SIZE
+        return self.batch_size
 
 
 @dataclass
@@ -54,13 +72,18 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
         client = self.config.get_client()
-        embeddings = client.embed(
-            texts=[str(e) for e in elements],
-            model=self.config.model_name,
-            input_type="document",
-            truncation=self.config.truncation,
-            output_dimension=self.config.output_dimension,
-        ).embeddings
+        embeddings: List[List[float]] = []
+
+        _iter = self._get_batch_iterator(elements)
+        for i in _iter:
+            r = client.embed(
+                texts=[str(e) for e in elements[i: i + self.config.get_batch_size()]],
+                model=self.config.model_name,
+                input_type="document",
+                truncation=self.config.truncation,
+                output_dimension=self.config.output_dimension,
+            ).embeddings
+            embeddings.extend(cast(Iterable[List[float]], r))
         return self._add_embeddings_to_elements(elements, embeddings)
 
     def embed_query(self, query: str) -> List[float]:
@@ -81,3 +104,19 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
             element.embeddings = embeddings[i]
             elements_w_embedding.append(element)
         return elements
+
+    def _get_batch_iterator(self, elements: List[Element]) -> Iterable:
+        if self.config.show_progress_bar:
+            try:
+                from tqdm.auto import tqdm  # type: ignore
+            except ImportError as e:
+                raise ImportError(
+                    "Must have tqdm installed if `show_progress_bar` is set to True. "
+                    "Please install with `pip install tqdm`."
+                ) from e
+
+            _iter = tqdm(range(0, len(elements), self.config.get_batch_size()))
+        else:
+            _iter = range(0, len(elements), self.config.get_batch_size())  # type: ignore
+
+        return _iter
