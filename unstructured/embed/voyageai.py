@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional, Iterable, cast
+from typing import TYPE_CHECKING, Iterable, List, Optional, cast
 
 import numpy as np
 from pydantic import Field, SecretStr
