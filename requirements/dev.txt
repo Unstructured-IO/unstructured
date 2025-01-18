@@ -17,7 +17,7 @@ distlib==0.3.9
     # via virtualenv
 filelock==3.16.1
     # via virtualenv
-identify==2.6.4
+identify==2.6.5
     # via pre-commit
 importlib-metadata==8.5.0
     # via
@@ -44,6 +44,7 @@ pyproject-hooks==1.2.0
     #   pip-tools
 pyyaml==6.0.2
     # via
+    #   -c ./base.txt
     #   -c ./test.txt
     #   pre-commit
 tomli==2.2.1
