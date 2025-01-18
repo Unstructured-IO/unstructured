@@ -58,7 +58,7 @@ def convert_pdf_to_image(
     dpi: int = 200,
     output_folder: Optional[Union[str, PurePath]] = None,
     path_only: bool = False,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
     """Get the image renderings of the pdf pages using pdf2image"""
 
@@ -127,7 +127,7 @@ def save_elements(
     is_image: bool = False,
     extract_image_block_to_payload: bool = False,
     output_dir_path: str | None = None,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ):
     """
     Saves specific elements from a PDF as images either to a directory or embeds them in the
@@ -393,7 +393,7 @@ def convert_pdf_to_images(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     chunk_size: int = 10,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ) -> Iterator[Image.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)

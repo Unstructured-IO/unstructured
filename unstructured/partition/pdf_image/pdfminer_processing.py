@@ -51,7 +51,7 @@ def process_file_with_pdfminer(
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-    password:Optional[str]=None,
+    password: Optional[str] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""

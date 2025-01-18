@@ -32,7 +32,7 @@ def partition_image(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
-    password:Optional[str]=None,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses an image into a list of interpreted elements.
