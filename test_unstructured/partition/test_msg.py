@@ -443,7 +443,7 @@ class DescribeMsgPartitionerOptions:
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture
-    def _last_modified_prop_(self, request: FixtureRequest):
+    def _last_modified_prop_(self, request: FixtureRequest):  # noqa: PT005
         return property_mock(request, MsgPartitionerOptions, "_last_modified")
 
     @pytest.fixture

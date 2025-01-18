@@ -99,7 +99,7 @@ class DescribeOCRAgent:
         return method_mock(request, OCRAgent, "get_instance")
 
     @pytest.fixture()
-    def _get_ocr_agent_cls_qname_(self, request: FixtureRequest):
+    def _get_ocr_agent_cls_qname_(self, request: FixtureRequest):  # noqa: PT005
         return method_mock(request, OCRAgent, "_get_ocr_agent_cls_qname")
 
     @pytest.fixture()

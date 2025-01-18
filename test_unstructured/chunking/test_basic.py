@@ -164,5 +164,5 @@ class Describe_chunk_elements:
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_elements_(self, request: FixtureRequest):
+    def _chunk_elements_(self, request: FixtureRequest):  # noqa: PT005
         return function_mock(request, "unstructured.chunking.basic._chunk_elements")
