@@ -9,7 +9,7 @@ from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from langchain_voyageai import VoyageAIEmbeddings
+    from voyageai import Client
 
 
 class VoyageAIEmbeddingConfig(EmbeddingConfig):
@@ -17,20 +17,18 @@ class VoyageAIEmbeddingConfig(EmbeddingConfig):
     model_name: str
     batch_size: Optional[int] = Field(default=None)
     truncation: Optional[bool] = Field(default=None)
+    output_dimension: Optional[int] = Field(default=None)
 
     @requires_dependencies(
-        ["langchain", "langchain_voyageai"],
+        ["voyageai"],
         extras="embed-voyageai",
     )
-    def get_client(self) -> "VoyageAIEmbeddings":
-        """Creates a Langchain VoyageAI python client to embed elements."""
-        from langchain_voyageai import VoyageAIEmbeddings
+    def get_client(self) -> "Client":
+        """Creates a VoyageAI python client to embed elements."""
+        from voyageai import Client
 
-        return VoyageAIEmbeddings(
-            voyage_api_key=self.api_key,
-            model=self.model_name,
-            batch_size=self.batch_size,
-            truncation=self.truncation,
+        return Client(
+            api_key=self.api_key.get_secret_value(),
         )
 
 
@@ -56,12 +54,24 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
         client = self.config.get_client()
-        embeddings = client.embed_documents([str(e) for e in elements])
+        embeddings = client.embed(
+            texts=[str(e) for e in elements],
+            model=self.config.model_name,
+            input_type="document",
+            truncation=self.config.truncation,
+            output_dimension=self.config.output_dimension,
+        ).embeddings
         return self._add_embeddings_to_elements(elements, embeddings)
 
     def embed_query(self, query: str) -> List[float]:
         client = self.config.get_client()
-        return client.embed_query(query)
+        return client.embed(
+            texts=[query],
+            model=self.config.model_name,
+            input_type="query",
+            truncation=self.config.truncation,
+            output_dimension=self.config.output_dimension,
+        ).embeddings[0]
 
     @staticmethod
     def _add_embeddings_to_elements(elements, embeddings) -> List[Element]:
