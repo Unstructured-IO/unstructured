@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Tuple, Optional
+from typing import BinaryIO, List, Tuple
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
@@ -73,7 +73,7 @@ def rect_to_bbox(
 @requires_dependencies(["pikepdf", "pypdf"])
 def open_pdfminer_pages_generator(
     fp: BinaryIO,
-    password:Optional[str]=None,
+    password: str = "",
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
