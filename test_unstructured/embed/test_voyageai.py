@@ -1,4 +1,4 @@
-from voyageai.object import EmbeddingsObject
+from unittest.mock import Mock
 
 from unstructured.documents.elements import Text
 from unstructured.embed.voyageai import VoyageAIEmbeddingConfig, VoyageAIEmbeddingEncoder
@@ -6,7 +6,7 @@ from unstructured.embed.voyageai import VoyageAIEmbeddingConfig, VoyageAIEmbeddi
 
 def test_embed_documents_does_not_break_element_to_dict(mocker):
     # Mocked client with the desired behavior for embed_documents
-    embed_response = EmbeddingsObject()
+    embed_response = Mock()
     embed_response.embeddings = [[1], [2]]
     mock_client = mocker.MagicMock()
     mock_client.embed.return_value = embed_response
