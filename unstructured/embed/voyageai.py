@@ -77,7 +77,7 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
         _iter = self._get_batch_iterator(elements)
         for i in _iter:
             r = client.embed(
-                texts=[str(e) for e in elements[i: i + self.config.get_batch_size()]],
+                texts=[str(e) for e in elements[i : i + self.config.get_batch_size()]],
                 model=self.config.model_name,
                 input_type="document",
                 truncation=self.config.truncation,
