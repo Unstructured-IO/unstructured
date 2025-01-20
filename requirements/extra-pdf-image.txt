@@ -16,6 +16,10 @@ cffi==1.17.1
     # via
     #   -c ./base.txt
     #   cryptography
+chardet==5.2.0
+    # via
+    #   -c ./base.txt
+    #   pdfplumber
 charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
@@ -136,11 +140,11 @@ pandas==2.2.3
     # via unstructured-inference
 pdf2image==1.17.0
     # via -r ./extra-pdf-image.in
-pdfminer-six==20231228
+pdfminer-six==20240706
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.5
+pdfplumber==0.5.3
     # via unstructured-inference
 pi-heif==0.21.0
     # via -r ./extra-pdf-image.in
@@ -181,14 +185,14 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
+pycrypto==2.6.1
+    # via pdfplumber
 pyparsing==3.2.1
     # via matplotlib
 pypdf==5.1.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
-pypdfium2==4.30.1
-    # via pdfplumber
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
@@ -267,6 +271,8 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.2
     # via pandas
+unicodecsv==0.14.1
+    # via pdfplumber
 unstructured-inference==0.8.3
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
@@ -276,6 +282,8 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
+wand==0.6.13
+    # via pdfplumber
 wrapt==1.17.2
     # via
     #   -c ./base.txt
