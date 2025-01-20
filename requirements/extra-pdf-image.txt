@@ -185,7 +185,8 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pycrypto==2.6.1
+pycryptodome==3.17
+# pycrypto==2.6.1
     # via pdfplumber
 pyparsing==3.2.1
     # via matplotlib
