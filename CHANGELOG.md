@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Update `unstructured-inference`** to 0.8.3 in requirements which removed `layoutparser` dependency libs
+- **Update `pdfminer-six` to 20240706**
 
 ## 0.16.14
 
