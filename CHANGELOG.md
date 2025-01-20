@@ -1,4 +1,4 @@
-## 0.16.14-dev0
+## 0.16.14
 
 ### Enhancements
 - **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
