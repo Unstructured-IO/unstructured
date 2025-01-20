@@ -1,3 +1,12 @@
+## 0.16.14-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Update `unstructured-inference`** to 0.8.3 in requirements which removed `layoutparser` dependency libs
+
 ## 0.16.13
 
 ### Enhancements
