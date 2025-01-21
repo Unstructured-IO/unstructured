@@ -18,7 +18,7 @@ from unstructured_inference.inference.layoutelement import (
 
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
-from unstructured.partition.pdf_image.ocr import pad_element_bboxes
+from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
@@ -94,12 +94,12 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     expected_layout = TextRegions(
         element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
         texts=np.array(["Hello", "World", "!"]),
-        source=Source.OCR_TESSERACT,
+        sources=np.array([Source.OCR_TESSERACT] * 3),
     )
 
     assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
     np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
-    assert ocr_layout.source == Source.OCR_TESSERACT
+    np.testing.assert_array_equal(ocr_layout.sources, expected_layout.sources)
 
 
 def mock_ocr(*args, **kwargs):
@@ -153,12 +153,12 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
     expected_layout = TextRegions(
         element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
         texts=np.array(["Hello", "World", "!"]),
-        source=Source.OCR_PADDLE,
+        sources=np.array([Source.OCR_PADDLE] * 3),
     )
 
     assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
     np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
-    assert ocr_layout.source == Source.OCR_PADDLE
+    np.testing.assert_array_equal(ocr_layout.sources, expected_layout.sources)
 
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
@@ -260,7 +260,7 @@ def test_get_layout_from_image_google_vision(google_vision_client):
     regions = ocr_agent.get_layout_from_image(image)
     assert len(regions) == 1
     assert regions.texts[0] == "Hello World!"
-    assert regions.source == Source.OCR_GOOGLEVISION
+    assert all(source == Source.OCR_GOOGLEVISION for source in regions.sources)
     assert regions.x1[0] == 0
     assert regions.y1[0] == 0
     assert regions.x2[0] == 10
@@ -343,7 +343,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
         for r in mock_ocr_regions.as_list()
     ]
 
-    final_layout = ocr.supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions)
+    final_layout = ocr.supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions).as_list()
 
     # Check if the final layout contains the original layout elements
     for element in mock_layout.as_list():
@@ -372,7 +372,7 @@ def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     final_layout = ocr.merge_out_layout_with_ocr_layout(
         mock_out_layout,
         mock_ocr_regions,
-    )
+    ).as_list()
 
     # Check if the out layout's text attribute is updated with aggregated OCR text
     assert final_layout[0].text == mock_ocr_regions.texts[2]
@@ -497,7 +497,9 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     ]
     input_layout_elements = mock_out_layout.as_list()
 
-    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
+    # TODO (yao): refactor the tests to check the array data structure directly instead of
+    # converting them into lists first (this includes other tests in this file)
+    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions).as_list()
 
     # Check if the out layout's text attribute is updated with aggregated OCR text
     assert final_layout[0].text == mock_ocr_regions.texts[2]
