@@ -345,6 +345,7 @@ def merge_out_layout_with_ocr_layout(
     out_layout: LayoutElements,
     ocr_layout: TextRegions,
     supplement_with_ocr_elements: bool = True,
+    subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> LayoutElements:
     """
     Merge the out layout with the OCR-detected text regions on page level.
@@ -362,6 +363,7 @@ def merge_out_layout_with_ocr_layout(
         out_layout.texts[idx] = aggregate_embedded_text_by_block(
             target_region=out_layout.slice([idx]),
             source_regions=ocr_layout,
+            threshold=subregion_threshold,
         )
 
     final_layout = (
