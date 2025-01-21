@@ -1,6 +1,16 @@
-## 0.16.13-dev0
+## 0.16.14
 
 ### Enhancements
+
+### Features
+
+### Fixes
+- **Fix an issue with multiple values for `infer_table_structure`** when paritioning email with image attachements the kwarg calls into `partition` to partition the image already contains `infer_table_structure`. Now `partition` function checks if the `kwarg` has `infer_table_structure` already
+
+## 0.16.13
+
+### Enhancements
+- **Add character-level filtering for tesseract output**. It is controllable via `TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD` environment variable.
 
 ### Features
 
@@ -8,7 +18,7 @@
 
 - **Fix NLTK Download** to use nltk assets in docker image
 - removed the ability to automatically download nltk package if missing
-  
+
 ## 0.16.12
 
 ### Enhancements

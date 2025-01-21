@@ -97,6 +97,11 @@ class ENVConfig:
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
 
     @property
+    def TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD(self) -> int:
+        """Tesseract predictions with confidence below this threshold are ignored"""
+        return self._get_float("TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD", 0.0)
+
+    @property
     def GOOGLEVISION_API_ENDPOINT(self) -> str:
         """API endpoint to use for Google Vision"""
         return self._get_string("GOOGLEVISION_API_ENDPOINT", "")

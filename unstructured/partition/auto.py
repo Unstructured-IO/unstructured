@@ -174,10 +174,19 @@ def partition(
     if file is not None:
         file.seek(0)
 
-    infer_table_structure = decide_table_extraction(
-        file_type,
-        skip_infer_table_types,
-        pdf_infer_table_structure,
+    # avoid double specification of infer_table_structure; this can happen when the kwarg passed
+    # into a partition function, e.g., partition_email is reused to partition sub-elements, e.g.,
+    # partition an image attachment buy calling partition with the kwargs. In that case here kwargs
+    # would have a infer_table_structure already
+    kwargs_infer_table_structure = kwargs.pop("infer_table_structure", None)
+    infer_table_structure = (
+        kwargs_infer_table_structure
+        if kwargs_infer_table_structure is not None
+        else decide_table_extraction(
+            file_type,
+            skip_infer_table_types,
+            pdf_infer_table_structure,
+        )
     )
 
     partitioner_loader = _PartitionerLoader()
