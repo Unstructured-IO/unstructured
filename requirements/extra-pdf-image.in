@@ -3,7 +3,7 @@
 
 onnx
 pdf2image
-pdfminer.six==20240706
+pdfminer.six
 pikepdf
 pi_heif
 pypdf
