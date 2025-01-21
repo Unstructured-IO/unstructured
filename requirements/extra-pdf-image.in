@@ -4,6 +4,7 @@
 onnx
 pdf2image
 pdfminer.six==20240706
+pycryptodome
 pikepdf
 pi_heif
 pypdf
