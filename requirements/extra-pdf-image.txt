@@ -185,8 +185,7 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pycryptodome==3.17
-# pycrypto==2.6.1
+pycrypto==2.6.1
     # via pdfplumber
 pyparsing==3.2.1
     # via matplotlib
@@ -274,7 +273,7 @@ tzdata==2024.2
     # via pandas
 unicodecsv==0.14.1
     # via pdfplumber
-unstructured-inference==0.8.3
+unstructured-inference==0.8.4
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in

@@ -19,7 +19,7 @@ filelock==3.16.1
     # via virtualenv
 identify==2.6.6
     # via pre-commit
-importlib-metadata==8.5.0
+importlib-metadata==8.6.1
     # via
     #   -c ././deps/constraints.txt
     #   build
