@@ -623,6 +623,9 @@ def _partition_pdf_or_image_local(
             hi_res_model_name=hi_res_model_name,
         )
 
+        # FIXME (yao): current vectorization progress stops here -> merged layout has vectorized
+        # data structure; ocr agent produces vectorized output as well; the but logic are still
+        # written to handle lists
         final_document_layout = process_file_with_ocr(
             filename,
             merged_document_layout,
@@ -1124,7 +1127,12 @@ def document_to_element_list(
             else None
         )
 
-        for layout_element in page.elements:
+        # TODO: vectorization stops here. Below there are logic applying per element and the output
+        # is a list of unstructured Element. As a result we don't vectorize the logic yet unless we
+        # are ready to work on `list[Element]`.
+        # - write a helper to iter elements without returning full list of all elements to reduce
+        # memory load
+        for layout_element in page.elements_array.as_list():
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:

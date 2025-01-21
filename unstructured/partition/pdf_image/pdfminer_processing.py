@@ -104,7 +104,7 @@ def process_page_layout_from_pdfminer(
             texts=np.array(texts).astype(object),
             element_class_ids=np.array(element_class),
             element_class_id_map={0: "Text", 1: "Image"},
-            source=Source.PDFMINER,
+            sources=np.array([Source.PDFMINER] * len(element_class)),
         ),
         urls_metadata,
     )

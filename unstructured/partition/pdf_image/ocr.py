@@ -4,6 +4,7 @@ import os
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
+import numpy as np
 import pdf2image
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
@@ -14,7 +15,7 @@ from PIL import ImageSequence
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
-from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import valid_text
 from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
@@ -97,7 +98,7 @@ def process_data_with_ocr(
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
-    extracted_layout: List[List["TextRegion"]],
+    extracted_layout: List[TextRegions],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -113,6 +114,9 @@ def process_file_with_ocr(
     - filename (str): The path to the input file, which can be an image or a PDF.
 
     - out_layout (DocumentLayout): The output layout from unstructured-inference.
+
+    - extracted_layout (List[TextRegions]): a list of text regions extracted by pdfminer, one for
+      each page
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).
         Defaults to False.
@@ -191,7 +195,7 @@ def supplement_page_layout_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
-    extracted_regions: Optional[List["TextRegion"]] = None,
+    extracted_regions: Optional[TextRegions] = None,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
 ) -> "PageLayout":
     """
@@ -207,29 +211,29 @@ def supplement_page_layout_with_ocr(
         ocr_layout = ocr_agent.get_layout_from_image(image)
         if ocr_layout_dumper:
             ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
-        page_layout.elements[:] = merge_out_layout_with_ocr_layout(
+        page_layout.elements_array = merge_out_layout_with_ocr_layout(
             out_layout=page_layout.elements_array,
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         # individual block mode still keeps using the list data structure for elements instead of
         # the vectorized page_layout.elements_array data structure
-        for element in page_layout.elements:
-            if not element.text:
-                padding = env_config.IMAGE_CROP_PAD
-                padded_element = pad_element_bboxes(element, padding=padding)
-                cropped_image = image.crop(
-                    (
-                        padded_element.bbox.x1,
-                        padded_element.bbox.y1,
-                        padded_element.bbox.x2,
-                        padded_element.bbox.y2,
-                    ),
-                )
-                # Note(yuming): instead of getting OCR layout, we just need
-                # the text extraced from OCR for individual elements
-                text_from_ocr = ocr_agent.get_text_from_image(cropped_image)
-                element.text = text_from_ocr
+        for i, text in enumerate(page_layout.texts):
+            if text:
+                continue
+            padding = env_config.IMAGE_CROP_PAD
+            cropped_image = image.crop(
+                (
+                    page_layout.x1[i] - padding,
+                    page_layout.y1[i] - padding,
+                    page_layout.x2[i] + padding,
+                    page_layout.y2[i] + padding,
+                ),
+            )
+            # Note(yuming): instead of getting OCR layout, we just need
+            # the text extraced from OCR for individual elements
+            text_from_ocr = ocr_agent.get_text_from_image(cropped_image)
+            page_layout.texts[i] = text_from_ocr
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "
@@ -244,8 +248,8 @@ def supplement_page_layout_with_ocr(
         if tables.tables_agent is None:
             raise RuntimeError("Unable to load table extraction agent.")
 
-        page_layout.elements[:] = supplement_element_with_table_extraction(
-            elements=cast(List["LayoutElement"], page_layout.elements),
+        page_layout.elements_array = supplement_element_with_table_extraction(
+            elements=page_layout.elements_array,
             image=image,
             tables_agent=tables.tables_agent,
             ocr_agent=ocr_agent,
@@ -257,11 +261,11 @@ def supplement_page_layout_with_ocr(
 
 @requires_dependencies("unstructured_inference")
 def supplement_element_with_table_extraction(
-    elements: List["LayoutElement"],
+    elements: LayoutElements,
     image: PILImage.Image,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_agent,
-    extracted_regions: Optional[List["TextRegion"]] = None,
+    extracted_regions: Optional[TextRegions] = None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata fields "text_as_html" where
@@ -270,23 +274,26 @@ def supplement_element_with_table_extraction(
     """
     from unstructured_inference.models.tables import cells_to_html
 
-    table_elements = [el for el in elements if el.type == ElementType.TABLE]
-    for element in table_elements:
-        padding = env_config.TABLE_IMAGE_CROP_PAD
-        padded_element = pad_element_bboxes(element, padding=padding)
+    table_id = {v: k for k, v in elements.element_class_id_map.items()}.get(ElementType.TABLE)
+    if not table_id:
+        # no table found in this page
+        return elements
+
+    table_ele_indices = np.where(elements.element_class_ids == table_id)[0]
+    table_elements = elements.slice(table_ele_indices)
+    padding = env_config.TABLE_IMAGE_CROP_PAD
+    for i, element_coords in enumerate(table_elements.element_coords):
         cropped_image = image.crop(
             (
-                padded_element.bbox.x1,
-                padded_element.bbox.y1,
-                padded_element.bbox.x2,
-                padded_element.bbox.y2,
+                element_coords[0] - padding,
+                element_coords[1] - padding,
+                element_coords[2] + padding,
+                element_coords[3] + padding,
             ),
         )
         table_tokens = get_table_tokens(
             table_element_image=cropped_image,
             ocr_agent=ocr_agent,
-            extracted_regions=extracted_regions,
-            table_element=padded_element,
         )
         tatr_cells = tables_agent.predict(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
@@ -294,13 +301,13 @@ def supplement_element_with_table_extraction(
 
         # NOTE(christine): `tatr_cells == ""` means that the table was not recognized
         text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
-        element.text_as_html = text_as_html
+        elements.text_as_html[table_ele_indices[i]] = text_as_html
 
         if env_config.EXTRACT_TABLE_AS_CELLS:
             simple_table_cells = [
                 SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
             ]
-            element.table_as_cells = simple_table_cells
+            elements.table_as_cells[table_ele_indices[i]] = simple_table_cells
 
     return elements
 
@@ -308,38 +315,29 @@ def supplement_element_with_table_extraction(
 def get_table_tokens(
     table_element_image: PILImage.Image,
     ocr_agent: OCRAgent,
-    extracted_regions: Optional[List["TextRegion"]] = None,
-    table_element: Optional["LayoutElement"] = None,
 ) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
     ocr_layout = ocr_agent.get_layout_from_image(image=table_element_image)
     table_tokens = []
-    # TODO (yao): need to refactor table token data structure and inference lib to use vectorized
-    # data structure before updating this function to use the vectorized TextRegions
-    for ocr_region in ocr_layout.as_list():
+    for i, text in enumerate(ocr_layout.texts):
         table_tokens.append(
             {
                 "bbox": [
-                    ocr_region.bbox.x1,
-                    ocr_region.bbox.y1,
-                    ocr_region.bbox.x2,
-                    ocr_region.bbox.y2,
+                    ocr_layout.x1[i],
+                    ocr_layout.y1[i],
+                    ocr_layout.x2[i],
+                    ocr_layout.y2[i],
                 ],
-                "text": ocr_region.text,
+                "text": text,
+                # 'table_tokens' is a list of tokens
+                # Need to be in a relative reading order
+                "span_num": i,
+                "line_num": 0,
+                "block_num": 0,
             }
         )
 
-    # 'table_tokens' is a list of tokens
-    # Need to be in a relative reading order
-    # If no order is provided, use current order
-    for idx, token in enumerate(table_tokens):
-        if "span_num" not in token:
-            token["span_num"] = idx
-        if "line_num" not in token:
-            token["line_num"] = 0
-        if "block_num" not in token:
-            token["block_num"] = 0
     return table_tokens
 
 
@@ -347,7 +345,7 @@ def merge_out_layout_with_ocr_layout(
     out_layout: LayoutElements,
     ocr_layout: TextRegions,
     supplement_with_ocr_elements: bool = True,
-) -> List["LayoutElement"]:
+) -> LayoutElements:
     """
     Merge the out layout with the OCR-detected text regions on page level.
 
@@ -401,7 +399,7 @@ def supplement_layout_with_ocr_elements(
     layout: LayoutElements,
     ocr_layout: TextRegions,
     subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
-) -> List["LayoutElement"]:
+) -> LayoutElements:
     """
     Supplement the existing layout with additional OCR-derived elements.
 
@@ -427,6 +425,8 @@ def supplement_layout_with_ocr_elements(
      threshold.
     """
 
+    from unstructured_inference.inference.layoutelement import LayoutElements
+
     from unstructured.partition.pdf_image.inference_utils import (
         build_layout_elements_from_ocr_regions,
     )
@@ -444,8 +444,8 @@ def supplement_layout_with_ocr_elements(
 
     if sum(mask):
         ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
-        final_layout = layout.as_list() + ocr_elements_to_add.as_list()
+        final_layout = LayoutElements.concatenate([layout, ocr_elements_to_add])
     else:
-        final_layout = layout.as_list()
+        final_layout = layout
 
     return final_layout

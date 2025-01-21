@@ -52,7 +52,7 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
-imageio==2.36.1
+imageio==2.37.0
     # via
     #   imgaug
     #   scikit-image

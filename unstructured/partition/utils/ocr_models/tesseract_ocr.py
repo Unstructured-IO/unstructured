@@ -153,7 +153,7 @@ class OCRAgentTesseract(OCRAgent):
         return TextRegions(
             element_coords=element_coords[mask],
             texts=texts[mask],
-            source=Source.OCR_TESSERACT,
+            sources=np.array([Source.OCR_TESSERACT] * mask.sum()),
         )
 
 

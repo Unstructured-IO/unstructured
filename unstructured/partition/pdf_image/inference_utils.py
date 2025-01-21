@@ -76,7 +76,7 @@ def build_layout_elements_from_ocr_regions(
     return LayoutElements(
         element_coords=merged_regions.element_coords,
         texts=merged_regions.texts,
-        source=merged_regions.source,
+        sources=merged_regions.sources,
         element_class_ids=np.zeros(merged_regions.texts.shape),
         element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT},
     )
@@ -102,6 +102,7 @@ def merge_text_regions(regions: TextRegions) -> TextRegion:
     max_y2 = regions.y2.max().astype(float)
 
     merged_text = " ".join([text for text in regions.texts if text])
-    source = regions.source
+    # assumption is the regions has the same source
+    source = regions.sources[0]
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
