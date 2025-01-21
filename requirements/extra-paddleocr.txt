@@ -32,7 +32,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
-fonttools==4.55.3
+fonttools==4.55.4
     # via matplotlib
 h11==0.14.0
     # via

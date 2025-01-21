@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-cachetools==5.5.0
+cachetools==5.5.1
     # via google-auth
 certifi==2024.12.14
     # via
@@ -16,10 +16,6 @@ cffi==1.17.1
     # via
     #   -c ./base.txt
     #   cryptography
-chardet==5.2.0
-    # via
-    #   -c ./base.txt
-    #   pdfplumber
 charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
@@ -39,14 +35,14 @@ deprecated==1.2.15
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   huggingface-hub
     #   torch
     #   transformers
 flatbuffers==24.12.23
     # via onnxruntime
-fonttools==4.55.3
+fonttools==4.55.4
     # via matplotlib
 fsspec==2024.12.0
     # via
@@ -143,9 +139,7 @@ pdf2image==1.17.0
 pdfminer-six==20240706
     # via
     #   -r ./extra-pdf-image.in
-    #   pdfplumber
-pdfplumber==0.5.3
-    # via unstructured-inference
+    #   unstructured-inference
 pi-heif==0.21.0
     # via -r ./extra-pdf-image.in
 pikepdf==9.5.1
@@ -154,7 +148,6 @@ pillow==11.1.0
     # via
     #   matplotlib
     #   pdf2image
-    #   pdfplumber
     #   pi-heif
     #   pikepdf
     #   torchvision
@@ -185,8 +178,6 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pycrypto==2.6.1
-    # via pdfplumber
 pycryptodome==3.21.0
     # via -r ./extra-pdf-image.in
 pyparsing==3.2.1
@@ -195,6 +186,8 @@ pypdf==5.1.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
+pypdfium2==4.30.1
+    # via unstructured-inference
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
@@ -271,11 +264,9 @@ typing-extensions==4.12.2
     #   huggingface-hub
     #   pypdf
     #   torch
-tzdata==2024.2
+tzdata==2025.1
     # via pandas
-unicodecsv==0.14.1
-    # via pdfplumber
-unstructured-inference==0.8.4
+unstructured-inference==0.8.5
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
@@ -284,8 +275,6 @@ urllib3==1.26.20
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-wand==0.6.13
-    # via pdfplumber
 wrapt==1.17.2
     # via
     #   -c ./base.txt
