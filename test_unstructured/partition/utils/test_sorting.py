@@ -118,6 +118,7 @@ def test_sort_text_regions():
             [[1, 2, 2, 2], [1, 1, 2, 2], [3, 1, 4, 4]],
         ),
         texts=np.array(["1", "2", "3"]),
+        sources=np.array(["foo"] * 3),
     )
     assert sort_text_regions(unsorted, sort_mode=SORT_MODE_BASIC).texts.tolist() == ["2", "3", "1"]
 
@@ -131,8 +132,9 @@ def test_sort_text_regions():
 )
 def test_sort_text_regions_with_invalid_coords_using_xy_cut_does_no_ops(coords):
     unsorted = TextRegions(
-        element_coords=np.array(coords),
+        element_coords=np.array(coords).astype(float),
         texts=np.array(["1", "2", "3"]),
+        sources=np.array(["foo"] * 3),
     )
     assert sort_text_regions(unsorted).texts.tolist() == ["1", "2", "3"]
 
