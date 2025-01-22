@@ -40,7 +40,7 @@ filelock==3.17.0
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==24.12.23
+flatbuffers==25.1.21
     # via onnxruntime
 fonttools==4.55.4
     # via matplotlib
@@ -178,8 +178,6 @@ pycparser==2.22
     # via
     #   -c ./base.txt
     #   cffi
-pycryptodome==3.21.0
-    # via -r ./extra-pdf-image.in
 pyparsing==3.2.1
     # via matplotlib
 pypdf==5.1.0

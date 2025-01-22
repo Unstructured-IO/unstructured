@@ -4,7 +4,6 @@
 onnx
 pdf2image
 pdfminer.six
-pycryptodome
 pikepdf
 pi_heif
 pypdf
@@ -12,5 +11,5 @@ google-cloud-vision
 effdet
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
-unstructured-inference==0.8.5
+unstructured-inference>=0.8.5
 unstructured.pytesseract>=0.3.12
