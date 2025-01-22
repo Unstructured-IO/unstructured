@@ -54,7 +54,7 @@ exceptiongroup==1.2.2
     #   -c ./base.txt
     #   anyio
     #   pytest
-faker==33.3.1
+faker==34.0.0
     # via jsf
 flake8==7.1.1
     # via
