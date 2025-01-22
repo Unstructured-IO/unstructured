@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==4.7.0
+anyio==4.8.0
     # via
     #   -c ./base.txt
     #   httpx
@@ -32,7 +32,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
-fonttools==4.55.3
+fonttools==4.55.4
     # via matplotlib
 h11==0.14.0
     # via
@@ -52,13 +52,13 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
-imageio==2.36.1
+imageio==2.37.0
     # via
     #   imgaug
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-resources==6.5.1
+importlib-resources==6.5.2
     # via matplotlib
 kiwisolver==1.4.7
     # via matplotlib
@@ -86,9 +86,9 @@ numpy==1.26.4
     #   shapely
     #   tifffile
     #   unstructured-paddleocr
-opencv-contrib-python==4.10.0.84
+opencv-contrib-python==4.11.0.86
     # via unstructured-paddleocr
-opencv-python==4.10.0.84
+opencv-python==4.11.0.86
     # via
     #   imgaug
     #   unstructured-paddleocr
@@ -113,10 +113,8 @@ pillow==11.1.0
     #   pdf2image
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==4.25.5
-    # via
-    #   -c ././deps/constraints.txt
-    #   paddlepaddle
+protobuf==5.29.3
+    # via paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
 pyparsing==3.2.1
