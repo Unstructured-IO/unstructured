@@ -91,9 +91,9 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_layout = ocr_agent.get_layout_from_image(image)
 
     expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_TESSERACT),
+        TextRegion.from_coords(10, 5, 25, 15, "Hello", sources=Source.OCR_TESSERACT),
+        TextRegion.from_coords(20, 15, 45, 35, "World", sources=Source.OCR_TESSERACT),
+        TextRegion.from_coords(30, 25, 65, 55, "!", sources=Source.OCR_TESSERACT),
     ]
 
     assert ocr_layout == expected_layout
@@ -148,9 +148,9 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
     ocr_layout = OCRAgentPaddle().get_layout_from_image(image)
 
     expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_PADDLE),
+        TextRegion.from_coords(10, 5, 25, 15, "Hello", sources=Source.OCR_PADDLE),
+        TextRegion.from_coords(20, 15, 45, 35, "World", sources=Source.OCR_PADDLE),
+        TextRegion.from_coords(30, 25, 65, 55, "!", sources=Source.OCR_PADDLE),
     ]
 
     assert ocr_layout == expected_layout
@@ -273,9 +273,9 @@ def test_get_layout_elements_from_image_google_vision(google_vision_client):
 @pytest.fixture()
 def mock_ocr_regions():
     return [
-        EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
-        EmbeddedTextRegion.from_coords(200, 200, 300, 300, text="1", source=None),
-        EmbeddedTextRegion.from_coords(500, 320, 600, 350, text="3", source=None),
+        EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", sources=None),
+        EmbeddedTextRegion.from_coords(200, 200, 300, 300, text="1", sources=None),
+        EmbeddedTextRegion.from_coords(500, 320, 600, 350, text="3", sources=None),
     ]
 
 
@@ -328,7 +328,7 @@ def mock_layout(mock_embedded_text_regions):
 
 def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -353,7 +353,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
 
 def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -473,7 +473,7 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # the code should ignore this invalid text and use ocr region's text
     mock_out_layout[0].text = "(cid:10)(cid:5)?"
     ocr_elements = [
-        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
