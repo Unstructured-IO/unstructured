@@ -158,7 +158,6 @@ proto-plus==1.25.0
     #   google-cloud-vision
 protobuf==5.29.3
     # via
-    #   -c ././deps/constraints.txt
     #   google-api-core
     #   google-cloud-vision
     #   googleapis-common-protos
