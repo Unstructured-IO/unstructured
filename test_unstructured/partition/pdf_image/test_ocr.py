@@ -328,7 +328,7 @@ def mock_layout(mock_embedded_text_regions):
 
 def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -353,7 +353,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
 
 def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
-        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
@@ -473,7 +473,7 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # the code should ignore this invalid text and use ocr region's text
     mock_out_layout[0].text = "(cid:10)(cid:5)?"
     ocr_elements = [
-        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        LayoutElement(text=r.text, sources=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_ocr_regions
     ]
 
