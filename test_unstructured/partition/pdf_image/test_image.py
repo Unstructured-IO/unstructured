@@ -79,6 +79,7 @@ class MockPageLayout(layout.PageLayout):
                 text="Charlie Brown and the Great Pumpkin",
             ),
         ]
+        self.elements_array = layout.LayoutElements.from_list(self.elements)
 
 
 class MockDocumentLayout(layout.DocumentLayout):
@@ -579,6 +580,7 @@ def inference_results():
         image=mock.MagicMock(format="JPEG"),
     )
     page.elements = [layout.LayoutElement.from_coords(0, 0, 600, 800, text="hello")]
+    page.elements_array = layout.LayoutElements.from_list(page.elements)
     doc = layout.DocumentLayout(pages=[page])
     return doc
 

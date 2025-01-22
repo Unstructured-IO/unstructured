@@ -218,22 +218,22 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         # individual block mode still keeps using the list data structure for elements instead of
         # the vectorized page_layout.elements_array data structure
-        for i, text in enumerate(page_layout.texts):
+        for i, text in enumerate(page_layout.elements_array.texts):
             if text:
                 continue
             padding = env_config.IMAGE_CROP_PAD
             cropped_image = image.crop(
                 (
-                    page_layout.x1[i] - padding,
-                    page_layout.y1[i] - padding,
-                    page_layout.x2[i] + padding,
-                    page_layout.y2[i] + padding,
+                    page_layout.elements_array.x1[i] - padding,
+                    page_layout.elements_array.y1[i] - padding,
+                    page_layout.elements_array.x2[i] + padding,
+                    page_layout.elements_array.y2[i] + padding,
                 ),
             )
             # Note(yuming): instead of getting OCR layout, we just need
             # the text extraced from OCR for individual elements
             text_from_ocr = ocr_agent.get_text_from_image(cropped_image)
-            page_layout.texts[i] = text_from_ocr
+            page_layout.elements_array.texts[i] = text_from_ocr
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "

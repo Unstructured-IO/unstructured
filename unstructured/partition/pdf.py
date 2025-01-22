@@ -1133,7 +1133,11 @@ def document_to_element_list(
         # - write a helper to iter elements without returning full list of all elements to reduce
         # memory load
         for layout_element in page.elements_array.as_list():
-            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
+            if (
+                image_width
+                and image_height
+                and not np.isnan(getattr(layout_element.bbox, "x1", np.nan))
+            ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
                 coordinate_system = None
