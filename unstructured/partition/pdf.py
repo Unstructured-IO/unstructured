@@ -1129,7 +1129,7 @@ def document_to_element_list(
             if (
                 image_width
                 and image_height
-                and getattr(layout_element.bbox, "x1") is not (None, np.nan)
+                and getattr(layout_element.bbox, "x1") not in (None, np.nan)
             ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
