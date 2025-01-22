@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-cachetools==5.5.0
+cachetools==5.5.1
     # via google-auth
 certifi==2024.12.14
     # via
@@ -35,14 +35,14 @@ deprecated==1.2.15
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==24.12.23
+flatbuffers==25.1.21
     # via onnxruntime
-fonttools==4.55.3
+fonttools==4.55.4
     # via matplotlib
 fsspec==2024.12.0
     # via
@@ -65,7 +65,7 @@ grpcio==1.69.0
     #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.62.3
+grpcio-status==1.69.0
     # via google-api-core
 huggingface-hub==0.27.1
     # via
@@ -159,9 +159,8 @@ proto-plus==1.25.0
     # via
     #   google-api-core
     #   google-cloud-vision
-protobuf==4.25.5
+protobuf==5.29.3
     # via
-    #   -c ././deps/constraints.txt
     #   google-api-core
     #   google-cloud-vision
     #   googleapis-common-protos
@@ -265,7 +264,7 @@ typing-extensions==4.12.2
     #   huggingface-hub
     #   pypdf
     #   torch
-tzdata==2024.2
+tzdata==2025.1
     # via pandas
 unstructured-inference==0.8.4
     # via -r ./extra-pdf-image.in

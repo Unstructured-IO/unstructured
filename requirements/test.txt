@@ -54,7 +54,7 @@ exceptiongroup==1.2.2
     #   -c ./base.txt
     #   anyio
     #   pytest
-faker==33.3.1
+faker==34.0.0
     # via jsf
 flake8==7.1.1
     # via
@@ -270,7 +270,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   referencing
-tzdata==2024.2
+tzdata==2025.1
     # via pandas
 ujson==5.10.0
     # via label-studio-sdk
