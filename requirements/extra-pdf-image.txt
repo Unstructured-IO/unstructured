@@ -136,12 +136,10 @@ pandas==2.2.3
     # via unstructured-inference
 pdf2image==1.17.0
     # via -r ./extra-pdf-image.in
-pdfminer-six==20231228
+pdfminer-six==20240706
     # via
     #   -r ./extra-pdf-image.in
-    #   pdfplumber
-pdfplumber==0.11.5
-    # via unstructured-inference
+    #   unstructured-inference
 pi-heif==0.21.0
     # via -r ./extra-pdf-image.in
 pikepdf==9.5.1
@@ -150,7 +148,6 @@ pillow==11.1.0
     # via
     #   matplotlib
     #   pdf2image
-    #   pdfplumber
     #   pi-heif
     #   pikepdf
     #   torchvision
@@ -187,7 +184,7 @@ pypdf==5.1.0
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
 pypdfium2==4.30.1
-    # via pdfplumber
+    # via unstructured-inference
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
@@ -266,7 +263,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2025.1
     # via pandas
-unstructured-inference==0.8.4
+unstructured-inference==0.8.6
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
