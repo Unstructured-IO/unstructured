@@ -2,6 +2,7 @@
 ### Enhancements
 
 ### Features
+- **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
 
 ### Fixes
 - **Add auto-download for NLTK for Python Enviroment** When user install python library without image. It will automatic download nltk data. Added `entry_points` in `setup` in `setup.py`

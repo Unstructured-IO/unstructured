@@ -1,4 +1,6 @@
+import numpy as np
 import pytest
+from unstructured_inference.inference.elements import TextRegions
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import CoordinatesMetadata, Element, Text
@@ -8,6 +10,7 @@ from unstructured.partition.utils.sorting import (
     coordinates_to_bbox,
     shrink_bbox,
     sort_page_elements,
+    sort_text_regions,
 )
 
 
@@ -107,6 +110,33 @@ def test_sort_basic_pos_coordinates():
 
     sorted_elem_text = " ".join([str(elem.text) for elem in sorted_page_elements])
     assert sorted_elem_text == "7 8 9"
+
+
+def test_sort_text_regions():
+    unsorted = TextRegions(
+        element_coords=np.array(
+            [[1, 2, 2, 2], [1, 1, 2, 2], [3, 1, 4, 4]],
+        ),
+        texts=np.array(["1", "2", "3"]),
+        sources=np.array(["foo"] * 3),
+    )
+    assert sort_text_regions(unsorted, sort_mode=SORT_MODE_BASIC).texts.tolist() == ["2", "3", "1"]
+
+
+@pytest.mark.parametrize(
+    "coords",
+    [
+        [[1, 2, 2, 2], [1, 1, 2, 2], [3, -1, 4, 4]],
+        [[1, 2, 2, 2], [1, 1, 2, 2], [3, None, 4, 4]],
+    ],
+)
+def test_sort_text_regions_with_invalid_coords_using_xy_cut_does_no_ops(coords):
+    unsorted = TextRegions(
+        element_coords=np.array(coords).astype(float),
+        texts=np.array(["1", "2", "3"]),
+        sources=np.array(["foo"] * 3),
+    )
+    assert sort_text_regions(unsorted).texts.tolist() == ["1", "2", "3"]
 
 
 def test_coordinates_to_bbox():
