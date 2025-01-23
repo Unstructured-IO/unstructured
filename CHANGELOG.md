@@ -1,11 +1,19 @@
-## 0.16.15-dev
-
+## 0.16.16-dev0
 ### Enhancements
 
 ### Features
 
 ### Fixes
 - **Add auto-download for NLTK for Python Enviroment** When user install python library without image. It will automatic download nltk data. Added `entry_points` in `setup` in `setup.py`
+
+## 0.16.15
+### Enhancements
+
+### Features
+
+### Fixes
+- **Update `unstructured-inference`** to 0.8.6 in requirements which removed `layoutparser` dependency libs
+- **Update `pdfminer-six` to 20240706**
 
 ## 0.16.14
 

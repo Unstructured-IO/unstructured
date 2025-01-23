@@ -49,7 +49,12 @@ dnspython==2.7.0
     # via email-validator
 email-validator==2.2.0
     # via pydantic
-faker==34.0.2
+exceptiongroup==1.2.2
+    # via
+    #   -c ./base.txt
+    #   anyio
+    #   pytest
+faker==34.0.0
     # via jsf
 flake8==7.1.1
     # via

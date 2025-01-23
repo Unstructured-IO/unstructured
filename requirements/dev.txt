@@ -19,6 +19,11 @@ filelock==3.17.0
     # via virtualenv
 identify==2.6.6
     # via pre-commit
+
+importlib-metadata==8.6.1
+    # via
+    #   -c ././deps/constraints.txt
+    #   build
 nodeenv==1.9.1
     # via pre-commit
 packaging==24.2
@@ -42,6 +47,11 @@ pyyaml==6.0.2
     # via
     #   -c ./test.txt
     #   pre-commit
+tomli==2.2.1
+    # via
+    #   -c ./test.txt
+    #   build
+    #   pip-tools
 virtualenv==20.29.1
     # via pre-commit
 wheel==0.45.1

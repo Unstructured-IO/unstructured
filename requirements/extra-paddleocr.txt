@@ -28,6 +28,10 @@ cython==3.0.11
     # via unstructured-paddleocr
 decorator==5.1.1
     # via paddlepaddle
+exceptiongroup==1.2.2
+    # via
+    #   -c ./base.txt
+    #   anyio
 fonttools==4.55.4
     # via matplotlib
 h11==0.14.0
@@ -54,7 +58,9 @@ imageio==2.37.0
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-kiwisolver==1.4.8
+importlib-resources==6.5.2
+    # via matplotlib
+kiwisolver==1.4.7
     # via matplotlib
 lazy-loader==0.4
     # via scikit-image
