@@ -6,7 +6,7 @@
 #
 et-xmlfile==2.0.0
     # via openpyxl
-networkx==3.4.2
+networkx==3.2.1
     # via -r ./extra-xlsx.in
 numpy==1.26.4
     # via
