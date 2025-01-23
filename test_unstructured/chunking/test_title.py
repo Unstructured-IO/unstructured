@@ -468,7 +468,7 @@ class Describe_chunk_by_title:
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_by_title_(self, request: FixtureRequest):
+    def _chunk_by_title_(self, request: FixtureRequest):  # noqa: PT005
         return function_mock(request, "unstructured.chunking.title._chunk_by_title")
 
 
