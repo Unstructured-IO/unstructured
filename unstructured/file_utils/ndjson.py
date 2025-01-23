@@ -1,3 +1,8 @@
+"""
+Adds support for working with newline-delimited JSON (ndjson) files. This format is useful for
+streaming json content that would otherwise not be possible using raw JSON files.
+"""
+
 import json
 from typing import IO, Any
 
