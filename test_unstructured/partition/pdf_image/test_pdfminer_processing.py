@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pytest
 from PIL import Image
@@ -12,7 +10,9 @@ from unstructured_inference.inference.elements import (
 )
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
@@ -76,6 +76,21 @@ mix_elements_inside_table = [
     LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.PDFMINER),
     LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.PDFMINER),
 ]
+
+
+@pytest.mark.parametrize(
+    ("bbox", "is_valid"),
+    [
+        ([0, 1, 0, 1], False),
+        ([0, 1, 1, 2], True),
+        ([0, 1, 1, None], False),
+        ([0, 1, 1, np.nan], False),
+        ([0, 1, -1, 0], False),
+        ([0, 1, -1, 2], False),
+    ],
+)
+def test_valid_bbox(bbox, is_valid):
+    assert _validate_bbox(bbox) is is_valid
 
 
 @pytest.mark.parametrize(
@@ -223,9 +238,7 @@ def test_remove_duplicate_elements():
 
 
 def test_process_file_with_pdfminer():
-    layout, links = process_file_with_pdfminer(
-        Path(__file__).parents[3] / "example-docs" / "pdf" / "layout-parser-paper-fast.pdf"
-    )
+    layout, links = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     assert len(layout)
     assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"

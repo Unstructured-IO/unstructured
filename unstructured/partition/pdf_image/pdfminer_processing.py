@@ -47,7 +47,7 @@ def process_file_with_pdfminer(
 
 
 def _validate_bbox(bbox: list[int | float]) -> bool:
-    return all(x is not None for x in bbox) and ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 0)
+    return all(x is not None for x in bbox) and (bbox[2] - bbox[0] > 0) and (bbox[3] - bbox[1] > 0)
 
 
 @requires_dependencies("unstructured_inference")
