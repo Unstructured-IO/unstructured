@@ -12,8 +12,6 @@ from __future__ import annotations
 import json
 from typing import IO, Any, Optional
 
-import ndjson
-
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
@@ -21,6 +19,7 @@ from unstructured.file_utils.filetype import (
     add_metadata_with_filetype,
     is_ndjson_processable,
 )
+from unstructured.file_utils.ndjson import loads as ndjson_loads
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.staging.base import elements_from_dicts
@@ -74,7 +73,7 @@ def partition_ndjson(
         )
 
     try:
-        element_dicts = ndjson.loads(file_text)
+        element_dicts = ndjson_loads(file_text)
         elements = elements_from_dicts(element_dicts)
     except json.JSONDecodeError:
         raise ValueError("Not a valid ndjson")

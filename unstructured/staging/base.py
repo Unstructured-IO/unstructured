@@ -9,8 +9,6 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Any, Iterable, Optional, Sequence, cast
 
-import ndjson
-
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -18,6 +16,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
 )
+from unstructured.file_utils.ndjson import dumps as ndjson_dumps
 from unstructured.partition.common.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
 
@@ -168,7 +167,7 @@ def elements_to_ndjson(
     # -- serialize `elements` as a JSON array (str) --
     precision_adjusted_elements = _fix_metadata_field_precision(elements)
     element_dicts = elements_to_dicts(precision_adjusted_elements)
-    ndjson_str = ndjson.dumps(element_dicts, sort_keys=True)
+    ndjson_str = ndjson_dumps(element_dicts, sort_keys=True)
 
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:

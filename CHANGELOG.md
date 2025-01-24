@@ -1,4 +1,4 @@
-## 0.16.16-dev0
+## 0.16.16-dev1
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 - **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
 
 ### Fixes
+
+* **Drop usage of ndjson dependency**
 
 ## 0.16.15
 
