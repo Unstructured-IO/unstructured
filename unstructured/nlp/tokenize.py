@@ -42,7 +42,8 @@ def download_nltk_packages():
     )
 
     if (not tokenizer_available) or (not tagger_available):
-        download_nltk_packages()
+        nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
 
 
 # auto download nltk packages if the environment variable is set
