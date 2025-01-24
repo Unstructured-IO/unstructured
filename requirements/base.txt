@@ -72,8 +72,6 @@ mypy-extensions==1.0.0
     # via
     #   typing-inspect
     #   unstructured-client
-ndjson==0.3.1
-    # via -r ./base.in
 nest-asyncio==1.6.0
     # via unstructured-client
 nltk==3.9.1

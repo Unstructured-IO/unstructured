@@ -1,4 +1,5 @@
-## 0.16.16-dev0
+## 0.16.16-dev1
+
 ### Enhancements
 
 ### Features
@@ -6,6 +7,8 @@
 
 ### Fixes
 - **Add auto-download for NLTK for Python Enviroment** When user install python library without image. It will automatic download nltk data. Added `entry_points` in `setup` in `setup.py`
+
+* **Drop usage of ndjson dependency**
 
 ## 0.16.15
 ### Enhancements
