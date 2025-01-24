@@ -1,4 +1,4 @@
-## 0.16.16-dev1
+## 0.16.16-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 
 ### Fixes
 - **Add auto-download for NLTK for Python Enviroment** When user install python library without image. It will automatic download nltk data. Added `entry_points` in `setup` in `setup.py`
+- **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
+
 
 * **Drop usage of ndjson dependency**
 
