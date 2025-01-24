@@ -281,7 +281,7 @@ def scarf_analytics():
         if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
             if "dev" in __version__:
                 requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
+                    "https://packages2.unstructured.io/python-telemetry?version="
                     + __version__
                     + "&platform="
                     + platform.system()
@@ -295,7 +295,7 @@ def scarf_analytics():
                 )
             else:
                 requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
+                    "https://packages2.unstructured.io/python-telemetry?version="
                     + __version__
                     + "&platform="
                     + platform.system()
