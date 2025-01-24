@@ -1,4 +1,4 @@
-## 0.16.16-dev1
+## 0.16.16-dev2
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 - **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
 
 ### Fixes
+- **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
 
 * **Drop usage of ndjson dependency**
 
@@ -56,8 +57,6 @@
 - **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
 - **Improve element-type mapping for Chinese text.** Fixes bug where Chinese text would produce large numbers of false-positive `Title` elements.
 - **Improve element-type mapping for HTML.** Fixes bug where certain non-title elements were classified as `Title`.
-
-- **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
 
 ## 0.16.11
 
