@@ -1,4 +1,4 @@
-## 0.16.16-dev2
+## 0.16.16-dev3
 
 ### Enhancements
 
@@ -8,7 +8,7 @@
 ### Fixes
 - **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
 
-* **Drop usage of ndjson dependency**
+- **Drop usage of ndjson dependency**
 
 ## 0.16.15
 
