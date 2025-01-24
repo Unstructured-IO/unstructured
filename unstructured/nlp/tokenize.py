@@ -12,9 +12,27 @@ from nltk import word_tokenize as _word_tokenize
 CACHE_MAX_SIZE: Final[int] = 128
 
 
+# We cache this because we do not want to attempt
+# downloading the packages multiple times
+@lru_cache()
 def download_nltk_packages():
-    nltk.download("averaged_perceptron_tagger_eng", quiet=True)
-    nltk.download("punkt_tab", quiet=True)
+    """If required NLTK packages are not available, download them."""
+
+    tagger_available = check_for_nltk_package(
+        package_category="taggers",
+        package_name="averaged_perceptron_tagger_eng",
+    )
+    tokenizer_available = check_for_nltk_package(
+        package_category="tokenizers", package_name="punkt_tab"
+    )
+
+    if (not tokenizer_available) or (not tagger_available):
+        download_nltk_packages()
+
+
+# auto download nltk packages if the environment variable is set
+if os.getenv("AUTO_DOWNLOAD_NLTK", True):
+    download_nltk_packages()
 
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:

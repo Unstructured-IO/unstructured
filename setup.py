@@ -128,9 +128,4 @@ setup(
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt", "py.typed"]},
-    entry_points={
-        "console_scripts": [
-            "post_install_unstructured=unstructured.nlp.tokenize:download_nltk_packages"
-        ],
-    },
 )
