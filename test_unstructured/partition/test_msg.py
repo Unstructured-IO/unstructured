@@ -23,14 +23,13 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Text,
-    Title,
 )
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.msg import MsgPartitionerOptions, partition_msg
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
-    Title(text="Important points:"),
+    Text(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -138,9 +137,9 @@ def test_partition_msg_can_process_attachments():
     assert [type(e).__name__ for e in elements][:10] == [
         "NarrativeText",
         "Text",
-        "Title",
-        "Title",
-        "Title",
+        "Text",
+        "Text",
+        "Text",
         "Image",
         "Title",
         "Text",
@@ -175,9 +174,9 @@ def test_partition_msg_silently_skips_attachments_it_cannot_partition(request: F
         # -- the email body is partitioned --
         NarrativeText("Here are those documents."),
         Text("--"),
-        Title("Mallori Harrell"),
-        Title("Unstructured Technologies"),
-        Title("Data Scientist"),
+        Text("Mallori Harrell"),
+        Text("Unstructured Technologies"),
+        Text("Data Scientist"),
         # -- no elements appear for the attachment(s) --
     ]
 

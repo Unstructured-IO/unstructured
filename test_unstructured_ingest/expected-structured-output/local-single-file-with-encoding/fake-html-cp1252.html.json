@@ -24,7 +24,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "82eda2671c5ead903683b67b0f8e3f29",
     "text": "My first paragraph.",
     "metadata": {
@@ -48,7 +48,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "9f76e487d5df3f6c4ce8ea2ece61057f",
     "text": "Some CP1252-specific characters:",
     "metadata": {

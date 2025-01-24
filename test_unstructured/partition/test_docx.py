@@ -77,14 +77,15 @@ def test_partition_docx_with_spooled_file(
     `python-docx` will NOT accept a `SpooledTemporaryFile` in Python versions before 3.11 so we need
     to ensure the source file is appropriately converted in this case.
     """
-    with open(mock_document_file_path, "rb") as test_file:
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(test_file.read())
+    with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+        with open(mock_document_file_path, "rb") as test_file:
+            spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
+
         elements = partition_docx(file=spooled_temp_file)
-        assert elements == expected_elements
-        for element in elements:
-            assert element.metadata.filename is None
+
+    assert elements == expected_elements
+    assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
@@ -626,7 +627,7 @@ def expected_elements() -> list[Text]:
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
         ListItem("Hockey"),
-        Title("Analysis"),
+        Text("Analysis"),
         NarrativeText("This is my first thought. This is my second thought."),
         NarrativeText("This is my third thought."),
         Text("2023"),
@@ -921,16 +922,16 @@ class DescribeDocxPartitionerOptions:
     def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
         self, opts_args: dict[str, Any]
     ):
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(b"abcdefg")
-        opts_args["file"] = spooled_temp_file
-        opts = DocxPartitionerOptions(**opts_args)
+        with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+            spooled_temp_file.write(b"abcdefg")
+            opts_args["file"] = spooled_temp_file
+            opts = DocxPartitionerOptions(**opts_args)
 
-        docx_file = opts._docx_file
+            docx_file = opts._docx_file
 
-        assert docx_file is not spooled_temp_file
-        assert isinstance(docx_file, io.BytesIO)
-        assert docx_file.getvalue() == b"abcdefg"
+            assert docx_file is not spooled_temp_file
+            assert isinstance(docx_file, io.BytesIO)
+            assert docx_file.getvalue() == b"abcdefg"
 
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
         self, opts_args: dict[str, Any]
@@ -1209,7 +1210,7 @@ class Describe_DocxPartitioner:
         opts_args["file_path"] = example_doc_path("page-breaks.docx")
         opts = DocxPartitionerOptions(**opts_args)
         expected = [
-            # NOTE(scanny) - -- page 1 --
+            # -- page 1 --
             NarrativeText(
                 "First page, tab here:\t"
                 "followed by line-break here:\n"
@@ -1219,28 +1220,28 @@ class Describe_DocxPartitioner:
                 "and hard page-break here>>"
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 2 --
+            # -- page 2 --
             NarrativeText(
                 "<<Text on second page. The font is big so it breaks onto third page--"
                 "------------------here-->> <<but break falls inside link so text stays"
                 " together."
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 3 --
+            # -- page 3 --
             NarrativeText("Continuous section break here>>"),
             NarrativeText("<<followed by text on same page"),
             NarrativeText("Odd-page section break here>>"),
             PageBreak(""),
-            # NOTE(scanny) - -- page 4 --
+            # -- page 4 --
             PageBreak(""),
-            # NOTE(scanny) - -- page 5 --
+            # -- page 5 --
             NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
             NarrativeText(
                 'Then text gets big again so a "natural" rendered page break happens again here>> '
             ),
             PageBreak(""),
-            # NOTE(scanny) - -- page 6 --
-            Title("<<and then more text proceeds."),
+            # -- page 6 --
+            Text("<<and then more text proceeds."),
         ]
 
         elements = _DocxPartitioner.iter_document_elements(opts)

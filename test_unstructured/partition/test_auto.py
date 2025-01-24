@@ -175,7 +175,7 @@ def test_partition_forwards_strategy_arg_to_partition_docx_and_its_brokers(
 
 EXPECTED_EMAIL_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
-    Title(text="Important points:"),
+    Text(text="Important points:"),
     ListItem(text="Roses are red"),
     ListItem(text="Violets are blue"),
 ]
@@ -440,7 +440,7 @@ def test_partition_md_from_url_works_with_embedded_html():
 def test_auto_partition_msg_from_filename():
     assert partition(example_doc_path("fake-email.msg"), strategy=PartitionStrategy.HI_RES) == [
         NarrativeText(text="This is a test email to use for unit tests."),
-        Title(text="Important points:"),
+        Text(text="Important points:"),
         ListItem(text="Roses are red"),
         ListItem(text="Violets are blue"),
     ]
@@ -568,6 +568,33 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         hi_res_model_name=None,
         starting_page_number=1,
     )
+
+
+@pytest.mark.parametrize("infer_bool", [True, False])
+def test_auto_handles_kwarg_with_infer_table_structure(infer_bool):
+    with patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
+        partition(
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            pdf_infer_table_structure=True,
+            strategy=PartitionStrategy.HI_RES,
+            infer_table_structure=infer_bool,
+        )
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"] is infer_bool
+
+
+def test_auto_handles_kwarg_with_infer_table_structure_when_none():
+    with patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+    ) as mock_process_file_with_model:
+        partition(
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            pdf_infer_table_structure=True,
+            strategy=PartitionStrategy.HI_RES,
+            infer_table_structure=None,
+        )
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"] is True
 
 
 def test_auto_partition_pdf_uses_pdf_infer_table_structure_argument():
@@ -1286,7 +1313,7 @@ def expected_docx_elements():
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
         ListItem("Hockey"),
-        Title("Analysis"),
+        Text("Analysis"),
         NarrativeText("This is my first thought. This is my second thought."),
         NarrativeText("This is my third thought."),
         Text("2023"),

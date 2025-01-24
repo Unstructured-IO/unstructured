@@ -17,8 +17,8 @@ from unstructured.partition.utils.constants import (
 
 if TYPE_CHECKING:
     from PIL import Image as PILImage
-    from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.elements import TextRegions
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 class OCRAgent(ABC):
@@ -55,11 +55,11 @@ class OCRAgent(ABC):
             )
 
     @abstractmethod
-    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
         pass
 
     @abstractmethod
-    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         pass
 
     @abstractmethod

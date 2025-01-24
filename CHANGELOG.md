@@ -1,12 +1,59 @@
-## 0.16.12-dev0
+## 0.16.16-dev0
 
 ### Enhancements
 
-- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
+### Features
+- **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
+
+### Fixes
+
+## 0.16.15
+
+### Enhancements
 
 ### Features
 
 ### Fixes
+- **Update `unstructured-inference`** to 0.8.6 in requirements which removed `layoutparser` dependency libs
+- **Update `pdfminer-six` to 20240706**
+
+## 0.16.14
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fix an issue with multiple values for `infer_table_structure`** when paritioning email with image attachements the kwarg calls into `partition` to partition the image already contains `infer_table_structure`. Now `partition` function checks if the `kwarg` has `infer_table_structure` already
+
+## 0.16.13
+
+### Enhancements
+- **Add character-level filtering for tesseract output**. It is controllable via `TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD` environment variable.
+
+### Features
+
+### Fixes
+
+- **Fix NLTK Download** to use nltk assets in docker image
+- removed the ability to automatically download nltk package if missing
+
+## 0.16.12
+
+### Enhancements
+
+- **Prepare auto-partitioning for pluggable partitioners**. Move toward a uniform partitioner call signature so a custom or override partitioner can be registered without code changes.
+- **Add NDJSON file type support.**
+
+### Features
+
+### Fixes
+
+- **Base image has been updated.**
+- **Upgrade ruff to latest.** Previously the ruff version was pinned to <0.5. Remove that pin and fix the handful of lint items that resulted.
+- **CSV with asserted XLS content-type is correctly identified as CSV.** Resolves a bug where a CSV file with an asserted content-type of `application/vnd.ms-excel` was incorrectly identified as an XLS file.
+- **Improve element-type mapping for Chinese text.** Fixes bug where Chinese text would produce large numbers of false-positive `Title` elements.
+- **Improve element-type mapping for HTML.** Fixes bug where certain non-title elements were classified as `Title`.
 
 - **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
 

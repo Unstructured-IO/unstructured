@@ -53,7 +53,6 @@ def ontology_to_unstructured_elements(
     """
     elements_to_return = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
-
         if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
 
@@ -200,10 +199,7 @@ def is_text_element(ontology_element: ontology.OntologyElement) -> bool:
     if any(isinstance(ontology_element, class_) for class_ in text_classes):
         return True
 
-    if any(ontology_element.elementType == category for category in text_categories):
-        return True
-
-    return False
+    return any(ontology_element.elementType == category for category in text_categories)
 
 
 def is_inline_element(ontology_element: ontology.OntologyElement) -> bool:
@@ -218,10 +214,7 @@ def is_inline_element(ontology_element: ontology.OntologyElement) -> bool:
     if any(isinstance(ontology_element, class_) for class_ in inline_classes):
         return True
 
-    if any(ontology_element.elementType == category for category in inline_categories):
-        return True
-
-    return False
+    return any(ontology_element.elementType == category for category in inline_categories)
 
 
 def unstructured_elements_to_ontology(
@@ -327,10 +320,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
         if tag.attrs:
             return False
 
-        if not tag.get_text(strip=True):
-            return True
-
-        return False
+        return bool(not tag.get_text(strip=True))
 
     def remove_empty_tags(soup):
         for tag in soup.find_all():
@@ -419,8 +409,9 @@ def extract_tag_and_ontology_class_from_tag(
 
     # Scenario 1: Valid Ontology Element
     if soup.attrs.get("class"):
-        html_tag, element_class = soup.name, HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP.get(
-            (soup.name, soup.attrs["class"][0])
+        html_tag, element_class = (
+            soup.name,
+            HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP.get((soup.name, soup.attrs["class"][0])),
         )
 
     # Scenario 2: HTML tag incorrect, CSS class correct
