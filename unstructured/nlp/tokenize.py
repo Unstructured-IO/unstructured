@@ -12,6 +12,21 @@ from nltk import word_tokenize as _word_tokenize
 CACHE_MAX_SIZE: Final[int] = 128
 
 
+def check_for_nltk_package(package_name: str, package_category: str) -> bool:
+    """Checks to see if the specified NLTK package exists on the image."""
+    paths: list[str] = []
+    for path in nltk.data.path:
+        if not path.endswith("nltk_data"):
+            path = os.path.join(path, "nltk_data")
+        paths.append(path)
+
+    try:
+        nltk.find(f"{package_category}/{package_name}", paths=paths)
+        return True
+    except (LookupError, OSError):
+        return False
+
+
 # We cache this because we do not want to attempt
 # downloading the packages multiple times
 @lru_cache()
@@ -31,23 +46,8 @@ def download_nltk_packages():
 
 
 # auto download nltk packages if the environment variable is set
-if os.getenv("AUTO_DOWNLOAD_NLTK", True):
+if os.getenv("AUTO_DOWNLOAD_NLTK", "True").lower() == "true":
     download_nltk_packages()
-
-
-def check_for_nltk_package(package_name: str, package_category: str) -> bool:
-    """Checks to see if the specified NLTK package exists on the image."""
-    paths: list[str] = []
-    for path in nltk.data.path:
-        if not path.endswith("nltk_data"):
-            path = os.path.join(path, "nltk_data")
-        paths.append(path)
-
-    try:
-        nltk.find(f"{package_category}/{package_name}", paths=paths)
-        return True
-    except (LookupError, OSError):
-        return False
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
