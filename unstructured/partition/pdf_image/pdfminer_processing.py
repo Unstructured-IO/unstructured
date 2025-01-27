@@ -238,12 +238,23 @@ def bboxes1_is_almost_subregion_of_bboxes2(
 
 def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """compute iou for a group of elements"""
+    # only store one copy of coords in memory instead of calling get coords twice
     coords = get_coords_from_bboxes(bboxes, round_to=round_to)
 
-    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
-        coords, coords, round_to=round_to
-    )
+    return boxes_iou(coords, coords, threshold, round_to)
 
+
+# TODO (yao): move those vector math utils into a separated sub module to void import issues
+def boxes_iou(
+    bboxes1, bboxes2, threshold: float = 0.75, round_to: int = DEFAULT_ROUND
+) -> np.ndarray:
+    """compute iou between two groups of elements"""
+    coords1 = get_coords_from_bboxes(bboxes1, round_to=round_to)
+    coords2 = get_coords_from_bboxes(bboxes2, round_to=round_to)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
+        coords1, coords2, round_to=round_to
+    )
     return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
 
 
