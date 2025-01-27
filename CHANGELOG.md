@@ -1,3 +1,11 @@
+## 0.16.17-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
 ## 0.16.16
 
 ### Enhancements
@@ -8,8 +16,7 @@
 ### Fixes
 - **Add auto-download for NLTK for Python Enviroment** When user import tokenize, It will  automatic download nltk data from `tokenize.py` file. Added `AUTO_DOWNLOAD_NLTK` flag in `tokenize.py` to download `NLTK_DATA`.
 - **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
-
-* **Drop usage of ndjson dependency**
+- **Drop usage of ndjson dependency**
 
 ## 0.16.15
 ### Enhancements
