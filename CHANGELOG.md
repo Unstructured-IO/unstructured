@@ -1,4 +1,4 @@
-## 0.16.16-dev2
+## 0.16.16
 
 ### Enhancements
 
@@ -6,12 +6,12 @@
 - **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
 
 ### Fixes
+- **Add auto-download for NLTK for Python Enviroment** When user import tokenize, It will  automatic download nltk data from `tokenize.py` file. Added `AUTO_DOWNLOAD_NLTK` flag in `tokenize.py` to download `NLTK_DATA`.
 - **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
 
 * **Drop usage of ndjson dependency**
 
 ## 0.16.15
-
 ### Enhancements
 
 ### Features

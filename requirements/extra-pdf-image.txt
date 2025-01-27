@@ -42,7 +42,7 @@ filelock==3.17.0
     #   transformers
 flatbuffers==25.1.21
     # via onnxruntime
-fonttools==4.55.4
+fonttools==4.55.5
     # via matplotlib
 fsspec==2024.12.0
     # via
@@ -50,7 +50,7 @@ fsspec==2024.12.0
     #   torch
 google-api-core[grpc]==2.24.0
     # via google-cloud-vision
-google-auth==2.37.0
+google-auth==2.38.0
     # via
     #   google-api-core
     #   google-cloud-vision
