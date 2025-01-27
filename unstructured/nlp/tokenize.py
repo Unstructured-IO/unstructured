@@ -27,9 +27,6 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
         return False
 
 
-# We cache this because we do not want to attempt
-# downloading the packages multiple times
-@lru_cache()
 def download_nltk_packages():
     """If required NLTK packages are not available, download them."""
 
