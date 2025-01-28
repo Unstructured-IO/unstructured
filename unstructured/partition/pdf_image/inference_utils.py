@@ -139,28 +139,38 @@ def array_merge_inferred_layout_with_extracted_layout(
     ).sum(axis=1)
     image_indices_to_keep = image_indices_to_keep[~full_page_image_mask]
 
+    # rule: any inferred box that is almost the same as an extracted image box is removed
+    boxes_almost_same = boxes_iou(
+        inferred_layout.element_coords,
+        extracted_layout.slice(image_indices_to_keep).element_coords,
+        threshold=same_region_threshold,
+    ).sum(axis=1).astype(bool)
+
+    inferred_indices_to_proc = np.arange(len(inferred_region))[boxes_almost_same]
+    inferred_layout_to_proc = inferred_layout.slice(inferred_indices_to_keep)
+
     # now merge text regions
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
     boxes_almost_same = boxes_iou(
         extracted_text_layouts.element_coords,
-        inferred_layout.element_coords,
-        threshold=FULL_PAGE_REGION_THRESHOLD,
+        inferred_layout_to_proc.element_coords,
+        threshold=same_region_threshold,
     )
     inferred_is_subregion_of_extracted = bboxes1_is_almost_subregion_of_bboxes2(
-        inferred_layout.element_coords,
+        inferred_layout_to_proc.element_coords,
         extracted_text_layouts.element_coords,
         threshold=subregion_threshold,
     )
     # refactor so we only need to compute intersection once
     extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
         extracted_text_layouts.element_coords,
-        inferred_layout.element_coords,
+        inferred_layout_to_proc.element_coords,
         threshold=subregion_threshold,
     )
     inferred_text_idx = [
         idx
-        for idx, class_name in inferred_layout.element_class_id_map.items()
+        for idx, class_name in inferred_layout_to_proc.element_class_id_map.items()
         if class_name
         not in (
             ElementType.FIGURE,
@@ -172,6 +182,16 @@ def array_merge_inferred_layout_with_extracted_layout(
     inferred_is_text = np.zeros((len(inferred_layout),))
     for idx in inferred_text_idx:
         inferred_is_text = np.logical_and(
-            inferred_is_text, inferred_layout.element_class_ids == idx
+            inferred_is_text, inferred_layout_to_proc.element_class_ids == idx
         )
-    # now iterate over same bbox column by column, i.e., one inferred elemente at a time
+    # now iterate over same bbox row by row, i.e., one extracted text element at a time
+    extracted_indices_to_keep =  []
+    inferred_indices_to_remove = []
+    for i, extracted_text_row in boxes_almost_same:
+        # NOTE (yao): current source algorithm in inference lib does NOT remove an inferred layout
+        # from the process even if it is marked as to remove.
+        first_same_inferred_region = np.where(extracted_text_row==1)[0]
+        if first_same_inferred_region:
+            # keep this inferred and remove extracted region
+            grow_region_to_match_region(
+
