@@ -48,6 +48,7 @@
 ## 0.18.13
 
 ### Enhancements
+- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
@@ -426,7 +427,6 @@ This makes it impossible to write stable unit tests, for example, or to obtain r
 ## 0.16.14
 
 ### Enhancements
-- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
