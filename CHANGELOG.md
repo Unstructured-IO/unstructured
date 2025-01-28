@@ -1,6 +1,7 @@
 ## 0.16.17-dev1
 
 ### Enhancements
+- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
@@ -30,7 +31,6 @@
 ## 0.16.14
 
 ### Enhancements
-- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
