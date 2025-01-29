@@ -17,6 +17,7 @@ Options:
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
   --tables        Enable table extraction: tables are represented as html in metadata
+  --images        Include base64images in json
   --coordinates   Include coordinates in the output
   --trace         Enable trace logging for debugging, useful to cut and paste the executed curl call
   --verbose       Enable verbose logging including printing first 8 elements to stdout
@@ -39,6 +40,7 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
+IMAGE_BLOCK_TYPES=${IMAGE_BLOCK_TYPES:-'"image", "table"'}
 API_KEY=${UNST_API_KEY:-""}
 TMP_DOWNLOADS_DIR="$HOME/tmp/unst-downloads"
 TMP_OUTPUTS_DIR="$HOME/tmp/unst-outputs"
@@ -68,6 +70,7 @@ TRACE=false
 COORDINATES=false
 FREEMIUM=false
 TABLES=true
+IMAGES=false
 S3=""
 
 while [[ "$#" -gt 0 ]]; do
@@ -98,6 +101,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --tables)
     TABLES=true
+    shift
+    ;;
+  --images)
+    IMAGES=true
     shift
     ;;
   --coordinates)
@@ -180,12 +187,14 @@ CURL_COORDINATES=()
 [[ "$COORDINATES" == "true" ]] && CURL_COORDINATES=(-F "coordinates=true")
 CURL_TABLES=()
 [[ "$TABLES" == "true" ]] && CURL_TABLES=(-F "skip_infer_table_types='[]'")
+CURL_IMAGES=()
+[[ "$IMAGES" == "true" ]] && CURL_IMAGES=(-F "extract_image_block_types=[$IMAGE_BLOCK_TYPES]")
 
 curl -q -X 'POST' \
   "$API_ENDPOINT" \
   "${CURL_API_KEY[@]}" -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  "${CURL_STRATEGY[@]}" "${CURL_COORDINATES[@]}" "${CURL_TABLES[@]}" -F "files=@${INPUT_FILEPATH}" \
+  "${CURL_STRATEGY[@]}" "${CURL_COORDINATES[@]}" "${CURL_TABLES[@]}" "${CURL_IMAGES[@]}" -F "files=@${INPUT_FILEPATH}" \
   -o "${JSON_OUTPUT_FILEPATH}"
 
 JSON_FILE_SIZE=$(wc -c <"${JSON_OUTPUT_FILEPATH}")

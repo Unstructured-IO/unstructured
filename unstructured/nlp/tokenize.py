@@ -12,13 +12,8 @@ from nltk import word_tokenize as _word_tokenize
 CACHE_MAX_SIZE: Final[int] = 128
 
 
-def download_nltk_packages():
-    nltk.download("averaged_perceptron_tagger_eng", quiet=True)
-    nltk.download("punkt_tab", quiet=True)
-
-
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
-    """Checks to see if the specified NLTK package exists on the file system"""
+    """Checks to see if the specified NLTK package exists on the image."""
     paths: list[str] = []
     for path in nltk.data.path:
         if not path.endswith("nltk_data"):
@@ -32,10 +27,7 @@ def check_for_nltk_package(package_name: str, package_category: str) -> bool:
         return False
 
 
-# We cache this because we do not want to attempt
-# downloading the packages multiple times
-@lru_cache()
-def _download_nltk_packages_if_not_present():
+def download_nltk_packages():
     """If required NLTK packages are not available, download them."""
 
     tagger_available = check_for_nltk_package(
@@ -47,30 +39,31 @@ def _download_nltk_packages_if_not_present():
     )
 
     if (not tokenizer_available) or (not tagger_available):
-        download_nltk_packages()
+        nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
+
+
+# auto download nltk packages if the environment variable is set
+if os.getenv("AUTO_DOWNLOAD_NLTK", "True").lower() == "true":
+    download_nltk_packages()
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
-    _download_nltk_packages_if_not_present()
     return _sent_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
-    _download_nltk_packages_if_not_present()
     return _word_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    _download_nltk_packages_if_not_present()
-    # NOTE(robinson) - Splitting into sentences before tokenizing. The helps with
-    # situations like "ITEM 1A. PROPERTIES" where "PROPERTIES" can be mistaken
-    # for a verb because it looks like it's in verb form an "ITEM 1A." looks like the subject.
+    # Splitting into sentences before tokenizing.
     sentences = _sent_tokenize(text)
     parts_of_speech: list[tuple[str, str]] = []
     for sentence in sentences:

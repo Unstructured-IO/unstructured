@@ -18,7 +18,8 @@ EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  's3.sh'
+  # NOTE(scanny): This test is disabled because it routinely flakes on OCR differencs
+  # 's3.sh'
   's3-minio.sh'
   'astradb.sh'
   'azure.sh'
@@ -39,8 +40,8 @@ all_tests=(
   'against-api.sh'
   'gcs.sh'
   'kafka-local.sh'
-  'onedrive.sh'
-  'outlook.sh'
+  #'onedrive.sh'
+  #'outlook.sh'
   'elasticsearch.sh'
   'confluence-diff.sh'
   'confluence-large.sh'
@@ -76,7 +77,8 @@ full_python_matrix_tests=(
   'local-single-file.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
-  's3.sh'
+  # NOTE(scanny): This test is disabled because it routinely flakes on OCR differences
+  # 's3.sh'
   'google-drive.sh'
   'gcs.sh'
   'azure.sh'

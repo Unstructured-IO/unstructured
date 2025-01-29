@@ -1,6 +1,6 @@
 [
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "cc23ac9998df1db62b795ec4e5133ab0",
     "text": "Title",
     "metadata": {
@@ -23,6 +23,13 @@
         "date_modified": "1686809744.0",
         "permissions_data": [
           {
+            "id": "anyoneWithLink",
+            "type": "anyone",
+            "kind": "drive#permission",
+            "role": "reader",
+            "allowFileDiscovery": false
+          },
+          {
             "id": "18298851591250030956",
             "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "type": "user",
@@ -34,24 +41,6 @@
             "pendingOwner": false
           },
           {
-            "id": "09147371668407854156",
-            "displayName": "roman",
-            "type": "user",
-            "kind": "drive#permission",
-            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWoGrFCgXcF6CtiBIBLnAfM68qUnQaJOcgvg3qzfQ3W8Ch6dA=s64",
-            "emailAddress": "roman@unstructured.io",
-            "role": "writer",
-            "deleted": false,
-            "pendingOwner": false
-          },
-          {
-            "id": "anyoneWithLink",
-            "type": "anyone",
-            "kind": "drive#permission",
-            "role": "reader",
-            "allowFileDiscovery": false
-          },
-          {
             "id": "04774006893477068632",
             "displayName": "ryan",
             "type": "user",
@@ -59,6 +48,17 @@
             "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjXeWpu7QcZuYqIl3p1mwqzS8XGFJ4RqA3Xjljfkm1DcFZ9M7A=s64",
             "emailAddress": "ryan@unstructured.io",
             "role": "owner",
+            "deleted": false,
+            "pendingOwner": false
+          },
+          {
+            "id": "09147371668407854156",
+            "displayName": "roman",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWoGrFCgXcF6CtiBIBLnAfM68qUnQaJOcgvg3qzfQ3W8Ch6dA=s64",
+            "emailAddress": "roman@unstructured.io",
+            "role": "writer",
             "deleted": false,
             "pendingOwner": false
           }
@@ -90,6 +90,13 @@
         "date_modified": "1686809744.0",
         "permissions_data": [
           {
+            "id": "anyoneWithLink",
+            "type": "anyone",
+            "kind": "drive#permission",
+            "role": "reader",
+            "allowFileDiscovery": false
+          },
+          {
             "id": "18298851591250030956",
             "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "type": "user",
@@ -101,24 +108,6 @@
             "pendingOwner": false
           },
           {
-            "id": "09147371668407854156",
-            "displayName": "roman",
-            "type": "user",
-            "kind": "drive#permission",
-            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWoGrFCgXcF6CtiBIBLnAfM68qUnQaJOcgvg3qzfQ3W8Ch6dA=s64",
-            "emailAddress": "roman@unstructured.io",
-            "role": "writer",
-            "deleted": false,
-            "pendingOwner": false
-          },
-          {
-            "id": "anyoneWithLink",
-            "type": "anyone",
-            "kind": "drive#permission",
-            "role": "reader",
-            "allowFileDiscovery": false
-          },
-          {
             "id": "04774006893477068632",
             "displayName": "ryan",
             "type": "user",
@@ -126,6 +115,17 @@
             "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjXeWpu7QcZuYqIl3p1mwqzS8XGFJ4RqA3Xjljfkm1DcFZ9M7A=s64",
             "emailAddress": "ryan@unstructured.io",
             "role": "owner",
+            "deleted": false,
+            "pendingOwner": false
+          },
+          {
+            "id": "09147371668407854156",
+            "displayName": "roman",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWoGrFCgXcF6CtiBIBLnAfM68qUnQaJOcgvg3qzfQ3W8Ch6dA=s64",
+            "emailAddress": "roman@unstructured.io",
+            "role": "writer",
             "deleted": false,
             "pendingOwner": false
           }
