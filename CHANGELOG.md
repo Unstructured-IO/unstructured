@@ -5,6 +5,7 @@
 ### Features
 
 ### Fixes
+- **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
 
 ## 0.16.17
 
