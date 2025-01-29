@@ -14,7 +14,6 @@ verboseOutput = true
 [tool.ruff]
 line-length = 100
 target-version = "py39"
-exclude = ["unstructured/nlp/patterns.py"]
 
 [tool.ruff.lint]
 ignore = [
@@ -39,4 +38,3 @@ select = [
     "UP034",    # -- Avoid extraneous parentheses --
     "W",        # -- Warnings, including invalid escape-sequence --
 ]
-exclude = ["unstructured/nlp/patterns.py"]
