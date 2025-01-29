@@ -1,4 +1,4 @@
-## 0.16.17-dev1
+## 0.16.17-dev2
 
 ### Enhancements
 - **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
@@ -6,6 +6,7 @@
 ### Features
 
 ### Fixes
+- **Fix a bug where `build_layout_elements_from_cor_regions` incorrectly joins texts in wrong order**.
 
 ## 0.16.16
 
