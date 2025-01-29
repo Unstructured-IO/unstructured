@@ -62,12 +62,12 @@ def build_layout_elements_from_ocr_regions(
                     break
                 if text in words:
                     regions.append(indices[mask][i])
-                    mask[mask][i] = False
                     words.remove(text)
 
             if not regions:
                 continue
 
+            mask[regions] = False
             grouped_regions.append(ocr_regions.slice(regions))
     else:
         grouped_regions = partition_groups_from_regions(ocr_regions)

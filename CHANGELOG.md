@@ -6,6 +6,7 @@
 ### Features
 
 ### Fixes
+- **Fix a bug where `build_layout_elements_from_cor_regions` incorrectly joins texts in wrong order**.
 
 ## 0.16.16
 
