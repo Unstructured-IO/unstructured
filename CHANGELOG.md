@@ -1,4 +1,13 @@
-## 0.16.17-dev1
+## 0.16.18-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+ **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
+
+## 0.16.17
 
 ### Enhancements
 - **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
@@ -6,7 +15,7 @@
 ### Features
 
 ### Fixes
-- **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
+- **Fix a bug where `build_layout_elements_from_cor_regions` incorrectly joins texts in wrong order**.
 
 ## 0.16.16
 
