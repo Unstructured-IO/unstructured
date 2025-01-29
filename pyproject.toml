@@ -16,7 +16,6 @@ line-length = 100
 target-version = "py39"
 exclude = ["unstructured/nlp/patterns.py"]
 
-
 [tool.ruff.lint]
 ignore = [
     "COM812",   # -- over aggressively insists on trailing commas where not desireable --
