@@ -100,7 +100,7 @@ python-magic==0.4.27
     # via -r ./base.in
 python-oxmsg==0.0.1
     # via -r ./base.in
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via -r ./base.in
 regex==2024.11.6
     # via nltk
@@ -141,9 +141,8 @@ unstructured-client==0.25.9
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in
-urllib3==1.26.20
+urllib3==2.3.0
     # via
-    #   -c ././deps/constraints.txt
     #   requests
     #   unstructured-client
 webencodings==0.5.1

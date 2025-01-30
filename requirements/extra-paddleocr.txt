@@ -100,7 +100,7 @@ packaging==24.2
     #   lazy-loader
     #   matplotlib
     #   scikit-image
-paddlepaddle==3.0.0b1
+paddlepaddle==3.0.0rc1
     # via -r ./extra-paddleocr.in
 pdf2image==1.17.0
     # via unstructured-paddleocr
@@ -125,7 +125,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -167,9 +167,8 @@ typing-extensions==4.12.2
     #   paddlepaddle
 unstructured-paddleocr==2.8.1.0
     # via -r ./extra-paddleocr.in
-urllib3==1.26.20
+urllib3==2.3.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
 zipp==3.21.0

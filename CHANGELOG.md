@@ -1,6 +1,7 @@
 ## 0.16.19-dev1
 
 ### Enhancements
+- **Unpin some dependencies**. A few dependencies has updated and no longer needs to be pinned to avoid compatibility issues
 
 ### Features
 
