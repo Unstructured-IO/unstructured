@@ -12,6 +12,7 @@ python-iso639
 langdetect
 # NOTE(robinson) - numpy pin is because ONNX model weights are only compatible
 # with numpy 1.x.x
+# NOTE: onnx >= 1.17 supports numpy > 2; but paddlepaddle still requires numpy<2
 numpy<2
 rapidfuzz
 backoff
