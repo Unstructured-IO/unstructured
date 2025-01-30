@@ -1,3 +1,12 @@
+## 0.16.18-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+ **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
+
 ## 0.16.17
 
 ### Enhancements

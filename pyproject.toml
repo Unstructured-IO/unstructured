@@ -1,5 +1,23 @@
 [tool.black]
 line-length = 100
+exclude = '''
+/(
+    \.venv  # Ignore virtual environment directory
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.nox
+    | \.env
+    | \.pytest_cache
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | unstructured/nlp/patterns\.py
+)/
+'''
 
 [tool.pyright]
 pythonPlatform = "Linux"
