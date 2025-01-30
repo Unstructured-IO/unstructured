@@ -11,7 +11,11 @@ import requests
 from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import detect_filetype, is_json_processable
+from unstructured.file_utils.filetype import (
+    detect_filetype,
+    is_json_processable,
+    is_ndjson_processable,
+)
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import UnsupportedFileFormatError
@@ -170,10 +174,19 @@ def partition(
     if file is not None:
         file.seek(0)
 
-    infer_table_structure = decide_table_extraction(
-        file_type,
-        skip_infer_table_types,
-        pdf_infer_table_structure,
+    # avoid double specification of infer_table_structure; this can happen when the kwarg passed
+    # into a partition function, e.g., partition_email is reused to partition sub-elements, e.g.,
+    # partition an image attachment buy calling partition with the kwargs. In that case here kwargs
+    # would have a infer_table_structure already
+    kwargs_infer_table_structure = kwargs.pop("infer_table_structure", None)
+    infer_table_structure = (
+        kwargs_infer_table_structure
+        if kwargs_infer_table_structure is not None
+        else decide_table_extraction(
+            file_type,
+            skip_infer_table_types,
+            pdf_infer_table_structure,
+        )
     )
 
     partitioner_loader = _PartitionerLoader()
@@ -242,6 +255,16 @@ def partition(
             )
         partition_json = partitioner_loader.get(file_type)
         elements = partition_json(filename=filename, file=file, **kwargs)
+        return augment_metadata(elements)
+
+    if file_type == FileType.NDJSON:
+        if not is_ndjson_processable(filename=filename, file=file):
+            raise ValueError(
+                "Detected an NDJSON file that does not conform to the Unstructured schema. "
+                "partition_json currently only processes serialized Unstructured output.",
+            )
+        partition_ndjson = partitioner_loader.get(file_type)
+        elements = partition_ndjson(filename=filename, file=file, **kwargs)
         return augment_metadata(elements)
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be

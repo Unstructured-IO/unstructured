@@ -109,6 +109,7 @@ jobs:
           sudo apt-get install -y tesseract-ocr-kor
           sudo apt-get install diffstat
           tesseract --version
+          python -m nltk.downloader punkt_tab averaged_perceptron_tagger_eng
           ./test_unstructured_ingest/test-ingest-src.sh
 
       - name: Save branch name to environment file

@@ -254,7 +254,7 @@ tidy-shell:
 
 .PHONY: tidy-python
 tidy-python:
-	ruff . --fix-only || true
+	ruff check . --fix-only || true
 	autoflake --in-place .
 	black --line-length=100 .
 
@@ -308,7 +308,7 @@ docker-test:
 	$(DOCKER_IMAGE) \
 	bash -c "CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
+	python3 -m pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:

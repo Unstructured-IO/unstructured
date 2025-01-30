@@ -11,7 +11,6 @@ from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
 import wrapt
-from pdfminer import psparser
 from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
@@ -96,15 +95,18 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import parse_keyword
+from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     pass
 
-# NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
-# the bug: https://github.com/pdfminer/pdfminer.six/pull/885
-psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
+
+# Correct a bug that was introduced by a previous patch to
+# pdfminer.six, causing needless and unsuccessful repairing of PDFs
+# which were not actually broken.
+patch_psparser()
+
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -613,7 +615,7 @@ def _partition_pdf_or_image_local(
                     model_name=hi_res_model_name,
                 )
                 extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=extracted_layout,
+                    layout=[layout.as_list() for layout in extracted_layout],
                 )
                 ocr_layout_dumper = OCRLayoutDumper()
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
@@ -668,7 +670,7 @@ def _partition_pdf_or_image_local(
                     model_name=hi_res_model_name,
                 )
                 extracted_layout_dumper = ExtractedLayoutDumper(
-                    layout=extracted_layout,
+                    layout=[layout.as_list() for layout in extracted_layout],
                 )
                 ocr_layout_dumper = OCRLayoutDumper()
 
@@ -696,6 +698,7 @@ def _partition_pdf_or_image_local(
                 ocr_layout_dumper=ocr_layout_dumper,
             )
 
+    # vectorization of the data structure ends here
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
     for page in final_document_layout.pages:
@@ -909,8 +912,10 @@ def _partition_pdf_or_image_with_ocr_from_image(
         languages=languages,
     )
 
+    # NOTE (yao): elements for a document is still stored as a list therefore at this step we have
+    # to convert the vector data structured ocr_data into a list
     page_elements = ocr_data_to_elements(
-        ocr_data,
+        ocr_data.as_list(),
         image_size=image.size,
         common_metadata=metadata,
     )
@@ -1129,7 +1134,11 @@ def document_to_element_list(
         )
 
         for layout_element in page.elements:
-            if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
+            if (
+                image_width
+                and image_height
+                and getattr(layout_element.bbox, "x1") not in (None, np.nan)
+            ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
                 coordinate_system = None

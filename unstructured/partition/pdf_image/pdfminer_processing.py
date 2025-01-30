@@ -23,8 +23,9 @@ from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.elements import TextRegion, TextRegions
     from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 EPSILON_AREA = 0.01
@@ -45,18 +46,79 @@ def process_file_with_pdfminer(
         return extracted_layout, layouts_links
 
 
+def _validate_bbox(bbox: list[int | float]) -> bool:
+    return all(x is not None for x in bbox) and (bbox[2] - bbox[0] > 0) and (bbox[3] - bbox[1] > 0)
+
+
+@requires_dependencies("unstructured_inference")
+def process_page_layout_from_pdfminer(
+    annotation_list: list,
+    page_layout,
+    page_height: int | float,
+    page_number: int,
+    coord_coef: float,
+) -> tuple[LayoutElements, list]:
+    from unstructured_inference.inference.layoutelement import LayoutElements
+
+    urls_metadata: list[dict[str, Any]] = []
+    element_coords, texts, element_class = [], [], []
+    annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
+
+    for obj in page_layout:
+        x1, y1, x2, y2 = rect_to_bbox(obj.bbox, page_height)
+        bbox = (x1, y1, x2, y2)
+
+        if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
+            annotations_within_element = check_annotations_within_element(
+                annotation_list,
+                bbox,
+                page_number,
+                annotation_threshold,
+            )
+            _, words = get_words_from_obj(obj, page_height)
+            for annot in annotations_within_element:
+                urls_metadata.append(map_bbox_and_index(words, annot))
+
+        if hasattr(obj, "get_text"):
+            inner_text_objects = extract_text_objects(obj)
+            for inner_obj in inner_text_objects:
+                inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
+                if not _validate_bbox(inner_bbox):
+                    continue
+                texts.append(inner_obj.get_text())
+                element_coords.append(inner_bbox)
+                element_class.append(0)
+        else:
+            inner_image_objects = extract_image_objects(obj)
+            for img_obj in inner_image_objects:
+                inner_bbox = rect_to_bbox(img_obj.bbox, page_height)
+                if not _validate_bbox(inner_bbox):
+                    continue
+                texts.append(None)
+                element_coords.append(inner_bbox)
+                element_class.append(1)
+
+    return (
+        LayoutElements(
+            element_coords=coord_coef * np.array(element_coords),
+            texts=np.array(texts).astype(object),
+            element_class_ids=np.array(element_class),
+            element_class_id_map={0: "Text", 1: "Image"},
+            sources=np.array([Source.PDFMINER] * len(element_class)),
+        ),
+        urls_metadata,
+    )
+
+
 @requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-) -> tuple[List[List["TextRegion"]], List[List]]:
+) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
-    from unstructured_inference.inference.elements import (
-        EmbeddedTextRegion,
-        ImageTextRegion,
-    )
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
     layouts = []
     layouts_links = []
@@ -65,8 +127,6 @@ def process_data_with_pdfminer(
     for page_number, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
         width, height = page_layout.width, page_layout.height
 
-        text_layout = []
-        image_layout = []
         annotation_list = []
         coordinate_system = PixelSpace(
             width=width,
@@ -75,49 +135,10 @@ def process_data_with_pdfminer(
         if page.annots:
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
-        annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
-        urls_metadata: list[dict[str, Any]] = []
+        layout, urls_metadata = process_page_layout_from_pdfminer(
+            annotation_list, page_layout, height, page_number, coef
+        )
 
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            bbox = (x1, y1, x2, y2)
-
-            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
-                annotations_within_element = check_annotations_within_element(
-                    annotation_list,
-                    bbox,
-                    page_number,
-                    annotation_threshold,
-                )
-                _, words = get_words_from_obj(obj, height)
-                for annot in annotations_within_element:
-                    urls_metadata.append(map_bbox_and_index(words, annot))
-
-            if hasattr(obj, "get_text"):
-                inner_text_objects = extract_text_objects(obj)
-                for inner_obj in inner_text_objects:
-                    _text = inner_obj.get_text()
-                    text_region = _create_text_region(
-                        *rect_to_bbox(inner_obj.bbox, height),
-                        coef,
-                        _text,
-                        Source.PDFMINER,
-                        EmbeddedTextRegion,
-                    )
-                    if text_region.bbox is not None and text_region.bbox.area > 0:
-                        text_layout.append(text_region)
-            else:
-                inner_image_objects = extract_image_objects(obj)
-                for img_obj in inner_image_objects:
-                    text_region = _create_text_region(
-                        *rect_to_bbox(img_obj.bbox, height),
-                        coef,
-                        None,
-                        Source.PDFMINER,
-                        ImageTextRegion,
-                    )
-                    if text_region.bbox is not None and text_region.bbox.area > 0:
-                        image_layout.append(text_region)
         links = [
             {
                 "bbox": [x * coef for x in metadata["bbox"]],
@@ -128,13 +149,22 @@ def process_data_with_pdfminer(
             for metadata in urls_metadata
         ]
 
-        clean_text_layout = remove_duplicate_elements(
-            text_layout, env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD
-        )
-        clean_image_layout = remove_duplicate_elements(
-            image_layout, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
-        )
-        layout = [*clean_text_layout, *clean_image_layout]
+        clean_layouts = []
+        for threshold, element_class in zip(
+            (
+                env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD,
+                env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD,
+            ),
+            (0, 1),
+        ):
+            elements_to_sort = layout.slice(layout.element_class_ids == element_class)
+            clean_layouts.append(
+                remove_duplicate_elements(elements_to_sort, threshold)
+                if len(elements_to_sort)
+                else elements_to_sort
+            )
+
+        layout = LayoutElements.concatenate(clean_layouts)
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
         layout = sort_text_regions(layout, SORT_MODE_BASIC)
@@ -161,6 +191,9 @@ def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
 
 def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """convert a list of boxes's coords into np array"""
+    if isinstance(bboxes, np.ndarray):
+        return bboxes.round(round_to)
+
     # preallocate memory
     coords = np.zeros((len(bboxes), 4), dtype=np.float32)
 
@@ -215,13 +248,37 @@ def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND
 
 
 @requires_dependencies("unstructured_inference")
+def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[TextRegions]:
+    """a temporary solution to convert layout elements to a list of either EmbeddedTextRegion or
+    ImageTextRegion; this should be made obsolete after we refactor the merging logic in inference
+    library"""
+    from unstructured_inference.inference.elements import (
+        EmbeddedTextRegion,
+        ImageTextRegion,
+    )
+
+    regions = []
+    for i, element_class in enumerate(layout_elements.element_class_ids):
+        region_class = EmbeddedTextRegion if element_class == 0 else ImageTextRegion
+        regions.append(
+            region_class.from_coords(
+                *layout_elements.element_coords[i],
+                text=layout_elements.texts[i],
+                source=Source.PDFMINER,
+            )
+        )
+    return regions
+
+
+@requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
-    extracted_layout: List[List["TextRegion"]],
+    extracted_layout: List[TextRegions],
     hi_res_model_name: str,
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
+    from unstructured_inference.inference.layoutelement import LayoutElements
     from unstructured_inference.inference.layoutelement import (
         merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
     )
@@ -246,28 +303,30 @@ def merge_inferred_with_extracted_layout(
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
 
+        # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
+        # vectorized data structure into the merge function
         merged_layout = merge_inferred_with_extracted_page(
             inferred_layout=inferred_layout,
-            extracted_layout=extracted_page_layout,
+            extracted_layout=pdfminer_elements_to_text_regions(extracted_page_layout),
             page_image_size=image_size,
             **threshold_kwargs,
         )
 
-        merged_layout = sort_text_regions(cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC)
+        merged_layout = sort_text_regions(LayoutElements.from_list(merged_layout), SORT_MODE_BASIC)
+        # so that we can modify the text without worrying about hitting length limit
+        merged_layout.texts = merged_layout.texts.astype(object)
 
-        elements = []
-        for layout_el in merged_layout:
-            if layout_el.text is None:
+        for i, text in enumerate(merged_layout.texts):
+            if text is None:
                 text = aggregate_embedded_text_by_block(
-                    text_region=cast("TextRegion", layout_el),
-                    pdf_objects=extracted_page_layout,
+                    target_region=merged_layout.slice([i]),
+                    source_regions=extracted_page_layout,
                 )
-            else:
-                text = layout_el.text
-            layout_el.text = remove_control_characters(text)
-            elements.append(layout_el)
+            merged_layout.texts[i] = remove_control_characters(text)
 
-        inferred_page.elements[:] = elements
+        inferred_page.elements_array = merged_layout
+        # NOTE: once we drop reference to elements we can remove this step below
+        inferred_page.elements[:] = merged_layout.as_list()
 
     return inferred_document_layout
 
@@ -313,40 +372,39 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
 
 @requires_dependencies("unstructured_inference")
 def remove_duplicate_elements(
-    elements: list["TextRegion"],
+    elements: TextRegions,
     threshold: float = 0.5,
-) -> list["TextRegion"]:
+) -> TextRegions:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
 
-    bboxes = []
-    for i, element in enumerate(elements):
-        bboxes.append(element.bbox)
-
-    iou = boxes_self_iou(bboxes, threshold)
-
-    filtered_elements = []
-    for i, element in enumerate(elements):
-        if iou[i, i + 1 :].any():
-            continue
-        filtered_elements.append(element)
-
-    return filtered_elements
+    iou = boxes_self_iou(elements.element_coords, threshold)
+    # this is equivalent of finding those rows where `not iou[i, i + 1 :].any()`, i.e., any element
+    # that has no overlap above the threshold with any other elements
+    return elements.slice(~np.triu(iou, k=1).any(axis=1))
 
 
 def aggregate_embedded_text_by_block(
-    text_region: "TextRegion",
-    pdf_objects: list["TextRegion"],
+    target_region: TextRegions,
+    source_regions: TextRegions,
+    threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
 ) -> str:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
-    mask = bboxes1_is_almost_subregion_of_bboxes2(
-        [obj.bbox for obj in pdf_objects],
-        [text_region.bbox],
-        env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-    ).sum(axis=1)
+    if len(source_regions) == 0 or len(target_region) == 0:
+        return ""
 
-    text = " ".join([obj.text for i, obj in enumerate(pdf_objects) if (mask[i] and obj.text)])
+    mask = (
+        bboxes1_is_almost_subregion_of_bboxes2(
+            source_regions.element_coords,
+            target_region.element_coords,
+            threshold,
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
+
+    text = " ".join([text for text in source_regions.slice(mask).texts if text])
     return text
 
 

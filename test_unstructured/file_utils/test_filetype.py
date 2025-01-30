@@ -90,6 +90,7 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.WAV, "CantinaBand3.wav", "audio/wav"),
         (FileType.XML, "factbook.xml", "application/xml"),
         (FileType.ZIP, "simple.zip", "application/zip"),
+        (FileType.NDJSON, "spring-weather.html.ndjson", "application/x-ndjson"),
     ],
 )
 def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_content_type(
@@ -146,6 +147,17 @@ def test_it_detects_correct_file_type_from_file_no_name_with_correct_asserted_co
     ctx_mime_type_.assert_not_called()
     assert file_type is expected_value
 
+
+def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_content_type():
+    with open(example_doc_path("simple.ndjson"), "rb") as f:
+        file = io.BytesIO(f.read())
+    assert detect_filetype(file=file, content_type=FileType.NDJSON.mime_type) == FileType.NDJSON
+
+
+# TODO: ideally this test should pass, currently fails
+# def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
+#     file_path = example_doc_path("simple.ndjson")
+#     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
 
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY

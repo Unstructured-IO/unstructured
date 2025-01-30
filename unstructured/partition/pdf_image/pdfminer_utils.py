@@ -6,7 +6,7 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PSSyntaxError
+from pdfminer.psparser import PSSyntaxError
 
 from unstructured.logger import logger
 from unstructured.utils import requires_dependencies

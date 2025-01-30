@@ -12,7 +12,7 @@
       ]
     },
     "text": "Page with every block",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "098442d39ccc8a9731627be8a843d02a",
@@ -42,7 +42,7 @@
       ]
     },
     "text": "Heading 2",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "af888c9a9a14c9c6616cf54ac230c20a",
@@ -352,7 +352,7 @@
       ]
     },
     "text": "https://www.wikipedia.org/",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "0f215d56b4a1fc900dc2dad40b7df66f",
@@ -373,7 +373,7 @@
       ]
     },
     "text": "https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "5da75c186c36d3117e60f08d49e66085",
@@ -388,7 +388,7 @@
       ]
     },
     "text": "Child Database:",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "a82757a2b9004569ab1761d061847bd3",
@@ -409,7 +409,7 @@
       ]
     },
     "text": "Analytics",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "29a6be22a8770f106f54f4abcdc1de68",
@@ -424,7 +424,7 @@
       ]
     },
     "text": "Child Page:",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "d07d54a1ce286a7679952d4e4ce82c8e",
@@ -445,7 +445,7 @@
       ]
     },
     "text": "Untitled",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "d4c02f5b35a00e87ef7be603d82c5df3",
@@ -520,7 +520,7 @@
       ]
     },
     "text": "Final text in column",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "fa3e9d761730605036aaf854d9edd5b4",
@@ -565,7 +565,7 @@
       ]
     },
     "text": "Stuff todo",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "8cfa5b216c8d3f774f8e1def029681e6",
@@ -580,7 +580,7 @@
       ]
     },
     "text": "more stuff todo",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "b538abdbf0aff3f9f1ab11d79bb5bc26",
