@@ -5,9 +5,8 @@
 ### Features
 
 ### Fixes
-- **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
 - **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
-
+- **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
 
 ## 0.16.17
 

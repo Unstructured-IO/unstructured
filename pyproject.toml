@@ -16,7 +16,8 @@ exclude = '''
     | build
     | dist
     | unstructured/nlp/patterns\.py
-)/
+)/|
+unstructured/nlp/patterns\.py
 '''
 
 [tool.pyright]
