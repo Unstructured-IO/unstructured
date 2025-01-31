@@ -5,6 +5,7 @@
 ### Features
 
 ### Fixes
+- **fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
 
 ## 0.16.18-dev1
 
