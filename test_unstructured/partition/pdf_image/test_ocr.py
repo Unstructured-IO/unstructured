@@ -16,9 +16,13 @@ from unstructured_inference.inference.layoutelement import (
     LayoutElements,
 )
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
-from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes
+from unstructured.partition.pdf_image.pdf_image_utils import (
+    convert_pdf_to_images,
+    pad_element_bboxes,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
@@ -434,6 +438,28 @@ def mock_ocr_layout():
             TextRegion.from_coords(x1=40, y1=30, x2=45, y2=50, text="Token2"),
         ]
     )
+
+
+def test_supplement_element_with_table_extraction():
+    from unstructured_inference.models import tables
+
+    tables.load_agent()
+
+    image = next(convert_pdf_to_images(example_doc_path("pdf/single_table.pdf")))
+    elements = LayoutElements(
+        element_coords=np.array([[215.00109863, 731.89996338, 1470.07739258, 972.83129883]]),
+        texts=np.array(["foo"]),
+        sources=np.array(["yolox_sg"]),
+        element_class_ids=np.array([0]),
+        element_class_id_map={0: "Table"},
+    )
+    supplemented = ocr.supplement_element_with_table_extraction(
+        elements=elements,
+        image=image,
+        tables_agent=tables.tables_agent,
+        ocr_agent=ocr.OCRAgent.get_agent(language="eng"),
+    )
+    assert supplemented.text_as_html[0].startswith("<table>")
 
 
 def test_get_table_tokens(mock_ocr_layout):
