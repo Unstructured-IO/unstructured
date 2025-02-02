@@ -1,4 +1,4 @@
-## 0.16.19-dev1
+## 0.16.19-dev2
 
 ### Enhancements
 
@@ -6,14 +6,6 @@
 
 ### Fixes
 - **fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
-
-## 0.16.18-dev1
-
-### Enhancements
-
-### Features
-
-### Fixes
 - **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
 - **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
 
