@@ -12,8 +12,8 @@ from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.inference.elements import TextRegion, TextRegions
+    from unstructured_inference.inference.layoutelement import LayoutElements
 
 
 class OCRAgentPaddle(OCRAgent):
@@ -61,12 +61,12 @@ class OCRAgentPaddle(OCRAgent):
 
     def get_text_from_image(self, image: PILImage.Image) -> str:
         ocr_regions = self.get_layout_from_image(image)
-        return "\n\n".join([r.text for r in ocr_regions])
+        return "\n\n".join(ocr_regions.texts)
 
     def is_text_sorted(self):
         return False
 
-    def get_layout_from_image(self, image: PILImage.Image) -> list[TextRegion]:
+    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         """Get the OCR regions from image as a list of text regions with paddle."""
 
         trace_logger.detail("Processing entire page OCR with paddle...")
@@ -80,26 +80,22 @@ class OCRAgentPaddle(OCRAgent):
         return ocr_regions
 
     @requires_dependencies("unstructured_inference")
-    def get_layout_elements_from_image(self, image: PILImage.Image) -> list[LayoutElement]:
-        from unstructured.partition.pdf_image.inference_utils import build_layout_element
+    def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
 
         ocr_regions = self.get_layout_from_image(image)
 
         # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
         # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
         # and merging steps are not necessary.
-        return [
-            build_layout_element(
-                bbox=r.bbox,
-                text=r.text,
-                source=r.source,
-                element_type=ElementType.UNCATEGORIZED_TEXT,
-            )
-            for r in ocr_regions
-        ]
+        return LayoutElements(
+            element_coords=ocr_regions.element_coords,
+            texts=ocr_regions.texts,
+            element_class_ids=np.zeros(ocr_regions.texts.shape),
+            element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT},
+        )
 
     @requires_dependencies("unstructured_inference")
-    def parse_data(self, ocr_data: list[Any]) -> list[TextRegion]:
+    def parse_data(self, ocr_data: list[Any]) -> TextRegions:
         """Parse the OCR result data to extract a list of TextRegion objects from paddle.
 
         The function processes the OCR result dictionary, looking for bounding
@@ -110,13 +106,16 @@ class OCRAgentPaddle(OCRAgent):
         - ocr_data (list): A list containing the OCR result data
 
         Returns:
-        - list[TextRegion]: A list of TextRegion objects, each representing a
-                            detected text region within the OCR-ed image.
+        - TextRegions:
+            TextRegions object, containing data from all text regions in numpy arrays; each row
+            represents a detected text region within the OCR-ed image.
 
         Note:
         - An empty string or a None value for the 'text' key in the input
           dictionary will result in its associated bounding box being ignored.
         """
+
+        from unstructured_inference.inference.elements import TextRegions
 
         from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
 
@@ -141,4 +140,6 @@ class OCRAgentPaddle(OCRAgent):
                     )
                     text_regions.append(text_region)
 
-        return text_regions
+        # FIXME (yao): find out if paddle supports a vectorized output format so we can skip the
+        # step of parsing a list
+        return TextRegions.from_list(text_regions)

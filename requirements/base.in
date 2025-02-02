@@ -22,4 +22,3 @@ tqdm
 psutil
 python-oxmsg
 html5lib
-ndjson
