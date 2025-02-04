@@ -8,9 +8,9 @@ anyio==4.8.0
     # via httpx
 backoff==2.2.1
     # via -r ./base.in
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.1
     # via -r ./base.in
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
@@ -64,7 +64,7 @@ langdetect==1.0.9
     # via -r ./base.in
 lxml==5.3.0
     # via -r ./base.in
-marshmallow==3.26.0
+marshmallow==3.26.1
     # via
     #   dataclasses-json
     #   unstructured-client
@@ -80,7 +80,7 @@ numpy==1.26.4
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
-orderly-set==5.2.3
+orderly-set==5.3.0
     # via deepdiff
 packaging==24.2
     # via
@@ -98,9 +98,9 @@ python-iso639==2025.1.28
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-python-oxmsg==0.0.1
+python-oxmsg==0.0.2
     # via -r ./base.in
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via -r ./base.in
 regex==2024.11.6
     # via nltk
@@ -129,6 +129,7 @@ typing-extensions==4.12.2
     # via
     #   -r ./base.in
     #   anyio
+    #   beautifulsoup4
     #   pypdf
     #   python-oxmsg
     #   typing-inspect

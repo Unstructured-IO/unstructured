@@ -24,7 +24,7 @@ black==25.1.0
     # via
     #   -r ./test.in
     #   datamodel-code-generator
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c ./base.txt
     #   httpcore
@@ -54,7 +54,7 @@ exceptiongroup==1.2.2
     #   -c ./base.txt
     #   anyio
     #   pytest
-faker==35.0.0
+faker==35.2.0
     # via jsf
 flake8==7.1.1
     # via
@@ -190,7 +190,7 @@ python-dateutil==2.9.0.post0
     #   faker
     #   freezegun
     #   pandas
-pytz==2024.2
+pytz==2025.1
     # via pandas
 pyyaml==6.0.2
     # via
@@ -218,7 +218,7 @@ rpds-py==0.22.3
     #   referencing
 rstr==3.2.2
     # via jsf
-ruff==0.9.3
+ruff==0.9.4
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck

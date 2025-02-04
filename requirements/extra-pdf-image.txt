@@ -8,7 +8,7 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.5.1
     # via google-auth
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c ./base.txt
     #   requests
@@ -44,7 +44,7 @@ flatbuffers==25.1.24
     # via onnxruntime
 fonttools==4.55.8
     # via matplotlib
-fsspec==2024.12.0
+fsspec==2025.2.0
     # via
     #   huggingface-hub
     #   torch
@@ -67,7 +67,7 @@ grpcio==1.70.0
     #   grpcio-status
 grpcio-status==1.70.0
     # via google-api-core
-huggingface-hub==0.28.0
+huggingface-hub==0.28.1
     # via
     #   timm
     #   tokenizers
@@ -192,7 +192,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-multipart==0.0.20
     # via unstructured-inference
-pytz==2024.2
+pytz==2025.1
     # via pandas
 pyyaml==6.0.2
     # via
@@ -200,7 +200,7 @@ pyyaml==6.0.2
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -263,7 +263,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2025.1
     # via pandas
-unstructured-inference==0.8.6
+unstructured-inference==0.8.7
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.13
     # via -r ./extra-pdf-image.in
