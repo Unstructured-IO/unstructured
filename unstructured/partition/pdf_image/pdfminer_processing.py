@@ -119,6 +119,62 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     return extracted_almost_the_same_as_inferred, inferred_indices_to_update
 
 
+def _merge_extracted_that_are_subregion_of_inferred_text(
+    extracted_layout,
+    inferred_layout,
+    extracted_is_subregion_of_inferred,
+    extracted_to_skip,
+    inferred_to_proc,
+):
+    extracted_text_is_subregion_of_inferred_text = extracted_is_subregion_of_inferred[
+        ~extracted_to_skip
+    ][:, inferred_to_proc]
+    # in theory one extracted __should__ only match at most one inferred region, given inferred
+    # region can not overlap; so first match here __should__ also be the only match
+    extracted_to_proc = extracted_to_skip[~extracted_to_skip]
+    proc_indices = np.arange(len(extracted_layout))[~extracted_to_skip]
+    for inferred_index, inferred_row in enumerate(extracted_text_is_subregion_of_inferred_text.T):
+        matches = np.where(inferred_row)[0]
+        if not matches.size:
+            continue
+        # Technically those two lines below can be vectorized but this loop would still run anyway;
+        # it is not clear which one is overall faster so might worth profiling in the future
+        extracted_to_proc[matches] = True
+        inferred_to_proc[inferred_index] = False
+        # then expand inferred box by all the extracted boxes
+        # FIXME (yao): this part is broken at the moment
+        inferred_layout.element_coords[[inferred_index]] = _minimum_containing_coords(
+            inferred_layout.slice([inferred_index]),
+            *[extracted_layout.slice([proc_indices[match]]) for match in matches],
+        )
+    extracted_to_skip[~extracted_to_skip] = extracted_to_proc
+
+
+def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
+    extracted_layout,
+    inferred_layout,
+    extracted_is_subregion_of_inferred,
+    inferred_to_keep,
+    subregion_threshold,
+):
+    inferred_is_subregion_of_extracted = bboxes1_is_almost_subregion_of_bboxes2(
+        inferred_layout.element_coords,
+        extracted_layout.element_coords,
+        threshold=subregion_threshold,
+    )
+    inferred_to_remove_mask = np.logical_and(
+        ~_inferred_is_elementtype(inferred_layout, [ElementType.TABLE]),
+        np.logical_or(
+            inferred_is_subregion_of_extracted,
+            extracted_is_subregion_of_inferred.T,
+        )
+        .sum(axis=1)
+        .astype(bool),
+    )
+    inferred_to_keep[inferred_to_remove_mask] = False
+    return inferred_to_keep
+
+
 @requires_dependencies("unstructured_inference")
 def array_merge_inferred_layout_with_extracted_layout(
     inferred_layout: LayoutElements,
@@ -133,7 +189,7 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
-    # Full page images are ignored
+    # ==== RULE 0: Full page images are ignored
     # extracted elements to add:
     # - non full-page images
     # - extracted text region that doesn't match an inferred region; with caveats below
@@ -149,7 +205,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     # non full page extracted image regions are kept, except when they match a non-text inferred
     # region then we use the common bounding boxes and keep just one of the two sets
 
-    # rule: any inferred box that is almost the same as an extracted image box is removed
+    # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
     boxes_almost_same = (
         boxes_iou(
             inferred_layout.element_coords,
@@ -166,78 +222,53 @@ def array_merge_inferred_layout_with_extracted_layout(
     # now merge text regions
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
-    # -- compute criterion, boolean matrices, first:
-    inferred_is_subregion_of_extracted = bboxes1_is_almost_subregion_of_bboxes2(
-        inferred_layout_to_proc.element_coords,
-        extracted_text_layouts.element_coords,
-        threshold=subregion_threshold,
-    )
-    # TODO: refactor so we only need to compute intersection once
+    # compute criterion, boolean matrices, first:
     extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
         extracted_text_layouts.element_coords,
         inferred_layout_to_proc.element_coords,
         threshold=subregion_threshold,
     )
 
-    # -- now determine if an extracted region should be kept; there are four main paths
-    # 1. if there is a inferred region almost the same as the extracted text-region -> keep inferred
-    # and removed extracted region; here we put more trust in OD model more than pdfminer for
-    # bounding box
+    # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
+    # keep inferred and removed extracted region; here we put more trust in OD model more than
+    # pdfminer for bounding box
     extracted_to_remove, inferred_to_keep = _merge_extracted_into_inferred_when_almost_the_same(
         extracted_text_layouts,
         inferred_layout_to_proc,
         same_region_threshold,
     )
 
-    # 2. if extracted is subregion of an inferrred text region
-    # compute for a mask where inferred region is text; or not one of the following types
-    inferred_is_text = _inferred_is_text(inferred_layout_to_proc)
-    inferred_to_keep = inferred_is_text.copy()
+    # ==== RULE 3. if extracted is subregion of an inferrred text region:
+    # remove extracted and keep inferred;
+    # expand inferred bounding box if needed to encompass all subregion extracted boxes
+    inferred_to_proc = _inferred_is_text(inferred_layout_to_proc)
+    inferred_to_keep = inferred_to_proc.copy()
 
-    extracted_text_is_subregion_of_inferred_text = extracted_is_subregion_of_inferred[
-        ~extracted_to_remove
-    ][:, inferred_is_text]
-    # in theory one extracted __should__ only match at most one inferred region, given inferred
-    # region can not overlap; so first match here __should__ also be the only match
-    extracted_to_proc = extracted_to_remove[~extracted_to_remove]
-    proc_indices = np.arange(len(extracted_text_layouts))[~extracted_to_remove]
-    for inferred_index, inferred_row in enumerate(extracted_text_is_subregion_of_inferred_text.T):
-        matches = np.where(inferred_row)[0]
-        if not matches.size:
-            continue
-        # Technically those two lines below can be vectorized but this loop would still run anyway;
-        # it is not clear which one is overall faster so might worth profiling in the future
-        extracted_to_proc[matches] = True
-        inferred_is_text[inferred_index] = False
-        # then expand inferred box by all the extracted boxes
-        # FIXME (yao): this part is broken at the moment
-        inferred_layout_to_proc.element_coords[[inferred_index]] = _minimum_containing_coords(
-            inferred_layout_to_proc.slice([inferred_index]),
-            *[extracted_text_layouts.slice([proc_indices[match]]) for match in matches],
-        )
-    extracted_to_remove[~extracted_to_remove] = extracted_to_proc
+    _merge_extracted_that_are_subregion_of_inferred_text(
+        extracted_text_layouts,
+        inferred_layout_to_proc,
+        extracted_is_subregion_of_inferred,
+        extracted_to_remove,
+        inferred_to_proc,
+    )
 
-    # 3. if extracted is subregion of an inferred or inferred is subregion of extracted, except for
-    # inferrred tables, remove inferred and chose extracted
+    # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
+    # except for inferrred tables, remove inferred and chose extracted
     extracted_to_proc = ~extracted_to_remove
-    if sum(extracted_to_proc):
-        inferred_to_remove_mask = np.logical_and(
-            ~_inferred_is_elementtype(
-                inferred_layout_to_proc.slice(~inferred_is_text), [ElementType.TABLE]
-            ),
-            np.logical_or(
-                inferred_is_subregion_of_extracted[~inferred_is_text][:, extracted_to_proc],
-                extracted_is_subregion_of_inferred.T[~inferred_is_text][:, extracted_to_proc],
-            )
-            .sum(axis=1)
-            .astype(bool),
+    if any(extracted_to_proc):
+        # TODO: refactor so we only need to compute intersection once
+        inferred_to_keep = _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
+            extracted_text_layouts.slice(extracted_to_proc),
+            inferred_layout_to_proc.slice(inferred_to_proc),
+            extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
+            inferred_to_keep,
+            subregion_threshold,
         )
-        inferred_to_keep[inferred_to_remove_mask] = False
 
-    # 4. all else -> keep extracted region; note we also keep extracted image regions that is a
-    # subregion of an inferred text region
+    # ==== RULE 5. all else -> keep extracted region; note we also keep extracted image regions
+    # that is a subregion of an inferred text region
     extracted_to_keep = np.concatenate(
-        (text_element_indices[~extracted_to_remove], image_indices_to_keep)
+        (text_element_indices[extracted_to_proc], image_indices_to_keep)
     )
     extracted_to_keep.sort()
 
