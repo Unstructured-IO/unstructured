@@ -617,9 +617,6 @@ def _partition_pdf_or_image_local(
                 )
                 ocr_layout_dumper = OCRLayoutDumper()
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        import pdb
-
-        pdb.set_trace()
         merged_document_layout = merge_inferred_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,
