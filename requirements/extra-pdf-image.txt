@@ -31,7 +31,7 @@ cryptography==44.0.0
     #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
-deprecated==1.2.15
+deprecated==1.2.18
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
@@ -40,17 +40,17 @@ filelock==3.17.0
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==25.1.21
+flatbuffers==25.1.24
     # via onnxruntime
-fonttools==4.55.4
+fonttools==4.55.8
     # via matplotlib
 fsspec==2024.12.0
     # via
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.24.0
+google-api-core[grpc]==2.24.1
     # via google-cloud-vision
-google-auth==2.37.0
+google-auth==2.38.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -60,14 +60,14 @@ googleapis-common-protos==1.66.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.69.0
+grpcio==1.70.0
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.69.0
+grpcio-status==1.70.0
     # via google-api-core
-huggingface-hub==0.27.1
+huggingface-hub==0.28.0
     # via
     #   timm
     #   tokenizers
@@ -152,7 +152,7 @@ pillow==11.1.0
     #   pikepdf
     #   torchvision
     #   unstructured-pytesseract
-proto-plus==1.25.0
+proto-plus==1.26.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -179,7 +179,7 @@ pycparser==2.22
     #   cffi
 pyparsing==3.2.1
     # via matplotlib
-pypdf==5.1.0
+pypdf==5.2.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -238,13 +238,13 @@ tokenizers==0.19.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.5.1
+torch==2.6.0
     # via
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.20.1
+torchvision==0.21.0
     # via
     #   effdet
     #   timm

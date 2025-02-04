@@ -1,4 +1,25 @@
-## 0.16.16-dev1
+## 0.16.19-dev2
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
+- **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
+- **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
+
+## 0.16.17
+
+### Enhancements
+- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
+
+### Features
+
+### Fixes
+- **Fix a bug where `build_layout_elements_from_cor_regions` incorrectly joins texts in wrong order**.
+
+## 0.16.16
 
 ### Enhancements
 
@@ -6,11 +27,11 @@
 - **Vectorize layout (inferred, extracted, and OCR) data structure** Using `np.ndarray` to store a group of layout elements or text regions instead of using a list of objects. This improves the memory efficiency and compute speed around layout merging and deduplication.
 
 ### Fixes
-
-* **Drop usage of ndjson dependency**
+- **Add auto-download for NLTK for Python Enviroment** When user import tokenize, It will  automatic download nltk data from `tokenize.py` file. Added `AUTO_DOWNLOAD_NLTK` flag in `tokenize.py` to download `NLTK_DATA`.
+- **Correctly patch pdfminer to avoid PDF repair**. The patch applied to pdfminer's parser caused it to occasionally split tokens in content streams, throwing `PDFSyntaxError`.  Repairing these PDFs sometimes failed (since they were not actually invalid) resulting in unnecessary OCR fallback.
+- **Drop usage of ndjson dependency**
 
 ## 0.16.15
-
 ### Enhancements
 
 ### Features

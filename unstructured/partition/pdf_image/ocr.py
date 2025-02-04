@@ -276,7 +276,7 @@ def supplement_element_with_table_extraction(
     from unstructured_inference.models.tables import cells_to_html
 
     table_id = {v: k for k, v in elements.element_class_id_map.items()}.get(ElementType.TABLE)
-    if not table_id:
+    if table_id is None:
         # no table found in this page
         return elements
 

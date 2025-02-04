@@ -13,7 +13,7 @@ EMBEDDING_PROVIDER_TO_CLASS_MAP = {
     "langchain-huggingface": HuggingFaceEmbeddingEncoder,
     "langchain-aws-bedrock": BedrockEmbeddingEncoder,
     "langchain-vertexai": VertexAIEmbeddingEncoder,
-    "langchain-voyageai": VoyageAIEmbeddingEncoder,
+    "voyageai": VoyageAIEmbeddingEncoder,
     "mixedbread-ai": MixedbreadAIEmbeddingEncoder,
     "octoai": OctoAIEmbeddingEncoder,
 }
