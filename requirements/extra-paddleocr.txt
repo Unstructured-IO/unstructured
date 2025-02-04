@@ -10,7 +10,7 @@ anyio==4.8.0
     #   httpx
 astor==0.8.1
     # via paddlepaddle
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c ./base.txt
     #   httpcore
@@ -125,7 +125,7 @@ python-dateutil==2.9.0.post0
     #   matplotlib
 pyyaml==6.0.2
     # via unstructured-paddleocr
-rapidfuzz==3.11.0
+rapidfuzz==3.12.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -141,7 +141,7 @@ scipy==1.13.1
     # via
     #   imgaug
     #   scikit-image
-shapely==2.0.6
+shapely==2.0.7
     # via
     #   imgaug
     #   unstructured-paddleocr

@@ -4,7 +4,7 @@
 #
 #    pip-compile ./huggingface.in
 #
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c ./base.txt
     #   requests
@@ -21,11 +21,11 @@ filelock==3.17.0
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.12.0
+fsspec==2025.2.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.28.0
+huggingface-hub==0.28.1
     # via
     #   tokenizers
     #   transformers
