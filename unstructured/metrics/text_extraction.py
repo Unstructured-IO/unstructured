@@ -8,7 +8,7 @@ from unstructured.cleaners.core import clean_bullets, remove_sentence_punctuatio
 def calculate_accuracy(
     output: Optional[str],
     source: Optional[str],
-    weights: Tuple[int, int, int] = (2, 1, 1),
+    weights: Tuple[int, int, int] = (1, 1, 1),
 ) -> float:
     """
     Calculates accuracy by calling calculate_edit_distance function using `return_as=score`.
@@ -20,7 +20,7 @@ def calculate_accuracy(
 def calculate_edit_distance(
     output: Optional[str],
     source: Optional[str],
-    weights: Tuple[int, int, int] = (2, 1, 1),
+    weights: Tuple[int, int, int] = (1, 1, 1),
     return_as: str = "distance",
     standardize_whitespaces: bool = True,
 ) -> float:
