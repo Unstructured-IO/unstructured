@@ -125,7 +125,8 @@ class OntologyElement(BaseModel):
         text = self.text or ""
 
         if text or children_html:
-            return f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
+            inside_tag_text = f"{text} {children_html}".strip()
+            return f"<{self.html_tag_name} {attr_str}>{inside_tag_text}</{self.html_tag_name}>"
         else:
             return f"<{self.html_tag_name} {attr_str} />"
 
@@ -145,11 +146,10 @@ class OntologyElement(BaseModel):
 
 def remove_ids_and_class_from_table(soup: Tag):
     for tag in soup.find_all(True):
-        if tag.name != "table":
-            tag.attrs.pop("class", None)
-            tag.attrs.pop("id", None)
-        if tag.name in ["td", "th"]:
-            tag.string = " ".join(tag.stripped_strings)
+        if tag.name == "table":
+            continue  # We keep table tag
+        tag.attrs.pop("class", None)
+        tag.attrs.pop("id", None)
     return soup
 
 
