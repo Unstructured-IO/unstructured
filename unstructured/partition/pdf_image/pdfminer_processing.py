@@ -195,10 +195,6 @@ def array_merge_inferred_layout_with_extracted_layout(
     if len(inferred_layout) == 0:
         return extracted_layout
 
-    import pdb
-
-    pdb.set_trace()
-
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
     # ==== RULE 0: Full page images are ignored
@@ -222,6 +218,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     # region then we use the common bounding boxes and keep just one of the two sets
 
     # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
+    # what if od model detects table but pdfminer says image -> we would lose the table!!
     boxes_almost_same = (
         boxes_iou(
             inferred_layout.element_coords,
@@ -568,12 +565,6 @@ def merge_inferred_with_extracted_layout(
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
-    from unstructured_inference.inference.layoutelement import (
-        LayoutElements,
-    )
-    from unstructured_inference.inference.layoutelement import (
-        merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
-    )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     inferred_pages = inferred_document_layout.pages
@@ -597,18 +588,6 @@ def merge_inferred_with_extracted_layout(
         # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
         # vectorized data structure into the merge function
 
-        _merged_layout = merge_inferred_with_extracted_page(
-            inferred_layout=inferred_page.elements,
-            extracted_layout=pdfminer_elements_to_text_regions(extracted_page_layout),
-            page_image_size=image_size,
-            **threshold_kwargs,
-        )
-        _merged_layout = sort_text_regions(
-            LayoutElements.from_list(_merged_layout), SORT_MODE_BASIC
-        )
-        import pdb
-
-        pdb.set_trace()
         merged_layout = array_merge_inferred_layout_with_extracted_layout(
             inferred_page.elements_array,
             extracted_page_layout,
@@ -617,7 +596,6 @@ def merge_inferred_with_extracted_layout(
         )
 
         merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
-        pdb.set_trace()
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
 
