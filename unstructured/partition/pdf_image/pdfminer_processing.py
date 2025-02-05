@@ -148,6 +148,7 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
         )
     inferred_to_proc[inferred_to_proc] = inferred_to_iter
     extracted_to_proc[extracted_to_proc] = extracted_to_iter
+    return inferred_layout
 
 
 def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
@@ -194,6 +195,10 @@ def array_merge_inferred_layout_with_extracted_layout(
     if len(inferred_layout) == 0:
         return extracted_layout
 
+    import pdb
+
+    pdb.set_trace()
+
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
     # ==== RULE 0: Full page images are ignored
@@ -234,14 +239,6 @@ def array_merge_inferred_layout_with_extracted_layout(
     # now process extracted text regions; the loop version's outter loop is extracted layout
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
-    # compute criterion, boolean matrices, first:
-    extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
-        extracted_text_layouts.element_coords,
-        inferred_layout_to_proc.element_coords,
-        threshold=subregion_threshold,
-        round_to=2,
-    )
-
     # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
     # keep inferred and removed extracted region; here we put more trust in OD model more than
     # pdfminer for bounding box
@@ -251,6 +248,9 @@ def array_merge_inferred_layout_with_extracted_layout(
         same_region_threshold,
     )
 
+    # compute criterion, boolean matrices, first:
+    # NOTE (yao): loop version updates the inferrred layout size as process goes on so vectorization
+    # might not work after all
     # ==== RULE 3. if extracted is subregion of an inferrred text region:
     # remove extracted and keep inferred;
     # expand inferred bounding box if needed to encompass all subregion extracted boxes
@@ -262,15 +262,41 @@ def array_merge_inferred_layout_with_extracted_layout(
     # but not almost match of an extracted image
     inferred_is_image = ~inferred_to_proc.copy()
     extracted_to_proc = ~extracted_to_remove
+    rounds = 0
 
-    _merge_extracted_that_are_subregion_of_inferred_text(
-        extracted_text_layouts.slice(extracted_to_proc),
-        inferred_layout_to_proc.slice(inferred_to_proc),
-        extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
-        # both those following two are modified in place in the function
-        extracted_to_proc,
-        inferred_to_proc,
-    )
+    # because inferred layout sizes can be increased after one pass we may need to run through
+    # multiple passes; the original looped version increases layout size when it is processed so
+    # order would matter in that version. Here we loop over multiple times to avoid order being a
+    # factor -> this is one big difference between the current refactor and the version in inference
+    # lib that uses loops
+    while True and rounds < 1:
+        rounds += 1
+        inferred_to_proc_at_start = inferred_to_proc.copy()
+        extracted_to_proc_start = extracted_to_proc.copy()
+        extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
+            extracted_text_layouts.element_coords,
+            inferred_layout_to_proc.element_coords,
+            threshold=subregion_threshold,
+        )
+
+        updated_inferred = _merge_extracted_that_are_subregion_of_inferred_text(
+            extracted_text_layouts.slice(extracted_to_proc),
+            inferred_layout_to_proc.slice(inferred_to_proc),
+            extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
+            # both those following two are modified in place in the function
+            extracted_to_proc,
+            inferred_to_proc,
+        )
+        # unfortunately slice uses "fancy" indexing and it generates a copy instead of a view, which
+        # was intentional by design to avoid unintended modification of the original data
+        inferred_layout_to_proc.element_coords[inferred_to_proc_at_start] = (
+            updated_inferred.element_coords
+        )
+        if np.array_equal(extracted_to_proc_start, extracted_to_proc) and np.array_equal(
+            inferred_to_proc_at_start, inferred_to_proc
+        ):
+            print("finishe in %i rounds", rounds)
+            break
 
     # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
     # except for inferrred tables, remove inferred and chose extracted
@@ -542,6 +568,12 @@ def merge_inferred_with_extracted_layout(
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
+    from unstructured_inference.inference.layoutelement import (
+        LayoutElements,
+    )
+    from unstructured_inference.inference.layoutelement import (
+        merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
+    )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     inferred_pages = inferred_document_layout.pages
@@ -565,6 +597,18 @@ def merge_inferred_with_extracted_layout(
         # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
         # vectorized data structure into the merge function
 
+        _merged_layout = merge_inferred_with_extracted_page(
+            inferred_layout=inferred_page.elements,
+            extracted_layout=pdfminer_elements_to_text_regions(extracted_page_layout),
+            page_image_size=image_size,
+            **threshold_kwargs,
+        )
+        _merged_layout = sort_text_regions(
+            LayoutElements.from_list(_merged_layout), SORT_MODE_BASIC
+        )
+        import pdb
+
+        pdb.set_trace()
         merged_layout = array_merge_inferred_layout_with_extracted_layout(
             inferred_page.elements_array,
             extracted_page_layout,
@@ -573,6 +617,7 @@ def merge_inferred_with_extracted_layout(
         )
 
         merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
+        pdb.set_trace()
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
 
