@@ -14,7 +14,7 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
     import pypandoc
 
     try:
-        text = pypandoc.convert_file(filename, target_format, format=source_format)
+        text = pypandoc.convert_file(filename, target_format, format=source_format, sandbox=True)
     except FileNotFoundError as err:
         msg = (
             f"Error converting the file to text. Ensure you have the pandoc package installed on"
