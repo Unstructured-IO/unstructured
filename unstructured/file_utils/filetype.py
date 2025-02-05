@@ -172,7 +172,8 @@ class _FileTypeDetector:
             return file_type
 
         # -- strategy 3: guess MIME-type using libmagic and use that --
-        if file_type := self._file_type_from_guessed_mime_type:
+        if file_type := self._file_type_from_guessed_mime_type and self._ctx.extension != ".ndjson":
+            # ndjson gets detected as json mime type, will be incorrectly classified as JSON
             return file_type
 
         # -- strategy 4: use filename-extension, like ".docx" -> FileType.DOCX --
