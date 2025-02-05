@@ -542,17 +542,12 @@ def merge_inferred_with_extracted_layout(
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
-    from unstructured_inference.inference.layoutelement import LayoutElements
-    from unstructured_inference.inference.layoutelement import (
-        merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
-    )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
         zip(inferred_pages, extracted_layout)
     ):
-        inferred_layout = inferred_page.elements
         image_metadata = inferred_page.image_metadata
         w = image_metadata.get("width")
         h = image_metadata.get("height")
@@ -569,16 +564,6 @@ def merge_inferred_with_extracted_layout(
 
         # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
         # vectorized data structure into the merge function
-
-        _merged_layout = merge_inferred_with_extracted_page(
-            inferred_layout=inferred_layout,
-            extracted_layout=pdfminer_elements_to_text_regions(extracted_page_layout),
-            page_image_size=image_size,
-            **threshold_kwargs,
-        )
-        _merged_layout = sort_text_regions(
-            LayoutElements.from_list(_merged_layout), SORT_MODE_BASIC
-        )
 
         merged_layout = array_merge_inferred_layout_with_extracted_layout(
             inferred_page.elements_array,
