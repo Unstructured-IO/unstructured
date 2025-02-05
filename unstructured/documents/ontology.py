@@ -153,16 +153,6 @@ def remove_ids_and_class_from_table(soup: Tag):
     return soup
 
 
-def strip_table_cells(soup):
-    cells = soup.find_all(["td", "th"])
-
-    for cell in cells:
-        for node in cell.find_all(text=True):
-            node.replace_with(node.strip())
-
-    return soup
-
-
 # Define specific elements
 class Document(OntologyElement):
     description: str = Field("Root element of the document", frozen=True)
@@ -473,7 +463,6 @@ class TableOfContents(OntologyElement):
     def to_html(self, add_children=True) -> str:
         soup = BeautifulSoup(super().to_html(add_children), "html.parser")
         soup = remove_ids_and_class_from_table(soup)
-        soup = strip_table_cells(soup)
         return str(soup)
 
 
