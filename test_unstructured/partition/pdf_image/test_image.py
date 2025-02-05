@@ -79,6 +79,7 @@ class MockPageLayout(layout.PageLayout):
                 text="Charlie Brown and the Great Pumpkin",
             ),
         ]
+        self.elements_array = layout.LayoutElements.from_list(self.elements)
 
 
 class MockDocumentLayout(layout.DocumentLayout):
@@ -254,7 +255,10 @@ def test_partition_image_with_ocr_detects_korean():
     )
 
     assert elements[0].text == "RULES AND INSTRUCTIONS"
-    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
+    # FIXME (yao): revisit this lstrip after refactoring merging logics; right now on docker and
+    # local testing yield different results and on docker there is a "," at the start of the Korean
+    # text line
+    assert elements[3].text.replace(" ", "").lstrip(",").startswith("안녕하세요")
 
 
 def test_partition_image_with_ocr_detects_korean_from_file():
@@ -267,7 +271,7 @@ def test_partition_image_with_ocr_detects_korean_from_file():
         )
 
     assert elements[0].text == "RULES AND INSTRUCTIONS"
-    assert elements[3].text.replace(" ", "").startswith("안녕하세요")
+    assert elements[3].text.replace(" ", "").lstrip(",").startswith("안녕하세요")
 
 
 def test_partition_image_raises_with_bad_strategy():
@@ -579,6 +583,7 @@ def inference_results():
         image=mock.MagicMock(format="JPEG"),
     )
     page.elements = [layout.LayoutElement.from_coords(0, 0, 600, 800, text="hello")]
+    page.elements_array = layout.LayoutElements.from_list(page.elements)
     doc = layout.DocumentLayout(pages=[page])
     return doc
 

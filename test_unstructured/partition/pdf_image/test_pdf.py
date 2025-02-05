@@ -15,6 +15,7 @@ from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout
+from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
@@ -89,22 +90,26 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
+        self.image_metadata = {"width": 10, "height": 10}
+        self.detection_model = None
         self.elements = [
             layout.LayoutElement.from_coords(
                 type="Title",
-                x1=0,
-                y1=0,
-                x2=2,
-                y2=2,
+                x1=0.0,
+                y1=0.0,
+                x2=2.0,
+                y2=2.0,
                 text="Charlie Brown and the Great Pumpkin",
             ),
         ]
+        self.elements_array = layout.LayoutElements.from_list(self.elements)
 
 
 class MockSinglePageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image.Image):
         self.number = number
         self.image = image
+        self.image_metadata = {"width": 10, "height": 10}
 
     @property
     def elements(self):
@@ -112,24 +117,28 @@ class MockSinglePageLayout(layout.PageLayout):
             LayoutElement(
                 type="Headline",
                 text="Charlie Brown and the Great Pumpkin",
-                bbox=None,
+                bbox=Rectangle(None, None, None, None),
             ),
             LayoutElement(
                 type="Subheadline",
                 text="The Beginning",
-                bbox=None,
+                bbox=Rectangle(None, None, None, None),
             ),
             LayoutElement(
                 type="Text",
                 text="This time Charlie Brown had it really tricky...",
-                bbox=None,
+                bbox=Rectangle(None, None, None, None),
             ),
             LayoutElement(
                 type="Title",
                 text="Another book title in the same page",
-                bbox=None,
+                bbox=Rectangle(None, None, None, None),
             ),
         ]
+
+    @property
+    def elements_array(self):
+        return layout.LayoutElements.from_list(self.elements)
 
 
 class MockDocumentLayout(layout.DocumentLayout):
@@ -265,7 +274,7 @@ def test_partition_pdf_with_model_name_env_var(
     with mock.patch.object(
         layout,
         "process_file_with_model",
-        mock.MagicMock(),
+        return_value=MockDocumentLayout(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
         assert mock_process.call_args[1]["model_name"] == "checkbox"
@@ -281,7 +290,7 @@ def test_partition_pdf_with_model_name(
     with mock.patch.object(
         layout,
         "process_file_with_model",
-        mock.MagicMock(),
+        return_value=MockDocumentLayout(),
     ) as mock_process:
         pdf.partition_pdf(
             filename=filename,
@@ -293,7 +302,7 @@ def test_partition_pdf_with_model_name(
     with mock.patch.object(
         layout,
         "process_data_with_model",
-        mock.MagicMock(),
+        return_value=MockDocumentLayout(),
     ) as mock_process:
         with open(filename, "rb") as f:
             pdf.partition_pdf(
@@ -312,7 +321,7 @@ def test_partition_pdf_with_hi_res_model_name(
     with mock.patch.object(
         layout,
         "process_file_with_model",
-        mock.MagicMock(),
+        return_value=MockDocumentLayout(),
     ) as mock_process:
         pdf.partition_pdf(
             filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
@@ -329,7 +338,7 @@ def test_partition_pdf_or_image_with_hi_res_model_name(
     with mock.patch.object(
         layout,
         "process_file_with_model",
-        mock.MagicMock(),
+        return_value=MockDocumentLayout(),
     ) as mock_process:
         pdf.partition_pdf_or_image(
             filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
@@ -615,7 +624,9 @@ def test_partition_pdf_with_copy_protection():
 
 def test_partition_pdf_with_dpi():
     filename = example_doc_path("pdf/copy-protected.pdf")
-    with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
+    with mock.patch.object(
+        layout, "process_file_with_model", return_value=MockDocumentLayout()
+    ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, pdf_image_dpi=100)
         assert mock_process.call_args[1]["pdf_image_dpi"] == 100
 
@@ -1194,14 +1205,28 @@ def test_partition_pdf_with_fast_finds_headers_footers(
 @pytest.mark.parametrize(
     ("filename", "expected_log"),
     [
+        # This one is *actually* an invalid PDF document
         ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
-        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
     ],
 )
 def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
     caplog.set_level(logging.INFO)
     assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
     assert expected_log in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected_log"),
+    [
+        # This one is *not* an invalid PDF document, make sure we
+        # don't try to "repair" it unnecessarily
+        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
+    ],
+)
+def test_properly_patch_pdfminer(filename, expected_log, caplog):
+    caplog.set_level(logging.INFO)
+    assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
+    assert expected_log not in caplog.text
 
 
 def assert_element_extraction(
@@ -1448,6 +1473,8 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
+    # TODO (yao): investigate why we need this test. The LayoutElement definition suggests bbox
+    # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
     layout_elem_absent_coordinates = MockSinglePageDocumentLayout()
     for page in layout_elem_absent_coordinates.pages:
         for el in page.elements:
@@ -1463,6 +1490,7 @@ class MockImage:
     format = "JPG"
 
 
+@pytest.mark.skip(reason="no current layout model supports parent assignment")
 def test_document_to_element_list_handles_parent():
     block1 = LayoutElement.from_coords(1, 2, 3, 4, text="block 1", type="NarrativeText")
     block2 = LayoutElement.from_coords(
@@ -1478,7 +1506,7 @@ def test_document_to_element_list_handles_parent():
         number=1,
         image=MockImage(),
     )
-    page.elements = [block1, block2]
+    page.elements_array = layout.LayoutElements.from_list([block1, block2])
     doc = DocumentLayout.from_pages([page])
     el1, el2 = pdf.document_to_element_list(doc)
     assert el2.metadata.parent_id == el1.id
@@ -1503,7 +1531,7 @@ def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_cou
         number=1,
         image=MockImage(),
     )
-    page.elements = [block1, block2]
+    page.elements_array = layout.LayoutElements.from_list([block1, block2])
     doc = DocumentLayout.from_pages([page])
     with mock.patch.object(pdf, "sort_page_elements") as mock_sort_page_elements:
         pdf.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)

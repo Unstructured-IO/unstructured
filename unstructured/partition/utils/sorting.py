@@ -11,7 +11,7 @@ from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY
 from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.elements import TextRegions
 
 
 def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> tuple[int, int, int, int]:
@@ -213,33 +213,30 @@ def sort_bboxes_by_xy_cut(
 
 
 def sort_text_regions(
-    elements: list["TextRegion"],
+    elements: TextRegions,
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
-) -> list["TextRegion"]:
+) -> TextRegions:
     """Sort a list of TextRegion elements based on the specified sorting mode."""
 
     if not elements:
         return elements
 
-    bboxes = [(el.bbox.x1, el.bbox.y1, el.bbox.x2, el.bbox.y2) for el in elements]
+    bboxes = elements.element_coords
 
     def _bboxes_ok(strict_points: bool):
-        warned = False
 
-        for bbox in bboxes:
-            if bbox is None:
-                trace_logger.detail(  # type: ignore
-                    "some or all elements are missing bboxes, skipping sort",
-                )
+        if np.isnan(bboxes).any():
+            trace_logger.detail(  # type: ignore
+                "some or all elements are missing bboxes, skipping sort",
+            )
+            return False
+
+        if bboxes.shape[1] != 4 or np.where(bboxes < 0)[0].size:
+            trace_logger.detail("at least one bbox contains invalid values")  # type: ignore
+            if strict_points:
                 return False
-            elif not bbox_is_valid(bbox):
-                if not warned:
-                    trace_logger.detail(f"bbox {bbox} does not have valid values")  # type: ignore
-                    warned = True
-                if strict_points:
-                    return False
         return True
 
     if sort_mode == SORT_MODE_XY_CUT:
@@ -260,11 +257,12 @@ def sort_text_regions(
             shrink_factor=shrink_factor,
             xy_cut_primary_direction=xy_cut_primary_direction,
         )
-        sorted_elements = [elements[i] for i in res]
+        sorted_elements = elements.slice(res)
     elif sort_mode == SORT_MODE_BASIC:
-        sorted_elements = sorted(
-            elements,
-            key=lambda el: (el.bbox.y1, el.bbox.x1, el.bbox.y2, el.bbox.x2),
+        # NOTE (yao): lexsort order is revese from the input sequence; so below is first sort by y1,
+        # then x1, then y2, lastly x2
+        sorted_elements = elements.slice(
+            np.lexsort((elements.x2, elements.y2, elements.x1, elements.y1))
         )
     else:
         sorted_elements = elements

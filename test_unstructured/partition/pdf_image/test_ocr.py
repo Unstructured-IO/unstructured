@@ -9,15 +9,20 @@ import unstructured_pytesseract
 from bs4 import BeautifulSoup, Tag
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
-from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
+from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
 from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
+    LayoutElements,
 )
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
-from unstructured.partition.pdf_image.ocr import pad_element_bboxes
+from unstructured.partition.pdf_image.pdf_image_utils import (
+    convert_pdf_to_images,
+    pad_element_bboxes,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
@@ -90,13 +95,15 @@ def test_get_ocr_layout_from_image_tesseract(monkeypatch):
     ocr_agent = OCRAgentTesseract()
     ocr_layout = ocr_agent.get_layout_from_image(image)
 
-    expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_TESSERACT),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_TESSERACT),
-    ]
+    expected_layout = TextRegions(
+        element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
+        texts=np.array(["Hello", "World", "!"]),
+        sources=np.array([Source.OCR_TESSERACT] * 3),
+    )
 
-    assert ocr_layout == expected_layout
+    assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
+    np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
+    np.testing.assert_array_equal(ocr_layout.sources, expected_layout.sources)
 
 
 def mock_ocr(*args, **kwargs):
@@ -147,13 +154,15 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
     ocr_layout = OCRAgentPaddle().get_layout_from_image(image)
 
-    expected_layout = [
-        TextRegion.from_coords(10, 5, 25, 15, "Hello", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(20, 15, 45, 35, "World", source=Source.OCR_PADDLE),
-        TextRegion.from_coords(30, 25, 65, 55, "!", source=Source.OCR_PADDLE),
-    ]
+    expected_layout = TextRegions(
+        element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
+        texts=np.array(["Hello", "World", "!"]),
+        sources=np.array([Source.OCR_PADDLE] * 3),
+    )
 
-    assert ocr_layout == expected_layout
+    assert ocr_layout.texts.tolist() == expected_layout.texts.tolist()
+    np.testing.assert_array_equal(ocr_layout.element_coords, expected_layout.element_coords)
+    np.testing.assert_array_equal(ocr_layout.sources, expected_layout.sources)
 
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
@@ -254,12 +263,12 @@ def test_get_layout_from_image_google_vision(google_vision_client):
     ocr_agent = google_vision_client
     regions = ocr_agent.get_layout_from_image(image)
     assert len(regions) == 1
-    assert regions[0].text == "Hello World!"
-    assert regions[0].source == Source.OCR_GOOGLEVISION
-    assert regions[0].bbox.x1 == 0
-    assert regions[0].bbox.y1 == 0
-    assert regions[0].bbox.x2 == 10
-    assert regions[0].bbox.y2 == 10
+    assert regions.texts[0] == "Hello World!"
+    assert all(source == Source.OCR_GOOGLEVISION for source in regions.sources)
+    assert regions.x1[0] == 0
+    assert regions.y1[0] == 0
+    assert regions.x2[0] == 10
+    assert regions.y2[0] == 10
 
 
 def test_get_layout_elements_from_image_google_vision(google_vision_client):
@@ -272,24 +281,28 @@ def test_get_layout_elements_from_image_google_vision(google_vision_client):
 
 @pytest.fixture()
 def mock_ocr_regions():
-    return [
-        EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
-        EmbeddedTextRegion.from_coords(200, 200, 300, 300, text="1", source=None),
-        EmbeddedTextRegion.from_coords(500, 320, 600, 350, text="3", source=None),
-    ]
+    return TextRegions.from_list(
+        [
+            EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
+            EmbeddedTextRegion.from_coords(200, 200, 300, 300, text="1", source=None),
+            EmbeddedTextRegion.from_coords(500, 320, 600, 350, text="3", source=None),
+        ]
+    )
 
 
 @pytest.fixture()
 def mock_out_layout(mock_embedded_text_regions):
-    return [
-        LayoutElement(
-            text=None,
-            source=None,
-            type="Text",
-            bbox=r.bbox,
-        )
-        for r in mock_embedded_text_regions
-    ]
+    return LayoutElements.from_list(
+        [
+            LayoutElement(
+                text="",
+                source=None,
+                type="Text",
+                bbox=r.bbox,
+            )
+            for r in mock_embedded_text_regions
+        ]
+    )
 
 
 def test_aggregate_ocr_text_by_block():
@@ -320,29 +333,31 @@ def test_zoom_image(zoom):
 
 @pytest.fixture()
 def mock_layout(mock_embedded_text_regions):
-    return [
-        LayoutElement(text=r.text, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
-        for r in mock_embedded_text_regions
-    ]
+    return LayoutElements.from_list(
+        [
+            LayoutElement(text=r.text, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+            for r in mock_embedded_text_regions
+        ]
+    )
 
 
 def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
     ocr_elements = [
         LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
-        for r in mock_ocr_regions
+        for r in mock_ocr_regions.as_list()
     ]
 
-    final_layout = ocr.supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions)
+    final_layout = ocr.supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions).as_list()
 
     # Check if the final layout contains the original layout elements
-    for element in mock_layout:
+    for element in mock_layout.as_list():
         assert element in final_layout
 
     # Check if the final layout contains the OCR-derived elements
     assert any(ocr_element in final_layout for ocr_element in ocr_elements)
 
     # Check if the OCR-derived elements that are subregions of layout elements are removed
-    for element in mock_layout:
+    for element in mock_layout.as_list():
         for ocr_element in ocr_elements:
             if ocr_element.bbox.is_almost_subregion_of(
                 element.bbox,
@@ -354,16 +369,22 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
 def test_merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions):
     ocr_elements = [
         LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
-        for r in mock_ocr_regions
+        for r in mock_ocr_regions.as_list()
     ]
+    input_layout_elements = mock_out_layout.as_list()
 
-    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
+    final_layout = ocr.merge_out_layout_with_ocr_layout(
+        mock_out_layout,
+        mock_ocr_regions,
+    ).as_list()
 
     # Check if the out layout's text attribute is updated with aggregated OCR text
-    assert final_layout[0].text == mock_ocr_regions[2].text
+    assert final_layout[0].text == mock_ocr_regions.texts[2]
 
     # Check if the final layout contains both original elements and OCR-derived elements
-    assert all(element in final_layout for element in mock_out_layout)
+    # The first element's text is modified by the ocr regions so it won't be the same as the input
+    assert all(element in final_layout for element in input_layout_elements[1:])
+    assert final_layout[0].bbox == input_layout_elements[0].bbox
     assert any(element in final_layout for element in ocr_elements)
 
 
@@ -411,11 +432,34 @@ def table_element():
 
 @pytest.fixture()
 def mock_ocr_layout():
-    ocr_regions = [
-        TextRegion.from_coords(x1=15, y1=25, x2=35, y2=45, text="Token1"),
-        TextRegion.from_coords(x1=40, y1=30, x2=45, y2=50, text="Token2"),
-    ]
-    return ocr_regions
+    return TextRegions.from_list(
+        [
+            TextRegion.from_coords(x1=15, y1=25, x2=35, y2=45, text="Token1"),
+            TextRegion.from_coords(x1=40, y1=30, x2=45, y2=50, text="Token2"),
+        ]
+    )
+
+
+def test_supplement_element_with_table_extraction():
+    from unstructured_inference.models import tables
+
+    tables.load_agent()
+
+    image = next(convert_pdf_to_images(example_doc_path("pdf/single_table.pdf")))
+    elements = LayoutElements(
+        element_coords=np.array([[215.00109863, 731.89996338, 1470.07739258, 972.83129883]]),
+        texts=np.array(["foo"]),
+        sources=np.array(["yolox_sg"]),
+        element_class_ids=np.array([0]),
+        element_class_id_map={0: "Table"},
+    )
+    supplemented = ocr.supplement_element_with_table_extraction(
+        elements=elements,
+        image=image,
+        tables_agent=tables.tables_agent,
+        ocr_agent=ocr.OCRAgent.get_agent(language="eng"),
+    )
+    assert supplemented.text_as_html[0].startswith("<table>")
 
 
 def test_get_table_tokens(mock_ocr_layout):
@@ -462,7 +506,7 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     image = Image.new("RGB", (1000, 1000))
     ocr_agent = OCRAgentTesseract()
     # tests that the code can run instead of oom and OCR results make sense
-    assert [region.text for region in ocr_agent.get_layout_from_image(image)] == [
+    assert ocr_agent.get_layout_from_image(image).texts.tolist() == [
         "Hello",
         "World",
         "!",
@@ -471,19 +515,23 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
 
 def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # the code should ignore this invalid text and use ocr region's text
-    mock_out_layout[0].text = "(cid:10)(cid:5)?"
+    mock_out_layout.texts = mock_out_layout.texts.astype(object)
+    mock_out_layout.texts[0] = "(cid:10)(cid:5)?"
     ocr_elements = [
         LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
-        for r in mock_ocr_regions
+        for r in mock_ocr_regions.as_list()
     ]
+    input_layout_elements = mock_out_layout.as_list()
 
-    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
+    # TODO (yao): refactor the tests to check the array data structure directly instead of
+    # converting them into lists first (this includes other tests in this file)
+    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions).as_list()
 
     # Check if the out layout's text attribute is updated with aggregated OCR text
-    assert final_layout[0].text == mock_ocr_regions[2].text
+    assert final_layout[0].text == mock_ocr_regions.texts[2]
 
     # Check if the final layout contains both original elements and OCR-derived elements
-    assert all(element in final_layout for element in mock_out_layout)
+    assert all(element in final_layout for element in input_layout_elements[1:])
     assert any(element in final_layout for element in ocr_elements)
 
 

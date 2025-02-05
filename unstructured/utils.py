@@ -292,6 +292,21 @@ def scarf_analytics():
                     + "&gpu="
                     + str(gpu_present)
                     + "&dev=true",
+                    timeout=10,
+                )
+                requests.get(
+                    "https://packages2.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=true",
+                    timeout=10,
                 )
             else:
                 requests.get(
@@ -306,6 +321,21 @@ def scarf_analytics():
                     + "&gpu="
                     + str(gpu_present)
                     + "&dev=false",
+                    timeout=10,
+                )
+                requests.get(
+                    "https://packages2.unstructured.io/python-telemetry?version="
+                    + __version__
+                    + "&platform="
+                    + platform.system()
+                    + "&python"
+                    + python_version
+                    + "&arch="
+                    + platform.machine()
+                    + "&gpu="
+                    + str(gpu_present)
+                    + "&dev=false",
+                    timeout=10,
                 )
     except Exception:
         pass
