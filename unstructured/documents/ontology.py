@@ -125,7 +125,8 @@ class OntologyElement(BaseModel):
         text = self.text or ""
 
         if text or children_html:
-            return f"<{self.html_tag_name} {attr_str}>{text} {children_html}</{self.html_tag_name}>"
+            inside_tag_text = f"{text} {children_html}".strip()
+            return f"<{self.html_tag_name} {attr_str}>{inside_tag_text}</{self.html_tag_name}>"
         else:
             return f"<{self.html_tag_name} {attr_str} />"
 
@@ -153,10 +154,12 @@ def remove_ids_and_class_from_table(soup: Tag):
 
 
 def strip_table_cells(soup):
-    for tag in soup.find_all(["td", "th"]):
-        for element in tag.descendants:
-            if element.string:
-                element.replace_with(element.string.strip())
+    cells = soup.find_all(["td", "th"])
+
+    for cell in cells:
+        for node in cell.find_all(text=True):
+            node.replace_with(node.strip())
+
     return soup
 
 
@@ -327,22 +330,12 @@ class TableCell(OntologyElement):
     elementType: ElementTypeEnum = Field(ElementTypeEnum.table, frozen=True)
     allowed_tags: List[str] = Field(["td"], frozen=True)
 
-    def to_html(self, add_children=True) -> str:
-        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
-        soup = strip_table_cells(soup)
-        return str(soup)
-
 
 # Note(Pluto): Renamed from TableCellHeader to TableHeaderCell to be consistent with TableCell
 class TableCellHeader(OntologyElement):
     description: str = Field("A header cell in a table", frozen=True)
     elementType: ElementTypeEnum = Field(ElementTypeEnum.table, frozen=True)
     allowed_tags: List[str] = Field(["th"], frozen=True)
-
-    def to_html(self, add_children=True) -> str:
-        soup = BeautifulSoup(super().to_html(add_children), "html.parser")
-        soup = strip_table_cells(soup)
-        return str(soup)
 
 
 class Image(OntologyElement):
