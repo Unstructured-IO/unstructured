@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, BinaryIO, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
 from pdfminer.layout import LTChar, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
+from unstructured_inference.config import inference_config
+from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
 from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
-from unstructured.documents.elements import CoordinatesMetadata
+from unstructured.documents.elements import CoordinatesMetadata, ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
@@ -48,6 +50,253 @@ def process_file_with_pdfminer(
 
 def _validate_bbox(bbox: list[int | float]) -> bool:
     return all(x is not None for x in bbox) and (bbox[2] - bbox[0] > 0) and (bbox[3] - bbox[1] > 0)
+
+
+def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
+    # TODO: refactor to just use np array as input
+    return np.vstack(
+        (
+            np.min([region.x1 for region in regions], axis=0),
+            np.min([region.y1 for region in regions], axis=0),
+            np.max([region.x2 for region in regions], axis=0),
+            np.max([region.y2 for region in regions], axis=0),
+        )
+    ).T
+
+
+def _inferred_is_elementtype(
+    inferred_layout: LayoutElements, etypes: Iterable[ElementType]
+) -> np.ndarry:
+    inferred_text_idx = [
+        idx
+        for idx, class_name in inferred_layout.element_class_id_map.items()
+        if class_name in etypes
+    ]
+    inferred_is_etypes = np.zeros((len(inferred_layout),)).astype(bool)
+    for idx in inferred_text_idx:
+        inferred_is_etypes = np.logical_or(
+            inferred_is_etypes, inferred_layout.element_class_ids == idx
+        )
+    return inferred_is_etypes
+
+
+def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
+    return ~_inferred_is_elementtype(
+        inferred_layout,
+        etypes=(
+            ElementType.FIGURE,
+            ElementType.IMAGE,
+            # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
+            ElementType.PICTURE,
+            ElementType.PAGE_BREAK,
+            ElementType.TABLE,
+        ),
+    )
+
+
+def _merge_extracted_into_inferred_when_almost_the_same(
+    extracted_layout: LayoutElements,
+    inferred_layout: LayoutElements,
+    same_region_threshold: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    # -- compute criterion, boolean matrices, first:
+    boxes_almost_same = boxes_iou(
+        extracted_layout.element_coords,
+        inferred_layout.element_coords,
+        threshold=same_region_threshold,
+    )
+    extracted_almost_the_same_as_inferred = boxes_almost_same.sum(axis=1).astype(bool)
+    # NOTE: if a row is full of False the argmax returns first index; we use the mask above to
+    # distinguish those (they would be False in the mask)
+    first_match = np.argmax(boxes_almost_same, axis=1)
+    inferred_indices_to_update = first_match[extracted_almost_the_same_as_inferred]
+    extracted_to_remove = extracted_layout.slice(extracted_almost_the_same_as_inferred)
+    # copy here in case we change the extracted layout later
+    inferred_layout.texts[inferred_indices_to_update] = extracted_to_remove.texts.copy()
+    # use coords that can bound BOTH the inferred and extracted region as final bounding box coords
+    inferred_layout.element_coords[inferred_indices_to_update] = _minimum_containing_coords(
+        inferred_layout.slice(inferred_indices_to_update),
+        extracted_to_remove,
+    )
+    return extracted_almost_the_same_as_inferred
+
+
+def _merge_extracted_that_are_subregion_of_inferred_text(
+    extracted_layout,
+    inferred_layout,
+    extracted_is_subregion_of_inferred,
+    extracted_to_proc,
+    inferred_to_proc,
+):
+    # in theory one extracted __should__ only match at most one inferred region, given inferred
+    # region can not overlap; so first match here __should__ also be the only match
+    inferred_to_iter = inferred_to_proc[inferred_to_proc]
+    extracted_to_iter = extracted_to_proc[extracted_to_proc]
+    for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
+        matches = np.where(inferred_row)[0]
+        if not matches.size:
+            continue
+        # Technically those two lines below can be vectorized but this loop would still run anyway;
+        # it is not clear which one is overall faster so might worth profiling in the future
+        extracted_to_iter[matches] = False
+        inferred_to_iter[inferred_index] = False
+        # then expand inferred box by all the extracted boxes
+        # FIXME (yao): this part is broken at the moment
+        inferred_layout.element_coords[[inferred_index]] = _minimum_containing_coords(
+            inferred_layout.slice([inferred_index]),
+            *[extracted_layout.slice([match]) for match in matches],
+        )
+    inferred_to_proc[inferred_to_proc] = inferred_to_iter
+    extracted_to_proc[extracted_to_proc] = extracted_to_iter
+
+
+def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
+    extracted_layout,
+    inferred_layout,
+    extracted_is_subregion_of_inferred,
+    inferred_to_keep,
+    subregion_threshold,
+):
+    inferred_is_subregion_of_extracted = bboxes1_is_almost_subregion_of_bboxes2(
+        inferred_layout.element_coords,
+        extracted_layout.element_coords,
+        threshold=subregion_threshold,
+    )
+    inferred_to_remove_mask = np.logical_and(
+        ~_inferred_is_elementtype(inferred_layout, [ElementType.TABLE]),
+        np.logical_or(
+            inferred_is_subregion_of_extracted,
+            extracted_is_subregion_of_inferred.T,
+        )
+        .sum(axis=1)
+        .astype(bool),
+    )
+    # NOTE (yao): maybe we should expand those matching extracted region to contain the inferred
+    # regions it has subregion relationship with? like we did for inferred regions
+    inferred_to_keep[inferred_to_remove_mask] = False
+    return inferred_to_keep
+
+
+@requires_dependencies("unstructured_inference")
+def array_merge_inferred_layout_with_extracted_layout(
+    inferred_layout: LayoutElements,
+    extracted_layout: LayoutElements,
+    page_image_size: tuple,
+    same_region_threshold: float = inference_config.LAYOUT_SAME_REGION_THRESHOLD,
+    subregion_threshold: float = inference_config.LAYOUT_SUBREGION_THRESHOLD,
+) -> LayoutElements:
+    """merge elements using array data structures; it also returns LayoutElements instead of
+    collection of LayoutElement"""
+    from unstructured_inference.inference.layoutelement import LayoutElements
+
+    if len(extracted_layout) == 0:
+        return inferred_layout
+    if len(inferred_layout) == 0:
+        return extracted_layout
+
+    w, h = page_image_size
+    full_page_region = Rectangle(0, 0, w, h)
+    # ==== RULE 0: Full page images are ignored
+    # extracted elements to add:
+    # - non full-page images
+    # - extracted text region that doesn't match an inferred region; with caveats below
+    # matching between extracted text and inferred text can result in three different outcomes
+    image_indices_to_keep = np.where(extracted_layout.element_class_ids == 1)[0]
+    if len(image_indices_to_keep):
+        full_page_image_mask = (
+            boxes_iou(
+                extracted_layout.slice(image_indices_to_keep).element_coords,
+                [full_page_region],
+                threshold=FULL_PAGE_REGION_THRESHOLD,
+            )
+            .sum(axis=1)
+            .astype(bool)
+        )
+        image_indices_to_keep = image_indices_to_keep[~full_page_image_mask]
+    # non full page extracted image regions are kept, except when they match a non-text inferred
+    # region then we use the common bounding boxes and keep just one of the two sets
+
+    # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
+    boxes_almost_same = (
+        boxes_iou(
+            inferred_layout.element_coords,
+            extracted_layout.slice(image_indices_to_keep).element_coords,
+            threshold=same_region_threshold,
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
+
+    # drop off those matching inferred from processing
+    inferred_layout_to_proc = inferred_layout.slice(~boxes_almost_same)
+    inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
+
+    # now process extracted text regions; the loop version's outter loop is extracted layout
+    text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
+    extracted_text_layouts = extracted_layout.slice(text_element_indices)
+    # compute criterion, boolean matrices, first:
+    extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
+        extracted_text_layouts.element_coords,
+        inferred_layout_to_proc.element_coords,
+        threshold=subregion_threshold,
+        round_to=2,
+    )
+
+    # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
+    # keep inferred and removed extracted region; here we put more trust in OD model more than
+    # pdfminer for bounding box
+    extracted_to_remove = _merge_extracted_into_inferred_when_almost_the_same(
+        extracted_text_layouts,
+        inferred_layout_to_proc,
+        same_region_threshold,
+    )
+
+    # ==== RULE 3. if extracted is subregion of an inferrred text region:
+    # remove extracted and keep inferred;
+    # expand inferred bounding box if needed to encompass all subregion extracted boxes
+    inferred_to_proc = _inferred_is_text(inferred_layout_to_proc)
+    # but not almost match of an extracted image
+    inferred_is_image = ~inferred_to_proc.copy()
+    extracted_to_proc = ~extracted_to_remove
+
+    _merge_extracted_that_are_subregion_of_inferred_text(
+        extracted_text_layouts.slice(extracted_to_proc),
+        inferred_layout_to_proc.slice(inferred_to_proc),
+        extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
+        # both those following two are modified in place in the function
+        extracted_to_proc,
+        inferred_to_proc,
+    )
+
+    # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
+    # except for inferrred tables, remove inferred and chose extracted
+    if any(extracted_to_proc):
+        inferred_to_proc = np.logical_or(inferred_to_proc, inferred_is_image)
+        # TODO: refactor so we only need to compute intersection once
+        inferred_to_keep[inferred_to_proc] = (
+            _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
+                extracted_text_layouts.slice(extracted_to_proc),
+                inferred_layout_to_proc.slice(inferred_to_proc),
+                extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
+                inferred_to_keep[inferred_to_proc],
+                subregion_threshold,
+            )
+        )
+
+    # ==== RULE 5. all else -> keep extracted region; note we also keep extracted image regions
+    # that is a subregion of an inferred text region
+    extracted_to_keep = np.concatenate(
+        (text_element_indices[extracted_to_proc], image_indices_to_keep)
+    )
+    extracted_to_keep.sort()
+
+    final_layout = LayoutElements.concatenate(
+        (
+            extracted_layout.slice(extracted_to_keep),
+            inferred_layout_to_proc.slice(inferred_to_keep),
+        )
+    )
+    return final_layout
 
 
 @requires_dependencies("unstructured_inference")
@@ -103,7 +352,7 @@ def process_page_layout_from_pdfminer(
             element_coords=coord_coef * np.array(element_coords),
             texts=np.array(texts).astype(object),
             element_class_ids=np.array(element_class),
-            element_class_id_map={0: "Text", 1: "Image"},
+            element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
         ),
         urls_metadata,
@@ -238,12 +487,23 @@ def bboxes1_is_almost_subregion_of_bboxes2(
 
 def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """compute iou for a group of elements"""
+    # only store one copy of coords in memory instead of calling get coords twice
     coords = get_coords_from_bboxes(bboxes, round_to=round_to)
 
-    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
-        coords, coords, round_to=round_to
-    )
+    return boxes_iou(coords, coords, threshold, round_to)
 
+
+# TODO (yao): move those vector math utils into a separated sub module to void import issues
+def boxes_iou(
+    bboxes1, bboxes2, threshold: float = 0.75, round_to: int = DEFAULT_ROUND
+) -> np.ndarray:
+    """compute iou between two groups of elements"""
+    coords1 = get_coords_from_bboxes(bboxes1, round_to=round_to)
+    coords2 = get_coords_from_bboxes(bboxes2, round_to=round_to)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
+        coords1, coords2, round_to=round_to
+    )
     return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
 
 
@@ -305,14 +565,25 @@ def merge_inferred_with_extracted_layout(
 
         # NOTE (yao): after refactoring the algorithm to be vectorized we can then pass in the
         # vectorized data structure into the merge function
-        merged_layout = merge_inferred_with_extracted_page(
+
+        _merged_layout = merge_inferred_with_extracted_page(
             inferred_layout=inferred_layout,
             extracted_layout=pdfminer_elements_to_text_regions(extracted_page_layout),
             page_image_size=image_size,
             **threshold_kwargs,
         )
+        _merged_layout = sort_text_regions(
+            LayoutElements.from_list(_merged_layout), SORT_MODE_BASIC
+        )
 
-        merged_layout = sort_text_regions(LayoutElements.from_list(merged_layout), SORT_MODE_BASIC)
+        merged_layout = array_merge_inferred_layout_with_extracted_layout(
+            inferred_page.elements_array,
+            extracted_page_layout,
+            page_image_size=image_size,
+            **threshold_kwargs,
+        )
+
+        merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
 
