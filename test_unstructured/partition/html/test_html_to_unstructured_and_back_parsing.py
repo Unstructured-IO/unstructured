@@ -90,7 +90,7 @@ def test_simple_narrative_text_with_id():
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<p class="NarrativeText" '
-                'id="73cd7b4a-2444-4910-87a4-138117dfaab9">DEALER ONLY </p>',
+                'id="73cd7b4a-2444-4910-87a4-138117dfaab9">DEALER ONLY</p>',
                 parent_id="1",
             ),
         )
@@ -158,7 +158,7 @@ def test_multiple_elements():
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html='<p class="Paragraph" id="2">About the same </p>',
+                text_as_html='<p class="Paragraph" id="2">About the same</p>',
                 parent_id="1",
             ),
         ),
@@ -178,7 +178,7 @@ def test_multiple_elements():
             text="Some text",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<p class="Paragraph" ' 'id="4">Some text </p>',
+                text_as_html='<p class="Paragraph" ' 'id="4">Some text</p>',
                 parent_id="1",
             ),
         ),
@@ -226,7 +226,7 @@ def test_multiple_pages():
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html='<p class="Paragraph" id="2">Some text </p>', parent_id="1"
+                text_as_html='<p class="Paragraph" id="2">Some text</p>', parent_id="1"
             ),
         ),
         Text(
@@ -242,7 +242,7 @@ def test_multiple_pages():
             detection_origin="vlm_partitioner",
             element_id="4",
             metadata=ElementMetadata(
-                text_as_html='<p class="Paragraph" id="4">Another text </p>', parent_id="3"
+                text_as_html='<p class="Paragraph" id="4">Another text</p>', parent_id="3"
             ),
         ),
     ]
@@ -279,13 +279,13 @@ def test_forms():
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html=""
-                '<form class="Form" id="2"> '
+                '<form class="Form" id="2">'
                 '<label class="FormField" '
-                'for="option1" id="3"> '
+                'for="option1" id="3">'
                 '<input class="FormFieldValue" type="radio" '
                 'name="options" value="2" id="4" checked />'
                 '<p class="Paragraph" id="5">'
-                "Option 1 (Checked) "
+                "Option 1 (Checked)"
                 "</p></label></form>",
                 parent_id="1",
             ),
@@ -323,9 +323,9 @@ def test_table():
             detection_origin="vlm_partitioner",
             element_id="2",
             metadata=ElementMetadata(
-                text_as_html='<table class="Table" id="2"> '
-                "<tbody> "
-                "<tr> "
+                text_as_html='<table class="Table" id="2">'
+                "<tbody>"
+                "<tr>"
                 "<td>"
                 "Fair Value1"
                 "</td>"
@@ -402,7 +402,7 @@ def test_very_nested_structure_is_preserved():
             element_id="10",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<h1 class="Title" id="10">Title </h1>', parent_id="3"
+                text_as_html='<h1 class="Title" id="10">Title</h1>', parent_id="3"
             ),
         ),
         Text(
@@ -416,9 +416,9 @@ def test_very_nested_structure_is_preserved():
             element_id="5",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<blockquote class="Quote" id="5"> '
+                text_as_html='<blockquote class="Quote" id="5">'
                 '<p class="Paragraph" id="6">'
-                "Clever Quote "
+                "Clever Quote"
                 "</p>"
                 "</blockquote>",
                 parent_id="4",
@@ -429,9 +429,9 @@ def test_very_nested_structure_is_preserved():
             element_id="8",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<div class="Footnote" id="8"> '
+                text_as_html='<div class="Footnote" id="8">'
                 '<span class="UncategorizedText" id="9">'
-                "Uncategorized footnote text "
+                "Uncategorized footnote text"
                 "</span>"
                 "</div>",
                 parent_id="4",
@@ -472,14 +472,14 @@ def test_ordered_list():
             element_id="2",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<ul class="UnorderedList" id="2"> '
+                text_as_html='<ul class="UnorderedList" id="2">'
                 '<li class="ListItem" id="3">'
-                "Item 1 "
+                "Item 1"
                 "</li>"
                 '<li class="ListItem" id="4">'
-                "Item 2 </li>"
+                "Item 2</li>"
                 '<li class="ListItem" id="5">'
-                "Item 3 "
+                "Item 3"
                 "</li></ul>",
                 parent_id="1",
             ),
@@ -517,11 +517,11 @@ def test_squeezed_elements_are_parsed_back():
             element_id="2",
             detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
-                text_as_html='<p class="NarrativeText" id="2">Table of Contents </p> '
+                text_as_html='<p class="NarrativeText" id="2">Table of Contents</p>'
                 '<address class="Address" id="3">'
-                "68 Prince Street Palmdale, CA 93550 "
-                "</address> "
-                '<a class="Hyperlink" id="4">www.google.com </a>',
+                "68 Prince Street Palmdale, CA 93550"
+                "</address>"
+                '<a class="Hyperlink" id="4">www.google.com</a>',
                 parent_id="1",
             ),
         )

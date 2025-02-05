@@ -136,7 +136,7 @@ def combine_inline_elements(elements: list[elements.Element]) -> list[elements.E
 
         if can_unstructured_elements_be_merged(current_element, next_element):
             current_element.text += " " + next_element.text
-            current_element.metadata.text_as_html += " " + next_element.metadata.text_as_html
+            current_element.metadata.text_as_html += next_element.metadata.text_as_html
         else:
             result_elements.append(current_element)
             current_element = next_element
