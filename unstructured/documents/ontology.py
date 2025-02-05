@@ -153,9 +153,10 @@ def remove_ids_and_class_from_table(soup: Tag):
 
 
 def strip_table_cells(soup):
-    for element in soup.descendants:
-        if element.string:
-            element.replace_with(element.string.strip())
+    for tag in soup.find_all(["td", "th"]):
+        for element in tag.descendants:
+            if element.string:
+                element.replace_with(element.string.strip())
     return soup
 
 

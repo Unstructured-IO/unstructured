@@ -47,7 +47,7 @@ def test_alternative_image_text_can_be_included_when_nested_in_paragraph():
     assert "ALT TEXT Logo" not in paragraph_none_alt_mode.text
 
 
-def test_checkbox_inside_table():
+def test_attr_and_html_inside_table_cell_is_kept():
     # language=HTML
     html = """
     <div class="Page">
@@ -70,6 +70,6 @@ def test_checkbox_inside_table():
         image_alt_mode="to_text",
         html_parser_version="v2",
     )
-    # '<table class="Table" id="4492f03131014e74bd180b964cde414e"> <tbody> <tr>
-    # Some text<td><input checked="" type="checkbox"/></td></tr></tbody></table>'
+
     assert '<input checked="" type="checkbox"/>' in table.metadata.text_as_html  # class is removed
+    assert 'colspan="2"' in table.metadata.text_as_html
