@@ -333,6 +333,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
         (FileType.XML, "factbook.xml"),
+        (FileType.NDJSON, "simple.ndjson"),
     ],
 )
 def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_type(
