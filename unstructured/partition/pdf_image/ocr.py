@@ -357,8 +357,11 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    if len(out_layout) == 0 or len(ocr_layout):
+    if len(out_layout) == 0 or len(ocr_layout) == 0:
         # what if od model finds nothing but ocr finds something? should we use ocr output at all
+        # currently we require some kind of bounding box, from `out_layout` to aggreaget ocr
+        # results. Can we just use ocr bounding boxes (gonna be many but at least we save
+        # information)
         return out_layout
 
     invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]

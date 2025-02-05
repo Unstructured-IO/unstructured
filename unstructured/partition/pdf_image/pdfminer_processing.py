@@ -254,6 +254,10 @@ def array_merge_inferred_layout_with_extracted_layout(
     # ==== RULE 3. if extracted is subregion of an inferrred text region:
     # remove extracted and keep inferred;
     # expand inferred bounding box if needed to encompass all subregion extracted boxes
+    # NOTE (yao):
+    # currently this rule can fail to capture almost overlaps of two text regions when the pdfminer
+    # has larger bounding boxes (in area). It might be worth it to use simpler IOU thresholding or
+    # use the minimum of the two areas when computing sub regions
     inferred_to_proc = _inferred_is_text(inferred_layout_to_proc)
     # but not almost match of an extracted image
     inferred_is_image = ~inferred_to_proc.copy()
