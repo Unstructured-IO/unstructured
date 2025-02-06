@@ -107,10 +107,7 @@ def _convert_odt_to_docx(
     import pypandoc
 
     pypandoc.convert_file(
-        source_file_path,
-        "docx",
-        format="odt",
-        outputfile=target_docx_path,
+        source_file_path, "docx", format="odt", outputfile=target_docx_path, sandbox=True
     )
 
     return target_docx_path

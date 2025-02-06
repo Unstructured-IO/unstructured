@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    find_text_in_elements,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Title
 from unstructured.partition.rst import partition_rst
@@ -120,3 +126,15 @@ def test_partition_rst_respects_detect_language_per_element():
     )
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+
+
+def test_rst_wont_include_external_files():
+    # Make sure our import file is in place (otherwise the import fails silently and test passes)
+    assert Path(example_doc_path("file_we_dont_want_imported")).exists()
+    elements = partition_rst(example_doc_path("README-w-include.rst"))
+    # The partition should contain some elements
+    assert elements
+    # We find something we expect to find from file we partitioned directly
+    assert find_text_in_elements("instructions", elements)
+    # But we don't find something from the file included within the file we partitioned directly
+    assert not find_text_in_elements("wombat", elements)

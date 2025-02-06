@@ -1,3 +1,12 @@
+## 0.16.20
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fix a security issue where rst and org files could read files in the local filesystem**. Certain filetypes could 'include' or 'import' local files into their content, allowing partitioning of arbitrary files from the local filesystem. Partitioning of these files is now sandboxed.
+
 ## 0.16.19
 
 ### Enhancements
