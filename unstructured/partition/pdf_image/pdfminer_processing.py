@@ -84,12 +84,12 @@ def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
     return ~_inferred_is_elementtype(
         inferred_layout,
         etypes=(
-            ElementType.FIGURE,
-            ElementType.IMAGE,
+            # ElementType.FIGURE,
+            # ElementType.IMAGE,
             # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
             # ElementType.PICTURE,
             ElementType.PAGE_BREAK,
-            ElementType.TABLE,
+            # ElementType.TABLE,
         ),
     )
 
@@ -124,14 +124,26 @@ def _merge_extracted_into_inferred_when_almost_the_same(
 def _merge_extracted_that_are_subregion_of_inferred_text(
     extracted_layout,
     inferred_layout,
-    extracted_is_subregion_of_inferred,
+    subregion_threshold,
     extracted_to_proc,
     inferred_to_proc,
 ):
     # in theory one extracted __should__ only match at most one inferred region, given inferred
     # region can not overlap; so first match here __should__ also be the only match
-    inferred_to_iter = inferred_to_proc[inferred_to_proc]
-    extracted_to_iter = extracted_to_proc[extracted_to_proc]
+    extracted_is_subregion_of_inferred = np.logical_or(
+        boxes_max_overlap(
+            extracted_layout.element_coords,
+            inferred_layout.element_coords,
+            threshold=0.5,
+        ),
+        bboxes1_is_almost_subregion_of_bboxes2(
+            extracted_layout.element_coords,
+            inferred_layout.element_coords,
+            threshold=0.1,
+        ),
+    )
+    inferred_to_iter = np.ones_like(inferred_to_proc).astype(bool)
+    extracted_to_iter = np.ones_like(extracted_to_proc).astype(bool)
     for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
         matches = np.where(inferred_row)[0]
         if not matches.size:
@@ -146,9 +158,9 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
             inferred_layout.slice([inferred_index]),
             *[extracted_layout.slice([match]) for match in matches],
         )
-    inferred_to_proc[inferred_to_proc] = inferred_to_iter
-    extracted_to_proc[extracted_to_proc] = extracted_to_iter
-    return inferred_layout
+    inferred_to_proc = inferred_to_proc[inferred_to_iter]
+    extracted_to_proc = extracted_to_proc[extracted_to_iter]
+    return inferred_layout, extracted_to_proc, inferred_to_proc
 
 
 def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
@@ -223,33 +235,34 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
     # what if od model detects table but pdfminer says image -> we would lose the table!!
-    boxes_almost_same = (
-        boxes_iou(
-            inferred_layout.element_coords,
-            extracted_layout.slice(image_indices_to_keep).element_coords,
-            threshold=same_region_threshold,
-        )
-        .sum(axis=1)
-        .astype(bool)
-    )
+    # boxes_almost_same = (
+    #     boxes_iou(
+    #         inferred_layout.element_coords,
+    #         extracted_layout.slice(image_indices_to_keep).element_coords,
+    #         threshold=same_region_threshold,
+    #     )
+    #     .sum(axis=1)
+    #     .astype(bool)
+    # )
 
     # drop off those matching inferred from processing
-    inferred_layout_to_proc = inferred_layout.slice(~boxes_almost_same)
-    inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
+    # inferred_layout_to_proc = inferred_layout.slice(~boxes_almost_same)
+    # inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
 
     # now process extracted text regions; the loop version's outter loop is extracted layout
     # TODO (yao): experiment with all regions, not just text region, being potential targets to be
     # merged into inferred elements
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
-    extracted_text_layouts = extracted_layout.slice(text_element_indices)
+    extracted_to_proc = np.concatenate((text_element_indices, image_indices_to_keep))
+    # extracted_layouts_to_proc = extracted_layout.slice(extracted_to_proc)
     # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
     # keep inferred and removed extracted region; here we put more trust in OD model more than
     # pdfminer for bounding box
-    extracted_to_remove = _merge_extracted_into_inferred_when_almost_the_same(
-        extracted_text_layouts,
-        inferred_layout_to_proc,
-        same_region_threshold,
-    )
+    # extracted_to_remove = _merge_extracted_into_inferred_when_almost_the_same(
+    #     extracted_text_layouts,
+    #     inferred_layout_to_proc,
+    #     same_region_threshold,
+    # )
 
     # compute criterion, boolean matrices, first:
     # NOTE (yao): loop version updates the inferrred layout size as process goes on so vectorization
@@ -261,8 +274,8 @@ def array_merge_inferred_layout_with_extracted_layout(
     # currently this rule can fail to capture almost overlaps of two text regions when the pdfminer
     # has larger bounding boxes (in area). It might be worth it to use simpler IOU thresholding or
     # use the minimum of the two areas when computing sub regions
-    inferred_to_proc = _inferred_is_text(inferred_layout_to_proc)
-    extracted_to_proc = ~extracted_to_remove
+    inferred_to_proc = np.where(_inferred_is_text(inferred_layout))[0]
+    # extracted_to_proc = ~extracted_to_remove
     rounds = 0
 
     # because inferred layout sizes can be increased after one pass we may need to run through
@@ -275,27 +288,19 @@ def array_merge_inferred_layout_with_extracted_layout(
         inferred_to_proc_at_start = inferred_to_proc.copy()
         extracted_to_proc_start = extracted_to_proc.copy()
 
-        extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
-            extracted_text_layouts.element_coords,
-            inferred_layout_to_proc.element_coords,
-            # TODO (yao): experiment logic change: be more aggressive with merging extracted into
-            # inferred elements
-            threshold=subregion_threshold,
-        )
-
-        updated_inferred = _merge_extracted_that_are_subregion_of_inferred_text(
-            extracted_text_layouts.slice(extracted_to_proc),
-            inferred_layout_to_proc.slice(inferred_to_proc),
-            extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
-            # both those following two are modified in place in the function
-            extracted_to_proc,
-            inferred_to_proc,
+        updated_inferred, extracted_to_proc, inferred_to_proc = (
+            _merge_extracted_that_are_subregion_of_inferred_text(
+                extracted_layout.slice(extracted_to_proc),
+                inferred_layout.slice(inferred_to_proc),
+                subregion_threshold,
+                # both those following two are modified in place in the function
+                extracted_to_proc,
+                inferred_to_proc,
+            )
         )
         # unfortunately slice uses "fancy" indexing and it generates a copy instead of a view, which
         # was intentional by design to avoid unintended modification of the original data
-        inferred_layout_to_proc.element_coords[inferred_to_proc_at_start] = (
-            updated_inferred.element_coords
-        )
+        inferred_layout.element_coords[inferred_to_proc_at_start] = updated_inferred.element_coords
 
         if np.array_equal(extracted_to_proc_start, extracted_to_proc) and np.array_equal(
             inferred_to_proc_at_start, inferred_to_proc
@@ -304,31 +309,7 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
     # except for inferrred tables, remove inferred and chose extracted
-    extracted_to_keep = np.concatenate(
-        (image_indices_to_keep, text_element_indices[extracted_to_proc])
-    )
-    if any(extracted_to_proc):
-        inferred_to_proc = np.logical_or(
-            inferred_to_proc,
-            _inferred_is_elementtype(
-                inferred_layout_to_proc,
-                [
-                    ElementType.FIGURE,
-                    ElementType.IMAGE,
-                    ElementType.PICTURE,
-                ],
-            ),
-        )
-        # TODO: refactor so we only need to compute intersection once
-        inferred_to_keep[inferred_to_proc] = (
-            _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
-                extracted_layout.slice(extracted_to_keep),
-                inferred_layout_to_proc.slice(inferred_to_proc),
-                inferred_to_keep[inferred_to_proc],
-                subregion_threshold,
-            )
-        )
-
+    extracted_to_keep = extracted_to_proc
     # ==== RULE 5. all else -> keep extracted region; note we also keep extracted image regions
     # that is a subregion of an inferred text region
     extracted_to_keep.sort()
@@ -336,7 +317,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     final_layout = LayoutElements.concatenate(
         (
             extracted_layout.slice(extracted_to_keep),
-            inferred_layout_to_proc.slice(inferred_to_keep),
+            inferred_layout,
         )
     )
     return final_layout
@@ -548,6 +529,19 @@ def boxes_iou(
         coords1, coords2, round_to=round_to
     )
     return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+
+
+def boxes_max_overlap(
+    bboxes1, bboxes2, threshold: float = 0.75, round_to: int = DEFAULT_ROUND
+) -> np.ndarray:
+    """compute iou between two groups of elements"""
+    coords1 = get_coords_from_bboxes(bboxes1, round_to=round_to)
+    coords2 = get_coords_from_bboxes(bboxes2, round_to=round_to)
+
+    inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
+        coords1, coords2, round_to=round_to
+    )
+    return (inter_area / np.maximum(EPSILON_AREA, np.minimum(boxa_area, boxb_area.T))) > threshold
 
 
 @requires_dependencies("unstructured_inference")
