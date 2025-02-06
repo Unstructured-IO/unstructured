@@ -208,34 +208,48 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    "strategy",
+    ("strategy", "starting_page_number", "expected_page_numbers", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        PartitionStrategy.FAST,
-        PartitionStrategy.HI_RES,
-        PartitionStrategy.OCR_ONLY,
+        (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
+        (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
+        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer", "ocr_tesseract"}),
+        (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
 def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
     file_mode,
     strategy,
+    starting_page_number,
+    expected_page_numbers,
+    origin,
     filename=example_doc_path("pdf/layout-parser-paper-with-empty-pages.pdf"),
 ):
     # Test that the partition_pdf function can handle filename
     def _test(result):
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
+        # check that the pdf has multiple different page numbers
+        assert {element.metadata.page_number for element in result} == expected_page_numbers
+        if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+            print(
+                [
+                    (element.metadata.detection_origin, element.category, element.text)
+                    for element in result
+                ]
+            )
+            assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
         result = pdf.partition_pdf(
-            filename=filename, strategy=strategy,
+            filename=filename, strategy=strategy, starting_page_number=starting_page_number
         )
         _test(result)
     elif file_mode == "rb":
         with open(filename, "rb") as f:
             result = pdf.partition_pdf(
-                file=f, strategy=strategy,
+                file=f, strategy=strategy, starting_page_number=starting_page_number
             )
             _test(result)
     else:
@@ -246,6 +260,7 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
                 result = pdf.partition_pdf(
                     file=spooled_temp_file,
                     strategy=strategy,
+                    starting_page_number=starting_page_number,
                 )
                 _test(result)
 
