@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Tuple, Optional
+from typing import BinaryIO, List, Optional, Tuple
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
