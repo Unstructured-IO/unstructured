@@ -84,12 +84,12 @@ def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
     return ~_inferred_is_elementtype(
         inferred_layout,
         etypes=(
-            # ElementType.FIGURE,
-            # ElementType.IMAGE,
+            ElementType.FIGURE,
+            ElementType.IMAGE,
             # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
             # ElementType.PICTURE,
             ElementType.PAGE_BREAK,
-            # ElementType.TABLE,
+            ElementType.TABLE,
         ),
     )
 
@@ -235,7 +235,9 @@ def array_merge_inferred_layout_with_extracted_layout(
     inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
 
     # now process extracted text regions; the loop version's outter loop is extracted layout
-    text_element_indices = np.where(extracted_layout.element_class_ids >= 0)[0]
+    # TODO (yao): experiment with all regions, not just text region, being potential targets to be
+    # merged into inferred elements
+    text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
     # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
     # keep inferred and removed extracted region; here we put more trust in OD model more than
@@ -275,9 +277,9 @@ def array_merge_inferred_layout_with_extracted_layout(
         extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
             extracted_text_layouts.element_coords,
             inferred_layout_to_proc.element_coords,
-            # NOTE (yao): experiment logic change: be more aggressive with merging extracted into
+            # TODO (yao): experiment logic change: be more aggressive with merging extracted into
             # inferred elements
-            threshold=subregion_threshold * 0.8,
+            threshold=subregion_threshold,
         )
 
         updated_inferred = _merge_extracted_that_are_subregion_of_inferred_text(
