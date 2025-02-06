@@ -46,7 +46,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import DICT_PATTERN, EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, JSON_PATTERN_NO_LIST, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -141,7 +141,7 @@ def is_ndjson_processable(
             file_path=filename, file=file, encoding=encoding
         ).text_head
 
-    return re.match(DICT_PATTERN, file_text) is not None
+    return re.match(JSON_PATTERN_NO_LIST, file_text) is not None
 
 
 class _FileTypeDetector:
@@ -220,7 +220,7 @@ class _FileTypeDetector:
 
         This method is used when the content-type is `application/json` and the file is not empty.
         """
-        if self._ctx.content_type != "application/json":
+        if self._ctx.content_type is not None and self._ctx.content_type != "application/json":
             return None
         if is_json_processable(file_text=self._ctx.text_head):
             return FileType.JSON
