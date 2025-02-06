@@ -154,7 +154,6 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
 def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
     extracted_layout,
     inferred_layout,
-    extracted_is_subregion_of_inferred,
     inferred_to_keep,
     subregion_threshold,
 ):
@@ -163,14 +162,18 @@ def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
         extracted_layout.element_coords,
         threshold=subregion_threshold,
     )
-    inferred_to_remove_mask = np.logical_and(
-        ~_inferred_is_elementtype(inferred_layout, [ElementType.TABLE]),
+    extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
+        extracted_layout.element_coords,
+        inferred_layout.element_coords,
+        threshold=subregion_threshold,
+    )
+    inferred_to_remove_mask = (
         np.logical_or(
             inferred_is_subregion_of_extracted,
             extracted_is_subregion_of_inferred.T,
         )
         .sum(axis=1)
-        .astype(bool),
+        .astype(bool)
     )
     # NOTE (yao): maybe we should expand those matching extracted region to contain the inferred
     # regions it has subregion relationship with? like we did for inferred regions
@@ -259,8 +262,6 @@ def array_merge_inferred_layout_with_extracted_layout(
     # has larger bounding boxes (in area). It might be worth it to use simpler IOU thresholding or
     # use the minimum of the two areas when computing sub regions
     inferred_to_proc = _inferred_is_text(inferred_layout_to_proc)
-    # but not almost match of an extracted image
-    inferred_is_image = ~inferred_to_proc.copy()
     extracted_to_proc = ~extracted_to_remove
     rounds = 0
 
@@ -303,14 +304,26 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
     # except for inferrred tables, remove inferred and chose extracted
+    extracted_to_keep = np.concatenate(
+        (image_indices_to_keep, text_element_indices[extracted_to_proc])
+    )
     if any(extracted_to_proc):
-        inferred_to_proc = np.logical_or(inferred_to_proc, inferred_is_image)
+        inferred_to_proc = np.logical_or(
+            inferred_to_proc,
+            _inferred_is_elementtype(
+                inferred_layout_to_proc,
+                [
+                    ElementType.FIGURE,
+                    ElementType.IMAGE,
+                    ElementType.PICTURE,
+                ],
+            ),
+        )
         # TODO: refactor so we only need to compute intersection once
         inferred_to_keep[inferred_to_proc] = (
             _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
-                extracted_text_layouts.slice(extracted_to_proc),
+                extracted_layout.slice(extracted_to_keep),
                 inferred_layout_to_proc.slice(inferred_to_proc),
-                extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
                 inferred_to_keep[inferred_to_proc],
                 subregion_threshold,
             )
@@ -318,9 +331,6 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     # ==== RULE 5. all else -> keep extracted region; note we also keep extracted image regions
     # that is a subregion of an inferred text region
-    extracted_to_keep = np.concatenate(
-        (text_element_indices[extracted_to_proc], image_indices_to_keep)
-    )
     extracted_to_keep.sort()
 
     final_layout = LayoutElements.concatenate(
