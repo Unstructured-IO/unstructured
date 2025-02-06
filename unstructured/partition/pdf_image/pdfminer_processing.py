@@ -84,12 +84,12 @@ def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
     return ~_inferred_is_elementtype(
         inferred_layout,
         etypes=(
-            ElementType.FIGURE,
-            ElementType.IMAGE,
+            # ElementType.FIGURE,
+            # ElementType.IMAGE,
             # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
             # ElementType.PICTURE,
             ElementType.PAGE_BREAK,
-            ElementType.TABLE,
+            # ElementType.TABLE,
         ),
     )
 
@@ -185,6 +185,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     page_image_size: tuple,
     same_region_threshold: float = inference_config.LAYOUT_SAME_REGION_THRESHOLD,
     subregion_threshold: float = inference_config.LAYOUT_SUBREGION_THRESHOLD,
+    max_rounds: int = 5,
 ) -> LayoutElements:
     """merge elements using array data structures; it also returns LayoutElements instead of
     collection of LayoutElement"""
@@ -197,9 +198,6 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
-    import pdb
-
-    pdb.set_trace()
     # ==== RULE 0: Full page images are ignored
     # extracted elements to add:
     # - non full-page images
@@ -237,7 +235,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
 
     # now process extracted text regions; the loop version's outter loop is extracted layout
-    text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
+    text_element_indices = np.where(extracted_layout.element_class_ids >= 0)[0]
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
     # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
     # keep inferred and removed extracted region; here we put more trust in OD model more than
@@ -269,7 +267,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     # order would matter in that version. Here we loop over multiple times to avoid order being a
     # factor -> this is one big difference between the current refactor and the version in inference
     # lib that uses loops
-    while rounds < 1:
+    while rounds < max_rounds:
         rounds += 1
         inferred_to_proc_at_start = inferred_to_proc.copy()
         extracted_to_proc_start = extracted_to_proc.copy()
@@ -277,7 +275,9 @@ def array_merge_inferred_layout_with_extracted_layout(
         extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
             extracted_text_layouts.element_coords,
             inferred_layout_to_proc.element_coords,
-            threshold=subregion_threshold,
+            # NOTE (yao): experiment logic change: be more aggressive with merging extracted into
+            # inferred elements
+            threshold=subregion_threshold * 0.8,
         )
 
         updated_inferred = _merge_extracted_that_are_subregion_of_inferred_text(

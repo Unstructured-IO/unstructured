@@ -257,3 +257,7 @@ def var_mock(request: FixtureRequest, q_var_name: str, **kwargs: Any) -> Mock:
     _patch = patch(q_var_name, **kwargs)
     request.addfinalizer(_patch.stop)
     return _patch.start()
+
+
+def find_text_in_elements(text: str, elements: List[Element]):
+    return any(el.text.find(text) != -1 for el in elements)
