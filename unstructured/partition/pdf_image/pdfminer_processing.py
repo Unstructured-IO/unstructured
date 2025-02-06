@@ -87,7 +87,7 @@ def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
             ElementType.FIGURE,
             ElementType.IMAGE,
             # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
-            ElementType.PICTURE,
+            # ElementType.PICTURE,
             ElementType.PAGE_BREAK,
             ElementType.TABLE,
         ),
@@ -197,6 +197,9 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
+    import pdb
+
+    pdb.set_trace()
     # ==== RULE 0: Full page images are ignored
     # extracted elements to add:
     # - non full-page images
@@ -266,10 +269,11 @@ def array_merge_inferred_layout_with_extracted_layout(
     # order would matter in that version. Here we loop over multiple times to avoid order being a
     # factor -> this is one big difference between the current refactor and the version in inference
     # lib that uses loops
-    while True and rounds < 1:
+    while rounds < 1:
         rounds += 1
         inferred_to_proc_at_start = inferred_to_proc.copy()
         extracted_to_proc_start = extracted_to_proc.copy()
+
         extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
             extracted_text_layouts.element_coords,
             inferred_layout_to_proc.element_coords,
@@ -289,10 +293,10 @@ def array_merge_inferred_layout_with_extracted_layout(
         inferred_layout_to_proc.element_coords[inferred_to_proc_at_start] = (
             updated_inferred.element_coords
         )
+
         if np.array_equal(extracted_to_proc_start, extracted_to_proc) and np.array_equal(
             inferred_to_proc_at_start, inferred_to_proc
         ):
-            print("finishe in %i rounds", rounds)
             break
 
     # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
