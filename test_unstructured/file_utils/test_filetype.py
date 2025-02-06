@@ -154,10 +154,10 @@ def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_conte
     assert detect_filetype(file=file, content_type=FileType.NDJSON.mime_type) == FileType.NDJSON
 
 
-# TODO: ideally this test should pass, currently fails
-# def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
-#     file_path = example_doc_path("simple.ndjson")
-#     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
+    file_path = example_doc_path("simple.ndjson")
+    assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
 
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
@@ -394,6 +394,27 @@ def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extensi
 
     ctx_mime_type_.assert_called_with()
     assert file_type is FileType.HTML
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_without_extension(expected_value: FileType, file_name: str):
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    filetype = detect_filetype(file=file)
+    assert filetype == expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_with_extension(expected_value: FileType, file_name: str):
+    filetype = detect_filetype(file_path=example_doc_path(file_name))
+    assert filetype == expected_value
 
 
 @pytest.mark.parametrize(

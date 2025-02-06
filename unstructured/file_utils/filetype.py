@@ -179,7 +179,11 @@ class _FileTypeDetector:
         if file_type := self._file_type_from_file_extension:
             return file_type
 
-        # -- strategy 5: give up and report FileType.UNK --
+        # -- strategy 5: edge case where JSON/NDJSON content without file extension --
+        if file_type := self._disambiguate_json_file_type:
+            return file_type
+
+        # -- strategy 6: give up and report FileType.UNK --
         return FileType.UNK
 
     # == STRATEGIES ============================================================
@@ -209,6 +213,20 @@ class _FileTypeDetector:
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
         return FileType.from_mime_type(self._ctx.content_type)
+
+    @property
+    def _disambiguate_json_file_type(self) -> FileType | None:
+        """Disambiguate JSON/NDJSON file-type based on file contents.
+
+        This method is used when the content-type is `application/json` and the file is not empty.
+        """
+        if self._ctx.content_type != "application/json":
+            return None
+        if is_json_processable(file_text=self._ctx.text_head):
+            return FileType.JSON
+        if is_ndjson_processable(file_text=self._ctx.text_head):
+            return FileType.NDJSON
+        return None
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
