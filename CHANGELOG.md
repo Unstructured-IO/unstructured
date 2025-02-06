@@ -1,4 +1,4 @@
-## 0.16.19-dev3
+## 0.16.20-dev1
 
 ### Enhancements
 - **Use password** to load PDF with all modes
@@ -6,9 +6,19 @@
 ### Features
 
 ### Fixes
-- **fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
+- **Fix a security issue where rst and org files could read files in the local filesystem**. Certain filetypes could 'include' or 'import' local files into their content, allowing partitioning of arbitrary files from the local filesystem. Partitioning of these files is now sandboxed.
+
+## 0.16.19
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
 - **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
 - **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
+- **Fixes removing HTML elements from the inside of table cells** in html partition v=2.0. The HTML partitioner now correctly preserves HTML elements from the inside of table cells.
 
 ## 0.16.17
 
