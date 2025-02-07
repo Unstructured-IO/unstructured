@@ -100,7 +100,7 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     same_region_threshold: float,
 ) -> tuple[np.ndarray, np.ndarray]:
     # -- compute criterion, boolean matrices, first:
-    boxes_almost_same = boxes_iou(
+    boxes_almost_same = boxes_overlap_by_iou(
         extracted_layout.element_coords,
         inferred_layout.element_coords,
         threshold=same_region_threshold,
@@ -134,29 +134,21 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
         bboxes1_is_almost_subregion_of_bboxes2(
             extracted_layout.element_coords,
             inferred_layout.element_coords,
-            threshold=subregion_threshold,
+            threshold=env_config.MERGING_SUBREGION_THRESHOLD,
         ),
-        bboxes1_is_almost_subregion_of_bboxes2(
-            inferred_layout.element_coords,
+        boxes_overlap_by_iou(
             extracted_layout.element_coords,
-            threshold=subregion_threshold,
-        ).T,
+            inferred_layout.element_coords,
+            threshold=env_config.MERGING_IOU_THRESHOLD,
+        ),
     )
 
-    # boxes_max_overlap(
-    #     extracted_layout.element_coords,
-    #     inferred_layout.element_coords,
-    #     threshold=0.5,
-    # )
     inferred_to_iter = np.ones_like(inferred_to_proc).astype(bool)
     extracted_to_iter = np.ones_like(extracted_to_proc).astype(bool)
     inferred_is_image = _inferred_is_elementtype(
         inferred_layout,
         [ElementType.FIGURE, ElementType.IMAGE, ElementType.PICTURE],
     ).astype(int)
-    import pdb
-
-    pdb.set_trace()
     for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
         matches = np.where(inferred_row)[0]
         if not matches.size:
@@ -239,7 +231,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     image_indices_to_keep = np.where(extracted_layout.element_class_ids == 1)[0]
     if len(image_indices_to_keep):
         full_page_image_mask = (
-            boxes_iou(
+            boxes_overlap_by_iou(
                 extracted_layout.slice(image_indices_to_keep).element_coords,
                 [full_page_region],
                 threshold=FULL_PAGE_REGION_THRESHOLD,
@@ -254,7 +246,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
     # what if od model detects table but pdfminer says image -> we would lose the table!!
     # boxes_almost_same = (
-    #     boxes_iou(
+    #     boxes_overlap_by_iou(
     #         inferred_layout.element_coords,
     #         extracted_layout.slice(image_indices_to_keep).element_coords,
     #         threshold=same_region_threshold,
@@ -532,13 +524,11 @@ def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND
     # only store one copy of coords in memory instead of calling get coords twice
     coords = get_coords_from_bboxes(bboxes, round_to=round_to)
 
-    return boxes_iou(coords, coords, threshold, round_to)
+    return boxes_overlap_by_iou(coords, coords, threshold, round_to)
 
 
 # TODO (yao): move those vector math utils into a separated sub module to void import issues
-def boxes_iou(
-    bboxes1, bboxes2, threshold: float = 0.75, round_to: int = DEFAULT_ROUND
-) -> np.ndarray:
+def boxes_iou(bboxes1, bboxes2, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     """compute iou between two groups of elements"""
     coords1 = get_coords_from_bboxes(bboxes1, round_to=round_to)
     coords2 = get_coords_from_bboxes(bboxes2, round_to=round_to)
@@ -546,7 +536,15 @@ def boxes_iou(
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
         coords1, coords2, round_to=round_to
     )
-    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+    return inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
+
+
+# TODO (yao): move those vector math utils into a separated sub module to void import issues
+def boxes_overlap_by_iou(
+    bboxes1, bboxes2, threshold: float = 0.75, round_to: int = DEFAULT_ROUND
+) -> np.ndarray:
+    """compute iou between two groups of elements"""
+    return boxes_iou(bboxes1, bboxes2, round_to) > threshold
 
 
 def boxes_max_overlap(
