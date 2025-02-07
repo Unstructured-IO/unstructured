@@ -81,6 +81,8 @@ def _inferred_is_elementtype(
 
 
 def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
+    """return a boolean array masking for each element if it is non-image type (True) or image like
+    type (False); image types are ElementType.FIGURE/IMAGE/PAGE_BREAK/TABLE"""
     return ~_inferred_is_elementtype(
         inferred_layout,
         etypes=(
@@ -98,7 +100,12 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     extracted_layout: LayoutElements,
     inferred_layout: LayoutElements,
     same_region_threshold: float,
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray]:
+    """merge exstracted elements that have almost the same bounding box as an inferrred element into
+    that inferred element: a) the inferred element bounding box is updated, if needed, to be able to
+    bound the merged extracted element; b) the inferred element uses the extracted element's text as
+    its text attribute. Return a boolean mask array indicating where (when True) an extracted
+    element is merged therefore should be excluded from later analysis"""
 
     if len(inferred_layout) == 0:
         return np.array([False] * len(extracted_layout))
@@ -127,12 +134,17 @@ def _merge_extracted_into_inferred_when_almost_the_same(
 
 
 def _merge_extracted_that_are_subregion_of_inferred_text(
-    extracted_layout,
-    inferred_layout,
-    extracted_is_subregion_of_inferred,
-    extracted_to_proc,
-    inferred_to_proc,
-):
+    extracted_layout: LayoutElements,
+    inferred_layout: LayoutElements,
+    extracted_is_subregion_of_inferred: np.ndarray,
+    extracted_to_proc: np.ndarray,
+    inferred_to_proc: np.ndarray,
+) -> LayoutElements:
+    """merged extracted elements that are subregions of inferrred elements into those inferred
+    elements: the inferred elements' bounding boxes expands, if needed, to include those subregion
+    elements. Returns the modified inferred layout where some of its elements' bounding boxes may
+    have expanded due to merging.
+    """
     # in theory one extracted __should__ only match at most one inferred region, given inferred
     # region can not overlap; so first match here __should__ also be the only match
     inferred_to_iter = inferred_to_proc[inferred_to_proc]
@@ -157,11 +169,17 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
 
 
 def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
-    extracted_layout,
-    inferred_layout,
-    inferred_to_keep,
-    subregion_threshold,
-):
+    extracted_layout: LayoutElements,
+    inferred_layout: LayoutElements,
+    inferred_to_keep: np.ndarray,
+    subregion_threshold: float,
+) -> np.ndaray:
+    """
+    Marking elements in inferred layout to remove after merging when:
+    - if the inferred element is subregion of an extracted element
+    - and/or an extracted element is subregion of this inferred element
+    Return updated mask on which inferred indices to keep (when True)
+    """
     inferred_is_subregion_of_extracted = bboxes1_is_almost_subregion_of_bboxes2(
         inferred_layout.element_coords,
         extracted_layout.element_coords,
@@ -316,7 +334,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     extracted_to_keep = np.concatenate(
         (image_indices_to_keep, text_element_indices[extracted_to_proc])
     )
-    if any(extracted_to_proc):
+    if any(extracted_to_keep):
         inferred_to_proc = np.logical_or(
             inferred_to_proc,
             _inferred_is_elementtype(
