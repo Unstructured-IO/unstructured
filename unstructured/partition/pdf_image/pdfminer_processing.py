@@ -105,7 +105,6 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     if len(extracted_layout) == 0:
         return np.array([])
 
-    # -- compute criterion, boolean matrices, first:
     boxes_almost_same = boxes_iou(
         extracted_layout.element_coords,
         inferred_layout.element_coords,
@@ -207,11 +206,10 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     w, h = page_image_size
     full_page_region = Rectangle(0, 0, w, h)
-    # ==== RULE 0: Full page images are ignored
-    # extracted elements to add:
-    # - non full-page images
-    # - extracted text region that doesn't match an inferred region; with caveats below
-    # matching between extracted text and inferred text can result in three different outcomes
+    # ==== RULE 0: Full page extracted images are ignored
+    # non full page extracted image regions are kept, except when they match a non-text inferred
+    # region then we use the common bounding boxes and keep just one of the two sets (see rules
+    # below)
     image_indices_to_keep = np.where(extracted_layout.element_class_ids == 1)[0]
     if len(image_indices_to_keep):
         full_page_image_mask = (
@@ -224,11 +222,10 @@ def array_merge_inferred_layout_with_extracted_layout(
             .astype(bool)
         )
         image_indices_to_keep = image_indices_to_keep[~full_page_image_mask]
-    # non full page extracted image regions are kept, except when they match a non-text inferred
-    # region then we use the common bounding boxes and keep just one of the two sets
 
-    # ==== RULE 1: any inferred box that is almost the same as an extracted image box is removed
-    # what if od model detects table but pdfminer says image -> we would lose the table!!
+    # ==== RULE 1: any inferred box that is almost the same as an extracted image box, inferred is
+    # removed
+    # NOTE (yao): what if od model detects table but pdfminer says image -> we would lose the table
     boxes_almost_same = (
         boxes_iou(
             inferred_layout.element_coords,
@@ -243,7 +240,6 @@ def array_merge_inferred_layout_with_extracted_layout(
     inferred_layout_to_proc = inferred_layout.slice(~boxes_almost_same)
     inferred_to_keep = np.array([True] * len(inferred_layout_to_proc))
 
-    # now process extracted text regions; the loop version's outter loop is extracted layout
     # TODO (yao): experiment with all regions, not just text region, being potential targets to be
     # merged into inferred elements
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
@@ -269,9 +265,6 @@ def array_merge_inferred_layout_with_extracted_layout(
         same_region_threshold,
     )
 
-    # compute criterion, boolean matrices, first:
-    # NOTE (yao): loop version updates the inferrred layout size as process goes on so vectorization
-    # might not work after all
     # ==== RULE 3. if extracted is subregion of an inferrred text region:
     # remove extracted and keep inferred;
     # expand inferred bounding box if needed to encompass all subregion extracted boxes
@@ -296,8 +289,6 @@ def array_merge_inferred_layout_with_extracted_layout(
         extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
             extracted_text_layouts.element_coords,
             inferred_layout_to_proc.element_coords,
-            # TODO (yao): experiment logic change: be more aggressive with merging extracted into
-            # inferred elements
             threshold=subregion_threshold,
         )
 
@@ -337,7 +328,6 @@ def array_merge_inferred_layout_with_extracted_layout(
                 ],
             ),
         )
-        # TODO: refactor so we only need to compute intersection once
         inferred_to_keep[inferred_to_proc] = (
             _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
                 extracted_layout.slice(extracted_to_keep),
