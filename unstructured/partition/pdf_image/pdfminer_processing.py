@@ -248,6 +248,14 @@ def array_merge_inferred_layout_with_extracted_layout(
     # merged into inferred elements
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
 
+    if len(text_element_indices) == 0:
+        return LayoutElements.concatenate(
+            (
+                inferred_layout_to_proc,
+                extracted_layout.slice(image_indices_to_keep),
+            )
+        )
+
     if len(inferred_layout_to_proc) == 0:
         return extracted_layout.slice(np.concatenate((image_indices_to_keep, text_element_indices)))
 
