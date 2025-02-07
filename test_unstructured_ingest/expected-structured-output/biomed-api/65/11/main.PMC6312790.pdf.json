@@ -187,7 +187,7 @@
       "page_number": 1
     },
     "text": "a r t i c l e i n f o",
-    "type": "NarrativeText"
+    "type": "Title"
   },
   {
     "element_id": "b9e48f235de5b531427187eb6ea135fe",
@@ -591,7 +591,7 @@
     "type": "FigureCaption"
   },
   {
-    "element_id": "86202dccdd86c3f690e636d77f97a80d",
+    "element_id": "24043ff71a94bb6f5632e647ae0632b2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -600,7 +600,7 @@
       ],
       "page_number": 3
     },
-    "text": "100  90  80  2g  4g  )  %  (     y  c  n  e  70  60  6g  8g  10g  i  c  i  f  f  E  50     n  o  i  t  i  40  b  i  h  n  I  30  20  10  0  20  40  60  80  100  120  140  160  180  Exposure Time (Hours) ",
+    "text": "90  80  2g  4g  )  %  (     y  c  n  e  70  60  6g  8g  10g  i  c  i  f  f  E  50     n  o  i  t  i  40  b  i  h  n  I  30  20  10  0  20  40  60  80  100  120  140  160  180  Exposure Time (Hours) ",
     "type": "Image"
   },
   {
@@ -734,20 +734,7 @@
     "type": "Table"
   },
   {
-    "element_id": "d61e56d1a4c761ad3c69f4b970ba4f3c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "rate (mm/year)",
-    "type": "Title"
-  },
-  {
-    "element_id": "3a5534c2aafc2d8a4c0b65d530d00ab3",
+    "element_id": "f55e192ad2e6bca248a2dae6c281cc69",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -760,7 +747,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3aca0cc2ad685c5ca25646c82eeb73a8",
+    "element_id": "6f7c88b8803c13c004f40ccd00b45447",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -773,7 +760,7 @@
     "type": "Image"
   },
   {
-    "element_id": "5746a0363a91513e4bed4e740cba2fa5",
+    "element_id": "c835ef0f50c0cb95aeeeb4be8e5eed0e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -786,7 +773,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a98eb6a3340c566043ba7e8c0bd5208e",
+    "element_id": "5e8e16200ca068ad87eeadee54bb3e4f",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
