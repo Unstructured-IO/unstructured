@@ -99,6 +99,12 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     inferred_layout: LayoutElements,
     same_region_threshold: float,
 ) -> tuple[np.ndarray, np.ndarray]:
+
+    if len(inferred_layout) == 0:
+        return np.array([False] * len(extracted_layout))
+    if len(extracted_layout) == 0:
+        return np.array([])
+
     # -- compute criterion, boolean matrices, first:
     boxes_almost_same = boxes_iou(
         extracted_layout.element_coords,
@@ -241,6 +247,10 @@ def array_merge_inferred_layout_with_extracted_layout(
     # TODO (yao): experiment with all regions, not just text region, being potential targets to be
     # merged into inferred elements
     text_element_indices = np.where(extracted_layout.element_class_ids == 0)[0]
+
+    if len(inferred_layout_to_proc) == 0:
+        return extracted_layout.slice(np.concatenate((image_indices_to_keep, text_element_indices)))
+
     extracted_text_layouts = extracted_layout.slice(text_element_indices)
     # ==== RULE 2. if there is a inferred region almost the same as the extracted text-region ->
     # keep inferred and removed extracted region; here we put more trust in OD model more than
@@ -270,7 +280,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     # order would matter in that version. Here we loop over multiple times to avoid order being a
     # factor -> this is one big difference between the current refactor and the version in inference
     # lib that uses loops
-    while rounds < max_rounds:
+    while rounds < max_rounds and any(inferred_to_proc) and any(extracted_to_proc):
         rounds += 1
         inferred_to_proc_at_start = inferred_to_proc.copy()
         extracted_to_proc_start = extracted_to_proc.copy()
