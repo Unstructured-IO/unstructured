@@ -550,7 +550,7 @@
     }
   },
   {
-    "type": "UncategorizedText",
+    "type": "Footer",
     "element_id": "dd4a661e1a3c898a5cf6328ba56b924d",
     "text": "2",
     "metadata": {

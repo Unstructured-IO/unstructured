@@ -278,7 +278,7 @@
       "page_number": 1
     },
     "text": "a r t i c l e i n f o",
-    "type": "NarrativeText"
+    "type": "Title"
   },
   {
     "element_id": "4f3f69dd17ddae776c656ec73d9837ae",
@@ -291,7 +291,7 @@
       "page_number": 1
     },
     "text": "a b s t r a c t",
-    "type": "NarrativeText"
+    "type": "Title"
   },
   {
     "element_id": "34522460857b10c63d8c2c8d2fbb3087",
@@ -534,7 +534,7 @@
       "page_number": 2
     },
     "text": "e All the problem instances are available for use without any restrictions.",
-    "type": "NarrativeText"
+    "type": "ListItem"
   },
   {
     "element_id": "d401597b8ff2854bfb89f2833d02a763",
@@ -560,7 +560,7 @@
       "page_number": 2
     },
     "text": "© The dataset includes a program that can generate similar problem instances of different sizes.",
-    "type": "NarrativeText"
+    "type": "ListItem"
   },
   {
     "element_id": "fb765d6762e6a423cb8b9dab27359732",
@@ -869,7 +869,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "63de709cd751564fc9622864af4e9310",
+    "element_id": "fc4f978bd0de31348966bdd31d0cea12",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -878,21 +878,8 @@
       ],
       "page_number": 3
     },
-    "text": "Instance size (m, n) Average number of Locations Times Vehicles (8, 1500) 568.40 975.20 652.20 668,279.40 (8, 2000) 672.80 1048.00 857.20 1,195,844.80 (8, 2500) 923.40 1078.00 1082.40 1,866,175.20 (8, 3000) 977.00 1113.20 1272.80 2,705,617.00 (12, 1500) 566.00 994.00 642.00 674,191.00 (12, 2000) 732.60 1040.60 861.20 1,199,659.80 (12, 2500) 875.00 1081.00 1096.00 1,878,745.20 (12, 3000) 1119.60 1107.40 1286.20 2,711,180.40 (16, 1500) 581.80 985.40 667.80 673,585.80 (16, 2000) 778.00 1040.60 872.40 1,200,560.80 (16, 2500) 879.00 1083.20 1076.40 1,879,387.00 (16, 3000) 1087.20 1101.60 1284.60 2,684,983.60",
+    "text": "Instance size (m, n) Average number of Locations Times Vehicles Possible empty travels (8, 1500) 568.40 975.20 652.20 668,279.40 (8, 2000) 672.80 1048.00 857.20 1,195,844.80 (8, 2500) 923.40 1078.00 1082.40 1,866,175.20 (8, 3000) 977.00 1113.20 1272.80 2,705,617.00 (12, 1500) 566.00 994.00 642.00 674,191.00 (12, 2000) 732.60 1040.60 861.20 1,199,659.80 (12, 2500) 875.00 1081.00 1096.00 1,878,745.20 (12, 3000) 1119.60 1107.40 1286.20 2,711,180.40 (16, 1500) 581.80 985.40 667.80 673,585.80 (16, 2000) 778.00 1040.60 872.40 1,200,560.80 (16, 2500) 879.00 1083.20 1076.40 1,879,387.00 (16, 3000) 1087.20 1101.60 1284.60 2,684,983.60",
     "type": "Table"
-  },
-  {
-    "element_id": "ec04cd3d411eed35515b3ea80ebac5af",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Possible empty travels",
-    "type": "Title"
   },
   {
     "element_id": "fa23407a7c3c99ae3b6fb79034698807",
