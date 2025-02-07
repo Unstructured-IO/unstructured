@@ -150,10 +150,13 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
     # )
     inferred_to_iter = np.ones_like(inferred_to_proc).astype(bool)
     extracted_to_iter = np.ones_like(extracted_to_proc).astype(bool)
-    inferred_is_not_image = ~_inferred_is_elementtype(
+    inferred_is_image = _inferred_is_elementtype(
         inferred_layout,
         [ElementType.FIGURE, ElementType.IMAGE, ElementType.PICTURE],
     ).astype(int)
+    import pdb
+
+    pdb.set_trace()
     for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
         matches = np.where(inferred_row)[0]
         if not matches.size:
@@ -170,8 +173,7 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
                 extracted_layout.slice([match])
                 for match in matches
                 # can merge image and text into inferred image; and only text into inferred text
-                if extracted_layout.element_class_ids[match]
-                >= inferred_is_not_image[inferred_index]
+                if extracted_layout.element_class_ids[match] <= inferred_is_image[inferred_index]
             ],
         )
     inferred_to_proc = inferred_to_proc[inferred_to_iter]
