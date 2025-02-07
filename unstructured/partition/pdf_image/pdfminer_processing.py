@@ -131,19 +131,29 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
     # in theory one extracted __should__ only match at most one inferred region, given inferred
     # region can not overlap; so first match here __should__ also be the only match
     extracted_is_subregion_of_inferred = np.logical_or(
-        boxes_max_overlap(
-            extracted_layout.element_coords,
-            inferred_layout.element_coords,
-            threshold=0.5,
-        ),
         bboxes1_is_almost_subregion_of_bboxes2(
             extracted_layout.element_coords,
             inferred_layout.element_coords,
-            threshold=0.1,
+            threshold=subregion_threshold,
         ),
+        bboxes1_is_almost_subregion_of_bboxes2(
+            inferred_layout.element_coords,
+            extracted_layout.element_coords,
+            threshold=subregion_threshold,
+        ).T,
     )
+
+    # boxes_max_overlap(
+    #     extracted_layout.element_coords,
+    #     inferred_layout.element_coords,
+    #     threshold=0.5,
+    # )
     inferred_to_iter = np.ones_like(inferred_to_proc).astype(bool)
     extracted_to_iter = np.ones_like(extracted_to_proc).astype(bool)
+    inferred_is_image = _inferred_is_elementtype(
+        inferred_layout,
+        [ElementType.FIGURE, ElementType.IMAGE, ElementType.PICTURE],
+    ).astype(int)
     for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
         matches = np.where(inferred_row)[0]
         if not matches.size:
@@ -152,11 +162,15 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
         # it is not clear which one is overall faster so might worth profiling in the future
         extracted_to_iter[matches] = False
         inferred_to_iter[inferred_index] = False
-        # then expand inferred box by all the extracted boxes
-        # FIXME (yao): this part is broken at the moment
+        # then expand inferred box by all the extracted boxes; only for those with matching element
+        # meta groupod (image to image, textual to textual)
         inferred_layout.element_coords[[inferred_index]] = _minimum_containing_coords(
             inferred_layout.slice([inferred_index]),
-            *[extracted_layout.slice([match]) for match in matches],
+            *[
+                extracted_layout.slice([match])
+                for match in matches
+                if extracted_layout.element_class_ids[match] == inferred_is_image[inferred_index]
+            ],
         )
     inferred_to_proc = inferred_to_proc[inferred_to_iter]
     extracted_to_proc = extracted_to_proc[extracted_to_iter]
