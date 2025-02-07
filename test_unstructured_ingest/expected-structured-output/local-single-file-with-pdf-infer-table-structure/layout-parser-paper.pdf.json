@@ -360,8 +360,8 @@
   },
   {
     "type": "Title",
-    "element_id": "bcb94891b0d7a997ab7e28d99195ff37",
-    "text": "Introduction",
+    "element_id": "3a170066f972d25cc303a05ddc16d52c",
+    "text": "1 Introduction",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -692,8 +692,8 @@
   },
   {
     "type": "Header",
-    "element_id": "f5a6697190c20bf6030d8e4ae8f6861a",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "69c3d3a4f4b7956cd5b0b4153a22b90b",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 3",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1022,7 +1022,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "db639db124b6064248de0c0dc71510a4",
     "text": "7 https://ocr-d.de/en/about",
     "metadata": {
@@ -1044,7 +1044,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "d881ce84f017d89f6e35e2bc4b133bfc",
     "text": "8 https://github.com/BobLd/DocumentLayoutAnalysis",
     "metadata": {
@@ -1066,7 +1066,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "9b96c128deddda1a32c739a2df157496",
     "text": "9 https://github.com/leonlulu/DeepLayout",
     "metadata": {
@@ -1088,7 +1088,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "5cf72e821375f4480a1529bef97608ef",
     "text": "10 https://github.com/hpanwar08/detectron2",
     "metadata": {
@@ -1110,7 +1110,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "4ab94e79eedc3a7ac498aaf737ca8878",
     "text": "11 https://github.com/JaidedAI/EasyOCR",
     "metadata": {
@@ -1132,7 +1132,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "Footer",
     "element_id": "460b163c13ad7cad4fce325820a76481",
     "text": "12 https://github.com/PaddlePaddle/PaddleOCR",
     "metadata": {
@@ -1385,8 +1385,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "cd1112d2b15a0d27a29b1c83b2afd0dd",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "0aa04d35b73cb762efb8f068240c20ef",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 5",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1879,8 +1879,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "48d58ed9a3d95637df68c8b810147ba1",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "e8d5221ef31e53d129c2c82c4a0a665c",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 7",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2153,7 +2153,7 @@
     "element_id": "64bc79d1132a89c71837f420d6e4e2dc",
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2\u2019s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
     "metadata": {
-      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2\u2019s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2\u2019s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -2334,8 +2334,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c069937e6c2bfc0f856835f3af4d6181",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "c9bb0f33fdd13f4e5b46aacfe3d590e2",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 9",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2377,8 +2377,52 @@
     }
   },
   {
+    "type": "FigureCaption",
+    "element_id": "9e1c338a3371cb3df5bddc5672e6a53b",
+    "text": "Mode I: Showing Layout on the Original Image",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 9,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "FigureCaption",
+    "element_id": "2b8903940339ed9a553e4b84107ebd40",
+    "text": "Mode Il: Drawing OCR'd Text at the Correspoding Position",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 9,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "fadd4ad54cd14e3e4711d41a1c99f813",
+    "element_id": "e523a8d1116c7285345aef3a499c7819",
     "text": "Fig. 3: Layout detection and OCR results visualization generated by the LayoutParser APIs. Mode I directly overlays the layout region bounding boxes and categories over the original image. Mode II recreates the original document via drawing the OCR\u2019d texts at their corresponding positions on the image canvas. In this \ufb01gure, tokens in textual regions are \ufb01ltered using the API and then displayed.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2400,7 +2444,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "625c9e1d41a9740f094041595f79953d",
+    "element_id": "5b842403fb6d891dd468a13d00295082",
     "text": "can also be highly sensitive and not sharable publicly. To overcome these chal- lenges, LayoutParser is built with rich features for e\ufb03cient data annotation and customized model training.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2422,7 +2466,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a3498730b5cd3fe9405fad69bcf37882",
+    "element_id": "eb88479f76d806ca0a07e36b53ecb4b9",
     "text": "LayoutParser incorporates a toolkit optimized for annotating document lay- outs using object-level active learning [32]. With the help from a layout detection model trained along with labeling, only the most important layout objects within each image, rather than the whole image, are required for labeling. The rest of the regions are automatically annotated with high con\ufb01dence predictions from the layout detection model. This allows a layout dataset to be created more e\ufb03ciently with only around 60% of the labeling budget.",
     "metadata": {
       "links": [
@@ -2451,7 +2495,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c4ccf2cf2e7495668221cbe51534f90b",
+    "element_id": "4fe78489dc18583bc966cec8fe1c6ea5",
     "text": "After the training dataset is curated, LayoutParser supports di\ufb00erent modes for training the layout models. Fine-tuning can be used for training models on a small newly-labeled dataset by initializing the model with existing pre-trained weights. Training from scratch can be helpful when the source dataset and target are signi\ufb01cantly di\ufb00erent and a large training set is available. However, as suggested in Studer et al.\u2019s work[33], loading pre-trained weights on large-scale datasets like ImageNet [5], even from totally di\ufb00erent domains, can still boost model performance. Through the integrated API provided by LayoutParser, users can easily compare model performances on the benchmark datasets.",
     "metadata": {
       "links": [
@@ -2528,8 +2572,30 @@
     }
   },
   {
+    "type": "FigureCaption",
+    "element_id": "70d7d0c165c33191957d4e9e017c2f87",
+    "text": "(b) Illustration of the recreated document with dense text structure for better OCR performance",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 10,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "NarrativeText",
-    "element_id": "ebbb8c84b2a69f817c8ae7df20d72dd9",
+    "element_id": "e4a5e8a6208d92b11dc523988ce795d8",
     "text": "Fig. 4: Illustration of (a) the original historical Japanese document with layout detection results and (b) a recreated version of the document image that achieves much better character recognition recall. The reorganization algorithm rearranges the tokens based on the their detected bounding boxes given a maximum allowed height.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2551,7 +2617,7 @@
   },
   {
     "type": "Title",
-    "element_id": "88f6e589165656eceebf898d0240e05c",
+    "element_id": "f791f077e8d2d8faec47792a1d576766",
     "text": "4 LayoutParser Community Platform",
     "metadata": {
       "filetype": "application/pdf",
@@ -2573,7 +2639,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "e9a86eb57ba5483acfeefb0e931402b1",
+    "element_id": "35bc3fa0635dc2c5dd9feadb4ba039b1",
     "text": "Another focus of LayoutParser is promoting the reusability of layout detection models and full digitization pipelines. Similar to many existing deep learning libraries, LayoutParser comes with a community model hub for distributing layout models. End-users can upload their self-trained models to the model hub, and these models can be loaded into a similar interface as the currently available LayoutParser pre-trained models. For example, the model trained on the News Navigator dataset [17] has been incorporated in the model hub.",
     "metadata": {
       "links": [
@@ -2602,7 +2668,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c08c76705396fe7a65be5dff6d3bffd5",
+    "element_id": "42cb4161d74e8e50a46b23a9daa70586",
     "text": "Beyond DL models, LayoutParser also promotes the sharing of entire doc- ument digitization pipelines. For example, sometimes the pipeline requires the combination of multiple DL models to achieve better accuracy. Currently, pipelines are mainly described in academic papers and implementations are often not pub- licly available. To this end, the LayoutParser community platform also enables the sharing of layout pipelines to promote the discussion and reuse of techniques. For each shared pipeline, it has a dedicated project page, with links to the source code, documentation, and an outline of the approaches. A discussion panel is provided for exchanging ideas. Combined with the core LayoutParser library, users can easily build reusable components based on the shared pipelines and apply them to solve their unique problems.",
     "metadata": {
       "filetype": "application/pdf",
@@ -2624,7 +2690,7 @@
   },
   {
     "type": "Title",
-    "element_id": "53da8301ac140e0b72cdcf6a7f405918",
+    "element_id": "dce66025c40567da68fd7370506997e1",
     "text": "5 Use Cases",
     "metadata": {
       "filetype": "application/pdf",
@@ -2646,7 +2712,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "1fd6bf73b6c80f8ed034bf977fba5a67",
+    "element_id": "0dfe18d94b2a87db18d0a45d434b1cb0",
     "text": "The core objective of LayoutParser is to make it easier to create both large-scale and light-weight document digitization pipelines. Large-scale document processing",
     "metadata": {
       "filetype": "application/pdf",
@@ -2668,8 +2734,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ab543398222da25b3a9231929162d3a0",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "26c4fc43b8747a63b6fc5050297a5ef3",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 11",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3097,8 +3163,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2b7101f39954d5301166b82906202ea9",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "f1b03448874d9c98a0a59a20b134c513",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 13",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3578,8 +3644,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "8bce49aab693aad97676011688f3f6f3",
-    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA",
+    "element_id": "5775b2142d78559b8747af71750be04c",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for DL-Based DIA 15",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
