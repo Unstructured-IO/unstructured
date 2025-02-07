@@ -357,6 +357,13 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
+    if len(out_layout) == 0 or len(ocr_layout) == 0:
+        # what if od model finds nothing but ocr finds something? should we use ocr output at all
+        # currently we require some kind of bounding box, from `out_layout` to aggreaget ocr
+        # results. Can we just use ocr bounding boxes (gonna be many but at least we save
+        # information)
+        return out_layout
+
     invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]
     out_layout.texts = out_layout.texts.astype(object)
 
@@ -434,18 +441,24 @@ def supplement_layout_with_ocr_elements(
         build_layout_elements_from_ocr_regions,
     )
 
-    mask = (
-        ~bboxes1_is_almost_subregion_of_bboxes2(
-            ocr_layout.element_coords, layout.element_coords, subregion_threshold
+    if len(layout) == 0:
+        if len(ocr_layout) == 0:
+            return layout
+        else:
+            ocr_regions_to_add = ocr_layout
+    else:
+        mask = (
+            ~bboxes1_is_almost_subregion_of_bboxes2(
+                ocr_layout.element_coords, layout.element_coords, subregion_threshold
+            )
+            .sum(axis=1)
+            .astype(bool)
         )
-        .sum(axis=1)
-        .astype(bool)
-    )
 
-    # add ocr regions that are not covered by layout
-    ocr_regions_to_add = ocr_layout.slice(mask)
+        # add ocr regions that are not covered by layout
+        ocr_regions_to_add = ocr_layout.slice(mask)
 
-    if sum(mask):
+    if len(ocr_regions_to_add):
         ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
         final_layout = LayoutElements.concatenate([layout, ocr_elements_to_add])
     else:

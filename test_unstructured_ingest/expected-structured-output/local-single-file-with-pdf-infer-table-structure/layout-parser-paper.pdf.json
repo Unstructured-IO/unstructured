@@ -360,8 +360,8 @@
   },
   {
     "type": "Title",
-    "element_id": "bcb94891b0d7a997ab7e28d99195ff37",
-    "text": "Introduction",
+    "element_id": "3a170066f972d25cc303a05ddc16d52c",
+    "text": "1 Introduction",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1600,9 +1600,9 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2f41c1732a2870b1fecd72dec1b2ff3d",
-    "text": "1 import layoutparser as lp 2 image = cv2 . imread ( \" image_file \" ) # load images 3 model = lp . De t e c tro n2 Lay outM odel ( 4 \" lp :// PubLayNet / f as t er _ r c nn _ R _ 50 _ F P N_ 3 x / config \" ) 5 layout = model . detect ( image )",
+    "type": "ListItem",
+    "element_id": "508a6705bb0bfb693616cc14fec5e1b9",
+    "text": "1 import layoutparser as lp",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1622,9 +1622,9 @@
     }
   },
   {
-    "type": "ListItem",
-    "element_id": "53b448c75f1556b1f60b4e3324bd0724",
-    "text": "1 import layoutparser as lp",
+    "type": "NarrativeText",
+    "element_id": "c2af717e76ad68bd6da87a15a69f126a",
+    "text": "2 image = cv2 . imread ( \" image_file \" ) # load images 3 model = lp . De t e c tro n2 Lay outM odel ( 4 \" lp :// PubLayNet / f as t er _ r c nn _ R _ 50 _ F P N_ 3 x / config \" )",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

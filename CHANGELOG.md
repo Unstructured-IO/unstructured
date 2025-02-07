@@ -1,6 +1,8 @@
-## 0.16.21-dev1
+## 0.16.21-dev2
 
 ### Enhancements
+
+- **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
 
 ### Features
 
