@@ -136,9 +136,9 @@ def _merge_extracted_into_inferred_when_almost_the_same(
 def _merge_extracted_that_are_subregion_of_inferred_text(
     extracted_layout: LayoutElements,
     inferred_layout: LayoutElements,
-    extracted_is_subregion_of_inferred: np.ndarray,
     extracted_to_proc: np.ndarray,
     inferred_to_proc: np.ndarray,
+    subregion_threshold: float,
 ) -> LayoutElements:
     """merged extracted elements that are subregions of inferrred elements into those inferred
     elements: the inferred elements' bounding boxes expands, if needed, to include those subregion
@@ -147,6 +147,19 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
     """
     # in theory one extracted __should__ only match at most one inferred region, given inferred
     # region can not overlap; so first match here __should__ also be the only match
+    extracted_is_subregion_of_inferred = np.logical_or(
+        bboxes1_is_almost_subregion_of_bboxes2(
+            extracted_layout.element_coords,
+            inferred_layout.element_coords,
+            threshold=subregion_threshold * 0.5,
+        ),
+        boxes_iou(
+            extracted_layout.element_coords,
+            inferred_layout.element_coords,
+            threshold=subregion_threshold,
+        ),
+    )
+
     inferred_to_iter = inferred_to_proc[inferred_to_proc]
     extracted_to_iter = extracted_to_proc[extracted_to_proc]
     for inferred_index, inferred_row in enumerate(extracted_is_subregion_of_inferred.T):
@@ -304,19 +317,13 @@ def array_merge_inferred_layout_with_extracted_layout(
         inferred_to_proc_at_start = inferred_to_proc.copy()
         extracted_to_proc_start = extracted_to_proc.copy()
 
-        extracted_is_subregion_of_inferred = bboxes1_is_almost_subregion_of_bboxes2(
-            extracted_text_layouts.element_coords,
-            inferred_layout_to_proc.element_coords,
-            threshold=subregion_threshold,
-        )
-
         updated_inferred = _merge_extracted_that_are_subregion_of_inferred_text(
             extracted_text_layouts.slice(extracted_to_proc),
             inferred_layout_to_proc.slice(inferred_to_proc),
-            extracted_is_subregion_of_inferred[extracted_to_proc][:, inferred_to_proc],
             # both those following two are modified in place in the function
             extracted_to_proc,
             inferred_to_proc,
+            subregion_threshold=subregion_threshold,
         )
         # unfortunately slice uses "fancy" indexing and it generates a copy instead of a view, which
         # was intentional by design to avoid unintended modification of the original data
