@@ -366,7 +366,7 @@ def extractable_elements(
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     if isinstance(file, bytes):
@@ -388,7 +388,7 @@ def _partition_pdf_with_pdfminer(
     languages: list[str],
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -447,7 +447,7 @@ def _process_pdfminer_pages(
 
     for page_number, (page, page_layout) in enumerate(
         open_pdfminer_pages_generator(fp, password=password),
-            start=starting_page_number,
+        start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
 
@@ -569,7 +569,7 @@ def _partition_pdf_or_image_local(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     pdf_hi_res_max_pages: Optional[int] = None,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -610,8 +610,7 @@ def _partition_pdf_or_image_local(
         )
 
         extracted_layout, layouts_links = (
-            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi,
-                                       password=password)
+            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi, password=password)
             if pdf_text_extractable
             else ([], [])
         )
@@ -881,8 +880,7 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file, password=password),
-                start=starting_page_number
+            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,

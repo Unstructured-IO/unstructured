@@ -42,7 +42,7 @@ def process_data_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given data and supplement the output DocumentLayout
@@ -107,7 +107,7 @@ def process_file_with_ocr(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     pdf_image_dpi: int = 200,
     ocr_layout_dumper: Optional[OCRLayoutDumper] = None,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
@@ -168,7 +168,7 @@ def process_file_with_ocr(
                     dpi=pdf_image_dpi,
                     output_folder=temp_dir,
                     paths_only=True,
-                    userpw=password or ""
+                    userpw=password or "",
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):

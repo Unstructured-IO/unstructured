@@ -116,7 +116,7 @@ def process_page_layout_from_pdfminer(
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-    password:Optional[str] = None,
+    password: Optional[str] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
@@ -127,8 +127,9 @@ def process_data_with_pdfminer(
     layouts_links = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page_number, (page, page_layout) in (
-            enumerate(open_pdfminer_pages_generator(file, password=password))):
+    for page_number, (page, page_layout) in enumerate(
+        open_pdfminer_pages_generator(file, password=password)
+    ):
         width, height = page_layout.width, page_layout.height
 
         annotation_list = []
