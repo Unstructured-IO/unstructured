@@ -94,7 +94,7 @@ def open_pdfminer_pages_generator(
                     page_layout = device.get_result()
                 except PSSyntaxError:
                     logger.info("Detected invalid dictionary construct for PDFminer")
-                    logger.info(f"Repairing the PDF page {i+1} ...")
+                    logger.info(f"Repairing the PDF page {i + 1} ...")
                     # find the error page from binary data fp
                     error_page_data = get_page_data(fp, page_number=i)
                     # repair the error page with pikepdf
