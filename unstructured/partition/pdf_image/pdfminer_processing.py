@@ -91,7 +91,7 @@ def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
             # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
             # ElementType.PICTURE,
             ElementType.PAGE_BREAK,
-            ElementType.TABLE,
+            # ElementType.TABLE,
         ),
     )
 
