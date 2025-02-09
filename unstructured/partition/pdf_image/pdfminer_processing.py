@@ -317,6 +317,17 @@ def array_merge_inferred_layout_with_extracted_layout(
         ):
             break
 
+    # practically dedupes inferred that are nested after expansions
+    inferred_to_proc_copy = inferred_to_proc.copy()
+    _merge_extracted_that_are_subregion_of_inferred_text(
+        inferred_layout.slice(inferred_to_proc),
+        inferred_layout.slice(inferred_to_proc),
+        0.99,
+        # both those following two are modified in place in the function
+        inferred_to_proc_copy,
+        inferred_to_proc,
+    )
+    inferred_to_proc = np.logical_and(inferred_to_proc, inferred_to_proc_copy)
     # ==== RULE 4. if extracted is subregion of an inferred or inferred is subregion of extracted,
     # except for inferrred tables, remove inferred and chose extracted
     extracted_to_keep = extracted_to_proc
