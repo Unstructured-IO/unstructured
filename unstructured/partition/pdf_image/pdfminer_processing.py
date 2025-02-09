@@ -151,12 +151,12 @@ def _merge_extracted_that_are_subregion_of_inferred_text(
         bboxes1_is_almost_subregion_of_bboxes2(
             extracted_layout.element_coords,
             inferred_layout.element_coords,
-            threshold=subregion_threshold * 0.5,
+            threshold=env_config.MERGING_SUBREGION_THRESHOLD,
         ),
         boxes_iou(
             extracted_layout.element_coords,
             inferred_layout.element_coords,
-            threshold=subregion_threshold,
+            threshold=env_config.MERGING_IOU_THRESHOLD,
         ),
     )
 

@@ -55,6 +55,14 @@ class ENVConfig:
         tempfile.tempdir = tmpdir
 
     @property
+    def MERGING_SUBREGION_THRESHOLD(self) -> int:
+        return self._get_float("MERGING_SUBREGION_THRESHOLD", 0.5)
+
+    @property
+    def MERGING_IOU_THRESHOLD(self) -> int:
+        return self._get_float("MERGING_IOU_THRESHOLD", 0.75)
+
+    @property
     def IMAGE_CROP_PAD(self) -> int:
         """extra image content to add around an identified element region; measured in pixels"""
         return self._get_int("IMAGE_CROP_PAD", 0)
