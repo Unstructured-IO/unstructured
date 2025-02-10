@@ -1,4 +1,4 @@
-## 0.16.21-dev2
+## 0.16.21-dev3
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+- **Address forward compatibility issue in partition_via_api** - As of unstructured-client==0.30.0, the `server_url` is passed to the method rather than the client instance.
 
 ## 0.16.20
 
