@@ -8,13 +8,14 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.psparser import PSSyntaxError
 
+from unstructured import env_config
 from unstructured.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-def init_pdfminer():
+def init_pdfminer(word_margin: float = 0.1, char_margin: float = 2):
     rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
+    laparams = LAParams(word_margin=word_margin, char_margin=char_margin)
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
@@ -80,7 +81,10 @@ def open_pdfminer_pages_generator(
 
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
-    device, interpreter = init_pdfminer()
+    device, interpreter = init_pdfminer(
+        word_margin=env_config.PDFMINER_WORD_MARGIN,
+        char_margin=env_config.PDFMINER_CHAR_MARGIN,
+    )
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         try:
