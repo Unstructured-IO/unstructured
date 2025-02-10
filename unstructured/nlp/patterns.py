@@ -132,9 +132,6 @@ LIST_OF_DICTS_PATTERN = r"\A\s*\[\s*{?"
 # or the closing bracket to handle cases where the JSON array is cut off
 JSON_PATTERN = r"(?s)\{(?=.*:).*?(?:\}|$)|\[(?s:.*?)\](?:$|,|\])"
 
-# JSON Pattern without support for lists
-JSON_PATTERN_NO_LIST = r"(?s)\{(?=.*:).*?(?:\}|$)|(?:$|,|\])"
-
 
 # taken from https://stackoverflow.com/a/3845829/12406158
 VALID_JSON_CHARACTERS = r"[,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]"

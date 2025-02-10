@@ -46,7 +46,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import EMAIL_HEAD_RE, JSON_PATTERN_NO_LIST, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -140,8 +140,7 @@ def is_ndjson_processable(
         file_text = _FileTypeDetectionContext.new(
             file_path=filename, file=file, encoding=encoding
         ).text_head
-
-    return re.match(JSON_PATTERN_NO_LIST, file_text) is not None
+    return file_text.lstrip().startswith("{")
 
 
 class _FileTypeDetector:
