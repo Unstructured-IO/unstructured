@@ -8,8 +8,8 @@ from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.psparser import PSSyntaxError
 
-from unstructured import env_config
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
 
 
