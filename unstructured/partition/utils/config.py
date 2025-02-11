@@ -224,17 +224,5 @@ class ENVConfig:
         """The format for analysed pages with bboxes drawn on them. Default is 'png'."""
         return self._get_string("ANALYSIS_BBOX_FORMAT", "png")
 
-    @property
-    def PDFMINER_WORD_MARGIN(self) -> float:
-        """Distance (calculated as percentage of character width) between characters to consider
-        them seperated words and inject space between them"""
-        return self._get_float("PDFMINER_WORD_MARGIN", 0.1)
-
-    @property
-    def PDFMINER_CHAR_MARGIN(self) -> float:
-        """Distance (calculated as percentage of character width) between characters to consider
-        them to be in the same line"""
-        return self._get_float("PDFMINER_CHAR_MARGIN", 2)
-
 
 env_config = ENVConfig()
