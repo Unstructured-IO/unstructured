@@ -46,7 +46,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import DICT_PATTERN, EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -140,8 +140,7 @@ def is_ndjson_processable(
         file_text = _FileTypeDetectionContext.new(
             file_path=filename, file=file, encoding=encoding
         ).text_head
-
-    return re.match(DICT_PATTERN, file_text) is not None
+    return file_text.lstrip().startswith("{")
 
 
 class _FileTypeDetector:
@@ -179,7 +178,11 @@ class _FileTypeDetector:
         if file_type := self._file_type_from_file_extension:
             return file_type
 
-        # -- strategy 5: give up and report FileType.UNK --
+        # -- strategy 5: edge case where JSON/NDJSON content without file extension --
+        if file_type := self._disambiguate_json_file_type:
+            return file_type
+
+        # -- strategy 6: give up and report FileType.UNK --
         return FileType.UNK
 
     # == STRATEGIES ============================================================
@@ -211,6 +214,20 @@ class _FileTypeDetector:
         return FileType.from_mime_type(self._ctx.content_type)
 
     @property
+    def _disambiguate_json_file_type(self) -> FileType | None:
+        """Disambiguate JSON/NDJSON file-type based on file contents.
+
+        This method is used when the content-type is `application/json` and the file is not empty.
+        """
+        if self._ctx.content_type is not None and self._ctx.content_type != "application/json":
+            return None
+        if is_json_processable(file_text=self._ctx.text_head):
+            return FileType.JSON
+        if is_ndjson_processable(file_text=self._ctx.text_head):
+            return FileType.NDJSON
+        return None
+
+    @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
         """FileType based on auto-detection of MIME-type by libmagic.
 
@@ -239,6 +256,9 @@ class _FileTypeDetector:
 
         if mime_type.endswith("empty"):
             return FileType.EMPTY
+
+        if mime_type.endswith("json") and self._ctx.extension == ".ndjson":
+            return FileType.NDJSON
 
         # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
         file_type = FileType.from_mime_type(mime_type)
