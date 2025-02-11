@@ -1,6 +1,7 @@
-## 0.16.21-dev3
+## 0.16.21-dev4
 
 ### Enhancements
+- **Use password** to load PDF with all modes
 
 - **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
 
