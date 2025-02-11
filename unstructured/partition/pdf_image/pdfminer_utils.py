@@ -1,21 +1,31 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Tuple
+from typing import BinaryIO, List, Optional, Tuple
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.psparser import PSSyntaxError
+from pydantic import BaseModel
 
 from unstructured.logger import logger
-from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
 
 
-def init_pdfminer(word_margin: float = 0.1, char_margin: float = 2):
+class PDFMinerConfig(BaseModel):
+    line_overlap: float = 0.5
+    word_margin: float = 0.1
+    line_margin: float = 0.5
+    char_margin: float = 2
+
+
+def init_pdfminer(pdfminer_config: Optional[PDFMinerConfig] = None):
     rsrcmgr = PDFResourceManager()
-    laparams = LAParams(word_margin=word_margin, char_margin=char_margin)
+
+    laparams_kwargs = pdfminer_config.model_dump() if pdfminer_config else {}
+    laparams = LAParams(**laparams_kwargs)
+
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
@@ -72,19 +82,14 @@ def rect_to_bbox(
 
 
 @requires_dependencies(["pikepdf", "pypdf"])
-def open_pdfminer_pages_generator(
-    fp: BinaryIO,
-):
+def open_pdfminer_pages_generator(fp: BinaryIO, pdfminer_config: Optional[PDFMinerConfig] = None):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
     import pikepdf
 
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
-    device, interpreter = init_pdfminer(
-        word_margin=env_config.PDFMINER_WORD_MARGIN,
-        char_margin=env_config.PDFMINER_CHAR_MARGIN,
-    )
+    device, interpreter = init_pdfminer(pdfminer_config=pdfminer_config)
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         try:
