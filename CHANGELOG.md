@@ -1,4 +1,4 @@
-## 0.16.21-dev3
+## 0.16.21-dev4
 
 ### Enhancements
 - **Use password** to load PDF with all modes
