@@ -14,16 +14,16 @@ from unstructured.utils import requires_dependencies
 
 
 class PDFMinerConfig(BaseModel):
-    line_overlap: float = 0.5
-    word_margin: float = 0.1
-    line_margin: float = 0.5
-    char_margin: float = 2
+    line_overlap: Optional[float] = None
+    word_margin: Optional[float] = None
+    line_margin: Optional[float] = None
+    char_margin: Optional[float] = None
 
 
 def init_pdfminer(pdfminer_config: Optional[PDFMinerConfig] = None):
     rsrcmgr = PDFResourceManager()
 
-    laparams_kwargs = pdfminer_config.model_dump() if pdfminer_config else {}
+    laparams_kwargs = pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
     laparams = LAParams(**laparams_kwargs)
 
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
