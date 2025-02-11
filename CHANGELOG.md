@@ -1,3 +1,13 @@
+## 0.16.21-dev0
+
+### Enhancements
+- **Add PDF Miner configuration** Now PDF Miner can be configured via `pdfminer_line_overlap`, `pdfminer_word_margin`, `pdfminer_line_margin` and `pdfminer_char_margin` parameters added to partition method.
+-
+### Features
+
+### Fixes
+
+
 ## 0.16.20
 
 ### Enhancements
