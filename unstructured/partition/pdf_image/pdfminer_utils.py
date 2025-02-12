@@ -82,7 +82,9 @@ def rect_to_bbox(
 
 
 @requires_dependencies(["pikepdf", "pypdf"])
-def open_pdfminer_pages_generator(fp: BinaryIO, pdfminer_config: Optional[PDFMinerConfig] = None):
+def open_pdfminer_pages_generator(
+    fp: BinaryIO, password: Optional[str] = None, pdfminer_config: Optional[PDFMinerConfig] = None
+):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
     import pikepdf
@@ -93,7 +95,7 @@ def open_pdfminer_pages_generator(fp: BinaryIO, pdfminer_config: Optional[PDFMin
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         try:
-            pages = PDFPage.get_pages(fp)
+            pages = PDFPage.get_pages(fp, password=password or "")
             # Detect invalid dictionary construct for entire PDF
             for i, page in enumerate(pages):
                 try:
@@ -102,7 +104,7 @@ def open_pdfminer_pages_generator(fp: BinaryIO, pdfminer_config: Optional[PDFMin
                     page_layout = device.get_result()
                 except PSSyntaxError:
                     logger.info("Detected invalid dictionary construct for PDFminer")
-                    logger.info(f"Repairing the PDF page {i+1} ...")
+                    logger.info(f"Repairing the PDF page {i + 1} ...")
                     # find the error page from binary data fp
                     error_page_data = get_page_data(fp, page_number=i)
                     # repair the error page with pikepdf

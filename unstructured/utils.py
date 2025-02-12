@@ -294,37 +294,9 @@ def scarf_analytics():
                     + "&dev=true",
                     timeout=10,
                 )
-                requests.get(
-                    "https://packages2.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=true",
-                    timeout=10,
-                )
             else:
                 requests.get(
                     "https://packages.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=false",
-                    timeout=10,
-                )
-                requests.get(
-                    "https://packages2.unstructured.io/python-telemetry?version="
                     + __version__
                     + "&platform="
                     + platform.system()

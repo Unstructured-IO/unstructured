@@ -77,7 +77,6 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
-        (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -116,7 +115,6 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
-        (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -154,10 +152,10 @@ def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_conte
     assert detect_filetype(file=file, content_type=FileType.NDJSON.mime_type) == FileType.NDJSON
 
 
-# TODO: ideally this test should pass, currently fails
-# def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
-#     file_path = example_doc_path("simple.ndjson")
-#     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
+    file_path = example_doc_path("simple.ndjson")
+    assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
 
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
@@ -268,7 +266,6 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
         (FileType.UNK, "stanley-cups.csv"),
         (FileType.UNK, "eml/fake-email.eml"),
         (FileType.UNK, "example-10k-1p.html"),
-        (FileType.UNK, "spring-weather.html.json"),
         (FileType.UNK, "README.md"),
         (FileType.UNK, "README.org"),
         (FileType.UNK, "README.rst"),
@@ -333,6 +330,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
         (FileType.XML, "factbook.xml"),
+        (FileType.NDJSON, "simple.ndjson"),
     ],
 )
 def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_type(
@@ -393,6 +391,27 @@ def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extensi
 
     ctx_mime_type_.assert_called_with()
     assert file_type is FileType.HTML
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_without_extension(expected_value: FileType, file_name: str):
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    filetype = detect_filetype(file=file)
+    assert filetype == expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_with_extension(expected_value: FileType, file_name: str):
+    filetype = detect_filetype(file_path=example_doc_path(file_name))
+    assert filetype == expected_value
 
 
 @pytest.mark.parametrize(

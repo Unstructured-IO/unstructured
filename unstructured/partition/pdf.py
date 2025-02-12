@@ -145,6 +145,7 @@ def partition_pdf(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    password: Optional[str] = None,
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
@@ -228,6 +229,7 @@ def partition_pdf(
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
+        password=password,
         pdfminer_line_margin=pdfminer_line_margin,
         pdfminer_char_margin=pdfminer_char_margin,
         pdfminer_line_overlap=pdfminer_line_overlap,
@@ -253,6 +255,7 @@ def partition_pdf_or_image(
     starting_page_number: int = 1,
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
+    password: Optional[str] = None,
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
@@ -290,6 +293,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 **kwargs,
             )
             pdf_text_extractable = any(
@@ -339,6 +343,7 @@ def partition_pdf_or_image(
                 starting_page_number=starting_page_number,
                 extract_forms=extract_forms,
                 form_extraction_skip_tables=form_extraction_skip_tables,
+                password=password,
                 pdfminer_config=pdfminer_config,
                 **kwargs,
             )
@@ -365,6 +370,7 @@ def partition_pdf_or_image(
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -378,6 +384,7 @@ def extractable_elements(
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
@@ -389,6 +396,7 @@ def extractable_elements(
         languages=languages,
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
+        password=password,
         pdfminer_config=pdfminer_config,
         **kwargs,
     )
@@ -400,6 +408,7 @@ def _partition_pdf_with_pdfminer(
     languages: list[str],
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
+    password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
@@ -424,6 +433,7 @@ def _partition_pdf_with_pdfminer(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified,
                 starting_page_number=starting_page_number,
+                password=password,
                 pdfminer_config=pdfminer_config,
                 **kwargs,
             )
@@ -435,6 +445,8 @@ def _partition_pdf_with_pdfminer(
             languages=languages,
             metadata_last_modified=metadata_last_modified,
             starting_page_number=starting_page_number,
+            password=password,
+            pdfminer_config=pdfminer_config,
             **kwargs,
         )
 
@@ -449,6 +461,7 @@ def _process_pdfminer_pages(
     metadata_last_modified: Optional[str],
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
+    password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs,
 ) -> list[list[Element]]:
@@ -457,7 +470,7 @@ def _process_pdfminer_pages(
     elements = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, pdfminer_config=pdfminer_config),
+        open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
         start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
@@ -580,6 +593,7 @@ def _partition_pdf_or_image_local(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     pdf_hi_res_max_pages: Optional[int] = None,
+    password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[Element]:
@@ -617,11 +631,15 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         extracted_layout, layouts_links = (
             process_file_with_pdfminer(
-                filename=filename, dpi=pdf_image_dpi, pdfminer_config=pdfminer_config
+                filename=filename,
+                dpi=pdf_image_dpi,
+                password=password,
+                pdfminer_config=pdfminer_config,
             )
             if pdf_text_extractable
             else ([], [])
@@ -662,6 +680,7 @@ def _partition_pdf_or_image_local(
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
+            password=password,
         )
     else:
         inferred_document_layout = process_data_with_model(
@@ -669,6 +688,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
+            password=password,
         )
 
         if hasattr(file, "seek"):
@@ -676,7 +696,7 @@ def _partition_pdf_or_image_local(
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(
-                file=file, dpi=pdf_image_dpi, pdfminer_config=pdfminer_config
+                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
             )
             if pdf_text_extractable
             else ([], [])
@@ -719,6 +739,7 @@ def _partition_pdf_or_image_local(
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
+            password=password,
         )
 
     # vectorization of the data structure ends here
@@ -866,6 +887,7 @@ def _partition_pdf_or_image_with_ocr(
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    password: Optional[str] = None,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
@@ -890,7 +912,7 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file), start=starting_page_number
+            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
