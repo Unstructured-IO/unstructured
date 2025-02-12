@@ -149,7 +149,7 @@ def partition_pdf(
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = 1.85,
+    pdfminer_word_margin: Optional[float] = 0.185,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -272,7 +272,7 @@ def partition_pdf_or_image(
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = 1.85,
+    pdfminer_word_margin: Optional[float] = 0.185,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
