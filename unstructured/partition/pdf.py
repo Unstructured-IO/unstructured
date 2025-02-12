@@ -149,7 +149,7 @@ def partition_pdf(
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = None,
+    pdfminer_word_margin: Optional[float] = 1.85,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -208,6 +208,19 @@ def partition_pdf(
         (results in adding FormKeysValues elements to output).
     form_extraction_skip_tables
         Whether the form extraction logic should ignore regions designated as Tables.
+    pdfminer_line_margin
+        If two lines are close together they are considered to be part of the same paragraph.
+        The margin is specified relative to the height of a line.
+    pdfminer_char_margin
+        If two characters are closer together than this margin they are considered part of
+        the same line. The margin is specified relative to the width of the character.
+    pdfminer_line_overlap
+        If two characters have more overlap than this they are considered to be on the same line.
+        The overlap is specified relative to the minimum height of both characters.
+    pdfminer_word_margin
+        If two characters on the same line are further apart than this margin then they are
+        considered to be two separate words, and an intermediate space will be added for
+        readability. The margin is specified relative to the width of the character.
     """
 
     exactly_one(filename=filename, file=file)
@@ -259,7 +272,7 @@ def partition_pdf_or_image(
     pdfminer_line_margin: Optional[float] = None,
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = None,
+    pdfminer_word_margin: Optional[float] = 1.85,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
