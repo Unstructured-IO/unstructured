@@ -7,7 +7,6 @@
 
 ### Fixes
 
-
 ## 0.16.20
 
 ### Enhancements
