@@ -327,3 +327,12 @@ docker-jupyter-notebook:
 .PHONY: run-jupyter
 run-jupyter:
 	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
+
+
+###########
+# Other #
+###########
+
+.PHONY: html-fixtures-update
+html-fixtures-update:
+	test_unstructured_ingest/html-fixtures-update.sh
