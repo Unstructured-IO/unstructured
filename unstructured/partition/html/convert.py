@@ -28,9 +28,12 @@ TABLE_BORDER_COLLAPSE_STYLE = "border-collapse: collapse;"
 
 def _element_to_html_attrs(element: Element) -> dict[str, Any]:
     element_attrs = element.to_dict()
-    element_metadata = element_attrs.pop("metadata", None)
+    element_metadata = element_attrs.pop("metadata", {})
     if element_metadata is not None:
-        element_attrs = {**element_attrs, **element_metadata}
+        element_attrs = {
+            **{key: str(val) for key, val in element_attrs.items()},
+            **{key: str(val) for key, val in element_metadata.items()},
+        }
     return {f"data-{key}": value for key, value in element_attrs.items()}
 
 
