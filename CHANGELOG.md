@@ -1,3 +1,16 @@
+## 0.16.21-dev4
+
+### Enhancements
+- **Use password** to load PDF with all modes
+
+- **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
+
+### Features
+
+### Fixes
+
+- **Fix file type detection for NDJSON files** NDJSON files were being detected as JSON due to having the same mime-type.
+
 ## 0.16.20
 
 ### Enhancements
