@@ -1,5 +1,8 @@
+from unittest.mock import patch
+
 import numpy as np
 import pytest
+from pdfminer.layout import LAParams
 from PIL import Image
 from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import (
@@ -11,6 +14,7 @@ from unstructured_inference.inference.elements import (
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from test_unstructured.unit_utils import example_doc_path
+from unstructured.partition.auto import partition
 from unstructured.partition.pdf_image.pdfminer_processing import (
     _validate_bbox,
     aggregate_embedded_text_by_block,
@@ -242,3 +246,19 @@ def test_process_file_with_pdfminer():
     assert len(layout)
     assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"
+
+
+@patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
+def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
+    partition(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        pdfminer_line_margin=1.123,
+        pdfminer_char_margin=None,
+        pdfminer_line_overlap=0.0123,
+        pdfminer_word_margin=3.21,
+    )
+    assert pdfminer_mock.call_args.kwargs == {
+        "line_margin": 1.123,
+        "line_overlap": 0.0123,
+        "word_margin": 3.21,
+    }

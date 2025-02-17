@@ -1,9 +1,11 @@
-## 0.16.21-dev4
+## 0.16.21-dev5
 
 ### Enhancements
 - **Use password** to load PDF with all modes
 
 - **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
+
+- **Add PDF Miner configuration** Now PDF Miner can be configured via `pdfminer_line_overlap`, `pdfminer_word_margin`, `pdfminer_line_margin` and `pdfminer_char_margin` parameters added to partition method.
 
 ### Features
 
