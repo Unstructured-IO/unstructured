@@ -8,19 +8,19 @@ all: compile-all-base
 
 .PHONY: compile-test
 compile-test:
-	pip-compile --upgrade test.in
+	pip-compile --upgrade test.in --no-emit-index-url
 
 .PHONY: compile-dev
 compile-dev:
-	pip-compile --upgrade dev.in
+	pip-compile --upgrade dev.in --no-emit-index-url
 
 .PHONY: compile-base
 compile-base:
-	pip-compile --upgrade base.in
+	pip-compile --upgrade base.in --no-emit-index-url
 
 .PHONY: compile-all-base
 compile-all-base: compile-base compile-test compile-dev
-	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --upgrade $(file) || exit;)
+	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --no-emit-index-url --upgrade $(file) || exit;)
 
 .PHONY: clean
 clean: clean-base
