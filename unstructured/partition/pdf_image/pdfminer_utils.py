@@ -7,14 +7,25 @@ from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.psparser import PSSyntaxError
+from pydantic import BaseModel
 
 from unstructured.logger import logger
 from unstructured.utils import requires_dependencies
 
 
-def init_pdfminer():
+class PDFMinerConfig(BaseModel):
+    line_overlap: Optional[float] = None
+    word_margin: Optional[float] = None
+    line_margin: Optional[float] = None
+    char_margin: Optional[float] = None
+
+
+def init_pdfminer(pdfminer_config: Optional[PDFMinerConfig] = None):
     rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
+
+    laparams_kwargs = pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
+    laparams = LAParams(**laparams_kwargs)
+
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
@@ -72,8 +83,7 @@ def rect_to_bbox(
 
 @requires_dependencies(["pikepdf", "pypdf"])
 def open_pdfminer_pages_generator(
-    fp: BinaryIO,
-    password: Optional[str] = None,
+    fp: BinaryIO, password: Optional[str] = None, pdfminer_config: Optional[PDFMinerConfig] = None
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
@@ -81,7 +91,7 @@ def open_pdfminer_pages_generator(
 
     from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
-    device, interpreter = init_pdfminer()
+    device, interpreter = init_pdfminer(pdfminer_config=pdfminer_config)
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
         try:

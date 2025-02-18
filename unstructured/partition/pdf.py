@@ -80,6 +80,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
+    PDFMinerConfig,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -145,6 +146,10 @@ def partition_pdf(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     password: Optional[str] = None,
+    pdfminer_line_margin: Optional[float] = None,
+    pdfminer_char_margin: Optional[float] = None,
+    pdfminer_line_overlap: Optional[float] = None,
+    pdfminer_word_margin: Optional[float] = 0.185,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -203,12 +208,24 @@ def partition_pdf(
         (results in adding FormKeysValues elements to output).
     form_extraction_skip_tables
         Whether the form extraction logic should ignore regions designated as Tables.
+    pdfminer_line_margin
+        If two lines are close together they are considered to be part of the same paragraph.
+        The margin is specified relative to the height of a line.
+    pdfminer_char_margin
+        If two characters are closer together than this margin they are considered part of
+        the same line. The margin is specified relative to the width of the character.
+    pdfminer_line_overlap
+        If two characters have more overlap than this they are considered to be on the same line.
+        The overlap is specified relative to the minimum height of both characters.
+    pdfminer_word_margin
+        If two characters on the same line are further apart than this margin then they are
+        considered to be two separate words, and an intermediate space will be added for
+        readability. The margin is specified relative to the width of the character.
     """
 
     exactly_one(filename=filename, file=file)
 
     languages = check_language_args(languages or [], ocr_languages)
-
     return partition_pdf_or_image(
         filename=filename,
         file=file,
@@ -226,6 +243,10 @@ def partition_pdf(
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
         password=password,
+        pdfminer_line_margin=pdfminer_line_margin,
+        pdfminer_char_margin=pdfminer_char_margin,
+        pdfminer_line_overlap=pdfminer_line_overlap,
+        pdfminer_word_margin=pdfminer_word_margin,
         **kwargs,
     )
 
@@ -248,6 +269,10 @@ def partition_pdf_or_image(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     password: Optional[str] = None,
+    pdfminer_line_margin: Optional[float] = None,
+    pdfminer_char_margin: Optional[float] = None,
+    pdfminer_line_overlap: Optional[float] = None,
+    pdfminer_word_margin: Optional[float] = 0.185,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -265,7 +290,12 @@ def partition_pdf_or_image(
     validate_strategy(strategy, is_image)
 
     last_modified = get_last_modified_date(filename) if filename else None
-
+    pdfminer_config = PDFMinerConfig(
+        line_margin=pdfminer_line_margin,
+        char_margin=pdfminer_char_margin,
+        line_overlap=pdfminer_line_overlap,
+        word_margin=pdfminer_word_margin,
+    )
     extracted_elements = []
     pdf_text_extractable = False
     if not is_image:
@@ -277,6 +307,7 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modified,
                 starting_page_number=starting_page_number,
                 password=password,
+                pdfminer_config=pdfminer_config,
                 **kwargs,
             )
             pdf_text_extractable = any(
@@ -327,6 +358,7 @@ def partition_pdf_or_image(
                 extract_forms=extract_forms,
                 form_extraction_skip_tables=form_extraction_skip_tables,
                 password=password,
+                pdfminer_config=pdfminer_config,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -367,6 +399,7 @@ def extractable_elements(
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     if isinstance(file, bytes):
@@ -378,6 +411,7 @@ def extractable_elements(
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
         password=password,
+        pdfminer_config=pdfminer_config,
         **kwargs,
     )
 
@@ -389,12 +423,13 @@ def _partition_pdf_with_pdfminer(
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
 
-    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
+    Implementation is based on the `extract_text` implementation in pdfminer.six, but
     modified to support tracking page numbers and working with file-like objects.
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
@@ -413,6 +448,7 @@ def _partition_pdf_with_pdfminer(
                 metadata_last_modified=metadata_last_modified,
                 starting_page_number=starting_page_number,
                 password=password,
+                pdfminer_config=pdfminer_config,
                 **kwargs,
             )
 
@@ -424,6 +460,7 @@ def _partition_pdf_with_pdfminer(
             metadata_last_modified=metadata_last_modified,
             starting_page_number=starting_page_number,
             password=password,
+            pdfminer_config=pdfminer_config,
             **kwargs,
         )
 
@@ -439,6 +476,7 @@ def _process_pdfminer_pages(
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs,
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
@@ -446,7 +484,7 @@ def _process_pdfminer_pages(
     elements = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, password=password),
+        open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
         start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
@@ -570,6 +608,7 @@ def _partition_pdf_or_image_local(
     form_extraction_skip_tables: bool = True,
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -610,7 +649,12 @@ def _partition_pdf_or_image_local(
         )
 
         extracted_layout, layouts_links = (
-            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi, password=password)
+            process_file_with_pdfminer(
+                filename=filename,
+                dpi=pdf_image_dpi,
+                password=password,
+                pdfminer_config=pdfminer_config,
+            )
             if pdf_text_extractable
             else ([], [])
         )
@@ -665,7 +709,9 @@ def _partition_pdf_or_image_local(
             file.seek(0)
 
         extracted_layout, layouts_links = (
-            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi, password=password)
+            process_data_with_pdfminer(
+                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+            )
             if pdf_text_extractable
             else ([], [])
         )

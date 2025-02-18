@@ -14,6 +14,7 @@ from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata, ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
+    PDFMinerConfig,
     extract_image_objects,
     extract_text_objects,
     open_pdfminer_pages_generator,
@@ -39,13 +40,12 @@ def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout, layouts_links = process_data_with_pdfminer(
-            file=fp,
-            dpi=dpi,
-            password=password,
+            file=fp, dpi=dpi, password=password, pdfminer_config=pdfminer_config
         )
         return extracted_layout, layouts_links
 
@@ -435,6 +435,7 @@ def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
     password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
@@ -446,7 +447,7 @@ def process_data_with_pdfminer(
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(file, password=password)
+        open_pdfminer_pages_generator(file, password=password, pdfminer_config=pdfminer_config)
     ):
         width, height = page_layout.width, page_layout.height
 
