@@ -1,3 +1,9 @@
+## 0.16.22-dev0
+
+### Fixes
+
+* **Handle filenames without extensions in file type detection**
+
 ## 0.16.21
 
 ### Enhancements
