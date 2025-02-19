@@ -4,10 +4,8 @@
 #
 #    pip-compile extra-pptx.in
 #
-lxml==5.3.0
-    # via
-    #   -c ./deps/constraints.txt
-    #   python-pptx
+lxml==5.3.1
+    # via python-pptx
 pillow==11.1.0
     # via python-pptx
 python-pptx==1.0.2
