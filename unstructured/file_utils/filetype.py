@@ -94,10 +94,11 @@ def detect_filetype(
           filesystem.
         - Neither `file_path` nor `file` were specified.
     """
-    file_buffer = (
-        io.BytesIO(file.read()) if isinstance(file, tempfile.SpooledTemporaryFile) else file
-    )
-    file.seek(0)
+    file_buffer = file
+    if isinstance(file, tempfile.SpooledTemporaryFile):
+        file_buffer = io.BytesIO(file.read())
+        file.seek(0)
+
     ctx = _FileTypeDetectionContext.new(
         file_path=file_path,
         file=file_buffer,
