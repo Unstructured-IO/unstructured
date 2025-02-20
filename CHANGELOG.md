@@ -1,4 +1,4 @@
-## 0.16.22-dev0
+## 0.16.23-dev0
 
 ### Enhancements
 
@@ -6,6 +6,17 @@
 
 ### Fixes
 - **Fixes detect_filetype when SpooledTemporaryFile is passed**. Previously some random name would get assigned to the file and the function raised error.
+
+
+## 0.16.22
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix open CVES in and bump dependencies
 
 ## 0.16.21
 
