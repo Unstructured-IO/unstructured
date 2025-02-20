@@ -1,10 +1,20 @@
-## 0.16.22-dev1
+## 0.16.23-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+## 0.16.22
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix open CVES in and bump dependencies**
 
 ## 0.16.21
 
