@@ -31,9 +31,11 @@ from __future__ import annotations
 import contextlib
 import functools
 import importlib.util
+import io
 import json
 import os
 import re
+import tempfile
 import zipfile
 from typing import IO, Callable, Iterator, Optional
 
@@ -60,7 +62,7 @@ except ImportError:
 
 def detect_filetype(
     file_path: str | None = None,
-    file: IO[bytes] | None = None,
+    file: IO[bytes] | tempfile.SpooledTemporaryFile | None = None,
     encoding: str | None = None,
     content_type: str | None = None,
     metadata_file_path: Optional[str] = None,
@@ -92,9 +94,14 @@ def detect_filetype(
           filesystem.
         - Neither `file_path` nor `file` were specified.
     """
+    file_buffer = file
+    if isinstance(file, tempfile.SpooledTemporaryFile):
+        file_buffer = io.BytesIO(file.read())
+        file.seek(0)
+
     ctx = _FileTypeDetectionContext.new(
         file_path=file_path,
-        file=file,
+        file=file_buffer,
         encoding=encoding,
         content_type=content_type,
         metadata_file_path=metadata_file_path,
