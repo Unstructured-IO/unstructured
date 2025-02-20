@@ -1,3 +1,12 @@
+## 0.16.22-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes detect_filetype when SpooledTemporaryFile is passed**. Previously some random name would get assigned to the file and the function raised error.
+
 ## 0.16.21
 
 ### Enhancements
