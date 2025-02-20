@@ -9,7 +9,7 @@ import tempfile
 import warnings
 from importlib import import_module
 from typing import Iterator
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from PIL import Image
@@ -42,6 +42,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.common import UnsupportedFileFormatError
@@ -1239,6 +1240,17 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
         for e in elements
         if e.metadata.filetype is not None
     )
+
+
+def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):
+    detect_filetype_mock = MagicMock(return_value=FileType.JSON)
+    mocker.patch("unstructured.file_utils.filetype._FileTypeDetector", detect_filetype_mock)
+    with tempfile.SpooledTemporaryFile() as f:
+        f.write(b'{"text": Hello, world!}')
+        f.seek(0)
+        detect_filetype(file=f)
+    file_detection_context = detect_filetype_mock.file_type.call_args[0][0]
+    assert file_detection_context.text_head == '{"text": Hello, world!}'
 
 
 # -- .languages -----------------------------------------------------------
