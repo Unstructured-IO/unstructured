@@ -9,7 +9,7 @@ import tempfile
 import warnings
 from importlib import import_module
 from typing import Iterator
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from PIL import Image
@@ -1239,6 +1239,19 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
         for e in elements
         if e.metadata.filetype is not None
     )
+
+
+def test_partition_maps_temp_file_to_bytes_io_before_calling_detect_filetype(mocker):
+    detect_filetype_mock = MagicMock(return_value=FileType.JSON)
+    mocker.patch("unstructured.partition.auto.detect_filetype", detect_filetype_mock)
+
+    with tempfile.SpooledTemporaryFile() as f:
+        f.write(b'{"text": Hello, world!}')
+        f.seek(0)
+
+        partition(file=f, filename="file.json")
+
+    assert detect_filetype_mock.call_args[1]["file_path"] is not None
 
 
 # -- .languages -----------------------------------------------------------
