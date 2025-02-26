@@ -1,5 +1,19 @@
+from unstructured.documents.elements import ElementType
 from unstructured.partition.html import partition_html
 
+def test_base64_images_are_included():
+    # language=HTML
+    html = """
+    <div class="Page">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
+        //8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Base64 Image">
+    </div>
+    """
+    _, image = partition_html(
+        text=html,
+        html_parser_version="v2",
+    )
+    assert image.category == ElementType.IMAGE
 
 def test_alternative_image_text_can_be_included():
     # language=HTML
