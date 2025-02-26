@@ -224,15 +224,15 @@ def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
     temp_group: list["ElementHtml"] = []
     prev_grouping = False
     for child in children:
-        if grouping := child.element.category in LIST_ELEMENTS:
-            if grouping:
-                temp_group.append(child)
-            elif prev_grouping:
-                grouped_children.append(OrderedListElementHtml(Element(), temp_group))
-                grouped_children.append(child)
-                temp_group = []
-            else:
-                grouped_children.append(child)
+        grouping = child.element.category in LIST_ELEMENTS
+        if grouping:
+            temp_group.append(child)
+        elif prev_grouping:
+            grouped_children.append(OrderedListElementHtml(Element(), temp_group))
+            grouped_children.append(child)
+            temp_group = []
+        else:
+            grouped_children.append(child)
         prev_grouping = grouping
     if temp_group:
         grouped_children.append(OrderedListElementHtml(Element(), temp_group))
@@ -273,9 +273,9 @@ def _elements_to_html_tags_by_page(
     soup = BeautifulSoup("", HTML_PARSER)
     pages_tags: list[Tag] = []
     grouped_elements = group_elements_by_page(elements)
-    for page, elements in enumerate(grouped_elements, start=1):
+    for page, g_elements in enumerate(grouped_elements, start=1):
         page_html = soup.new_tag(name="div", attrs={"data-page_number": page})
-        elements_html = _elements_to_html_tags(elements, exclude_binary_image_data)
+        elements_html = _elements_to_html_tags(g_elements, exclude_binary_image_data)
         for element_html in elements_html:
             page_html.append(element_html)
         pages_tags.append(page_html)
