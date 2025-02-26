@@ -223,9 +223,8 @@ class _HtmlPartitioner:
 
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.
-        elements_to_remove = ["del", "link", "meta", "noscript", "script", "style"]
         etree.strip_elements(
-            root, elements_to_remove, with_tail=False
+            root, ["del", "link", "meta", "noscript", "script", "style"], with_tail=False
         )
 
         # -- remove <header> and <footer> tags if the caller doesn't want their contents --
