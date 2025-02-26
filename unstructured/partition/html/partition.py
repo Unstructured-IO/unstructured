@@ -224,8 +224,6 @@ class _HtmlPartitioner:
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.
         elements_to_remove = ["del", "link", "meta", "noscript", "script", "style"]
-        if self._opts.html_parser_version != "v2":
-            elements_to_remove.append("img")
         etree.strip_elements(
             root, elements_to_remove, with_tail=False
         )

@@ -75,6 +75,7 @@ Other background
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict, deque
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
@@ -89,6 +90,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    Image,
     ListItem,
     NarrativeText,
     Table,
@@ -475,6 +477,35 @@ class Pre(BlockItem):
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _PreElementAccumulator(self)
+
+class ImageBlock(Flow):
+    """Custom element-class for `<img>` elements."""
+
+    BASE64_IMAGE_REGEX = re.compile(r"^data:(image/[^;]+);base64,")
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Generate an Image element based on `src`, `alt`, and dimensions."""
+        img_src = self.get("src", "").strip()
+        img_alt = self.get("alt", "").strip()
+
+        # Extract MIME type from base64-encoded `src`
+        mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
+        img_mime_type = mime_match.group(1) if mime_match else None
+
+        # If it's a base64 image, store the whole base64 data
+        img_base64 = img_src if img_src.startswith("data:image/") else None
+
+        if not img_src:
+            return
+
+        yield Image(
+            text=img_alt,
+            metadata=ElementMetadata(
+                text_as_html=f'<img src="{img_src}" alt="{img_alt}"/>',
+                image_mime_type=img_mime_type if img_mime_type else None,
+                image_base64=img_base64,
+            )
+        )
 
 
 class TableBlock(Flow):
@@ -928,6 +959,8 @@ element_class_lookup.get_namespace(None).update(
         "ol": ListBlock,
         "ul": ListBlock,
         "li": ListItemBlock,
+        # -- image --
+        "img": ImageBlock,
         # -- table --
         "table": TableBlock,
         # -- annotated phrasing --

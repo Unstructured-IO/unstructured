@@ -24,6 +24,7 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     CompositeElement,
+    ElementType,
     ListItem,
     NarrativeText,
     Table,
@@ -294,6 +295,27 @@ def test_it_does_not_extract_text_in_style_tags():
 
     assert isinstance(element, Text)
     assert element.text == "Lorem ipsum dolor"
+
+
+# -- image parsing behaviors ---------------------------------------------------------------------
+
+def test_base64_images_are_included():
+    base64 = (
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
+        "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+    )
+    # language=HTML
+    html = f"""
+    <div class="Page">
+        <img src="{base64}" alt="Base64 Image">
+    </div>
+    """
+    image, = partition_html(
+        text=html,
+    )
+    assert image.category == ElementType.IMAGE
+    assert image.metadata.image_base64 == base64
+    assert image.metadata.image_mime_type == "image/png"
 
 
 # -- table parsing behaviors ---------------------------------------------------------------------
