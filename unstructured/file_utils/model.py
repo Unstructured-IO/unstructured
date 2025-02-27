@@ -394,9 +394,9 @@ class FileType(enum.Enum):
     )
     WAV = (
         "wav",
-        None,
+        "audio",
         cast(list[str], []),
-        None,
+        "audio",
         [".wav"],
         "audio/wav",
         [
@@ -406,6 +406,16 @@ class FileType(enum.Enum):
             "audio/x-pn-wav",
             "audio/x-wav",
         ],
+    )
+    MP3 = (
+        "mp3",
+        "audio",
+        cast(list[str], []),
+        "audio",
+        [".mp3"],
+        "audio/mpeg",
+        ["audio/mp3",
+         "audio/mpeg"],
     )
     XLS = (
         "xls",

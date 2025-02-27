@@ -208,6 +208,10 @@ class ElementMetadata:
     table_as_cells: Optional[dict[str, str | int]]
     url: Optional[str]
 
+    # -- used for audio elements to capture start and end times --
+    start_time: Optional[float]
+    end_time: Optional[float]
+
     # -- debug fields can be assigned and referenced using dotted-notation but are not serialized
     # -- to dict/JSON, do not participate in equality comparison, and are not included in the
     # -- `.fields` dict used by other parts of the library like chunking and weaviate.
@@ -250,6 +254,8 @@ class ElementMetadata:
         table_as_cells: Optional[dict[str, str | int]] = None,
         text_as_html: Optional[str] = None,
         url: Optional[str] = None,
+        start_time: Optional[float]=None,
+        end_time: Optional[float]=None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
         self.bcc_recipient = bcc_recipient
@@ -294,6 +300,8 @@ class ElementMetadata:
         self.text_as_html = text_as_html
         self.table_as_cells = table_as_cells
         self.url = url
+        self.start_time = start_time
+        self.end_time = end_time
 
     def __eq__(self, other: object) -> bool:
         """Implments equivalence, like meta == other_meta.
@@ -636,6 +644,7 @@ class ElementType:
     PAGE_NUMBER = "PageNumber"
     CODE_SNIPPET = "CodeSnippet"
     FORM_KEYS_VALUES = "FormKeysValues"
+    TranscriptFragment = "TranscriptFragment"
 
     @classmethod
     def to_dict(cls):
@@ -971,6 +980,11 @@ class FormKeysValues(Text):
     category = "FormKeysValues"
 
 
+class TranscriptFragment(Text):
+    """An element for capturing page numbers."""
+
+    category = "TranscriptFragment"
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -1009,6 +1023,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.CODE_SNIPPET: CodeSnippet,
     ElementType.PAGE_NUMBER: PageNumber,
     ElementType.FORM_KEYS_VALUES: FormKeysValues,
+    ElementType.TranscriptFragment: TranscriptFragment,
 }
 
 
