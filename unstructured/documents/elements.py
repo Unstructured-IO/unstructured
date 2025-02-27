@@ -645,6 +645,7 @@ class ElementType:
     CODE_SNIPPET = "CodeSnippet"
     FORM_KEYS_VALUES = "FormKeysValues"
     TranscriptFragment = "TranscriptFragment"
+    VideoFragmentCaption = "VideoFragmentCaption"
 
     @classmethod
     def to_dict(cls):
@@ -985,6 +986,11 @@ class TranscriptFragment(Text):
 
     category = "TranscriptFragment"
 
+
+class VideoFragmentCaption(Text):
+    category = "VideoFragmentCaption"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -1024,6 +1030,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.PAGE_NUMBER: PageNumber,
     ElementType.FORM_KEYS_VALUES: FormKeysValues,
     ElementType.TranscriptFragment: TranscriptFragment,
+    ElementType.VideoFragmentCaption: VideoFragmentCaption,
 }
 
 
