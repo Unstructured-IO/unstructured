@@ -114,7 +114,7 @@ jobs:
       - name: Update HTML fixtures
         run: |
           source .venv/bin/activate
-          ./test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+          make html-fixtures-update
 
       - name: Save branch name to environment file
         id: branch
