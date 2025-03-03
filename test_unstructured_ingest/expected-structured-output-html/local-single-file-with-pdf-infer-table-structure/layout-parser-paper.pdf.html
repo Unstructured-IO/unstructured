@@ -140,8 +140,8 @@
    Z. Shen et al.
   </p>
   <img alt="Efficient Data Annotation Model Customization Document Images Community Platform ‘a &gt;) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY" class="Image" id="642416e5d6c99219b16dbba6f72392c5"/>
-  <p class="NarrativeText" id="2172d9b276cd7a485dea4978805815d8">
-   Fig. 1: The overall architecture of LayoutParser. For an input document image, the core LayoutParser library provides a set of oﬀ-the-shelf tools for layout detection, OCR, visualization, and storage, backed by a carefully designed layout data structure. LayoutParser also supports high level customization via eﬃcient layout annotation and model training functions. These improve model accuracy on the target samples. The community platform enables the easy sharing of DIA models and whole digitization pipelines to promote reusability and reproducibility. A collection of detailed documentation, tutorials and exemplar projects make LayoutParser easy to learn and use.
+  <p class="NarrativeText" id="466f0bc21599ccf0fa27c021cb023f90">
+   Fig.1: The overall architecture of LayoutParser. For an input document image, the core LayoutParser library provides a set of oﬀ-the-shelf tools for layout detection, OCR, visualization, and storage, backed by a carefully designed layout data structure. LayoutParser also supports high level customization via eﬃcient layout annotation and model training functions. These improve model accuracy on the target samples. The community platform enables the easy sharing of DIA models and whole digitization pipelines to promote reusability and reproducibility. A collection of detailed documentation, tutorials and exemplar projects make LayoutParser easy to learn and use.
   </p>
   <p class="NarrativeText" id="b4948db85ca791e99aa92589fc41734f">
    AllenNLP [8] and transformers [34] have provided the community with complete DL-based support for developing and deploying models for general computer vision and natural language processing problems. LayoutParser, on the other hand, specializes speciﬁcally in DIA tasks. LayoutParser is also equipped with a community platform inspired by established model hubs such as Torch Hub [23] and TensorFlow Hub [1]. It enables the sharing of pretrained models as well as full document processing pipelines that are unique to DIA tasks.
@@ -248,14 +248,14 @@
   <li class="ListItem" id="508a6705bb0bfb693616cc14fec5e1b9">
    1 import layoutparser as lp
   </li>
-  <p class="NarrativeText" id="c2af717e76ad68bd6da87a15a69f126a">
-   2 image = cv2 . imread ( " image_file " ) # load images 3 model = lp . De t e c tro n2 Lay outM odel ( 4 " lp :// PubLayNet / f as t er _ r c nn _ R _ 50 _ F P N_ 3 x / config " )
+  <p class="NarrativeText" id="7d55b80ca5a0c2888ff44b931430b0d8">
+   2 image = cv2.imread("image_file") # load images 3 model = lp.Detectron2LayoutModel( 4 "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config")
   </p>
-  <li class="ListItem" id="a002e13c7ea2613b2eabb9ea3501856d">
-   3 model = lp . De t e c tro n2 Lay outM odel (
+  <li class="ListItem" id="f30541418a7dca51e3e4cd880486ab9c">
+   3 model = lp.Detectron2LayoutModel(
   </li>
-  <li class="ListItem" id="366c05fd7babc86bf01d690b9df755da">
-   5 layout = model . detect ( image )
+  <li class="ListItem" id="ecaf88c55d275f8fdc8c25e2d919077f">
+   5 layout = model.detect(image)
   </li>
   <p class="NarrativeText" id="f888c5e8f5b1339f2af75612ea13c719">
    LayoutParser provides a wealth of pre-trained model weights using various datasets covering diﬀerent languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are signiﬁcantly diﬀerent from the training dataset. As document structures and layouts vary greatly in diﬀerent domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name lp://&lt;dataset-name&gt;/&lt;model-architecture-name&gt;.
@@ -267,8 +267,8 @@
    Z. Shen et al.
   </p>
   <img alt='- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=") [Bo] eaing i Text | | Type | | ower ° &amp; a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff' class="Image" id="6eb2bb6ca50b3be177565f9ff546bce8"/>
-  <p class="FigureCaption" id="c2a2a4a054151d16820f38e115ce7a72">
-   Fig. 2: The relationship between the three types of layout data structures. Coordinate supports three kinds of variation; TextBlock consists of the co- ordinate information and extra features like block text, types, and reading orders; a Layout object is a list of all possible layout elements, including other Layout objects. They all support the same set of transformation and operation APIs for maximum ﬂexibility.
+  <p class="FigureCaption" id="9f11aa6b22dea1bba7eb0d122c0c5562">
+   Fig.2: The relationship between the three types of layout data structures. Coordinate supports three kinds of variation; TextBlock consists of the co- ordinate information and extra features like block text, types, and reading orders; a Layout object is a list of all possible layout elements, including other Layout objects. They all support the same set of transformation and operation APIs for maximum ﬂexibility.
   </p>
   <p class="NarrativeText" id="d997f63fd79c7e03050ca01b58dfdf0a">
    Shown in Table 1, LayoutParser currently hosts 9 pre-trained models trained on 5 diﬀerent datasets. Description of the training dataset is provided alongside with the trained models such that users can quickly identify the most suitable models for their tasks. Additionally, when such a model is not readily available, LayoutParser also supports training customized layout models and community sharing of the models (detailed in Section 3.5).
@@ -294,8 +294,8 @@
   <p class="NarrativeText" id="16565416942e53cf65f75a8a845df211">
    LayoutParser provides a uniﬁed interface for existing OCR tools. Though there are many OCR tools available, they are usually conﬁgured diﬀerently with distinct APIs or protocols for using them. It can be ineﬃcient to add new OCR tools into an existing pipeline, and diﬃcult to make direct comparisons among the available tools to ﬁnd the best option for a particular project. To this end, LayoutParser builds a series of wrappers among existing OCR engines, and provides nearly the same syntax for using them. It supports a plug-and-play style of using OCR engines, making it eﬀortless to switch, evaluate, and compare diﬀerent OCR modules:
   </p>
-  <p class="NarrativeText" id="373a9a67f855ba5b79bdc1393d2f1ce9">
-   1 ocr_agent = lp . TesseractAgent () 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent . detect ( image )
+  <p class="NarrativeText" id="2e605dfb574532cf2ab54ded080a2ab9">
+   1 ocr_agent = lp.TesseractAgent() 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent.detect(image)
   </p>
   <p class="NarrativeText" id="5bc3c9470dc53c60c1fd04828105afdd">
    The OCR outputs will also be stored in the aforementioned layout data structures and can be seamlessly incorporated into the digitization pipeline. Currently LayoutParser supports the Tesseract and Google Cloud Vision OCR engines.
@@ -450,8 +450,8 @@
    LayoutParser: A Uniﬁed Toolkit for DL-Based DIA
   </li>
   <img alt="x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position" class="Image" id="f5450580bd9ae07f4cdf7c23a6ccaf41"/>
-  <p class="NarrativeText" id="fadd4ad54cd14e3e4711d41a1c99f813">
-   Fig. 3: Layout detection and OCR results visualization generated by the LayoutParser APIs. Mode I directly overlays the layout region bounding boxes and categories over the original image. Mode II recreates the original document via drawing the OCR’d texts at their corresponding positions on the image canvas. In this ﬁgure, tokens in textual regions are ﬁltered using the API and then displayed.
+  <p class="NarrativeText" id="4d1b9566e792683b9559b778be4f4046">
+   Fig.3: Layout detection and OCR results visualization generated by the LayoutParser APIs. Mode I directly overlays the layout region bounding boxes and categories over the original image. Mode II recreates the original document via drawing the OCR’d texts at their corresponding positions on the image canvas. In this ﬁgure, tokens in textual regions are ﬁltered using the API and then displayed.
   </p>
   <p class="NarrativeText" id="625c9e1d41a9740f094041595f79953d">
    can also be highly sensitive and not sharable publicly. To overcome these chal- lenges, LayoutParser is built with rich features for eﬃcient data annotation and customized model training.
@@ -466,8 +466,8 @@
    10 Z. Shen et al.
   </li>
   <img alt="Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable Column reading order HEE company type Column Categories (J tite Adress _] ree [7] Section Header Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance" class="Image" id="6eb34afad9d568fbccde8ac8854dc24d"/>
-  <p class="NarrativeText" id="ebbb8c84b2a69f817c8ae7df20d72dd9">
-   Fig. 4: Illustration of (a) the original historical Japanese document with layout detection results and (b) a recreated version of the document image that achieves much better character recognition recall. The reorganization algorithm rearranges the tokens based on the their detected bounding boxes given a maximum allowed height.
+  <p class="NarrativeText" id="9667b0e42f9d28607c7c13bffb760906">
+   Fig.4: Illustration of (a) the original historical Japanese document with layout detection results and (b) a recreated version of the document image that achieves much better character recognition recall. The reorganization algorithm rearranges the tokens based on the their detected bounding boxes given a maximum allowed height.
   </p>
   <h1 class="Title" id="88f6e589165656eceebf898d0240e05c">
    4 LayoutParser Community Platform
@@ -503,8 +503,8 @@
    As shown in Figure 4 (a), the document contains columns of text written vertically 15, a common style in Japanese. Due to scanning noise and archaic printing technology, the columns can be skewed or have vari- able widths, and hence cannot be eas- ily identiﬁed via rule-based methods. Within each column, words are sepa- rated by white spaces of variable size, and the vertical positions of objects can be an indicator of their layout type.
   </p>
   <img alt="(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training &amp; Inference, ¥ ; Handy Data Structures &amp; Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | &lt;—— Default ane Customized ¥ ee Layout Structure Visualization &amp; Export | &lt;—— | visualization &amp; Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules" class="Image" id="f48a844114951222f6c96331efc683fb"/>
-  <p class="NarrativeText" id="3c1fd89a3436d3cedb4d22d297c76437">
-   Fig. 5: Illustration of how LayoutParser helps with the historical document digi- tization pipeline.
+  <p class="NarrativeText" id="80291b42f1785935496188bb52788288">
+   Fig.5: Illustration of how LayoutParser helps with the historical document digi- tization pipeline.
   </p>
   <li class="ListItem" id="c5b22d5a9f8b657ad4acdf6ad1f0bdd0">
    15 A document page consists of eight rows like this. For simplicity we skip the row segmentation discussion and refer readers to the source code when available.
@@ -537,8 +537,8 @@
    LayoutParser: A Uniﬁed Toolkit for DL-Based DIA
   </li>
   <img alt="(@) Partial table at the bottom (&amp;) Full page table (6) Partial table at the top (d) Mis-detected tet line" class="Image" id="d5c954ff619e348d36d5180feedabc6c"/>
-  <p class="FigureCaption" id="7e685908875164adafa447ec3d97455e">
-   Fig. 6: This lightweight table detector can identify tables (outlined in red) and cells (shaded in blue) in diﬀerent locations on a page. In very few cases (d), it might generate minor error predictions, e.g, failing to capture the top text line of a table.
+  <p class="FigureCaption" id="d35d253341e8b8d837f384ecd6ac410a">
+   Fig.6: This lightweight table detector can identify tables (outlined in red) and cells (shaded in blue) in diﬀerent locations on a page. In very few cases (d), it might generate minor error predictions, e.g, failing to capture the top text line of a table.
   </p>
   <h1 class="Title" id="60e4fa05c78628ec1c6fa6003b86b52e">
    5.2 A light-weight Visual Table Extractor
