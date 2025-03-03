@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Description: Compare the structured output html files to the expected output html files and exit
+# Description: Compare the structured output HTML files to the expected output html files and exit
 #              with an error if they are different. If the environment variable OVERWRITE_FIXTURES
 #              is not "false", then this script will instead copy the output files to the expected
 #              output directory.
 #
 # Environment Variables:
-#   - OVERWRITE_FIXTURES: Controls whether to overwrite fixtures or not. default: "false"
+#   - OVERWRITE_FIXTURES: Controls whether to overwrite HTML fixtures or not. default: "false"
 
 set +e
 
@@ -34,7 +34,7 @@ trap cleanup EXIT
 # Generate structured HTML output
 "$SCRIPT_DIR"/structured-json-to-html.sh "$OUTPUT_DIR_HTML"
 
-# To update ingest test html fixtures, run 'make html-fixtures-update' on x86_64
+# To update ingest test HTML fixtures, run 'make html-fixtures-update' on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
   # remove folder if it exists
   if [ -d "$EXPECTED_OUTPUT_DIR_HTML" ]; then
