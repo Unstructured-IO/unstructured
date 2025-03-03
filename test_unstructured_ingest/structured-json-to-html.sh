@@ -18,7 +18,7 @@ process_json_files() {
         cmd+=" --no-group"
     fi
     # Run the Python script with the constructed command
-    eval $cmd
+    eval "$cmd"
 }
 
 # Start processing from the input directory
