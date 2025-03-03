@@ -1,8 +1,10 @@
-## 0.16.24-dev1
+## 0.16.24-dev2
 
 ### Enhancements
 
 ### Features
+
+- **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
 
 ### Fixes
 
