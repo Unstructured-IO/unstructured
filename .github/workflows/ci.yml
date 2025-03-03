@@ -343,6 +343,8 @@ jobs:
         OVERWRITE_FIXTURES: "false"
       run: |
         source .venv/bin/activate
+        sudo apt-get update
+        make install-base-ci
         ./test_unstructured_ingest/check-diff-expected-output-html.sh
 
   test_unstructured_api_unit:
