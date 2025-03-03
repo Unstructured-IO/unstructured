@@ -1,16 +1,17 @@
 #!/bin/bash
 
 # Define the input and output top directories
-OUTPUT_DIR=${1:-"test_unstructured_ingest/structured-output-html"}
-INPUT_DIR="test_unstructured_ingest/expected-structured-output"
-PYTHON_SCRIPT="scripts/html/elements_json_to_html.py"
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+OUTPUT_DIR=${1:-"$SCRIPT_DIR/structured-output-html"}
+INPUT_DIR="$SCRIPT_DIR/expected-structured-output"
+PYTHON_SCRIPT="$SCRIPT_DIR/../scripts/html/elements_json_to_html.py"
 EXCLUDE_IMG=0
 NO_GROUP=1
 
 # Function to process JSON files
 process_json_files() {
   # Add flags based on the variables
-  cmd="python \"$PYTHON_SCRIPT\" \"$INPUT_DIR\" --outdir \"$OUTPUT_DIR\""
+  cmd="PYTHONPATH=${PYTHONPATH:-.} python \"$PYTHON_SCRIPT\" \"$INPUT_DIR\" --outdir \"$OUTPUT_DIR\""
   if [ "$EXCLUDE_IMG" -eq 1 ]; then
     cmd+=" --exclude-img"
   fi
