@@ -8,7 +8,7 @@ weaviate-client>=3.26.7,<4.0.0
 # TODO: Constriant due to multiple versions being installed during pip-compile
 grpcio>=1.65.5
 # TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
-tokenizers>=0.19,<0.20
+tokenizers>=0.21,<0.22
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
 # updated or we drop support for 3.9
 urllib3<1.27

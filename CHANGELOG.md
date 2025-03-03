@@ -1,9 +1,39 @@
-## 0.16.21-dev4
+## 0.16.24-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.16.23
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes detect_filetype when SpooledTemporaryFile is passed**. Previously some random name would get assigned to the file and the function raised error.
+
+## 0.16.22
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix open CVES in and bump dependencies**
+
+## 0.16.21
 
 ### Enhancements
 - **Use password** to load PDF with all modes
 
 - **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
+
+- **Add PDF Miner configuration** Now PDF Miner can be configured via `pdfminer_line_overlap`, `pdfminer_word_margin`, `pdfminer_line_margin` and `pdfminer_char_margin` parameters added to partition method.
 
 ### Features
 
