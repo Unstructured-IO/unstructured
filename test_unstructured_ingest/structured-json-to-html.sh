@@ -9,16 +9,16 @@ NO_GROUP=1
 
 # Function to process JSON files
 process_json_files() {
-    # Add flags based on the variables
-    cmd="python \"$PYTHON_SCRIPT\" \"$INPUT_DIR\" --outdir \"$OUTPUT_DIR\""
-    if [ "$EXCLUDE_IMG" -eq 1 ]; then
-        cmd+=" --exclude-img"
-    fi
-    if [ "$NO_GROUP" -eq 1 ]; then
-        cmd+=" --no-group"
-    fi
-    # Run the Python script with the constructed command
-    eval "$cmd"
+  # Add flags based on the variables
+  cmd="python \"$PYTHON_SCRIPT\" \"$INPUT_DIR\" --outdir \"$OUTPUT_DIR\""
+  if [ "$EXCLUDE_IMG" -eq 1 ]; then
+    cmd+=" --exclude-img"
+  fi
+  if [ "$NO_GROUP" -eq 1 ]; then
+    cmd+=" --no-group"
+  fi
+  # Run the Python script with the constructed command
+  eval "$cmd"
 }
 
 # Start processing from the input directory
