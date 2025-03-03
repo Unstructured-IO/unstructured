@@ -245,7 +245,7 @@ def check_element_types_to_extract(
         normalized_el_type = available_element_types.get(
             el_type.lower(), el_type.lower().capitalize()
         )
-        if normalized_el_type not in available_element_types:
+        if normalized_el_type not in available_element_types.values():
             logger.warning(f"The requested type ({el_type}) doesn't match any available type")
         normalized_extract_image_block_types.append(normalized_el_type)
 
