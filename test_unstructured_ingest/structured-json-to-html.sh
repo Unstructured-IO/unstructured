@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define the input and output top directories
+OUTPUT_DIR=${1:-"test_unstructured_ingest/structured-output-html"}
 INPUT_DIR="test_unstructured_ingest/expected-structured-output"
-OUTPUT_DIR="test_unstructured_ingest/expected-structured-output-html"
 PYTHON_SCRIPT="scripts/html/elements_json_to_html.py"
 EXCLUDE_IMG=0
 NO_GROUP=1
