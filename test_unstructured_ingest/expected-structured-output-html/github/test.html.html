@@ -21,17 +21,17 @@
   filename: function(){
     return document.getElementById('filename').value;
   },
-  data: function(){
+  data: function(){ 
     return document.getElementById('data').value;
   },
-  onComplete: function(){
-    alert('Your File Has Been Saved!');
+  onComplete: function(){ 
+    alert('Your File Has Been Saved!'); 
   },
-  onCancel: function(){
+  onCancel: function(){ 
     alert('You have cancelled the saving of this file.');
   },
-  onError: function(){
-    alert('You must put something in the File Contents or there will be nothing to save!');
+  onError: function(){ 
+    alert('You must put something in the File Contents or there will be nothing to save!'); 
   },
   swf: 'media/downloadify.swf',
   downloadImage: 'images/download.png',
