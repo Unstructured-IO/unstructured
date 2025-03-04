@@ -656,8 +656,6 @@ def merge_inferred_with_extracted_layout(
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
-        # NOTE: once we drop reference to elements we can remove this step below
-        inferred_page.elements[:] = merged_layout.as_list()
 
     return inferred_document_layout
 
@@ -669,34 +667,23 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        non_pdfminer_element_boxes = [e.bbox for e in page.elements if e.source != Source.PDFMINER]
-        element_boxes = []
-        element_to_subregion_map = {}
-        subregion_indice = 0
-        for i, element in enumerate(page.elements):
-            if element.source != Source.PDFMINER:
-                continue
-            element_boxes.append(element.bbox)
-            element_to_subregion_map[i] = subregion_indice
-            subregion_indice += 1
+        pdfminer_mask = page.elements_array.sources == Source.PDFMINER
+        non_pdfminer_element_boxes = page.elements_array.slice(~pdfminer_mask).element_coords
+        pdfminer_element_boxes = page.elements_array.slice(pdfminer_mask).element_coords
 
         is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
-                element_boxes,
+                pdfminer_element_boxes,
                 non_pdfminer_element_boxes,
                 env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
             ).sum(axis=1)
             == 1
         )
 
-        page.elements = [
-            e
-            for i, e in enumerate(page.elements)
-            if (
-                (i not in element_to_subregion_map)
-                or not is_element_subregion_of_other_elements[element_to_subregion_map[i]]
-            )
-        ]
+        pdfminer_to_keep = np.where(pdfminer_mask)[0][~is_element_subregion_of_other_elements]
+        page.elements_array = page.elements_array.slice(
+            np.concatenate((np.where(~pdfminer_mask)[0], pdfminer_to_keep))
+        )
 
     return document
 

@@ -760,7 +760,8 @@ def _partition_pdf_or_image_local(
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
     for page in final_document_layout.pages:
-        page.elements_array.texts[np.isnull(page.elements_array.texts)] = ""
+        # TODO (yao): find upstream where None can be introduced and replace it with ""
+        page.elements_array.texts[page.elements_array.texts == None] = ""  # noqa: E711
 
     elements = document_to_element_list(
         final_document_layout,
