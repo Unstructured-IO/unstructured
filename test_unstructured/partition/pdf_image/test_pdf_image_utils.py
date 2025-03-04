@@ -231,6 +231,7 @@ def test_pad_bbox():
         (["table", "image"], ["Table", "Image"]),
         (["unknown"], ["Unknown"]),
         (["Table", "image", "UnknOwn"], ["Table", "Image", "Unknown"]),
+        (["NarrativeText", "narrativetext"], ["NarrativeText", "NarrativeText"]),
     ],
 )
 def test_check_element_types_to_extract(input_types, expected):

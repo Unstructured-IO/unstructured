@@ -1,6 +1,8 @@
-## 0.16.24-dev1
+## 0.16.24-dev2
 
 ### Enhancements
+
+- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
 
 ### Features
 
