@@ -319,6 +319,32 @@ jobs:
         make install-ingest
         ./test_unstructured_ingest/test-ingest-src.sh
 
+  test_json_to_html:
+    strategy:
+      matrix:
+        python-version: ["3.9","3.10"]
+    runs-on: ubuntu-latest-m
+    needs: [setup, lint]
+    steps:
+    - uses: 'actions/checkout@v4'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Get full Python version
+      id: full-python-version
+      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+    - name: Setup virtual environment
+      uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test HTML fixtures
+      env:
+        OVERWRITE_FIXTURES: "false"
+        PYTHONPATH: ${{ github.workspace }}
+      run: |
+        source .venv/bin/activate
+        ./test_unstructured_ingest/check-diff-expected-output-html.sh
 
   test_unstructured_api_unit:
     strategy:
