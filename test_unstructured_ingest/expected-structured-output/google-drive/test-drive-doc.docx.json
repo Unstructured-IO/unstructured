@@ -30,6 +30,37 @@
             "allowFileDiscovery": false
           },
           {
+            "id": "10619079449796831495",
+            "displayName": "fuse-team",
+            "type": "group",
+            "kind": "drive#permission",
+            "emailAddress": "fuse-team@unstructured.io",
+            "role": "writer",
+            "deleted": false
+          },
+          {
+            "id": "03887347926440898356",
+            "displayName": "michal.martyniak",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWWmJCSvduWur55hl36IxwKs5FJ1FWMoK6KtFlNUHDBU-McvlI=s64",
+            "emailAddress": "michal.martyniak@unstructured.io",
+            "role": "writer",
+            "deleted": false,
+            "pendingOwner": false
+          },
+          {
+            "id": "13662041828528429192",
+            "displayName": "rob",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjV31Wb5kVmEk66cog1KN-N_twpHHoDttcCQ9pRvE1cz1-FLHQ=s64",
+            "emailAddress": "rob@unstructured.io",
+            "role": "writer",
+            "deleted": false,
+            "pendingOwner": false
+          },
+          {
             "id": "18298851591250030956",
             "displayName": "ingest@unstructured-ingest-test.iam.gserviceaccount.com",
             "type": "user",
@@ -95,6 +126,37 @@
             "kind": "drive#permission",
             "role": "reader",
             "allowFileDiscovery": false
+          },
+          {
+            "id": "10619079449796831495",
+            "displayName": "fuse-team",
+            "type": "group",
+            "kind": "drive#permission",
+            "emailAddress": "fuse-team@unstructured.io",
+            "role": "writer",
+            "deleted": false
+          },
+          {
+            "id": "03887347926440898356",
+            "displayName": "michal.martyniak",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjWWmJCSvduWur55hl36IxwKs5FJ1FWMoK6KtFlNUHDBU-McvlI=s64",
+            "emailAddress": "michal.martyniak@unstructured.io",
+            "role": "writer",
+            "deleted": false,
+            "pendingOwner": false
+          },
+          {
+            "id": "13662041828528429192",
+            "displayName": "rob",
+            "type": "user",
+            "kind": "drive#permission",
+            "photoLink": "https://lh3.googleusercontent.com/a-/ALV-UjV31Wb5kVmEk66cog1KN-N_twpHHoDttcCQ9pRvE1cz1-FLHQ=s64",
+            "emailAddress": "rob@unstructured.io",
+            "role": "writer",
+            "deleted": false,
+            "pendingOwner": false
           },
           {
             "id": "18298851591250030956",
