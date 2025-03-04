@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+
 ### Features
 
 - **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
