@@ -25,7 +25,7 @@ fsspec==2025.2.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.29.1
+huggingface-hub==0.29.2
     # via
     #   tokenizers
     #   transformers
