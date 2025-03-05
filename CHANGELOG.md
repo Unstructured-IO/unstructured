@@ -1,8 +1,9 @@
-## 0.16.24-dev3
+## 0.16.24-dev4
 
 ### Enhancements
 
 - **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+- **`get_layout_elements_from_image` for `TesseractOCRAgent` now only calls `tesseract` once for inference`**. Previously two calls are made to get hocr and text information from the same image now those are combined into one inference call to save cpu time
 
 ### Features
 
