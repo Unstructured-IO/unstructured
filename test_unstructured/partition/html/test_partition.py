@@ -305,32 +305,36 @@ def test_partition_html_includes_base64_for_images():
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
         "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
     )
+    alt_text = "URL Image"
     # language=HTML
     html = f"""
     <div class="Page">
-        <img src="{base64}" alt="Base64 Image">
+        <img src="{base64}" alt="{alt_text}">
     </div>
     """
     (image,) = partition_html(
         text=html,
     )
     assert image.category == ElementType.IMAGE
+    assert image.text == alt_text
     assert image.metadata.image_base64 == base64
     assert image.metadata.image_mime_type == "image/png"
 
 
 def test_partition_html_includes_url_for_images():
     url = "https://example.com/image.png"
+    alt_text = "URL Image"
     # language=HTML
     html = f"""
     <div class="Page">
-        <img src="{url}" alt="Test Image">
+        <img src="{url}" alt="{alt_text}">
     </div>
     """
     (image,) = partition_html(
         text=html,
     )
     assert image.category == ElementType.IMAGE
+    assert image.text == alt_text
     assert image.metadata.url == url
 
 
