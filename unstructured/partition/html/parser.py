@@ -485,7 +485,7 @@ class ImageBlock(Flow):
     BASE64_IMAGE_REGEX = re.compile(r"^data:(image/[^;]+);base64,")
 
     def iter_elements(self) -> Iterator[Element]:
-        """Generate an Image element based on `src`, `data-src`, `alt`, and dimensions."""
+        """Generate an Image element based on `src`, `data-src`, and `alt`."""
         img_src = self.get("data-src", "").strip() or self.get("src", "").strip()
         img_alt = self.get("alt", "").strip()
 
