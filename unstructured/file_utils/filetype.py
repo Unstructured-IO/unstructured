@@ -168,26 +168,31 @@ class _FileTypeDetector:
         # -- inherently unreliable. On the other hand, binary file-types can be detected with 100%
         # -- accuracy. So start with binary types and only then consider an asserted content-type,
         # -- generally as a last resort.
-        # == STRATEGIES ============================================================
 
-        result_file_type = FileType.UNK
-
-        # -- strategy 1: most binary types can be detected with 100% accuracy --
         if (
-            predicted_file_type := self._known_binary_file_type
-            or (predicted_file_type := self._file_type_from_content_type)
-            or (
+            (  # strategy 1: most binary types can be detected with 100% accuracy
+                predicted_file_type := self._known_binary_file_type
+            )
+            or (  # strategy 2: use content-type asserted by caller
+                predicted_file_type := self._file_type_from_content_type
+            )
+            or (  # strategy 3: guess MIME-type using libmagic and use that
                 predicted_file_type := self._file_type_from_guessed_mime_type
-                or (predicted_file_type := self._file_type_from_file_extension)
+            )
+            or (  # strategy 4: use filename-extension, like ".docx" -> FileType.DOCX
+                predicted_file_type := self._file_type_from_file_extension
             )
         ):
             result_file_type = predicted_file_type
+        else:
+            # give up and report FileType.UNK
+            result_file_type = FileType.UNK
 
-        # -- strategy 5: edge case where JSON/NDJSON content without file extension --
-        if predicted_file_type == FileType.JSON:
+        if result_file_type == FileType.JSON:
+            # edge case where JSON/NDJSON content without file extension
+            # (magic lib can't distinguish them)
             result_file_type = self._disambiguate_json_file_type
 
-        # -- strategy 6: give up and report FileType.UNK --
         return result_file_type
 
     @property
