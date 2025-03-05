@@ -305,7 +305,7 @@ def test_partition_html_includes_base64_for_images():
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
         "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
     )
-    alt_text = "URL Image"
+    alt_text = "Base64 Image"
     # language=HTML
     html = f"""
     <div class="Page">
