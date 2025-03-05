@@ -43,12 +43,14 @@ class OCRAgentTesseract(OCRAgent):
     def get_text_from_image(self, image: PILImage.Image) -> str:
         return unstructured_pytesseract.image_to_string(np.array(image), lang=self.language)
 
-    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
+    def get_layout_from_image(
+        self, image: PILImage.Image, return_text=False
+    ) -> TextRegions | tuple[TextRegions, str]:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
         trace_logger.detail("Processing entire page OCR with tesseract...")
         zoom = 1
-        ocr_df: pd.DataFrame = self.image_to_data_with_character_confidence_filter(
+        ocr_df, text = self.image_to_data_with_character_confidence_filter(
             np.array(image),
             lang=self.language,
             character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
@@ -77,7 +79,7 @@ class OCRAgentTesseract(OCRAgent):
                 np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
                 max_zoom,
             )
-            ocr_df = self.image_to_data_with_character_confidence_filter(
+            ocr_df, text = self.image_to_data_with_character_confidence_filter(
                 np.array(zoom_image(image, zoom)),
                 lang=self.language,
                 character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
@@ -85,6 +87,8 @@ class OCRAgentTesseract(OCRAgent):
             ocr_df = ocr_df.dropna()
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
+        if return_text:
+            return ocr_regions, text
         return ocr_regions
 
     def image_to_data_with_character_confidence_filter(
@@ -94,14 +98,14 @@ class OCRAgentTesseract(OCRAgent):
         config: str = "",
         character_confidence_threshold: float = 0.0,
     ) -> pd.DataFrame:
-        hocr: str = unstructured_pytesseract.image_to_pdf_or_hocr(
+        hocr, text = unstructured_pytesseract.run_and_get_multiple_output(
             image,
             lang=lang,
-            config="-c hocr_char_boxes=1 " + config,
-            extension="hocr",
+            extensions=["hocr", "txt"],
+            extra_config="hocr_char_boxes=1",
         )
         ocr_df = self.hocr_to_dataframe(hocr, character_confidence_threshold)
-        return ocr_df
+        return ocr_df, text
 
     def hocr_to_dataframe(
         self, hocr: str, character_confidence_threshold: float = 0.0
@@ -171,16 +175,7 @@ class OCRAgentTesseract(OCRAgent):
             build_layout_elements_from_ocr_regions,
         )
 
-        ocr_regions = self.get_layout_from_image(image)
-
-        # NOTE(christine): For tesseract, the ocr_text returned by
-        # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
-        # well grouped. Conversely, the ocr_layout returned by parsing
-        # `unstructured_pytesseract.image_to_data()` contains bounding box data but is not well
-        # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
-        # the text regions in each group to create a list of layout elements.
-
-        ocr_text = self.get_text_from_image(image)
+        ocr_regions, ocr_text = self.get_layout_from_image(image, return_text=True)
 
         return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
