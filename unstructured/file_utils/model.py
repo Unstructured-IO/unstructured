@@ -292,7 +292,7 @@ class FileType(enum.Enum):
     NDJSON = (
         "ndjson",
         "ndjson",
-        ["ndjson"],
+        cast(list[str], []),
         None,
         [".ndjson"],
         "application/x-ndjson",
