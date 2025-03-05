@@ -85,7 +85,7 @@ install-markdown:
 	${PYTHON} -m pip install -r requirements/extra-markdown.txt
 
 .PHONY: install-ndjson
-install-markdown:
+install-ndjson:
 	${PYTHON} -m pip install -r requirements/extra-ndjson.txt
 
 .PHONY: install-pdf-image
