@@ -64,6 +64,7 @@ all_doc_reqs = list(
         + epub_reqs
         + image_reqs
         + markdown_reqs
+        + ndjson_reqs
         + odt_reqs
         + org_reqs
         + pdf_reqs
