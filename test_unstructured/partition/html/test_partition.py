@@ -302,19 +302,20 @@ def test_it_does_not_extract_text_in_style_tags():
 
 def test_partition_html_includes_base64_for_images():
     base64 = (
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
+        "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
         "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
     )
+    src = "data:image/png;base64," + base64
     alt_text = "Base64 Image"
-    # language=HTML
+
     html = f"""
     <div class="Page">
-        <img src="{base64}" alt="{alt_text}">
+        <img src="{src}" alt="{alt_text}">
     </div>
     """
-    (image,) = partition_html(
-        text=html,
-    )
+
+    (image,) = partition_html(text=html)
+
     assert image.category == ElementType.IMAGE
     assert image.text == alt_text
     assert image.metadata.image_base64 == base64
