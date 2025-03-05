@@ -501,7 +501,6 @@ class ImageBlock(Flow):
         yield Image(
             text=img_alt,
             metadata=ElementMetadata(
-                text_as_html=f'<img src="{img_src}" alt="{img_alt}"/>',
                 image_mime_type=img_mime_type if img_mime_type else None,
                 image_base64=img_base64,
             )
