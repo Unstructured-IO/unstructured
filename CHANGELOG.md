@@ -1,4 +1,4 @@
-## 0.16.24-dev3
+## 0.16.24
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 - **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
 
 ### Fixes
+
+- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
 
 ## 0.16.23
 

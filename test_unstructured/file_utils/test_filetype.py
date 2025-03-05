@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 
 import pytest
@@ -937,3 +938,45 @@ class Describe_ZipFileDetector:
     ):
         ctx = _FileTypeDetectionContext(example_doc_path(file_name))
         assert _ZipFileDetector.file_type(ctx) is expected_value
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_json():
+    json_bytes = json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.NDJSON
+
+
+def test_json_content_type_is_disambiguated_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(
+        file=file_buffer, metadata_file_path="filename.pdf", content_type="application/json"
+    )
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
+    assert predicted_type == FileType.NDJSON
