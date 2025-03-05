@@ -478,6 +478,7 @@ class Pre(BlockItem):
         """Text-segment accumulator suitable for this block-element."""
         return _PreElementAccumulator(self)
 
+
 class ImageBlock(Flow):
     """Custom element-class for `<img>` elements."""
 
@@ -485,30 +486,27 @@ class ImageBlock(Flow):
 
     def iter_elements(self) -> Iterator[Element]:
         """Generate an Image element based on `src`, `data-src`, `alt`, and dimensions."""
-        img_src = self.get("src", "").strip()
-        img_data_src = self.get("data-src", "").strip()
+        img_src = self.get("data-src", "").strip() or self.get("src", "").strip()
         img_alt = self.get("alt", "").strip()
 
-        # Use data-src if available, otherwise fallback to src
-        img_src = img_data_src if img_data_src else img_src
-
-        # Extract MIME type from base64-encoded `src`
-        mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
-        img_mime_type = mime_match.group(1) if mime_match else None
-
-        if not img_src:
+        if not img_src:  # Early exit if no image source
             return
 
+        mime_match = (
+            self.BASE64_IMAGE_REGEX.match(img_src) if hasattr(self, "BASE64_IMAGE_REGEX") else None
+        )
+        img_mime_type = mime_match.group(1) if mime_match else None
+
         img_base64 = img_src if img_src.startswith("data:image/") else None
-        img_url = img_src if not img_base64 else None
+        img_url = None if img_base64 else img_src
 
         yield Image(
             text=img_alt,
             metadata=ElementMetadata(
-                image_mime_type=img_mime_type if img_mime_type else None,
+                image_mime_type=img_mime_type,
                 image_base64=img_base64,
                 url=img_url,
-            )
+            ),
         )
 
 

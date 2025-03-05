@@ -299,7 +299,8 @@ def test_it_does_not_extract_text_in_style_tags():
 
 # -- image parsing behaviors ---------------------------------------------------------------------
 
-def test_base64_images_are_included():
+
+def test_partition_html_includes_base64_for_images():
     base64 = (
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
         "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
@@ -310,12 +311,27 @@ def test_base64_images_are_included():
         <img src="{base64}" alt="Base64 Image">
     </div>
     """
-    image, = partition_html(
+    (image,) = partition_html(
         text=html,
     )
     assert image.category == ElementType.IMAGE
     assert image.metadata.image_base64 == base64
     assert image.metadata.image_mime_type == "image/png"
+
+
+def test_partition_html_includes_url_for_images():
+    url = "https://example.com/image.png"
+    # language=HTML
+    html = f"""
+    <div class="Page">
+        <img src="{url}" alt="Test Image">
+    </div>
+    """
+    (image,) = partition_html(
+        text=html,
+    )
+    assert image.category == ElementType.IMAGE
+    assert image.metadata.url == url
 
 
 # -- table parsing behaviors ---------------------------------------------------------------------
