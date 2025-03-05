@@ -492,17 +492,18 @@ class ImageBlock(Flow):
         mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
         img_mime_type = mime_match.group(1) if mime_match else None
 
-        # If it's a base64 image, store the whole base64 data
-        img_base64 = img_src if img_src.startswith("data:image/") else None
-
         if not img_src:
             return
+
+        img_base64 = img_src if img_src.startswith("data:image/") else None
+        img_url = img_src if not img_base64 else None
 
         yield Image(
             text=img_alt,
             metadata=ElementMetadata(
-                image_mime_type=img_mime_type if img_mime_type else None,
-                image_base64=img_base64,
+            image_mime_type=img_mime_type if img_mime_type else None,
+            image_base64=img_base64,
+            url=img_url,
             )
         )
 
