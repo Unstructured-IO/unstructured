@@ -48,15 +48,15 @@ fsspec==2025.2.0
     # via
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.24.1
+google-api-core[grpc]==2.8.0
     # via google-cloud-vision
 google-auth==2.38.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.10.0
+google-cloud-vision==2.7.2
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.69.0
+googleapis-common-protos==1.56.1
     # via
     #   google-api-core
     #   grpcio-status
@@ -65,7 +65,7 @@ grpcio==1.70.0
     #   -c ././deps/constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.70.0
+grpcio-status==1.62.3
     # via google-api-core
 huggingface-hub==0.29.2
     # via
@@ -152,14 +152,12 @@ pillow==11.1.0
     #   pikepdf
     #   torchvision
     #   unstructured-pytesseract
-proto-plus==1.26.0
+proto-plus==1.20.4
+    # via google-cloud-vision
+protobuf==6.30.0
     # via
+    #   -c ././deps/constraints.txt
     #   google-api-core
-    #   google-cloud-vision
-protobuf==5.29.3
-    # via
-    #   google-api-core
-    #   google-cloud-vision
     #   googleapis-common-protos
     #   grpcio-status
     #   onnx
