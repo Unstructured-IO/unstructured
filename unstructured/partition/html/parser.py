@@ -484,9 +484,13 @@ class ImageBlock(Flow):
     BASE64_IMAGE_REGEX = re.compile(r"^data:(image/[^;]+);base64,")
 
     def iter_elements(self) -> Iterator[Element]:
-        """Generate an Image element based on `src`, `alt`, and dimensions."""
+        """Generate an Image element based on `src`, `data-src`, `alt`, and dimensions."""
         img_src = self.get("src", "").strip()
+        img_data_src = self.get("data-src", "").strip()
         img_alt = self.get("alt", "").strip()
+
+        # Use data-src if available, otherwise fallback to src
+        img_src = img_data_src if img_data_src else img_src
 
         # Extract MIME type from base64-encoded `src`
         mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
@@ -501,9 +505,9 @@ class ImageBlock(Flow):
         yield Image(
             text=img_alt,
             metadata=ElementMetadata(
-            image_mime_type=img_mime_type if img_mime_type else None,
-            image_base64=img_base64,
-            url=img_url,
+                image_mime_type=img_mime_type if img_mime_type else None,
+                image_base64=img_base64,
+                url=img_url,
             )
         )
 
