@@ -671,6 +671,9 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
         non_pdfminer_element_boxes = page.elements_array.slice(~pdfminer_mask).element_coords
         pdfminer_element_boxes = page.elements_array.slice(pdfminer_mask).element_coords
 
+        if len(pdfminer_element_boxes) == 0 or len(non_pdfminer_element_boxes) == 0:
+            continue
+
         is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
                 pdfminer_element_boxes,
