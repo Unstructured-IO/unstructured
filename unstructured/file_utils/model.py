@@ -66,7 +66,7 @@ class FileType(enum.Enum):
     _alias_mime_types: tuple[str, ...]
     """MIME-types accepted as identifying this file-type."""
 
-    _partitioner_full_module_path: str | None
+    _partitioner_full_module_path: Optional[str]
     """Fully-qualified name of module providing partitioner for this file-type."""
 
     def __new__(
