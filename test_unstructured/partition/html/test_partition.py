@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import io
 import pathlib
-from typing import Any
+from typing import Any, Optional
 
 import pytest
 from lxml import etree
@@ -300,7 +300,22 @@ def test_it_does_not_extract_text_in_style_tags():
 # -- image parsing behaviors ---------------------------------------------------------------------
 
 
-def test_partition_html_includes_base64_for_images():
+@pytest.mark.parametrize(
+    ("extract_to_payload", "extract_types", "expect_base64"),
+    [
+        (True, ["Image"], True),
+        (True, [], False),
+        (True, None, False),
+        (False, ["Image"], False),
+    ],
+)
+
+def test_partition_html_base64_for_images(
+    opts_args: dict[str, Any],
+    extract_to_payload: bool,
+    extract_types: Optional[list[str]],
+    expect_base64: bool
+):
     base64 = (
         "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
         "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
@@ -313,13 +328,19 @@ def test_partition_html_includes_base64_for_images():
         <img src="{src}" alt="{alt_text}">
     </div>
     """
+    opts_args["text"] = html
+    opts_args["extract_image_block_to_payload"] = extract_to_payload
+    opts_args["extract_image_block_types"] = extract_types
+    opts = HtmlPartitionerOptions(**opts_args)
+    (element,) = list(_HtmlPartitioner.iter_elements(opts))
 
-    (image,) = partition_html(text=html)
-
-    assert image.category == ElementType.IMAGE
-    assert image.text == alt_text
-    assert image.metadata.image_base64 == base64
-    assert image.metadata.image_mime_type == "image/png"
+    assert element.category == ElementType.IMAGE
+    assert element.text == alt_text
+    assert element.metadata.image_mime_type == "image/png"
+    if expect_base64:
+        assert element.metadata.image_base64 == base64
+    else:
+        assert element.metadata.image_base64 is None
 
 
 def test_partition_html_includes_url_for_images():
