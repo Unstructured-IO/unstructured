@@ -1,8 +1,9 @@
-## 0.16.24-dev4
+## 0.16.24-dev5
 
 ### Enhancements
 
 - **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+- **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
 
 ### Features
 
