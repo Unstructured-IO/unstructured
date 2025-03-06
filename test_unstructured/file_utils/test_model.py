@@ -242,7 +242,4 @@ def test_register_partitioner():
         pass
 
     assert file_type.partitioner_function_name == "partition_foo"
-    assert (
-        file_type.partitioner_module_qname
-        == "test_unstructured.file_utils.test_model.partition_foo"
-    )
+    assert file_type.partitioner_module_qname == "test_unstructured.file_utils.test_model"
