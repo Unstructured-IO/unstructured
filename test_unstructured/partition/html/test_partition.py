@@ -309,12 +309,11 @@ def test_it_does_not_extract_text_in_style_tags():
         (False, ["Image"], False),
     ],
 )
-
 def test_partition_html_base64_for_images(
     opts_args: dict[str, Any],
     extract_to_payload: bool,
     extract_types: Optional[list[str]],
-    expect_base64: bool
+    expect_base64: bool,
 ):
     base64 = (
         "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
