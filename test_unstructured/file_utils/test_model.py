@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 
 
 class DescribeFileType:
@@ -225,3 +225,21 @@ class DescribeFileType:
         self, file_type: FileType, expected_value: str
     ):
         assert file_type.partitioner_shortname == expected_value
+
+
+def test_create_file_type():
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+
+    assert FileType.from_extension(".foo") is file_type
+    assert FileType.from_mime_type("application/foo") is file_type
+
+
+def test_register_partitioner():
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+
+    @register_partitioner(file_type)
+    def partition_foo():
+        pass
+
+    assert file_type.partitioner_function_name == "partition_foo"
+    assert file_type.partitioner_module_qname == "test_unstructured.file_utils.test_model"
