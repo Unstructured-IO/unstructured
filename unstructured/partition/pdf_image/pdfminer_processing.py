@@ -685,7 +685,7 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
 
         pdfminer_to_keep = np.where(pdfminer_mask)[0][~is_element_subregion_of_other_elements]
         page.elements_array = page.elements_array.slice(
-            np.concatenate((np.where(~pdfminer_mask)[0], pdfminer_to_keep)).sort()
+            np.sort(np.concatenate((np.where(~pdfminer_mask)[0], pdfminer_to_keep)))
         )
 
     return document
