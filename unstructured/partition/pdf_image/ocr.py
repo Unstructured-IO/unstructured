@@ -259,7 +259,6 @@ def supplement_page_layout_with_ocr(
             ocr_agent=ocr_agent,
             extracted_regions=extracted_regions,
         )
-    page_layout.elements = page_layout.elements_array.as_list()
 
     return page_layout
 

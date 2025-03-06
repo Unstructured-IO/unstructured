@@ -12,6 +12,7 @@ from unstructured_inference.inference.elements import (
     TextRegions,
 )
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
+from unstructured_inference.inference.layoutelement import LayoutElements
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
@@ -108,7 +109,7 @@ def test_valid_bbox(bbox, is_valid):
 def test_clean_pdfminer_inner_elements(elements, length_extra_info, expected_document_length):
     # create a sample document with pdfminer elements inside tables
     page = PageLayout(number=1, image=Image.new("1", (1, 1)))
-    page.elements = elements
+    page.elements_array = LayoutElements.from_list(elements)
     document_with_table = DocumentLayout(pages=[page])
     document = document_with_table
 
@@ -116,7 +117,7 @@ def test_clean_pdfminer_inner_elements(elements, length_extra_info, expected_doc
     cleaned_doc = clean_pdfminer_inner_elements(document)
 
     # check that the pdfminer elements were stored in the extra_info dictionary
-    assert len(cleaned_doc.pages[0].elements) == expected_document_length
+    assert len(cleaned_doc.pages[0].elements_array) == expected_document_length
 
 
 elements_with_duplicate_images = [

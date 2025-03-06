@@ -1477,8 +1477,7 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
     layout_elem_absent_coordinates = MockSinglePageDocumentLayout()
     for page in layout_elem_absent_coordinates.pages:
-        for el in page.elements:
-            el.bbox = None
+        page.elements_array.element_coords[:, :] = None
     elements = pdf.document_to_element_list(layout_elem_absent_coordinates)
     assert elements[0].metadata.coordinates is None
 
