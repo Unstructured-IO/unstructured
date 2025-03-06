@@ -43,7 +43,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.filetype import detect_filetype
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -1331,3 +1331,17 @@ def expected_docx_elements():
         Text("2023"),
         Address("DOYLESTOWN, PA 18901"),
     ]
+
+
+def _test_partition_foo():
+    pass
+
+
+def test_auto_partition_works_with_custom_types(
+    request: FixtureRequest,
+):
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+
+    register_partitioner(file_type)(_test_partition_foo)
+    loader = _PartitionerLoader()
+    assert loader.get(file_type) is _test_partition_foo
