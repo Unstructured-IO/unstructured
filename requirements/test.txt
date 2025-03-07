@@ -12,7 +12,7 @@ anyio==4.8.0
     #   httpx
 appdirs==1.4.4
     # via label-studio-sdk
-argcomplete==3.5.3
+argcomplete==3.6.0
     # via datamodel-code-generator
 attrs==25.1.0
     # via
@@ -54,7 +54,7 @@ exceptiongroup==1.2.2
     #   -c ./base.txt
     #   anyio
     #   pytest
-faker==36.1.1
+faker==36.2.2
     # via jsf
 flake8==7.1.2
     # via
@@ -98,7 +98,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via datamodel-code-generator
-jinja2==3.1.5
+jinja2==3.1.6
     # via datamodel-code-generator
 joblib==1.4.2
     # via

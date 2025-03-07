@@ -46,7 +46,6 @@ docx_reqs = load_requirements("requirements/extra-docx.in")
 epub_reqs = load_requirements("requirements/extra-epub.in")
 image_reqs = load_requirements("requirements/extra-pdf-image.in")
 markdown_reqs = load_requirements("requirements/extra-markdown.in")
-ndjson_reqs = load_requirements("requirements/extra-ndjson.in")
 odt_reqs = load_requirements("requirements/extra-odt.in")
 org_reqs = load_requirements("requirements/extra-pandoc.in")
 pdf_reqs = load_requirements("requirements/extra-pdf-image.in")
@@ -64,7 +63,6 @@ all_doc_reqs = list(
         + epub_reqs
         + image_reqs
         + markdown_reqs
-        + ndjson_reqs
         + odt_reqs
         + org_reqs
         + pdf_reqs

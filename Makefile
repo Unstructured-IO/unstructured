@@ -84,10 +84,6 @@ install-pypandoc:
 install-markdown:
 	${PYTHON} -m pip install -r requirements/extra-markdown.txt
 
-.PHONY: install-ndjson
-install-ndjson:
-	${PYTHON} -m pip install -r requirements/extra-ndjson.txt
-
 .PHONY: install-pdf-image
 install-pdf-image:
 	${PYTHON} -m pip install -r requirements/extra-pdf-image.txt
@@ -101,7 +97,7 @@ install-xlsx:
 	${PYTHON} -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-ndjson install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-ingest
 install-ingest:
