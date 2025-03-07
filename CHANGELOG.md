@@ -1,3 +1,14 @@
+## 0.16.25
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
+
+
 ## 0.16.24
 
 ### Enhancements
@@ -14,7 +25,6 @@
 
 ### Fixes
 
-- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
 
 ## 0.16.23
 
