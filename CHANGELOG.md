@@ -2,7 +2,11 @@
 
 ### Enhancements
 
+- **Support dynamic partitioner file type registration**. Use `create_file_type` to create new file type that can be handled
+  in unstructured and `register_partitioner` to enable registering your own partitioner for any file type.
+
 - **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+- **use block matrix to reduce peak memory usage for pdf/image partition**.
 
 ### Features
 

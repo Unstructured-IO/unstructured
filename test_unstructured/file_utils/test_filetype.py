@@ -26,7 +26,7 @@ from unstructured.file_utils.filetype import (
     detect_filetype,
     is_json_processable,
 )
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -466,6 +466,13 @@ def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas()
     assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+def test_it_detects_correct_file_type_for_custom_types(tmp_path):
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+    dumb_file = tmp_path / "dumb.foo"
+    dumb_file.write_bytes(b"38v8df889qw8sdfj")
+    assert detect_filetype(file_path=str(dumb_file), content_type="application/foo") is file_type
 
 
 # ================================================================================================
