@@ -169,30 +169,31 @@ class _FileTypeDetector:
         # -- accuracy. So start with binary types and only then consider an asserted content-type,
         # -- generally as a last resort.
 
-        # -- strategy 1: most binary types can be detected with 100% accuracy --
-        if file_type := self._known_binary_file_type:
-            return file_type
+        if (
+            (  # strategy 1: most binary types can be detected with 100% accuracy
+                predicted_file_type := self._known_binary_file_type
+            )
+            or (  # strategy 2: use content-type asserted by caller
+                predicted_file_type := self._file_type_from_content_type
+            )
+            or (  # strategy 3: guess MIME-type using libmagic and use that
+                predicted_file_type := self._file_type_from_guessed_mime_type
+            )
+            or (  # strategy 4: use filename-extension, like ".docx" -> FileType.DOCX
+                predicted_file_type := self._file_type_from_file_extension
+            )
+        ):
+            result_file_type = predicted_file_type
+        else:
+            # give up and report FileType.UNK
+            result_file_type = FileType.UNK
 
-        # -- strategy 2: use content-type asserted by caller --
-        if file_type := self._file_type_from_content_type:
-            return file_type
+        if result_file_type == FileType.JSON:
+            # edge case where JSON/NDJSON content without file extension
+            # (magic lib can't distinguish them)
+            result_file_type = self._disambiguate_json_file_type
 
-        # -- strategy 3: guess MIME-type using libmagic and use that --
-        if file_type := self._file_type_from_guessed_mime_type:
-            return file_type
-
-        # -- strategy 4: use filename-extension, like ".docx" -> FileType.DOCX --
-        if file_type := self._file_type_from_file_extension:
-            return file_type
-
-        # -- strategy 5: edge case where JSON/NDJSON content without file extension --
-        if file_type := self._disambiguate_json_file_type:
-            return file_type
-
-        # -- strategy 6: give up and report FileType.UNK --
-        return FileType.UNK
-
-    # == STRATEGIES ============================================================
+        return result_file_type
 
     @property
     def _known_binary_file_type(self) -> FileType | None:
