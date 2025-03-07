@@ -124,8 +124,7 @@ class FileType(enum.Enum):
         Returns `None` when `mime_type` is `None` or does not map to the canonical MIME-type of a
         `FileType` member or one of its alias MIME-types.
         """
-        if mime_type is None or mime_type == "application/json":
-            # application/json is ambiguous as it may point ot JSON and NDJSON file types
+        if mime_type is None:
             return None
         # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
         # -- limitations on defining a class variable on an Enum.

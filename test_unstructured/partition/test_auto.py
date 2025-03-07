@@ -409,17 +409,17 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
-def test_auto_partition_json_raises_with_unprocessable_json(tmp_path: pathlib.Path):
-    # NOTE(robinson) - This is unprocessable because it is not a list of dicts, per the
-    # Unstructured JSON serialization format
-    text = '{"hi": "there"}'
+def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
+    text = '{"text": "hello", "type": "NarrativeText"}'
 
     file_path = str(tmp_path / "unprocessable.json")
     with open(file_path, "w") as f:
         f.write(text)
 
-    with pytest.raises(ValueError, match="Detected a JSON file that does not conform to the Unst"):
-        partition(filename=file_path)
+    result = partition(filename=file_path)
+    assert len(result) == 1
+    assert isinstance(result[0], NarrativeText)
+    assert "hello" in result[0].text
 
 
 # ================================================================================================
