@@ -210,7 +210,7 @@ def test_auto_partition_epub_from_filename():
     elements = partition(example_doc_path("winter-sports.epub"), strategy=PartitionStrategy.HI_RES)
 
     assert len(elements) > 0
-    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    assert elements[2].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
 def test_auto_partition_epub_from_file():
@@ -218,7 +218,7 @@ def test_auto_partition_epub_from_file():
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
 
     assert len(elements) > 0
-    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    assert elements[2].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
 # ================================================================================================
@@ -430,7 +430,7 @@ def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
 def test_partition_md_from_url_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy=PartitionStrategy.HI_RES)
-    assert "unstructured" in elements[0].text
+    assert "unstructured" in elements[1].text
 
 
 # ================================================================================================

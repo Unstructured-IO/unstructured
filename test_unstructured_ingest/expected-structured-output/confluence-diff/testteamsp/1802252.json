@@ -308,7 +308,29 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a931e049fc3bd99cf74ef09502a71938",
+    "element_id": "61525bb0c406b033be2849cb375e9fcd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-11T17:01:39.240000",
+        "date_modified": "2023-07-11T17:01:47.340000",
+        "record_locator": {
+          "page_id": "1802252",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1802252",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "7e8cf6622ad36f28966178e194feaad8",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -330,7 +352,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "59e566b7776eba69071658b586226bd0",
+    "element_id": "eeb9717b5c634b6bb4b4bb1b83101500",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -352,7 +374,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "971bd18c2de3ef14a26ba1d8e4ef8668",
+    "element_id": "c5bc1b1b90fd002ca136bc3d76e3d482",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -374,7 +396,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c688b4f7d2e49c8d8d7c77d28ddf5ecc",
+    "element_id": "9ecb8d523cdd75be94294fa2ca440799",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -396,7 +418,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "9ce074ac38046f414a5f16cd9c7308b3",
+    "element_id": "4909ea47e524d3b8fbac470c0663f589",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -418,7 +440,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a4fbf964d1efe50e1c1ee181b453d4d6",
+    "element_id": "ab916d1a2aa844a463b48a24637a8b2d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -440,7 +462,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b7c108f30be7dfb550213536c197e563",
+    "element_id": "a9060bb59dfa0b37c1ec13e97228470a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -462,7 +484,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "9e78d28a1e5c130197f6a909ec74c987",
+    "element_id": "0dbff111f50ea5a58eee83c85a1c30b5",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -490,7 +512,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d8ae65b075a2f46c394461d4e393f0d5",
+    "element_id": "ed95477f3bff4586983201b6387c875b",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -512,7 +534,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "7f3784563903fdf80ca26e027ca7376d",
+    "element_id": "260cee6fb6f1562e7b1cb0f7644ea64d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -534,7 +556,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "81f723fb10893947353084829f8b5f68",
+    "element_id": "6820bf233e6604b7bd6750d0d2b62192",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -556,7 +578,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "a28747bf65c9c6ad4981e57ec35822a3",
+    "element_id": "8f13efbe5d5b289c6ce8eb00e2b5fae2",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -578,7 +600,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "ec5dbc92af9cfee5f32dba0e9919b1f7",
+    "element_id": "ecc13666f56ab3fb01917335016cd9c3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -606,7 +628,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f09110aa418d33cbaccc7b380e0fe0c6",
+    "element_id": "93ec1210a0bf6e8b0c6c8504648e7489",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -634,7 +656,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "fa11e4585afb53a4d046e095f08ac084",
+    "element_id": "f3c0e02138cb55302a075d5508843876",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -656,7 +678,7 @@
     "type": "Title"
   },
   {
-    "element_id": "2f06add07bf5f930085d334e1d1fdb6c",
+    "element_id": "5bc45f2fc513158f644f2c217cc9e54d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -678,7 +700,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0c493dc4e25a1447702be5bd7d8a156f",
+    "element_id": "81bebaf32dff5511a7856e553b526fa3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -700,7 +722,7 @@
     "type": "Title"
   },
   {
-    "element_id": "dcf629a3cf73037815d0b85bf9878bd5",
+    "element_id": "833cc590b6815b09fd40d1d73a752420",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -722,7 +744,7 @@
     "type": "Title"
   },
   {
-    "element_id": "31d39e1ce259ec5bc37463b03c993697",
+    "element_id": "bff43fdce7563ccbd5cf3354090e8cf3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -744,7 +766,7 @@
     "type": "Title"
   },
   {
-    "element_id": "8083af07d9148f975b439cdb91a216cf",
+    "element_id": "69b2cf7ade2f1034892b2b38b186fdaa",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:39.240000",
@@ -765,5 +787,27 @@
     },
     "text": "Testdoc2 Table: Column 1 Row 0 Testdoc2 Table: Column 2 Row 0 Testdoc2 Table: Column 3 Row 0 Testdoc2 Table: Column 1 Row 1 Testdoc2 Table: Column 2 Row 1 Testdoc2 Table: Column 3 Row 1 Testdoc2 Table: Column 1 Row 2 Testdoc2 Table: Column 2 Row 2 Testdoc2 Table: Column 3 Row 2",
     "type": "Table"
+  },
+  {
+    "element_id": "825a8cbb41eecc2f1b29d4b34cb05c2f",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-11T17:01:39.240000",
+        "date_modified": "2023-07-11T17:01:47.340000",
+        "record_locator": {
+          "page_id": "1802252",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1802252",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "",
+    "type": "Image"
   }
 ]
