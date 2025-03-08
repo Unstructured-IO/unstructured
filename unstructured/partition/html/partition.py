@@ -37,6 +37,8 @@ def partition_html(
     detection_origin: Optional[str] = None,
     html_parser_version: Literal["v1", "v2"] = "v1",
     image_alt_mode: Optional[Literal["to_text"]] = "to_text",
+    extract_image_block_to_payload: bool = False,
+    extract_image_block_types: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -86,6 +88,8 @@ def partition_html(
         detection_origin=detection_origin,
         html_parser_version=html_parser_version,
         image_alt_mode=image_alt_mode,
+        extract_image_block_types=extract_image_block_types,
+        extract_image_block_to_payload=extract_image_block_to_payload,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))

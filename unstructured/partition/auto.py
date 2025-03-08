@@ -283,6 +283,8 @@ def partition(
     partitioning_kwargs["languages"] = languages
     partitioning_kwargs["starting_page_number"] = starting_page_number
     partitioning_kwargs["strategy"] = strategy
+    partitioning_kwargs["extract_image_block_types"] = extract_image_block_types
+    partitioning_kwargs["extract_image_block_to_payload"] = extract_image_block_to_payload
 
     partition = partitioner_loader.get(file_type)
     elements = partition(filename=filename, file=file, **partitioning_kwargs)
