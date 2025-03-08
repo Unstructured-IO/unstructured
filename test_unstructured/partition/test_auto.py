@@ -627,6 +627,19 @@ def test_auto_partition_pdf_element_extraction(extract_image_block_to_payload: b
         )
 
 
+def test_auto_partition_html_element_extraction():
+    extract_image_block_types = ["Image"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            example_doc_path("html-with-base64-image.html"),
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=True,
+        )
+
+        assert_element_extraction(elements, extract_image_block_types, True, tmpdir)
+
+
 def test_partition_pdf_does_not_raise_warning():
     # NOTE(robinson): This is the recommended way to check that no warning is emitted,
     # per the pytest docs.
