@@ -1,8 +1,9 @@
-## 0.16.26-dev2
+## 0.16.26-dev3
 
 ### Enhancements
 
 - **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
+- **Use kwargs instead of env to specify `ocr_agent` and `table_ocr_agent`** for `hi_res` strategy.
 
 ### Features
 
