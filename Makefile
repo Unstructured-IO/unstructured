@@ -22,7 +22,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc install-paddleocr
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
@@ -79,6 +79,10 @@ install-odt:
 .PHONY: install-pypandoc
 install-pypandoc:
 	${PYTHON} -m pip install -r requirements/extra-pandoc.txt
+
+.PHONY: install-paddleocr
+install-paddleocr:
+	${PYTHON} -m pip install -r requirements/extra-paddleocr.txt
 
 .PHONY: install-markdown
 install-markdown:
