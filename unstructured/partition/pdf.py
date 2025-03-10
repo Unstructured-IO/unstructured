@@ -54,7 +54,6 @@ from unstructured.partition.common.common import (
 from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
-    tesseract_to_paddle_language,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
@@ -88,7 +87,6 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    OCR_AGENT_PADDLE,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -100,7 +98,7 @@ from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
 
 
 # Correct a bug that was introduced by a previous patch to
@@ -273,6 +271,8 @@ def partition_pdf_or_image(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -332,8 +332,9 @@ def partition_pdf_or_image(
         file.seek(0)
 
     ocr_languages = prepare_languages_for_tesseract(languages)
-    if env_config.OCR_AGENT == OCR_AGENT_PADDLE:
-        ocr_languages = tesseract_to_paddle_language(ocr_languages)
+    # TODO (yao): drop this part and move the logic closer to load agent
+    # if ocr_agent == OCR_AGENT_PADDLE:
+    #     ocr_languages = tesseract_to_paddle_language(ocr_languages)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
@@ -359,6 +360,8 @@ def partition_pdf_or_image(
                 form_extraction_skip_tables=form_extraction_skip_tables,
                 password=password,
                 pdfminer_config=pdfminer_config,
+                ocr_agent=ocr_agent,
+                table_ocr_agent=table_ocr_agent,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -609,6 +612,8 @@ def _partition_pdf_or_image_local(
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -690,11 +695,13 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
     else:
         inferred_document_layout = process_data_with_model(
@@ -749,11 +756,13 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
 
     # vectorization of the data structure ends here
