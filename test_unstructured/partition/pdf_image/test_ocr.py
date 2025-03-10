@@ -68,12 +68,10 @@ def test_process_file_with_ocr_invalid_filename(is_image):
         )
 
 
-def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
-    monkeypatch.setenv("OCR_AGENT", "invalid_ocr")
+def test_supplement_page_layout_with_ocr_invalid_ocr():
     with pytest.raises(ValueError):
         _ = ocr.supplement_page_layout_with_ocr(
-            page_layout=None,
-            image=None,
+            page_layout=None, image=None, ocr_agent="invliad_ocr"
         )
 
 
