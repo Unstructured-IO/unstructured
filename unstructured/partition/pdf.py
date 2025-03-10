@@ -87,6 +87,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -98,7 +99,7 @@ from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+    pass
 
 
 # Correct a bug that was introduced by a previous patch to
