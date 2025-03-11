@@ -6,6 +6,8 @@
 # we are using v3 client https://weaviate.io/developers/weaviate/client-libraries/python/python_v3
 weaviate-client>=3.26.7,<4.0.0
 # TODO: Constriant due to multiple versions being installed during pip-compile
+protobuf>=6.30.0
+# TODO: Constriant due to multiple versions being installed during pip-compile
 grpcio>=1.65.5
 # TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
 tokenizers>=0.21,<0.22

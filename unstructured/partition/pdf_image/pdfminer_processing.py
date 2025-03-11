@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
@@ -698,10 +699,16 @@ def remove_duplicate_elements(
 ) -> TextRegions:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
 
-    iou = boxes_self_iou(elements.element_coords, threshold)
-    # this is equivalent of finding those rows where `not iou[i, i + 1 :].any()`, i.e., any element
-    # that has no overlap above the threshold with any other elements
-    return elements.slice(~np.triu(iou, k=1).any(axis=1))
+    coords = elements.element_coords
+    # experiments show 2e3 is the block size that constrains the peak memory around 1Gb for this
+    # function; that accounts for all the intermediate matricies allocated and memory for storing
+    # final results
+    memory_cap_in_gb = os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1)
+    n_split = np.ceil(coords.shape[0] / 2e3 / memory_cap_in_gb)
+    splits = np.array_split(coords, n_split, axis=0)
+
+    ious = [~np.triu(boxes_iou(split, coords, threshold), k=1).any(axis=1) for split in splits]
+    return elements.slice(np.concatenate(ious))
 
 
 def aggregate_embedded_text_by_block(

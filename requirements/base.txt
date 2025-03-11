@@ -34,7 +34,7 @@ dataclasses-json==0.6.7
     # via
     #   -r ./base.in
     #   unstructured-client
-deepdiff==8.2.0
+deepdiff==8.3.0
     # via unstructured-client
 emoji==2.14.1
     # via -r ./base.in

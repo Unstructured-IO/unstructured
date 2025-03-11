@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 
 import pytest
@@ -25,7 +26,7 @@ from unstructured.file_utils.filetype import (
     detect_filetype,
     is_json_processable,
 )
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -465,6 +466,13 @@ def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas()
     assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+def test_it_detects_correct_file_type_for_custom_types(tmp_path):
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+    dumb_file = tmp_path / "dumb.foo"
+    dumb_file.write_bytes(b"38v8df889qw8sdfj")
+    assert detect_filetype(file_path=str(dumb_file), content_type="application/foo") is file_type
 
 
 # ================================================================================================
@@ -937,3 +945,45 @@ class Describe_ZipFileDetector:
     ):
         ctx = _FileTypeDetectionContext(example_doc_path(file_name))
         assert _ZipFileDetector.file_type(ctx) is expected_value
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_json():
+    json_bytes = json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.NDJSON
+
+
+def test_json_content_type_is_disambiguated_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(
+        file=file_buffer, metadata_file_path="filename.pdf", content_type="application/json"
+    )
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
+    assert predicted_type == FileType.NDJSON

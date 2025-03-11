@@ -43,7 +43,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.filetype import detect_filetype
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -210,7 +210,7 @@ def test_auto_partition_epub_from_filename():
     elements = partition(example_doc_path("winter-sports.epub"), strategy=PartitionStrategy.HI_RES)
 
     assert len(elements) > 0
-    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    assert elements[2].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
 def test_auto_partition_epub_from_file():
@@ -218,7 +218,7 @@ def test_auto_partition_epub_from_file():
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
 
     assert len(elements) > 0
-    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    assert elements[2].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
 # ================================================================================================
@@ -409,17 +409,17 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
-def test_auto_partition_json_raises_with_unprocessable_json(tmp_path: pathlib.Path):
-    # NOTE(robinson) - This is unprocessable because it is not a list of dicts, per the
-    # Unstructured JSON serialization format
-    text = '{"hi": "there"}'
+def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
+    text = '{"text": "hello", "type": "NarrativeText"}'
 
     file_path = str(tmp_path / "unprocessable.json")
     with open(file_path, "w") as f:
         f.write(text)
 
-    with pytest.raises(ValueError, match="Detected a JSON file that does not conform to the Unst"):
-        partition(filename=file_path)
+    result = partition(filename=file_path)
+    assert len(result) == 1
+    assert isinstance(result[0], NarrativeText)
+    assert "hello" in result[0].text
 
 
 # ================================================================================================
@@ -430,7 +430,7 @@ def test_auto_partition_json_raises_with_unprocessable_json(tmp_path: pathlib.Pa
 def test_partition_md_from_url_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy=PartitionStrategy.HI_RES)
-    assert "unstructured" in elements[0].text
+    assert "unstructured" in elements[1].text
 
 
 # ================================================================================================
@@ -625,6 +625,19 @@ def test_auto_partition_pdf_element_extraction(extract_image_block_to_payload: b
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
+
+
+def test_auto_partition_html_element_extraction():
+    extract_image_block_types = ["Image"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            example_doc_path("html-with-base64-image.html"),
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=True,
+        )
+
+        assert_element_extraction(elements, extract_image_block_types, True, tmpdir)
 
 
 def test_partition_pdf_does_not_raise_warning():
@@ -1331,3 +1344,17 @@ def expected_docx_elements():
         Text("2023"),
         Address("DOYLESTOWN, PA 18901"),
     ]
+
+
+def _test_partition_foo():
+    pass
+
+
+def test_auto_partition_works_with_custom_types(
+    request: FixtureRequest,
+):
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+
+    register_partitioner(file_type)(_test_partition_foo)
+    loader = _PartitionerLoader()
+    assert loader.get(file_type) is _test_partition_foo

@@ -1,15 +1,43 @@
-## 0.16.24-dev5
+## 0.16.26-dev3
 
 ### Enhancements
 
-- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+- **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
+
 - **stop using `PageLayout.elements` to save memory and cpu cost**. Now only use `PageLayout.elements_array` throughout the partition, except when `analysis=True` where the drawing logic still uses `elements`.
+
+### Features
+
+### Fixes
+
+## 0.16.25
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
+
+
+## 0.16.24
+
+### Enhancements
+
+- **Support dynamic partitioner file type registration**. Use `create_file_type` to create new file type that can be handled
+  in unstructured and `register_partitioner` to enable registering your own partitioner for any file type.
+
+- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+
+- **use block matrix to reduce peak memory usage for pdf/image partition**.
 
 ### Features
 
 - **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
 
 ### Fixes
+
 
 ## 0.16.23
 
