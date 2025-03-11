@@ -333,9 +333,6 @@ def partition_pdf_or_image(
         file.seek(0)
 
     ocr_languages = prepare_languages_for_tesseract(languages)
-    # TODO (yao): drop this part and move the logic closer to load agent
-    # if ocr_agent == OCR_AGENT_PADDLE:
-    #     ocr_languages = tesseract_to_paddle_language(ocr_languages)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
