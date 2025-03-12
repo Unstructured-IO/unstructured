@@ -1,8 +1,9 @@
-## 0.16.26-dev3
+## 0.17.0
 
 ### Enhancements
 
 - **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
+
 - **Use kwargs instead of env to specify `ocr_agent` and `table_ocr_agent`** for `hi_res` strategy.
 
 - **stop using `PageLayout.elements` to save memory and cpu cost**. Now only use `PageLayout.elements_array` throughout the partition, except when `analysis=True` where the drawing logic still uses `elements`.
