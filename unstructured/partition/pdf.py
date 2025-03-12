@@ -766,10 +766,6 @@ def _partition_pdf_or_image_local(
     # vectorization of the data structure ends here
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
-    for page in final_document_layout.pages:
-        for el in page.elements:
-            el.text = el.text or ""
-
     elements = document_to_element_list(
         final_document_layout,
         sortable=True,
@@ -1199,11 +1195,24 @@ def document_to_element_list(
             else None
         )
 
-        for layout_element in page.elements:
+        head_line_type_class_ids = [
+            idx
+            for idx, class_type in page.elements_array.element_class_id_map.items()
+            if class_type in ("Headline", "Subheadline")
+        ]
+        if head_line_type_class_ids:
+            has_headline = any(
+                np.any(page.elements_array.element_class_ids == idx)
+                for idx in head_line_type_class_ids
+            )
+        else:
+            has_headline = False
+
+        for layout_element in page.elements_array.iter_elements():
             if (
                 image_width
                 and image_height
-                and getattr(layout_element.bbox, "x1") not in (None, np.nan)
+                and not np.isnan(getattr(layout_element.bbox, "x1", np.nan))
             ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
@@ -1234,8 +1243,8 @@ def document_to_element_list(
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
 
-                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
-                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
+                if (isinstance(element, Title) and element.metadata.category_depth is None) and (
+                    has_headline
                 ):
                     element.metadata.category_depth = 0
 
