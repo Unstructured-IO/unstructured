@@ -335,11 +335,12 @@ def test_partition_html_base64_for_images(
 
     assert element.category == ElementType.IMAGE
     assert element.text == alt_text
-    assert element.metadata.image_mime_type == "image/png"
     if expect_base64:
         assert element.metadata.image_base64 == base64
+        assert element.metadata.image_mime_type == "image/png"
     else:
         assert element.metadata.image_base64 is None
+        assert element.metadata.image_mime_type == None
 
 
 def test_partition_html_includes_url_for_images():
