@@ -348,7 +348,7 @@ def test_partition_html_includes_url_for_images():
     # language=HTML
     html = f"""
     <div class="Page">
-        <img src="{url}" alt="{alt_text}">
+        <img src="{image_url}" alt="{alt_text}">
     </div>
     """
     (image,) = partition_html(
