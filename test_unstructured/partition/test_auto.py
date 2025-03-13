@@ -632,7 +632,7 @@ def test_auto_partition_html_element_extraction():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = partition(
-            example_doc_path("html-with-base64-image.html"),
+            example_doc_path("fake-html-with-base64-image.html"),
             extract_image_block_types=extract_image_block_types,
             extract_image_block_to_payload=True,
         )
