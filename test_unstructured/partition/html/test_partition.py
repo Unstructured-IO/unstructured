@@ -340,7 +340,7 @@ def test_partition_html_base64_for_images(
         assert element.metadata.image_mime_type == "image/png"
     else:
         assert element.metadata.image_base64 is None
-        assert element.metadata.image_mime_type == None
+        assert element.metadata.image_mime_type is None
 
 
 def test_partition_html_includes_url_for_images():
