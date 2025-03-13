@@ -172,6 +172,7 @@ class ElementMetadata:
     file_directory: Optional[str]
     filename: Optional[str]
     filetype: Optional[str]
+    image_url: Optional[str]
     image_path: Optional[str]
     image_base64: Optional[str]
     image_mime_type: Optional[str]
@@ -230,6 +231,7 @@ class ElementMetadata:
         header_footer_type: Optional[str] = None,
         image_base64: Optional[str] = None,
         image_mime_type: Optional[str] = None,
+        image_url: Optional[str] = None,
         image_path: Optional[str] = None,
         is_continuation: Optional[bool] = None,
         languages: Optional[list[str]] = None,
@@ -274,6 +276,7 @@ class ElementMetadata:
         self.header_footer_type = header_footer_type
         self.image_base64 = image_base64
         self.image_mime_type = image_mime_type
+        self.image_url = image_url
         self.image_path = image_path
         self.is_continuation = is_continuation
         self.languages = languages
@@ -490,6 +493,7 @@ class ConsolidationStrategy(enum.Enum):
             "filename": cls.FIRST,
             "filetype": cls.FIRST,
             "header_footer_type": cls.DROP,
+            "image_url": cls.DROP,
             "image_path": cls.DROP,
             "image_base64": cls.DROP,
             "image_mime_type": cls.DROP,

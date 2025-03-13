@@ -632,12 +632,19 @@ def test_auto_partition_html_element_extraction():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = partition(
-            example_doc_path("html-with-base64-image.html"),
+            example_doc_path("fake-html-with-base64-image.html"),
             extract_image_block_types=extract_image_block_types,
             extract_image_block_to_payload=True,
         )
 
         assert_element_extraction(elements, extract_image_block_types, True, tmpdir)
+
+
+def test_auto_partition_html_image_with_url():
+    elements = partition(
+        example_doc_path("fake-html-with-image-from-url.html"),
+    )
+    assert elements[1].metadata.image_url is not None
 
 
 def test_partition_pdf_does_not_raise_warning():

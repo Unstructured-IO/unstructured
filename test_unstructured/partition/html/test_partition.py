@@ -335,20 +335,21 @@ def test_partition_html_base64_for_images(
 
     assert element.category == ElementType.IMAGE
     assert element.text == alt_text
-    assert element.metadata.image_mime_type == "image/png"
     if expect_base64:
         assert element.metadata.image_base64 == base64
+        assert element.metadata.image_mime_type == "image/png"
     else:
         assert element.metadata.image_base64 is None
+        assert element.metadata.image_mime_type is None
 
 
 def test_partition_html_includes_url_for_images():
-    url = "https://example.com/image.png"
+    image_url = "https://example.com/image.png"
     alt_text = "URL Image"
     # language=HTML
     html = f"""
     <div class="Page">
-        <img src="{url}" alt="{alt_text}">
+        <img src="{image_url}" alt="{alt_text}">
     </div>
     """
     (image,) = partition_html(
@@ -356,7 +357,7 @@ def test_partition_html_includes_url_for_images():
     )
     assert image.category == ElementType.IMAGE
     assert image.text == alt_text
-    assert image.metadata.url == url
+    assert image.metadata.image_url == image_url
 
 
 # -- table parsing behaviors ---------------------------------------------------------------------

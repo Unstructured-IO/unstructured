@@ -502,7 +502,7 @@ class ImageBlock(Flow):
             metadata=ElementMetadata(
                 image_mime_type=img_mime_type,
                 image_base64=img_base64,
-                url=img_url,
+                image_url=img_url,
             ),
         )
 

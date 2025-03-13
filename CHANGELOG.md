@@ -1,3 +1,13 @@
+## 0.17.1-dev0
+
+### Enhancements
+
+- **Add image_url of images in html partitioner** `<img>` tags with non-data content include a new image_url metadata field with the content of the src attribute.
+  
+### Features
+
+### Fixes
+
 ## 0.17.0
 
 ### Enhancements
