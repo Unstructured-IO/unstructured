@@ -639,6 +639,12 @@ def test_auto_partition_html_element_extraction():
 
         assert_element_extraction(elements, extract_image_block_types, True, tmpdir)
 
+def test_auto_partition_html_image_with_url():
+    elements = partition(
+        example_doc_path("fake-html-with-image-from-url.html"),
+    )
+    assert elements[1].metadata.image_url is not None
+
 
 def test_partition_pdf_does_not_raise_warning():
     # NOTE(robinson): This is the recommended way to check that no warning is emitted,
