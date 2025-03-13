@@ -343,7 +343,7 @@ def test_partition_html_base64_for_images(
 
 
 def test_partition_html_includes_url_for_images():
-    url = "https://example.com/image.png"
+    image_url = "https://example.com/image.png"
     alt_text = "URL Image"
     # language=HTML
     html = f"""
@@ -356,7 +356,7 @@ def test_partition_html_includes_url_for_images():
     )
     assert image.category == ElementType.IMAGE
     assert image.text == alt_text
-    assert image.metadata.url == url
+    assert image.metadata.image_url == image_url
 
 
 # -- table parsing behaviors ---------------------------------------------------------------------
