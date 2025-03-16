@@ -747,13 +747,13 @@ class _ZipFileDetector:
 
             filenames = zip.namelist()
 
-            if "word/document.xml" in filenames:
+            if any(re.match(r"word/document.*\.xml$", filename) for filename in filenames):
                 return FileType.DOCX
 
-            if "xl/workbook.xml" in filenames:
+            if any(re.match(r"xl/workbook.*\.xml$", filename) for filename in filenames):
                 return FileType.XLSX
 
-            if "ppt/presentation.xml" in filenames:
+            if any(re.match(r"ppt/presentation.*\.xml$", filename) for filename in filenames):
                 return FileType.PPTX
 
             # -- ODT and EPUB files place their MIME-type in `mimetype` in the archive root --
