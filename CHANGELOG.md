@@ -1,3 +1,12 @@
+## 0.17.2-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes wrong detection of office files** certain office files wrongly identified as .ZIP when office(.docx,.xlsx and .pptx) files containing files other than word/document.xml, xl/workbook.xml and ppt/presentation.xml respectively will now be identified correctly by looking for word/document\*.xml, xl/workbook\*.xml and ppt/presentation\*.xml 
+
 ## 0.17.1
 
 ### Enhancements
