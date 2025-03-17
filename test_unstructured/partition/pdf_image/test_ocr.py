@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import unstructured_pytesseract
-from bs4 import BeautifulSoup, Tag
+from lxml import etree
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
@@ -536,23 +536,24 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
 
 
 def _create_hocr_word_span(
-    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int]
-) -> Tag:
-    word_span = BeautifulSoup(
-        f"<span class='ocrx_word' title='"
-        f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
-        f"; x_wconf 64'></span>",
-        "html.parser",
-    ).span
+    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int], namespace_map: dict
+) -> etree.Element:
+    word_span = [
+        '<root xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">\n',
+        (
+            f"<span class='ocrx_word' title='"
+            f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
+            f"; x_wconf 64'>"
+        ),
+    ]
     for char, x_conf in characters:
-        char_span = BeautifulSoup(
-            f"""
-            <span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>
-            """,  # noqa : E501
-            "html.parser",
-        ).span
-        word_span.append(char_span)
-    return word_span
+        word_span.append(
+            f"<span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>"
+        )
+    word_span.append("</span>")
+    word_span.append("</root>")
+    root = etree.fromstring("\n".join(word_span))
+    return root
 
 
 def test_extract_word_from_hocr():
@@ -565,18 +566,19 @@ def test_extract_word_from_hocr():
         ("@", "45.0"),
     ]
     word_bbox = (10, 9, 70, 22)
-    word_span = _create_hocr_word_span(characters, word_bbox)
+    agent = OCRAgentTesseract()
+    word_span = _create_hocr_word_span(characters, word_bbox, agent.hocr_namespace)
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.0)
+    text = agent.extract_word_from_hocr(word_span, 0.0)
     assert text == "word!@"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.960)
+    text = agent.extract_word_from_hocr(word_span, 0.960)
     assert text == "word"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.990)
+    text = agent.extract_word_from_hocr(word_span, 0.990)
     assert text == "w"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.999)
+    text = agent.extract_word_from_hocr(word_span, 0.999)
     assert text == ""
 
 
@@ -590,8 +592,9 @@ def test_hocr_to_dataframe():
         ("@", "45.0"),
     ]
     word_bbox = (10, 9, 70, 22)
-    hocr = str(_create_hocr_word_span(characters, word_bbox))
-    df = OCRAgentTesseract().hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
+    agent = OCRAgentTesseract()
+    hocr = etree.tostring(_create_hocr_word_span(characters, word_bbox, agent.hocr_namespace))
+    df = agent.hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
 
     assert df.shape == (1, 5)
     assert df["left"].iloc[0] == 10
@@ -608,7 +611,7 @@ def test_hocr_to_dataframe_when_no_prediction_empty_df():
     assert "left" in df.columns
     assert "top" in df.columns
     assert "width" in df.columns
-    assert "text" in df.columns
+    assert "height" in df.columns
     assert "text" in df.columns
 
 

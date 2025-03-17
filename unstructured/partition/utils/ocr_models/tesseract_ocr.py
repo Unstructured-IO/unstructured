@@ -109,10 +109,14 @@ class OCRAgentTesseract(OCRAgent):
         self, hocr: str, character_confidence_threshold: float = 0.0
     ) -> pd.DataFrame:
 
+        df_entries = []
+
+        if not hocr:
+            return pd.DataFrame(df_entries, columns=["left", "top", "width", "height", "text"])
+
         root = etree.fromstring(hocr)
         word_spans = root.findall('.//h:span[@class="ocrx_word"]', self.hocr_namespace)
 
-        df_entries = []
         for word_span in word_spans:
             word_title = word_span.get("title", "")
             bbox_match = re.search(r"bbox (\d+) (\d+) (\d+) (\d+)", word_title)
