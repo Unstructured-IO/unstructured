@@ -1,3 +1,13 @@
+## 0.17.1-dev0
+
+### Enhancements
+
+- **bump `numpy` to `>2`**. And upgrade `paddlepaddle`, `unstructured-paddleocr`, `onnx` so they are compatible with `numpy>2`.
+
+### Features
+
+### Fixes
+
 ## 0.17.0
 
 ### Enhancements
