@@ -223,6 +223,7 @@ class _HtmlPartitioner:
             # -- remove <image_base64> if not requested --
             if not self._should_include_image_base64(e):
                 e.metadata.image_base64 = None
+                e.metadata.image_mime_type = None
             yield e
 
     @lazyproperty
