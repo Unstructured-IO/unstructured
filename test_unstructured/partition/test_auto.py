@@ -1052,7 +1052,23 @@ def test_auto_partition_respects_detect_language_per_element_arg():
 
 
 @pytest.mark.parametrize(
-    "file_extension", "doc docx eml epub html md odt org ppt pptx rst rtf txt xml".split()
+    "file_extension",
+    [
+        "doc",
+        "docx",
+        "eml",
+        "epub",
+        "html",
+        "md",
+        "odt",
+        "org",
+        "ppt",
+        "pptx",
+        "rst",
+        "rtf",
+        "txt",
+        "xml",
+    ],
 )
 def test_auto_partition_respects_language_arg(file_extension: str):
     elements = partition(
