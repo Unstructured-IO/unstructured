@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import unstructured_pytesseract
-from bs4 import BeautifulSoup, Tag
+from lxml import etree
 from PIL import Image as PILImage
 
 from unstructured.logger import trace_logger
@@ -33,6 +33,8 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 
 class OCRAgentTesseract(OCRAgent):
     """OCR service implementation for Tesseract."""
+
+    hocr_namespace = {"h": "http://www.w3.org/1999/xhtml"}
 
     def __init__(self, language: str = "eng"):
         self.language = language
@@ -106,17 +108,19 @@ class OCRAgentTesseract(OCRAgent):
     def hocr_to_dataframe(
         self, hocr: str, character_confidence_threshold: float = 0.0
     ) -> pd.DataFrame:
-        soup = BeautifulSoup(hocr, "html.parser")
-        word_spans = soup.find_all("span", class_="ocrx_word")
 
         df_entries = []
+
+        if not hocr:
+            return pd.DataFrame(df_entries, columns=["left", "top", "width", "height", "text"])
+
+        root = etree.fromstring(hocr)
+        word_spans = root.findall('.//h:span[@class="ocrx_word"]', self.hocr_namespace)
+
         for word_span in word_spans:
             word_title = word_span.get("title", "")
             bbox_match = re.search(r"bbox (\d+) (\d+) (\d+) (\d+)", word_title)
 
-            # Note: word bbox is used instead of combining characters together due to tesseract
-            # bug that causes the character bboxes to be outside the word bbox, and they have 0
-            # height or width when text is horizontal
             text = self.extract_word_from_hocr(
                 word=word_span, character_confidence_threshold=character_confidence_threshold
             )
@@ -140,11 +144,12 @@ class OCRAgentTesseract(OCRAgent):
         ocr_df = ocr_df.drop(columns=["right", "bottom"])
         return ocr_df
 
-    @staticmethod
-    def extract_word_from_hocr(word: Tag, character_confidence_threshold: float = 0.0) -> str:
+    def extract_word_from_hocr(
+        self, word: etree.Element, character_confidence_threshold: float = 0.0
+    ) -> str:
         """Extracts a word from an hOCR word tag, filtering out characters with low confidence."""
 
-        character_spans = word.find_all("span", class_="ocrx_cinfo")
+        character_spans = word.findall('.//h:span[@class="ocrx_cinfo"]', self.hocr_namespace)
         if len(character_spans) == 0:
             return ""
 

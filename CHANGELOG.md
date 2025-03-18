@@ -1,9 +1,10 @@
-## 0.17.1-dev0
+## 0.17.1-dev1
 
 ### Enhancements
 
 - **Add image_url of images in html partitioner** `<img>` tags with non-data content include a new image_url metadata field with the content of the src attribute.
-  
+- **Use `lxml` instead of `bs4` to parse hOCR data.** `lxml` is much faster than `bs4` given the hOCR data format is regular (garanteed because it is programatically generated)
+
 ### Features
 
 ### Fixes
