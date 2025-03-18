@@ -4,7 +4,7 @@
 #
 #    pip-compile ./extra-csv.in
 #
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c ./base.txt
     #   pandas

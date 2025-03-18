@@ -4,12 +4,24 @@
 #
 #    pip-compile ./extra-paddleocr.in
 #
-anyio==4.8.0
+albucore==0.0.23
+    # via
+    #   albumentations
+    #   unstructured-paddleocr
+albumentations==2.0.5
+    # via unstructured-paddleocr
+annotated-types==0.7.0
+    # via pydantic
+anyio==4.9.0
     # via
     #   -c ./base.txt
     #   httpx
 astor==0.8.1
     # via paddlepaddle
+beautifulsoup4==4.13.3
+    # via
+    #   -c ./base.txt
+    #   unstructured-paddleocr
 certifi==2025.1.31
     # via
     #   -c ./base.txt
@@ -20,20 +32,20 @@ charset-normalizer==3.4.1
     # via
     #   -c ./base.txt
     #   requests
-contourpy==1.3.0
-    # via matplotlib
-cycler==0.12.1
-    # via matplotlib
 cython==3.0.12
     # via unstructured-paddleocr
 decorator==5.2.1
     # via paddlepaddle
+eval-type-backport==0.2.2
+    # via albumentations
 exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   anyio
+fire==0.7.0
+    # via unstructured-paddleocr
 fonttools==4.56.0
-    # via matplotlib
+    # via unstructured-paddleocr
 h11==0.14.0
     # via
     #   -c ./base.txt
@@ -53,32 +65,26 @@ idna==3.10
     #   httpx
     #   requests
 imageio==2.37.0
-    # via
-    #   imgaug
-    #   scikit-image
-imgaug==0.4.0
-    # via unstructured-paddleocr
-importlib-resources==6.5.2
-    # via matplotlib
-kiwisolver==1.4.7
-    # via matplotlib
+    # via scikit-image
 lazy-loader==0.4
     # via scikit-image
-matplotlib==3.9.4
-    # via imgaug
+lxml==5.3.1
+    # via
+    #   -c ./base.txt
+    #   python-docx
 networkx==3.2.1
     # via
     #   paddlepaddle
     #   scikit-image
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c ./base.txt
-    #   contourpy
+    #   albucore
+    #   albumentations
     #   imageio
-    #   imgaug
-    #   matplotlib
     #   opencv-contrib-python
     #   opencv-python
+    #   opencv-python-headless
     #   opt-einsum
     #   paddlepaddle
     #   scikit-image
@@ -89,44 +95,42 @@ numpy==1.26.4
 opencv-contrib-python==4.11.0.86
     # via unstructured-paddleocr
 opencv-python==4.11.0.86
+    # via unstructured-paddleocr
+opencv-python-headless==4.11.0.86
     # via
-    #   imgaug
-    #   unstructured-paddleocr
+    #   albucore
+    #   albumentations
 opt-einsum==3.3.0
     # via paddlepaddle
 packaging==24.2
     # via
     #   -c ./base.txt
     #   lazy-loader
-    #   matplotlib
     #   scikit-image
-paddlepaddle==3.0.0b1
+paddlepaddle==3.0.0rc1
     # via -r ./extra-paddleocr.in
-pdf2image==1.17.0
-    # via unstructured-paddleocr
 pillow==11.1.0
     # via
     #   imageio
-    #   imgaug
-    #   matplotlib
     #   paddlepaddle
-    #   pdf2image
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==6.30.0
+protobuf==6.30.1
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
-pyparsing==3.2.1
-    # via matplotlib
-python-dateutil==2.9.0.post0
-    # via
-    #   -c ./base.txt
-    #   matplotlib
-pyyaml==6.0.2
+pydantic==2.10.6
+    # via albumentations
+pydantic-core==2.27.2
+    # via pydantic
+python-docx==1.1.2
     # via unstructured-paddleocr
+pyyaml==6.0.2
+    # via
+    #   albumentations
+    #   unstructured-paddleocr
 rapidfuzz==3.12.2
     # via
     #   -c ./base.txt
@@ -136,26 +140,27 @@ requests==2.32.3
     #   -c ./base.txt
     #   unstructured-paddleocr
 scikit-image==0.24.0
-    # via
-    #   imgaug
-    #   unstructured-paddleocr
+    # via unstructured-paddleocr
 scipy==1.13.1
     # via
-    #   imgaug
+    #   albumentations
     #   scikit-image
 shapely==2.0.7
-    # via
-    #   imgaug
-    #   unstructured-paddleocr
-six==1.17.0
-    # via
-    #   -c ./base.txt
-    #   imgaug
-    #   python-dateutil
+    # via unstructured-paddleocr
+simsimd==6.2.1
+    # via albucore
 sniffio==1.3.1
     # via
     #   -c ./base.txt
     #   anyio
+soupsieve==2.6
+    # via
+    #   -c ./base.txt
+    #   beautifulsoup4
+stringzilla==3.12.3
+    # via albucore
+termcolor==2.5.0
+    # via fire
 tifffile==2024.8.30
     # via scikit-image
 tqdm==4.67.1
@@ -165,14 +170,18 @@ tqdm==4.67.1
 typing-extensions==4.12.2
     # via
     #   -c ./base.txt
+    #   albucore
+    #   albumentations
     #   anyio
+    #   beautifulsoup4
     #   paddlepaddle
-unstructured-paddleocr==2.8.1.0
+    #   pydantic
+    #   pydantic-core
+    #   python-docx
+unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
 urllib3==1.26.20
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.21.0
-    # via importlib-resources

@@ -15,9 +15,9 @@ click==8.1.8
     #   pip-tools
 distlib==0.3.9
     # via virtualenv
-filelock==3.17.0
+filelock==3.18.0
     # via virtualenv
-identify==2.6.8
+identify==2.6.9
     # via pre-commit
 importlib-metadata==8.6.1
     # via
