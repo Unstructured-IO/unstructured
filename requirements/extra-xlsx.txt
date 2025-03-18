@@ -8,7 +8,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 networkx==3.2.1
     # via -r ./extra-xlsx.in
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c ./base.txt
     #   pandas
