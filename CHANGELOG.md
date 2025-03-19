@@ -1,3 +1,7 @@
+## 0.17.2
+
+* Fix Image in a <div> tag is "UncategorizedText" with no .text
+
 ## 0.17.1
 
 ### Enhancements
