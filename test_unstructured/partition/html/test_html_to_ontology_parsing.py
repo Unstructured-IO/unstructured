@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
+from unstructured.documents.ontology import Form, FormFieldValue, Image, OntologyElement, Page
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
@@ -672,3 +672,24 @@ def test_get_text_when_recursion_limit_activated():
         last_child = last_child.children[0]
 
     assert last_child.to_text() == "some text"
+
+
+def test_uncategorizedtest_has_image_and_no_text():
+    # language=HTML
+    base_html = _wrap_with_body(
+        """
+        <div class="Page">
+    <div class="UncategorizedText">
+        <img src="https://www.example.com/image.jpg"/>
+    </div>
+    </div>
+    """
+    )
+
+    base_html = indent_html(base_html)
+
+    ontology: OntologyElement = parse_html_to_ontology(base_html)
+
+    element = ontology.children[0].children[0]
+    assert type(element) is Image
+    assert element.css_class_name == "Image"
