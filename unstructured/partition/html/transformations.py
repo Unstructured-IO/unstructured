@@ -437,6 +437,11 @@ def extract_tag_and_ontology_class_from_tag(
         html_tag = "span"
         element_class = ontology.UncategorizedText
 
+    # Scenario 5: UncategorizedText has image and no text
+    # Typically, this happens with a span or div tag with an image inside
+    if element_class == ontology.UncategorizedText and soup.find("img") and not soup.text.strip():
+        element_class = ontology.Image
+
     return html_tag, element_class
 
 

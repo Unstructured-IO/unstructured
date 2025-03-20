@@ -1,4 +1,4 @@
-## 0.17.2-dev0
+## 0.17.3-dev0
 
 ### Enhancements
 
@@ -6,6 +6,10 @@
 
 ### Fixes
 - **Fixes wrong detection of office files** certain office files wrongly identified as .ZIP when office(.docx,.xlsx and .pptx) files containing files other than word/document.xml, xl/workbook.xml and ppt/presentation.xml respectively will now be identified correctly by looking for word/document\*.xml, xl/workbook\*.xml and ppt/presentation\*.xml 
+
+## 0.17.2
+
+* Fix Image in a <div> tag is "UncategorizedText" with no .text
 
 ## 0.17.1
 
