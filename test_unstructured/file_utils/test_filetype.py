@@ -15,6 +15,7 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
+    input_path,
     patch,
     property_mock,
 )
@@ -992,5 +993,7 @@ def test_json_content_type_is_disambiguated_for_ndjson():
 
 def test_office_files_when_document_archive_has_non_standard_prefix():
 
-    predicted_type = detect_filetype(file_path="test_document_from_office365.docx")
+    predicted_type = detect_filetype(
+        file_path=input_path("file_type/test_document_from_office365.docx")
+    )
     assert predicted_type == FileType.DOCX
