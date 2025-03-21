@@ -15,6 +15,7 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
+    input_path,
     patch,
     property_mock,
 )
@@ -29,6 +30,7 @@ from unstructured.file_utils.filetype import (
 from unstructured.file_utils.model import FileType, create_file_type
 
 is_in_docker = os.path.exists("/.dockerenv")
+
 
 # ================================================================================================
 # STRATEGY #1 - DIRECT DETECTION OF CFB/ZIP-BASED BINARY FILE TYPES (8 TYPES)
@@ -987,3 +989,11 @@ def test_json_content_type_is_disambiguated_for_ndjson():
     file_buffer.name = "filename.pdf"
     predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
     assert predicted_type == FileType.NDJSON
+
+
+def test_office_files_when_document_archive_has_non_standard_prefix():
+
+    predicted_type = detect_filetype(
+        file_path=input_path("file_type/test_document_from_office365.docx")
+    )
+    assert predicted_type == FileType.DOCX
