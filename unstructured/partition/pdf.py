@@ -622,8 +622,7 @@ def _partition_pdf_or_image_local(
 
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
-        process_data_with_pdfminer,
-        process_file_with_pdfminer,
+        process_file_with_pdfplumber,
     )
 
     if not is_image:
@@ -652,8 +651,8 @@ def _partition_pdf_or_image_local(
         )
 
         extracted_layout, layouts_links = (
-            process_file_with_pdfminer(
-                filename=filename,
+            process_file_with_pdfplumber(
+                filename,
                 dpi=pdf_image_dpi,
                 password=password,
                 pdfminer_config=pdfminer_config,
@@ -714,8 +713,8 @@ def _partition_pdf_or_image_local(
             file.seek(0)
 
         extracted_layout, layouts_links = (
-            process_data_with_pdfminer(
-                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+            process_file_with_pdfplumber(
+                file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
             )
             if pdf_text_extractable
             else ([], [])
