@@ -1,3 +1,93 @@
+## 0.17.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes wrong detection of office files** certain office files wrongly identified as .ZIP when office(.docx,.xlsx and .pptx) files containing files other than word/document.xml, xl/workbook.xml and ppt/presentation.xml respectively will now be identified correctly by looking for word/document\*.xml, xl/workbook\*.xml and ppt/presentation\*.xml 
+
+## 0.17.2
+
+* Fix Image in a <div> tag is "UncategorizedText" with no .text
+
+## 0.17.1
+
+### Enhancements
+
+- **Add image_url of images in html partitioner** `<img>` tags with non-data content include a new image_url metadata field with the content of the src attribute.
+
+- **Use `lxml` instead of `bs4` to parse hOCR data.** `lxml` is much faster than `bs4` given the hOCR data format is regular (garanteed because it is programatically generated)
+
+- **bump `numpy` to `>2`**. And upgrade `paddlepaddle`, `unstructured-paddleocr`, `onnx` so they are compatible with `numpy>2`.
+
+### Features
+
+### Fixes
+
+## 0.17.0
+
+### Enhancements
+
+- **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
+
+- **Use kwargs instead of env to specify `ocr_agent` and `table_ocr_agent`** for `hi_res` strategy.
+
+- **stop using `PageLayout.elements` to save memory and cpu cost**. Now only use `PageLayout.elements_array` throughout the partition, except when `analysis=True` where the drawing logic still uses `elements`.
+
+### Features
+
+### Fixes
+
+## 0.16.25
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
+
+
+## 0.16.24
+
+### Enhancements
+
+- **Support dynamic partitioner file type registration**. Use `create_file_type` to create new file type that can be handled
+  in unstructured and `register_partitioner` to enable registering your own partitioner for any file type.
+
+- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+
+- **use block matrix to reduce peak memory usage for pdf/image partition**.
+
+### Features
+
+- **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
+
+### Fixes
+
+
+## 0.16.23
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes detect_filetype when SpooledTemporaryFile is passed**. Previously some random name would get assigned to the file and the function raised error.
+
+## 0.16.22
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix open CVES in and bump dependencies**
+
 ## 0.16.21
 
 ### Enhancements

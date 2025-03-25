@@ -15,9 +15,9 @@ click==8.1.8
     #   pip-tools
 distlib==0.3.9
     # via virtualenv
-filelock==3.17.0
+filelock==3.18.0
     # via virtualenv
-identify==2.6.6
+identify==2.6.9
     # via pre-commit
 importlib-metadata==8.6.1
     # via
@@ -51,7 +51,7 @@ tomli==2.2.1
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.29.1
+virtualenv==20.29.3
     # via pre-commit
 wheel==0.45.1
     # via pip-tools

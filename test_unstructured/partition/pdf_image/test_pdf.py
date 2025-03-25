@@ -39,6 +39,8 @@ from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -1477,8 +1479,7 @@ def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
     layout_elem_absent_coordinates = MockSinglePageDocumentLayout()
     for page in layout_elem_absent_coordinates.pages:
-        for el in page.elements:
-            el.bbox = None
+        page.elements_array.element_coords[:, :] = None
     elements = pdf.document_to_element_list(layout_elem_absent_coordinates)
     assert elements[0].metadata.coordinates is None
 
@@ -1585,3 +1586,20 @@ def test_partition_pdf_with_password(
                     file=spooled_temp_file, strategy=strategy, password="password"
                 )
                 _test(result)
+
+
+def test_partition_pdf_with_specified_ocr_agents(mocker):
+    from unstructured.partition.pdf_image.ocr import OCRAgent
+
+    spy = mocker.spy(OCRAgent, "get_instance")
+
+    pdf.partition_pdf(
+        filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+        ocr_agent=OCR_AGENT_TESSERACT,
+        table_ocr_agent=OCR_AGENT_PADDLE,
+    )
+
+    assert spy.call_args_list[0][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
+    assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}

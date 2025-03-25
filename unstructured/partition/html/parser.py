@@ -75,6 +75,7 @@ Other background
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict, deque
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
@@ -89,6 +90,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    Image,
     ListItem,
     NarrativeText,
     Table,
@@ -475,6 +477,34 @@ class Pre(BlockItem):
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _PreElementAccumulator(self)
+
+
+class ImageBlock(Flow):
+    """Custom element-class for `<img>` elements."""
+
+    BASE64_IMAGE_REGEX = re.compile(r"^data:(image/[^;]+);base64,(.*)")
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Generate an Image element based on `src`, `data-src`, and `alt`."""
+        img_src = self.get("data-src", "").strip() or self.get("src", "").strip()
+        img_alt = self.get("alt", "").strip()
+
+        if not img_src:  # Early exit if no image source
+            return
+
+        mime_match = self.BASE64_IMAGE_REGEX.match(img_src)
+        img_mime_type = mime_match.group(1) if mime_match else None
+        img_base64 = mime_match.group(2) if mime_match else None
+        img_url = None if img_base64 else img_src
+
+        yield Image(
+            text=img_alt,
+            metadata=ElementMetadata(
+                image_mime_type=img_mime_type,
+                image_base64=img_base64,
+                image_url=img_url,
+            ),
+        )
 
 
 class TableBlock(Flow):
@@ -928,6 +958,8 @@ element_class_lookup.get_namespace(None).update(
         "ol": ListBlock,
         "ul": ListBlock,
         "li": ListItemBlock,
+        # -- image --
+        "img": ImageBlock,
         # -- table --
         "table": TableBlock,
         # -- annotated phrasing --

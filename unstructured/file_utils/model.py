@@ -3,7 +3,43 @@
 from __future__ import annotations
 
 import enum
-from typing import Iterable, cast
+from typing import TYPE_CHECKING, Callable, Iterable, Type, cast
+
+from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from unstructured.documents.elements import Element
+else:
+    Element = None
+
+
+def _create_file_type_enum(
+    cls: Type["FileType"],
+    value: str,
+    partitioner_shortname: str | None,
+    importable_package_dependencies: Iterable[str],
+    extra_name: str | None,
+    extensions: Iterable[str],
+    canonical_mime_type: str,
+    alias_mime_types: Iterable[str],
+    partitioner_full_module_path: str | None = None,
+) -> "FileType":
+    """
+    Moving here instead of directly in the FileType.__new__ allows us
+    to dynamically create new enum properties.
+
+    FileType.__new__ does not work with dynamic properties.
+    """
+    val = object.__new__(cls)
+    val._value_ = value
+    val._partitioner_shortname = partitioner_shortname
+    val._importable_package_dependencies = tuple(importable_package_dependencies)
+    val._extra_name = extra_name
+    val._extensions = tuple(extensions)
+    val._canonical_mime_type = canonical_mime_type
+    val._alias_mime_types = tuple(alias_mime_types)
+    val._partitioner_full_module_path = partitioner_full_module_path
+    return val
 
 
 class FileType(enum.Enum):
@@ -30,6 +66,9 @@ class FileType(enum.Enum):
     _alias_mime_types: tuple[str, ...]
     """MIME-types accepted as identifying this file-type."""
 
+    _partitioner_full_module_path: str | None
+    """Fully-qualified name of module providing partitioner for this file-type."""
+
     def __new__(
         cls,
         value: str,
@@ -39,16 +78,19 @@ class FileType(enum.Enum):
         extensions: Iterable[str],
         canonical_mime_type: str,
         alias_mime_types: Iterable[str],
+        partitioner_full_module_path: str | None = None,
     ):
-        self = object.__new__(cls)
-        self._value_ = value
-        self._partitioner_shortname = partitioner_shortname
-        self._importable_package_dependencies = tuple(importable_package_dependencies)
-        self._extra_name = extra_name
-        self._extensions = tuple(extensions)
-        self._canonical_mime_type = canonical_mime_type
-        self._alias_mime_types = tuple(alias_mime_types)
-        return self
+        return _create_file_type_enum(
+            cls,
+            value,
+            partitioner_shortname,
+            importable_package_dependencies,
+            extra_name,
+            extensions,
+            canonical_mime_type,
+            alias_mime_types,
+            partitioner_full_module_path,
+        )
 
     def __lt__(self, other: FileType) -> bool:
         """Makes `FileType` members comparable with relational operators, at least with `<`.
@@ -82,8 +124,7 @@ class FileType(enum.Enum):
         Returns `None` when `mime_type` is `None` or does not map to the canonical MIME-type of a
         `FileType` member or one of its alias MIME-types.
         """
-        if mime_type is None or mime_type == "application/json":
-            # application/json is ambiguous as it may point ot JSON and NDJSON file types
+        if mime_type is None:
             return None
         # -- not super efficient but plenty fast enough for once-or-twice-per-file use and avoids
         # -- limitations on defining a class variable on an Enum.
@@ -132,7 +173,7 @@ class FileType(enum.Enum):
         distinguishing file-types like WAV, ZIP, EMPTY, and UNK which are legitimate file-types
         but have no associated partitioner.
         """
-        return bool(self._partitioner_shortname)
+        return bool(self._partitioner_shortname) or bool(self._partitioner_full_module_path)
 
     @property
     def mime_type(self) -> str:
@@ -154,6 +195,9 @@ class FileType(enum.Enum):
         # -- Raise when this property is accessed on a FileType member that has no partitioner
         # -- shortname. This prevents a harder-to-find bug from appearing far away from this call
         # -- when code would try to `getattr(module, None)` or whatever.
+        if full_module_path := self._partitioner_full_module_path:
+            return full_module_path.split(".")[-1]
+
         if (shortname := self._partitioner_shortname) is None:
             raise ValueError(
                 f"`.partitioner_function_name` is undefined because FileType.{self.name} is not"
@@ -171,6 +215,9 @@ class FileType(enum.Enum):
         # -- Raise when this property is accessed on a FileType member that has no partitioner
         # -- shortname. This prevents a harder-to-find bug from appearing far away from this call
         # -- when code would try to `importlib.import_module(None)` or whatever.
+        if full_module_path := self._partitioner_full_module_path:
+            return ".".join(full_module_path.split(".")[:-1])
+
         if (shortname := self._partitioner_shortname) is None:
             raise ValueError(
                 f"`.partitioner_module_qname` is undefined because FileType.{self.name} is not"
@@ -292,7 +339,7 @@ class FileType(enum.Enum):
     NDJSON = (
         "ndjson",
         "ndjson",
-        ["ndjson"],
+        cast(list[str], []),
         None,
         [".ndjson"],
         "application/x-ndjson",
@@ -446,3 +493,42 @@ class FileType(enum.Enum):
         "inode/x-empty",
         cast(list[str], []),
     )
+
+
+def create_file_type(
+    name: str,
+    *,
+    canonical_mime_type: str,
+    importable_package_dependencies: Iterable[str] | None = None,
+    extra_name: str | None = None,
+    extensions: Iterable[str] | None = None,
+    alias_mime_types: Iterable[str] | None = None,
+) -> FileType:
+    """Register a new FileType member."""
+    type_ = _create_file_type_enum(
+        FileType,
+        name,
+        None,
+        importable_package_dependencies or cast(list[str], []),
+        extra_name,
+        extensions or cast(list[str], []),
+        canonical_mime_type,
+        alias_mime_types or cast(list[str], []),
+        None,
+    )
+    type_._name_ = name
+    FileType._member_map_[name] = type_
+    return type_
+
+
+_P = ParamSpec("_P")
+
+
+def register_partitioner(
+    file_type: FileType,
+) -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
+        file_type._partitioner_full_module_path = func.__module__ + "." + func.__name__
+        return func
+
+    return decorator

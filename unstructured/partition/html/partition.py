@@ -10,7 +10,7 @@ import requests
 from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Element, ElementType
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -37,6 +37,8 @@ def partition_html(
     detection_origin: Optional[str] = None,
     html_parser_version: Literal["v1", "v2"] = "v1",
     image_alt_mode: Optional[Literal["to_text"]] = "to_text",
+    extract_image_block_to_payload: bool = False,
+    extract_image_block_types: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -86,6 +88,8 @@ def partition_html(
         detection_origin=detection_origin,
         html_parser_version=html_parser_version,
         image_alt_mode=image_alt_mode,
+        extract_image_block_types=extract_image_block_types,
+        extract_image_block_to_payload=extract_image_block_to_payload,
     )
 
     return list(_HtmlPartitioner.iter_elements(opts))
@@ -108,6 +112,8 @@ class HtmlPartitionerOptions:
         detection_origin: str | None,
         html_parser_version: Literal["v1", "v2"] = "v1",
         image_alt_mode: Optional[Literal["to_text"]] = "to_text",
+        extract_image_block_types: Optional[list[str]] = None,
+        extract_image_block_to_payload: bool = False,
     ):
         self._file_path = file_path
         self._file = file
@@ -120,6 +126,8 @@ class HtmlPartitionerOptions:
         self._detection_origin = detection_origin
         self._html_parser_version = html_parser_version
         self._image_alt_mode = image_alt_mode
+        self._extract_image_block_types = extract_image_block_types
+        self._extract_image_block_to_payload = extract_image_block_to_payload
 
     @lazyproperty
     def detection_origin(self) -> str | None:
@@ -183,6 +191,15 @@ class _HtmlPartitioner:
     def __init__(self, opts: HtmlPartitionerOptions):
         self._opts = opts
 
+    def _should_include_image_base64(self, element: Element) -> bool:
+        """Determines if an image_base64 element should be included in the output."""
+        return (
+            element.category == ElementType.IMAGE
+            and self._opts._extract_image_block_to_payload
+            and self._opts._extract_image_block_types is not None
+            and "Image" in self._opts._extract_image_block_types
+        )
+
     @classmethod
     def iter_elements(cls, opts: HtmlPartitionerOptions) -> Iterator[Element]:
         """Partition HTML document provided by `opts` into document-elements."""
@@ -202,6 +219,11 @@ class _HtmlPartitioner:
         for e in elements_iter:
             e.metadata.last_modified = self._opts.last_modified
             e.metadata.detection_origin = self._opts.detection_origin
+
+            # -- remove <image_base64> if not requested --
+            if not self._should_include_image_base64(e):
+                e.metadata.image_base64 = None
+                e.metadata.image_mime_type = None
             yield e
 
     @lazyproperty
@@ -224,7 +246,7 @@ class _HtmlPartitioner:
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.
         etree.strip_elements(
-            root, ["del", "img", "link", "meta", "noscript", "script", "style"], with_tail=False
+            root, ["del", "link", "meta", "noscript", "script", "style"], with_tail=False
         )
 
         # -- remove <header> and <footer> tags if the caller doesn't want their contents --

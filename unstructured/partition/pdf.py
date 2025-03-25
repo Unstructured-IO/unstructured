@@ -54,7 +54,6 @@ from unstructured.partition.common.common import (
 from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
-    tesseract_to_paddle_language,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
@@ -88,7 +87,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -273,6 +272,8 @@ def partition_pdf_or_image(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -332,8 +333,6 @@ def partition_pdf_or_image(
         file.seek(0)
 
     ocr_languages = prepare_languages_for_tesseract(languages)
-    if env_config.OCR_AGENT == OCR_AGENT_PADDLE:
-        ocr_languages = tesseract_to_paddle_language(ocr_languages)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
@@ -359,6 +358,8 @@ def partition_pdf_or_image(
                 form_extraction_skip_tables=form_extraction_skip_tables,
                 password=password,
                 pdfminer_config=pdfminer_config,
+                ocr_agent=ocr_agent,
+                table_ocr_agent=table_ocr_agent,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -609,6 +610,8 @@ def _partition_pdf_or_image_local(
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -690,11 +693,13 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
     else:
         inferred_document_layout = process_data_with_model(
@@ -749,19 +754,17 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
 
     # vectorization of the data structure ends here
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
-
-    for page in final_document_layout.pages:
-        for el in page.elements:
-            el.text = el.text or ""
 
     elements = document_to_element_list(
         final_document_layout,
@@ -1192,11 +1195,24 @@ def document_to_element_list(
             else None
         )
 
-        for layout_element in page.elements:
+        head_line_type_class_ids = [
+            idx
+            for idx, class_type in page.elements_array.element_class_id_map.items()
+            if class_type in ("Headline", "Subheadline")
+        ]
+        if head_line_type_class_ids:
+            has_headline = any(
+                np.any(page.elements_array.element_class_ids == idx)
+                for idx in head_line_type_class_ids
+            )
+        else:
+            has_headline = False
+
+        for layout_element in page.elements_array.iter_elements():
             if (
                 image_width
                 and image_height
-                and getattr(layout_element.bbox, "x1") not in (None, np.nan)
+                and not np.isnan(getattr(layout_element.bbox, "x1", np.nan))
             ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
@@ -1227,8 +1243,8 @@ def document_to_element_list(
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
 
-                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
-                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
+                if (isinstance(element, Title) and element.metadata.category_depth is None) and (
+                    has_headline
                 ):
                     element.metadata.category_depth = 0
 

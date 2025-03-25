@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
@@ -656,8 +657,6 @@ def merge_inferred_with_extracted_layout(
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
-        # NOTE: once we drop reference to elements we can remove this step below
-        inferred_page.elements[:] = merged_layout.as_list()
 
     return inferred_document_layout
 
@@ -669,34 +668,26 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        non_pdfminer_element_boxes = [e.bbox for e in page.elements if e.source != Source.PDFMINER]
-        element_boxes = []
-        element_to_subregion_map = {}
-        subregion_indice = 0
-        for i, element in enumerate(page.elements):
-            if element.source != Source.PDFMINER:
-                continue
-            element_boxes.append(element.bbox)
-            element_to_subregion_map[i] = subregion_indice
-            subregion_indice += 1
+        pdfminer_mask = page.elements_array.sources == Source.PDFMINER
+        non_pdfminer_element_boxes = page.elements_array.slice(~pdfminer_mask).element_coords
+        pdfminer_element_boxes = page.elements_array.slice(pdfminer_mask).element_coords
+
+        if len(pdfminer_element_boxes) == 0 or len(non_pdfminer_element_boxes) == 0:
+            continue
 
         is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
-                element_boxes,
+                pdfminer_element_boxes,
                 non_pdfminer_element_boxes,
                 env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
             ).sum(axis=1)
             == 1
         )
 
-        page.elements = [
-            e
-            for i, e in enumerate(page.elements)
-            if (
-                (i not in element_to_subregion_map)
-                or not is_element_subregion_of_other_elements[element_to_subregion_map[i]]
-            )
-        ]
+        pdfminer_to_keep = np.where(pdfminer_mask)[0][~is_element_subregion_of_other_elements]
+        page.elements_array = page.elements_array.slice(
+            np.sort(np.concatenate((np.where(~pdfminer_mask)[0], pdfminer_to_keep)))
+        )
 
     return document
 
@@ -708,10 +699,16 @@ def remove_duplicate_elements(
 ) -> TextRegions:
     """Removes duplicate text elements extracted by PDFMiner from a document layout."""
 
-    iou = boxes_self_iou(elements.element_coords, threshold)
-    # this is equivalent of finding those rows where `not iou[i, i + 1 :].any()`, i.e., any element
-    # that has no overlap above the threshold with any other elements
-    return elements.slice(~np.triu(iou, k=1).any(axis=1))
+    coords = elements.element_coords
+    # experiments show 2e3 is the block size that constrains the peak memory around 1Gb for this
+    # function; that accounts for all the intermediate matricies allocated and memory for storing
+    # final results
+    memory_cap_in_gb = os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1)
+    n_split = np.ceil(coords.shape[0] / 2e3 / memory_cap_in_gb)
+    splits = np.array_split(coords, n_split, axis=0)
+
+    ious = [~np.triu(boxes_iou(split, coords, threshold), k=1).any(axis=1) for split in splits]
+    return elements.slice(np.concatenate(ious))
 
 
 def aggregate_embedded_text_by_block(

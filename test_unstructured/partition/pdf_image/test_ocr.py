@@ -1,16 +1,16 @@
 from collections import namedtuple
 from typing import Optional
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
 import unstructured_pytesseract
-from bs4 import BeautifulSoup, Tag
+from lxml import etree
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
-from unstructured_inference.inference.layout import DocumentLayout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     LayoutElements,
@@ -25,6 +25,8 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
 )
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     Source,
 )
 from unstructured.partition.utils.ocr_models.google_vision_ocr import OCRAgentGoogleVision
@@ -66,12 +68,10 @@ def test_process_file_with_ocr_invalid_filename(is_image):
         )
 
 
-def test_supplement_page_layout_with_ocr_invalid_ocr(monkeypatch):
-    monkeypatch.setenv("OCR_AGENT", "invalid_ocr")
+def test_supplement_page_layout_with_ocr_invalid_ocr():
     with pytest.raises(ValueError):
         _ = ocr.supplement_page_layout_with_ocr(
-            page_layout=None,
-            image=None,
+            page_layout=None, image=None, ocr_agent="invliad_ocr"
         )
 
 
@@ -536,23 +536,24 @@ def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
 
 
 def _create_hocr_word_span(
-    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int]
-) -> Tag:
-    word_span = BeautifulSoup(
-        f"<span class='ocrx_word' title='"
-        f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
-        f"; x_wconf 64'></span>",
-        "html.parser",
-    ).span
+    characters: list[tuple[str, str]], word_bbox: tuple[int, int, int, int], namespace_map: dict
+) -> etree.Element:
+    word_span = [
+        '<root xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">\n',
+        (
+            f"<span class='ocrx_word' title='"
+            f"bbox {word_bbox[0]} {word_bbox[1]} {word_bbox[2]} {word_bbox[3]}"
+            f"; x_wconf 64'>"
+        ),
+    ]
     for char, x_conf in characters:
-        char_span = BeautifulSoup(
-            f"""
-            <span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>
-            """,  # noqa : E501
-            "html.parser",
-        ).span
-        word_span.append(char_span)
-    return word_span
+        word_span.append(
+            f"<span class='ocrx_cinfo' title='x_bboxes 0 0 0 0; x_conf {x_conf}'>{char}</span>"
+        )
+    word_span.append("</span>")
+    word_span.append("</root>")
+    root = etree.fromstring("\n".join(word_span))
+    return root
 
 
 def test_extract_word_from_hocr():
@@ -565,18 +566,19 @@ def test_extract_word_from_hocr():
         ("@", "45.0"),
     ]
     word_bbox = (10, 9, 70, 22)
-    word_span = _create_hocr_word_span(characters, word_bbox)
+    agent = OCRAgentTesseract()
+    word_span = _create_hocr_word_span(characters, word_bbox, agent.hocr_namespace)
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.0)
+    text = agent.extract_word_from_hocr(word_span, 0.0)
     assert text == "word!@"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.960)
+    text = agent.extract_word_from_hocr(word_span, 0.960)
     assert text == "word"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.990)
+    text = agent.extract_word_from_hocr(word_span, 0.990)
     assert text == "w"
 
-    text = OCRAgentTesseract.extract_word_from_hocr(word_span, 0.999)
+    text = agent.extract_word_from_hocr(word_span, 0.999)
     assert text == ""
 
 
@@ -590,8 +592,9 @@ def test_hocr_to_dataframe():
         ("@", "45.0"),
     ]
     word_bbox = (10, 9, 70, 22)
-    hocr = str(_create_hocr_word_span(characters, word_bbox))
-    df = OCRAgentTesseract().hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
+    agent = OCRAgentTesseract()
+    hocr = etree.tostring(_create_hocr_word_span(characters, word_bbox, agent.hocr_namespace))
+    df = agent.hocr_to_dataframe(hocr=hocr, character_confidence_threshold=0.960)
 
     assert df.shape == (1, 5)
     assert df["left"].iloc[0] == 10
@@ -608,5 +611,55 @@ def test_hocr_to_dataframe_when_no_prediction_empty_df():
     assert "left" in df.columns
     assert "top" in df.columns
     assert "width" in df.columns
+    assert "height" in df.columns
     assert "text" in df.columns
-    assert "text" in df.columns
+
+
+@pytest.fixture
+def mock_page(mock_ocr_layout, mock_layout):
+    mock_page = MagicMock(PageLayout)
+    mock_page.elements_array = mock_layout
+    return mock_page
+
+
+def test_supplement_layout_with_ocr(mocker, mock_page):
+    from unstructured.partition.pdf_image.ocr import OCRAgent
+
+    mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
+    spy = mocker.spy(OCRAgent, "get_instance")
+
+    ocr.supplement_page_layout_with_ocr(
+        mock_page,
+        Image.new("RGB", (100, 100)),
+        infer_table_structure=True,
+        ocr_agent=OCR_AGENT_TESSERACT,
+        ocr_languages="eng",
+        table_ocr_agent=OCR_AGENT_PADDLE,
+    )
+
+    assert spy.call_args_list[0][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
+    assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
+
+
+def test_pass_down_agents(mocker, mock_page):
+    from unstructured.partition.pdf_image.ocr import OCRAgent, PILImage
+
+    mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
+    mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (100, 100)))
+    spy = mocker.spy(OCRAgent, "get_instance")
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [mock_page]
+
+    ocr.process_file_with_ocr(
+        "foo",
+        doc,
+        [],
+        infer_table_structure=True,
+        is_image=True,
+        ocr_agent=OCR_AGENT_PADDLE,
+        ocr_languages="eng",
+        table_ocr_agent=OCR_AGENT_TESSERACT,
+    )
+
+    assert spy.call_args_list[0][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
+    assert spy.call_args_list[1][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}

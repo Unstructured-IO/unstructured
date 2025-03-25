@@ -10,9 +10,7 @@ emoji
 dataclasses-json
 python-iso639
 langdetect
-# NOTE(robinson) - numpy pin is because ONNX model weights are only compatible
-# with numpy 1.x.x
-numpy<2
+numpy
 rapidfuzz
 backoff
 typing-extensions
