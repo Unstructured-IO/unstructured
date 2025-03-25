@@ -1,3 +1,12 @@
+## 0.17.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Resolve open CVEs
+
 ## 0.17.3-dev0
 
 ### Enhancements
@@ -102,6 +111,7 @@
 ### Fixes
 
 - **Fix file type detection for NDJSON files** NDJSON files were being detected as JSON due to having the same mime-type.
+- Base-image was updated to resolved CVEs, running pipline to manually build
 
 ## 0.16.20
 
