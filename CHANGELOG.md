@@ -12,6 +12,7 @@
 ### Fixes
 
 - **Fix file type detection for NDJSON files** NDJSON files were being detected as JSON due to having the same mime-type.
+- Base-image was updated to resolved CVEs, running pipline to manually build
 
 ## 0.16.20
 
