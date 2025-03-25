@@ -1,3 +1,12 @@
+## 0.17.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Resolve open CVEs
+
 ## 0.17.3-dev0
 
 ### Enhancements
