@@ -107,7 +107,7 @@ packaging==24.2
     #   -c ./base.txt
     #   lazy-loader
     #   scikit-image
-paddlepaddle==3.0.0rc1
+paddlepaddle==3.0.0
     # via -r ./extra-paddleocr.in
 pillow==11.1.0
     # via
@@ -115,7 +115,7 @@ pillow==11.1.0
     #   paddlepaddle
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==6.30.1
+protobuf==6.30.2
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle
@@ -167,7 +167,7 @@ tqdm==4.67.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -c ./base.txt
     #   albucore

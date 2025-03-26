@@ -96,9 +96,9 @@ tqdm==4.67.1
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.49.0
+transformers==4.50.1
     # via -r ./huggingface.in
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -c ./base.txt
     #   huggingface-hub
