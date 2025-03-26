@@ -32,11 +32,11 @@ packaging==24.2
     #   build
 pip-tools==7.4.1
     # via -r ./dev.in
-platformdirs==4.3.6
+platformdirs==4.3.7
     # via
     #   -c ./test.txt
     #   virtualenv
-pre-commit==4.1.0
+pre-commit==4.2.0
     # via -r ./dev.in
 pyproject-hooks==1.2.0
     # via
