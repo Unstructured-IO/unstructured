@@ -6,7 +6,6 @@ types-click
 flake8
 flake8-print
 freezegun
-label_studio_sdk
 mypy
 pydantic
 pytest-cov
@@ -15,7 +14,6 @@ ruff
 types-Markdown
 types-requests
 types-tabulate
-vcrpy
 grpcio
 autoflake
 liccheck
