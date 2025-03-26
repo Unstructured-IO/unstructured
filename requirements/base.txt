@@ -76,7 +76,7 @@ nest-asyncio==1.6.0
     # via unstructured-client
 nltk==3.9.1
     # via -r ./base.in
-numpy==2.0.2
+numpy==1.26.4
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
@@ -125,7 +125,7 @@ tqdm==4.67.1
     # via
     #   -r ./base.in
     #   nltk
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -r ./base.in
     #   anyio

@@ -1,3 +1,12 @@
+## 0.17.3.1
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Resolve open Python CVEs
+
 ## 0.17.3
 
 ### Enhancements

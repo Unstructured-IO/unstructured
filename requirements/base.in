@@ -10,7 +10,8 @@ emoji
 dataclasses-json
 python-iso639
 langdetect
-numpy
+# label-studio-sdk requires numpy<2.0.0
+numpy<2.0.0
 rapidfuzz
 backoff
 typing-extensions

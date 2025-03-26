@@ -76,7 +76,7 @@ networkx==3.2.1
     # via
     #   paddlepaddle
     #   scikit-image
-numpy==2.0.2
+numpy==1.26.4
     # via
     #   -c ./base.txt
     #   albucore
@@ -107,7 +107,7 @@ packaging==24.2
     #   -c ./base.txt
     #   lazy-loader
     #   scikit-image
-paddlepaddle==3.0.0rc1
+paddlepaddle==3.0.0
     # via -r ./extra-paddleocr.in
 pillow==11.1.0
     # via
@@ -167,7 +167,7 @@ tqdm==4.67.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -c ./base.txt
     #   albucore

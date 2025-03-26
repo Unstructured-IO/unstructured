@@ -8,7 +8,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 networkx==3.2.1
     # via -r ./extra-xlsx.in
-numpy==2.0.2
+numpy==1.26.4
     # via
     #   -c ./base.txt
     #   pandas
@@ -20,13 +20,13 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   pandas
-pytz==2025.1
+pytz==2025.2
     # via pandas
 six==1.17.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-tzdata==2025.1
+tzdata==2025.2
     # via pandas
 xlrd==2.0.1
     # via -r ./extra-xlsx.in
