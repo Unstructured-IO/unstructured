@@ -1,3 +1,12 @@
+## 0.17.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Deprecate `stage_for_label_studio` and drop `label_studio_sdk` dependency.** This resolves a CVE due to the dependency on `label_studio_sdk`.
+
 ## 0.17.3
 
 ### Enhancements
