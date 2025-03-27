@@ -25,7 +25,7 @@ ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV NLTK_DATA=/home/notebook-user/nltk_data
 
 # Install Python dependencies and download required NLTK packages
-RUN find requirements/ -type f -name "*.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
+RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
     mkdir -p ${NLTK_DATA} && \
     $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
     $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
