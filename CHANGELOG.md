@@ -1,3 +1,12 @@
+## 0.17.5
+
+### Enhancements
+- **Remove test and dev dependencies from docker image** This reduces the docker image size slightly and reduces potential security vulnerabilities.
+
+### Features
+
+### Fixes
+
 ## 0.17.4
 
 ### Enhancements
