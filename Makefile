@@ -310,7 +310,7 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "pip install -r requirements/test.txt requirements/dev.txt && \
+	bash -c "pip install -r requirements/test.txt -r requirements/dev.txt && \
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
 	python3 -m pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
