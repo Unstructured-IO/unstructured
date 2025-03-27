@@ -1,11 +1,12 @@
 ## 0.17.5
 
 ### Enhancements
-- **Remove test and dev dependencies from docker image** This reduces the docker image size slightly and reduces potential security vulnerabilities.
+- **Remove test and dev dependencies from docker image.** This reduces the docker image size slightly and reduces potential security vulnerabilities.
 
 ### Features
 
 ### Fixes
+- **Removed out of date ubuntu Dockerfile.** The Dockerfile was out of date and non-functional.
 
 ## 0.17.4
 
