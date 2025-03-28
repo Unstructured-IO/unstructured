@@ -88,14 +88,11 @@ VLM_MODEL=""
 
 # Function to check if more than one strategy is enabled
 check_strategy_conflict() {
-  echo "foo e"
   local count=0
   $HI_RES && ((count++))
   $FAST && ((count++))
   $OCR_ONLY && ((count++))
   $VLM && ((count++))
-
-  echo count is "$count"
   
   if [ "$count" -gt 1 ]; then
     echo "Error: Only one strategy option (--hi-res, --fast, --ocr-only, --vlm) can be specified at a time."
@@ -200,7 +197,6 @@ if [ -z "$INPUT" ]; then
   exit 1
 fi
 
-echo hello
 # Check for strategy conflicts after all arguments are processed
 check_strategy_conflict
 
