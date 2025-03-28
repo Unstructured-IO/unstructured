@@ -86,19 +86,6 @@ OPEN_HTML=${UNST_AUTO_OPEN_HTML:-false}
 VLM_PROVIDER=""
 VLM_MODEL=""
 
-# Function to check if more than one strategy is enabled
-check_strategy_conflict() {
-  local count=0
-  $HI_RES && ((count++))
-  $FAST && ((count++))
-  $OCR_ONLY && ((count++))
-  $VLM && ((count++))
-  
-  if [ "$count" -gt 1 ]; then
-    echo "Error: Only one strategy option (--hi-res, --fast, --ocr-only, --vlm) can be specified at a time."
-    exit 1
-  fi
-}
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -198,7 +185,16 @@ if [ -z "$INPUT" ]; then
 fi
 
 # Check for strategy conflicts after all arguments are processed
-check_strategy_conflict
+STRATEGY_COUNT=0
+$HI_RES && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
+$FAST && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
+$OCR_ONLY && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
+$VLM && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
+
+if [ "$STRATEGY_COUNT" -gt 1 ]; then
+  echo "Error: Only one strategy option (--hi-res, --fast, --ocr-only, --vlm) can be specified at a time."
+  exit 1
+fi
 
 if $TRACE; then
   set -x
