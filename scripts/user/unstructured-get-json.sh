@@ -16,6 +16,7 @@ Options:
   --hi-res        hi_res strategy: Enable high-resolution processing, with layout segmentation and OCR
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
+  --vlm           vlm strategy: Use Vision Language Model for processing
   --tables        Enable table extraction: tables are represented as html in metadata
   --images        Include base64images in json
   --coordinates   Include coordinates in the output
@@ -64,6 +65,7 @@ copy_to_clipboard() {
 HI_RES=false
 FAST=false
 OCR_ONLY=false
+VLM=false
 STRATEGY=""
 VERBOSE=false
 TRACE=false
@@ -85,6 +87,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --ocr-only)
     OCR_ONLY=true
+    shift
+    ;;
+  --vlm)
+    VLM=true
     shift
     ;;
   --trace)
@@ -175,6 +181,11 @@ elif $OCR_ONLY; then
   STRATEGY="-ocr-only"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=ocr_only")
+elif $VLM; then
+  if $VERBOSE; then echo "Sending API request with vlm strategy"; fi
+  STRATEGY="-vlm"
+  JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
+  CURL_STRATEGY=(-F "strategy=vlm")
 else
   if $VERBOSE; then echo "Sending API request WITHOUT a strategy"; fi
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
