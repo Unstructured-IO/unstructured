@@ -209,3 +209,4 @@ metricsdiff.txt
 
 # analysis
 annotated/
+.aider*
