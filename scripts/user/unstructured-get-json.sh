@@ -298,11 +298,11 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
   
-  # Check if all elements have text_as_html field that is not empty or null
-  ALL_HAVE_HTML=$(jq 'map(has("text_as_html") and .text_as_html != null and .text_as_html != "") | all' "${JSON_OUTPUT_FILEPATH}")
+  # Check if all elements have metadata.text_as_html field that is not empty or null
+  ALL_HAVE_HTML=$(jq 'map(has("metadata") and .metadata | has("text_as_html") and .metadata.text_as_html != null and .metadata.text_as_html != "") | all' "${JSON_OUTPUT_FILEPATH}")
   
   if [ "$ALL_HAVE_HTML" = "true" ]; then
-    # Create HTML directly from text_as_html fields
+    # Create HTML directly from metadata.text_as_html fields
     {
       echo "<!DOCTYPE html>"
       echo "<html>"
@@ -315,11 +315,11 @@ if [ "$WRITE_HTML" = true ]; then
       echo "  </style>"
       echo "</head>"
       echo "<body>"
-      jq -r 'map(.text_as_html) | join("\n")' "${JSON_OUTPUT_FILEPATH}"
+      jq -r 'map(.metadata.text_as_html) | join("\n")' "${JSON_OUTPUT_FILEPATH}"
       echo "</body>"
       echo "</html>"
     } > "${HTML_OUTPUT_FILEPATH}"
-    echo "HTML written directly from text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
+    echo "HTML written directly from metadata.text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
   else
     # Fall back to using the Python script
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
