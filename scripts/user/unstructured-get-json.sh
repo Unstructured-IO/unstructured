@@ -23,6 +23,7 @@ Options:
   --trace         Enable trace logging for debugging, useful to cut and paste the executed curl call
   --verbose       Enable verbose logging including printing first 8 elements to stdout
   --s3            Write the resulting output to s3 (like a pastebin)
+  --write-html    Convert JSON output to HTML. Set the env var $UNST_WRITE_HTML to skip providing this option.
   --help          Display this help and exit.
 
 
@@ -74,6 +75,7 @@ FREEMIUM=false
 TABLES=true
 IMAGES=false
 S3=""
+WRITE_HTML=${UNST_WRITE_HTML:-false}
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -103,6 +105,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --s3)
     S3=true
+    shift
+    ;;
+  --write-html)
+    WRITE_HTML=true
     shift
     ;;
   --tables)
@@ -223,6 +229,12 @@ else
   echo "total number of elements: " $(jq 'length' "${JSON_OUTPUT_FILEPATH}")
 fi
 echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
+
+# Convert JSON to HTML if requested
+if [ "$WRITE_HTML" = true ]; then
+  HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
+  echo "Would write HTML to: ${HTML_OUTPUT_FILEPATH}"
+fi
 
 # write .json output to s3 location
 if [ -n "$S3" ]; then
