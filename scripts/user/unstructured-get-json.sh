@@ -105,22 +105,18 @@ while [[ "$#" -gt 0 ]]; do
   --hi-res)
     HI_RES=true
     shift
-    check_strategy_conflict
     ;;
   --fast)
     FAST=true
     shift
-    check_strategy_conflict
     ;;
   --ocr-only)
     OCR_ONLY=true
     shift
-    check_strategy_conflict
     ;;
   --vlm)
     VLM=true
     shift
-    check_strategy_conflict
     ;;
   --vlm-provider)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
@@ -200,6 +196,9 @@ if [ -z "$INPUT" ]; then
   echo "Error: File or URL argument is missing."
   exit 1
 fi
+
+# Check for strategy conflicts after all arguments are processed
+check_strategy_conflict
 
 if $TRACE; then
   set -x
