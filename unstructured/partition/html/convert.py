@@ -248,9 +248,12 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
         grouped_children = _group_element_children(children)
         parent = next((el for el in elements if el.element.id == parent_id), None)
         if parent is None:
-            logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
-            continue
-        parent.set_children(grouped_children)
+            logger.warning(f"Parent element with id {parent_id} not found. Keeping elements without parent.")
+            # Add these elements to the root level instead of skipping them
+            for child in children:
+                child.element.metadata.parent_id = None
+        else:
+            parent.set_children(grouped_children)
     return [el for el in elements if el.element.metadata.parent_id is None]
 
 
