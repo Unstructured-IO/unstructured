@@ -233,7 +233,9 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 # Convert JSON to HTML if requested
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
-  echo "Would write HTML to: ${HTML_OUTPUT_FILEPATH}"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  PYTHONPATH="${SCRIPT_DIR}/../.." python -c "import os, sys; sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..')); from html.elements_json_to_html import json_to_html; from pathlib import Path; json_to_html(Path('${JSON_OUTPUT_FILEPATH}'), Path('${TMP_OUTPUTS_DIR}'), False, False)"
+  echo "HTML written to: ${HTML_OUTPUT_FILEPATH}"
 fi
 
 # write .json output to s3 location
