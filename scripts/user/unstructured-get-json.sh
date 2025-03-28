@@ -246,7 +246,6 @@ if [ "$WRITE_HTML" = true ]; then
   # Open HTML file in browser if requested and on macOS
   if [ "$OPEN_HTML" = true ] && [ "$(uname)" == "Darwin" ]; then
     open "${HTML_OUTPUT_FILEPATH}"
-    echo "Opened HTML file in browser"
   fi
 fi
 
