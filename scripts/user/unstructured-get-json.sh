@@ -89,11 +89,8 @@ VLM_MODEL=""
 # Function to check if more than one strategy is enabled
 check_strategy_conflict() {
   local count=0
-  echo "$count"
   $HI_RES && ((count++))
-  echo "hi_res $count"
   $FAST && ((count++))
-  echo "fast $count"
   $OCR_ONLY && ((count++))
   $VLM && ((count++))
   
