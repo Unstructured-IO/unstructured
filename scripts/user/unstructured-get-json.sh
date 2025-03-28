@@ -234,7 +234,7 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  PYTHONPATH="${SCRIPT_DIR}/../.." python3 -c "import os, sys; sys.path.insert(0, os.path.join('${SCRIPT_DIR}', '..')); from html.elements_json_to_html import json_to_html; from pathlib import Path; json_to_html(Path('${JSON_OUTPUT_FILEPATH}'), Path('${TMP_OUTPUTS_DIR}'), False, False)"
+  PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
   echo "HTML written to: ${HTML_OUTPUT_FILEPATH}"
 fi
 
