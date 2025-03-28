@@ -297,9 +297,35 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 # Convert JSON to HTML if requested
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
-  echo "HTML written to: ${HTML_OUTPUT_FILEPATH}"
+  
+  # Check if all elements have text_as_html field that is not empty or null
+  ALL_HAVE_HTML=$(jq 'map(has("text_as_html") and .text_as_html != null and .text_as_html != "") | all' "${JSON_OUTPUT_FILEPATH}")
+  
+  if [ "$ALL_HAVE_HTML" = "true" ]; then
+    # Create HTML directly from text_as_html fields
+    {
+      echo "<!DOCTYPE html>"
+      echo "<html>"
+      echo "<head>"
+      echo "  <meta charset=\"UTF-8\">"
+      echo "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+      echo "  <title>${FILENAME}</title>"
+      echo "  <style>"
+      echo "    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }"
+      echo "  </style>"
+      echo "</head>"
+      echo "<body>"
+      jq -r 'map(.text_as_html) | join("\n")' "${JSON_OUTPUT_FILEPATH}"
+      echo "</body>"
+      echo "</html>"
+    } > "${HTML_OUTPUT_FILEPATH}"
+    echo "HTML written directly from text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
+  else
+    # Fall back to using the Python script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
+    echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"
+  fi
   
   # Open HTML file in browser if requested and on macOS
   if [ "$OPEN_HTML" = true ] && [ "$(uname)" == "Darwin" ]; then
