@@ -17,8 +17,10 @@ Options:
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
   --vlm           vlm strategy: Use Vision Language Model for processing
-  --vlm-provider  Specify the VLM model provider when using --vlm strategy (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
-  --vlm-model     Specify the VLM model when using --vlm strategy (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
+  --vlm-provider  Specify the VLM model provider when using --vlm strategy
+                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
+  --vlm-model     Specify the VLM model when using --vlm strategy
+                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
   --tables        Enable table extraction: tables are represented as html in metadata
   --images        Include base64images in json
   --coordinates   Include coordinates in the output
