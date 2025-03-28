@@ -299,7 +299,7 @@ if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
   
   # Check if all elements have metadata.text_as_html field that is not empty or null
-  ALL_HAVE_HTML=$(jq 'map(has("metadata") and (.metadata | has("text_as_html")) and (.metadata.text_as_html != null) and (.metadata.text_as_html != "")) | all' "${JSON_OUTPUT_FILEPATH}")
+  ALL_HAVE_HTML=$(jq 'map(has("metadata") and ((.metadata | has("text_as_html")) or false) and ((.metadata.text_as_html != null) or false) and ((.metadata.text_as_html != "") or false)) | all' "${JSON_OUTPUT_FILEPATH}")
   
   if [ "$ALL_HAVE_HTML" = "true" ]; then
     # Create HTML directly from metadata.text_as_html fields
