@@ -24,6 +24,7 @@ Options:
   --verbose       Enable verbose logging including printing first 8 elements to stdout
   --s3            Write the resulting output to s3 (like a pastebin)
   --write-html    Convert JSON output to HTML. Set the env var $UNST_WRITE_HTML to skip providing this option.
+  --open-html     Automatically open HTML output in browser (macOS only). Set the env var $UNST_AUTO_OPEN_HTML to skip providing this option.
   --help          Display this help and exit.
 
 
@@ -76,6 +77,7 @@ TABLES=true
 IMAGES=false
 S3=""
 WRITE_HTML=${UNST_WRITE_HTML:-false}
+OPEN_HTML=${UNST_AUTO_OPEN_HTML:-false}
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -109,6 +111,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --write-html)
     WRITE_HTML=true
+    shift
+    ;;
+  --open-html)
+    OPEN_HTML=true
     shift
     ;;
   --tables)
@@ -236,6 +242,12 @@ if [ "$WRITE_HTML" = true ]; then
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
   echo "HTML written to: ${HTML_OUTPUT_FILEPATH}"
+  
+  # Open HTML file in browser if requested and on macOS
+  if [ "$OPEN_HTML" = true ] && [ "$(uname)" == "Darwin" ]; then
+    open "${HTML_OUTPUT_FILEPATH}"
+    echo "Opened HTML file in browser"
+  fi
 fi
 
 # write .json output to s3 location
