@@ -17,6 +17,7 @@ Options:
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
   --vlm           vlm strategy: Use Vision Language Model for processing
+  --vlm-provider  Specify the VLM model provider when using --vlm strategy
   --tables        Enable table extraction: tables are represented as html in metadata
   --images        Include base64images in json
   --coordinates   Include coordinates in the output
@@ -78,6 +79,7 @@ IMAGES=false
 S3=""
 WRITE_HTML=${UNST_WRITE_HTML:-false}
 OPEN_HTML=${UNST_AUTO_OPEN_HTML:-false}
+VLM_PROVIDER=""
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -96,6 +98,15 @@ while [[ "$#" -gt 0 ]]; do
   --vlm)
     VLM=true
     shift
+    ;;
+  --vlm-provider)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      VLM_PROVIDER=$2
+      shift 2
+    else
+      echo "Error: Argument for $1 is missing" >&2
+      exit 1
+    fi
     ;;
   --trace)
     TRACE=true
@@ -198,6 +209,9 @@ elif $VLM; then
   STRATEGY="-vlm"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=vlm")
+  if [ -n "$VLM_PROVIDER" ]; then
+    CURL_STRATEGY+=(-F "vlm_model_provider=$VLM_PROVIDER")
+  fi
 else
   if $VERBOSE; then echo "Sending API request WITHOUT a strategy"; fi
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
