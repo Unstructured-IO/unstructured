@@ -286,15 +286,20 @@ def group_elements_by_page(
     unstructured_elements: list[Element],
 ) -> list[list[Element]]:
     pages_dict: defaultdict[int, list[Element]] = defaultdict(list)
+    none_page_elements: list[Element] = []
 
     for element in unstructured_elements:
         page_number = element.metadata.page_number
         if page_number is None:
-            logger.warning(f"Page number is not set for an element {element.id}. Skipping.")
-            continue
-        pages_dict[page_number].append(element)
+            logger.warning(f"Page number is not set for an element {element.id}. Adding to 'none' page.")
+            none_page_elements.append(element)
+        else:
+            pages_dict[page_number].append(element)
 
     pages_list = list(pages_dict.values())
+    if none_page_elements:
+        pages_list.append(none_page_elements)
+    
     return pages_list
 
 
