@@ -196,6 +196,12 @@ if [ "$STRATEGY_COUNT" -gt 1 ]; then
   exit 1
 fi
 
+# Check if vlm-provider or vlm-model are provided without --vlm
+if { [ -n "$VLM_PROVIDER" ] || [ -n "$VLM_MODEL" ]; } && ! $VLM; then
+  echo "Error: --vlm-provider or --vlm-model can only be used with --vlm strategy."
+  exit 1
+fi
+
 if $TRACE; then
   set -x
 fi
