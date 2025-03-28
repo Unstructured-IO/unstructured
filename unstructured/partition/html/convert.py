@@ -248,12 +248,9 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
         grouped_children = _group_element_children(children)
         parent = next((el for el in elements if el.element.id == parent_id), None)
         if parent is None:
-            logger.warning(f"Parent element with id {parent_id} not found. Keeping elements without parent.")
-            # Add these elements to the root level instead of skipping them
-            for child in children:
-                child.element.metadata.parent_id = None
-        else:
-            parent.set_children(grouped_children)
+            logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
+            continue
+        parent.set_children(grouped_children)
     return [el for el in elements if el.element.metadata.parent_id is None]
 
 
@@ -289,20 +286,15 @@ def group_elements_by_page(
     unstructured_elements: list[Element],
 ) -> list[list[Element]]:
     pages_dict: defaultdict[int, list[Element]] = defaultdict(list)
-    none_page_elements: list[Element] = []
 
     for element in unstructured_elements:
         page_number = element.metadata.page_number
         if page_number is None:
-            logger.warning(f"Page number is not set for an element {element.id}. Adding to 'none' page.")
-            none_page_elements.append(element)
-        else:
-            pages_dict[page_number].append(element)
+            logger.warning(f"Page number is not set for an element {element.id}. Skipping.")
+            continue
+        pages_dict[page_number].append(element)
 
     pages_list = list(pages_dict.values())
-    if none_page_elements:
-        pages_list.append(none_page_elements)
-    
     return pages_list
 
 
