@@ -28,7 +28,7 @@ Options:
   --verbose       Enable verbose logging including printing first 8 elements to stdout
   --s3            Write the resulting output to s3 (like a pastebin)
   --write-html    Convert JSON output to HTML. Set the env var $UNST_WRITE_HTML to skip providing this option.
-  --open-html     Automatically open HTML output in browser (macOS only). 
+  --open-html     Automatically open HTML output in browser (macOS only) if --write-html. 
                   Set the env var UNST_AUTO_OPEN_HTML=true to skip providing this option.
   --help          Display this help and exit.
 
