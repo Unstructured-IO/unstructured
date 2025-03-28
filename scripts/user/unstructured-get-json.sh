@@ -221,6 +221,14 @@ elif $OCR_ONLY; then
 elif $VLM; then
   if $VERBOSE; then echo "Sending API request with vlm strategy"; fi
   STRATEGY="-vlm"
+  # Add provider and model to filename if specified
+  if [ -n "$VLM_PROVIDER" ] && [ -n "$VLM_MODEL" ]; then
+    STRATEGY="-vlm-${VLM_PROVIDER}-${VLM_MODEL}"
+  elif [ -n "$VLM_PROVIDER" ]; then
+    STRATEGY="-vlm-${VLM_PROVIDER}"
+  elif [ -n "$VLM_MODEL" ]; then
+    STRATEGY="-vlm-model-${VLM_MODEL}"
+  fi
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=vlm")
   if [ -n "$VLM_PROVIDER" ]; then
