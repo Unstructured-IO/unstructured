@@ -86,7 +86,6 @@ OPEN_HTML=${UNST_AUTO_OPEN_HTML:-false}
 VLM_PROVIDER=""
 VLM_MODEL=""
 
-
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
   --hi-res)
@@ -186,10 +185,10 @@ fi
 
 # Check for strategy conflicts after all arguments are processed
 STRATEGY_COUNT=0
-$HI_RES && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
-$FAST && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
-$OCR_ONLY && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
-$VLM && STRATEGY_COUNT=$((STRATEGY_COUNT+1))
+$HI_RES && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$FAST && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$OCR_ONLY && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$VLM && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
 
 if [ "$STRATEGY_COUNT" -gt 1 ]; then
   echo "Error: Only one strategy option (--hi-res, --fast, --ocr-only, --vlm) can be specified at a time."
@@ -297,10 +296,10 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 # Convert JSON to HTML if requested
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
-  
+
   # Check if all elements have metadata.text_as_html field that is not empty or null
   ALL_HAVE_HTML=$(jq 'map(has("metadata") and ((.metadata | has("text_as_html")) or false) and ((.metadata.text_as_html != null) or false) and ((.metadata.text_as_html != "") or false)) | all' "${JSON_OUTPUT_FILEPATH}")
-  
+
   if [ "$ALL_HAVE_HTML" = "true" ]; then
     # Create HTML directly from metadata.text_as_html fields
     {
@@ -318,7 +317,7 @@ if [ "$WRITE_HTML" = true ]; then
       jq -r 'map(.metadata.text_as_html) | join("\n")' "${JSON_OUTPUT_FILEPATH}"
       echo "</body>"
       echo "</html>"
-    } > "${HTML_OUTPUT_FILEPATH}"
+    } >"${HTML_OUTPUT_FILEPATH}"
     echo "HTML written directly from metadata.text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
   else
     # Fall back to using the Python script
@@ -326,7 +325,7 @@ if [ "$WRITE_HTML" = true ]; then
     PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
     echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"
   fi
-  
+
   # Open HTML file in browser if requested and on macOS
   if [ "$OPEN_HTML" = true ] && [ "$(uname)" == "Darwin" ]; then
     open "${HTML_OUTPUT_FILEPATH}"
