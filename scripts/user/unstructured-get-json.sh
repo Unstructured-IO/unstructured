@@ -297,11 +297,9 @@ echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 if [ "$WRITE_HTML" = true ]; then
   HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
 
-  # Check if all elements have metadata.text_as_html field that is not empty or null
-  ALL_HAVE_HTML=$(jq 'map(has("metadata") and ((.metadata | has("text_as_html")) or false) and ((.metadata.text_as_html != null) or false) and ((.metadata.text_as_html != "") or false)) | all' "${JSON_OUTPUT_FILEPATH}")
-
-  if [ "$ALL_HAVE_HTML" = "true" ]; then
-    # Create HTML directly from metadata.text_as_html fields
+  if $VLM; then
+    # VLM output has all metadata.text_as_html fields defined, so
+    # create HTML directly from the metadata.text_as_html fields
     {
       echo "<!DOCTYPE html>"
       echo "<html>"
@@ -320,7 +318,8 @@ if [ "$WRITE_HTML" = true ]; then
     } >"${HTML_OUTPUT_FILEPATH}"
     echo "HTML written directly from metadata.text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
   else
-    # Fall back to using the Python script
+    # most elements will not have metadata.text_as_html defined (by design on Table elements do),
+    # so use the unstructured library's python script for the conversion.
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
     echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"
