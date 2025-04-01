@@ -50,8 +50,8 @@ fi
 
 IMAGE_BLOCK_TYPES=${IMAGE_BLOCK_TYPES:-'"image", "table"'}
 API_KEY=${UNST_API_KEY:-""}
-TMP_DOWNLOADS_DIR="$HOME/tmp/unst-downloads"
-TMP_OUTPUTS_DIR="$HOME/tmp/unst-outputs"
+TMP_DOWNLOADS_DIR=${UNST_SCRIPT_DOWNLOADS_DIR:-"$HOME/tmp/unst-downloads"}
+TMP_OUTPUTS_DIR=${UNST_SCRIPT_JSON_OUTPUTS_DIR:-"$HOME/tmp/unst-outputs"}
 # only applicable if writing .json output files to S3 when using --s3, e.g. s3://bucket-name/path/
 S3_URI_PREFIX=${UNST_S3_JSON_OUTPUT_URI:-""}
 # e.g. us-east-2, used to provide http links for above location
