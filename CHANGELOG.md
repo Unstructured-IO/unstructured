@@ -5,7 +5,7 @@
 ### Features
 
 ### Fixes
-- **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements which are embedded text objects, i.e. objects found outside of Object Detection which get mapped to *inferred* elements (which are merged with extracted elements).
+- **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements, meaning text objects that are found outside of Object Detection objects which get mapped to *inferred* elements. (*extracted* and *inferred* elements get merged together to form the list of `Element`s returned by `pdf_partition()`)
 
 ## 0.17.5
 
