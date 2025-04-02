@@ -362,7 +362,10 @@ def partition_pdf_or_image(
                 table_ocr_agent=table_ocr_agent,
                 **kwargs,
             )
-            out_elements = _process_uncategorized_text_elements(elements)
+            # NOTE(crag): do not call _process_uncategorized_text_elements here, because
+            # extracted elements (which are text blocks outside of OD-determined blocks)
+            # are likely not Titles and should not be identified as such.
+            return elements
 
     elif strategy == PartitionStrategy.FAST:
         out_elements = _partition_pdf_with_pdfparser(
@@ -996,7 +999,7 @@ def _process_uncategorized_text_elements(elements: list[Element]):
     """Processes a list of elements, creating a new list where elements with the
     category `UncategorizedText` are replaced with corresponding
     elements created from their text content."""
-
+    
     out_elements = []
     for el in elements:
         if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
