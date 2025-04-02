@@ -999,7 +999,7 @@ def _process_uncategorized_text_elements(elements: list[Element]):
     """Processes a list of elements, creating a new list where elements with the
     category `UncategorizedText` are replaced with corresponding
     elements created from their text content."""
-    
+
     out_elements = []
     for el in elements:
         if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
