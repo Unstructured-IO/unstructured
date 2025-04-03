@@ -179,7 +179,6 @@ def sort_page_elements(
             key=lambda el: (
                 el.metadata.coordinates.points[0][1] if el.metadata.coordinates else float("inf"),
                 el.metadata.coordinates.points[0][0] if el.metadata.coordinates else float("inf"),
-                el.id,
             ),
         )
     else:
