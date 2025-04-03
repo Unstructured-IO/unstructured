@@ -63,7 +63,7 @@
       "page_number": 1
     },
     "text": "Data in Brief",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "c1b3d4f53698b892fcc23fc10a72e6fb",
@@ -148,7 +148,7 @@
       "page_number": 1
     },
     "text": "(eee",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "0cda4eb20070fdf01ec0d47b2a550241",
@@ -252,7 +252,7 @@
       "page_number": 1
     },
     "text": "Australia",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "85875ebbc1de554e92edc54674add1d5",
@@ -278,7 +278,7 @@
       "page_number": 1
     },
     "text": "a r t i c l e i n f o",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "4f3f69dd17ddae776c656ec73d9837ae",
@@ -291,7 +291,7 @@
       "page_number": 1
     },
     "text": "a b s t r a c t",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "34522460857b10c63d8c2c8d2fbb3087",
@@ -534,7 +534,7 @@
       "page_number": 2
     },
     "text": "e All the problem instances are available for use without any restrictions.",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "d401597b8ff2854bfb89f2833d02a763",
@@ -560,7 +560,7 @@
       "page_number": 2
     },
     "text": "© The dataset includes a program that can generate similar problem instances of different sizes.",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "fb765d6762e6a423cb8b9dab27359732",
@@ -606,7 +606,7 @@
       "page_number": 2
     },
     "text": "The number of depots mð",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "320f6d28582c354d35673c2a4119851f",
@@ -892,7 +892,7 @@
       "page_number": 3
     },
     "text": "Possible empty travels",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "fa23407a7c3c99ae3b6fb79034698807",
