@@ -824,7 +824,7 @@ def test_partition_categorization_backup():
             strategy=PartitionStrategy.HI_RES,
         )
         # Should NOT have changed the element class from Text to Title
-        assert isinstance(elements[0], Trct)
+        assert isinstance(elements[0], Text)
         assert elements[0].text == text
 
 
