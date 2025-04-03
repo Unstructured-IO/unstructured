@@ -63,7 +63,7 @@
       "page_number": 1
     },
     "text": "Data in Brief",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "97e80c6e7dc2754c9083b263ff65039e",
@@ -148,7 +148,7 @@
       "page_number": 1
     },
     "text": "(Jee",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "bddd1cbc864e9b44cc0715a1cccf8dbc",
@@ -187,7 +187,7 @@
       "page_number": 1
     },
     "text": "a r t i c l e i n f o",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "b9e48f235de5b531427187eb6ea135fe",
@@ -200,7 +200,7 @@
       "page_number": 1
     },
     "text": "a b s t r a c t",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "911bfead9b546998812e2d1d615ecc87",
@@ -432,7 +432,7 @@
       "page_number": 2
     },
     "text": "© Data presented here provide optimum conditions of waste material as inhibitor for stainless steel",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "afed004de4c50d761640b6c18729a988",
@@ -458,7 +458,7 @@
       "page_number": 2
     },
     "text": "© The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "cb6e8acb9c24820b59f8973cc236ef35",
@@ -484,7 +484,7 @@
       "page_number": 2
     },
     "text": "© The data can be used to examine the relationship between the process variable as it affect the",
-    "type": "NarrativeText"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "e1f7e635d8739a97d8d0000ba8004f61",
@@ -744,7 +744,7 @@
       "page_number": 4
     },
     "text": "rate (mm/year)",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "3a5534c2aafc2d8a4c0b65d530d00ab3",
@@ -1134,7 +1134,7 @@
       "page_number": 6
     },
     "text": "ð2Þ",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "cff55ae1916232dbda5239f59c897cb9",
@@ -1147,7 +1147,7 @@
       "page_number": 6
     },
     "text": "ð3Þ",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "e40c3ee561b10ca5b7a76900c8d5b263",
