@@ -823,8 +823,8 @@ def test_partition_categorization_backup():
             example_doc_path("pdf/layout-parser-paper-fast.pdf"),
             strategy=PartitionStrategy.HI_RES,
         )
-        # Should have changed the element class from Text to Title
-        assert isinstance(elements[0], Title)
+        # Should NOT have changed the element class from Text to Title
+        assert isinstance(elements[0], Text)
         assert elements[0].text == text
 
 

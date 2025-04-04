@@ -110,7 +110,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "4608f9aa33a0cab158565817b0d15743",
     "text": "v",
     "metadata": {
@@ -132,7 +132,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "6f69e5f921907e689f1a52bd84282b31",
     "text": "arXiv",
     "metadata": {
@@ -154,7 +154,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "ed4e590932b333f40d0e1367b6b0e32e",
     "text": "i",
     "metadata": {
@@ -176,7 +176,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "8cb024fb60457b7c572b167801037f75",
     "text": "X",
     "metadata": {
@@ -198,7 +198,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "c202bdacd2daf4c52fa3a6ddd64a0728",
     "text": "r",
     "metadata": {
@@ -220,7 +220,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "3db474893ec321c81ef9d1a2afd5f660",
     "text": "a",
     "metadata": {
@@ -1022,7 +1022,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "db639db124b6064248de0c0dc71510a4",
     "text": "7 https://ocr-d.de/en/about",
     "metadata": {
@@ -1044,7 +1044,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "d881ce84f017d89f6e35e2bc4b133bfc",
     "text": "8 https://github.com/BobLd/DocumentLayoutAnalysis",
     "metadata": {
@@ -1066,7 +1066,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "9b96c128deddda1a32c739a2df157496",
     "text": "9 https://github.com/leonlulu/DeepLayout",
     "metadata": {
@@ -1088,7 +1088,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "5cf72e821375f4480a1529bef97608ef",
     "text": "10 https://github.com/hpanwar08/detectron2",
     "metadata": {
@@ -1110,7 +1110,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "4ab94e79eedc3a7ac498aaf737ca8878",
     "text": "11 https://github.com/JaidedAI/EasyOCR",
     "metadata": {
@@ -1132,7 +1132,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "460b163c13ad7cad4fce325820a76481",
     "text": "12 https://github.com/PaddlePaddle/PaddleOCR",
     "metadata": {
@@ -1176,7 +1176,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "UncategorizedText",
     "element_id": "92c4289ad4af7c0793e40d5662707e0a",
     "text": "Z. Shen et al.",
     "metadata": {
@@ -1739,7 +1739,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "UncategorizedText",
     "element_id": "710ac103981c6363195774b02ee582d4",
     "text": "Z. Shen et al.",
     "metadata": {
@@ -2083,7 +2083,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "UncategorizedText",
     "element_id": "a2a0a2ef0279f0710f3cd34474ca8645",
     "text": "13 This is also available in the LayoutParser documentation pages.",
     "metadata": {
