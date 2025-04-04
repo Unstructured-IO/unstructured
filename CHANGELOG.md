@@ -5,6 +5,9 @@
 ### Features
 
 ### Fixes
+- The sort_page_element() use the element id to sort the elements.
+Two executions of the same code, on the same file, produce different results. The order of the elements is random.
+This makes it impossible to write stable unit tests, for example, or to obtain reproducible results.
 
 ## 0.17.5
 
