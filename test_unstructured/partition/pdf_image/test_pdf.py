@@ -1603,3 +1603,24 @@ def test_partition_pdf_with_specified_ocr_agents(mocker):
 
     assert spy.call_args_list[0][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
     assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
+
+
+def test_reproductible_pdf_loader():
+    from glob import glob
+
+    for f in glob(example_doc_path("pdf/layout-parser-paper.pdf")):
+        elements_1 = pdf.partition_pdf(
+            filename=f,
+            strategy=PartitionStrategy.AUTO,
+            infer_table_structure=False,
+        )
+        for _ in range(4):
+            elements_2 = pdf.partition_pdf(
+                filename=f,
+                strategy=PartitionStrategy.AUTO,
+                infer_table_structure=False,
+            )
+            for e1, e2 in zip(elements_1, elements_2):
+                assert e1.text == e2.text, f"load two time {f=} return differents results"
+            else:
+                break
