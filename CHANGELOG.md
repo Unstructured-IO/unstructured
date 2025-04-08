@@ -1,30 +1,3 @@
-## 0.17.7
-
-### Enhancements
-
-### Features
-
-### Fixes
-Fix for 'PSSyntaxError' import error:
-"cannot import name 'PSSyntaxError' from 'pdfminer.pdfparser'"
-
-Latest pdfminer-six doesn't import PSSyntaxError into pdfminer.pdfparser anymore. It must now be directly imported from its source (pdfminer.psexceptions)
-
-This change will also work on the older version. In the older version, `pdfminer.pdfparser` imports PSSyntaxError from  `pdfminer.psexceptions`.
-However they have since removed the PSSyntaxError import from `pdfminer.pdfparser`.
-
-Therefore, for the new pdfminer version we must change to directly import from `pdfminer.psexceptions`.
-
-So instead of
-`pdfminer_utils.py` -> `pdfminer.pdfparser` ->`pdfminer.psexceptions`
-
-We can do
-`pdfminer_utils.py` -> `pdfminer.psexceptions`
-
-PSSyntaxError is defined in `pdfminer.psexceptions` in both the old and new versions of pdfminer, so we will still get backward compatibility.
-
-[Here is the commit](https://github.com/pdfminer/pdfminer.six/commit/b9b75ff85877b7cd373539c79014cbde39508969#diff-a0da8fc41f6e21cd3ab62f914df6ce72d433d3222168af458993d911a5dac37c) for the change on pdfminer.
-
 ## 0.17.6-dev0
 
 ### Enhancements
@@ -42,6 +15,7 @@ PSSyntaxError is defined in `pdfminer.psexceptions` in both the old and new vers
 
 ### Fixes
 - **Removed out of date ubuntu Dockerfile.** The Dockerfile was out of date and non-functional.
+- **Fix for 'PSSyntaxError' import error: "cannot import name 'PSSyntaxError' from 'pdfminer.pdfparser'"** PSSyntaxError needed to be imported from its source 'pdfminer.psexceptions'.
 
 ## 0.17.4
 
