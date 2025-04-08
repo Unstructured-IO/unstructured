@@ -186,7 +186,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "UncategorizedText",
     "element_id": "7137c1e14141fad3ad306fe68918a967",
     "text": "Recalibrating risk",
     "metadata": {
@@ -2790,7 +2790,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "a8706e82b3f90cffc996a24348e3b670",
     "text": "r",
     "metadata": {
@@ -2883,7 +2883,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "da631c23500655c51b9311a61f55744f",
     "text": "a",
     "metadata": {
@@ -2976,7 +2976,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "d78a11e9e55235934c3a4922053c68e5",
     "text": "e",
     "metadata": {
@@ -3069,7 +3069,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "8d14df8b7fd7744365fbf8e02d69415a",
     "text": "y",
     "metadata": {
@@ -3162,7 +3162,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "f4df01bee1b8ffb973ac8539649c5189",
     "text": "W",
     "metadata": {
@@ -3255,7 +3255,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "b733cf49de269e22bed7c9883b958669",
     "text": "T",
     "metadata": {
@@ -3348,7 +3348,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "c4b47d788b26c3d5c62ad462ed3ca2db",
     "text": "r",
     "metadata": {
@@ -3441,7 +3441,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "bff4435574259239761670b31432cc8a",
     "text": "e",
     "metadata": {
@@ -3534,7 +3534,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "8ba15a3a71eb0bb689c582098cce6730",
     "text": "p",
     "metadata": {
@@ -3627,7 +3627,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "5fde097ba00ad7647206ae11c721d28c",
     "text": "s",
     "metadata": {
@@ -3813,7 +3813,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "81f1f3b9da6df38d938bf7871fa069b5",
     "text": "e",
     "metadata": {
@@ -3906,7 +3906,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "aa4a79651a9a0087b66fcc40a2213113",
     "text": "i",
     "metadata": {
@@ -3999,7 +3999,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "6d1c0d05d3a424b43d9572188a76c2d4",
     "text": "t",
     "metadata": {
@@ -4092,7 +4092,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "392a17b2f3eba46f4bcf078e0b204514",
     "text": "i",
     "metadata": {
@@ -4185,7 +4185,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "d24a9a771e46fdd6b269f1ecaf0b5eec",
     "text": "l",
     "metadata": {
@@ -4278,7 +4278,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "9dc4537afa8ae0b959a542f9ba5c1e03",
     "text": "S",
     "metadata": {
@@ -4371,7 +4371,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "919dac2487a4c860747318a132a54a72",
     "text": "a",
     "metadata": {
@@ -4464,7 +4464,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "04ee5d05c3fcfffd945762e803478600",
     "text": "t",
     "metadata": {
@@ -4557,7 +4557,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "63dabde368e2cf310d20a885fe50314a",
     "text": "a",
     "metadata": {
@@ -4650,7 +4650,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "796538927664e4d87312c428469428f5",
     "text": "F",
     "metadata": {
@@ -8184,7 +8184,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "UncategorizedText",
     "element_id": "a95a2add68d668b944cc332c88ea721e",
     "text": "i",
     "metadata": {

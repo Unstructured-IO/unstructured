@@ -1,10 +1,14 @@
-## 0.17.6-dev0
+## 0.17.6-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+- The sort_page_element() use the element id to sort the elements.
+Two executions of the same code, on the same file, produce different results. The order of the elements is random.
+This makes it impossible to write stable unit tests, for example, or to obtain reproducible results.
+- **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements, meaning text objects that are found outside of Object Detection objects which get mapped to *inferred* elements. (*extracted* and *inferred* elements get merged together to form the list of `Element`s returned by `pdf_partition()`)
 
 ## 0.17.5
 
