@@ -19,6 +19,7 @@ This makes it impossible to write stable unit tests, for example, or to obtain r
 
 ### Fixes
 - **Removed out of date ubuntu Dockerfile.** The Dockerfile was out of date and non-functional.
+- **Fix for 'PSSyntaxError' import error: "cannot import name 'PSSyntaxError' from 'pdfminer.pdfparser'"** PSSyntaxError needed to be imported from its source 'pdfminer.psexceptions'.
 
 ## 0.17.4
 
