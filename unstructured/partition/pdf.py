@@ -36,7 +36,7 @@ from unstructured.documents.elements import (
     PageBreak,
     Text,
     Title,
-    process_metadata,
+    process_metadata, TableChunk, Table,
 )
 from unstructured.errors import PageCountExceededError
 from unstructured.file_utils.filetype import add_metadata_with_filetype
@@ -823,8 +823,9 @@ def _partition_pdf_or_image_local(
 
         if isinstance(el, Image):
             out_elements.append(cast(Element, el))
-        # NOTE(crag): this is probably always a Text object, but check for the sake of typing
-        elif isinstance(el, Text):
+        # NOTE(crag): this is probably always a Text object, but check for the sake of typing.
+        # NOTE(JQQ): Escape RE for Table and TableChunk
+        elif isinstance(el, Text) and not isinstance(el, (Table, TableChunk)):
             el.text = re.sub(
                 RE_MULTISPACE_INCLUDING_NEWLINES,
                 " ",

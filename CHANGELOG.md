@@ -9,6 +9,7 @@
 Two executions of the same code, on the same file, produce different results. The order of the elements is random.
 This makes it impossible to write stable unit tests, for example, or to obtain reproducible results.
 - **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements, meaning text objects that are found outside of Object Detection objects which get mapped to *inferred* elements. (*extracted* and *inferred* elements get merged together to form the list of `Element`s returned by `pdf_partition()`)
+- **RE_MULTISPACE_INCLUDING_NEWLINES was incorrectly used for Table or TableChunk** Newlines should not be removed from Table or TableChunk elements. The re.sub is not needed for Table or TableChunk elements now.
 
 ## 0.17.5
 
