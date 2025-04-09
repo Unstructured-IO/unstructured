@@ -34,9 +34,11 @@ from unstructured.documents.elements import (
     Link,
     ListItem,
     PageBreak,
+    Table,
+    TableChunk,
     Text,
     Title,
-    process_metadata, TableChunk, Table,
+    process_metadata,
 )
 from unstructured.errors import PageCountExceededError
 from unstructured.file_utils.filetype import add_metadata_with_filetype
