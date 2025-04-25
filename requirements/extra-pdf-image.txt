@@ -138,8 +138,9 @@ pandas==2.2.3
     # via unstructured-inference
 pdf2image==1.17.0
     # via -r ./extra-pdf-image.in
-pdfminer-six==20250416
+pdfminer-six==20250327
     # via
+    #   -c ././deps/constraints.txt
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
 pi-heif==0.22.0
