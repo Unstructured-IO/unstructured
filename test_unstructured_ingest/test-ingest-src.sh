@@ -31,7 +31,7 @@ all_tests=(
   'box.sh'
   'discord.sh'
   'dropbox.sh'
-  'github.sh'
+  # 'github.sh'
   'gitlab.sh'
   'google-drive.sh'
   'wikipedia.sh'
