@@ -52,9 +52,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --max-num-of-spaces 10 \
   --spaces testteamsp1 \
   --max-num-of-docs-from-each-space 250 \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1
 

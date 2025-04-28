@@ -35,9 +35,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
   --anonymous \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

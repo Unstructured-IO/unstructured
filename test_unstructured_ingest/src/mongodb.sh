@@ -40,8 +40,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --preserve-downloads \
   --reprocess \
   --batch-size 2 \
-  --verbose
+  --verbose \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

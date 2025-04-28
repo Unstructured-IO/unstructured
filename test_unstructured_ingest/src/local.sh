@@ -29,9 +29,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --verbose \
   --file-glob "*.html" \
   --input-path example-docs \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-num-files-output.sh 15 $OUTPUT_FOLDER_NAME
 

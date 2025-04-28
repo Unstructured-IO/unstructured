@@ -33,9 +33,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --num-processes "$max_processes" \
   --reprocess \
   --verbose \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

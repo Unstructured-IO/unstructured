@@ -39,8 +39,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --file-glob "*.pdf" \
   --input-path "$INPUT_PATH" \
   --recursive \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

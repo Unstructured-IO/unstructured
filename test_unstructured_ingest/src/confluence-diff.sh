@@ -44,8 +44,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --user-email "$CONFLUENCE_USER_EMAIL" \
   --api-token "$CONFLUENCE_API_TOKEN" \
   --spaces testteamsp,MFS \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

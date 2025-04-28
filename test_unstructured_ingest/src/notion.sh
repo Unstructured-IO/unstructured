@@ -40,8 +40,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --recursive \
   --verbose \
   --work-dir "$WORK_DIR" \
-  --max-retry-time 30
+  --max-retry-time 30 \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -48,9 +48,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --num-processes "$max_processes" \
   --preserve-downloads \
   --reprocess \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 # We are expecting fifteen directories: fourteen bases and the parent directory
 "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"

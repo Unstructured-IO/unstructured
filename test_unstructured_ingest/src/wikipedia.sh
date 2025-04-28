@@ -34,8 +34,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --preserve-downloads \
   --verbose \
   --page-title "Open Source Software" \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

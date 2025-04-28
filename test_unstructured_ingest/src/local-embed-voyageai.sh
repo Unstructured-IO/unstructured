@@ -36,9 +36,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --work-dir "$WORK_DIR" \
   --embedding-provider "voyageai" \
   --embedding-api-key "$VOYAGE_API_KEY" \
-  --embedding-model-name "voyage-3-large"
+  --embedding-model-name "voyage-3-large" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 

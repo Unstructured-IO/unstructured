@@ -35,9 +35,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --work-dir "$WORK_DIR" \
   --embedding-provider "aws-bedrock" \
   --embedding-aws-access-key-id "$AWS_ACCESS_KEY_ID" \
-  --embedding-aws-secret-access-key "$AWS_SECRET_ACCESS_KEY"
+  --embedding-aws-secret-access-key "$AWS_SECRET_ACCESS_KEY" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 

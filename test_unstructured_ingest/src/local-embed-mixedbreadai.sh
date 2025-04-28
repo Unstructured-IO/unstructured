@@ -34,9 +34,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --work-dir "$WORK_DIR" \
   --embedding-provider "mixedbread-ai" \
   --embedding-api-key "$MXBAI_API_KEY" \
-  --embedding-model-name "mixedbread-ai/mxbai-embed-large-v1"
+  --embedding-model-name "mixedbread-ai/mxbai-embed-large-v1" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 

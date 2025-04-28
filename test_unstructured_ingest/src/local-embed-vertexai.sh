@@ -36,9 +36,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --work-dir "$WORK_DIR" \
   --embedding-provider "vertexai" \
   --embedding-api-key "$GCP_INGEST_SERVICE_KEY" \
-  --embedding-model-name "textembedding-gecko@001"
+  --embedding-model-name "textembedding-gecko@001" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 

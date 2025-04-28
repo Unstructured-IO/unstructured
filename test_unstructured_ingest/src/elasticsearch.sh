@@ -52,8 +52,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --password "$ELASTIC_PASSWORD" \
   --fields 'ethnicity,director,plot' \
   --work-dir "$WORK_DIR" \
-  --batch-size 2
+  --batch-size 2 \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

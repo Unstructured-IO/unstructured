@@ -51,8 +51,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --url dcneiner/Downloadify \
   --git-file-glob '*.html,*.txt' \
   --work-dir "$WORK_DIR" \
-  $ACCESS_TOKEN_FLAGS
+  $ACCESS_TOKEN_FLAGS \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

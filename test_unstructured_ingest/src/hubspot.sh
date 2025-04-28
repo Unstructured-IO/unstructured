@@ -50,8 +50,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --custom-properties '{"products":["my_custom_property"],"tickets":["another_custom_property"]}' \
   --work-dir "$WORK_DIR" \
   --preserve-downloads \
-  --verbose
+  --verbose \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

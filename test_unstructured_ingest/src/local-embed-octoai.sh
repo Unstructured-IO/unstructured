@@ -35,9 +35,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
   --embedding-provider "octoai" \
-  --embedding-api-key "$OCTOAI_API_KEY"
+  --embedding-api-key "$OCTOAI_API_KEY" \
   local \
-  --output-dir "$OUTPUT_DIR" \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 
