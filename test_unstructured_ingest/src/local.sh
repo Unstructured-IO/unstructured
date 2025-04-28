@@ -28,7 +28,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
-  --file-glob "*.html" \
   --input-path example-docs \
   --work-dir "$WORK_DIR"
 
