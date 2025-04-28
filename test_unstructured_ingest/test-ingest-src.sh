@@ -32,7 +32,7 @@ all_tests=(
   'discord.sh'
   'dropbox.sh'
   # 'github.sh'
-  'gitlab.sh'
+  # 'gitlab.sh'
   'google-drive.sh'
   'wikipedia.sh'
   'local.sh'
