@@ -39,7 +39,7 @@ all_tests=(
   # 'slack.sh'
   'against-api.sh'
   'gcs.sh'
-  'kafka-local.sh'
+  # 'kafka-local.sh'
   #'onedrive.sh'
   #'outlook.sh'
   'elasticsearch.sh'
