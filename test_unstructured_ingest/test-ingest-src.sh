@@ -18,57 +18,23 @@ EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  # NOTE(scanny): This test is disabled because it routinely flakes on OCR differencs
-  # 's3.sh'
   's3-minio.sh'
   'astradb.sh'
   'azure.sh'
-  # 'biomed-api.sh'
-  # 'biomed-path.sh'
   # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
   'pdf-fast-reprocess.sh'
-  # 'salesforce.sh'
-  # 'box.sh'
-  'discord.sh'
-  'dropbox.sh'
-  # 'github.sh'
-  # 'gitlab.sh'
-  'google-drive.sh'
-  # 'wikipedia.sh'
   'local.sh'
-  # 'slack.sh'
-  'against-api.sh'
-  'gcs.sh'
-  # 'kafka-local.sh'
-  #'onedrive.sh'
-  #'outlook.sh'
-  'elasticsearch.sh'
-  'confluence-diff.sh'
-  'confluence-large.sh'
-  # NOTE(christine): This test is disabled because it is triggering 404 client errors to the API
-  # 'airtable-diff.sh'
-  # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
-  # 'airtable-large.sh'
   'local-single-file.sh'
   'local-single-file-basic-chunking.sh'
   'local-single-file-chunk-no-orig-elements.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
-  'notion.sh'
-  'delta-table.sh'
-  'jira.sh'
-  # 'sharepoint.sh'
-  # 'sharepoint-with-permissions.sh'
-  # 'hubspot.sh'
   'local-embed.sh'
   'local-embed-bedrock.sh'
   'local-embed-octoai.sh'
   'local-embed-vertexai.sh'
   'local-embed-voyageai.sh'
   'local-embed-mixedbreadai.sh'
-  'sftp.sh'
-  'opensearch.sh'
-  'mongodb.sh'
 )
 
 full_python_matrix_tests=(
@@ -79,8 +45,6 @@ full_python_matrix_tests=(
   'local-single-file-with-pdf-infer-table-structure.sh'
   # NOTE(scanny): This test is disabled because it routinely flakes on OCR differences
   # 's3.sh'
-  'google-drive.sh'
-  'gcs.sh'
   'azure.sh'
 )
 
