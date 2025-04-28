@@ -39,12 +39,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --num-processes "$max_processes" \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --url https://unstructured-ingest-test.atlassian.net \
   --user-email "$CONFLUENCE_USER_EMAIL" \
   --api-token "$CONFLUENCE_API_TOKEN" \
   --spaces testteamsp,MFS \
   --work-dir "$WORK_DIR"
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

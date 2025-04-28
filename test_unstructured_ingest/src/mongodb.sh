@@ -33,7 +33,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
-  --output-dir "$OUTPUT_DIR" \
   --uri "$MONGODB_URI" \
   --database "$MONGODB_DATABASE_NAME" \
   --collection "$SOURCE_MONGO_COLLECTION" \
@@ -42,5 +41,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --batch-size 2 \
   --verbose
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

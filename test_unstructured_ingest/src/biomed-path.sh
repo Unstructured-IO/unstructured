@@ -32,11 +32,12 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy hi_res \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --max-request-time 30 \
   --max-retries 5 \
   --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
   --work-dir "$WORK_DIR"
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

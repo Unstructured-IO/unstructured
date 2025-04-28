@@ -45,7 +45,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --num-processes "$max_processes" \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --url https://unstructured-ingest-test.atlassian.net \
   --user-email "$CONFLUENCE_USER_EMAIL" \
@@ -54,6 +53,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --spaces testteamsp1 \
   --max-num-of-docs-from-each-space 250 \
   --work-dir "$WORK_DIR"
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1
 

@@ -37,11 +37,12 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --chunking-strategy by_page \
   --chunk-max-characters 10000 \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --num-processes "$max_processes" \
   --input-path "example-docs/pdf/$TEST_FILE_NAME" \
   --work-dir "$WORK_DIR"
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 RESULT_FILE_PATH="$OUTPUT_DIR/$TEST_FILE_NAME.json"
 # validate that there is at least one table with text_as_html in the results

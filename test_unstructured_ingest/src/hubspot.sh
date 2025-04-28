@@ -45,12 +45,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
-  --output-dir "$OUTPUT_DIR" \
   --api-token "$HUBSPOT_API_TOKEN" \
   --object-types "calls,communications,emails,notes,products,tickets" \
   --custom-properties '{"products":["my_custom_property"],"tickets":["another_custom_property"]}' \
   --work-dir "$WORK_DIR" \
   --preserve-downloads \
   --verbose
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

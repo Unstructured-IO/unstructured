@@ -42,11 +42,12 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.data_source.filesize_bytes,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
   --recursive \
   --remote-url gs://utic-test-ingest-fixtures/ \
   --work-dir "$WORK_DIR"
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -29,12 +29,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy fast \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/small-pdf-set-w-compression/ \
   --anonymous \
   --work-dir "$WORK_DIR" \
   --uncompress
+  local \
+  --output-dir "$OUTPUT_DIR" \
 
 "$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME
 
