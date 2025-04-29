@@ -222,7 +222,7 @@
   {
     "type": "ListItem",
     "element_id": "1a174e104169cb41cf69393a9cdc0872",
-    "text": "4. Team science and scientific communication: \u201csoft\u201d skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science.",
+    "text": "4. Team science and scientific communication: “soft” skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science.",
     "metadata": {
       "languages": [
         "eng"
@@ -310,7 +310,7 @@
   {
     "type": "NarrativeText",
     "element_id": "690b79e1d449426afb07ed40866a6bb6",
-    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM\u2019s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with",
+    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM’s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with",
     "metadata": {
       "languages": [
         "eng"
