@@ -29,7 +29,7 @@ GH_READ_ONLY_ACCESS_TOKEN=${GH_READ_ONLY_ACCESS_TOKEN:-none}
 ACCESS_TOKEN_FLAGS=""
 # to update test fixtures, "export OVERWRITE_FIXTURES=true" and rerun this script
 if [[ "$GH_READ_ONLY_ACCESS_TOKEN" != "none" ]]; then
-  ACCESS_TOKEN_FLAGS="--git-access-token $GH_READ_ONLY_ACCESS_TOKEN"
+  ACCESS_TOKEN_FLAGS="--access-token $GH_READ_ONLY_ACCESS_TOKEN"
 elif [[ "$CI" == "true" ]]; then
   echo "Warning: GH_READ_ONLY_ACCESS_TOKEN is not defined in the CI environment."
   echo "This can lead to intermittent failures in test-ingest-github.sh, as non-auth'ed"
@@ -47,11 +47,12 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy hi_res \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --url dcneiner/Downloadify \
-  --git-file-glob '*.html,*.txt' \
+  --file-glob '*.html,*.txt' \
   --work-dir "$WORK_DIR" \
-  $ACCESS_TOKEN_FLAGS
+  $ACCESS_TOKEN_FLAGS \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

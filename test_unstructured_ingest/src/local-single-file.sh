@@ -27,12 +27,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.data_source.filesize_bytes,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-  --output-dir "$OUTPUT_DIR" \
   --additional-partition-args '{"strategy":"ocr_only", "languages":["ind", "est"]}' \
   --verbose \
   --reprocess \
   --input-path "$ABS_INPUT_PATH" \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

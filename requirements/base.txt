@@ -8,9 +8,9 @@ anyio==4.9.0
     # via httpx
 backoff==2.2.1
     # via -r ./base.in
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
     # via -r ./base.in
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   httpcore
     #   httpx
@@ -42,11 +42,11 @@ exceptiongroup==1.2.2
     # via anyio
 filetype==1.2.0
     # via -r ./base.in
-h11==0.14.0
+h11==0.16.0
     # via httpcore
 html5lib==1.1
     # via -r ./base.in
-httpcore==1.0.7
+httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via unstructured-client
@@ -62,13 +62,13 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.3.1
+lxml==5.4.0
     # via -r ./base.in
 marshmallow==3.26.1
     # via
     #   dataclasses-json
     #   unstructured-client
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via
     #   typing-inspect
     #   unstructured-client
@@ -80,9 +80,9 @@ numpy==2.0.2
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
-orderly-set==5.3.0
+orderly-set==5.4.0
     # via deepdiff
-packaging==24.2
+packaging==25.0
     # via
     #   marshmallow
     #   unstructured-client
@@ -100,7 +100,7 @@ python-magic==0.4.27
     # via -r ./base.in
 python-oxmsg==0.0.2
     # via -r ./base.in
-rapidfuzz==3.12.2
+rapidfuzz==3.13.0
     # via -r ./base.in
 regex==2024.11.6
     # via nltk
@@ -119,13 +119,13 @@ six==1.17.0
     #   unstructured-client
 sniffio==1.3.1
     # via anyio
-soupsieve==2.6
+soupsieve==2.7
     # via beautifulsoup4
 tqdm==4.67.1
     # via
     #   -r ./base.in
     #   nltk
-typing-extensions==4.13.0
+typing-extensions==4.13.2
     # via
     #   -r ./base.in
     #   anyio

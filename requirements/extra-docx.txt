@@ -4,13 +4,13 @@
 #
 #    pip-compile ./extra-docx.in
 #
-lxml==5.3.1
+lxml==5.4.0
     # via
     #   -c ./base.txt
     #   python-docx
 python-docx==1.1.2
     # via -r ./extra-docx.in
-typing-extensions==4.13.0
+typing-extensions==4.13.2
     # via
     #   -c ./base.txt
     #   python-docx

@@ -14,7 +14,7 @@ click==8.1.8
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.7.1
+coverage[toml]==7.8.0
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -22,7 +22,7 @@ exceptiongroup==1.2.2
     # via
     #   -c ./base.txt
     #   pytest
-flake8==7.1.2
+flake8==7.2.0
     # via
     #   -r ./test.in
     #   flake8-print
@@ -42,12 +42,12 @@ mccabe==0.7.0
     # via flake8
 mypy==1.15.0
     # via -r ./test.in
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via
     #   -c ./base.txt
     #   black
     #   mypy
-packaging==24.2
+packaging==25.0
     # via
     #   -c ./base.txt
     #   black
@@ -58,15 +58,15 @@ platformdirs==4.3.7
     # via black
 pluggy==1.5.0
     # via pytest
-pycodestyle==2.12.1
+pycodestyle==2.13.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.10.6
+pydantic==2.11.3
     # via -r ./test.in
-pydantic-core==2.27.2
+pydantic-core==2.33.1
     # via pydantic
-pyflakes==3.2.0
+pyflakes==3.3.2
     # via
     #   autoflake
     #   flake8
@@ -74,7 +74,7 @@ pytest==8.3.5
     # via
     #   pytest-cov
     #   pytest-mock
-pytest-cov==6.0.0
+pytest-cov==6.1.1
     # via -r ./test.in
 pytest-mock==3.14.0
     # via -r ./test.in
@@ -82,7 +82,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-ruff==0.11.2
+ruff==0.11.7
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck
@@ -101,7 +101,7 @@ tomli==2.2.1
     #   pytest
 types-click==7.1.8
     # via -r ./test.in
-types-markdown==3.7.0.20250322
+types-markdown==3.8.0.20250415
     # via -r ./test.in
 types-requests==2.31.0.6
     # via -r ./test.in
@@ -109,10 +109,13 @@ types-tabulate==0.9.0.20241207
     # via -r ./test.in
 types-urllib3==1.26.25.14
     # via types-requests
-typing-extensions==4.13.0
+typing-extensions==4.13.2
     # via
     #   -c ./base.txt
     #   black
     #   mypy
     #   pydantic
     #   pydantic-core
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via pydantic
