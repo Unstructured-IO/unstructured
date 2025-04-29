@@ -345,6 +345,7 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}
       run: |
         source .venv/bin/activate
+        sudo apt-get install diffstat
         ./test_unstructured_ingest/check-diff-expected-output-html.sh
 
   test_unstructured_api_unit:
