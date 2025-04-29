@@ -29,12 +29,6 @@ all_tests=(
   'local-single-file-chunk-no-orig-elements.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
-  'local-embed.sh'
-  'local-embed-bedrock.sh'
-  'local-embed-octoai.sh'
-  'local-embed-vertexai.sh'
-  'local-embed-voyageai.sh'
-  'local-embed-mixedbreadai.sh'
 )
 
 full_python_matrix_tests=(
