@@ -410,6 +410,12 @@ class DescribePreChunk:
         pre_chunk = PreChunk([], overlap_prefix="", opts=ChunkingOptions())
         assert pre_chunk != 42
 
+    def it_can_handle_element_with_none_as_text(self):
+        pre_chunk = PreChunk(
+            [Image(None), Text("hello")], overlap_prefix="", opts=ChunkingOptions()
+        )
+        assert pre_chunk._text == "hello"
+
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
         [
