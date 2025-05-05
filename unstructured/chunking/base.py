@@ -387,7 +387,7 @@ class PreChunkBuilder:
         if self._text_length > self._opts.soft_max:
             return False
         # -- don't add an element if it would increase total size beyond the hard-max --
-        return not self._remaining_space < len(element.text)
+        return not self._remaining_space < len(element.text or "")
 
     @property
     def _remaining_space(self) -> int:

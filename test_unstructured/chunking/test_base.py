@@ -31,6 +31,7 @@ from unstructured.documents.elements import (
     CompositeElement,
     Element,
     ElementMetadata,
+    Image,
     PageBreak,
     Table,
     TableChunk,
@@ -233,6 +234,10 @@ class DescribePreChunkBuilder:
         )
         assert builder._text_length == 112
         assert builder._remaining_space == 36
+
+    def it_will_fit_when_element_has_none_as_text(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        assert builder.will_fit(Image(None))
 
     def it_will_fit_an_oversized_element_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions())
