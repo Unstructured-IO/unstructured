@@ -31,6 +31,7 @@ from unstructured.documents.elements import (
     CompositeElement,
     Element,
     ElementMetadata,
+    Image,
     PageBreak,
     Table,
     TableChunk,
@@ -234,6 +235,10 @@ class DescribePreChunkBuilder:
         assert builder._text_length == 112
         assert builder._remaining_space == 36
 
+    def it_will_fit_when_element_has_none_as_text(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        assert builder.will_fit(Image(None))
+
     def it_will_fit_an_oversized_element_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions())
         assert builder.will_fit(Text("abcd " * 200))
@@ -404,6 +409,12 @@ class DescribePreChunk:
     def and_it_knows_it_is_NOT_equal_to_an_object_that_is_not_a_PreChunk(self):
         pre_chunk = PreChunk([], overlap_prefix="", opts=ChunkingOptions())
         assert pre_chunk != 42
+
+    def it_can_handle_element_with_none_as_text(self):
+        pre_chunk = PreChunk(
+            [Image(None), Text("hello")], overlap_prefix="", opts=ChunkingOptions()
+        )
+        assert pre_chunk._text == "hello"
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
