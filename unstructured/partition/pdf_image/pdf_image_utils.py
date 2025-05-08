@@ -204,6 +204,11 @@ def save_elements(
                 image_path = image_paths[page_index]
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
+
+                # PNG images with transparency need to be converted before saving
+                if cropped_image.mode == "RGBA":
+                    cropped_image = cropped_image.convert("RGB")
+
                 if extract_image_block_to_payload:
                     buffered = BytesIO()
                     cropped_image.save(buffered, format="JPEG")

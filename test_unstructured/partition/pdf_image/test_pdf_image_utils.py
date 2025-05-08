@@ -73,6 +73,7 @@ def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-i
     [
         (example_doc_path("pdf/layout-parser-paper-fast.pdf"), False),
         (example_doc_path("img/layout-parser-paper-fast.jpg"), True),
+        (example_doc_path("img/english-and-korean.png"), True),
     ],
 )
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
