@@ -624,6 +624,7 @@ def _partition_pdf_or_image_local(
     )
 
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
+    from unstructured.partition.pdf_image.pdfium_processing import process_data_with_pdfium
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
@@ -654,16 +655,21 @@ def _partition_pdf_or_image_local(
             password=password,
         )
 
-        extracted_layout, layouts_links = (
-            process_file_with_pdfminer(
-                filename=filename,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
+        if os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true":
+            print("using pdfium")
+            extracted_layout = process_data_with_pdfium(file=filename, fill=True)
+            layouts_links = []
+        else:
+            extracted_layout, layouts_links = (
+                process_file_with_pdfminer(
+                    filename=filename,
+                    dpi=pdf_image_dpi,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                )
+                if pdf_text_extractable
+                else ([], [])
             )
-            if pdf_text_extractable
-            else ([], [])
-        )
 
         if analysis:
             if not analyzed_image_output_dir_path:
@@ -716,13 +722,18 @@ def _partition_pdf_or_image_local(
         if hasattr(file, "seek"):
             file.seek(0)
 
-        extracted_layout, layouts_links = (
-            process_data_with_pdfminer(
-                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+        if os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true":
+            print("using pdfium")
+            extracted_layout = process_data_with_pdfium(file=file, fill=False)
+            layouts_links = []
+        else:
+            extracted_layout, layouts_links = (
+                process_data_with_pdfminer(
+                    file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+                )
+                if pdf_text_extractable
+                else ([], [])
             )
-            if pdf_text_extractable
-            else ([], [])
-        )
 
         if analysis:
             if not analyzed_image_output_dir_path:
