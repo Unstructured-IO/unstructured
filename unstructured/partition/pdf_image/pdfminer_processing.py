@@ -731,8 +731,9 @@ def aggregate_embedded_text_by_block(
         .sum(axis=1)
         .astype(bool)
     )
+    joiner = "" if os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true" else " "
 
-    text = " ".join([text for text in source_regions.slice(mask).texts if text])
+    text = joiner.join([text for text in source_regions.slice(mask).texts if text])
     return text
 
 

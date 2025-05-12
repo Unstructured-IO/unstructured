@@ -724,7 +724,7 @@ def _partition_pdf_or_image_local(
 
         if os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true":
             print("using pdfium")
-            extracted_layout = process_data_with_pdfium(file=file, fill=False)
+            extracted_layout = process_data_with_pdfium(file=file, fill=True)
             layouts_links = []
         else:
             extracted_layout, layouts_links = (
