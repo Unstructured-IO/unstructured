@@ -73,6 +73,7 @@ def repair_fragments(text_line, fragments):
         match = matcher.find_longest_match(0, len(remaining_text), 0, len(fragment))
 
         if match.size == 0:
+            repaired.append("")
             continue  # Skip fragment if no match found
 
         # Extract matched portion from the ground truth
