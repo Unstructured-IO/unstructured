@@ -35,9 +35,8 @@ def process_data_with_pdfium(
             element_coords.append(bbox)
             texts.append(textpage.get_text_bounded(*bbox).replace("\r", "").lstrip())
 
-        if len(element_coords) == 0:
-            element_coords = [[]]
-        element_coords = np.array(element_coords)
+        element_coords = np.empty((0, 4)) if len(element_coords) == 0 else np.array(element_coords)
+
         height = page.get_height()
         y2 = height - element_coords[:, 1]
         element_coords[:, 1] = height - element_coords[:, 3]
@@ -87,7 +86,7 @@ def repair_fragments(text_line, fragments):
         if (
             (new_pos < len_text and ifrag < len_frag)
             and remaining_text[match_end] == "\n"
-            and ((not fragments[ifrag + 1].startswith("\n")) or (ifrag == len_frag - 1))
+            and (ifrag == len_frag - 1 or not fragments[ifrag + 1].startswith("\n"))
         ):
             matched_text += "\n"
             new_pos += 1
