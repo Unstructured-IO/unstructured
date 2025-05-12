@@ -731,7 +731,16 @@ def aggregate_embedded_text_by_block(
         .sum(axis=1)
         .astype(bool)
     )
-    joiner = "" if os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true" else " "
+    source_is_ocr = source_regions.source in (
+        Source.OCR_PADDLE,
+        Source.OCR_TESSERACT,
+        Source.OCR_GOOGLEVISION,
+    )
+    joiner = (
+        ""
+        if (os.getenv("HI_RES_USE_PDFIUM", "true").lower() == "true" and not source_is_ocr)
+        else " "
+    )
 
     text = joiner.join([text for text in source_regions.slice(mask).texts if text])
     return text
