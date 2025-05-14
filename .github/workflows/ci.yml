@@ -19,7 +19,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11", "3.12"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -27,34 +27,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         check-only: 'true'
-
-  check-deps:
-    strategy:
-      matrix:
-        python-version: ["3.9","3.10","3.11", "3.12"]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Check for dependency conflicts
-      run: make check-deps
-
-  check-extras:
-    strategy:
-      matrix:
-        python-version: [ "3.9","3.10","3.11","3.12" ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install all extras
-        run: make check-extras
 
   check-licenses:
     strategy:
@@ -72,13 +44,13 @@ jobs:
       # in the requirements file and the dep version in site packages
       - name: Install all doc and test dependencies
         run: |
-          make install-ci
+          make install
           make check-licenses
 
   lint:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest
     needs: [setup, changelog]
     steps:
@@ -94,7 +66,7 @@ jobs:
     - name: Lint
       run: |
         source .venv/bin/activate
-        make install-ci
+        make install
         make check
 
   shellcheck:
@@ -117,7 +89,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11", "3.12"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest
     needs: [setup, lint]
     steps:
@@ -147,15 +119,14 @@ jobs:
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
           exit 1
         fi
-        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
-        make install-ci
+        make install
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
   test_unit_no_extras:
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest
     needs: [setup, lint]
     steps:
@@ -173,15 +144,14 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         source .venv/bin/activate
-        make install-ci
-        make install-nltk-models
+        make install
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
     # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.12"]
         extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
     runs-on: ubuntu-latest
     needs: [setup, lint, test_unit_no_extras]
@@ -201,8 +171,7 @@ jobs:
       run: |
         python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
         source .venv-${{ matrix.extra }}/bin/activate
-        make install-base-ci
-        make install-${{ matrix.extra }}
+        make install
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
@@ -212,19 +181,18 @@ jobs:
         # NOTE(newelh) - determine what needs to be installed here
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-${{ matrix.extra }}
-        [[ ${{ matrix.extra }} == "pdf-image" ]] && make install-paddleocr
+        make install
+        [[ ${{ matrix.extra }} == "pdf-image" ]]
         make test-extra-${{ matrix.extra }} CI=true
 
   setup_ingest:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10" ]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
@@ -237,7 +205,7 @@ jobs:
   test_ingest_src:
     strategy:
       matrix:
-        python-version: ["3.9","3.10"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest-m
     needs: [setup_ingest, lint]
     steps:
@@ -309,21 +277,19 @@ jobs:
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
+        make install
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make install-all-docs
-        make install-ingest
         ./test_unstructured_ingest/test-ingest-src.sh
 
   test_json_to_html:
     strategy:
       matrix:
-        python-version: ["3.9","3.10"]
+        python-version: ["3.12"]
     runs-on: ubuntu-latest-m
     needs: [setup, lint]
     steps:
@@ -351,8 +317,7 @@ jobs:
   test_unstructured_api_unit:
     strategy:
       matrix:
-        # NOTE(yuming): Unstructured API only use Python 3.10
-        python-version: ["3.10"]
+        python-version: ["3.10"] # TODO bump to 3.12 once unstructured api is on 3.12
     runs-on: ubuntu-latest
     needs: [setup, lint]
     steps:
@@ -377,19 +342,17 @@ jobs:
         python${{ matrix.python-version}} -m venv .venv
         source .venv/bin/activate
         mkdir "$NLTK_DATA"
-        make install-ci
+        make install
     - name: Test Unstructured API Unit
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
         source .venv/bin/activate
-        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
-        make install-ci
+        make install
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-nltk-models
         make test-unstructured-api-unit
 
   changelog:

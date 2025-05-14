@@ -1,5 +1,0 @@
--c ./deps/constraints.txt
--c base.txt
-
-paddlepaddle>=3.0.0b1
-unstructured.paddleocr==2.10.0

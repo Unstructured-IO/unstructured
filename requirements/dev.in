@@ -1,5 +1,0 @@
--c ./deps/constraints.txt
--c base.txt
--c test.txt
-pip-tools
-pre-commit

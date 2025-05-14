@@ -1,5 +1,4 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 23.2.1
 CURRENT_DIR := $(shell pwd)
 ARCH := $(shell uname -m)
 PYTHON ?= python3
@@ -8,141 +7,37 @@ PYTHON ?= python3
 help: Makefile
 	@sed -n 's/^\(## \)\([a-zA-Z]\)/\2/p' $<
 
+.PHONY: install-uv
+install-uv:
+	@uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ###########
 # Install #
 ###########
 
-## install-base:            installs core requirements needed for text processing bricks
-.PHONY: install-base
-install-base: install-base-pip-packages install-nltk-models
+.PHONY: install-dependencies
+install-dependencies:
+	@uv sync --all-groups
 
-## install:                 installs all test, dev, and experimental requirements
+.PHONY: upgrade-dependencies
+upgrade-dependencies:
+	@uv sync --all-groups --upgrade
+
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
+install:
+	install-uv install-dependencies
 
-.PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc install-paddleocr
-
-.PHONY: install-base-ci
-install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
-
-.PHONY: install-base-pip-packages
-install-base-pip-packages:
-	${PYTHON} -m pip install pip==${PIP_VERSION}
-	${PYTHON} -m pip install -r requirements/base.txt
-
-.PHONY: install-huggingface
-install-huggingface:
-	${PYTHON} -m pip install pip==${PIP_VERSION}
-	${PYTHON} -m pip install -r requirements/huggingface.txt
-
-.PHONY: install-nltk-models
-install-nltk-models:
-	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
-
-.PHONY: install-test
-install-test:
-	${PYTHON} -m pip install -r requirements/test.txt
-	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
-	# pytesseract installation into the virtual env for testing
-	${PYTHON} -m pip install unstructured_pytesseract
-	# ${PYTHON} -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
-	# NOTE(robinson) - Installing weaviate-client separately here because the requests
-	# version conflicts with label_studio_sdk
-	${PYTHON} -m pip install weaviate-client -c requirements/deps/constraints.txt
-
-.PHONY: install-dev
-install-dev:
-	${PYTHON} -m pip install -r requirements/dev.txt
-
-.PHONY: install-build
-install-build:
-	${PYTHON} -m pip install -r requirements/build.txt
-
-.PHONY: install-csv
-install-csv:
-	${PYTHON} -m pip install -r requirements/extra-csv.txt
-
-.PHONY: install-docx
-install-docx:
-	${PYTHON} -m pip install -r requirements/extra-docx.txt
-
-.PHONY: install-epub
-install-epub:
-	${PYTHON} -m pip install -r requirements/extra-epub.txt
-
-.PHONY: install-odt
-install-odt:
-	${PYTHON} -m pip install -r requirements/extra-odt.txt
-
-.PHONY: install-pypandoc
-install-pypandoc:
-	${PYTHON} -m pip install -r requirements/extra-pandoc.txt
-
-.PHONY: install-paddleocr
-install-paddleocr:
-	${PYTHON} -m pip install -r requirements/extra-paddleocr.txt
-
-.PHONY: install-markdown
-install-markdown:
-	${PYTHON} -m pip install -r requirements/extra-markdown.txt
-
-.PHONY: install-pdf-image
-install-pdf-image:
-	${PYTHON} -m pip install -r requirements/extra-pdf-image.txt
-
-.PHONY: install-pptx
-install-pptx:
-	${PYTHON} -m pip install -r requirements/extra-pptx.txt
-
-.PHONY: install-xlsx
-install-xlsx:
-	${PYTHON} -m pip install -r requirements/extra-xlsx.txt
-
-.PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
-
-.PHONY: install-ingest
-install-ingest:
-	python3 -m pip install -r requirements/ingest/ingest.txt
-
-## install-local-inference: installs requirements for local inference
-.PHONY: install-local-inference
-install-local-inference: install install-all-docs
-
-.PHONY: install-pandoc
-install-pandoc:
-	ARCH=${ARCH} ./scripts/install-pandoc.sh
-
-## pip-compile:             compiles all base/dev/test requirements
-.PHONY: pip-compile
-pip-compile:
-	@scripts/pip-compile.sh
-
-## install-project-local:   install unstructured into your local python environment
-.PHONY: install-project-local
-install-project-local: install
-	# MAYBE TODO: fail if already exists?
-	${PYTHON} -m pip install -e .
-
-## uninstall-project-local: uninstall unstructured from your local python environment
-.PHONY: uninstall-project-local
-uninstall-project-local:
-	${PYTHON} -m pip uninstall ${PACKAGE_NAME}
-
-#################
-# Test and Lint #
-#################
+#########
+# Tests #
+#########
 
 export CI ?= false
 export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 
-## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	CI=$(CI) UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	uv run pytest test_$(PACKAGE_NAME) --cov=$(PACKAGE_NAME) --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -150,136 +45,102 @@ test-unstructured-api-unit:
 
 .PHONY: test-no-extras
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) \
-		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest \
-		test_${PACKAGE_NAME}/partition/test_text.py \
-		test_${PACKAGE_NAME}/partition/test_email.py \
-		test_${PACKAGE_NAME}/partition/html/test_partition.py \
-		test_${PACKAGE_NAME}/partition/test_xml.py
+	CI=$(CI) UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	uv run pytest \
+		test_$(PACKAGE_NAME)/partition/test_text.py \
+		test_$(PACKAGE_NAME)/partition/test_email.py \
+		test_$(PACKAGE_NAME)/partition/html/test_partition.py \
+		test_$(PACKAGE_NAME)/partition/test_xml.py
 
 .PHONY: test-extra-csv
 test-extra-csv:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	CI=$(CI) uv run pytest \
 		test_unstructured/partition/test_csv.py \
 		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	CI=$(CI) uv run pytest \
 		test_unstructured/partition/test_doc.py \
 		test_unstructured/partition/test_docx.py
 
 .PHONY: test-extra-epub
 test-extra-epub:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_epub.py
+	CI=$(CI) uv run pytest test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_md.py
+	CI=$(CI) uv run pytest test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_odt.py
+	CI=$(CI) uv run pytest test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/pdf_image
+	CI=$(CI) uv run pytest test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	CI=$(CI) uv run pytest \
 		test_unstructured/partition/test_ppt.py \
 		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	CI=$(CI) uv run pytest \
 		test_unstructured/partition/test_org.py \
 		test_unstructured/partition/test_rst.py \
 		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_xlsx.py
+	CI=$(CI) uv run pytest test_unstructured/partition/test_xlsx.py
 
 .PHONY: test-text-extraction-evaluate
 test-text-extraction-evaluate:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/metrics/test_text_extraction.py
+	CI=$(CI) uv run pytest test_unstructured/metrics/test_text_extraction.py
 
-## check:                   runs linters (includes tests)
+
+###########
+#  CHECK  #
+###########
+
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version
+check: check-ruff check-yaml check-docker
 
-.PHONY: check-shfmt
-check-shfmt:
-	shfmt -i 2 -d .
+.PHONY: check-ruff
+check-ruff:
+	uv run ruff check .
 
-.PHONY: check-black
-check-black:
-	${PYTHON} -m black . --check --line-length=100
+.PHONY: check-yaml
+check-yaml:
+	uv run yamllint .
 
-.PHONY: check-flake8
-check-flake8:
-	${PYTHON} -m flake8 .
+.PHONY: check-docker
+check-docker:
+	uv run hadolint Dockerfile
 
 .PHONY: check-licenses
 check-licenses:
 	@scripts/check-licenses.sh
 
-.PHONY: check-ruff
-check-ruff:
-    # -- ruff options are determined by pyproject.toml --
-	ruff check .
-
-.PHONY: check-autoflake
-check-autoflake:
-	autoflake --check-diff .
-
-## check-scripts:           run shellcheck
 .PHONY: check-scripts
 check-scripts:
     # Fail if any of these files have warnings
 	scripts/shellcheck.sh
 
-## check-version:           run check to ensure version in CHANGELOG.md matches version in package
-.PHONY: check-version
-check-version:
-    # Fail if syncing version would produce changes
-	scripts/version-sync.sh -c \
-		-f "unstructured/__version__.py" semver
+###########
+#  TIDY   #
+###########
 
-## tidy:                    run black
 .PHONY: tidy
-tidy: tidy-python
+tidy: tidy-ruff
 
-.PHONY: tidy_shell
-tidy-shell:
-	shfmt -i 2 -l -w .
-
-.PHONY: tidy-python
-tidy-python:
-	ruff check . --fix-only || true
-	autoflake --in-place .
-	black --line-length=100 .
-
-## version-sync:            update __version__.py with most recent version from CHANGELOG.md
-.PHONY: version-sync
-version-sync:
-	scripts/version-sync.sh \
-		-f "unstructured/__version__.py" semver
-
-.PHONY: check-coverage
-check-coverage:
-	${PYTHON} -m coverage report --fail-under=90
-
-## check-deps:              check consistency of dependencies
-.PHONY: check-deps
-check-deps:
-	scripts/consistent-deps.sh
-
-.PHONY: check-extras
-check-extras:
-	scripts/check-extras.sh
+.PHONY: tidy-ruff
+tidy-ruff:
+	uv run ruff format .
+	uv run ruff check --fix-only --show-fixes .
 
 ##########
 # Docker #
