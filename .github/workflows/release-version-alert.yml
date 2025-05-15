@@ -5,14 +5,14 @@ on:
     types:
       - opened
       - synchronize
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  check-version:  
+  check-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout codes
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4
       - name: Get PR information
         id: pr-info
         run: |
@@ -28,7 +28,8 @@ jobs:
           CHECK_NEW_VERSION_RESPONSE=$(bash scripts/check-new-release-version.sh)
           if [[ "$CHECK_NEW_VERSION_RESPONSE" == "New release version"* ]]; then
             if [ "$HAS_PR" = true ]; then
-              MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
+              MESSAGE="$CHECK_NEW_VERSION_RESPONSE :rocket: Coming soon in PR: \
+              https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER "
             else
               BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
               BRANCH_LINK="https://github.com/${{ github.repository }}/tree/$BRANCH_NAME"
@@ -38,10 +39,10 @@ jobs:
           else
             echo "No new non-dev version found. Skipping Slack notification."
             echo "SKIP_STEPS=true" >> $GITHUB_ENV  # Set an environment variable to indicate skipping steps
-          fi 
+          fi
           echo "SLACK_MESSAGE=$MESSAGE"
       - name: Generate Message Hash
-        if: env.SKIP_STEPS != 'true' 
+        if: env.SKIP_STEPS != 'true'
         id: generate-hash
         run: |
           MESSAGE_HASH=$(echo "${{env.SLACK_MESSAGE}}" | sha256sum | cut -d ' ' -f1)
@@ -50,7 +51,7 @@ jobs:
         if: env.SKIP_STEPS != 'true'
         id: restore-cache
         uses: actions/cache/restore@v4
-        with: 
+        with:
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH  }}
       - name: Check for Duplicates
