@@ -18,20 +18,10 @@ env:
   PYTHON_VERSION: "3.12"
 
 jobs:
-  setup-cache:
-    name: Setup Cache
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/base-cache
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          check-only: true
-
   lint-checks:
     name: Lint and Checks
     runs-on: ubuntu-latest
-    needs: [setup-cache, changelog]
+    needs: [changelog]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
