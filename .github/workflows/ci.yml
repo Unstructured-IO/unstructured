@@ -43,7 +43,8 @@ jobs:
             .venv
       - name: Shell Formatter (shfmt)
         uses: mfinelli/setup-shfmt@v3
-      - run: shfmt -i 2 -d .
+      - run:
+          find . -type f -name '*.sh' ! -path './.venv/*' -print0 | xargs -0 shfmt -i 2 -d
 
   unit-tests:
     name: Unit Tests
