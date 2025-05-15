@@ -1,3 +1,16 @@
+## 0.18.0
+
+### Enhancements
+- Homebrew for package management, apt repos are rarely updated these days
+- Default Python version is set to 3.12
+- Multiple improvements to maintainability and readability of the project files
+
+### Features
+- Dependency management with uv
+
+### Fixes
+- Better dependencies resolution and locking
+
 ## 0.17.7-dev0
 
 ### Enhancements
