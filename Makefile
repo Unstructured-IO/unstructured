@@ -25,7 +25,8 @@ upgrade-dependencies:
 
 .PHONY: install
 install:
-	install-uv install-dependencies
+	$(MAKE) install-uv
+	$(MAKE) install-dependencies
 
 #########
 # Tests #
