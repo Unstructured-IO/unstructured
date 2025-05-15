@@ -38,8 +38,11 @@ jobs:
         run: make check
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
+        with:
+          ignore_paths: >-
+            .venv
         env:
-          SHELLCHECK_OPTS: '--exclude=SC2148,SC2086 --exclude-dir=.venv'
+          SHELLCHECK_OPTS: '-e SC2148,SC2086'
 
       - name: Shell Formatter (shfmt)
         uses: mfinelli/setup-shfmt@v3
