@@ -1,10 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/requirements"
-    schedule:
-      interval: "monthly"
-
   - package-ecosystem: "github-actions"
     # NOTE(robinson) - Workflow files stored in the
     # default location of `.github/workflows`
