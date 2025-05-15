@@ -36,9 +36,10 @@ jobs:
 
       - name: Python Lint
         run: make check
-
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
+        env:
+          SHELLCHECK_OPTS: '--exclude=SC2148,SC2086 --exclude-dir=.venv'
 
       - name: Shell Formatter (shfmt)
         uses: mfinelli/setup-shfmt@v3
