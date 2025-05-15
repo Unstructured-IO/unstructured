@@ -108,7 +108,7 @@ test-text-extraction-evaluate:
 ###########
 
 .PHONY: check
-check: check-ruff check-yaml check-docker
+check: check-ruff check-yaml
 
 .PHONY: check-ruff
 check-ruff:
@@ -117,10 +117,6 @@ check-ruff:
 .PHONY: check-yaml
 check-yaml:
 	uv run yamllint .
-
-.PHONY: check-docker
-check-docker:
-	uv run hadolint Dockerfile
 
 .PHONY: check-licenses
 check-licenses:

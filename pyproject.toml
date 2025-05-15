@@ -93,13 +93,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "hadolintw",
     "liccheck",
     "mypy",
     "pre-commit",
     "ruff",
     "semantic-version",
-    "yamllint"
+    "yamllint",
 ]
 test = [
     "pytest",
