@@ -191,7 +191,7 @@ def test_partition_ndjson_works_with_empty_string():
 
 def test_partition_ndjson_works_with_empty_item():
     with pytest.raises(ValueError):
-        assert partition_ndjson(text="{}") == []
+        partition_ndjson(text="{}")
 
 
 def test_partition_ndjson_works_with_empty_list():
