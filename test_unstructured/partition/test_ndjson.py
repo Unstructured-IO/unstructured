@@ -188,13 +188,16 @@ def test_partition_json_raises_with_none_specified():
 def test_partition_ndjson_works_with_empty_string():
     assert partition_ndjson(text="") == []
 
+
 def test_partition_ndjson_works_with_empty_item():
     with pytest.raises(ValueError):
         assert partition_ndjson(text="{}") == []
 
+
 def test_partition_ndjson_works_with_empty_list():
     with pytest.raises(ValueError):
         assert partition_ndjson(text="[]") == []
+
 
 def test_partition_ndjson_raises_with_too_many_specified():
     path = example_doc_path("fake-text.txt")
@@ -295,10 +298,12 @@ def test_partition_ndjson_from_text_prefers_metadata_last_modified():
 
 # ------------------------------------------------------------------------------------------------
 
+
 def test_partition_json_raises_with_unprocessable_json():
     text = '{"invalid": "schema"}'
     with pytest.raises(ValueError):
         partition_ndjson(text=text)
+
 
 def test_partition_json_raises_with_invalid_json():
     text = '[{"hi": "there"}]]'
