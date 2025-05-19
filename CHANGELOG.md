@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fix image extraction for PNG files.** When `extract_image_block_to_payload` is True, and the image is a PNG, we get a Pillow error. We need to remove the PNG transparency layer before saving the image.
+- **Throw validation error when json is passed with invalid unstructured json
 
 ## 0.17.6
 
