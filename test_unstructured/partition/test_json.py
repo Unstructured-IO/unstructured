@@ -187,7 +187,7 @@ def test_partition_json_works_with_empty_string():
     assert partition_json(text="") == []
 
 
-def test_partition_json_works_with_empty_item():
+def test_partition_json_fails_with_empty_item():
     with pytest.raises(ValueError):
         partition_json(text="{}")
 
