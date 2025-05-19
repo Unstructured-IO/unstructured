@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fix image extraction for PNG files.** When `extract_image_block_to_payload` is True, and the image is a PNG, we get a Pillow error. We need to remove the PNG transparency layer before saving the image.
+- **Fix logger deprecation warning**: Replaced usage of `logger.warn` with `logger.warning` to comply with the Python logging standards.
 
 ## 0.17.6
 
