@@ -75,6 +75,11 @@ def partition_ndjson(
     try:
         element_dicts = ndjson_loads(file_text)
         elements = elements_from_dicts(element_dicts)
+        # if we found at least one json element, but no unstructured elements were found, throw 422
+        if len(element_dicts) > 0 and len(elements) == 0:
+            raise ValueError(
+                "JSON cannot be partitioned. Schema does not match the Unstructured schema.",
+            )
     except json.JSONDecodeError:
         raise ValueError("Not a valid ndjson")
 
