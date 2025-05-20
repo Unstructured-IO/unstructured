@@ -41,7 +41,7 @@ The `unstructured` library provides open-source components for ingesting and pre
 
 ## Try the Unstructured Platform Product
 
-Ready to move your data processing pipeline to production, and take advantage of advanced features?  Check out [Unstructured Platform](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichments, all from a low code UI or an API.  [Request a demo](https://unstructured.io/contact) from our sales team to learn more about how to get started.
+Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Platform](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichments, all from a low code UI or an API. [Request a demo](https://unstructured.io/contact) from our sales team to learn more about how to get started.
 
 ## :eight_pointed_black_star: Quick Start
 
