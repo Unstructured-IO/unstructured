@@ -41,9 +41,9 @@ class VoyageAIEmbeddingConfig(EmbeddingConfig):
         if self.batch_size is None:
             if self.model_name in ["voyage-2", "voyage-02"]:
                 self.batch_size = DEFAULT_VOYAGE_2_BATCH_SIZE
-            elif self.model_name == "voyage-3-lite":
+            elif self.model_name in ["voyage-3.5-lite", "voyage-3-lite"]:
                 self.batch_size = DEFAULT_VOYAGE_3_LITE_BATCH_SIZE
-            elif self.model_name == "voyage-3":
+            elif self.model_name in ["voyage-3.5", "voyage-3"]:
                 self.batch_size = DEFAULT_VOYAGE_3_BATCH_SIZE
             else:
                 self.batch_size = DEFAULT_BATCH_SIZE
