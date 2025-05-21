@@ -1,7 +1,0 @@
--c ./deps/constraints.txt
--c base.txt
-
-openpyxl
-pandas
-xlrd
-networkx

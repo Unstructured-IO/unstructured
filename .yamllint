@@ -1,0 +1,12 @@
+extends: default
+
+ignore: |
+  .venv
+
+rules:
+  document-start: disable
+  line-length:
+    max: 150
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+  truthy: disable

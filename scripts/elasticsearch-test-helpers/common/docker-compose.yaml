@@ -11,7 +11,11 @@ services:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTIC_USER=${ELASTIC_USER}
     healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTIC_USER}:${ELASTIC_PASSWORD} localhost:9200/_cluster/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail -u ${ELASTIC_USER}:${ELASTIC_PASSWORD} localhost:9200/_cluster/health || exit 1"
+        ]
       interval: 10s
       timeout: 30s
       retries: 3
