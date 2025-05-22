@@ -94,7 +94,10 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
+from unstructured.partition.utils.sorting import (
+    coord_has_valid_points,
+    sort_document_elements_by_page,
+)
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
@@ -881,21 +884,31 @@ def _partition_pdf_with_pdfparser(
     **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
-    elements = []
 
-    for page_elements in extracted_elements:
-        # NOTE(crag, christine): always do the basic sort first for deterministic order across
-        # python versions.
-        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
-        if sort_mode != SORT_MODE_BASIC:
-            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+    # NOTE(crag, christine): always do the basic sort first for deterministic order across
+    # python versions.
+    paged_elements = sort_document_elements_by_page(extracted_elements, sort_mode=SORT_MODE_BASIC)
+    if sort_mode != SORT_MODE_BASIC:
+        paged_elements = sort_document_elements_by_page(paged_elements, sort_mode=sort_mode)
 
-        elements += sorted_page_elements
+    if include_page_breaks:
+        paged_elements = add_page_breaks(paged_elements)
 
-        if include_page_breaks:
-            elements.append(PageBreak(text=""))
+    elements = [el for page_elements in paged_elements for el in page_elements]
 
     return elements
+
+
+def add_page_breaks(
+    paged_elements: list[list[Element]], num_pages: Optional[int] = None
+) -> list[list[Element]]:
+    """Add page breaks to a list of page elements."""
+    if num_pages is None:
+        num_pages = len(paged_elements)
+    for i, page_elements in enumerate(paged_elements):
+        if i < num_pages:
+            page_elements.append(PageBreak(text=""))
+    return paged_elements
 
 
 def _partition_pdf_or_image_with_ocr(
@@ -908,57 +921,16 @@ def _partition_pdf_or_image_with_ocr(
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
+    sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
 
-    elements = []
     if is_image:
-        images = []
-        image = PILImage.open(file) if file is not None else PILImage.open(filename)
-        images.append(image)
-
-        for page_number, image in enumerate(images, start=starting_page_number):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
-            elements.extend(page_elements)
+        images = [PILImage.open(file if file is not None else filename)]
     else:
-        for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
-        ):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
-            elements.extend(page_elements)
-
-    return elements
-
-
-def _partition_pdf_or_image_with_ocr_from_image(
-    image: PILImage.Image,
-    languages: Optional[list[str]] = None,
-    ocr_languages: Optional[str] = None,
-    page_number: int = 1,
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    sort_mode: str = SORT_MODE_XY_CUT,
-    **kwargs: Any,
-) -> list[Element]:
-    """Extract `unstructured` elements from an image using OCR and perform partitioning."""
+        images = convert_pdf_to_images(filename, file, password=password)
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
@@ -967,6 +939,36 @@ def _partition_pdf_or_image_with_ocr_from_image(
     # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
+    paged_elements: list[list[Element]] = []
+    for page_number, image in enumerate(images, start=starting_page_number):
+        page_elements = _partition_pdf_or_image_with_ocr_from_image(
+            image=image,
+            ocr_agent=ocr_agent,
+            languages=languages,
+            page_number=page_number,
+            metadata_last_modified=metadata_last_modified,
+            **kwargs,
+        )
+        paged_elements.append(page_elements)
+
+    paged_elements: list[list[Element]] = sort_document_elements_by_page(
+        paged_elements, sort_mode=sort_mode
+    )
+    if include_page_breaks:
+        paged_elements = add_page_breaks(paged_elements)
+
+    return [el for page_elements in paged_elements for el in page_elements]
+
+
+def _partition_pdf_or_image_with_ocr_from_image(
+    image: PILImage.Image,
+    ocr_agent: "OCRAgent",
+    languages: Optional[list[str]] = None,
+    page_number: int = 1,
+    metadata_last_modified: Optional[str] = None,
+    **kwargs: Any,
+) -> list[Element]:
+    """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
     ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
@@ -984,13 +986,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
         image_size=image.size,
         common_metadata=metadata,
     )
-
-    sorted_page_elements = page_elements
-    if sort_mode != SORT_MODE_DONT:
-        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-
-    if include_page_breaks:
-        sorted_page_elements.append(PageBreak(text=""))
 
     return page_elements
 
@@ -1179,7 +1174,7 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: list[Element] = []
+    paged_elements: list[list[Element]] = []
 
     num_pages = len(document.pages)
     for page_number, page in enumerate(document.pages, start=starting_page_number):
@@ -1280,12 +1275,13 @@ def document_to_element_list(
                     (el for l_el, el in translation_mapping if l_el is layout_element.parent),
                 )
                 element.metadata.parent_id = element_parent.id
-        sorted_page_elements = page_elements
-        if sortable and sort_mode != SORT_MODE_DONT:
-            sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
-        if include_page_breaks and page_number < num_pages + starting_page_number:
-            sorted_page_elements.append(PageBreak(text=""))
-        elements.extend(sorted_page_elements)
+        paged_elements.append(page_elements)
 
-    return elements
+    if sortable and sort_mode != SORT_MODE_DONT:
+        paged_elements = sort_document_elements_by_page(paged_elements, sort_mode=sort_mode)
+
+    if include_page_breaks:
+        paged_elements = add_page_breaks(paged_elements, num_pages=num_pages)
+
+    return [el for page_elements in paged_elements for el in page_elements]

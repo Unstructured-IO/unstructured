@@ -7,7 +7,7 @@ import numpy as np
 
 from unstructured.documents.elements import CoordinatesMetadata, Element
 from unstructured.logger import trace_logger
-from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 if TYPE_CHECKING:
@@ -185,6 +185,23 @@ def sort_page_elements(
         sorted_page_elements = page_elements
 
     return sorted_page_elements
+
+
+def sort_document_elements_by_page(
+    pages: list[list[Element]], sort_mode: str
+) -> list[list[Element]]:
+    """Sort a list of document elements while respecting page boundaries."""
+
+    elements: list[list[Element]] = []
+    for page_elements in pages:
+        sorted_page_elements = (
+            page_elements
+            if sort_mode == SORT_MODE_DONT
+            else sort_page_elements(page_elements, sort_mode=sort_mode)
+        )
+        elements.append(sorted_page_elements)
+
+    return elements
 
 
 def sort_bboxes_by_xy_cut(
