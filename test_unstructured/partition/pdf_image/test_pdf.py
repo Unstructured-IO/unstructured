@@ -1534,7 +1534,7 @@ def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_cou
     )
     page.elements_array = layout.LayoutElements.from_list([block1, block2])
     doc = DocumentLayout.from_pages([page])
-    with mock.patch.object(pdf, "sort_page_elements") as mock_sort_page_elements:
+    with mock.patch.object(pdf, "sort_document_elements_by_page") as mock_sort_page_elements:
         pdf.document_to_element_list(doc, sortable=True, sort_mode=sort_mode)
     assert mock_sort_page_elements.call_count == call_count
 
