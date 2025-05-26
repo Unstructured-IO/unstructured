@@ -1,6 +1,7 @@
 ## 0.17.7-dev0
 
 ### Enhancements
+- **VoyageAI's v3.5 models**
 
 ### Features
 
