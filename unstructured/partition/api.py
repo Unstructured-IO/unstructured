@@ -86,7 +86,7 @@ def partition_via_api(
 
     if file_filename is not None:
         metadata_filename = file_filename
-        logger.warn(
+        logger.warning(
             "The file_filename kwarg will be deprecated in a future version of unstructured. "
             "Please use metadata_filename instead.",
         )
@@ -277,7 +277,7 @@ def partition_multiple_via_api(
 
     if file_filenames is not None:
         metadata_filenames = file_filenames
-        logger.warn(
+        logger.warning(
             "The file_filenames kwarg will be deprecated in a future version of unstructured. "
             "Please use metadata_filenames instead.",
         )
