@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run_and_sniff_in_container.sh
+# test-outbound-connectivity.sh
 #
 # Capture every external packet an Unstructured Docker image emits while
 # partition()‑ing a test PNG, *inside the same container* (works on macOS).
@@ -9,10 +9,10 @@
 # under ./python-output/<scenario>.log while still streaming it to your terminal.
 #
 # Usage examples
-#   ./run_and_sniff_in_container.sh baseline
-#   ./run_and_sniff_in_container.sh --cleanup missing-models
-#   ./run_and_sniff_in_container.sh --cleanup offline
-#   ./run_and_sniff_in_container.sh offline-and-missing-models
+#   ./test-outbound-connectivity.sh baseline
+#   ./test-outbound-connectivity.sh --cleanup missing-models
+#   ./test-outbound-connectivity.sh --cleanup offline
+#   ./test-outbound-connectivity.sh offline-and-missing-models
 #
 # Outputs:
 #   ./pcaps/<scenario>.pcap
@@ -26,9 +26,15 @@ IMAGE="downloads.unstructured.io/unstructured-io/unstructured:e42884a"
 NET="unstructured_test_net"
 CAPTURE_IFACE="${CAPTURE_IFACE:-eth0}"
 PCAP_DIR="$(pwd)/pcaps"
-PY_LOG_DIR="$(pwd)/python-output"  # where Python logs go
+PY_LOG_DIR="$(pwd)/python-output" # where Python logs go
 HF_CACHE="/home/notebook-user/.cache/huggingface"
 ########################################################################
+
+# shellcheck disable=SC2015
+((BASH_VERSINFO[0] >= 5)) || {
+  echo "Requires bash >= 5" >&2
+  exit 1
+}
 
 # Create output directories up‑front so failures don’t leave us empty‑handed
 mkdir -p "$PCAP_DIR" "$PY_LOG_DIR"
@@ -47,37 +53,52 @@ if [[ -z "$SCENARIO" ]]; then
 fi
 
 # ---------- optional pre‑run cleanup ----------------------------------
-if (( CLEANUP )); then
+if ((CLEANUP)); then
   echo ">>> Removing leftover sut_* containers…"
-  docker rm -f $(docker ps -aq --filter name='^sut_') 2>/dev/null || true
+  # shellcheck disable=SC2015
+  docker rm -f "$(docker ps -aq --filter name='^sut_')" 2>/dev/null || true
 fi
 
 # ---------- scenario‑specific settings --------------------------------
-DO_NOT_TRACK=""; HF_HUB_OFFLINE=""; REMOVE_CACHE=0
+DO_NOT_TRACK=""
+HF_HUB_OFFLINE=""
+REMOVE_CACHE=0
 case "$SCENARIO" in
-  baseline) ;;
-  missing-models)               REMOVE_CACHE=1 ;;
-  offline)                      DO_NOT_TRACK=true; HF_HUB_OFFLINE=1 ;;
-  offline-and-missing-models)   DO_NOT_TRACK=true; HF_HUB_OFFLINE=1; REMOVE_CACHE=1 ;;
-  *) echo "Unknown scenario: $SCENARIO"; exit 1 ;;
+baseline) ;;
+missing-models) REMOVE_CACHE=1 ;;
+analytics-online-only) HF_HUB_OFFLINE=1 ;;
+offline)
+  DO_NOT_TRACK=true
+  HF_HUB_OFFLINE=1
+  ;;
+offline-and-missing-models)
+  DO_NOT_TRACK=true
+  HF_HUB_OFFLINE=1
+  REMOVE_CACHE=1
+  ;;
+*)
+  echo "Unknown scenario: $SCENARIO"
+  exit 1
+  ;;
 esac
 
 docker network inspect "$NET" >/dev/null 2>&1 || docker network create "$NET"
 
 # ---------- launch SUT idle -------------------------------------------
 CID=$(docker run -d --rm --name "sut_${SCENARIO}" \
-         --network "$NET" \
-         --cap-add NET_RAW --cap-add NET_ADMIN \
-         -e DO_NOT_TRACK="$DO_NOT_TRACK" \
-         -e HF_HUB_OFFLINE="$HF_HUB_OFFLINE" \
-         --entrypoint /bin/sh "$IMAGE" -c "sleep infinity")
+  --network "$NET" \
+  --cap-add NET_RAW --cap-add NET_ADMIN \
+  -e DO_NOT_TRACK="$DO_NOT_TRACK" \
+  -e HF_HUB_OFFLINE="$HF_HUB_OFFLINE" \
+  --entrypoint /bin/sh "$IMAGE" -c "sleep infinity")
 echo "Container: $CID  (scenario $SCENARIO)"
 
 # install tcpdump (Wolfi uses apk) as root
 docker exec -u root "$CID" apk add --no-cache tcpdump >/dev/null
 
 # optionally wipe HF cache
-(( REMOVE_CACHE )) && docker exec "$CID" rm -rf "$HF_CACHE" || true
+# shellcheck disable=SC2015
+((REMOVE_CACHE)) && docker exec "$CID" rm -rf "$HF_CACHE" || true
 
 # ---------- start tcpdump in background -------------------------------
 FILTER='not (dst net ff02::/16 or src net ff02::/16 or ip6[6] = 58 or ether multicast)'
@@ -103,7 +124,6 @@ if [[ "$HF_HUB_OFFLINE" -eq 1 && "$REMOVE_CACHE" -eq 1 ]]; then
   echo "HF_HUB_OFFLINE=1 and REMOVE_CACHE=1 : allowing python command have a non-exit 0 status and will continue the script."
   set +e
 fi
-
 
 docker exec -i -e PYTHONUNBUFFERED=1 "$CID" python - <<PY |& tee "${PY_LOG_DIR}/${SCENARIO}.log"
 import logging
@@ -155,7 +175,7 @@ set -e
 
 # ---------- stop tcpdump, copy pcap, clean up -------------------------
 docker exec "$CID" pkill -2 tcpdump || true
-sleep 1   # let pcap flush
+sleep 1 # let pcap flush
 
 docker cp "$CID:/tmp/capture.pcap" "${PCAP_DIR}/${SCENARIO}.pcap"
 echo "pcap saved to ${PCAP_DIR}/${SCENARIO}.pcap"
