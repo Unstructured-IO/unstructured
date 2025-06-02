@@ -27,7 +27,6 @@ NET="unstructured_test_net"
 CAPTURE_IFACE="${CAPTURE_IFACE:-eth0}"
 PCAP_DIR="$(pwd)/pcaps"
 PY_LOG_DIR="$(pwd)/python-output"  # where Python logs go
-TEST_FILE="/app/example-docs/img/english-and-korean.png"
 HF_CACHE="/home/notebook-user/.cache/huggingface"
 ########################################################################
 
@@ -125,9 +124,23 @@ logging.getLogger("urllib").setLevel(logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.DEBUG)
 logging.getLogger("httpcore").setLevel(logging.DEBUG)
+logging.getLogger("pdfminer.pdfpage").setLevel(logging.CRITICAL)
 
-print(f"[INFO] partitioning ${TEST_FILE}")
-partition("${TEST_FILE}", strategy="hi_res")
+for test_file in [
+ "/app/example-docs/ideas-page.html",
+ "/app/example-docs/category-level.docx",
+ "/app/example-docs/fake_table.docx",
+ "/app/example-docs/img/english-and-korean.png",
+ "/app/example-docs/img/embedded-images-tables.jpg",
+ "/app/example-docs/img/layout-parser-paper-with-table.jpg",
+ "/app/example-docs/pdf/embedded-images-tables.pdf",
+ "/app/example-docs/pdf/all-number-table.pdf",
+ "/app/example-docs/fake-power-point.pptx",
+ "/app/example-docs/stanley-cups.xlsx",
+ "/app/example-docs/fake-email-multiple-attachments.msg",
+]:
+ print("[INFO] partitioning "+test_file)
+ partition(test_file, strategy="hi_res", skip_infer_table_types=[])
 ## add this if you always want to force an external connection
 #print("[INFO] done partitioning; hitting google…")
 #urllib.request.urlopen("https://www.google.com", timeout=10).read(64)
