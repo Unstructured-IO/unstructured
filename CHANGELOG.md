@@ -1,7 +1,7 @@
 ## 0.17.7
 
 ### Enhancements
-- **Updated Docker file with ENV HF_HUB_ONLINE=1 to prevent the contianer from trying to access the internet
+- **Updated Docker file with ENV HF_HUB_OFFLINE=1 to prevent the contianer from trying to access the internet
 
 ### Features
 
