@@ -17,9 +17,9 @@ distlib==0.3.9
     # via virtualenv
 filelock==3.18.0
     # via virtualenv
-identify==2.6.10
+identify==2.6.12
     # via pre-commit
-importlib-metadata==8.6.1
+importlib-metadata==8.7.0
     # via
     #   -c ././deps/constraints.txt
     #   build
@@ -32,7 +32,7 @@ packaging==25.0
     #   build
 pip-tools==7.4.1
     # via -r ./dev.in
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via
     #   -c ./test.txt
     #   virtualenv
@@ -49,11 +49,11 @@ tomli==2.2.1
     #   -c ./test.txt
     #   build
     #   pip-tools
-virtualenv==20.30.0
+virtualenv==20.31.2
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
-zipp==3.21.0
+zipp==3.22.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
