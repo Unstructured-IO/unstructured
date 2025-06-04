@@ -30,16 +30,7 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
     $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')" && \
-    $PYTHON -c "from transformers import MarianMTModel, MarianTokenizer; \
-                models_to_download = [ \
-                    'Helsinki-NLP/opus-mt-de-en', \
-                    'Helsinki-NLP/opus-mt-ru-en', \
-                    'Helsinki-NLP/opus-mt-zh-en' \
-                ]; \
-                for model_name in models_to_download: \
-                    MarianTokenizer.from_pretrained(model_name); \
-                    MarianMTModel.from_pretrained(model_name)"
-
+    $PYTHON -c "from transformers import MarianMTModel, MarianTokenizer; models_to_download = ['Helsinki-NLP/opus-mt-de-en', 'Helsinki-NLP/opus-mt-ru-en', 'Helsinki-NLP/opus-mt-zh-en']; [ (MarianTokenizer.from_pretrained(m), MarianMTModel.from_pretrained(m)) for m in models_to_download ]"
 
 ENV HF_HUB_OFFLINE=1
 
