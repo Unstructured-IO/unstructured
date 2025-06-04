@@ -20,8 +20,8 @@ RECURSION_LIMIT = 50
 
 def ontology_to_unstructured_elements(
     ontology_element: ontology.OntologyElement,
-    parent_id: str = None,
-    page_number: int = None,
+    parent_id: str | None = None,
+    page_number: int | None = None,
     depth: int = 0,
     filename: str | None = None,
     add_img_alt_text: bool = True,
@@ -51,7 +51,7 @@ def ontology_to_unstructured_elements(
     Returns:
         list[Element]: A list of unstructured Element objects.
     """
-    elements_to_return = []
+    elements_to_return: list[elements.Element] = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
         if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
@@ -71,7 +71,7 @@ def ontology_to_unstructured_elements(
                     ),
                 )
             ]
-        children = []
+        children: list[elements.Element] = []
         for child in ontology_element.children:
             child = ontology_to_unstructured_elements(
                 child,
@@ -86,12 +86,14 @@ def ontology_to_unstructured_elements(
         combined_children = combine_inline_elements(children)
         elements_to_return += combined_children
     else:
-        element_class = ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE[ontology_element.__class__]
+        element_class: type[elements.Element] = ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE[
+            ontology_element.__class__
+        ]
         html_code_of_ontology_element = ontology_element.to_html()
         element_text = ontology_element.to_text(add_img_alt_text=add_img_alt_text)
 
         unstructured_element = element_class(
-            text=element_text,
+            text=element_text,  # type: ignore
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
             metadata=elements.ElementMetadata(
@@ -126,9 +128,9 @@ def combine_inline_elements(elements: list[elements.Element]) -> list[elements.E
     Returns:
         list[Element]: A list of combined elements.
     """
-    result_elements = []
+    result_elements: list[elements.Element] = []
 
-    current_element = None
+    current_element: elements.Element | None = None
     for next_element in elements:
         if current_element is None:
             current_element = next_element
@@ -445,7 +447,7 @@ def extract_tag_and_ontology_class_from_tag(
     return html_tag, element_class
 
 
-def get_escaped_attributes(soup: Tag):
+def get_escaped_attributes(soup: Tag) -> dict[str, str | list[str]]:
     """
     Escapes the attributes of a BeautifulSoup Tag object.
 
@@ -455,7 +457,7 @@ def get_escaped_attributes(soup: Tag):
     Returns:
         dict: A dictionary with escaped attribute names and values.
     """
-    escaped_attrs = {}
+    escaped_attrs: dict[str, str | list[str]] = {}
     for key, value in soup.attrs.items():
         escaped_key = html.escape(key)
         escaped_value = None
