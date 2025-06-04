@@ -1,4 +1,6 @@
-import pytest, os
+import os
+
+import pytest
 
 from unstructured.cleaners import translate
 
