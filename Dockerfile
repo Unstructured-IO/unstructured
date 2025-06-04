@@ -29,7 +29,7 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     mkdir -p ${NLTK_DATA} && \
     $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
     $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
-    $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')" && \
+    $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 ENV HF_HUB_OFFLINE=1
 
