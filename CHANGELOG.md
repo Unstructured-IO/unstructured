@@ -1,15 +1,16 @@
-## 0.17.7
+## 0.17.8
 
 ### Enhancements
-- **Updated Docker file with ENV HF_HUB_OFFLINE=1 to prevent the contianer from trying to access the internet
+- **Bump `unstructured-inference` to `1.0.5`** It includes critical fix to ensure inference model initialization is thread safe
 
 ### Features
 
 ### Fixes
 
-## 0.17.7-dev0
+## 0.17.7
 
 ### Enhancements
+- **Updated Docker file with ENV HF_HUB_OFFLINE=1 to prevent the contianer from trying to access the internet
 
 ### Features
 
