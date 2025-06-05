@@ -52,7 +52,7 @@ fsspec==2025.5.1
     #   torch
 google-api-core[grpc]==2.25.0
     # via google-cloud-vision
-google-auth==2.40.2
+google-auth==2.40.3
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -69,9 +69,9 @@ grpcio==1.72.1
     #   grpcio-status
 grpcio-status==1.72.1
     # via google-api-core
-hf-xet==1.1.2
+hf-xet==1.1.3
     # via huggingface-hub
-huggingface-hub==0.32.3
+huggingface-hub==0.32.4
     # via
     #   accelerate
     #   timm
@@ -139,7 +139,7 @@ packaging==25.0
     #   pikepdf
     #   transformers
     #   unstructured-pytesseract
-pandas==2.2.3
+pandas==2.3.0
     # via unstructured-inference
 pdf2image==1.17.0
     # via -r ./extra-pdf-image.in
@@ -184,7 +184,7 @@ pyasn1==0.6.1
     #   rsa
 pyasn1-modules==0.4.2
     # via google-auth
-pycocotools==2.0.9
+pycocotools==2.0.10
     # via effdet
 pycparser==2.22
     # via
@@ -253,14 +253,14 @@ tokenizers==0.21.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.7.0
+torch==2.7.1
     # via
     #   accelerate
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.22.0
+torchvision==0.22.1
     # via
     #   effdet
     #   timm
@@ -280,7 +280,7 @@ typing-extensions==4.14.0
     #   torch
 tzdata==2025.2
     # via pandas
-unstructured-inference==1.0.2
+unstructured-inference==1.0.5
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in
