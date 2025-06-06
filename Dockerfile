@@ -31,4 +31,6 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
+ENV HF_HUB_OFFLINE=1
+
 CMD ["/bin/bash"]

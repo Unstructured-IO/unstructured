@@ -12,7 +12,7 @@ pypandoc==1.15
     # via -r ./extra-odt.in
 python-docx==1.1.2
     # via -r ./extra-odt.in
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   -c ./base.txt
     #   python-docx

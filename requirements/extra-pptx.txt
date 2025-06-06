@@ -10,7 +10,7 @@ pillow==11.2.1
     # via python-pptx
 python-pptx==1.0.2
     # via -r ./extra-pptx.in
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via python-pptx
 xlsxwriter==3.2.3
     # via python-pptx
