@@ -176,11 +176,6 @@ def test_parsed_ontology_can_be_serialized_from_json(json_file_path):
         assert Path(elements[i].metadata.filename).stem == json_file_path.stem
 
 
-# regex to match id="\w+" but also '-' character e.g.  id="6135aeb6-9558-46e2-9da4-473a74db3e9d">
-
-regex = r'id="\w+(-?\w+)*"'
-
-
 @pytest.mark.parametrize(
     ("html_file_path", "json_file_path"),
     [
