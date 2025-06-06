@@ -237,7 +237,7 @@ def unstructured_elements_to_ontology(
     Returns:
         OntologyElement: The converted OntologyElement object.
     """
-    id_to_element_mapping = OrderedDict()
+    id_to_element_mapping: OrderedDict[str, ontology.OntologyElement] = OrderedDict()
 
     document_element_id = unstructured_elements[0].metadata.parent_id
 
@@ -253,18 +253,14 @@ def unstructured_elements_to_ontology(
         html_as_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
             recursive=False
         )
-        for html_as_tag in html_as_tags:
-            ontology_element = parse_html_to_ontology_element(html_as_tag)
-            # Note: Each HTML of non-terminal Element doesn't have children in HTML
-            # So we just add Ontology Element with tag and class, later children are appended by
-            # parent_id.
-            # For terminal Elements entire HTML is added to text_as_html, thus it allows us to
-            # recreate the entire HTML structure
-
-            id_to_element_mapping[ontology_element.id] = ontology_element
-
-            if element.metadata.parent_id and element.metadata.parent_id in id_to_element_mapping:
-                id_to_element_mapping[element.metadata.parent_id].children.append(ontology_element)
+        element_id = element.id
+        parent_id = element.metadata.parent_id
+        if parent_id and parent_id in id_to_element_mapping:
+            for html_as_tag in html_as_tags:
+                ontology_element = parse_html_to_ontology_element(html_as_tag)
+                if ontology_element:
+                    id_to_element_mapping[element_id] = ontology_element
+                    id_to_element_mapping[parent_id].children.append(ontology_element)
 
     root_id, root_element = id_to_element_mapping.popitem(last=False)
     return root_element
