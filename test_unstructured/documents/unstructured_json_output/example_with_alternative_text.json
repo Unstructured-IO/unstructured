@@ -9,7 +9,7 @@
             ],
             "page_number": 1,
             "parent_id": "897a8a47377c4ad6aab839a929879537",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"1\" id=\"3a6b156a81764e17be128264241f8136\" />"
+            "text_as_html": "<div class=\"Page\" data-page-number=\"1\" />"
         },
         "text": "",
         "type": "UncategorizedText"
@@ -24,7 +24,7 @@
             ],
             "page_number": 1,
             "parent_id": "3a6b156a81764e17be128264241f8136",
-            "text_as_html": "<header class=\"Header\" id=\"6135aeb6-9558-46e2-9da4-473a74db3e9d\" />"
+            "text_as_html": "<header class=\"Header\" />"
         },
         "text": "",
         "type": "UncategorizedText"
@@ -39,7 +39,7 @@
             ],
             "page_number": 1,
             "parent_id": "6135aeb6-9558-46e2-9da4-473a74db3e9d",
-            "text_as_html": "<img class=\"Logo\" alt=\"New York logo\" id=\"33d66969-b274-4f88-abaa-e7f258b1595f\" />"
+            "text_as_html": "<img class=\"Logo\" alt=\"New York logo\" />"
         },
         "text": "New York logo",
         "type": "Image"
@@ -54,7 +54,7 @@
             ],
             "page_number": 1,
             "parent_id": "6135aeb6-9558-46e2-9da4-473a74db3e9d",
-            "text_as_html": "<img class=\"Image\" alt=\"A line graph showing the comparison of 5 year cumulative total return for stocks\" id=\"40c32fd8-9a02-42b8-a587-884293881090\" />"
+            "text_as_html": "<img class=\"Image\" alt=\"A line graph showing the comparison of 5 year cumulative total return for stocks\" />"
         },
         "text": "A line graph showing the comparison of 5 year cumulative total return for stocks",
         "type": "Image"

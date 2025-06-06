@@ -1,3 +1,13 @@
+## 0.17.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
+
+
 ## 0.17.8
 
 ### Enhancements
