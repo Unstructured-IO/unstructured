@@ -25,9 +25,9 @@ fsspec==2025.5.1
     # via
     #   huggingface-hub
     #   torch
-hf-xet==1.1.2
+hf-xet==1.1.3
     # via huggingface-hub
-huggingface-hub==0.32.3
+huggingface-hub==0.32.4
     # via
     #   tokenizers
     #   transformers
@@ -90,7 +90,7 @@ tokenizers==0.21.1
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.7.0
+torch==2.7.1
     # via -r ./huggingface.in
 tqdm==4.67.1
     # via
