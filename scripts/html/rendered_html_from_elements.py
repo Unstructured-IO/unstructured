@@ -10,6 +10,7 @@ TODO: It was noted that unstructured_elements_to_ontology func always returns a 
 """
 
 import argparse
+import html
 import logging
 import os
 import select
@@ -46,7 +47,8 @@ def rendered_html(*, filepath: str | None = None, text: str | None = None) -> st
     unstructured_elements = elements_from_json(filename=filepath, text=text)
     ontology_root = unstructured_elements_to_ontology(unstructured_elements)
     html_document = ontology_root.to_html()
-    return html_document
+    unescaped_html = html.unescape(html_document)
+    return unescaped_html
 
 
 def _main():
