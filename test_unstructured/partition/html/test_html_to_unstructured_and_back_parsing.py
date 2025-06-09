@@ -31,7 +31,6 @@ def _wrap_in_body_and_page(html_code):
 _page_elements = [
     Text(
         text="",
-        detection_origin="vlm_partitioner",
         metadata=ElementMetadata(text_as_html='<div class="Page" data-page-number="1" />'),
     ),
 ]
@@ -41,9 +40,6 @@ def _assert_elements_equal(actual_elements: list[Element], expected_elements: li
     assert len(actual_elements) == len(expected_elements)
     for actual, expected in zip(actual_elements, expected_elements):
         assert actual == expected, f"Actual: {actual}, Expected: {expected}"
-        assert (
-            actual.metadata.detection_origin == expected.metadata.detection_origin
-        ), f"Actual: {actual}, Expected: {expected}"
         # Not all elements are considered be __eq__ Elements method
         actual_html = indent_html(actual.metadata.text_as_html, html_parser="html.parser")
         expected_html = indent_html(expected.metadata.text_as_html, html_parser="html.parser")
@@ -79,7 +75,6 @@ def test_simple_narrative_text_with_id():
     expected_elements = _page_elements + [
         NarrativeText(
             text="DEALER ONLY",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<p class="NarrativeText">DEALER ONLY</p>',
             ),
@@ -108,7 +103,6 @@ def test_input_with_radio_button_checked():
     expected_elements = _page_elements + [
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html=(
                     '<input class="RadioButton" name="health-comparison"' 'type="radio" checked />'
@@ -144,21 +138,18 @@ def test_multiple_elements():
     expected_elements = _page_elements + [
         NarrativeText(
             text="About the same",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<p class="Paragraph">About the same</p>',
             ),
         ),
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<input class="RadioButton" name="health-comparison" type="radio" />',
             ),
         ),
         NarrativeText(
             text="Some text",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<p class="Paragraph">Some text</p>',
             ),
@@ -196,22 +187,18 @@ def test_multiple_pages():
     expected_elements = [
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<div class="Page" data-page-number="1" />'),
         ),
         NarrativeText(
             text="Some text",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<p class="Paragraph">Some text</p>'),
         ),
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<div class="Page" data-page-number="2" />'),
         ),
         NarrativeText(
             text="Another text",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<p class="Paragraph">Another text</p>'),
         ),
     ]
@@ -244,7 +231,6 @@ def test_forms():
     expected_elements = _page_elements + [
         Text(
             text="2 Option 1 (Checked)",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html=""
                 '<form class="Form">'
@@ -287,7 +273,6 @@ def test_table():
     expected_elements = _page_elements + [
         Table(
             text="Fair Value1 Fair Value2",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<table class="Table">'
                 "<tbody>"
@@ -342,32 +327,26 @@ def test_very_nested_structure_is_preserved():
     expected_elements = _page_elements + [
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<section class="Section" />'),
         ),
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<div class="Column" />'),
         ),
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<header class="Header" />'),
         ),
         Title(
             text="Title",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<h1 class="Title">Title</h1>'),
         ),
         Text(
             text="",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(text_as_html='<div class="Column" />'),
         ),
         NarrativeText(
             text="Clever Quote",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<blockquote class="Quote">'
                 '<p class="Paragraph">'
@@ -378,7 +357,6 @@ def test_very_nested_structure_is_preserved():
         ),
         Text(
             text="Uncategorized footnote text",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<div class="Footnote">'
                 '<span class="UncategorizedText">'
@@ -419,7 +397,6 @@ def test_ordered_list():
     expected_elements = _page_elements + [
         Text(
             text="Item 1 Item 2 Item 3",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<ul class="UnorderedList">'
                 '<li class="ListItem">'
@@ -462,7 +439,6 @@ def test_squeezed_elements_are_parsed_back():
     expected_elements = _page_elements + [
         NarrativeText(
             text="Table of Contents 68 Prince Street Palmdale, CA 93550 www.google.com",
-            detection_origin="vlm_partitioner",
             metadata=ElementMetadata(
                 text_as_html='<p class="NarrativeText">Table of Contents</p>'
                 '<address class="Address">'
