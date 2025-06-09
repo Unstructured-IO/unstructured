@@ -239,14 +239,14 @@ def unstructured_elements_to_ontology(
     """
     id_to_element_mapping: OrderedDict[str, ontology.OntologyElement] = OrderedDict()
 
-    document_element_id = unstructured_elements[0].metadata.parent_id
+    root_element_id = unstructured_elements[0].metadata.parent_id
 
-    if document_element_id is None:
-        document_element_id = ontology.OntologyElement.generate_unique_id()
-        unstructured_elements[0].metadata.parent_id = document_element_id
+    if root_element_id is None:
+        root_element_id = ontology.OntologyElement.generate_unique_id()
+        unstructured_elements[0].metadata.parent_id = root_element_id
 
-    id_to_element_mapping[document_element_id] = ontology.Document(
-        additional_attributes={"id": document_element_id}
+    id_to_element_mapping[root_element_id] = ontology.Document(
+        additional_attributes={"id": root_element_id}
     )
 
     for element in unstructured_elements:
@@ -255,12 +255,21 @@ def unstructured_elements_to_ontology(
         )
         element_id = element.id
         parent_id = element.metadata.parent_id
-        if parent_id and parent_id in id_to_element_mapping:
+
+        if parent_id is None:
+            # Make sure that no element is lost
+            parent_id = root_element_id
+
+        if parent_id in id_to_element_mapping:
             for html_as_tag in html_as_tags:
                 ontology_element = parse_html_to_ontology_element(html_as_tag)
                 if ontology_element:
                     id_to_element_mapping[element_id] = ontology_element
                     id_to_element_mapping[parent_id].children.append(ontology_element)
+                else:
+                    raise ValueError(f"Failed to parse HTML to ontology element: {html_as_tag}")
+        else:
+            raise ValueError(f"Parent element {parent_id} not found in id_to_element_mapping")
 
     root_id, root_element = id_to_element_mapping.popitem(last=False)
     return root_element
