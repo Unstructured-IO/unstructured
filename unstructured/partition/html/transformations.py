@@ -260,16 +260,16 @@ def unstructured_elements_to_ontology(
             # Make sure that no element is lost
             parent_id = root_element_id
 
-        if parent_id in id_to_element_mapping:
-            for html_as_tag in html_as_tags:
-                ontology_element = parse_html_to_ontology_element(html_as_tag)
-                if ontology_element:
-                    id_to_element_mapping[element_id] = ontology_element
-                    id_to_element_mapping[parent_id].children.append(ontology_element)
-                else:
-                    raise ValueError(f"Failed to parse HTML to ontology element: {html_as_tag}")
-        else:
+        if parent_id not in id_to_element_mapping:
             raise ValueError(f"Parent element {parent_id} not found in id_to_element_mapping")
+
+        for html_as_tag in html_as_tags:
+            ontology_element = parse_html_to_ontology_element(html_as_tag)
+            if not ontology_element:
+                raise ValueError(f"Failed to parse HTML to ontology element: {html_as_tag}")
+
+            id_to_element_mapping[element_id] = ontology_element
+            id_to_element_mapping[parent_id].children.append(ontology_element)
 
     root_id, root_element = id_to_element_mapping.popitem(last=False)
     return root_element
