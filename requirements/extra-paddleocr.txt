@@ -135,7 +135,7 @@ rapidfuzz==3.13.0
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
