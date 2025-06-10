@@ -260,14 +260,8 @@ def unstructured_elements_to_ontology(
             # Make sure that no element is lost
             parent_id = root_element_id
 
-        if parent_id not in id_to_element_mapping:
-            raise ValueError(f"Parent element {parent_id} not found in id_to_element_mapping")
-
         for html_as_tag in html_as_tags:
             ontology_element = parse_html_to_ontology_element(html_as_tag)
-            if not ontology_element:
-                raise ValueError(f"Failed to parse HTML to ontology element: {html_as_tag}")
-
             id_to_element_mapping[element_id] = ontology_element
             id_to_element_mapping[parent_id].children.append(ontology_element)
 
@@ -339,9 +333,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
     return str(soup)
 
 
-def parse_html_to_ontology_element(
-    soup: Tag, recursion_depth: int = 1
-) -> ontology.OntologyElement | None:
+def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> ontology.OntologyElement:
     """
     Converts a BeautifulSoup Tag object into an OntologyElement object. This function is recursive.
     First tries to recognize a class from Unstructured Ontology, then if class is matched tries
