@@ -1,3 +1,6 @@
+## 0.17.9
+- Patch various CVEs
+
 ## 0.17.8
 
 ### Enhancements
