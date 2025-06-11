@@ -503,7 +503,7 @@ class PreChunk:
         if self._overlap_prefix:
             yield self._overlap_prefix
         for e in self._elements:
-            if e.text:
+            if e.text and len(e.text):
                 text = " ".join(e.text.strip().split())
                 if text:
                     yield text
