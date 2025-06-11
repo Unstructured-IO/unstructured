@@ -184,7 +184,7 @@ typing-inspection==0.4.1
     # via pydantic
 unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
-urllib3==1.26.20
+urllib3==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

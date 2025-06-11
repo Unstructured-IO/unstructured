@@ -105,7 +105,7 @@ typing-extensions==4.14.0
     #   -c ./base.txt
     #   huggingface-hub
     #   torch
-urllib3==1.26.20
+urllib3==2.4.0
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
