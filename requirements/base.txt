@@ -141,11 +141,11 @@ typing-inspect==0.9.0
     #   unstructured-client
 unstructured-client==0.25.9
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   -r ./base.in
 urllib3==2.4.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   requests
     #   unstructured-client
 webencodings==0.5.1

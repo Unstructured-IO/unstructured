@@ -6,19 +6,19 @@
 #
 numpy==2.2.6
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   pandas
 pandas==2.3.0
     # via -r ./extra-csv.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   pandas
 pytz==2025.2
     # via pandas
 six==1.17.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-dateutil
 tzdata==2025.2
     # via pandas

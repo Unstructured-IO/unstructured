@@ -6,11 +6,11 @@
 #
 lxml==5.4.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-docx
 python-docx==1.1.2
     # via -r ./extra-docx.in
 typing-extensions==4.14.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-docx

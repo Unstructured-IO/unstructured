@@ -6,15 +6,15 @@
 #
 certifi==2025.4.26
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   requests
 charset-normalizer==3.4.2
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   requests
 click==8.2.1
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   sacremoses
 filelock==3.18.0
     # via
@@ -33,17 +33,17 @@ huggingface-hub==0.32.5
     #   transformers
 idna==3.10
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   requests
 jinja2==3.1.6
     # via torch
 joblib==1.5.1
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   sacremoses
 langdetect==1.0.9
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   -r ./huggingface.in
 markupsafe==3.0.2
     # via jinja2
@@ -53,7 +53,7 @@ networkx==3.4.2
     # via torch
 numpy==2.2.6
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   transformers
 nvidia-cublas-cu12==12.6.4.1
     # via
@@ -94,7 +94,7 @@ nvidia-nvtx-cu12==12.6.77
     # via torch
 packaging==25.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   huggingface-hub
     #   transformers
 pyyaml==6.0.2
@@ -103,12 +103,12 @@ pyyaml==6.0.2
     #   transformers
 regex==2024.11.6
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   sacremoses
     #   transformers
 requests==2.32.4
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   huggingface-hub
     #   transformers
 sacremoses==0.1.1
@@ -119,19 +119,19 @@ sentencepiece==0.2.0
     # via -r ./huggingface.in
 six==1.17.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   langdetect
 sympy==1.14.0
     # via torch
 tokenizers==0.21.1
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   transformers
 torch==2.7.1
     # via -r ./huggingface.in
 tqdm==4.67.1
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   huggingface-hub
     #   sacremoses
     #   transformers
@@ -141,13 +141,13 @@ triton==3.3.1
     # via torch
 typing-extensions==4.14.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   huggingface-hub
     #   torch
 urllib3==2.4.0
     # via
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/base.txt
-    #   -c /home/pastel/work/unstructured/unstructured/requirements/deps/constraints.txt
+    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
     #   requests
 
 # The following packages are considered to be unsafe in a requirements file:
