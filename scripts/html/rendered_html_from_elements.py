@@ -10,64 +10,18 @@ TODO: It was noted that unstructured_elements_to_ontology func always returns a 
 """
 
 import argparse
+import html
 import logging
 import os
 import select
 import sys
-from collections import defaultdict
-from typing import List, Sequence
 
-from bs4 import BeautifulSoup
-
-from unstructured.documents import elements
 from unstructured.partition.html.transformations import unstructured_elements_to_ontology
 from unstructured.staging.base import elements_from_json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-
-def extract_document_div(html_content: str) -> str:
-    pos = html_content.find(">")
-    if pos != -1:
-        return html_content[: pos + 1]
-    logger.error("No '>' found in the HTML content.")
-    raise ValueError("No '>' found in the HTML content.")
-
-
-def extract_page_div(html_content: str) -> str:
-    soup = BeautifulSoup(html_content, "html.parser")
-    page_divs = soup.find_all("div", class_="Page")
-    if len(page_divs) != 1:
-        logger.error(
-            "Expected exactly one <div> element with class 'Page'. Found %d.", len(page_divs)
-        )
-        raise ValueError("Expected exactly one <div> element with class 'Page'.")
-    return str(page_divs[0])
-
-
-def fold_document_div(
-    html_document_start: str, html_document_end: str, html_per_page: List[str]
-) -> str:
-    html_document = html_document_start
-    for page_html in html_per_page:
-        html_document += page_html
-    html_document += html_document_end
-    return html_document
-
-
-def group_elements_by_page(
-    unstructured_elements: Sequence[elements.Element],
-) -> Sequence[Sequence[elements.Element]]:
-    pages_dict = defaultdict(list)
-
-    for element in unstructured_elements:
-        page_number = element.metadata.page_number
-        pages_dict[page_number].append(element)
-
-    pages_list = list(pages_dict.values())
-    return pages_list
 
 
 def rendered_html(*, filepath: str | None = None, text: str | None = None) -> str:
@@ -91,18 +45,10 @@ def rendered_html(*, filepath: str | None = None, text: str | None = None) -> st
         logger.info("Rendering HTML from text.")
 
     unstructured_elements = elements_from_json(filename=filepath, text=text)
-    unstructured_elements_per_page = group_elements_by_page(unstructured_elements)
-    # parsed_ontology = unstructured_elements_to_ontology(unstructured_elements)
-    parsed_ontology_per_page = [
-        unstructured_elements_to_ontology(elements) for elements in unstructured_elements_per_page
-    ]
-    html_per_page = [parsed_ontology.to_html() for parsed_ontology in parsed_ontology_per_page]
-
-    html_document_start = extract_document_div(html_per_page[0])
-    html_document_end = "</div>"
-    html_per_page = [extract_page_div(page) for page in html_per_page]
-
-    return fold_document_div(html_document_start, html_document_end, html_per_page)
+    ontology_root = unstructured_elements_to_ontology(unstructured_elements)
+    html_document = ontology_root.to_html()
+    unescaped_html = html.unescape(html_document)
+    return unescaped_html
 
 
 def _main():

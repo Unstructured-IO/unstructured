@@ -5,13 +5,13 @@ They are used to simplify transformations between different representations
 of parsed documents
 """
 
-from typing import Any, Dict, Type
+from typing import Dict, Type
 
 from unstructured.documents import elements, ontology
 from unstructured.documents.elements import Element
 
 
-def get_all_subclasses(cls) -> list[Any]:
+def get_all_subclasses(cls: type) -> list[type]:
     """
     Recursively find all subclasses of a given class.
 
@@ -19,7 +19,7 @@ def get_all_subclasses(cls) -> list[Any]:
     cls (type): The class for which to find all subclasses.
 
     Returns:
-    list: A list of all subclasses of the given class.
+    list[type]: A list of all subclasses of the given class.
     """
     subclasses = cls.__subclasses__()
     all_subclasses = subclasses.copy()
@@ -30,7 +30,9 @@ def get_all_subclasses(cls) -> list[Any]:
     return all_subclasses
 
 
-def get_ontology_to_unstructured_type_mapping() -> dict[str, Element]:
+def get_ontology_to_unstructured_type_mapping() -> (
+    dict[Type[ontology.OntologyElement], Type[Element]]
+):
     """
     Get a mapping of ontology element to unstructured type.
 
@@ -50,7 +52,7 @@ def get_ontology_to_unstructured_type_mapping() -> dict[str, Element]:
     dict: A dictionary where keys are ontology element classes
           and values are unstructured types.
     """
-    ontology_to_unstructured_class_mapping = {
+    ontology_to_unstructured_class_mapping: Dict[Type[ontology.OntologyElement], Type[Element]] = {
         ontology.Document: elements.Text,
         ontology.Section: elements.Text,
         ontology.Page: elements.Text,
@@ -134,9 +136,7 @@ HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP: Dict[tuple[str, str], Type[ontology.O
     for tag in element_type().allowed_tags
 }
 CSS_CLASS_TO_ELEMENT_TYPE_MAP: Dict[str, Type[ontology.OntologyElement]] = {
-    element_type().css_class_name: element_type
-    for element_type in ALL_ONTOLOGY_ELEMENT_TYPES
-    for tag in element_type().allowed_tags
+    element_type().css_class_name: element_type for element_type in ALL_ONTOLOGY_ELEMENT_TYPES
 }
 
 HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP: Dict[str, Type[ontology.OntologyElement]] = {
