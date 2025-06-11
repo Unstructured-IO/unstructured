@@ -188,7 +188,7 @@ class _FileTypeDetector:
             # give up and report FileType.UNK
             result_file_type = FileType.UNK
 
-        if result_file_type == FileType.JSON:
+        if result_file_type == FileType.JSON and self._disambiguate_json_file_type:
             # edge case where JSON/NDJSON content without file extension
             # (magic lib can't distinguish them)
             result_file_type = self._disambiguate_json_file_type

@@ -226,7 +226,7 @@ def partition(
         )
         return augment_metadata(elements)
 
-    if file_type.partitioner_shortname == "image":
+    if file_type.partitioner_shortname and file_type.partitioner_shortname == "image":
         partition_image = partitioner_loader.get(file_type)
         elements = partition_image(
             filename=filename,
