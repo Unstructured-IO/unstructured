@@ -1,3 +1,8 @@
+## 0.17.10
+- Drop Python 3.9 support as it reaches EOL in October 2025
+- Update pip-compile script to use Python 3.10 and newer
+- Update all packages using pip-compile
+
 ## 0.17.9
 - Patch various CVEs
 
