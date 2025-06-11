@@ -13,7 +13,7 @@ COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN chown -R notebook-user:notebook-user /app && \
-    apk add font-ubuntu git && \
+    apk add --no-cache font-ubuntu fontconfig git && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
 

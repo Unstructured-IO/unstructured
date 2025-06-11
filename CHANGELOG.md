@@ -1,4 +1,4 @@
-## 0.17.9-dev0
+## 0.17.11-dev0
 
 ### Enhancements
 
@@ -7,6 +7,13 @@
 ### Fixes
 - Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
 
+## 0.17.10
+- Drop Python 3.9 support as it reaches EOL in October 2025
+- Update pip-compile script to use Python 3.10 and newer
+- Update all packages using pip-compile
+
+## 0.17.9
+- Patch various CVEs
 
 ## 0.17.8
 
