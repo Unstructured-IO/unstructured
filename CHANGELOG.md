@@ -1,3 +1,6 @@
+## 0.17.10
+- Drop Python 3.9 for test-json-to-html test as `requests` package no longer supports Python 3.9
+
 ## 0.17.9
 - Patch various CVEs
 
