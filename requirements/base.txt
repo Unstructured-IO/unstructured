@@ -104,7 +104,7 @@ rapidfuzz==3.13.0
     # via -r ./base.in
 regex==2024.11.6
     # via nltk
-requests==2.32.3
+requests==2.32.4
     # via
     #   -r ./base.in
     #   requests-toolbelt

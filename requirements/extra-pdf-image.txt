@@ -222,7 +222,7 @@ regex==2024.11.6
     # via
     #   -c ./base.txt
     #   transformers
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c ./base.txt
     #   google-api-core
