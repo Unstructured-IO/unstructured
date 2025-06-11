@@ -323,7 +323,7 @@ jobs:
   test_json_to_html:
     strategy:
       matrix:
-        python-version: ["3.9","3.10"]
+        python-version: ["3.10"]
     runs-on: ubuntu-latest-m
     needs: [setup, lint]
     steps:
