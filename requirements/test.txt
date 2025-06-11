@@ -107,7 +107,7 @@ types-click==7.1.8
     # via -r ./test.in
 types-markdown==3.8.0.20250415
     # via -r ./test.in
-types-requests==2.31.0.6
+types-requests==2.32.4.20250611
     # via -r ./test.in
 types-tabulate==0.9.0.20241207
     # via -r ./test.in
