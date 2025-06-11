@@ -416,6 +416,20 @@ class DescribePreChunk:
         )
         assert pre_chunk._text == "hello"
 
+    def it_can_chunk_elements_with_none_text_without_error(self):
+        """Regression test for AttributeError when Image elements have None text."""
+        pre_chunk = PreChunk(
+            [Image(None), Text("hello world"), Image(None)], 
+            overlap_prefix="", 
+            opts=ChunkingOptions()
+        )
+        
+        # Should not raise AttributeError when generating chunks
+        chunks = list(pre_chunk.iter_chunks())
+        
+        assert len(chunks) == 1
+        assert chunks[0].text == "hello world"
+
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
         [
@@ -1025,6 +1039,15 @@ class Describe_TableChunker:
         assert orig_element.metadata.orig_elements is None
         # -- computation is only on first call, all chunks get exactly the same orig-elements --
         assert table_chunker._orig_elements is orig_elements
+
+    def it_handles_table_with_none_text_without_error(self):
+        """Regression test for AttributeError when Table elements have None text."""
+        table = Table(None)  # Table with None text
+        
+        # Should not raise AttributeError and should produce no chunks
+        chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
+        
+        assert len(chunks) == 0
 
 
 # ================================================================================================

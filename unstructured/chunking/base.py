@@ -503,12 +503,10 @@ class PreChunk:
         if self._overlap_prefix:
             yield self._overlap_prefix
         for e in self._elements:
-            if e.text is None:
-                continue
-            text = " ".join(e.text.strip().split())
-            if not text:
-                continue
-            yield text
+            if e.text:
+                text = " ".join(e.text.strip().split())
+                if text:
+                    yield text
 
     @lazyproperty
     def _text(self) -> str:
@@ -848,13 +846,18 @@ class _TableChunker:
     @lazyproperty
     def _table_text(self) -> str:
         """The text in this table, not including any overlap-prefix or extra whitespace."""
+        if not self._table.text:
+            return ""
         return " ".join(self._table.text.split())
 
     @lazyproperty
     def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
-        table_text = self._table.text.strip()
+        if not self._table.text:
+            table_text = ""
+        else:
+            table_text = self._table.text.strip()
         # -- use row-separator between overlap and table-text --
         return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
