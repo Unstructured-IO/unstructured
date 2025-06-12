@@ -854,10 +854,7 @@ class _TableChunker:
     def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
-        if not self._table.text:
-            table_text = ""
-        else:
-            table_text = self._table.text.strip()
+        table_text = "" if not self._table.text else self._table.text.strip()
         # -- use row-separator between overlap and table-text --
         return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
