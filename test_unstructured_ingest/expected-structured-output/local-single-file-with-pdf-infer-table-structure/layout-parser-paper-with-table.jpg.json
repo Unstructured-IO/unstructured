@@ -48,7 +48,7 @@
     "element_id": "dddac446da6c93dc1449ecb5d997c423",
     "text": "Dataset | Base Model\" Large Model | Notes PubLayNet [38] P/M M Layouts of modern scientific documents PRImA [3) M - Layouts of scanned modern magazines and scientific reports Newspaper [17] P - Layouts of scanned US newspapers from the 20th century ‘TableBank (18) P P Table region on modern scientific and business document HJDataset (31) | F/M - Layouts of history Japanese documents",
     "metadata": {
-      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model!|</th><th>Large Model</th><th>| Notes</th></tr></thead><tbody><tr><td>PubLayNet [33]</td><td>P/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>P</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>P</td><td></td><td>Table region on modern scientific and business document</td></tr><tr><td>HIDataset [31]</td><td>P/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model!|</th><th>Large Model</th><th>| Notes</th></tr></thead><tbody><tr><td>PubLayNet [33]</td><td>P/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>P</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>P</td><td></td><td>Table region on modern scientific and business document</td></tr><tr><td>HIDataset (31)</td><td>P/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
       "filetype": "image/jpeg",
       "languages": [
         "eng"
@@ -68,8 +68,8 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "a0c3c6b7e1e8c95016b989ef43c5ea2e",
-    "text": "2 For each dataset, we train several models of different sizes for different needs (the trade-off between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of different architectures, like Faster R-CNN [28] (P) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has m Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
+    "element_id": "3d1c1bf1eb6a87a874d21d8f11b226b1",
+    "text": "2 For each dataset, we train several models of different sizes for different needs (the trade-off between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of different architectures, like Fuster R-CNN [28] (P) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has m Faster R-CNN model trained using the ResNet 10] backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
     "metadata": {
       "filetype": "image/jpeg",
       "languages": [
