@@ -419,14 +419,14 @@ class DescribePreChunk:
     def it_can_chunk_elements_with_none_text_without_error(self):
         """Regression test for AttributeError when Image elements have None text."""
         pre_chunk = PreChunk(
-            [Image(None), Text("hello world"), Image(None)], 
-            overlap_prefix="", 
-            opts=ChunkingOptions()
+            [Image(None), Text("hello world"), Image(None)],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
         )
-        
+
         # Should not raise AttributeError when generating chunks
         chunks = list(pre_chunk.iter_chunks())
-        
+
         assert len(chunks) == 1
         assert chunks[0].text == "hello world"
 
@@ -1043,10 +1043,10 @@ class Describe_TableChunker:
     def it_handles_table_with_none_text_without_error(self):
         """Regression test for AttributeError when Table elements have None text."""
         table = Table(None)  # Table with None text
-        
+
         # Should not raise AttributeError and should produce no chunks
         chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
-        
+
         assert len(chunks) == 0
 
 
