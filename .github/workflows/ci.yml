@@ -140,7 +140,7 @@ jobs:
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        sudo apt-get install -y tesseract-ocr=5.4.1-1ppa1~jammy1 tesseract-ocr-kor
         tesseract --version
         installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
         if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
@@ -215,7 +215,7 @@ jobs:
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        sudo apt-get install -y tesseract-ocr=5.4.1-1ppa1~jammy1 tesseract-ocr-kor
         tesseract --version
         make install-${{ matrix.extra }}
         [[ ${{ matrix.extra }} == "pdf-image" ]] && make install-paddleocr
@@ -312,7 +312,7 @@ jobs:
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
-        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr=5.4.1-1ppa1~jammy1
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
@@ -387,7 +387,7 @@ jobs:
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        sudo apt-get install -y tesseract-ocr=5.4.1-1ppa1~jammy1 tesseract-ocr-kor
         tesseract --version
         make install-nltk-models
         make test-unstructured-api-unit
