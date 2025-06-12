@@ -14,7 +14,7 @@ click==8.2.1
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.8.2
+coverage[toml]==7.9.0
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -32,7 +32,7 @@ freezegun==1.5.2
     # via -r ./test.in
 grpcio==1.73.0
     # via
-    #   -c ./deps/constraints.txt
+    #   -c ././deps/constraints.txt
     #   -r ./test.in
 iniconfig==2.1.0
     # via pytest
@@ -59,7 +59,9 @@ pathspec==0.12.1
 platformdirs==4.3.8
     # via black
 pluggy==1.6.0
-    # via pytest
+    # via
+    #   pytest
+    #   pytest-cov
 pycodestyle==2.13.0
     # via
     #   flake8
@@ -78,7 +80,7 @@ pytest==8.4.0
     # via
     #   pytest-cov
     #   pytest-mock
-pytest-cov==6.1.1
+pytest-cov==6.2.1
     # via -r ./test.in
 pytest-mock==3.14.1
     # via -r ./test.in
@@ -124,6 +126,6 @@ typing-inspection==0.4.1
     # via pydantic
 urllib3==2.4.0
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
-    #   -c ./deps/constraints.txt
     #   types-requests
