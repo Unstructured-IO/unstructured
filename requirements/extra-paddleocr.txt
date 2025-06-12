@@ -115,7 +115,7 @@ pillow==11.2.1
     #   unstructured-paddleocr
 protobuf==6.31.1
     # via
-    #   -c ./deps/constraints.txt
+    #   -c ././deps/constraints.txt
     #   paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
@@ -182,6 +182,6 @@ unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
 urllib3==2.4.0
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
-    #   -c ./deps/constraints.txt
     #   requests
