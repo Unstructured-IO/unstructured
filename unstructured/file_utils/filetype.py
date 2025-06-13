@@ -223,12 +223,7 @@ class _FileTypeDetector:
 
     @property
     def _disambiguate_json_file_type(self) -> FileType:
-        """Disambiguate JSON/NDJSON file-type based on file contents.
-
-        This method is used when the content-type is `application/json` and the file is not empty.
-        """
-        if self._ctx.content_type is not None and self._ctx.content_type != "application/json":
-            raise ValueError("Content-type is not application/json for a JSON file")
+        """Disambiguate JSON/NDJSON file-type based on file contents."""
         if is_json_processable(file_text=self._ctx.text_head):
             return FileType.JSON
         if is_ndjson_processable(file_text=self._ctx.text_head):
