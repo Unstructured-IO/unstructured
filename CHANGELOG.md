@@ -1,10 +1,11 @@
-## 0.17.11-dev1
+## 0.17.11-dev2
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+- Fix type error when `result_file_type` is expected to be a `FileType` but is `None`
 - Fix chunking for elements with None text that has AttributeError 'NoneType' object has no attribute 'strip'.
 - Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
 
