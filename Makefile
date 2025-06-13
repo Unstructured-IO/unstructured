@@ -142,7 +142,7 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n 1 test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:

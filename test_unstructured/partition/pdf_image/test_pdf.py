@@ -1588,6 +1588,7 @@ def test_partition_pdf_with_password(
                 _test(result)
 
 
+@pytest.mark.xdist_group(name="paddle_ocr")
 def test_partition_pdf_with_specified_ocr_agents(mocker):
     from unstructured.partition.pdf_image.ocr import OCRAgent
 
