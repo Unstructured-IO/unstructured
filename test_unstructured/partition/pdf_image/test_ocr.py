@@ -622,6 +622,7 @@ def mock_page(mock_ocr_layout, mock_layout):
     return mock_page
 
 
+@pytest.mark.xdist_group(name="paddle_ocr")
 def test_supplement_layout_with_ocr(mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent
 
@@ -641,6 +642,7 @@ def test_supplement_layout_with_ocr(mocker, mock_page):
     assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
 
 
+@pytest.mark.xdist_group(name="paddle_ocr")
 def test_pass_down_agents(mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent, PILImage
 

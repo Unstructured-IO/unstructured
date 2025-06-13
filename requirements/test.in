@@ -10,6 +10,7 @@ mypy
 pydantic
 pytest-cov
 pytest-mock
+pytest-xdist
 ruff
 types-Markdown
 types-requests
