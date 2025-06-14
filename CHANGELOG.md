@@ -1,4 +1,4 @@
-## 0.17.11-dev2
+## 0.17.11-dev3
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 - Fix type error when `result_file_type` is expected to be a `FileType` but is `None`
 - Fix chunking for elements with None text that has AttributeError 'NoneType' object has no attribute 'strip'.
 - Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
+- Fix bs4 deprecation warnings by updating `findAll()` with `find_all()`.
 
 ## 0.17.10
 - Drop Python 3.9 support as it reaches EOL in October 2025
