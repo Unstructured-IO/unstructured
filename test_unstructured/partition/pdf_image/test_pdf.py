@@ -1588,10 +1588,7 @@ def test_partition_pdf_with_password(
                 _test(result)
 
 
-def test_partition_pdf_with_specified_ocr_agents(mocker):
-    from unstructured.partition.pdf_image.ocr import OCRAgent
-
-    spy = mocker.spy(OCRAgent, "get_instance")
+def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
 
     pdf.partition_pdf(
         filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
@@ -1601,8 +1598,15 @@ def test_partition_pdf_with_specified_ocr_agents(mocker):
         table_ocr_agent=OCR_AGENT_PADDLE,
     )
 
-    assert spy.call_args_list[0][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
-    assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
+    # Verify get_instance was called with correct parameters
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
+        "language": "eng",
+        "ocr_agent_module": OCR_AGENT_TESSERACT,
+    }
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
+        "language": "en",
+        "ocr_agent_module": OCR_AGENT_PADDLE,
+    }
 
 
 def test_reproductible_pdf_loader():
