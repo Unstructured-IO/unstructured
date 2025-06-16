@@ -1588,18 +1588,7 @@ def test_partition_pdf_with_password(
                 _test(result)
 
 
-def test_partition_pdf_with_specified_ocr_agents(mocker):
-    from unstructured.partition.pdf_image.ocr import OCRAgent
-
-    def mock_get_instance(ocr_agent_module, language):
-        if ocr_agent_module in (OCR_AGENT_TESSERACT, OCR_AGENT_PADDLE):
-            return mocker.MagicMock()
-        else:
-            raise ValueError(f"Unknown OCR agent: {ocr_agent_module}")
-
-    mock_get_instance_patch = mocker.patch.object(
-        OCRAgent, "get_instance", side_effect=mock_get_instance
-    )
+def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
 
     pdf.partition_pdf(
         filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
@@ -1609,11 +1598,12 @@ def test_partition_pdf_with_specified_ocr_agents(mocker):
         table_ocr_agent=OCR_AGENT_PADDLE,
     )
 
-    assert mock_get_instance_patch.call_args_list[0][1] == {
+    # Verify get_instance was called with correct parameters
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
-    assert mock_get_instance_patch.call_args_list[1][1] == {
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
         "language": "en",
         "ocr_agent_module": OCR_AGENT_PADDLE,
     }

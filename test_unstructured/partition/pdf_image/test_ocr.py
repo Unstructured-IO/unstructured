@@ -622,19 +622,10 @@ def mock_page(mock_ocr_layout, mock_layout):
     return mock_page
 
 
-def test_supplement_layout_with_ocr(mocker, mock_page):
+def test_supplement_layout_with_ocr(mock_ocr_get_instance, mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent
 
-    def mock_get_instance(ocr_agent_module, language):
-        if ocr_agent_module in (OCR_AGENT_TESSERACT, OCR_AGENT_PADDLE):
-            return mocker.MagicMock()
-        else:
-            raise ValueError(f"Unknown OCR agent: {ocr_agent_module}")
-
     mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
-    mock_get_instance_patch = mocker.patch.object(
-        OCRAgent, "get_instance", side_effect=mock_get_instance
-    )
 
     ocr.supplement_page_layout_with_ocr(
         mock_page,
@@ -645,30 +636,21 @@ def test_supplement_layout_with_ocr(mocker, mock_page):
         table_ocr_agent=OCR_AGENT_PADDLE,
     )
 
-    assert mock_get_instance_patch.call_args_list[0][1] == {
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
-    assert mock_get_instance_patch.call_args_list[1][1] == {
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
         "language": "en",
         "ocr_agent_module": OCR_AGENT_PADDLE,
     }
 
 
-def test_pass_down_agents(mocker, mock_page):
+def test_pass_down_agents(mock_ocr_get_instance, mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent, PILImage
-
-    def mock_get_instance(ocr_agent_module, language):
-        if ocr_agent_module in (OCR_AGENT_TESSERACT, OCR_AGENT_PADDLE):
-            return mocker.MagicMock()
-        else:
-            raise ValueError(f"Unknown OCR agent: {ocr_agent_module}")
 
     mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
     mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (100, 100)))
-    mock_get_instance_patch = mocker.patch.object(
-        OCRAgent, "get_instance", side_effect=mock_get_instance
-    )
     doc = MagicMock(DocumentLayout)
     doc.pages = [mock_page]
 
@@ -683,11 +665,11 @@ def test_pass_down_agents(mocker, mock_page):
         table_ocr_agent=OCR_AGENT_TESSERACT,
     )
 
-    assert mock_get_instance_patch.call_args_list[0][1] == {
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
         "language": "en",
         "ocr_agent_module": OCR_AGENT_PADDLE,
     }
-    assert mock_get_instance_patch.call_args_list[1][1] == {
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
