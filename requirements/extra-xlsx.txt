@@ -28,5 +28,5 @@ six==1.17.0
     #   python-dateutil
 tzdata==2025.2
     # via pandas
-xlrd==2.0.1
+xlrd==2.0.2
     # via -r ./extra-xlsx.in
