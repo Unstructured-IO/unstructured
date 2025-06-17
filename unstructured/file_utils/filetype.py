@@ -126,20 +126,23 @@ def validate_json(
         _validate_json_content(file_text)
         return
 
-    if filename is not None:
-        with open(filename, encoding=safe_encoding) as f:
-            _validate_json_content(f.read())
-        return
+    try:
+        if filename is not None:
+            with open(filename, encoding=safe_encoding) as f:
+                _validate_json_content(f.read())
+            return
 
-    if file is not None:
-        original_position = file.tell()
-        file.seek(0)
-        try:
-            content = file.read().decode(safe_encoding)
-        finally:
-            file.seek(original_position)
-        _validate_json_content(content)
-        return
+        if file is not None:
+            original_position = file.tell()
+            file.seek(0)
+            try:
+                content = file.read().decode(safe_encoding)
+            finally:
+                file.seek(original_position)
+            _validate_json_content(content)
+            return
+    except (OSError, UnicodeDecodeError) as e:
+        raise ValidationError(f"File I/O error: {e}")
 
     raise ValidationError("No input source provided")
 
@@ -171,20 +174,23 @@ def validate_ndjson(
         _validate_ndjson_content(file_text)
         return
 
-    if filename is not None:
-        with open(filename, encoding=safe_encoding) as f:
-            _validate_ndjson_content(f.read())
-        return
+    try:
+        if filename is not None:
+            with open(filename, encoding=safe_encoding) as f:
+                _validate_ndjson_content(f.read())
+            return
 
-    if file is not None:
-        original_position = file.tell()
-        file.seek(0)
-        try:
-            content = file.read().decode(safe_encoding)
-        finally:
-            file.seek(original_position)
-        _validate_ndjson_content(content)
-        return
+        if file is not None:
+            original_position = file.tell()
+            file.seek(0)
+            try:
+                content = file.read().decode(safe_encoding)
+            finally:
+                file.seek(original_position)
+            _validate_ndjson_content(content)
+            return
+    except (OSError, UnicodeDecodeError) as e:
+        raise ValidationError(f"File I/O error: {e}")
 
     raise ValidationError("No input source provided")
 
@@ -203,12 +209,17 @@ def is_ndjson_processable(
         return False
 
 
-def _validate_json_content(content: str) -> None:
+def _validate_json_content(content: str, allow_partial: bool = False) -> None:
     content = content.strip()
     if not content:
         raise ValidationError("Empty content is not valid JSON")
     if not content.startswith(("{", "[")):
         raise ValidationError("JSON must start with object or array")
+
+    # For partial content (like text_head), just check the start format
+    if allow_partial:
+        return
+
     try:
         parsed = json.loads(content)
     except json.JSONDecodeError as e:
@@ -217,10 +228,27 @@ def _validate_json_content(content: str) -> None:
         raise ValidationError(f"JSON root must be object or array, got {type(parsed).__name__}")
 
 
-def _validate_ndjson_content(content: str) -> None:
+def _validate_ndjson_content(content: str, allow_partial: bool = False) -> None:
     lines = content.strip().splitlines()
     if not lines:
         raise ValidationError("Empty content is not valid NDJSON")
+
+    # For partial content, just check that the first non-empty line looks like JSON
+    if allow_partial:
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            # Just check if it starts like JSON - don't try to parse incomplete content
+            if (
+                line.startswith(("{", "[", '"'))
+                or line[0].isdigit()
+                or line.startswith(("true", "false", "null"))
+            ):
+                return
+            break
+        raise ValidationError("Content doesn't look like NDJSON")
+
     for lineno, line in enumerate(lines, start=1):
         line = line.strip()
         if not line:
@@ -305,10 +333,19 @@ class _FileTypeDetector:
     @property
     def _disambiguate_json_file_type(self) -> FileType:
         """Disambiguate JSON/NDJSON file-type based on file contents."""
-        if is_json_processable(file_text=self._ctx.text_head):
+        # Use partial validation since text_head is only the first 4096 chars
+        try:
+            _validate_json_content(self._ctx.text_head, allow_partial=True)
             return FileType.JSON
-        if is_ndjson_processable(file_text=self._ctx.text_head):
+        except ValidationError:
+            pass
+
+        try:
+            _validate_ndjson_content(self._ctx.text_head, allow_partial=True)
             return FileType.NDJSON
+        except ValidationError:
+            pass
+
         raise ValueError("Unable to process JSON file")
 
     @property
