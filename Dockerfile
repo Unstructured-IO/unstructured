@@ -1,8 +1,6 @@
-#FROM quay.io/unstructured-io/base-images:wolfi-base-latest AS base
-#FROM quay.io/unstructured-io/build-base-images-dev:wolfi-base-amd64-8f463aa AS base
-FROM local-base AS base
+FROM quay.io/unstructured-io/base-images:wolfi-base-latest AS base
 
-ARG PYTHON=python3.13
+ARG PYTHON=python3.12
 ARG PIP="${PYTHON} -m pip"
 
 USER root
