@@ -48,7 +48,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -58,6 +58,10 @@ try:
     LIBMAGIC_AVAILABLE = True
 except ImportError:
     LIBMAGIC_AVAILABLE = False  # pyright: ignore[reportConstantRedefinition]
+
+
+class ValidationError(Exception):
+    pass
 
 
 def detect_filetype(
@@ -109,25 +113,80 @@ def detect_filetype(
     return _FileTypeDetector.file_type(ctx)
 
 
+def validate_json(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    file_text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
+) -> None:
+    exactly_one(filename=filename, file=file, file_text=file_text)
+    safe_encoding = encoding or "utf-8"
+
+    if file_text is not None:
+        _validate_json_content(file_text)
+        return
+
+    if filename is not None:
+        with open(filename, encoding=safe_encoding) as f:
+            _validate_json_content(f.read())
+        return
+
+    if file is not None:
+        original_position = file.tell()
+        file.seek(0)
+        try:
+            content = file.read().decode(safe_encoding)
+        finally:
+            file.seek(original_position)
+        _validate_json_content(content)
+        return
+
+    raise ValidationError("No input source provided")
+
+
 def is_json_processable(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     file_text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> bool:
-    """True when file looks like a JSON array of objects.
+    try:
+        validate_json(filename=filename, file=file, file_text=file_text, encoding=encoding)
+        return True
+    except ValidationError as e:
+        logger.debug(f"JSON validation failed: {e}")
+        return False
 
-    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
-    file is JSON.
-    """
+
+def validate_ndjson(
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
+    file_text: Optional[str] = None,
+    encoding: Optional[str] = "utf-8",
+) -> None:
     exactly_one(filename=filename, file=file, file_text=file_text)
+    safe_encoding = encoding or "utf-8"
 
-    if file_text is None:
-        file_text = _FileTypeDetectionContext.new(
-            file_path=filename, file=file, encoding=encoding
-        ).text_head
+    if file_text is not None:
+        _validate_ndjson_content(file_text)
+        return
 
-    return re.match(LIST_OF_DICTS_PATTERN, file_text) is not None
+    if filename is not None:
+        with open(filename, encoding=safe_encoding) as f:
+            _validate_ndjson_content(f.read())
+        return
+
+    if file is not None:
+        original_position = file.tell()
+        file.seek(0)
+        try:
+            content = file.read().decode(safe_encoding)
+        finally:
+            file.seek(original_position)
+        _validate_ndjson_content(content)
+        return
+
+    raise ValidationError("No input source provided")
 
 
 def is_ndjson_processable(
@@ -136,18 +195,40 @@ def is_ndjson_processable(
     file_text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> bool:
-    """True when file looks like a JSON array of objects.
+    try:
+        validate_ndjson(filename=filename, file=file, file_text=file_text, encoding=encoding)
+        return True
+    except ValidationError as e:
+        logger.debug(f"NDJSON validation failed: {e}")
+        return False
 
-    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
-    file is JSON.
-    """
-    exactly_one(filename=filename, file=file, file_text=file_text)
 
-    if file_text is None:
-        file_text = _FileTypeDetectionContext.new(
-            file_path=filename, file=file, encoding=encoding
-        ).text_head
-    return file_text.lstrip().startswith("{")
+def _validate_json_content(content: str) -> None:
+    content = content.strip()
+    if not content:
+        raise ValidationError("Empty content is not valid JSON")
+    if not content.startswith(("{", "[")):
+        raise ValidationError("JSON must start with object or array")
+    try:
+        parsed = json.loads(content)
+    except json.JSONDecodeError as e:
+        raise ValidationError(f"Invalid JSON: {e.msg} at line {e.lineno}, column {e.colno}")
+    if not isinstance(parsed, (list, dict)):
+        raise ValidationError(f"JSON root must be object or array, got {type(parsed).__name__}")
+
+
+def _validate_ndjson_content(content: str) -> None:
+    lines = content.strip().splitlines()
+    if not lines:
+        raise ValidationError("Empty content is not valid NDJSON")
+    for lineno, line in enumerate(lines, start=1):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            json.loads(line)
+        except json.JSONDecodeError as e:
+            raise ValidationError(f"Invalid NDJSON at line {lineno}: {e.msg}")
 
 
 class _FileTypeDetector:
