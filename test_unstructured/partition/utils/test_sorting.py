@@ -6,11 +6,15 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import CoordinatesMetadata, Element, Text
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_XY_CUT
 from unstructured.partition.utils.sorting import (
+    textregions_horizontally_overlap,
     coord_has_valid_points,
     coordinates_to_bbox,
+    get_textregion_widths,
+    get_textregion_centers,
     shrink_bbox,
     sort_page_elements,
     sort_text_regions,
+    get_textregion_distances,
 )
 
 
@@ -155,3 +159,97 @@ def test_shrink_bbox():
     shrink_factor = 0.9
     expected_result = (20, 20, 290, 110)
     assert shrink_bbox(bbox, shrink_factor) == expected_result
+
+
+def test_get_textregion_widths():
+    widths = np.random.random(size=10)
+    x_0s = np.random.random(size=10)
+    x_1s = x_0s + widths
+    coords = np.column_stack((x_0s, np.zeros_like(x_0s), x_1s, np.ones_like(x_0s)))
+    text_regions = TextRegions(
+        element_coords=coords,
+        texts=np.array(["1"] * 10),
+        sources=np.array(["foo"] * 10),
+    )
+    np.testing.assert_almost_equal(get_textregion_widths(text_regions), widths)
+
+
+def test_textregions_horizontally_overlap():
+    x_0s = np.array([0, 0.5, 1, 1.5, 2])
+    x_1s = x_0s + 1
+    coords = np.column_stack((x_0s, np.zeros_like(x_0s), x_1s, np.ones_like(x_0s)))
+    text_regions = TextRegions(
+        element_coords=coords,
+        texts=np.array(["1", "2", "3", "4", "5"]),
+        sources=np.array(["foo"] * 5),
+    )
+    overlap = textregions_horizontally_overlap(text_regions)
+    assert overlap.shape == (5, 5)
+    assert (
+        (
+            overlap
+            == np.array(
+                [
+                    [True, True, False, False, False],
+                    [True, True, True, False, False],
+                    [False, True, True, True, False],
+                    [False, False, True, True, True],
+                    [False, False, False, True, True],
+                ]
+            )
+        )
+        .all()
+        .all()
+    )
+
+
+def test_get_textregion_centers():
+    x_0s = np.array([0, 0.5, 1, 1.5, 2])
+    x_1s = x_0s + 1
+    coords = np.column_stack((x_0s, np.zeros_like(x_0s), x_1s, np.ones_like(x_0s)))
+    text_regions = TextRegions(
+        element_coords=coords,
+        texts=np.array(["1", "2", "3", "4", "5"]),
+        sources=np.array(["foo"] * 5),
+    )
+    centers = get_textregion_centers(text_regions)
+    assert centers.shape == (5, 2)
+    assert (centers == np.column_stack((x_0s + 0.5, [0.5] * 5))).all()
+
+
+def displace_x(
+    bbox: tuple[float, float, float, float], x: float
+) -> tuple[float, float, float, float]:
+    return (bbox[0] + x, bbox[1], bbox[2] + x, bbox[3])
+
+
+def displace_y(
+    bbox: tuple[float, float, float, float], y: float
+) -> tuple[float, float, float, float]:
+    return (bbox[0], bbox[1] + y, bbox[2], bbox[3] + y)
+
+
+bbox_1 = (0.0, 0.0, 1.0, 1.0)
+
+
+@pytest.mark.parametrize(
+    ("textregions", "expected_distances"),
+    (
+        [
+            # |------|     |------|
+            # |      |     |      |
+            # |      |     |      |
+            # |      |     |      |
+            # |------|     |------|
+            TextRegions(
+                element_coords=np.stack([bbox_1, displace_x(bbox_1, 1.5)]),
+                texts=np.array(["1", "2", "3"]),
+                sources=np.array(["foo"] * 3),
+            ),
+            np.array([[0.0, 1.5], [1.5, 0.0]]),
+        ],
+    ),
+)
+def test_get_textregion_distances(textregions, expected_distances):
+    distances = get_textregion_distances(textregions)
+    np.testing.assert_almost_equal(distances, expected_distances)
