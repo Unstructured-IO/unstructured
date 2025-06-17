@@ -14,23 +14,23 @@ annotated-types==0.7.0
     # via pydantic
 anyio==4.9.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   httpx
 astor==0.8.1
     # via paddlepaddle
 beautifulsoup4==4.13.4
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   unstructured-paddleocr
-certifi==2025.4.26
+certifi==2025.6.15
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   httpcore
     #   httpx
     #   requests
 charset-normalizer==3.4.2
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   requests
 cython==3.1.2
     # via unstructured-paddleocr
@@ -38,27 +38,27 @@ decorator==5.2.1
     # via paddlepaddle
 exceptiongroup==1.3.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   anyio
 fire==0.7.0
     # via unstructured-paddleocr
-fonttools==4.58.2
+fonttools==4.58.4
     # via unstructured-paddleocr
 h11==0.16.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   httpcore
 httpcore==1.0.9
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   httpx
 httpx==0.28.1
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   paddlepaddle
 idna==3.10
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   anyio
     #   httpx
     #   requests
@@ -68,7 +68,7 @@ lazy-loader==0.4
     # via scikit-image
 lxml==5.4.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   python-docx
 networkx==3.4.2
     # via
@@ -76,7 +76,7 @@ networkx==3.4.2
     #   scikit-image
 numpy==2.2.6
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   albucore
     #   albumentations
     #   imageio
@@ -102,7 +102,7 @@ opt-einsum==3.3.0
     # via paddlepaddle
 packaging==25.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   lazy-loader
     #   scikit-image
 paddlepaddle==3.0.0
@@ -115,15 +115,15 @@ pillow==11.2.1
     #   unstructured-paddleocr
 protobuf==6.31.1
     # via
-    #   -c ././deps/constraints.txt
+    #   -c requirements/deps/constraints.txt
     #   paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
-pydantic==2.11.5
+pydantic==2.11.7
     # via albumentations
 pydantic-core==2.33.2
     # via pydantic
-python-docx==1.1.2
+python-docx==1.2.0
     # via unstructured-paddleocr
 pyyaml==6.0.2
     # via
@@ -131,11 +131,11 @@ pyyaml==6.0.2
     #   unstructured-paddleocr
 rapidfuzz==3.13.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   unstructured-paddleocr
 requests==2.32.4
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   unstructured-paddleocr
 scikit-image==0.25.2
     # via unstructured-paddleocr
@@ -149,11 +149,11 @@ simsimd==6.4.9
     # via albucore
 sniffio==1.3.1
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   anyio
 soupsieve==2.7
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   beautifulsoup4
 stringzilla==3.12.5
     # via albucore
@@ -163,11 +163,11 @@ tifffile==2025.5.10
     # via scikit-image
 tqdm==4.67.1
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   unstructured-paddleocr
 typing-extensions==4.14.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   anyio
     #   beautifulsoup4
     #   exceptiongroup
@@ -182,6 +182,6 @@ unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
 urllib3==2.4.0
     # via
-    #   -c ././deps/constraints.txt
-    #   -c ./base.txt
+    #   -c requirements/base.txt
+    #   -c requirements/deps/constraints.txt
     #   requests

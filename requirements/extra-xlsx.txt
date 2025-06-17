@@ -10,7 +10,7 @@ networkx==3.4.2
     # via -r ./extra-xlsx.in
 numpy==2.2.6
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   pandas
 openpyxl==3.1.5
     # via -r ./extra-xlsx.in
@@ -18,15 +18,15 @@ pandas==2.3.0
     # via -r ./extra-xlsx.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   pandas
 pytz==2025.2
     # via pandas
 six==1.17.0
     # via
-    #   -c ./base.txt
+    #   -c requirements/base.txt
     #   python-dateutil
 tzdata==2025.2
     # via pandas
-xlrd==2.0.1
+xlrd==2.0.2
     # via -r ./extra-xlsx.in

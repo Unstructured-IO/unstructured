@@ -1,3 +1,12 @@
+## 0.18.0
+
+### Enhancements
+
+### Features
+- Upgraded Python version to 3.12
+
+### Fixes
+
 ## 0.17.11-dev3
 
 ### Enhancements

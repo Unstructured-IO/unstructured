@@ -1,6 +1,6 @@
 FROM quay.io/unstructured-io/base-images:wolfi-base-latest AS base
 
-ARG PYTHON=python3.11
+ARG PYTHON=python3.12
 ARG PIP="${PYTHON} -m pip"
 
 USER root
