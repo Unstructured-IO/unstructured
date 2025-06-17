@@ -23,7 +23,6 @@ USER notebook-user
 ENV PATH="${PATH}:/home/notebook-user/.local/bin"
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV NLTK_DATA=/home/notebook-user/nltk_data
-RUN python3.13 --version && python3.13 -m pip --version && python3.13 -m pip list
 
 # Install Python dependencies and download required NLTK packages
 RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
