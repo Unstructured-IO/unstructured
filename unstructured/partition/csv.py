@@ -55,7 +55,7 @@ def partition_csv(
     )
 
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=encoding)
+        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -134,6 +134,11 @@ class _CsvPartitioningContext:
     def header(self) -> int | None:
         """Identifies the header row, if any, to Pandas, by idx."""
         return 0 if self._include_header else None
+
+    @lazyproperty
+    def encoding(self) -> str | None:
+        """The encoding to use for reading the file."""
+        return self._encoding
 
     @lazyproperty
     def last_modified(self) -> str | None:

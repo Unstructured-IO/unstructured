@@ -1,17 +1,18 @@
+## 0.18.1-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- The `encoding` property of the `_CsvPartitioningContext` is now properly used.
+
 ## 0.18.0
 
 ### Enhancements
 
 ### Features
 - Upgraded Python version to 3.12
-
-### Fixes
-
-## 0.17.11-dev3
-
-### Enhancements
-
-### Features
 
 ### Fixes
 - Fix type error when `result_file_type` is expected to be a `FileType` but is `None`
