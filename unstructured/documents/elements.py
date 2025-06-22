@@ -640,6 +640,7 @@ class ElementType:
     PAGE_NUMBER = "PageNumber"
     CODE_SNIPPET = "CodeSnippet"
     FORM_KEYS_VALUES = "FormKeysValues"
+    DOCUMENT_DATA = "DocumentData"
 
     @classmethod
     def to_dict(cls):
@@ -974,6 +975,13 @@ class FormKeysValues(Text):
 
     category = "FormKeysValues"
 
+class DocumentData(Text):
+    """An element for capturing document-level data,
+    particularly for large data that does not make sense to
+    represent across each element in the document."""
+
+    category = "DocumentData"
+
 
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
@@ -1013,6 +1021,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.CODE_SNIPPET: CodeSnippet,
     ElementType.PAGE_NUMBER: PageNumber,
     ElementType.FORM_KEYS_VALUES: FormKeysValues,
+    ElementType.DOCUMENT_DATA: DocumentData,
 }
 
 
