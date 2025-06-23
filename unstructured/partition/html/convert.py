@@ -216,6 +216,7 @@ TYPE_TO_HTML_MAP = {
     ElementType.PAGE_NUMBER: ElementHtml,
     ElementType.CODE_SNIPPET: ElementHtml,
     ElementType.FORM_KEYS_VALUES: ElementHtml,
+    ElementType.DOCUMENT_DATA: ElementHtml,
 }
 
 

@@ -1,8 +1,9 @@
-## 0.18.1-dev0
+## 0.18.1
 
 ### Enhancements
 
 ### Features
+- **Add DocumentData element type** This is helpful in scenarios where there is large data that does not make sense to represent across each element in the document.
 
 ### Fixes
 - The `encoding` property of the `_CsvPartitioningContext` is now properly used.
