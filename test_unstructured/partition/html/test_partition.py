@@ -1482,7 +1482,7 @@ class Describe_HtmlPartitioner:
 
 
 @pytest.mark.parametrize(
-    "test_case,content",
+    ("test_case", "content"),
     [
         ("empty_file", ""),
         ("empty_bytes", b""),
