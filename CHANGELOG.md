@@ -1,3 +1,13 @@
+## 0.18.2-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
+
+
 ## 0.18.1
 
 ### Enhancements
