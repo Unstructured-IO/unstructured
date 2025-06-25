@@ -1512,6 +1512,7 @@ def test_partition_html_with_empty_content_raises_error(test_case, content):
             temp_filename = f.name
             
         try:
-            partition_html(filename=temp_filename)
+            elements = partition_html(filename=temp_filename)
+            assert len(elements) == 0
         finally:
             os.unlink(temp_filename)
