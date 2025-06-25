@@ -1490,12 +1490,12 @@ class Describe_HtmlPartitioner:
     ],
 )
 def test_partition_html_with_empty_content_raises_error(test_case, content):
-    """Test that partitioning empty/whitespace-only HTML content won't 
+    """Test that partitioning empty/whitespace-only HTML content won't
     raise TypeError: Invalid input object: NoneType.
-    
+
     This reproduces the production error where lxml.etree.strip_elements is called with None
     when the HTML content is empty, causing etree.fromstring to return None.
-    
+
     Args:
         test_case: Description of the test scenario
         content: The content to test (empty string, empty bytes, or whitespace)
@@ -1510,7 +1510,7 @@ def test_partition_html_with_empty_content_raises_error(test_case, content):
             f.write(content)
             f.flush()
             temp_filename = f.name
-            
+
         try:
             elements = partition_html(filename=temp_filename)
             assert len(elements) == 0
