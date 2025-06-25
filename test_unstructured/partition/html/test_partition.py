@@ -5,7 +5,9 @@
 from __future__ import annotations
 
 import io
+import os
 import pathlib
+import tempfile
 from typing import Any, Optional
 
 import pytest
@@ -1477,3 +1479,40 @@ class Describe_HtmlPartitioner:
         opts = HtmlPartitionerOptions(**opts_args)
 
         assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+
+@pytest.mark.parametrize(
+    ("test_case", "content"),
+    [
+        ("empty_file", ""),
+        ("empty_bytes", b""),
+        ("whitespace_only", "   \n\t  \n  "),
+    ],
+)
+def test_partition_html_with_empty_content_raises_error(test_case, content):
+    """Test that partitioning empty/whitespace-only HTML content won't
+    raise TypeError: Invalid input object: NoneType.
+
+    This reproduces the production error where lxml.etree.strip_elements is called with None
+    when the HTML content is empty, causing etree.fromstring to return None.
+
+    Args:
+        test_case: Description of the test scenario
+        content: The content to test (empty string, empty bytes, or whitespace)
+    """
+    if test_case == "empty_bytes":
+        # Create a file-like object with empty content
+        empty_file = io.BytesIO(content)
+        partition_html(file=empty_file)
+    else:
+        # Create a temporary file with the given content
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".html", delete=False) as f:
+            f.write(content)
+            f.flush()
+            temp_filename = f.name
+
+        try:
+            elements = partition_html(filename=temp_filename)
+            assert len(elements) == 0
+        finally:
+            os.unlink(temp_filename)
