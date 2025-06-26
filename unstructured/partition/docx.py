@@ -788,11 +788,7 @@ class _DocxPartitioner:
                 if tc.vMerge == "continue":
                     continue
                 # -- do not generate empty strings --
-                try:
-                    yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
-                except Exception as e:
-                    print(f"Skipping cell in _iter_table_texts due to: {e}")
-                    continue
+                yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
 
     def _paragraph_emphasis(self, paragraph: Paragraph) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
