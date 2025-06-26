@@ -1283,7 +1283,6 @@ def test_partition_docx_skips_malformed_row_cells():
     """Test that partition_docx does not crash on a DOCX with malformed/merged table rows."""
     elements = partition_docx(example_doc_path("grid_offset_error.docx"))
 
-    # Ensure no crash and output looks valid
     assert isinstance(elements, list)
     assert all(hasattr(el, "text") for el in elements)
     assert any(el.text.strip() for el in elements), "Expected some non-empty extracted text"
