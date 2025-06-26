@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import IO, Any
 
 import markdown
@@ -19,6 +20,24 @@ def optional_decode(contents: str | bytes) -> str:
 
 
 DETECTION_ORIGIN: str = "md"
+
+
+def _preprocess_markdown_code_blocks(text: str) -> str:
+    """Pre-process markdown to ensure code blocks with XML are properly formatted.
+
+    The markdown library can fail to properly escape XML processing instructions
+    in code blocks if they're not formatted correctly. e.g. <?xml version="1.0"?>
+    """
+    code_block_pattern = r"```\s*\n(<\?xml[^>]*\?>.*?)\n```"
+
+    def fix_code_block(match):
+        xml_content = match.group(1)
+        indented_content = "\n".join("    " + line for line in xml_content.split("\n"))
+        return f"```\n{indented_content}\n```"
+
+    processed_text = re.sub(code_block_pattern, fix_code_block, text, flags=re.DOTALL)
+
+    return processed_text
 
 
 def partition_md(
@@ -73,7 +92,8 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text, extensions=["tables"])
+    processed_text = _preprocess_markdown_code_blocks(text)
+    html = markdown.markdown(processed_text, extensions=["tables"])
 
     return partition_html(
         text=html,
