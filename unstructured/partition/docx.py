@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import itertools
+import logging
 import os
 import tempfile
 import zipfile
@@ -497,7 +498,7 @@ class _DocxPartitioner:
                     cell_text = " ".join(iter_cell_block_items(cell))
                     yield " ".join(cell_text.split())
             except Exception as e:
-                print(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
+                logging.warning(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
                 yield ""
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
@@ -757,7 +758,7 @@ class _DocxPartitioner:
                     for paragraph in cell.paragraphs:
                         yield from self._iter_paragraph_emphasis(paragraph)
             except Exception as e:
-                print(f"Skipping row in _iter_table_emphasis due to: {e}")
+                logging.warning(f"Skipping row in _iter_table_emphasis due to: {e}")
                 continue
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
