@@ -491,12 +491,13 @@ class _DocxPartitioner:
                 yield ""
 
             try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the table
-                # -- has merged or malformed cells. always wrap in try/except.
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
+                # -- table has merged or malformed cells. always wrap in try/except.
                 for cell in row.cells:
                     cell_text = " ".join(iter_cell_block_items(cell))
                     yield " ".join(cell_text.split())
-            except:
+            except Exception as e:
+                print(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
                 yield ""
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
@@ -750,12 +751,12 @@ class _DocxPartitioner:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
             try:
-                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the table
-                # -- has merged or malformed cells. always wrap in try/except.
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
+                # -- table has merged or malformed cells. always wrap in try/except.
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
                         yield from self._iter_paragraph_emphasis(paragraph)
-            except ValueError as e:
+            except Exception as e:
                 print(f"Skipping row in _iter_table_emphasis due to: {e}")
                 continue
 
@@ -791,7 +792,7 @@ class _DocxPartitioner:
                 try:
                     yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
                 except Exception as e:
-                    print(f"Skipping cell in _iter_table_emphasis due to: {e}")
+                    print(f"Skipping cell in _iter_table_texts due to: {e}")
                     continue
 
     def _paragraph_emphasis(self, paragraph: Paragraph) -> tuple[list[str], list[str]]:
