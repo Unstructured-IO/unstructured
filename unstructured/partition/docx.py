@@ -760,7 +760,6 @@ class _DocxPartitioner:
                 print(f"Skipping row in _iter_table_emphasis due to: {e}")
                 continue
 
-
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
 
