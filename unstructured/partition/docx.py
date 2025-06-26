@@ -490,9 +490,14 @@ class _DocxPartitioner:
             for _ in range(row.grid_cols_before):
                 yield ""
 
-            for cell in row.cells:
-                cell_text = " ".join(iter_cell_block_items(cell))
-                yield " ".join(cell_text.split())
+            try:
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the table
+                # -- has merged or malformed cells. always wrap in try/except.
+                for cell in row.cells:
+                    cell_text = " ".join(iter_cell_block_items(cell))
+                    yield " ".join(cell_text.split())
+            except:
+                yield ""
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
@@ -744,9 +749,16 @@ class _DocxPartitioner:
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    yield from self._iter_paragraph_emphasis(paragraph)
+            try:
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the table
+                # -- has merged or malformed cells. always wrap in try/except.
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        yield from self._iter_paragraph_emphasis(paragraph)
+            except ValueError as e:
+                print(f"Skipping row in _iter_table_emphasis due to: {e}")
+                continue
+
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
@@ -776,7 +788,11 @@ class _DocxPartitioner:
                 if tc.vMerge == "continue":
                     continue
                 # -- do not generate empty strings --
-                yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
+                try:
+                    yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
+                except Exception as e:
+                    print(f"Skipping cell in _iter_table_emphasis due to: {e}")
+                    continue
 
     def _paragraph_emphasis(self, paragraph: Paragraph) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
