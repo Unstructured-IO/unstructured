@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import IO, Any
+from typing import IO, Any, Match
 
 import markdown
 import requests
@@ -23,21 +23,27 @@ DETECTION_ORIGIN: str = "md"
 
 
 def _preprocess_markdown_code_blocks(text: str) -> str:
-    """Pre-process markdown to ensure code blocks with XML are properly formatted.
+    """Pre-process code blocks so that processing instructions can be properly escaped.
 
-    The markdown library can fail to properly escape XML processing instructions
-    in code blocks if they're not formatted correctly. e.g. <?xml version="1.0"?>
+    The markdown library can fail to properly escape processing instructions like <?xml>, <?php>,
+    etc. in code blocks. This function adds minimal indentation to the processing instruction line
+    to force markdown to treat it as text content rather than XML.
     """
-    code_block_pattern = r"```\s*\n(<\?xml[^>]*\?>.*?)\n```"
+    # Breakdown of the regex:
+    # ```\s*\n           - Opening triple backticks + optional whitespace + newline
+    # ([ \t]{0,3})?      - Capture group 1: optional 0-3 spaces/tabs (existing indentation)
+    # (<\?[a-zA-Z][^>]*\?>.*?) - Capture group 2: processing instruction + any following content
+    # \n?```             - Optional newline + closing triple backticks
+    code_block_pattern = r"```\s*\n([ \t]{0,3})?(<\?[a-zA-Z][^>]*\?>.*?)\n?```"
 
-    def fix_code_block(match):
-        xml_content = match.group(1)
-        indented_content = "\n".join("    " + line for line in xml_content.split("\n"))
-        return f"```\n{indented_content}\n```"
+    def indent_processing_instruction(match: Match[str]) -> str:
+        content = match.group(2)
+        # Ensure processing instruction has at least 4-space indentation
+        if content.lstrip().startswith("<?"):
+            content = "    " + content.lstrip()
+        return f"```\n{content}\n```"
 
-    processed_text = re.sub(code_block_pattern, fix_code_block, text, flags=re.DOTALL)
-
-    return processed_text
+    return re.sub(code_block_pattern, indent_processing_instruction, text, flags=re.DOTALL)
 
 
 def partition_md(
