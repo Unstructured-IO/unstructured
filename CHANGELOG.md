@@ -1,4 +1,4 @@
-## 0.18.2-dev0
+## 0.18.2-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
+- xml code not getting escaped in a code block in a markdown file when in partition
 
 
 ## 0.18.1
