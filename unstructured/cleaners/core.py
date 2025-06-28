@@ -4,6 +4,7 @@ import quopri
 import re
 import sys
 import unicodedata
+from functools import lru_cache
 from typing import Optional, Tuple
 
 import numpy as np
@@ -119,16 +120,34 @@ def group_bullet_paragraph(paragraph: str) -> list:
     '''○ The big red fox is walking down the lane.
     ○ At the end of the land the fox met a bear.'''
     """
-    clean_paragraphs = []
-    # pytesseract converts some bullet points to standalone "e" characters.
-    # Substitute "e" with bullets since they are later used in partition_text
-    # to determine list element type.
-    paragraph = (re.sub(E_BULLET_PATTERN, "·", paragraph)).strip()
+    # Precompile needed patterns for performance
+    e_bullet_re = (
+        E_BULLET_PATTERN
+        if isinstance(E_BULLET_PATTERN, re.Pattern)
+        else re.compile(E_BULLET_PATTERN)
+    )
+    unicode_bullets_0w_re = (
+        UNICODE_BULLETS_RE_0W
+        if isinstance(UNICODE_BULLETS_RE_0W, re.Pattern)
+        else re.compile(UNICODE_BULLETS_RE_0W)
+    )
+    paragraph_pattern_re = (
+        PARAGRAPH_PATTERN
+        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
+        else re.compile(PARAGRAPH_PATTERN)
+    )
 
-    bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
+    # Use one sub operation for e->bullet replacement and strip at once
+    paragraph = e_bullet_re.sub("·", paragraph).strip()
+
+    # Split once, operate only on non-empty groups
+    bullet_paras = unicode_bullets_0w_re.split(paragraph)
+    clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
+            # Use precompiled re, faster than repeated compilation
+            clean_bullet = paragraph_pattern_re.sub(" ", bullet)
+            clean_paragraphs.append(clean_bullet)
     return clean_paragraphs
 
 
@@ -151,25 +170,51 @@ def group_broken_paragraphs(
     '''The big red fox is walking down the lane.
     At the end of the land the fox met a bear.'''
     """
+    # Precompile needed regex if not already compiled
+    unicode_bullets_re = (
+        UNICODE_BULLETS_RE
+        if isinstance(UNICODE_BULLETS_RE, re.Pattern)
+        else re.compile(UNICODE_BULLETS_RE)
+    )
+    e_bullet_re = (
+        E_BULLET_PATTERN
+        if isinstance(E_BULLET_PATTERN, re.Pattern)
+        else re.compile(E_BULLET_PATTERN)
+    )
+    paragraph_pattern_re = (
+        PARAGRAPH_PATTERN
+        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
+        else re.compile(PARAGRAPH_PATTERN)
+    )
+
     paragraphs = paragraph_split.split(text)
     clean_paragraphs = []
     for paragraph in paragraphs:
-        if not paragraph.strip():
+        stripped_par = paragraph.strip()
+        if not stripped_par:
             continue
-        # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
-        # grouped together, but aren't separated by a double line break.
-        #     Apache License
-        #     Version 2.0, January 2004
-        #     http://www.apache.org/licenses/
-        para_split = line_split.split(paragraph)
-        all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
-        # pytesseract converts some bullet points to standalone "e" characters
-        if UNICODE_BULLETS_RE.match(paragraph.strip()) or E_BULLET_PATTERN.match(paragraph.strip()):
+
+        # Check for bullets quickly first (likely fast path)
+        if unicode_bullets_re.match(stripped_par) or e_bullet_re.match(stripped_par):
             clean_paragraphs.extend(group_bullet_paragraph(paragraph))
-        elif all_lines_short:
-            clean_paragraphs.extend([line for line in para_split if line.strip()])
+            continue
+
+        # Split only once
+        para_split = line_split.split(paragraph)
+        # Short-circuit evaluation: if any line is not "short" we don't call all() over all lines
+        all_lines_short = True
+        for line in para_split:
+            # Use direct split (' ') since maxsplit=4 is faster for this check
+            # Strip only if there are leading/trailing spaces
+            if len(line.split()) >= 5:  # line.split() is already stripping by default
+                all_lines_short = False
+                break
+        if all_lines_short:
+            # Only add non-empty lines
+            clean_paragraphs.extend(line for line in para_split if line.strip())
         else:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+            # Replace paragraph linebreaks with space only once, using precompiled
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
 
@@ -385,8 +430,8 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
     ignore_case: If True, ignores case in the pattern
     strip: If True, removes trailing whitespace from the cleaned string.
     """
-    flags = re.IGNORECASE if ignore_case else 0
-    clean_text = re.sub(rf"{pattern}$", "", text, flags=flags)
+    regex = _cached_re_pattern(pattern, ignore_case)
+    clean_text = regex.sub("", text)
     clean_text = clean_text.rstrip() if strip else clean_text
     return clean_text
 
@@ -469,3 +514,10 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
+
+
+@lru_cache(maxsize=128)
+def _cached_re_pattern(pattern: str, ignore_case: bool):
+    flags = re.IGNORECASE if ignore_case else 0
+    # Directly compile only the pattern with the postfix "$"
+    return re.compile(rf"{pattern}$", flags=flags)
