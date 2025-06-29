@@ -430,8 +430,8 @@ def clean_postfix(text: str, pattern: str, ignore_case: bool = False, strip: boo
     ignore_case: If True, ignores case in the pattern
     strip: If True, removes trailing whitespace from the cleaned string.
     """
-    regex = _cached_re_pattern(pattern, ignore_case)
-    clean_text = regex.sub("", text)
+    flags = re.IGNORECASE if ignore_case else 0
+    clean_text = re.sub(rf"{pattern}$", "", text, flags=flags)
     clean_text = clean_text.rstrip() if strip else clean_text
     return clean_text
 
@@ -514,10 +514,3 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
 def index_adjustment_after_clean_extra_whitespace(index, moved_indices) -> int:
     return int(index - moved_indices[index])
-
-
-@lru_cache(maxsize=128)
-def _cached_re_pattern(pattern: str, ignore_case: bool):
-    flags = re.IGNORECASE if ignore_case else 0
-    # Directly compile only the pattern with the postfix "$"
-    return re.compile(rf"{pattern}$", flags=flags)
