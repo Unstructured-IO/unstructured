@@ -1277,3 +1277,12 @@ class Describe_DocxPartitioner:
 
         element = next(footer_iter)
         assert element.text == "para1\ncell1 a b c d e f\npara2"
+
+
+def test_partition_docx_skips_malformed_row_cells():
+    """Test that partition_docx does not crash on a DOCX with malformed/merged table rows."""
+    elements = partition_docx(example_doc_path("grid_offset_error.docx"))
+
+    assert isinstance(elements, list)
+    assert all(hasattr(el, "text") for el in elements)
+    assert any(el.text.strip() for el in elements), "Expected some non-empty extracted text"

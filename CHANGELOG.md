@@ -1,4 +1,4 @@
-## 0.18.2-dev0
+## 0.18.2-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
+- **Failproof docx malformed or merged tables** This fix prevents docx file with complex or vertical merges or malformed tables from failing at `tc_at_grid_offset` and raised `ValueError: no tc element at grid_offset=X`.
 
 
 ## 0.18.1
