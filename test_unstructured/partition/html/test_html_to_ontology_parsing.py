@@ -17,6 +17,26 @@ def remove_all_ids(html_str):
     return str(soup)
 
 
+def test_parsing_header_and_footer_into_correct_ontologyelement():
+    input_html = """
+    <div class="Page">
+    <header class="Header">
+     this is a header
+    </header>
+    <footer class="Footer">
+     this is a footer
+    </footer>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+    assert len(page.children) == 2
+    header, footer = page.children
+    assert header.text == "this is a header"
+    assert header.html_tag_name == "header"
+    assert footer.text == "this is a footer"
+    assert footer.html_tag_name == "footer"
+
+
 def test_wrong_html_parser_causes_paragraph_to_be_nested_in_div():
     # This test would fail if html5lib parser would be applied on the input HTML.
     # It would result in Page: <p></p> <address></address>

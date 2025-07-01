@@ -189,13 +189,13 @@ class Paragraph(OntologyElement):
 
 class Header(OntologyElement):
     description: str = Field("The top section of a page", frozen=True)
-    elementType: ElementTypeEnum = Field(ElementTypeEnum.layout, frozen=True)
+    elementType: ElementTypeEnum = Field(ElementTypeEnum.text, frozen=True)
     allowed_tags: List[str] = Field(["header"], frozen=True)
 
 
 class Footer(OntologyElement):
     description: str = Field("The bottom section of a page", frozen=True)
-    elementType: ElementTypeEnum = Field(ElementTypeEnum.layout, frozen=True)
+    elementType: ElementTypeEnum = Field(ElementTypeEnum.text, frozen=True)
     allowed_tags: List[str] = Field(["footer"], frozen=True)
 
 

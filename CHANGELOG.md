@@ -1,4 +1,4 @@
-## 0.18.2-dev3
+## 0.18.2-dev4
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 - **Failproof docx malformed or merged tables** This fix prevents docx file with complex or vertical merges or malformed tables from failing at `tc_at_grid_offset` and raised `ValueError: no tc element at grid_offset=X`.
 - **partition_md can read special characters on non- utf-8 files** `partition_md` reads the file as utf-8 previously. Now it uses `read_txt_file` that reads file with detected encoding.
 - xml code not getting escaped in a code block in a markdown file when in partition
+- **Fixes parsing HTML header and footer** Previously header and footer texts are partitioned as `UncategorizedText` or as the nested structure like `Title`. Now they are properly partitioned as `Header` and `Footer` element types.
 
 ## 0.18.1
 
