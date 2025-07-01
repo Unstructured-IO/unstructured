@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import IO, Any
+import re
+from typing import IO, Any, Match
 
 import markdown
 import requests
@@ -20,6 +21,30 @@ def optional_decode(contents: str | bytes) -> str:
 
 
 DETECTION_ORIGIN: str = "md"
+
+
+def _preprocess_markdown_code_blocks(text: str) -> str:
+    """Pre-process code blocks so that processing instructions can be properly escaped.
+
+    The markdown library can fail to properly escape processing instructions like <?xml>, <?php>,
+    etc. in code blocks. This function adds minimal indentation to the processing instruction line
+    to force markdown to treat it as text content rather than XML.
+    """
+    # Breakdown of the regex:
+    # ```\s*\n           - Opening triple backticks + optional whitespace + newline
+    # ([ \t]{0,3})?      - Capture group 1: optional 0-3 spaces/tabs (existing indentation)
+    # (<\?[a-zA-Z][^>]*\?>.*?) - Capture group 2: processing instruction + any following content
+    # \n?```             - Optional newline + closing triple backticks
+    code_block_pattern = r"```\s*\n([ \t]{0,3})?(<\?[a-zA-Z][^>]*\?>.*?)\n?```"
+
+    def indent_processing_instruction(match: Match[str]) -> str:
+        content = match.group(2)
+        # Ensure processing instruction has at least 4-space indentation
+        if content.lstrip().startswith("<?"):
+            content = "    " + content.lstrip()
+        return f"```\n{content}\n```"
+
+    return re.sub(code_block_pattern, indent_processing_instruction, text, flags=re.DOTALL)
 
 
 def partition_md(
@@ -73,7 +98,8 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text, extensions=["tables"])
+    processed_text = _preprocess_markdown_code_blocks(text)
+    html = markdown.markdown(processed_text, extensions=["tables"])
 
     return partition_html(
         text=html,
