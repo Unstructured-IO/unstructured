@@ -267,3 +267,38 @@ def test_partition_md_with_umlauts(filename: str):
     elements = partition_md(filename=filename)
     assert len(elements) > 0
     assert elements[-1].text.endswith("äöüß")
+
+
+def test_partition_md_xml_processing_instruction():
+    xml_content = """```
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+  <head></head>
+  <boolean>true</boolean>
+</sparql>
+```"""
+
+    elements = partition_md(text=xml_content)
+    assert len(elements) == 1
+
+
+def test_partition_md_xml_processing_instruction_with_indents():
+    xml_content = """```
+  <?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+  <head></head>
+  <boolean>true</boolean>
+</sparql>
+```"""
+
+    elements = partition_md(text=xml_content)
+    assert len(elements) == 1
+
+
+def test_partition_md_non_xml_processing_instruction():
+    php_content = """```
+    <?php echo "hello"; ?>
+    ```"""
+
+    elements = partition_md(text=php_content)
+    assert len(elements) == 1
