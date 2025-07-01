@@ -7,6 +7,7 @@ import markdown
 import requests
 
 from unstructured.documents.elements import Element
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -79,11 +80,10 @@ def partition_md(
     last_modified = get_last_modified_date(filename) if filename else None
 
     if filename is not None:
-        with open(filename, encoding="utf8") as f:
-            text = optional_decode(f.read())
+        _, text = read_txt_file(filename=filename)
 
     elif file is not None:
-        text = optional_decode(file.read())
+        _, text = read_txt_file(file=file)
 
     elif url is not None:
         response = requests.get(url)

@@ -255,6 +255,14 @@ def test_partition_md_parse_table():
     assert elements[0].category == ElementType.TABLE
 
 
+@pytest.mark.parametrize("filename", ["umlauts-utf8.md", "umlauts-non-utf8.md"])
+def test_partition_md_with_umlauts(filename: str):
+    filename = example_doc_path(filename)
+    elements = partition_md(filename=filename)
+    assert len(elements) > 0
+    assert elements[-1].text.endswith("äöüß")
+
+
 def test_partition_md_xml_processing_instruction():
     xml_content = """```
 <?xml version="1.0"?>
