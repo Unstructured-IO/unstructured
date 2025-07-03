@@ -296,3 +296,39 @@ def test_partition_md_non_xml_processing_instruction():
 
     elements = partition_md(text=php_content)
     assert len(elements) == 1
+
+
+def test_partition_fenced_code():
+    filename = example_doc_path("codeblock.md")
+    elements = partition_md(filename=filename)
+
+    # Should have 5 elements: 2 titles and 3 code blocks
+    assert len(elements) == 5
+
+    assert elements[0].text == "HTML Example"
+
+    expected_html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample HTML</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>This is a simple HTML example.</p>
+</body>
+</html>"""
+    assert elements[1].text == expected_html
+
+    assert elements[2].text == "XML Example"
+
+    expected_xml = """<note>
+    <to>Tove</to>
+    <from>Jani</from>
+    <heading>Reminder</heading>
+    <body>Don't forget me this weekend!</body>
+</note>"""
+    assert elements[3].text == expected_xml
+
+    assert elements[4].text == expected_xml
