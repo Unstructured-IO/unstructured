@@ -107,7 +107,7 @@ packaging==25.0
     #   scikit-image
 paddlepaddle==3.0.0
     # via -r ./extra-paddleocr.in
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   imageio
     #   paddlepaddle
