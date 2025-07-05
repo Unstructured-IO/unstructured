@@ -1,3 +1,12 @@
+## 0.18.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Upgrade Pillow to 11.3.0** Addresses a high priority CVE
+
 ## 0.18.2
 
 ### Enhancements
