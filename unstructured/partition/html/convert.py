@@ -34,7 +34,7 @@ class ElementHtml(ABC):
 
     def __init__(self, element: Element, children: Optional[list["ElementHtml"]] = None):
         self.element = element
-        self.children = children or []
+        self.children = children if children is not None else []
 
     @property
     def html_tag(self) -> str:
@@ -47,21 +47,53 @@ class ElementHtml(ABC):
         element_html.string = self.element.text
 
     def get_text_as_html(self) -> Union[Tag, None]:
-        element_html = BeautifulSoup(self.element.metadata.text_as_html or "", HTML_PARSER).find()
-        if not isinstance(element_html, Tag):
+        html = getattr(self.element.metadata, "text_as_html", None)
+        if not html:  # Fast-path for empty input
             return None
-        return element_html
+
+        # Fast-path: try to extract the first tag using string operations (for simple HTML snippets)
+        html = html.lstrip()
+        if html and html[0] == "<":
+            pos = html.find(">")
+            if pos != -1:
+                tag_name = html[1:pos].split()[0].rstrip("/").lower()
+                if tag_name.isidentifier():
+                    # Try to slice out a minimal well-formed snippet for BS
+                    close_tag = f"</{tag_name}>"
+                    close_idx = html.lower().find(close_tag)
+                    if close_idx != -1:
+                        snippet = html[: close_idx + len(close_tag)]
+                        soup = BeautifulSoup(snippet, "html.parser")
+                        el = soup.find(tag_name)
+                        if isinstance(el, Tag):
+                            return el
+
+        # Fallback: use BeautifulSoup for the general case
+        soup = BeautifulSoup(html, "html.parser")
+        for child in soup.contents:
+            if isinstance(child, Tag):
+                return child
+        return None
 
     def _get_children_html(self, soup: BeautifulSoup, element_html: Tag, **kwargs: Any) -> Tag:
+        # This method is performance critical. It does NOT create a new soup, instead receives one from the caller.
+        # Only called if children are present.
         wrapper = soup.new_tag(name="div")
         wrapper.append(element_html)
-        for child in self.children:
-            child_html = child.get_html_element(**kwargs)
+        # Avoid repeated hasattr/attr lookup in the loop
+        children = self.children
+        for child in children:
+            # Child already gets existing soup passed down via kwargs
+            child_html = child.get_html_element(_soup=soup, **kwargs)
             wrapper.append(child_html)
         return wrapper
 
     def get_html_element(self, **kwargs: Any) -> Tag:
-        soup = BeautifulSoup("", HTML_PARSER)
+        # Optimization: reuse a single soup for all descendants by passing it via _soup
+        soup: Optional[BeautifulSoup] = kwargs.pop("_soup", None)
+        if soup is None:
+            soup = BeautifulSoup("", HTML_PARSER)
+
         element_html = self.get_text_as_html()
         if element_html is None:
             element_html = soup.new_tag(name=self.html_tag)
@@ -69,7 +101,8 @@ class ElementHtml(ABC):
         element_html["class"] = self.element.category
         element_html["id"] = self.element.id
         self._inject_html_element_attrs(element_html)
-        if self.children:  # if element has children wrap it with a 'div' tag
+        # Fast-path: avoid copying list if no children
+        if self.children:
             return self._get_children_html(soup, element_html, **kwargs)
         return element_html
 
