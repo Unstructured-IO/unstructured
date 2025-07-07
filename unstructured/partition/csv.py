@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import contextlib
 import csv
-import ctypes
 from typing import IO, Any, Iterator
 
 import pandas as pd
@@ -15,6 +14,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
+CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
 
 
 @apply_metadata(FileType.CSV)
@@ -55,8 +55,7 @@ def partition_csv(
         infer_table_structure=infer_table_structure,
     )
 
-    # NOTE: Set maximum possible field size limit (LONG_MAX)
-    csv.field_size_limit(int(ctypes.c_ulong(-1).value // 2))
+    csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
         dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
 
