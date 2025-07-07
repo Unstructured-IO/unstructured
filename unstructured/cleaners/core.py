@@ -4,7 +4,6 @@ import quopri
 import re
 import sys
 import unicodedata
-from functools import lru_cache
 from typing import Optional, Tuple
 
 import numpy as np
@@ -120,34 +119,18 @@ def group_bullet_paragraph(paragraph: str) -> list:
     '''○ The big red fox is walking down the lane.
     ○ At the end of the land the fox met a bear.'''
     """
-    # Precompile needed patterns for performance
-    e_bullet_re = (
-        E_BULLET_PATTERN
-        if isinstance(E_BULLET_PATTERN, re.Pattern)
-        else re.compile(E_BULLET_PATTERN)
-    )
-    unicode_bullets_0w_re = (
-        UNICODE_BULLETS_RE_0W
-        if isinstance(UNICODE_BULLETS_RE_0W, re.Pattern)
-        else re.compile(UNICODE_BULLETS_RE_0W)
-    )
-    paragraph_pattern_re = (
-        PARAGRAPH_PATTERN
-        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
-        else re.compile(PARAGRAPH_PATTERN)
-    )
+    paragraph_pattern_re = re.compile(PARAGRAPH_PATTERN)
 
-    # Use one sub operation for e->bullet replacement and strip at once
-    paragraph = e_bullet_re.sub("·", paragraph).strip()
+    # pytesseract converts some bullet points to standalone "e" characters.
+    # Substitute "e" with bullets since they are later used in partition_text
+    # to determine list element type.
+    paragraph = E_BULLET_PATTERN.sub("·", paragraph).strip()
 
-    # Split once, operate only on non-empty groups
-    bullet_paras = unicode_bullets_0w_re.split(paragraph)
+    bullet_paras = UNICODE_BULLETS_RE_0W.split(paragraph)
     clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
-            # Use precompiled re, faster than repeated compilation
-            clean_bullet = paragraph_pattern_re.sub(" ", bullet)
-            clean_paragraphs.append(clean_bullet)
+            clean_paragraphs(paragraph_pattern_re.sub(" ", bullet))
     return clean_paragraphs
 
 
@@ -171,20 +154,8 @@ def group_broken_paragraphs(
     At the end of the land the fox met a bear.'''
     """
     # Precompile needed regex if not already compiled
-    unicode_bullets_re = (
-        UNICODE_BULLETS_RE
-        if isinstance(UNICODE_BULLETS_RE, re.Pattern)
-        else re.compile(UNICODE_BULLETS_RE)
-    )
-    e_bullet_re = (
-        E_BULLET_PATTERN
-        if isinstance(E_BULLET_PATTERN, re.Pattern)
-        else re.compile(E_BULLET_PATTERN)
-    )
     paragraph_pattern_re = (
-        PARAGRAPH_PATTERN
-        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
-        else re.compile(PARAGRAPH_PATTERN)
+        PARAGRAPH_PATTERN if isinstance(PARAGRAPH_PATTERN, re.Pattern) else re.compile(PARAGRAPH_PATTERN)
     )
 
     paragraphs = paragraph_split.split(text)
@@ -195,11 +166,14 @@ def group_broken_paragraphs(
             continue
 
         # Check for bullets quickly first (likely fast path)
-        if unicode_bullets_re.match(stripped_par) or e_bullet_re.match(stripped_par):
+        if UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par):
             clean_paragraphs.extend(group_bullet_paragraph(paragraph))
             continue
-
-        # Split only once
+        # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
+        # grouped together, but aren't separated by a double line break.
+        #     Apache License
+        #     Version 2.0, January 2004
+        #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
         # Short-circuit evaluation: if any line is not "short" we don't call all() over all lines
         all_lines_short = True
