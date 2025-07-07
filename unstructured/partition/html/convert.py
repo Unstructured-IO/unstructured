@@ -34,7 +34,7 @@ class ElementHtml(ABC):
 
     def __init__(self, element: Element, children: Optional[list["ElementHtml"]] = None):
         self.element = element
-        self.children = children if children is not None else []
+        self.children = children or []
 
     @property
     def html_tag(self) -> str:
@@ -47,43 +47,16 @@ class ElementHtml(ABC):
         element_html.string = self.element.text
 
     def get_text_as_html(self) -> Union[Tag, None]:
-        html = getattr(self.element.metadata, "text_as_html", None)
-        if not html:  # Fast-path for empty input
+        element_html = BeautifulSoup(self.element.metadata.text_as_html or "", HTML_PARSER).find()
+        if not isinstance(element_html, Tag):
             return None
-
-        # Fast-path: try to extract the first tag using string operations (for simple HTML snippets)
-        html = html.lstrip()
-        if html and html[0] == "<":
-            pos = html.find(">")
-            if pos != -1:
-                tag_name = html[1:pos].split()[0].rstrip("/").lower()
-                if tag_name.isidentifier():
-                    # Try to slice out a minimal well-formed snippet for BS
-                    close_tag = f"</{tag_name}>"
-                    close_idx = html.lower().find(close_tag)
-                    if close_idx != -1:
-                        snippet = html[: close_idx + len(close_tag)]
-                        soup = BeautifulSoup(snippet, "html.parser")
-                        el = soup.find(tag_name)
-                        if isinstance(el, Tag):
-                            return el
-
-        # Fallback: use BeautifulSoup for the general case
-        soup = BeautifulSoup(html, "html.parser")
-        for child in soup.contents:
-            if isinstance(child, Tag):
-                return child
-        return None
+        return element_html
 
     def _get_children_html(self, soup: BeautifulSoup, element_html: Tag, **kwargs: Any) -> Tag:
-        # This method is performance critical. It does NOT create a new soup, instead receives one from the caller.
-        # Only called if children are present.
         wrapper = soup.new_tag(name="div")
         wrapper.append(element_html)
-        # Avoid repeated hasattr/attr lookup in the loop
-        children = self.children
-        for child in children:
-            # Child already gets existing soup passed down via kwargs
+        for child in self.children:
+            # Child gets existing soup passed down
             child_html = child.get_html_element(_soup=soup, **kwargs)
             wrapper.append(child_html)
         return wrapper
@@ -101,8 +74,7 @@ class ElementHtml(ABC):
         element_html["class"] = self.element.category
         element_html["id"] = self.element.id
         self._inject_html_element_attrs(element_html)
-        # Fast-path: avoid copying list if no children
-        if self.children:
+        if self.children:  # if element has children wrap it with a 'div' tag
             return self._get_children_html(soup, element_html, **kwargs)
         return element_html
 
@@ -125,9 +97,7 @@ class ImageElementHtml(ElementHtml):
         exclude_binary_image_data = kwargs.get("exclude_binary_image_data", False)
         if self.element.metadata.image_base64 and not exclude_binary_image_data:
             image_mime_type = self.element.metadata.image_mime_type or "image/png"
-            element_html["src"] = (
-                f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
-            )
+            element_html["src"] = f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
         element_html["alt"] = self.element.text
 
 
@@ -255,7 +225,7 @@ TYPE_TO_HTML_MAP = {
 
 def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
     grouped_children: list[ElementHtml] = []
-    temp_group: list["ElementHtml"] = []
+    temp_group: list[ElementHtml] = []
     prev_grouping = False
     for child in children:
         grouping = child.element.category in LIST_ELEMENTS
@@ -288,12 +258,8 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
     return [el for el in elements if el.element.metadata.parent_id is None]
 
 
-def _elements_to_html_tags(
-    elements: list[Element], exclude_binary_image_data: bool = False
-) -> list[Tag]:
-    elements_html = [
-        TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements
-    ]
+def _elements_to_html_tags(elements: list[Element], exclude_binary_image_data: bool = False) -> list[Tag]:
+    elements_html = [TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements]
     elements_html = _elements_to_html_tags_by_parent(elements_html)
     return [
         element_html.get_html_element(exclude_binary_image_data=exclude_binary_image_data)
@@ -301,9 +267,7 @@ def _elements_to_html_tags(
     ]
 
 
-def _elements_to_html_tags_by_page(
-    elements: list[Element], exclude_binary_image_data: bool = False
-) -> list[Tag]:
+def _elements_to_html_tags_by_page(elements: list[Element], exclude_binary_image_data: bool = False) -> list[Tag]:
     soup = BeautifulSoup("", HTML_PARSER)
     pages_tags: list[Tag] = []
     grouped_elements = group_elements_by_page(elements)
@@ -316,9 +280,7 @@ def _elements_to_html_tags_by_page(
     return pages_tags
 
 
-def group_elements_by_page(
-    unstructured_elements: list[Element],
-) -> list[list[Element]]:
+def group_elements_by_page(unstructured_elements: list[Element]) -> list[list[Element]]:
     pages_dict: defaultdict[int, list[Element]] = defaultdict(list)
 
     for element in unstructured_elements:
@@ -333,9 +295,7 @@ def group_elements_by_page(
 
 
 def elements_to_html(
-    elements: list[Element],
-    exclude_binary_image_data: bool = False,
-    no_group_by_page: bool = False,
+    elements: list[Element], exclude_binary_image_data: bool = False, no_group_by_page: bool = False
 ) -> str:
     soup = BeautifulSoup(HTML_TEMPLATE, HTML_PARSER)
     if soup.body is None:
