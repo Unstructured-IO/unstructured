@@ -1,3 +1,12 @@
+## 0.18.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Increase CSV field limit** Addresses failures in partition for csv files with large fields
+
 ## 0.18.3
 
 ### Enhancements
