@@ -5,7 +5,7 @@
 ### Features
 
 ### Fixes
-- code block previously was being processed as embedded code instead of plain text. 
+- Code blocks in markdown were previously being processed as embedded code instead of plain text.
 
 ## 0.18.2
 
