@@ -97,7 +97,9 @@ class ImageElementHtml(ElementHtml):
         exclude_binary_image_data = kwargs.get("exclude_binary_image_data", False)
         if self.element.metadata.image_base64 and not exclude_binary_image_data:
             image_mime_type = self.element.metadata.image_mime_type or "image/png"
-            element_html["src"] = f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
+            element_html["src"] = (
+                f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
+            )
         element_html["alt"] = self.element.text
 
 
@@ -225,7 +227,7 @@ TYPE_TO_HTML_MAP = {
 
 def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
     grouped_children: list[ElementHtml] = []
-    temp_group: list[ElementHtml] = []
+    temp_group: list["ElementHtml"] = []
     prev_grouping = False
     for child in children:
         grouping = child.element.category in LIST_ELEMENTS
@@ -258,8 +260,12 @@ def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[Elemen
     return [el for el in elements if el.element.metadata.parent_id is None]
 
 
-def _elements_to_html_tags(elements: list[Element], exclude_binary_image_data: bool = False) -> list[Tag]:
-    elements_html = [TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements]
+def _elements_to_html_tags(
+    elements: list[Element], exclude_binary_image_data: bool = False
+) -> list[Tag]:
+    elements_html = [
+        TYPE_TO_HTML_MAP.get(element.category, ElementHtml)(element) for element in elements
+    ]
     elements_html = _elements_to_html_tags_by_parent(elements_html)
     return [
         element_html.get_html_element(exclude_binary_image_data=exclude_binary_image_data)
@@ -267,7 +273,9 @@ def _elements_to_html_tags(elements: list[Element], exclude_binary_image_data: b
     ]
 
 
-def _elements_to_html_tags_by_page(elements: list[Element], exclude_binary_image_data: bool = False) -> list[Tag]:
+def _elements_to_html_tags_by_page(
+    elements: list[Element], exclude_binary_image_data: bool = False
+) -> list[Tag]:
     soup = BeautifulSoup("", HTML_PARSER)
     pages_tags: list[Tag] = []
     grouped_elements = group_elements_by_page(elements)
@@ -280,7 +288,9 @@ def _elements_to_html_tags_by_page(elements: list[Element], exclude_binary_image
     return pages_tags
 
 
-def group_elements_by_page(unstructured_elements: list[Element]) -> list[list[Element]]:
+def group_elements_by_page(
+    unstructured_elements: list[Element],
+) -> list[list[Element]]:
     pages_dict: defaultdict[int, list[Element]] = defaultdict(list)
 
     for element in unstructured_elements:
@@ -295,7 +305,9 @@ def group_elements_by_page(unstructured_elements: list[Element]) -> list[list[El
 
 
 def elements_to_html(
-    elements: list[Element], exclude_binary_image_data: bool = False, no_group_by_page: bool = False
+    elements: list[Element],
+    exclude_binary_image_data: bool = False,
+    no_group_by_page: bool = False,
 ) -> str:
     soup = BeautifulSoup(HTML_TEMPLATE, HTML_PARSER)
     if soup.body is None:
