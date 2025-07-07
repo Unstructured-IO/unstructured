@@ -1,4 +1,4 @@
-## 0.18.3-dev0
+## 0.18.5-dev0
 
 ### Enhancements
 
@@ -6,6 +6,24 @@
 
 ### Fixes
 - Code blocks in markdown were previously being processed as embedded code instead of plain text.
+
+## 0.18.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Increase CSV field limit** Addresses failures in partition for csv files with large fields
+
+## 0.18.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Upgrade Pillow to 11.3.0** Addresses a high priority CVE
 
 ## 0.18.2
 

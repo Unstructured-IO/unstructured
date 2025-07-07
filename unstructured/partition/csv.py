@@ -14,6 +14,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
+CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
 
 
 @apply_metadata(FileType.CSV)
@@ -54,6 +55,7 @@ def partition_csv(
         infer_table_structure=infer_table_structure,
     )
 
+    csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
         dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
 
