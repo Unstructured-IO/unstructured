@@ -1,3 +1,12 @@
+## 0.18.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
+
 ## 0.18.4
 
 ### Enhancements
