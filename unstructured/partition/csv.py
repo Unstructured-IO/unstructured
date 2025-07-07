@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import csv
+import ctypes
 from typing import IO, Any, Iterator
 
 import pandas as pd
@@ -54,6 +55,8 @@ def partition_csv(
         infer_table_structure=infer_table_structure,
     )
 
+    # NOTE: Set maximum possible field size limit (LONG_MAX)
+    csv.field_size_limit(int(ctypes.c_ulong(-1).value // 2))
     with ctx.open() as file:
         dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
 
