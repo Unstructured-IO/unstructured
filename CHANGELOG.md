@@ -1,3 +1,12 @@
+## 0.18.6
+
+### Enhancements
+- **Optimize PDF processing with early page count check** Prevents expensive PDFMiner processing for documents that exceed page limits by checking page count before strategy execution when `pdf_hi_res_max_pages` is set.
+
+### Features
+
+### Fixes
+
 ## 0.18.5-dev0
 
 ### Enhancements

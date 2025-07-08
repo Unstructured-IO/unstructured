@@ -290,6 +290,27 @@ def partition_pdf_or_image(
 
     validate_strategy(strategy, is_image)
 
+    # Early page count check for strategies that will use HI_RES
+    # This prevents expensive PDFMiner processing for documents that exceed page limits
+    pdf_hi_res_max_pages = kwargs.get("pdf_hi_res_max_pages")
+    if pdf_hi_res_max_pages is not None:
+        # Check if this strategy will result in HI_RES processing
+        will_use_hi_res = False
+        
+        if strategy == PartitionStrategy.HI_RES:
+            will_use_hi_res = True
+        elif strategy == PartitionStrategy.AUTO:
+            # AUTO resolves to HI_RES in these cases:
+            extract_element = extract_images_in_pdf or bool(extract_image_block_types)
+            will_use_hi_res = is_image or infer_table_structure or extract_element
+        
+        if will_use_hi_res:
+            check_pdf_hi_res_max_pages_exceeded(
+                filename=filename,
+                file=file,
+                pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+            )
+
     last_modified = get_last_modified_date(filename) if filename else None
     pdfminer_config = PDFMinerConfig(
         line_margin=pdfminer_line_margin,
