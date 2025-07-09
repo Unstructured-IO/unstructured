@@ -4,5 +4,5 @@
 #
 #    pip-compile ./extra-markdown.in
 #
-markdown==3.8
+markdown==3.8.2
     # via -r ./extra-markdown.in
