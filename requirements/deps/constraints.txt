@@ -9,8 +9,6 @@ weaviate-client>=3.26.7,<4.0.0
 tokenizers>=0.21,<0.22
 # NOTE(alan): Okay to drop pin once this version exists and we verify compatibility.
 urllib3<3.0.0
-# TODO: Constriant due to both 8.5.0 and 8.4.0 being installed during pip-compile
-# importlib-metadata>=8.5.0
 # (austin): Versions below this have a different interface for passing parameters
 unstructured-client>=0.23.0,<0.26.0
 # paddle constrains protobuf; maybe we should put paddle here since its version is pinned in .in file
