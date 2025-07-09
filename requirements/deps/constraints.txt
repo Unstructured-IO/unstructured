@@ -4,15 +4,13 @@
 # words, if something does not require a constraint, it will not be installed.
 ####################################################################################################
 # we are using v3 client https://weaviate.io/developers/weaviate/client-libraries/python/python_v3
-weaviate-client>=3.26.7,<4.0.0
-# TODO: Constriant due to multiple versions being installed during pip-compile
-protobuf>=6.30.0
+weaviate-client>=3.26.7,<4.0.0 # Confirmed 
 # TODO: Constriant due to multiple versions being installed during pip-compile
 grpcio>=1.65.5
 # TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
-tokenizers>=0.21,<0.22
+tokenizers>=0.21,<0.22 # Confirmed
 # NOTE(alan): Okay to drop pin once this version exists and we verify compatibility.
-urllib3<3.0.0
+urllib3<3.0.0 # Confirmed
 # TODO: Constriant due to both 8.5.0 and 8.4.0 being installed during pip-compile
 importlib-metadata>=8.5.0
 # (austin): Versions below this have a different interface for passing parameters
