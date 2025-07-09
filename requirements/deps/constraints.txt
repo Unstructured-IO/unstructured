@@ -11,8 +11,7 @@ protobuf>=6.30.0
 grpcio>=1.65.5
 # TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
 tokenizers>=0.21,<0.22
-# TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
-# updated or we drop support for 3.9
+# NOTE(alan): Okay to drop pin once this version exists and we verify compatibility.
 urllib3<3.0.0
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
 botocore<1.34.132
