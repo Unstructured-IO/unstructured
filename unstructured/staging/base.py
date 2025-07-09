@@ -15,6 +15,10 @@ from unstructured.documents.elements import (
     CheckBox,
     Element,
     ElementMetadata,
+    Image,
+    NarrativeText,
+    Table,
+    Title,
 )
 from unstructured.file_utils.ndjson import dumps as ndjson_dumps
 from unstructured.partition.common.common import exactly_one
@@ -127,6 +131,37 @@ def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
 # -- legacy aliases for elements_to_dicts() --
 convert_to_isd = elements_to_dicts
 convert_to_dict = elements_to_dicts
+
+
+def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> str:
+    if isinstance(element, Title):
+        out = f"# {element.text}"
+    elif isinstance(element, NarrativeText):
+        out = element.text
+    elif isinstance(element, Table):
+        if element.metadata.text_as_html is not None:
+            out = element.metadata.text_as_html
+        else:
+            out = element.text
+    elif isinstance(element, Image):
+        if element.metadata.image_base64 is not None and exclude_binary_image_data:
+            out = (
+                f"![{element.text}]"
+                f"(data:{element.metadata.image_mime_type};base64,{element.metadata.image_base64})"
+            )
+        elif element.metadata.image_url is not None:
+            out = f"![{element.text}]({element.metadata.image_url})"
+        else:
+            out = element.text
+    else:
+        out = element.text
+    return out
+
+
+def elements_to_md(elements: Iterable[Element], exclude_binary_image_data: bool = False) -> str:
+    return "\n".join(
+        [element_to_md(el, exclude_binary_image_data=exclude_binary_image_data) for el in elements]
+    )
 
 
 def elements_to_json(
