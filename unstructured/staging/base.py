@@ -150,11 +150,32 @@ def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> 
             return element.text
 
 
-def elements_to_md(elements: Iterable[Element], exclude_binary_image_data: bool = False) -> str:
-    return "\n".join(
+def elements_to_md(
+    elements: Iterable[Element],
+    filename: Optional[str] = None,
+    exclude_binary_image_data: bool = False,
+    encoding: str = "utf-8"
+) -> str:
+    """Convert elements to markdown format.
+
+    Args:
+        elements: Iterable of elements to convert
+        filename: Optional file path to write the markdown to
+        exclude_binary_image_data: If True, exclude base64 image data from output
+        encoding: File encoding when writing to file
+
+    Returns:
+        The markdown content as a string
+    """
+    markdown_content = "\n".join(
         [element_to_md(el, exclude_binary_image_data=exclude_binary_image_data) for el in elements]
     )
 
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(markdown_content)
+
+    return markdown_content
 
 def elements_to_json(
     elements: Iterable[Element],
