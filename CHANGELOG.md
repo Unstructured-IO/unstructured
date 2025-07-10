@@ -1,6 +1,8 @@
-## 0.18.5-dev0
+## 0.18.5-dev1
 
 ### Enhancements
+
+- **Bump dependencies and remove lingering Python 3.9 artifacts** Cleaned up some references to 3.9 that were left When we dropped Python 3.9 support.
 
 ### Features
 
