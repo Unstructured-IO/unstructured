@@ -34,7 +34,7 @@ def test_remove_ids_and_class_from_table():
             <td>cell 2</td>
         </tr>
         <tr>
-            <td>cell 3</td>
+            <td><IMG class="Signature" alt="cell 3"/></td>
             <td>cell 4</td>
         </tr>
     </table>
@@ -49,7 +49,7 @@ def test_remove_ids_and_class_from_table():
 <td>cell 2</td>
 </tr>
 <tr>
-<td>cell 3</td>
+<td><img alt="cell 3" class="Signature"/></td>
 <td>cell 4</td>
 </tr>
 </table>
