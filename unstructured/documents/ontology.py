@@ -151,8 +151,10 @@ def remove_ids_and_class_from_table(soup: BeautifulSoup):
     for tag in soup.find_all(True):
         if tag.name == "table":  # type: ignore
             continue  # We keep table tag
-        tag.attrs.pop("class", None)  # type: ignore
         tag.attrs.pop("id", None)  # type: ignore
+        if tag.name == "img":  # type: ignore
+            continue  # We keep img tag's class attribute
+        tag.attrs.pop("class", None)  # type: ignore
     return soup
 
 
