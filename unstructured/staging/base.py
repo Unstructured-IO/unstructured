@@ -16,7 +16,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     Image,
-    NarrativeText,
     Table,
     Title,
 )
@@ -134,28 +133,19 @@ convert_to_dict = elements_to_dicts
 
 
 def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> str:
-    if isinstance(element, Title):
-        out = f"# {element.text}"
-    elif isinstance(element, NarrativeText):
-        out = element.text
-    elif isinstance(element, Table):
-        if element.metadata.text_as_html is not None:
-            out = element.metadata.text_as_html
-        else:
-            out = element.text
-    elif isinstance(element, Image):
-        if element.metadata.image_base64 is not None and exclude_binary_image_data:
-            out = (
-                f"![{element.text}]"
-                f"(data:{element.metadata.image_mime_type};base64,{element.metadata.image_base64})"
-            )
-        elif element.metadata.image_url is not None:
-            out = f"![{element.text}]({element.metadata.image_url})"
-        else:
-            out = element.text
-    else:
-        out = element.text
-    return out
+    match element:
+        case Title(text=text):
+            return f"# {text}"
+        case Table(metadata=metadata, text=text) if metadata.text_as_html is not None:
+            return metadata.text_as_html
+        case Image(metadata=metadata, text=text) if (
+            metadata.image_base64 is not None and not exclude_binary_image_data
+        ):
+            return f"![{text}](data:{metadata.image_mime_type};base64,{metadata.image_base64})"
+        case Image(metadata=metadata, text=text) if metadata.image_url is not None:
+            return f"![{text}]({metadata.image_url})"
+        case _:
+            return element.text
 
 
 def elements_to_md(elements: Iterable[Element], exclude_binary_image_data: bool = False) -> str:
