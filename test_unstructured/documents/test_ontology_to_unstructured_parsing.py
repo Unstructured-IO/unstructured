@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from bs4 import BeautifulSoup
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
@@ -13,6 +14,7 @@ from unstructured.documents.ontology import (
     Paragraph,
     Section,
     Table,
+    remove_ids_and_class_from_table,
 )
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 from unstructured.partition.html import partition_html
@@ -22,6 +24,37 @@ from unstructured.partition.html.transformations import (
 )
 from unstructured.partition.json import partition_json
 from unstructured.staging.base import elements_from_json
+
+
+def test_remove_ids_and_class_from_table():
+    html_text = """
+    <table>
+        <tr class="TableRow">
+            <td><img class="Signature" alt="cell 1"/></td>
+            <td>cell 2</td>
+        </tr>
+        <tr>
+            <td><IMG class="Signature" alt="cell 3"/></td>
+            <td>cell 4</td>
+        </tr>
+    </table>
+    """
+    soup = BeautifulSoup(html_text, "html.parser")
+    assert (
+        str(remove_ids_and_class_from_table(soup))
+        == """
+<table>
+<tr>
+<td><img alt="cell 1" class="Signature"/></td>
+<td>cell 2</td>
+</tr>
+<tr>
+<td><img alt="cell 3" class="Signature"/></td>
+<td>cell 4</td>
+</tr>
+</table>
+"""
+    )
 
 
 def test_page_number_is_passed_correctly():
