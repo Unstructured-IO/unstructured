@@ -432,9 +432,7 @@ def detect_languages(
             )
 
         try:
-            print("text sent to langdetect:", text)
             langdetect_result = detect_langs(text)
-            print("langdetect result:", langdetect_result)
         except lang_detect_exception.LangDetectException as e:
             logger.warning(e)
             return None  # None as default

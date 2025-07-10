@@ -445,7 +445,7 @@ def _partition_pdf_with_pdfminer(
 
     # if languages is None:
     #     print("pdfminer languages is None, defaulting to English.")
-        # languages = ["eng"]
+    # languages = ["eng"]
 
     exactly_one(filename=filename, file=file)
     if filename:
@@ -491,7 +491,7 @@ def _process_pdfminer_pages(
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
     print("Starting _process_pdfminer_pages...")
-    from unstructured.partition.common.lang import detect_languages # TODO move
+    from unstructured.partition.common.lang import detect_languages  # TODO move
 
     elements = []
 
@@ -555,15 +555,14 @@ def _process_pdfminer_pages(
                         languages=languages,
                     )
                     # print(f"-Detected languages for text element: {_text} are {detected_languages}")
-                    if detected_languages is None or len(detected_languages) != 1:                        
+                    if detected_languages is None or len(detected_languages) != 1:
                         logger.warning(
                             f"Detected languages for text element: {_text} are {detected_languages}. "
                             "Defaulting to English."
                         )
                         detected_languages = ["eng"]
                     print(f"-Detected language :{detected_languages}")
-                    
-                    
+
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=page_number,
@@ -748,10 +747,6 @@ def _partition_pdf_or_image_local(
             if pdf_text_extractable
             else ([], [])
         )
-        print("Extracted layout:", extracted_layout)
-        print("Layouts links:", layouts_links)
-        # maybe language detect here
-        
 
         if analysis:
             if not analyzed_image_output_dir_path:
