@@ -43,6 +43,7 @@ def process_file_with_pdfminer(
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
+    print("Starting process_file_with_pdfminer:")
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout, layouts_links = process_data_with_pdfminer(
@@ -440,6 +441,7 @@ def process_data_with_pdfminer(
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
+    print("Starting process_data_with_pdfminer:")
 
     from unstructured_inference.inference.layoutelement import LayoutElements
 

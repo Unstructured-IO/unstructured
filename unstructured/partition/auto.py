@@ -148,6 +148,7 @@ def partition(
         )
 
     languages = check_language_args(languages or [], ocr_languages)
+    print("Languages for partitioning:", languages)
 
     if url is not None:
         file, file_type = file_and_type_from_url(
