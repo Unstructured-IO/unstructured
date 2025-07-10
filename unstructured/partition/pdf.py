@@ -222,6 +222,7 @@ def partition_pdf(
         readability. The margin is specified relative to the width of the character.
     """
 
+    print("Starting partition_pdf...")
     exactly_one(filename=filename, file=file)
 
     languages = check_language_args(languages or [], ocr_languages)
@@ -282,8 +283,7 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    if languages is None:
-        languages = ["eng"]
+    print("Starting partition_pdf_or_image...")
 
     # init ability to process .heic files
     register_heif_opener()
@@ -332,6 +332,9 @@ def partition_pdf_or_image(
     if file is not None:
         file.seek(0)
 
+    if languages is None:
+        print("Warning: No languages specified, defaulting to English.")
+        languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     if strategy == PartitionStrategy.HI_RES:
@@ -423,8 +426,8 @@ def extractable_elements(
 def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
-    languages: list[str],
     metadata_last_modified: Optional[str],
+    languages: Optional[list[str]] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
@@ -438,8 +441,11 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
-    if languages is None:
-        languages = ["eng"]
+    print("Starting _partition_pdf_with_pdfminer...")
+
+    # if languages is None:
+    #     print("pdfminer languages is None, defaulting to English.")
+        # languages = ["eng"]
 
     exactly_one(filename=filename, file=file)
     if filename:
@@ -475,8 +481,8 @@ def _partition_pdf_with_pdfminer(
 def _process_pdfminer_pages(
     fp: IO[bytes],
     filename: str,
-    languages: list[str],
     metadata_last_modified: Optional[str],
+    languages: Optional[list[str]] = None,
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     password: Optional[str] = None,
@@ -484,6 +490,8 @@ def _process_pdfminer_pages(
     **kwargs,
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
+    print("Starting _process_pdfminer_pages...")
+    from unstructured.partition.common.lang import detect_languages # TODO move
 
     elements = []
 
@@ -541,13 +549,28 @@ def _process_pdfminer_pages(
                     )
                     links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
+                    # element lang here
+                    detected_languages = detect_languages(
+                        _text,
+                        languages=languages,
+                    )
+                    # print(f"-Detected languages for text element: {_text} are {detected_languages}")
+                    if detected_languages is None or len(detected_languages) != 1:                        
+                        logger.warning(
+                            f"Detected languages for text element: {_text} are {detected_languages}. "
+                            "Defaulting to English."
+                        )
+                        detected_languages = ["eng"]
+                    print(f"-Detected language :{detected_languages}")
+                    
+                    
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=page_number,
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
-                        languages=languages,
+                        languages=detected_languages,
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
@@ -618,6 +641,8 @@ def _partition_pdf_or_image_local(
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
+    print("Starting _partition_pdf_or_image_local...")
+
     from unstructured_inference.inference.layout import (
         process_data_with_model,
         process_file_with_model,
@@ -723,6 +748,10 @@ def _partition_pdf_or_image_local(
             if pdf_text_extractable
             else ([], [])
         )
+        print("Extracted layout:", extracted_layout)
+        print("Layouts links:", layouts_links)
+        # maybe language detect here
+        
 
         if analysis:
             if not analyzed_image_output_dir_path:
@@ -881,6 +910,8 @@ def _partition_pdf_with_pdfparser(
     **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
+    print("Starting _partition_pdf_with_pdfparser...")
+
     elements = []
 
     for page_elements in extracted_elements:
@@ -912,6 +943,7 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    print("Starting _partition_pdf_or_image_with_ocr...")
 
     elements = []
     if is_image:
@@ -959,6 +991,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
     **kwargs: Any,
 ) -> list[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
+    print("Starting _partition_pdf_or_image_with_ocr_from_image...")
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
