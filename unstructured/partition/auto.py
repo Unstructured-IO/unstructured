@@ -148,7 +148,6 @@ def partition(
         )
 
     languages = check_language_args(languages or [], ocr_languages)
-    print("Languages for partitioning:", languages)
 
     if url is not None:
         file, file_type = file_and_type_from_url(
@@ -217,6 +216,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
@@ -236,6 +236,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
