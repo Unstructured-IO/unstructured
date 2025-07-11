@@ -210,3 +210,5 @@ metricsdiff.txt
 # analysis
 annotated/
 .aider*
+
+.vs/
