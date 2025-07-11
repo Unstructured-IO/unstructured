@@ -1,8 +1,9 @@
-## 0.18.5-dev0
+## 0.18.5
 
 ### Enhancements
 
 ### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
 
 ### Fixes
 - **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
