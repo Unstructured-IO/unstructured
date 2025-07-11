@@ -4,11 +4,9 @@ import os, re
 import tempfile
 from typing import IO
 
+from unstructured.errors import UnprocessableEpubError
 from unstructured.partition.common.common import exactly_one
 from unstructured.utils import requires_dependencies
-
-class UnprocessableEpubError(Exception):
-    pass
 
 
 @requires_dependencies(["pypandoc"])

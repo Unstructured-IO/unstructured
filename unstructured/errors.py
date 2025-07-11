@@ -9,3 +9,9 @@ class PageCountExceededError(ValueError):
             f"pages={document_pages}, maximum={pdf_hi_res_max_pages}."
         )
         super().__init__(self.message)
+
+
+class UnprocessableEpubError(Exception):
+    """Error raised when the epub file is not valid."""
+
+    pass
