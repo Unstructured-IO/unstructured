@@ -11,7 +11,7 @@ from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
-@process_metadata()
+@process_metadata()  # TODO(shreya): update to use `apply_metadata` decorator
 @add_metadata
 @add_chunking_strategy
 def partition_image(
@@ -21,6 +21,7 @@ def partition_image(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[list[str]] = None,
+    detect_language_per_element: bool = False,
     strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
@@ -106,6 +107,7 @@ def partition_image(
         include_page_breaks=include_page_breaks,
         infer_table_structure=infer_table_structure,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
         strategy=strategy,
         metadata_last_modified=metadata_last_modified,
         hi_res_model_name=hi_res_model_name,
