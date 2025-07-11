@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import os
+import re
 import tempfile
 from typing import IO
 
+from unstructured.errors import UnprocessableEpubError
 from unstructured.partition.common.common import exactly_one
 from unstructured.utils import requires_dependencies
 
@@ -23,6 +25,14 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
         )
         raise FileNotFoundError(msg)
     except RuntimeError as err:
+        err_str = str(err)
+        if source_format == "epub" and (
+            "Couldn't extract ePub file" in err_str
+            or "No entry on path" in err_str
+            or re.search(r"exitcode ['\"]?64['\"]?", err_str)
+        ):
+            raise UnprocessableEpubError(f"Invalid EPUB file: {err_str}")
+
         supported_source_formats, _ = pypandoc.get_pandoc_formats()
 
         if source_format == "rtf" and source_format not in supported_source_formats:
