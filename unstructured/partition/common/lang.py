@@ -500,6 +500,7 @@ def apply_lang_metadata(
             e.metadata.languages = detected_languages
             yield e
     else:
+        print("DETECTING LANGUAGES PER ELEMENT")
         for e in elements:
             if hasattr(e, "text"):
                 e.metadata.languages = detect_languages(e.text)

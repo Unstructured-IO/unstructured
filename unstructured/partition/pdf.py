@@ -36,10 +36,8 @@ from unstructured.documents.elements import (
     PageBreak,
     Text,
     Title,
-    process_metadata,
 )
 from unstructured.errors import PageCountExceededError
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -55,7 +53,7 @@ from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
     FinalLayoutDumper,
@@ -122,8 +120,7 @@ def default_hi_res_model() -> str:
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.PDF)
+@apply_metadata(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
     filename: Optional[str] = None,
@@ -133,7 +130,7 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
-    metadata_filename: Optional[str] = None,  # used by decorator
+    detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     hi_res_model_name: Optional[str] = None,
@@ -233,6 +230,7 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
         metadata_last_modified=metadata_last_modified,
         hi_res_model_name=hi_res_model_name,
         extract_images_in_pdf=extract_images_in_pdf,
@@ -259,6 +257,7 @@ def partition_pdf_or_image(
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     languages: Optional[list[str]] = None,
+    detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
@@ -336,6 +335,7 @@ def partition_pdf_or_image(
         print("Warning: No languages specified, defaulting to English.")
         languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
+    print("pdf strategy split point:", strategy)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
@@ -491,7 +491,6 @@ def _process_pdfminer_pages(
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
     print("Starting _process_pdfminer_pages...")
-    from unstructured.partition.common.lang import detect_languages  # TODO move
 
     elements = []
 
@@ -549,27 +548,13 @@ def _process_pdfminer_pages(
                     )
                     links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
-                    # element lang here
-                    detected_languages = detect_languages(
-                        _text,
-                        languages=languages,
-                    )
-                    # print(f"-Detected languages for text element: {_text} are {detected_languages}")
-                    if detected_languages is None or len(detected_languages) != 1:
-                        logger.warning(
-                            f"Detected languages for text element: {_text} are {detected_languages}. "
-                            "Defaulting to English."
-                        )
-                        detected_languages = ["eng"]
-                    print(f"-Detected language :{detected_languages}")
-
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=page_number,
                         coordinates=coordinates_metadata,
                         last_modified=metadata_last_modified,
                         links=links,
-                        languages=detected_languages,
+                        languages=languages,
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
