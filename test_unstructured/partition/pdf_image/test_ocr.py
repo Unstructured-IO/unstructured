@@ -622,11 +622,10 @@ def mock_page(mock_ocr_layout, mock_layout):
     return mock_page
 
 
-def test_supplement_layout_with_ocr(mocker, mock_page):
+def test_supplement_layout_with_ocr(mock_ocr_get_instance, mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent
 
     mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
-    spy = mocker.spy(OCRAgent, "get_instance")
 
     ocr.supplement_page_layout_with_ocr(
         mock_page,
@@ -637,16 +636,21 @@ def test_supplement_layout_with_ocr(mocker, mock_page):
         table_ocr_agent=OCR_AGENT_PADDLE,
     )
 
-    assert spy.call_args_list[0][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
-    assert spy.call_args_list[1][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
+        "language": "eng",
+        "ocr_agent_module": OCR_AGENT_TESSERACT,
+    }
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
+        "language": "en",
+        "ocr_agent_module": OCR_AGENT_PADDLE,
+    }
 
 
-def test_pass_down_agents(mocker, mock_page):
+def test_pass_down_agents(mock_ocr_get_instance, mocker, mock_page):
     from unstructured.partition.pdf_image.ocr import OCRAgent, PILImage
 
     mocker.patch.object(OCRAgent, "get_layout_from_image", return_value=mock_ocr_layout)
     mocker.patch.object(PILImage, "open", return_value=Image.new("RGB", (100, 100)))
-    spy = mocker.spy(OCRAgent, "get_instance")
     doc = MagicMock(DocumentLayout)
     doc.pages = [mock_page]
 
@@ -661,5 +665,11 @@ def test_pass_down_agents(mocker, mock_page):
         table_ocr_agent=OCR_AGENT_TESSERACT,
     )
 
-    assert spy.call_args_list[0][1] == {"language": "en", "ocr_agent_module": OCR_AGENT_PADDLE}
-    assert spy.call_args_list[1][1] == {"language": "eng", "ocr_agent_module": OCR_AGENT_TESSERACT}
+    assert mock_ocr_get_instance.call_args_list[0][1] == {
+        "language": "en",
+        "ocr_agent_module": OCR_AGENT_PADDLE,
+    }
+    assert mock_ocr_get_instance.call_args_list[1][1] == {
+        "language": "eng",
+        "ocr_agent_module": OCR_AGENT_TESSERACT,
+    }

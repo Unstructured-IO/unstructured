@@ -1,6 +1,6 @@
 FROM quay.io/unstructured-io/base-images:wolfi-base-latest AS base
 
-ARG PYTHON=python3.11
+ARG PYTHON=python3.12
 ARG PIP="${PYTHON} -m pip"
 
 USER root
@@ -13,7 +13,7 @@ COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN chown -R notebook-user:notebook-user /app && \
-    apk add font-ubuntu git && \
+    apk add --no-cache font-ubuntu fontconfig git && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
 
@@ -30,5 +30,7 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
     $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+
+ENV HF_HUB_OFFLINE=1
 
 CMD ["/bin/bash"]

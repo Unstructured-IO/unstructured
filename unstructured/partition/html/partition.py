@@ -210,6 +210,11 @@ class _HtmlPartitioner:
 
         Elements appear in document order.
         """
+        # -- handle empty or whitespace-only HTML content --
+        html_text = self._opts.html_text
+        if not html_text or html_text.strip() == "":
+            return
+
         elements_iter = (
             self._main.iter_elements()
             if self._opts.html_parser_version == "v1"
@@ -264,6 +269,11 @@ class _HtmlPartitioner:
     def _from_ontology(self) -> List[Element]:
         """Convert an ontology elements represented in HTML to an ontology element."""
         html_text = self._opts.html_text
+
+        # -- handle empty or whitespace-only HTML content --
+        if not html_text or html_text.strip() == "":
+            return []
+
         ontology = parse_html_to_ontology(html_text)
         unstructured_elements = ontology_to_unstructured_elements(
             ontology, add_img_alt_text=self._opts.add_img_alt_text

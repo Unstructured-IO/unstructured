@@ -265,8 +265,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7cf062c1ba64938cc68c4fae61506d84",
-    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson’, and Weining Li>",
+    "element_id": "97c951d2dd3a1b5452d0c55e62e8ea78",
+    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson’, and Weining Li®",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1199,8 +1199,8 @@
   },
   {
     "type": "Image",
-    "element_id": "642416e5d6c99219b16dbba6f72392c5",
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY",
+    "element_id": "285d83f3098b26302329b33637fd265f",
+    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘A >) ¥ DIA Model Hub a Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (store Visualization LY",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1762,8 +1762,8 @@
   },
   {
     "type": "Image",
-    "element_id": "6eb2bb6ca50b3be177565f9ff546bce8",
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff",
+    "element_id": "fd2288e4e3cf90f109d1c1198cea4ca0",
+    "text": "3 a a 4 a 3 Rectangle vada 4 8 4 iS v 2 [S) af : fa & o a 6 ‘ g 4 Coordinate g 2 8 3 + 4 * v 8 Extra features =| 9%) | Hock) Reading é ret | | Type | | order 2 & a ¢ @ [ coordinatel textblock1 , 8 » , ee 3 , textblock2 , layoutl ] 8 q ® A list of the layout elements ‘sf",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2153,7 +2153,7 @@
     "element_id": "64bc79d1132a89c71837f420d6e4e2dc",
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
     "metadata": {
-      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of blockl to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -2356,8 +2356,8 @@
   },
   {
     "type": "Image",
-    "element_id": "f5450580bd9ae07f4cdf7c23a6ccaf41",
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position",
+    "element_id": "02a078081972f7bdb26f06a787773a30",
+    "text": "0g Burpunog uayor Aeydsiq:1 vondo 10g Guypunog usyou ap:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR’ Text at the Correspoding Position",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2507,8 +2507,8 @@
   },
   {
     "type": "Image",
-    "element_id": "6eb34afad9d568fbccde8ac8854dc24d",
-    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable Column reading order HEE company type Column Categories (J tite Adress _] ree [7] Section Header Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
+    "element_id": "747f46c43a88768fd543e10bac84203b",
+    "text": "Intra-column reading order Token Categories tie (Adress tee Ewumber Variable Column reading order HEE company ype Column Categories (J tite Adress 1] ree [7] Section Header Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2819,8 +2819,8 @@
   },
   {
     "type": "Image",
-    "element_id": "f48a844114951222f6c96331efc683fb",
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
+    "element_id": "2b90153124fb6f9e9f5539b9db75d240",
+    "text": "———————_+ (| ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ alae Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing Ee apis for Layout Dat a Ae ror yon Oats 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3119,8 +3119,8 @@
   },
   {
     "type": "Image",
-    "element_id": "d5c954ff619e348d36d5180feedabc6c",
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line",
+    "element_id": "1359eaa601a24c083e143b8bf5114127",
+    "text": "(@) Partial table at the bottom (6) Full page table (©) Partial table at the top (@) Mis-detected text line",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

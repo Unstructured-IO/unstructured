@@ -210,5 +210,7 @@ metricsdiff.txt
 # analysis
 annotated/
 .aider*
+pcaps
+python-output
 
 .vs/
