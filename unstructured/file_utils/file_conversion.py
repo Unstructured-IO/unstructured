@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-import os, re
+import os
+import re
 import tempfile
 from typing import IO
 
