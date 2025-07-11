@@ -11,7 +11,7 @@ from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
-@process_metadata() # TODO(shreya): update to use `apply_metadata` decorator
+@process_metadata()  # TODO(shreya): update to use `apply_metadata` decorator
 @add_metadata
 @add_chunking_strategy
 def partition_image(
