@@ -219,7 +219,6 @@ def partition_pdf(
         readability. The margin is specified relative to the width of the character.
     """
 
-    print("Starting partition_pdf...")
     exactly_one(filename=filename, file=file)
 
     languages = check_language_args(languages or [], ocr_languages)
@@ -282,8 +281,6 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    print("Starting partition_pdf_or_image...")
-
     # init ability to process .heic files
     register_heif_opener()
 
@@ -335,7 +332,6 @@ def partition_pdf_or_image(
         print("Warning: No languages specified, defaulting to English.")
         languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
-    print("pdf strategy split point:", strategy)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
@@ -441,11 +437,6 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
-    print("Starting _partition_pdf_with_pdfminer...")
-
-    # if languages is None:
-    #     print("pdfminer languages is None, defaulting to English.")
-    # languages = ["eng"]
 
     exactly_one(filename=filename, file=file)
     if filename:
@@ -490,7 +481,6 @@ def _process_pdfminer_pages(
     **kwargs,
 ) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
-    print("Starting _process_pdfminer_pages...")
 
     elements = []
 
@@ -625,7 +615,6 @@ def _partition_pdf_or_image_local(
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
-    print("Starting _partition_pdf_or_image_local...")
 
     from unstructured_inference.inference.layout import (
         process_data_with_model,
@@ -890,7 +879,6 @@ def _partition_pdf_with_pdfparser(
     **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
-    print("Starting _partition_pdf_with_pdfparser...")
 
     elements = []
 
@@ -923,7 +911,6 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
-    print("Starting _partition_pdf_or_image_with_ocr...")
 
     elements = []
     if is_image:
@@ -971,7 +958,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
     **kwargs: Any,
 ) -> list[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
-    print("Starting _partition_pdf_or_image_with_ocr_from_image...")
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
