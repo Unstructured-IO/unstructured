@@ -1,3 +1,13 @@
+## 0.17.7-dev1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Added new error type to return from epub conversion when file is invalid**
+
 ## 0.17.7-dev0
 
 ### Enhancements
