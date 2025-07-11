@@ -401,9 +401,8 @@ def test_get_page_image_metadata_and_coordinate_system():
     assert isinstance(metadata, dict)
 
 
-def test_ocr_data_to_elements(
-    filename=example_doc_path("img/layout-parser-paper-fast.jpg"),
-):
+def test_ocr_data_to_elements():
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
     text_regions = [
         TextRegion.from_coords(
             163.0,
