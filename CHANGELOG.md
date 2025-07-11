@@ -3,6 +3,7 @@
 ### Enhancements
 
 ### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
 
 ### Fixes
 - **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
@@ -16,7 +17,6 @@
 - **`text_as_html` for Table element now keeps `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for `img` tag in the table element's `metadata.text_as_html`.
 
 ### Features
-- **Add language detection for PDFs** Add document and element level language detection to PDFs.
 
 ### Fixes
 - **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
