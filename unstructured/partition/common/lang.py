@@ -464,7 +464,6 @@ def apply_lang_metadata(
     languages: Optional[list[str]],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
-    print("APPLY_LANG_METADATA")
     """Detect language and apply it to metadata.languages for each element in `elements`.
     If languages is None, default to auto detection.
     If languages is and empty string, skip."""
@@ -500,7 +499,6 @@ def apply_lang_metadata(
             e.metadata.languages = detected_languages
             yield e
     else:
-        print("DETECTING LANGUAGES PER ELEMENT")
         for e in elements:
             if hasattr(e, "text"):
                 e.metadata.languages = detect_languages(e.text)
