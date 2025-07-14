@@ -11,7 +11,7 @@ class PageCountExceededError(ValueError):
         super().__init__(self.message)
 
 
-class UnprocessableEpubError(Exception):
-    """Error raised when the epub file is not valid."""
+class UnprocessableEntityError(Exception):
+    """Error raised when a file is not valid."""
 
     pass
