@@ -321,7 +321,7 @@ if [ "$WRITE_HTML" = true ]; then
     # most elements will not have metadata.text_as_html defined (by design on Table elements do),
     # so use the unstructured library's python script for the conversion.
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../html/elements_json_to_html.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
+    PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../convert/elements_json_to_format.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
     echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"
   fi
 
