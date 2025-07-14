@@ -140,7 +140,12 @@ def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> 
             return metadata.text_as_html
         case Image(metadata=metadata, text=text) if (
             metadata.image_base64 is not None
-            and metadata.image_mime_type is not None
+            and metadata.image_mime_type is None
+            and not exclude_binary_image_data
+        ):
+            return f"![{text}](data:image/*;base64,{metadata.image_base64})"
+        case Image(metadata=metadata, text=text) if (
+            metadata.image_base64 is not None
             and not exclude_binary_image_data
         ):
             return f"![{text}](data:{metadata.image_mime_type};base64,{metadata.image_base64})"
