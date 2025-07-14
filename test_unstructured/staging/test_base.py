@@ -23,6 +23,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     PageBreak,
+    Table,
     Text,
     Title,
 )
@@ -513,3 +514,147 @@ def test_flatten_empty_dict():
 def test_flatten_dict_empty_lists():
     """Flattening a dictionary with empty lists"""
     assert base.flatten_dict({"a": [], "b": {"c": []}}) == {"a": [], "b_c": []}
+
+
+@pytest.mark.parametrize(
+    ("json_filename", "expected_md_filename"),
+    [
+        ("test_unstructured/testfiles/staging/UDHR_first_article_all.txt.json",
+         "test_unstructured/testfiles/staging/UDHR_first_article_all.txt.md"),
+        ("test_unstructured/testfiles/staging/embedded-images.pdf.json",
+         "test_unstructured/testfiles/staging/embedded-images.pdf.md"),
+    ]
+)
+def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str):
+    """Test that elements_from_json followed by elements_to_md produces expected markdown output."""
+    # Rehydrate elements from JSON
+    elements = base.elements_from_json(json_filename)
+
+    # Convert to markdown
+    markdown_output = base.elements_to_md(elements)
+
+    # Read expected markdown fixture
+    with open(expected_md_filename) as f:
+        expected_markdown = f.read()
+
+    # Compare outputs
+    assert markdown_output == expected_markdown
+
+
+def test_element_to_md_conversion():
+    """Test individual element to markdown conversion for different element types."""
+
+    # Test Title element
+    title_element = Title("Test Title")
+    assert base.element_to_md(title_element) == "# Test Title"
+
+    # Test NarrativeText element
+    text_element = NarrativeText("This is some narrative text.")
+    assert base.element_to_md(text_element) == "This is some narrative text."
+
+    # Test Image element with base64 data
+    image_metadata = ElementMetadata(
+        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        image_mime_type="image/png"
+    )
+    image_element = Image("Test Image", metadata=image_metadata)
+    expected_image_md = (
+        "![Test Image](data:image/png;base64,"
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)"
+    )
+    assert base.element_to_md(image_element) == expected_image_md
+
+    # Test Image element with exclude_binary_image_data=True
+    assert base.element_to_md(image_element, exclude_binary_image_data=True) == "Test Image"
+
+    # Test Image element with URL
+    image_metadata_url = ElementMetadata(image_url="https://example.com/image.jpg")
+    image_element_url = Image("Test Image", metadata=image_metadata_url)
+    assert base.element_to_md(image_element_url) == "![Test Image](https://example.com/image.jpg)"
+
+    # Test Table element with HTML
+    table_metadata = ElementMetadata(text_as_html="<table><tr><td>Test</td></tr></table>")
+    table_element = Table("Table Text", metadata=table_metadata)
+    assert base.element_to_md(table_element) == "<table><tr><td>Test</td></tr></table>"
+
+    # Test Table element without HTML (should fall back to text)
+    table_element_no_html = Table("Table Text")
+    assert base.element_to_md(table_element_no_html) == "Table Text"
+
+
+def test_elements_to_md_with_exclude_binary_image_data():
+    """Test elements_to_md function with exclude_binary_image_data parameter."""
+    from unstructured.documents.elements import ElementMetadata, Image, NarrativeText, Title
+
+    # Create elements with an image that has base64 data
+    image_metadata = ElementMetadata(
+        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        image_mime_type="image/png"
+    )
+    elements = [
+        Title("Test Document"),
+        NarrativeText("This is some text."),
+        Image("Test Image", metadata=image_metadata),
+        NarrativeText("More text here.")
+    ]
+
+    # Test without excluding binary data
+    markdown_with_images = base.elements_to_md(elements)
+    assert "# Test Document" in markdown_with_images
+    assert "This is some text." in markdown_with_images
+    assert "data:image/png;base64," in markdown_with_images
+    assert "More text here." in markdown_with_images
+
+    # Test with excluding binary data
+    markdown_without_images = base.elements_to_md(elements, exclude_binary_image_data=True)
+    assert "# Test Document" in markdown_without_images
+    assert "This is some text." in markdown_without_images
+    assert "data:image/png;base64," not in markdown_without_images
+    assert "Test Image" in markdown_without_images  # Should still show the text
+    assert "More text here." in markdown_without_images
+
+
+def test_elements_to_md_file_output():
+    """Test elements_to_md function with file output."""
+
+    elements = [
+        Title("Test Title"),
+        NarrativeText("Test content.")
+    ]
+
+    # Test file output
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as tmp_file:
+        tmp_filename = tmp_file.name
+
+    try:
+        markdown_content = base.elements_to_md(elements, filename=tmp_filename)
+
+        # Check that the function returns the content
+        assert markdown_content == "# Test Title\nTest content."
+
+        # Check that the file was created with correct content
+        with open(tmp_filename) as f:
+            file_content = f.read()
+        assert file_content == "# Test Title\nTest content."
+
+    finally:
+        # Clean up
+        if os.path.exists(tmp_filename):
+            os.unlink(tmp_filename)
+
+
+def test_element_to_md_with_none_mime_type():
+    """Test element_to_md handles None mime_type gracefully."""
+    from unstructured.documents.elements import ElementMetadata, Image
+
+    # Test Image element with None mime_type
+    image_metadata = ElementMetadata(
+        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        image_mime_type=None
+    )
+    image_element = Image("Test Image", metadata=image_metadata)
+
+    # Should handle None mime_type gracefully (your guard should handle this)
+    result = base.element_to_md(image_element)
+    assert "![Test Image](data:" in result
+    assert "base64," in result
