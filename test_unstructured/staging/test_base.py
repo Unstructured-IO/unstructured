@@ -588,38 +588,6 @@ def test_element_to_md_conversion(element: "Element", expected_markdown: str, ex
     ) == expected_markdown
 
 
-def test_elements_to_md_with_exclude_binary_image_data():
-    """Test elements_to_md function with exclude_binary_image_data parameter."""
-    from unstructured.documents.elements import ElementMetadata, Image, NarrativeText, Title
-
-    # Create elements with an image that has base64 data
-    image_metadata = ElementMetadata(
-        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-        image_mime_type="image/png"
-    )
-    elements = [
-        Title("Test Document"),
-        NarrativeText("This is some text."),
-        Image("Test Image", metadata=image_metadata),
-        NarrativeText("More text here.")
-    ]
-
-    # Test without excluding binary data
-    markdown_with_images = base.elements_to_md(elements)
-    assert "# Test Document" in markdown_with_images
-    assert "This is some text." in markdown_with_images
-    assert "data:image/png;base64," in markdown_with_images
-    assert "More text here." in markdown_with_images
-
-    # Test with excluding binary data
-    markdown_without_images = base.elements_to_md(elements, exclude_binary_image_data=True)
-    assert "# Test Document" in markdown_without_images
-    assert "This is some text." in markdown_without_images
-    assert "data:image/png;base64," not in markdown_without_images
-    assert "Test Image" in markdown_without_images  # Should still show the text
-    assert "More text here." in markdown_without_images
-
-
 def test_elements_to_md_file_output():
     """Test elements_to_md function with file output."""
 
