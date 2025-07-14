@@ -628,7 +628,7 @@ def test_element_to_md_with_none_mime_type():
     )
     image_element = Image("Test Image", metadata=image_metadata)
 
-    # Should handle None mime_type gracefully (your guard should handle this)
+    # Should handle None mime_type gracefully
     result = base.element_to_md(image_element)
-    assert "![Test Image](data:" in result
+    assert "![Test Image](data:image/*" in result
     assert "base64," in result
