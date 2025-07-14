@@ -555,13 +555,17 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
             Image(
                 "Test Image",
                 metadata=ElementMetadata(
-                    image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                    image_base64=(
+                        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhf"
+                        "DwAChwGA60e6kgAAAABJRU5ErkJggg=="
+                    ),
                     image_mime_type="image/png",
                 ),
             ),
             (
                 "![Test Image](data:image/png;base64,"
-                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)"
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgA"
+                "AAABJRU5ErkJggg==)"
             ),
             False,
         ),
@@ -569,7 +573,10 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
             Image(
                 "Test Image",
                 metadata=ElementMetadata(
-                    image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                    image_base64=(
+                        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60"
+                        "e6kgAAAABJRU5ErkJggg=="
+                    ),
                     image_mime_type="image/png",
                 ),
             ),
@@ -633,7 +640,10 @@ def test_element_to_md_with_none_mime_type():
 
     # Test Image element with None mime_type
     image_metadata = ElementMetadata(
-        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+        image_base64=(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU"
+            "5ErkJggg=="
+        ),
         image_mime_type=None,
     )
     image_element = Image("Test Image", metadata=image_metadata)
