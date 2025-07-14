@@ -520,11 +520,15 @@ def test_flatten_dict_empty_lists():
 @pytest.mark.parametrize(
     ("json_filename", "expected_md_filename"),
     [
-        ("test_unstructured/testfiles/staging/UDHR_first_article_all.txt.json",
-         "test_unstructured/testfiles/staging/UDHR_first_article_all.txt.md"),
-        ("test_unstructured/testfiles/staging/embedded-images.pdf.json",
-         "test_unstructured/testfiles/staging/embedded-images.pdf.md"),
-    ]
+        (
+            "test_unstructured/testfiles/staging/UDHR_first_article_all.txt.json",
+            "test_unstructured/testfiles/staging/UDHR_first_article_all.txt.md",
+        ),
+        (
+            "test_unstructured/testfiles/staging/embedded-images.pdf.json",
+            "test_unstructured/testfiles/staging/embedded-images.pdf.md",
+        ),
+    ],
 )
 def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str):
     """Test that elements_from_json followed by elements_to_md produces expected markdown output."""
@@ -548,56 +552,62 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
         (Title("Test Title"), "# Test Title", False),
         (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
         (
-            Image("Test Image", metadata=ElementMetadata(
-                image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-                image_mime_type="image/png"
-            )),
+            Image(
+                "Test Image",
+                metadata=ElementMetadata(
+                    image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                    image_mime_type="image/png",
+                ),
+            ),
             (
                 "![Test Image](data:image/png;base64,"
                 "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)"
             ),
-            False
+            False,
         ),
         (
-            Image("Test Image", metadata=ElementMetadata(
-                image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-                image_mime_type="image/png"
-            )),
+            Image(
+                "Test Image",
+                metadata=ElementMetadata(
+                    image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                    image_mime_type="image/png",
+                ),
+            ),
             "Test Image",
-            True
+            True,
         ),
         (
-            Image("Test Image", metadata=ElementMetadata(image_url="https://example.com/image.jpg")),
+            Image(
+                "Test Image", metadata=ElementMetadata(image_url="https://example.com/image.jpg")
+            ),
             "![Test Image](https://example.com/image.jpg)",
-            False
+            False,
         ),
         (
-            Table("Table Text", metadata=ElementMetadata(
-                text_as_html="<table><tr><td>Test</td></tr></table>")
+            Table(
+                "Table Text",
+                metadata=ElementMetadata(text_as_html="<table><tr><td>Test</td></tr></table>"),
             ),
             "<table><tr><td>Test</td></tr></table>",
-            False
+            False,
         ),
         (Table("Table Text"), "Table Text", False),
-    ]
+    ],
 )
 def test_element_to_md_conversion(element: "Element", expected_markdown: str, exclude_binary: bool):
     """Test individual element to markdown conversion for different element types."""
-    assert base.element_to_md(
-        element, exclude_binary_image_data=exclude_binary
-    ) == expected_markdown
+    assert (
+        base.element_to_md(element, exclude_binary_image_data=exclude_binary) == expected_markdown
+    )
 
 
 def test_elements_to_md_file_output():
     """Test elements_to_md function with file output."""
 
-    elements = [
-        Title("Test Title"),
-        NarrativeText("Test content.")
-    ]
+    elements = [Title("Test Title"), NarrativeText("Test content.")]
 
     # Test file output
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as tmp_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as tmp_file:
         tmp_filename = tmp_file.name
 
     try:
@@ -624,7 +634,7 @@ def test_element_to_md_with_none_mime_type():
     # Test Image element with None mime_type
     image_metadata = ElementMetadata(
         image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-        image_mime_type=None
+        image_mime_type=None,
     )
     image_element = Image("Test Image", metadata=image_metadata)
 

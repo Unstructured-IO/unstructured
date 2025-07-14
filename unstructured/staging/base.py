@@ -145,8 +145,7 @@ def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> 
         ):
             return f"![{text}](data:image/*;base64,{metadata.image_base64})"
         case Image(metadata=metadata, text=text) if (
-            metadata.image_base64 is not None
-            and not exclude_binary_image_data
+            metadata.image_base64 is not None and not exclude_binary_image_data
         ):
             return f"![{text}](data:{metadata.image_mime_type};base64,{metadata.image_base64})"
         case Image(metadata=metadata, text=text) if metadata.image_url is not None:
@@ -159,7 +158,7 @@ def elements_to_md(
     elements: Iterable[Element],
     filename: Optional[str] = None,
     exclude_binary_image_data: bool = False,
-    encoding: str = "utf-8"
+    encoding: str = "utf-8",
 ) -> str:
     """Convert elements to markdown format.
 
@@ -181,6 +180,7 @@ def elements_to_md(
             f.write(markdown_content)
 
     return markdown_content
+
 
 def elements_to_json(
     elements: Iterable[Element],
