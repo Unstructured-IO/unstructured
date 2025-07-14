@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     CoordinateSystem,
     DataSourceMetadata,
+    Element,
     ElementMetadata,
     ElementType,
     FigureCaption,
@@ -541,45 +542,50 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
     assert markdown_output == expected_markdown
 
 
-def test_element_to_md_conversion():
+@pytest.mark.parametrize(
+    ("element", "expected_markdown", "exclude_binary"),
+    [
+        (Title("Test Title"), "# Test Title", False),
+        (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
+        (
+            Image("Test Image", metadata=ElementMetadata(
+                image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                image_mime_type="image/png"
+            )),
+            (
+                "![Test Image](data:image/png;base64,"
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)"
+            ),
+            False
+        ),
+        (
+            Image("Test Image", metadata=ElementMetadata(
+                image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                image_mime_type="image/png"
+            )),
+            "Test Image",
+            True
+        ),
+        (
+            Image("Test Image", metadata=ElementMetadata(image_url="https://example.com/image.jpg")),
+            "![Test Image](https://example.com/image.jpg)",
+            False
+        ),
+        (
+            Table("Table Text", metadata=ElementMetadata(
+                text_as_html="<table><tr><td>Test</td></tr></table>")
+            ),
+            "<table><tr><td>Test</td></tr></table>",
+            False
+        ),
+        (Table("Table Text"), "Table Text", False),
+    ]
+)
+def test_element_to_md_conversion(element: "Element", expected_markdown: str, exclude_binary: bool):
     """Test individual element to markdown conversion for different element types."""
-
-    # Test Title element
-    title_element = Title("Test Title")
-    assert base.element_to_md(title_element) == "# Test Title"
-
-    # Test NarrativeText element
-    text_element = NarrativeText("This is some narrative text.")
-    assert base.element_to_md(text_element) == "This is some narrative text."
-
-    # Test Image element with base64 data
-    image_metadata = ElementMetadata(
-        image_base64="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-        image_mime_type="image/png"
-    )
-    image_element = Image("Test Image", metadata=image_metadata)
-    expected_image_md = (
-        "![Test Image](data:image/png;base64,"
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)"
-    )
-    assert base.element_to_md(image_element) == expected_image_md
-
-    # Test Image element with exclude_binary_image_data=True
-    assert base.element_to_md(image_element, exclude_binary_image_data=True) == "Test Image"
-
-    # Test Image element with URL
-    image_metadata_url = ElementMetadata(image_url="https://example.com/image.jpg")
-    image_element_url = Image("Test Image", metadata=image_metadata_url)
-    assert base.element_to_md(image_element_url) == "![Test Image](https://example.com/image.jpg)"
-
-    # Test Table element with HTML
-    table_metadata = ElementMetadata(text_as_html="<table><tr><td>Test</td></tr></table>")
-    table_element = Table("Table Text", metadata=table_metadata)
-    assert base.element_to_md(table_element) == "<table><tr><td>Test</td></tr></table>"
-
-    # Test Table element without HTML (should fall back to text)
-    table_element_no_html = Table("Table Text")
-    assert base.element_to_md(table_element_no_html) == "Table Text"
+    assert base.element_to_md(
+        element, exclude_binary_image_data=exclude_binary
+    ) == expected_markdown
 
 
 def test_elements_to_md_with_exclude_binary_image_data():
