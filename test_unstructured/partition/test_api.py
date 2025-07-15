@@ -631,6 +631,7 @@ def expected_call_():
                 chunking_strategy=None,
                 combine_under_n_chars=None,
                 coordinates=False,
+                detect_language_per_element=False,
                 encoding=None,
                 extract_image_block_types=None,
                 gz_uncompressed_content_type=None,
