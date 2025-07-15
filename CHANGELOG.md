@@ -5,7 +5,7 @@
 ### Features
 
 ### Fixes
-
+- **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
 - **Fix type for serialized TableChunks** Use `TableChunk` for the string value of the field `type` when serializing elements of type `TableChunk`, rather than using the value `Table`.
 
 ## 0.18.5

@@ -9,3 +9,9 @@ class PageCountExceededError(ValueError):
             f"pages={document_pages}, maximum={pdf_hi_res_max_pages}."
         )
         super().__init__(self.message)
+
+
+class UnprocessableEntityError(Exception):
+    """Error raised when a file is not valid."""
+
+    pass
