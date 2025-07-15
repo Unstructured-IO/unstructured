@@ -1,10 +1,11 @@
-## 0.18.6-dev0
+## 0.18.6-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+- **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
 - **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate exceptions
 
 ## 0.18.5
