@@ -13,5 +13,3 @@ class PageCountExceededError(ValueError):
 
 class UnprocessableEntityError(Exception):
     """Error raised when a file is not valid."""
-
-    pass
