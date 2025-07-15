@@ -1,9 +1,18 @@
-## 0.18.7-dev0
+## 0.18.8-dev0
 
 ### Enhancements
 - **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
 
 ### Features
+
+### Fixes
+
+## 0.18.7
+
+### Enhancements
+
+### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
 
 ### Fixes
 
