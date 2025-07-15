@@ -212,3 +212,5 @@ annotated/
 .aider*
 pcaps
 python-output
+
+.vs/
