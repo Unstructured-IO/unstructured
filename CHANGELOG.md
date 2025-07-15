@@ -1,3 +1,12 @@
+## 0.18.8-dev0
+
+### Enhancements
+- **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
+
+### Features
+
+### Fixes
+
 ## 0.18.7
 
 ### Enhancements
