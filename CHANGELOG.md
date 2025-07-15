@@ -1,3 +1,13 @@
+## 0.18.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix type for serialized TableChunks** Use `TableChunk` for the string value of the field `type` when serializing elements of type `TableChunk`, rather than using the value `Table`.
+
 ## 0.18.5
 
 ### Enhancements
