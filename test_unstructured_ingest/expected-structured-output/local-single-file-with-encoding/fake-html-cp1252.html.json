@@ -5,10 +5,7 @@
     "text": "My First Heading",
     "metadata": {
       "languages": [
-        "por",
-        "cat",
-        "eng",
-        "vie"
+        "eng"
       ],
       "filetype": "text/html",
       "data_source": {
@@ -29,10 +26,7 @@
     "text": "My first paragraph.",
     "metadata": {
       "languages": [
-        "por",
-        "cat",
-        "eng",
-        "vie"
+        "eng"
       ],
       "filetype": "text/html",
       "data_source": {
@@ -53,10 +47,7 @@
     "text": "Some CP1252-specific characters:",
     "metadata": {
       "languages": [
-        "por",
-        "cat",
-        "eng",
-        "vie"
+        "eng"
       ],
       "filetype": "text/html",
       "data_source": {
@@ -77,9 +68,6 @@
     "text": "    ¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯\n°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿\nÀ\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ\nÐ\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß\nà\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï\nð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ",
     "metadata": {
       "languages": [
-        "por",
-        "cat",
-        "eng",
         "vie"
       ],
       "filetype": "text/html",
