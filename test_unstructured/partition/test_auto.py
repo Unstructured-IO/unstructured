@@ -561,6 +561,7 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         strategy=PartitionStrategy.FAST,
         languages=None,
         metadata_filename=None,
+        detect_language_per_element=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
@@ -1309,17 +1310,17 @@ def test_auto_partition_languages_argument_default_to_None_when_omitted():
 
 def test_auto_partition_default_does_not_overwrite_other_defaults():
     """`partition()` ["eng"] default does not overwrite ["auto"] default in other partitioners."""
-    # the default for `languages` is ["auto"] in partiton_text
+    # the default for `languages` is ["auto"] in partition_text
     from unstructured.partition.text import partition_text
 
     # Use a document that is primarily in a language other than English
     file_path = example_doc_path("language-docs/UDHR_first_article_all.txt")
     text_elements = partition_text(file_path)
-    assert text_elements[0].metadata.languages != ["eng"]
+    assert text_elements[13].metadata.languages != ["eng"]
 
     auto_elements = partition(file_path)
-    assert auto_elements[0].metadata.languages != ["eng"]
-    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+    assert auto_elements[13].metadata.languages != ["eng"]
+    assert auto_elements[13].metadata.languages == text_elements[13].metadata.languages
 
 
 # ================================================================================================
