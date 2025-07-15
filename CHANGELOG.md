@@ -1,3 +1,12 @@
+## 0.18.6-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
+
 ## 0.18.5
 
 ### Enhancements
