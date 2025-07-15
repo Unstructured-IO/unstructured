@@ -1302,6 +1302,27 @@ def test_auto_partition_passes_user_provided_languages_arg_to_PDF():
     assert all(e.metadata.languages == ["eng"] for e in elements)
 
 
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_auto_partition_detects_pdf_language_per_element(strategy):
+    filename = example_doc_path("language-docs/fr_olap.pdf")
+    elements = partition(
+        filename=filename,
+        strategy=strategy,
+        detect_language_per_element=True,
+    )
+
+    assert len(elements) > 0
+    assert elements[0].metadata.languages == ["fra"]
+    assert elements[-1].metadata.languages == ["eng"]
+
+
 def test_auto_partition_languages_argument_default_to_None_when_omitted():
     elements = partition(example_doc_path("handbook-1p.docx"), detect_language_per_element=True)
     # -- PageBreak and any other element with no text is assigned `None` --
