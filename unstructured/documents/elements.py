@@ -943,7 +943,7 @@ class Table(Text):
 class TableChunk(Table):
     """An element for capturing chunks of tables."""
 
-    category = "Table"
+    category = "TableChunk"
 
 
 class Header(Text):
