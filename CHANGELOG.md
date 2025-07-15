@@ -1,3 +1,12 @@
+## 0.18.11-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.
+
 ## 0.18.10
 
 ### Enhancements
