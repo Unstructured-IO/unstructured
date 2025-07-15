@@ -74,7 +74,7 @@ def detect_file_encoding(
     encoding = result["encoding"]
     confidence = result["confidence"]
 
-    if encoding is None or (confidence is not None and confidence < ENCODE_REC_THRESHOLD):
+    if encoding is None or confidence is None or confidence < ENCODE_REC_THRESHOLD:
         # Encoding detection failed, fallback to predefined encodings
         for enc in COMMON_ENCODINGS:
             try:
