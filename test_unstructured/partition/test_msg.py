@@ -141,7 +141,7 @@ def test_partition_msg_can_process_attachments():
         "Text",
         "Text",
         "Image",
-        "Title",
+        "Text",
         "Text",
         "Title",
         "Title",

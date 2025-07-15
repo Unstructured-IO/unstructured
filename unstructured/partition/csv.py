@@ -14,6 +14,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "csv"
+CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
 
 
 @apply_metadata(FileType.CSV)
@@ -54,8 +55,9 @@ def partition_csv(
         infer_table_structure=infer_table_structure,
     )
 
+    csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=encoding)
+        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -134,6 +136,11 @@ class _CsvPartitioningContext:
     def header(self) -> int | None:
         """Identifies the header row, if any, to Pandas, by idx."""
         return 0 if self._include_header else None
+
+    @lazyproperty
+    def encoding(self) -> str | None:
+        """The encoding to use for reading the file."""
+        return self._encoding
 
     @lazyproperty
     def last_modified(self) -> str | None:

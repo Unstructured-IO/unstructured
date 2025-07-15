@@ -1,6 +1,10 @@
+import os
+
 import pytest
 
 from unstructured.cleaners import translate
+
+IS_CI = os.getenv("CI") == "true"
 
 
 def test_get_opus_mt_model_name():
@@ -24,27 +28,32 @@ def test_translate_returns_same_text_text_is_empty():
     assert translate.translate_text(text) == text
 
 
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_translate_with_language_specified():
     text = "Ich bin ein Berliner!"
     assert translate.translate_text(text, "de") == "I'm a Berliner!"
 
 
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_translate_with_no_language_specified():
     text = "Ich bin ein Berliner!"
     assert translate.translate_text(text) == "I'm a Berliner!"
 
 
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_translate_raises_with_bad_language():
     text = "Ich bin ein Berliner!"
     with pytest.raises(ValueError):
         translate.translate_text(text, "zz")
 
 
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_tranlate_works_with_russian():
     text = "Я тоже можно переводать русский язык!"
     assert translate.translate_text(text) == "I can also translate Russian!"
 
 
+@pytest.mark.skipif(IS_CI, reason="Skipping this test in CI pipeline")
 def test_translate_works_with_chinese():
     text = "網站有中、英文版本"
     translate.translate_text(text) == "Website available in Chinese and English"

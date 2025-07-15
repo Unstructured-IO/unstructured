@@ -22,7 +22,7 @@ COPY requirements requirements
 
 RUN python3.10 -m pip install pip==${PIP_VERSION} && \
   dnf -y groupinstall "Development Tools" && \
-  find requirements/ -type f -name "*.txt" -exec python3 -m pip install --no-cache -r '{}' ';' && \
+  find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec python3 -m pip install --no-cache -r '{}' ';' && \
   dnf -y groupremove "Development Tools" && \
   dnf clean all
 

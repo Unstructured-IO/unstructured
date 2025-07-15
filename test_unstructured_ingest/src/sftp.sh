@@ -41,12 +41,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.data_source.filesize_bytes,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.last_modified,metadata.data_source.version \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --recursive \
   --username foo \
   --password bar \
   --remote-url sftp://localhost:47474/upload/ \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

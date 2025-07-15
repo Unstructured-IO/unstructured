@@ -48,7 +48,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy hi_res \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --client-cred "$SHAREPOINT_CRED" \
   --client-id "$SHAREPOINT_CLIENT_ID" \
@@ -57,6 +56,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --permissions-client-cred "$SHAREPOINT_PERMISSIONS_APP_CRED" \
   --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
   --recursive \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -67,10 +67,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --port 29092 \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --work-dir "$WORK_DIR" \
-  --confluent false
+  --confluent false \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

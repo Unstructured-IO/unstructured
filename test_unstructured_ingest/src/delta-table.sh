@@ -38,10 +38,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.data_source.date_created,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --download-dir "$DOWNLOAD_DIR" \
   --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-  --output-dir "$OUTPUT_DIR" \
   --storage_options "{\"AWS_REGION\":\"us-east-2\",\"AWS_ACCESS_KEY_ID\":\"$AWS_ACCESS_KEY_ID\",\"AWS_SECRET_ACCESS_KEY\":\"$AWS_SECRET_ACCESS_KEY\"}" \
   --preserve-downloads \
   --verbose \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -222,18 +222,13 @@ class _FileTypeDetector:
         return FileType.from_mime_type(self._ctx.content_type)
 
     @property
-    def _disambiguate_json_file_type(self) -> FileType | None:
-        """Disambiguate JSON/NDJSON file-type based on file contents.
-
-        This method is used when the content-type is `application/json` and the file is not empty.
-        """
-        if self._ctx.content_type is not None and self._ctx.content_type != "application/json":
-            return None
+    def _disambiguate_json_file_type(self) -> FileType:
+        """Disambiguate JSON/NDJSON file-type based on file contents."""
         if is_json_processable(file_text=self._ctx.text_head):
             return FileType.JSON
         if is_ndjson_processable(file_text=self._ctx.text_head):
             return FileType.NDJSON
-        return None
+        raise ValueError("Unable to process JSON file")
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
@@ -747,13 +742,13 @@ class _ZipFileDetector:
 
             filenames = zip.namelist()
 
-            if "word/document.xml" in filenames:
+            if any(re.match(r"word/document.*\.xml$", filename) for filename in filenames):
                 return FileType.DOCX
 
-            if "xl/workbook.xml" in filenames:
+            if any(re.match(r"xl/workbook.*\.xml$", filename) for filename in filenames):
                 return FileType.XLSX
 
-            if "ppt/presentation.xml" in filenames:
+            if any(re.match(r"ppt/presentation.*\.xml$", filename) for filename in filenames):
                 return FileType.PPTX
 
             # -- ODT and EPUB files place their MIME-type in `mimetype` in the archive root --

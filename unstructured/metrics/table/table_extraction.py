@@ -50,11 +50,11 @@ def html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
 
     soup = BeautifulSoup(content, "html.parser")
     table = soup.find("table")
-    rows = table.findAll(["tr"])
+    rows = table.find_all(["tr"])
     table_data = []
 
     for i, row in enumerate(rows):
-        cells = row.findAll(["th", "td"])
+        cells = row.find_all(["th", "td"])
         for j, cell_data in enumerate(cells):
             cell = {
                 "y": i,

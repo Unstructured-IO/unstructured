@@ -387,7 +387,7 @@ class PreChunkBuilder:
         if self._text_length > self._opts.soft_max:
             return False
         # -- don't add an element if it would increase total size beyond the hard-max --
-        return not self._remaining_space < len(element.text)
+        return not self._remaining_space < len(element.text or "")
 
     @property
     def _remaining_space(self) -> int:
@@ -503,10 +503,10 @@ class PreChunk:
         if self._overlap_prefix:
             yield self._overlap_prefix
         for e in self._elements:
-            text = " ".join(e.text.strip().split())
-            if not text:
-                continue
-            yield text
+            if e.text and len(e.text):
+                text = " ".join(e.text.strip().split())
+                if text:
+                    yield text
 
     @lazyproperty
     def _text(self) -> str:
@@ -846,13 +846,15 @@ class _TableChunker:
     @lazyproperty
     def _table_text(self) -> str:
         """The text in this table, not including any overlap-prefix or extra whitespace."""
+        if not self._table.text:
+            return ""
         return " ".join(self._table.text.split())
 
     @lazyproperty
     def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
-        table_text = self._table.text.strip()
+        table_text = "" if not self._table.text else self._table.text.strip()
         # -- use row-separator between overlap and table-text --
         return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 

@@ -133,9 +133,8 @@ def test_partition_image_local_raises_with_no_filename():
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=True)
 
 
-def test_partition_image_with_auto_strategy(
-    filename=example_doc_path("img/layout-parser-paper-fast.jpg"),
-):
+def test_partition_image_with_auto_strategy():
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     titles = [
         el for el in elements if el.category == ElementType.TITLE and len(el.text.split(" ")) > 10
@@ -147,9 +146,8 @@ def test_partition_image_with_auto_strategy(
     assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
-def test_partition_image_with_table_extraction(
-    filename=example_doc_path("img/layout-parser-paper-with-table.jpg"),
-):
+def test_partition_image_with_table_extraction():
+    filename = example_doc_path("img/layout-parser-paper-with-table.jpg")
     elements = image.partition_image(
         filename=filename,
         strategy=PartitionStrategy.HI_RES,
@@ -161,17 +159,14 @@ def test_partition_image_with_table_extraction(
     assert "</thead><tbody><tr>" in table[0]
 
 
-def test_partition_image_with_multipage_tiff(
-    filename=example_doc_path("img/layout-parser-paper-combined.tiff"),
-):
+def test_partition_image_with_multipage_tiff():
+    filename = example_doc_path("img/layout-parser-paper-combined.tiff")
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     assert elements[-1].metadata.page_number == 2
 
 
-def test_partition_image_with_bmp(
-    tmpdir,
-    filename=example_doc_path("img/layout-parser-paper-with-table.jpg"),
-):
+def test_partition_image_with_bmp(tmpdir):
+    filename = example_doc_path("img/layout-parser-paper-with-table.jpg")
     bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
     img = Image.open(filename)
     img.save(bmp_filename)
@@ -187,7 +182,8 @@ def test_partition_image_with_bmp(
     assert "</thead><tbody><tr>" in table[0]
 
 
-def test_partition_image_with_language_passed(filename=example_doc_path("img/example.jpg")):
+def test_partition_image_with_language_passed():
+    filename = example_doc_path("img/example.jpg")
     with mock.patch.object(
         ocr,
         "process_file_with_ocr",
@@ -202,9 +198,8 @@ def test_partition_image_with_language_passed(filename=example_doc_path("img/exa
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
 
-def test_partition_image_from_file_with_language_passed(
-    filename=example_doc_path("img/example.jpg"),
-):
+def test_partition_image_from_file_with_language_passed():
+    filename = example_doc_path("img/example.jpg")
     with mock.patch.object(
         ocr,
         "process_data_with_ocr",
@@ -217,9 +212,8 @@ def test_partition_image_from_file_with_language_passed(
 
 # NOTE(crag): see https://github.com/Unstructured-IO/unstructured/issues/1086
 @pytest.mark.skip(reason="Current catching too many tesseract errors")
-def test_partition_image_raises_with_invalid_language(
-    filename=example_doc_path("img/example.jpg"),
-):
+def test_partition_image_raises_with_invalid_language():
+    filename = example_doc_path("img/example.jpg")
     with pytest.raises(TesseractError):
         image.partition_image(
             filename=filename,
@@ -414,9 +408,8 @@ def test_partition_msg_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_partition_image_with_ocr_has_coordinates_from_filename(
-    filename=example_doc_path("img/english-and-korean.png"),
-):
+def test_partition_image_with_ocr_has_coordinates_from_filename():
+    filename = example_doc_path("img/english-and-korean.png")
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.OCR_ONLY)
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
     assert int_coordinates == [(14, 16), (14, 37), (381, 37), (381, 16)]
@@ -467,9 +460,8 @@ def test_partition_image_warns_with_ocr_languages(caplog):
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
-def test_add_chunking_strategy_on_partition_image(
-    filename=example_doc_path("img/layout-parser-paper-fast.jpg"),
-):
+def test_add_chunking_strategy_on_partition_image():
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
     elements = image.partition_image(filename=filename)
     chunk_elements = image.partition_image(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
@@ -477,9 +469,8 @@ def test_add_chunking_strategy_on_partition_image(
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_on_partition_image_hi_res(
-    filename=example_doc_path("img/layout-parser-paper-with-table.jpg"),
-):
+def test_add_chunking_strategy_on_partition_image_hi_res():
+    filename = example_doc_path("img/layout-parser-paper-with-table.jpg")
     elements = image.partition_image(
         filename=filename,
         strategy=PartitionStrategy.HI_RES,
@@ -615,8 +606,8 @@ def test_partition_image_has_filename(inference_results):
 def test_partition_image_element_extraction(
     file_mode,
     extract_image_block_to_payload,
-    filename=example_doc_path("img/embedded-images-tables.jpg"),
 ):
+    filename = example_doc_path("img/embedded-images-tables.jpg")
     extract_image_block_types = ["Image", "Table"]
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -641,9 +632,8 @@ def test_partition_image_element_extraction(
         )
 
 
-def test_partition_image_works_on_heic_file(
-    filename=example_doc_path("img/DA-1p.heic"),
-):
+def test_partition_image_works_on_heic_file():
+    filename = example_doc_path("img/DA-1p.heic")
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     titles = [el.text for el in elements if el.category == ElementType.TITLE]
     assert "CREATURES" in titles

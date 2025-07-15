@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
+from unstructured.documents.ontology import Form, FormFieldValue, Image, OntologyElement, Page
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
@@ -15,6 +15,26 @@ def remove_all_ids(html_str):
         if tag.has_attr("id"):
             del tag["id"]
     return str(soup)
+
+
+def test_parsing_header_and_footer_into_correct_ontologyelement():
+    input_html = """
+    <div class="Page">
+    <header class="Header">
+     this is a header
+    </header>
+    <footer class="Footer">
+     this is a footer
+    </footer>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+    assert len(page.children) == 2
+    header, footer = page.children
+    assert header.text == "this is a header"
+    assert header.html_tag_name == "header"
+    assert footer.text == "this is a footer"
+    assert footer.html_tag_name == "footer"
 
 
 def test_wrong_html_parser_causes_paragraph_to_be_nested_in_div():
@@ -672,3 +692,24 @@ def test_get_text_when_recursion_limit_activated():
         last_child = last_child.children[0]
 
     assert last_child.to_text() == "some text"
+
+
+def test_uncategorizedtest_has_image_and_no_text():
+    # language=HTML
+    base_html = _wrap_with_body(
+        """
+        <div class="Page">
+    <div class="UncategorizedText">
+        <img src="https://www.example.com/image.jpg"/>
+    </div>
+    </div>
+    """
+    )
+
+    base_html = indent_html(base_html)
+
+    ontology: OntologyElement = parse_html_to_ontology(base_html)
+
+    element = ontology.children[0].children[0]
+    assert type(element) is Image
+    assert element.css_class_name == "Image"

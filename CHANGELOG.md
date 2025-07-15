@@ -1,12 +1,168 @@
-## 0.17.1
+## 0.18.5
+
+### Enhancements
+
+- **Bump dependencies and remove lingering Python 3.9 artifacts** Cleaned up some references to 3.9 that were left When we dropped Python 3.9 support.
+- **`text_as_html` for Table element now keeps `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for `img` tag in the table element's `metadata.text_as_html`.
+
+### Features
+
+### Fixes
+- **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
+
+## 0.18.4
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+- **Increase CSV field limit** Addresses failures in partition for csv files with large fields
 
-- **Use the string value `TableChunk` for the value of the `type` field when an element is serialized into a dictionary. That is, if the element is of type `TableChunk`. This is rather than using the string value `Table`.
+## 0.18.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Upgrade Pillow to 11.3.0** Addresses a high priority CVE
+
+## 0.18.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
+- **Failproof docx malformed or merged tables** This fix prevents docx file with complex or vertical merges or malformed tables from failing at `tc_at_grid_offset` and raised `ValueError: no tc element at grid_offset=X`.
+- **partition_md can read special characters on non- utf-8 files** `partition_md` reads the file as utf-8 previously. Now it uses `read_txt_file` that reads file with detected encoding.
+- xml code not getting escaped in a code block in a markdown file when in partition
+- **Fixes parsing HTML header and footer** Previously header and footer texts are partitioned as `UncategorizedText` or as the nested structure like `Title`. Now they are properly partitioned as `Header` and `Footer` element types.
+
+## 0.18.1
+
+### Enhancements
+
+### Features
+- **Add DocumentData element type** This is helpful in scenarios where there is large data that does not make sense to represent across each element in the document.
+
+### Fixes
+- The `encoding` property of the `_CsvPartitioningContext` is now properly used.
+
+## 0.18.0
+
+### Enhancements
+
+### Features
+- Upgraded Python version to 3.12
+
+### Fixes
+- Fix type error when `result_file_type` is expected to be a `FileType` but is `None`
+- Fix chunking for elements with None text that has AttributeError 'NoneType' object has no attribute 'strip'.
+- Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
+- Fix bs4 deprecation warnings by updating `findAll()` with `find_all()`.
+
+## 0.17.10
+- Drop Python 3.9 support as it reaches EOL in October 2025
+- Update pip-compile script to use Python 3.10 and newer
+- Update all packages using pip-compile
+
+## 0.17.9
+- Patch various CVEs
+
+## 0.17.8
+
+### Enhancements
+- **Bump `unstructured-inference` to `1.0.5`** It includes critical fix to ensure inference model initialization is thread safe
+
+### Features
+
+### Fixes
+
+## 0.17.7
+
+### Enhancements
+- **Updated Docker file with ENV HF_HUB_OFFLINE=1 to prevent the contianer from trying to access the internet
+
+### Features
+
+### Fixes
+- **Fix image extraction for PNG files.** When `extract_image_block_to_payload` is True, and the image is a PNG, we get a Pillow error. We need to remove the PNG transparency layer before saving the image.
+- **Fix logger deprecation warning**: Replaced usage of `logger.warn` with `logger.warning` to comply with the Python logging standards.
+- **Throw validation error when json is passed with invalid unstructured json
+
+## 0.17.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+- The sort_page_element() use the element id to sort the elements.
+Two executions of the same code, on the same file, produce different results. The order of the elements is random.
+This makes it impossible to write stable unit tests, for example, or to obtain reproducible results.
+- **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements, meaning text objects that are found outside of Object Detection objects which get mapped to *inferred* elements. (*extracted* and *inferred* elements get merged together to form the list of `Element`s returned by `pdf_partition()`)
+- Resolve open CVEs
+- Properly handle the case when an element's `text` attribute is None
+
+
+## 0.17.5
+
+### Enhancements
+- **Remove test and dev dependencies from docker image.** This reduces the docker image size slightly and reduces potential security vulnerabilities.
+
+### Features
+
+### Fixes
+- **Removed out of date ubuntu Dockerfile.** The Dockerfile was out of date and non-functional.
+- **Fix for 'PSSyntaxError' import error: "cannot import name 'PSSyntaxError' from 'pdfminer.pdfparser'"** PSSyntaxError needed to be imported from its source 'pdfminer.psexceptions'.
+
+## 0.17.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Deprecate `stage_for_label_studio` and drop `label_studio_sdk` dependency.** This resolves a CVE due to the dependency on `label_studio_sdk`.
+
+## 0.17.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Resolve open CVEs
+
+## 0.17.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes wrong detection of office files** certain office files wrongly identified as .ZIP when office(.docx,.xlsx and .pptx) files containing files other than word/document.xml, xl/workbook.xml and ppt/presentation.xml respectively will now be identified correctly by looking for word/document\*.xml, xl/workbook\*.xml and ppt/presentation\*.xml
+
+## 0.17.2
+
+* Fix Image in a <div> tag is "UncategorizedText" with no .text
+
+## 0.17.1
+
+### Enhancements
+
+- **Add image_url of images in html partitioner** `<img>` tags with non-data content include a new image_url metadata field with the content of the src attribute.
+
+- **Use `lxml` instead of `bs4` to parse hOCR data.** `lxml` is much faster than `bs4` given the hOCR data format is regular (garanteed because it is programatically generated)
+
+- **bump `numpy` to `>2`**. And upgrade `paddlepaddle`, `unstructured-paddleocr`, `onnx` so they are compatible with `numpy>2`.
+
+### Features
+
+### Fixes
 
 ## 0.17.0
 
@@ -85,6 +241,7 @@
 ### Fixes
 
 - **Fix file type detection for NDJSON files** NDJSON files were being detected as JSON due to having the same mime-type.
+- Base-image was updated to resolved CVEs, running pipline to manually build
 
 ## 0.16.20
 

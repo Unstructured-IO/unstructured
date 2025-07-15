@@ -6,7 +6,7 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from pdfminer.psparser import PSSyntaxError
+from pdfminer.psexceptions import PSSyntaxError
 from pydantic import BaseModel
 
 from unstructured.logger import logger
