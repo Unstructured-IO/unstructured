@@ -1,9 +1,17 @@
-## 0.18.6
+## 0.18.7
 
 ### Enhancements
 
 ### Features
 - **Add language detection for PDFs** Add document and element level language detection to PDFs.
+
+### Fixes
+
+## 0.18.6
+
+### Enhancements
+
+### Features
 
 ### Fixes
 - **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
