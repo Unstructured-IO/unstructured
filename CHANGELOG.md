@@ -1,3 +1,12 @@
+## 0.18.7
+
+### Enhancements
+
+### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
+
+### Fixes
+
 ## 0.18.6
 
 ### Enhancements
