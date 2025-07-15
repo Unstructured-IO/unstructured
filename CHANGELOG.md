@@ -1,3 +1,13 @@
+## 0.17.1
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Use the string value `TableChunk` for the value of the `type` field when an element is serialized into a dictionary. That is, if the element is of type `TableChunk`. This is rather than using the string value `Table`.
+
 ## 0.17.0
 
 ### Enhancements
