@@ -28,6 +28,7 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, Table, Text, Title
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.xlsx import (
     _ConnectedComponent,
     _SubtableParser,
@@ -166,6 +167,11 @@ def test_partition_xlsx_from_file_with_header():
     e = elements[0]
     assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     assert e.metadata.text_as_html is not None
+
+
+def test_partition_xlsx_password_protected_raises_exception():
+    with pytest.raises(UnprocessableEntityError):
+        partition_xlsx(filename="example-docs/password_protected.xlsx")
 
 
 # -- .metadata.last_modified ---------------------------------------------------------------------
