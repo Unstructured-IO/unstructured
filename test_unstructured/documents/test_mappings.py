@@ -12,9 +12,9 @@ from unstructured.documents.ontology import OntologyElement
 
 
 def test_if_all_html_tags_have_default_ontology_type():
-    html_tag_to_possible_ontology_classes: dict[str, list[Type[ontology.OntologyElement]]] = (
-        defaultdict(list)
-    )
+    html_tag_to_possible_ontology_classes: dict[
+        str, list[Type[ontology.OntologyElement]]
+    ] = defaultdict(list)
 
     for ontology_class in ALL_ONTOLOGY_ELEMENT_TYPES:
         for tag in ontology_class().allowed_tags:

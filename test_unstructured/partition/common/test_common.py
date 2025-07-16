@@ -331,7 +331,6 @@ def test_normalize_layout_element_bulleted_list():
 
 
 class MockRunOutput:
-
     def __init__(self, returncode, stdout, stderr):
         self.returncode = returncode
         self.stdout = stdout

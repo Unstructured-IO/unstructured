@@ -1600,7 +1600,6 @@ def test_partition_pdf_with_password(file_mode, strategy):
 
 
 def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
-
     pdf.partition_pdf(
         filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
         strategy=PartitionStrategy.HI_RES,
