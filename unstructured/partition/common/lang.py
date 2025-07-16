@@ -487,7 +487,7 @@ def apply_lang_metadata(
     if not isinstance(elements, list):
         elements = list(elements)
 
-    full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
+    full_text = " ".join(str(e.text) for e in elements if hasattr(e, "text") and e.text)
     detected_languages = detect_languages(text=full_text, languages=languages)
     if (
         detected_languages is not None
@@ -501,7 +501,8 @@ def apply_lang_metadata(
     else:
         for e in elements:
             if hasattr(e, "text"):
-                e.metadata.languages = detect_languages(e.text)
+                text_value = str(e.text) if e.text is not None else ""
+                e.metadata.languages = detect_languages(text_value)
                 yield e
             else:
                 yield e
