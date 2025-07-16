@@ -1,3 +1,12 @@
+## 0.18.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate
+
 ## 0.18.7
 
 ### Enhancements
