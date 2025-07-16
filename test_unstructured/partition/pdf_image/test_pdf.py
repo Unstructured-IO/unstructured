@@ -570,6 +570,49 @@ def test_partition_pdf_strategies_keep_languages_metadata(strategy):
 
 
 @pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_pdf_detects_document_language(strategy):
+    filename = example_doc_path("language-docs/fr_olap.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        url=None,
+        strategy=strategy,
+    )
+
+    assert len(elements) > 0
+    assert elements[0].metadata.languages == ["fra"]
+    assert elements[-1].metadata.languages == ["fra"]
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_pdf_detects_language_per_element(strategy):
+    filename = example_doc_path("language-docs/fr_olap.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        url=None,
+        strategy=strategy,
+        detect_language_per_element=True,
+    )
+
+    assert len(elements) > 0
+    assert elements[0].metadata.languages == ["fra"]
+    assert elements[-1].metadata.languages == ["eng"]
+
+
+@pytest.mark.parametrize(
     "ocr_mode",
     [
         "entire_page",
