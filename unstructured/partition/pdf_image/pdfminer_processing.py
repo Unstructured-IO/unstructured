@@ -323,9 +323,9 @@ def array_merge_inferred_layout_with_extracted_layout(
         )
         # unfortunately slice uses "fancy" indexing and it generates a copy instead of a view, which
         # was intentional by design to avoid unintended modification of the original data
-        inferred_layout_to_proc.element_coords[
-            inferred_to_proc_at_start
-        ] = updated_inferred.element_coords
+        inferred_layout_to_proc.element_coords[inferred_to_proc_at_start] = (
+            updated_inferred.element_coords
+        )
 
         if np.array_equal(extracted_to_proc_start, extracted_to_proc) and np.array_equal(
             inferred_to_proc_at_start, inferred_to_proc
@@ -349,13 +349,13 @@ def array_merge_inferred_layout_with_extracted_layout(
                 ],
             ),
         )
-        inferred_to_keep[
-            inferred_to_proc
-        ] = _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
-            extracted_layout.slice(extracted_to_keep),
-            inferred_layout_to_proc.slice(inferred_to_proc),
-            inferred_to_keep[inferred_to_proc],
-            subregion_threshold,
+        inferred_to_keep[inferred_to_proc] = (
+            _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
+                extracted_layout.slice(extracted_to_keep),
+                inferred_layout_to_proc.slice(inferred_to_proc),
+                inferred_to_keep[inferred_to_proc],
+                subregion_threshold,
+            )
         )
 
     # ==== RULE 5. all else -> keep extracted region; note we also keep extracted image regions

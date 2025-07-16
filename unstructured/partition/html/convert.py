@@ -92,9 +92,9 @@ class ImageElementHtml(ElementHtml):
         exclude_binary_image_data = kwargs.get("exclude_binary_image_data", False)
         if self.element.metadata.image_base64 and not exclude_binary_image_data:
             image_mime_type = self.element.metadata.image_mime_type or "image/png"
-            element_html[
-                "src"
-            ] = f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
+            element_html["src"] = (
+                f"data:{image_mime_type};base64,{self.element.metadata.image_base64}"
+            )
         element_html["alt"] = self.element.text
 
 
