@@ -1,4 +1,4 @@
-## 0.18.7-dev0
+## 0.18.9-dev0
 
 ### Enhancements
 
@@ -6,6 +6,15 @@
 - **Convert elements to markdown for output** Added function to convert elements to markdown format for easy viewing.
 
 ### Fixes
+
+## 0.18.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate
 
 ## 0.18.7
 
