@@ -147,13 +147,16 @@ class OntologyElement(BaseModel):
         return None
 
 
-def remove_ids_and_class_from_table(soup: BeautifulSoup) -> BeautifulSoup:
+def remove_ids_and_class_from_table(
+    soup: BeautifulSoup, class_attr_to_keep: list[str] = ["img", "input"]
+) -> BeautifulSoup:
     """
     Remove id and class attributes from tags inside tables,
-    except preserve class attributes for img tags.
+    except preserve class attributes for selected tags.
 
     Args:
         soup: BeautifulSoup object containing the HTML
+        class_attr_to_keep: a list of tag names whose class attr will be kept
 
     Returns:
         BeautifulSoup: Modified soup with attributes removed
@@ -162,7 +165,7 @@ def remove_ids_and_class_from_table(soup: BeautifulSoup) -> BeautifulSoup:
         if tag.name.lower() == "table":  # type: ignore
             continue  # We keep table tag
         tag.attrs.pop("id", None)  # type: ignore
-        if tag.name.lower() != "img":  # type: ignore
+        if tag.name.lower() not in class_attr_to_keep:  # type: ignore
             tag.attrs.pop("class", None)  # type: ignore
     return soup
 
