@@ -192,10 +192,10 @@ class _XlsxPartitionerOptions:
         try:
             office_file = OfficeFile(io.BytesIO(self._file_bytes))
         except FileFormatError as e:
-            raise UnprocessableEntityError(e)
+            raise UnprocessableEntityError("Not a valid XLSX file.") from e
 
         if office_file.is_encrypted():
-            raise UnprocessableEntityError("File is password protected.")
+            raise UnprocessableEntityError("XLSX file is password protected.")
 
         return pd.read_excel(
             io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
