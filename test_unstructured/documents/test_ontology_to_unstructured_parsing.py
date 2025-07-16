@@ -37,6 +37,10 @@ def test_remove_ids_and_class_from_table():
             <td><IMG class="Signature" alt="cell 3"/></td>
             <td>cell 4</td>
         </tr>
+        <tr>
+            <td><input class="Checkbox" type="checkbox"/></td>
+            <td>Option 1</td>
+        </tr>
     </table>
     """
     soup = BeautifulSoup(html_text, "html.parser")
@@ -51,6 +55,10 @@ def test_remove_ids_and_class_from_table():
 <tr>
 <td><img alt="cell 3" class="Signature"/></td>
 <td>cell 4</td>
+</tr>
+<tr>
+<td><input class="Checkbox" type="checkbox"/></td>
+<td>Option 1</td>
 </tr>
 </table>
 """
