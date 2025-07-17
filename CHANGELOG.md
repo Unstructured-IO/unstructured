@@ -1,3 +1,12 @@
+## 0.18.10-dev0
+
+### Enhancements
+- **Updated CodeQL** Updated CodeQL GHA to v3 from deprecated v2.
+
+### Features
+
+### Fixes
+
 ## 0.18.9
 
 ### Enhancements
