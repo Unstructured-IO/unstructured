@@ -1,3 +1,12 @@
+## 0.18.10
+
+### Enhancements
+
+### Features
+- **Add OCR_AGENT_CACHE_SIZE environment variable** Added configurable cache size for OCR agents to control memory usage.
+
+### Fixes
+
 ## 0.18.10-dev0
 
 ### Enhancements
