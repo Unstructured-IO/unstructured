@@ -4,8 +4,7 @@
 onnx>=1.17.0
 onnxruntime>=1.19.0
 pdf2image
-pdfminer.six
-pikepdf
+paves
 pi_heif
 pypdf
 google-cloud-vision

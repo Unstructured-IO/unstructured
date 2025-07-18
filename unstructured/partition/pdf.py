@@ -10,9 +10,7 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
-import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
-from pdfminer.utils import open_filename
+from paves.miner import LTContainer, LTImage, LTItem, LTTextBox, resolve1
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
@@ -93,17 +91,10 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     pass
-
-
-# Correct a bug that was introduced by a previous patch to
-# pdfminer.six, causing needless and unsuccessful repairing of PDFs
-# which were not actually broken.
-patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -439,38 +430,23 @@ def _partition_pdf_with_pdfminer(
     """
 
     exactly_one(filename=filename, file=file)
-    if filename:
-        with open_filename(filename, "rb") as fp:
-            fp = cast(IO[bytes], fp)
-            elements = _process_pdfminer_pages(
-                fp=fp,
-                filename=filename,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified,
-                starting_page_number=starting_page_number,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                **kwargs,
-            )
-
-    elif file:
-        elements = _process_pdfminer_pages(
-            fp=file,
-            filename=filename,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified,
-            starting_page_number=starting_page_number,
-            password=password,
-            pdfminer_config=pdfminer_config,
-            **kwargs,
-        )
+    elements = _process_pdfminer_pages(
+        fp=file,
+        filename=filename,
+        languages=languages,
+        metadata_last_modified=metadata_last_modified,
+        starting_page_number=starting_page_number,
+        password=password,
+        pdfminer_config=pdfminer_config,
+        **kwargs,
+    )
 
     return elements
 
 
-@requires_dependencies("pdfminer")
+@requires_dependencies("paves")
 def _process_pdfminer_pages(
-    fp: IO[bytes],
+    fp: Optional[IO[bytes]],
     filename: str,
     metadata_last_modified: Optional[str],
     languages: Optional[list[str]] = None,
@@ -485,7 +461,8 @@ def _process_pdfminer_pages(
     elements = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
+        open_pdfminer_pages_generator(fp, filename, password=password,
+                                      pdfminer_config=pdfminer_config),
         start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
@@ -497,8 +474,9 @@ def _process_pdfminer_pages(
             width=width,
             height=height,
         )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+        annots = resolve1(page.attrs.get("Annots"))
+        if annots:
+            annotation_list = get_uris(annots, height, coordinate_system, page_number)
 
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
@@ -1028,19 +1006,6 @@ def _extract_text(item: LTItem) -> str:
         # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
-
-
-# Some pages with a ICC color space do not follow the pdf spec
-# They throw an error when we call interpreter.process_page
-# Since we don't need color info, we can just drop it in the pdfminer code
-# See #2059
-@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
-def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
-    resources = args[0]
-    if "ColorSpace" in resources:
-        del resources["ColorSpace"]
-
-    return wrapped(resources)
 
 
 def _combine_list_elements(

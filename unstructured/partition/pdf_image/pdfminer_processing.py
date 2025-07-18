@@ -4,9 +4,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTTextBox
-from pdfminer.pdftypes import PDFObjRef
-from pdfminer.utils import open_filename
+from paves.miner import LTChar, LTTextBox, PDFObjRef, resolve1
 from unstructured_inference.config import inference_config
 from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
 from unstructured_inference.inference.elements import Rectangle
@@ -43,12 +41,11 @@ def process_file_with_pdfminer(
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
-    with open_filename(filename, "rb") as fp:
-        fp = cast(BinaryIO, fp)
-        extracted_layout, layouts_links = process_data_with_pdfminer(
-            file=fp, dpi=dpi, password=password, pdfminer_config=pdfminer_config
-        )
-        return extracted_layout, layouts_links
+
+    extracted_layout, layouts_links = process_data_with_pdfminer(
+        file=None, filename=filename, dpi=dpi, password=password, pdfminer_config=pdfminer_config
+    )
+    return extracted_layout, layouts_links
 
 
 def _validate_bbox(bbox: list[int | float]) -> bool:
@@ -434,6 +431,7 @@ def process_page_layout_from_pdfminer(
 @requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
+    filename: Optional[str] = None,
     dpi: int = 200,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
@@ -448,7 +446,7 @@ def process_data_with_pdfminer(
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(file, password=password, pdfminer_config=pdfminer_config)
+        open_pdfminer_pages_generator(file, filename, password=password, pdfminer_config=pdfminer_config)
     ):
         width, height = page_layout.width, page_layout.height
 
@@ -457,8 +455,9 @@ def process_data_with_pdfminer(
             width=width,
             height=height,
         )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+        annots = resolve1(page.attrs.get("Annots"))
+        if annots:
+            annotation_list = get_uris(annots, height, coordinate_system, page_number)
 
         layout, urls_metadata = process_page_layout_from_pdfminer(
             annotation_list, page_layout, height, page_number, coef
