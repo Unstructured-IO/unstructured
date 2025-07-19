@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union
 
 import numpy as np
 from paves.miner import LTChar, LTTextBox, PDFObjRef, resolve1
@@ -446,7 +446,9 @@ def process_data_with_pdfminer(
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(file, filename, password=password, pdfminer_config=pdfminer_config)
+        open_pdfminer_pages_generator(
+            file, filename, password=password, pdfminer_config=pdfminer_config
+        )
     ):
         width, height = page_layout.width, page_layout.height
 

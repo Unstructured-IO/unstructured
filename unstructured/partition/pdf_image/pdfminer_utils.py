@@ -66,8 +66,10 @@ def rect_to_bbox(
 
 @requires_dependencies("paves")
 def open_pdfminer_pages_generator(
-        fp: Optional[BinaryIO] = None, filename: Optional[str] = None,
-        password: Optional[str] = None, pdfminer_config: Optional[PDFMinerConfig] = None
+    fp: Optional[BinaryIO] = None,
+    filename: Optional[str] = None,
+    password: Optional[str] = None,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
     laparams_kwargs = pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
@@ -77,10 +79,10 @@ def open_pdfminer_pages_generator(
         from functools import partial
 
         assert filename
-        with playa.open(filename, space="page", password=password,
-                        max_workers=min(1, os.cpu_count() // 2)) as doc:
-            yield from zip(doc.pages,
-                           doc.pages.map(partial(extract_page, laparams=laparams)))
+        with playa.open(
+            filename, space="page", password=password, max_workers=min(1, os.cpu_count() // 2)
+        ) as doc:
+            yield from zip(doc.pages, doc.pages.map(partial(extract_page, laparams=laparams)))
     else:
         doc = playa.Document(fp, space="page", password=password)
         for page in doc.pages:

@@ -461,8 +461,9 @@ def _process_pdfminer_pages(
     elements = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, filename, password=password,
-                                      pdfminer_config=pdfminer_config),
+        open_pdfminer_pages_generator(
+            fp, filename, password=password, pdfminer_config=pdfminer_config
+        ),
         start=starting_page_number,
     ):
         width, height = page_layout.width, page_layout.height
