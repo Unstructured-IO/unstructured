@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams
+from paves.miner import LAParams
 from PIL import Image
 from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import (

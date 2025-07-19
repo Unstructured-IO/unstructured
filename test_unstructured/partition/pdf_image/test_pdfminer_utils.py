@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from pdfminer.layout import LTContainer, LTTextLine
+from paves.miner import LTContainer, LTTextLine
 
 from unstructured.partition.pdf_image.pdfminer_utils import extract_text_objects
 

@@ -1,6 +1,7 @@
 ## 0.18.11-dev0
 
 ### Enhancements
+- **Switch from pdfminer.six to PAVÉS** Increases robustness of PDF extraction and uses multiple CPUs when possible.  No more need to patch pdfminer or repair pdfs with pikepdf.
 
 ### Features
 
