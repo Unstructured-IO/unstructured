@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
+import playa
 from paves.miner import LTContainer, LTImage, LTItem, LTTextBox, resolve1
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
-import playa
 from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
