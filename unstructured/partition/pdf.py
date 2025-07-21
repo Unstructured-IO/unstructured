@@ -13,7 +13,7 @@ import numpy as np
 from paves.miner import LTContainer, LTImage, LTItem, LTTextBox, resolve1
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
-from pypdf import PdfReader
+import playa
 from unstructured_inference.inference.layout import DocumentLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
@@ -539,10 +539,11 @@ def _get_pdf_page_number(
     file: Optional[bytes | IO[bytes]] = None,
 ) -> int:
     if file:
-        number_of_pages = PdfReader(file).get_num_pages()
+        number_of_pages = len(playa.Document(file).pages)
         file.seek(0)
     elif filename:
-        number_of_pages = PdfReader(filename).get_num_pages()
+        with playa.open(filename) as pdf:
+            number_of_pages = len(pdf.pages)
     else:
         raise ValueError("Either 'file' or 'filename' must be provided.")
     return number_of_pages
