@@ -5,6 +5,7 @@ onnx>=1.17.0
 onnxruntime>=1.19.0
 pdf2image
 paves
+playa-pdf>=0.6.2
 pi_heif
 pypdf
 google-cloud-vision
