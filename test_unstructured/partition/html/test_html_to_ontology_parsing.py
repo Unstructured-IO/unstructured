@@ -1,14 +1,19 @@
-from bs4 import BeautifulSoup
-
-from unstructured.documents.ontology import Form, FormFieldValue, Image, OntologyElement, Page
-from unstructured.partition.html.html_utils import indent_html
-from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
-
-import pytest
 from typing import Optional, Type
 
-from unstructured.documents.ontology import Checkbox, RadioButton, FormFieldValue
-from unstructured.partition.html.transformations import parse_html_to_ontology
+import pytest
+from bs4 import BeautifulSoup
+
+from unstructured.documents.ontology import (
+    Checkbox,
+    Form,
+    FormFieldValue,
+    Image,
+    OntologyElement,
+    Page,
+    RadioButton,
+)
+from unstructured.partition.html.html_utils import indent_html
+from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
 
 def _wrap_with_body(html: str) -> str:
@@ -722,7 +727,7 @@ def test_uncategorizedtest_has_image_and_no_text():
 
 
 @pytest.mark.parametrize(
-    "input_type, expected_class",
+    ("input_type", "expected_class"),
     [
         ("checkbox", Checkbox),
         ("radio", RadioButton),
