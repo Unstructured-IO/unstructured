@@ -74,6 +74,8 @@ def open_pdfminer_pages_generator(
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
     laparams_kwargs = pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
     laparams = LAParams(**laparams_kwargs)
+    if password is None:
+        password = ""  # playa's default
 
     if fp is None:
         from functools import partial
