@@ -1,3 +1,8 @@
+## 0.18.11-dev1
+
+### Features
+- **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).
+
 ## 0.18.11-dev0
 
 ### Enhancements
