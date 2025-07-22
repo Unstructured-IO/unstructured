@@ -4,6 +4,8 @@
 - **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
 
 ### Features
+- **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).
+
 
 ### Fixes
 - **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.

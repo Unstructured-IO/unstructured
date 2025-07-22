@@ -1,6 +1,17 @@
+from typing import Optional, Type
+
+import pytest
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import Form, FormFieldValue, Image, OntologyElement, Page
+from unstructured.documents.ontology import (
+    Checkbox,
+    Form,
+    FormFieldValue,
+    Image,
+    OntologyElement,
+    Page,
+    RadioButton,
+)
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
@@ -330,7 +341,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
-                <input class="Checkbox" type="radio" name="option1" value="2" checked />
+                <input class="RadioButton" type="radio" name="option1" value="2" checked />
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
@@ -713,3 +724,30 @@ def test_uncategorizedtest_has_image_and_no_text():
     element = ontology.children[0].children[0]
     assert type(element) is Image
     assert element.css_class_name == "Image"
+
+
+@pytest.mark.parametrize(
+    ("input_type", "expected_class"),
+    [
+        ("checkbox", Checkbox),
+        ("radio", RadioButton),
+        ("text", FormFieldValue),  # explicit non-specialised type
+        (None, FormFieldValue),  # missing type attribute
+    ],
+)
+def test_input_tag_type_is_mapped_to_correct_ontology_class(
+    input_type: Optional[str], expected_class: Type[OntologyElement]
+) -> None:
+    """Ensure bare <input> tags are classified based on their *type* attribute."""
+
+    type_attr = f' type="{input_type}"' if input_type is not None else ""
+    html_snippet = f'<div class="Page"><input{type_attr} name="field" /></div>'
+
+    page = parse_html_to_ontology(html_snippet)
+    assert len(page.children) == 1
+    element = page.children[0]
+
+    # Validate chosen ontology class and preserved HTML semantics
+    assert isinstance(element, expected_class)
+    assert element.html_tag_name == "input"
+    assert element.css_class_name == expected_class.__name__
