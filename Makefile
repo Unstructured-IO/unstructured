@@ -342,3 +342,8 @@ run-jupyter:
 html-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-html && \
 	test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+
+.PHONY: markdown-fixtures-update
+markdown-fixtures-update:
+	rm -r test_unstructured_ingest/expected-structured-output-markdown && \
+	test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown

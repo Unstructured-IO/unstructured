@@ -104,7 +104,6 @@ def extract_text_regions_info(layout: List[List[TextRegion]]) -> dict:
 
 
 class ExtractedLayoutDumper(LayoutDumper):
-
     layout_source = "pdfminer"
 
     def __init__(self, layout: List[List[TextRegion]]):
@@ -115,7 +114,6 @@ class ExtractedLayoutDumper(LayoutDumper):
 
 
 class OCRLayoutDumper(LayoutDumper):
-
     layout_source = "ocr"
 
     def __init__(self):
@@ -162,7 +160,6 @@ def _extract_final_element_page_size(element: Element) -> dict:
 
 
 class FinalLayoutDumper(LayoutDumper):
-
     layout_source = "final"
 
     def __init__(self, layout: List[Element]):

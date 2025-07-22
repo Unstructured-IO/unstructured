@@ -1,4 +1,4 @@
-## 0.18.8-dev0
+## 0.18.11-dev1
 
 ### Enhancements
 - **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
@@ -6,10 +6,42 @@
 ### Features
 
 ### Fixes
+- **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.
+
+## 0.18.10
+
+### Enhancements
+- **Updated CodeQL** Updated CodeQL GHA to v3 from deprecated v2.
+
+### Features
+- **Add OCR_AGENT_CACHE_SIZE environment variable** Added configurable cache size for OCR agents to control memory usage.
+
+### Fixes
+
+## 0.18.9
+
+### Enhancements
+
+### Features
+- **Convert elements to markdown for output** Added function to convert elements to markdown format for easy viewing.
+
+### Fixes
+- *Language detection nit** Handle empty text
+
+## 0.18.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate
 
 ## 0.18.7
 
 ### Enhancements
+
+- **`text_as_html` for Table element now keeps both `input` and `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for both `input` and `img` tag in the table element's `metadata.text_as_html`.
 
 ### Features
 - **Add language detection for PDFs** Add document and element level language detection to PDFs.

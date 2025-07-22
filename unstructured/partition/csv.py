@@ -127,7 +127,7 @@ class _CsvPartitioningContext:
             )
 
         try:
-            return sniffer.sniff(data, delimiters=",;").delimiter
+            return sniffer.sniff(data, delimiters=",;|").delimiter
         except csv.Error:
             # -- sniffing will fail on single-column csv as no default can be assumed --
             return None

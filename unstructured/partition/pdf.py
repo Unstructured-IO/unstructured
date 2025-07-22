@@ -1235,7 +1235,6 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
-
                 element.metadata.links = (
                     get_links_in_element(links, layout_element.bbox) if links else []
                 )
