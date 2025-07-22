@@ -1,8 +1,10 @@
-## 0.18.11-dev0
+## 0.18.11-dev1
 
 ### Enhancements
 
 ### Features
+- **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).
+
 
 ### Fixes
 - **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.
