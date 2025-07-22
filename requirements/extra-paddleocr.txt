@@ -20,7 +20,7 @@ beautifulsoup4==4.13.4
     # via
     #   -c requirements/base.txt
     #   unstructured-paddleocr
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   -c requirements/base.txt
     #   httpcore

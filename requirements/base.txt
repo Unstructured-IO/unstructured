@@ -10,7 +10,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.13.4
     # via -r ./base.in
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   httpcore
     #   httpx
@@ -18,10 +18,9 @@ certifi==2025.7.9
     #   unstructured-client
 cffi==1.17.1
     # via cryptography
-chardet==5.2.0
-    # via -r ./base.in
 charset-normalizer==3.4.2
     # via
+    #   -r ./base.in
     #   requests
     #   unstructured-client
 click==8.2.1
@@ -80,7 +79,7 @@ numpy==2.2.6
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
-orderly-set==5.4.1
+orderly-set==5.5.0
     # via deepdiff
 packaging==25.0
     # via
@@ -90,7 +89,7 @@ psutil==7.0.0
     # via -r ./base.in
 pycparser==2.22
     # via cffi
-pypdf==5.7.0
+pypdf==5.8.0
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client

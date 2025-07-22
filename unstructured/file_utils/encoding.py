@@ -1,6 +1,6 @@
 from typing import IO, Optional, Tuple, Union
 
-import chardet
+from charset_normalizer import detect
 
 from unstructured.partition.common.common import convert_to_bytes
 
@@ -70,11 +70,11 @@ def detect_file_encoding(
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
-    result = chardet.detect(byte_data)
+    result = detect(byte_data)
     encoding = result["encoding"]
     confidence = result["confidence"]
 
-    if encoding is None or confidence < ENCODE_REC_THRESHOLD:
+    if encoding is None or confidence is None or confidence < ENCODE_REC_THRESHOLD:
         # Encoding detection failed, fallback to predefined encodings
         for enc in COMMON_ENCODINGS:
             try:
