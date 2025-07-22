@@ -1224,14 +1224,14 @@ def test_partition_pdf_with_fast_finds_headers_footers():
 @pytest.mark.parametrize(
     ("filename", "expected_log"),
     [
-        # This one is *actually* an invalid PDF document
+        # This one is *actually* an invalid PDF document, but we no longer need to repair it
         ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
     ],
 )
 def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
     caplog.set_level(logging.INFO)
     assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
-    assert expected_log in caplog.text
+    assert expected_log not in caplog.text
 
 
 @pytest.mark.parametrize(

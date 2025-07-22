@@ -1,6 +1,7 @@
 ## 0.18.11-dev1
 
 ### Enhancements
+- **Switch from pdfminer.six to PAVÉS** Increases robustness of PDF extraction and uses multiple CPUs when possible.  No more need to patch pdfminer or repair pdfs with pikepdf.
 
 ### Features
 - **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).

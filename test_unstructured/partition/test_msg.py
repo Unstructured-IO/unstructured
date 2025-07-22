@@ -125,8 +125,8 @@ def test_partition_msg_can_process_attachments():
 
     assert all(e.metadata.filename == "fake-email-multiple-attachments.msg" for e in elements[:5])
     assert all(e.metadata.filename == "unstructured_logo.png" for e in elements[5:7])
-    assert all(e.metadata.filename == "dense_doc.pdf" for e in elements[7:343])
-    assert all(e.metadata.filename == "Engineering Onboarding.pptx" for e in elements[343:])
+    assert all(e.metadata.filename == "dense_doc.pdf" for e in elements[7:341])
+    assert all(e.metadata.filename == "Engineering Onboarding.pptx" for e in elements[341:])
     assert [e.text for e in elements[:5]] == [
         "Here are those documents.",
         "--",

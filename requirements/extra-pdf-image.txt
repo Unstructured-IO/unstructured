@@ -33,8 +33,6 @@ cryptography==45.0.5
     #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
-deprecated==1.2.18
-    # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
 filelock==3.18.0
@@ -88,10 +86,6 @@ jinja2==3.1.6
     # via torch
 kiwisolver==1.4.8
     # via matplotlib
-lxml==6.0.0
-    # via
-    #   -c requirements/base.txt
-    #   pikepdf
 markupsafe==3.0.2
     # via jinja2
 matplotlib==3.10.3
@@ -134,30 +128,30 @@ packaging==25.0
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
-    #   pikepdf
     #   transformers
     #   unstructured-pytesseract
 pandas==2.3.1
     # via unstructured-inference
+paves==0.6.1
+    # via -r extra-pdf-image.in
 pdf2image==1.17.0
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 pdfminer-six==20250327
     # via
-    #   -c requirements/deps/constraints.txt
-    #   -r ./extra-pdf-image.in
+    #   -c ./deps/constraints.txt
     #   unstructured-inference
 pi-heif==1.0.0
-    # via -r ./extra-pdf-image.in
-pikepdf==9.9.0
-    # via -r ./extra-pdf-image.in
+    # via -r extra-pdf-image.in
 pillow==11.3.0
     # via
     #   matplotlib
+    #   paves
     #   pdf2image
     #   pi-heif
-    #   pikepdf
     #   torchvision
     #   unstructured-pytesseract
+playa-pdf==0.6.2
+    # via paves
 proto-plus==1.26.1
     # via
     #   google-api-core
@@ -274,7 +268,6 @@ typing-extensions==4.14.1
     #   -c requirements/base.txt
     #   huggingface-hub
     #   onnx
-    #   pypdf
     #   torch
 tzdata==2025.2
     # via pandas
@@ -287,7 +280,3 @@ urllib3==2.5.0
     #   -c requirements/base.txt
     #   -c requirements/deps/constraints.txt
     #   requests
-wrapt==1.17.2
-    # via
-    #   -c requirements/base.txt
-    #   deprecated
