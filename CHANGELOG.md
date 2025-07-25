@@ -1,3 +1,12 @@
+## 0.18.12
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Prevent large file content in encoding exceptions** Replace UnicodeDecodeError with UnprocessableEntityError in encoding detection to avoid storing entire file content in exception objects, which can cause issues in logging and error reporting systems when processing large files.
+
 ## 0.18.11
 
 ### Enhancements
