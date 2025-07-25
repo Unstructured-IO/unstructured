@@ -1,6 +1,7 @@
 ## 0.18.12
 
 ### Enhancements
+- **VoyageAI's v3.5 models**
 
 ### Features
 
