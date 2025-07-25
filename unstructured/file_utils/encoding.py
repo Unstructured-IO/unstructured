@@ -2,8 +2,8 @@ from typing import IO, Optional, Tuple, Union
 
 from charset_normalizer import detect
 
-from unstructured.partition.common.common import convert_to_bytes
 from unstructured.errors import UnprocessableEntityError
+from unstructured.partition.common.common import convert_to_bytes
 
 ENCODE_REC_THRESHOLD = 0.8
 
