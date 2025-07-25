@@ -2,6 +2,7 @@ from typing import IO, Optional, Tuple, Union
 
 from charset_normalizer import detect
 
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.common.common import convert_to_bytes
 
 ENCODE_REC_THRESHOLD = 0.8
@@ -88,17 +89,26 @@ def detect_file_encoding(
             except (UnicodeDecodeError, UnicodeError):
                 continue
         else:
-            raise UnicodeDecodeError(
-                "Unable to determine the encoding of the file or match it with any "
-                "of the specified encodings.",
-                byte_data,
-                0,
-                len(byte_data),
-                "Invalid encoding",
-            )
+            # NOTE: Use UnprocessableEntityError instead of UnicodeDecodeError to avoid
+            # logging the entire file content. UnicodeDecodeError automatically stores
+            # the complete input data, which can be problematic for large files.
+            raise UnprocessableEntityError(
+                "Unable to determine file encoding after trying all common encodings. "
+                "File may be corrupted or in an unsupported format."
+            ) from None
 
     else:
-        file_text = byte_data.decode(encoding)
+        # NOTE: Catch UnicodeDecodeError to avoid logging the entire file content.
+        # UnicodeDecodeError automatically stores the complete input data in its
+        # 'object' attribute, which can cause issues with large files in logging
+        # and error reporting systems.
+        try:
+            file_text = byte_data.decode(encoding)
+        except (UnicodeDecodeError, UnicodeError):
+            raise UnprocessableEntityError(
+                f"File encoding detection failed: detected '{encoding}' but decode failed. "
+                f"File may be corrupted or in an unsupported format."
+            ) from None
 
     formatted_encoding = format_encoding_str(encoding)
 
