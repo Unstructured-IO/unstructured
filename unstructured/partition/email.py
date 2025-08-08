@@ -371,13 +371,13 @@ class _EmailPartitioner:
 class _AttachmentPartitioner:
     """Partitions an attachment to a MSG file."""
 
-    def __init__(self, attachment: MIMEPart, ctx: EmailPartitioningContext):
+    def __init__(self, attachment: EmailMessage, ctx: EmailPartitioningContext):
         self._attachment = attachment
         self._ctx = ctx
 
     @classmethod
     def iter_elements(
-        cls, attachment: MIMEPart, ctx: EmailPartitioningContext
+        cls, attachment: EmailMessage, ctx: EmailPartitioningContext
     ) -> Iterator[Element]:
         """Partition an attachment MIME-part from a MIME email message (.eml file)."""
         return cls(attachment, ctx)._iter_elements()
