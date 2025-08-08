@@ -1,3 +1,13 @@
+## 0.18.13
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Parse a wider variety of date formats in email headers** The `partition_email` function is now more robust to non-standard date formats, including ISO-8601 dates with "Z" suffixes. This prevents `ValueError` exceptions when partitioning emails with these date formats. 
+
 ## 0.18.12
 
 ### Enhancements
