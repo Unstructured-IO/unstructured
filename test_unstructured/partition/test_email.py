@@ -540,6 +540,10 @@ class DescribeEmailPartitionerOptions:
         ctx = EmailPartitioningContext(example_doc_path(f"eml/{date_format}"))
         assert ctx.metadata_last_modified == expected_date
 
+    def and_it_returns_none_when_date_header_is_invalid(self):
+        ctx = EmailPartitioningContext(example_doc_path("eml/test-invalid-date.eml"))
+        assert ctx._sent_date is None
+
     def and_it_falls_back_to_filesystem_last_modified_when_no_Date_header_is_present(
         self, get_last_modified_date_: Mock
     ):
