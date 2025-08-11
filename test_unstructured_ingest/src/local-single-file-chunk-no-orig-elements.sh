@@ -6,6 +6,8 @@
 # option which otherwise has no other coverage.
 # ------------------------------------------------------------------------------------------------
 
+# shellcheck disable=SC2329  # Functions are invoked indirectly
+
 set -e
 
 # -- Test Parameters: These vary by test file, others are common computed values --
