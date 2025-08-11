@@ -47,6 +47,7 @@ AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/ \
   --endpoint-url http://localhost:9000 \
+  --ambient-credentials \
   --work-dir "$WORK_DIR" \
   local \
   --output-dir "$OUTPUT_DIR"
