@@ -35,8 +35,7 @@ scripts/minio-test-helpers/create-and-check-minio.sh
 wait
 
 RUN_SCRIPT=${RUN_SCRIPT:-unstructured-ingest}
-AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
-  PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   s3 \
   --num-processes "$max_processes" \
   --download-dir "$DOWNLOAD_DIR" \
@@ -47,7 +46,8 @@ AWS_SECRET_ACCESS_KEY=$secret_key AWS_ACCESS_KEY_ID=$access_key \
   --verbose \
   --remote-url s3://utic-dev-tech-fixtures/ \
   --endpoint-url http://localhost:9000 \
-  --ambient-credentials \
+  --key "$access_key" \
+  --secret "$secret_key" \
   --work-dir "$WORK_DIR" \
   local \
   --output-dir "$OUTPUT_DIR"
