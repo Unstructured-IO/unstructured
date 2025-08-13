@@ -51,7 +51,7 @@ done
 find "$OUTPUT_DIR/azure" -type d -name 'unstructured_*' -exec rm -rf {} +
 
 # Normalize record_locator.path to drop unstructured_* in the download path
-python3 - <<'PY'
+python3 - "$OUTPUT_DIR/azure" <<'PY'
 import re, sys, pathlib
 root = pathlib.Path(sys.argv[1])
 for p in root.rglob('*.json'):
@@ -59,7 +59,7 @@ for p in root.rglob('*.json'):
     s2 = re.sub(r'(/download/azure)/unstructured_[^/]+/', r'\1/', s)
     if s2 != s:
         p.write_text(s2)
-PY "$OUTPUT_DIR/azure"
+PY
 
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
