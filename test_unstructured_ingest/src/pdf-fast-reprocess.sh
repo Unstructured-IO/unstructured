@@ -43,4 +43,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --output-dir "$OUTPUT_DIR"
 
+# Flatten outputs so paths match fixtures. New behavior for downloads in unstructured-ingest is to create a nested directory structure.
+mkdir -p "$OUTPUT_DIR/azure"
+find "$OUTPUT_DIR/azure" -type f -name '*.json' -path '*/unstructured_*/*' -print0 | while IFS= read -r -d '' f; do
+  mv "$f" "$OUTPUT_DIR/azure/$(basename "$f")"
+done
+find "$OUTPUT_DIR/azure" -type d -name 'unstructured_*' -exec rm -rf {} +
+
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
