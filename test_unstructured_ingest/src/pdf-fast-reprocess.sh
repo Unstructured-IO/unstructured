@@ -60,6 +60,4 @@ for p in root.rglob('*.json'):
     if s2 != s:
         p.write_text(s2)
 PY
-
-
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
