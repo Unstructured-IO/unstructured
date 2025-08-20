@@ -1,3 +1,13 @@
+## 0.18.14-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **change short text language detection log to debug** reduce warning level log spamming
+
 ## 0.18.13
 
 ### Enhancements
@@ -6,7 +16,7 @@
 
 ### Fixes
 
-- **Parse a wider variety of date formats in email headers** The `partition_email` function is now more robust to non-standard date formats, including ISO-8601 dates with "Z" suffixes. This prevents `ValueError` exceptions when partitioning emails with these date formats. 
+- **Parse a wider variety of date formats in email headers** The `partition_email` function is now more robust to non-standard date formats, including ISO-8601 dates with "Z" suffixes. This prevents `ValueError` exceptions when partitioning emails with these date formats.
 
 ## 0.18.12
 
