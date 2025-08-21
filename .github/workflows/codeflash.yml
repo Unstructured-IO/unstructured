@@ -3,7 +3,7 @@ name: CodeFlash
 on:
   pull_request:
     paths:
-      - '**'  # Trigger for all paths
+      - 'unstructured/**' 
 
   workflow_dispatch:
 

@@ -247,7 +247,6 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     """
     if len(text) == 0:
         return False
-    pass
 
     alpha_count = len([char for char in text if char.strip() and char.isalpha()])
     total_count = len([char for char in text if char.strip()])
