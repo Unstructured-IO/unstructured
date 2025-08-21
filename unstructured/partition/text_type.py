@@ -218,7 +218,6 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     """
     sentences = sent_tokenize(text)
     count = 0
-    # OPT: avoid call to word_tokenize if just counting words after punctuation removed
     for sentence in sentences:
         stripped = remove_punctuation(sentence)
         # Fast token count after punctuation is removed: just split on whitespace
