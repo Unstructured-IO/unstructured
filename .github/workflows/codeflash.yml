@@ -1,4 +1,4 @@
-name: CodeFlash
+name: Codeflash Optimization
 
 on:
   pull_request:
@@ -26,10 +26,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: 3.12
-      - name: Install Environment
+      - name: 📦 Install Environment
         run: |
           uv pip install "."
           uv pip install -r requirements/test.txt
           uv pip install codeflash
-      - name: ⚡️Codeflash Optimization
+      - name: ⚡️ Codeflash Optimization
         run: source .venv/bin/activate && codeflash
