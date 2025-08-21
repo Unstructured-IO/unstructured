@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+
 ### Features
 
 ### Fixes
