@@ -7,6 +7,7 @@
 ### Fixes
 
 - **change short text language detection log to debug** reduce warning level log spamming
+- Speed up function sentence_count by 59% (codeflash)
 
 ## 0.18.13
 
