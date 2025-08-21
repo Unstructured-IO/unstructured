@@ -3,12 +3,14 @@
 ### Enhancements
 
 - Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
 ### Features
 
 ### Fixes
 
 - **change short text language detection log to debug** reduce warning level log spamming
+
 
 ## 0.18.13
 
