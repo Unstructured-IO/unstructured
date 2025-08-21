@@ -245,11 +245,17 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
         If the proportion of non-alpha characters exceeds this threshold, the function
         returns False
     """
-    if len(text) == 0:
+    if not text:
         return False
 
-    alpha_count = len([char for char in text if char.strip() and char.isalpha()])
-    total_count = len([char for char in text if char.strip()])
+    alpha_count = 0
+    total_count = 0
+    for char in text:
+        if not char.isspace():
+            total_count += 1
+            if char.isalpha():
+                alpha_count += 1
+
     return ((alpha_count / total_count) < threshold) if total_count > 0 else False
 
 
