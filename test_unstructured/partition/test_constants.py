@@ -37,6 +37,16 @@ EXPECTED_TABLE_XLSX = (
     "</table>"
 )
 
+EXPECTED_TABLE_WITH_LINE_DELIMITER = (
+    "<table>"
+    "<tr><td>col1</td><td>col2</td><td>col3</td></tr>"
+    "<tr><td>a</td><td>b</td><td>c</td></tr>"
+    "<tr><td>d</td><td>e</td><td>f</td></tr>"
+    "<tr><td>g</td><td>h</td><td>i</td></tr>"
+    "</table>"
+)
+
+
 EXPECTED_TITLE = "Stanley Cups"
 
 EXPECTED_TEXT = (
@@ -53,6 +63,8 @@ EXPECTED_TEXT_WITH_EMOJI = (
 EXPECTED_TEXT_SEMICOLON_DELIMITER = (
     "Year Month Revenue Costs 2022 1 123 -123 2023 2 143,1 -814,38 2024 3 215,32 -11,08"
 )
+
+EXPECTED_TEXT_WITH_LINE_DELIMITER = "col1 col2 col3 a b c d e f g h i"
 
 EXPECTED_XLS_TABLE = (
     "<table><tr>"

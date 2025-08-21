@@ -63,7 +63,6 @@ class Describe_get_last_modified_date:
 
 
 class Describe_set_element_hierarchy:
-
     def it_applies_default_ruleset(self):
         elements = [
             Title(element_id="0", text="Title0"),

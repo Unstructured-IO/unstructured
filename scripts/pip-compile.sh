@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# python version must match lowest supported (3.9)
+# python version must match lowest supported (3.10)
 major=3
 minor=10
 if ! python -c "import sys; assert sys.version_info.major == $major and sys.version_info.minor == $minor"; then

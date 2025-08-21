@@ -34,7 +34,7 @@ class OCRAgent(ABC):
         return cls.get_instance(ocr_agent_cls_qname, language)
 
     @staticmethod
-    @functools.lru_cache(maxsize=None)
+    @functools.lru_cache(maxsize=env_config.OCR_AGENT_CACHE_SIZE)
     def get_instance(ocr_agent_module: str, language: str) -> "OCRAgent":
         module_name, class_name = ocr_agent_module.rsplit(".", 1)
         if module_name not in OCR_AGENT_MODULES_WHITELIST:

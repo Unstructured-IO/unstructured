@@ -46,7 +46,9 @@ def partition_epub(
     last_modified = get_last_modified_date(filename) if filename else None
 
     html_text = convert_file_to_html_text_using_pandoc(
-        source_format="epub", filename=filename, file=file
+        source_format="epub",
+        filename=filename,
+        file=file,
     )
 
     return partition_html(

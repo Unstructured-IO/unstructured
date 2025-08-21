@@ -737,7 +737,6 @@ def aggregate_embedded_text_by_block(
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
-
     links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
     results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
     links = [

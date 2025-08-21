@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OUTPUT_DIR=${1:-"$SCRIPT_DIR/structured-output-html"}
 INPUT_DIR="$SCRIPT_DIR/expected-structured-output"
-PYTHON_SCRIPT="$SCRIPT_DIR/../scripts/html/elements_json_to_html.py"
+PYTHON_SCRIPT="$SCRIPT_DIR/../scripts/convert/elements_json_to_format.py"
 EXCLUDE_IMG=0
 NO_GROUP=1
 

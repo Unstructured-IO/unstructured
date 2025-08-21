@@ -561,6 +561,7 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         strategy=PartitionStrategy.FAST,
         languages=None,
         metadata_filename=None,
+        detect_language_per_element=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
@@ -1301,6 +1302,27 @@ def test_auto_partition_passes_user_provided_languages_arg_to_PDF():
     assert all(e.metadata.languages == ["eng"] for e in elements)
 
 
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_auto_partition_detects_pdf_language_per_element(strategy):
+    filename = example_doc_path("language-docs/fr_olap.pdf")
+    elements = partition(
+        filename=filename,
+        strategy=strategy,
+        detect_language_per_element=True,
+    )
+
+    assert len(elements) > 0
+    assert elements[0].metadata.languages == ["fra"]
+    assert elements[-1].metadata.languages == ["eng"]
+
+
 def test_auto_partition_languages_argument_default_to_None_when_omitted():
     elements = partition(example_doc_path("handbook-1p.docx"), detect_language_per_element=True)
     # -- PageBreak and any other element with no text is assigned `None` --
@@ -1309,17 +1331,17 @@ def test_auto_partition_languages_argument_default_to_None_when_omitted():
 
 def test_auto_partition_default_does_not_overwrite_other_defaults():
     """`partition()` ["eng"] default does not overwrite ["auto"] default in other partitioners."""
-    # the default for `languages` is ["auto"] in partiton_text
+    # the default for `languages` is ["auto"] in partition_text
     from unstructured.partition.text import partition_text
 
     # Use a document that is primarily in a language other than English
     file_path = example_doc_path("language-docs/UDHR_first_article_all.txt")
     text_elements = partition_text(file_path)
-    assert text_elements[0].metadata.languages != ["eng"]
+    assert text_elements[13].metadata.languages != ["eng"]
 
     auto_elements = partition(file_path)
-    assert auto_elements[0].metadata.languages != ["eng"]
-    assert auto_elements[0].metadata.languages == text_elements[0].metadata.languages
+    assert auto_elements[13].metadata.languages != ["eng"]
+    assert auto_elements[13].metadata.languages == text_elements[13].metadata.languages
 
 
 # ================================================================================================
