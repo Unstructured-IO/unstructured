@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import io
-from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Optional
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+from msoffcrypto import OfficeFile
+from msoffcrypto.exceptions import FileFormatError
 from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
@@ -23,6 +24,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.text_type import (
@@ -187,16 +189,28 @@ class _XlsxPartitionerOptions:
     @lazyproperty
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
-        if file_path := self._file_path:
-            return pd.read_excel(file_path, sheet_name=None, header=self.header_row_idx)
+        try:
+            office_file = OfficeFile(io.BytesIO(self._file_bytes))
+        except FileFormatError as e:
+            raise UnprocessableEntityError("Not a valid XLSX file.") from e
 
-        if f := self._file:
-            if isinstance(f, SpooledTemporaryFile):
-                f.seek(0)
-                f = io.BytesIO(f.read())
-            return pd.read_excel(f, sheet_name=None, header=self.header_row_idx)
+        if office_file.is_encrypted():
+            raise UnprocessableEntityError("XLSX file is password protected.")
 
-        raise ValueError("Either 'filename' or 'file' argument must be specified.")
+        return pd.read_excel(
+            io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
+        )
+
+    @lazyproperty
+    def _file_bytes(self) -> bytes:
+        if file := self._file:
+            file.seek(0)
+            return file.read()
+        elif self._file_path:
+            with open(self._file_path, "rb") as file:
+                return file.read()
+        else:
+            raise ValueError("Either 'filename' or 'file' argument must be specified.")
 
 
 class _ConnectedComponent:

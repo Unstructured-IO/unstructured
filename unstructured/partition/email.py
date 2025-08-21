@@ -14,6 +14,8 @@ import os
 from email.message import EmailMessage, MIMEPart
 from typing import IO, Any, Final, Iterator, cast
 
+from dateutil import parser
+
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common import UnsupportedFileFormatError
@@ -279,7 +281,11 @@ class EmailPartitioningContext:
         date_str = self.msg.get("Date")
         if not date_str:
             return None
-        sent_date = email.utils.parsedate_to_datetime(date_str)
+        try:
+            sent_date = parser.parse(date_str)
+        except (parser.ParserError, TypeError, ValueError):
+            return None
+
         return sent_date.astimezone(dt.timezone.utc).isoformat(timespec="seconds")
 
     def _validate(self) -> EmailPartitioningContext:

@@ -385,6 +385,8 @@ def detect_languages(
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
     """
+    if languages is None:
+        languages = ["auto"]
     if not isinstance(languages, list):
         raise TypeError(
             'The language parameter must be a list of language codes as strings, ex. ["eng"]',
@@ -401,6 +403,7 @@ def detect_languages(
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
     # to English. It will default to English if text is only ascii characters and is short.
     if re.match(r"^[\x00-\x7F]+$", text) and len(text.split()) < 5:
+        logger.debug(f'short text: "{text}". Defaulting to English.')
         return ["eng"]
 
     # set seed for deterministic langdetect outputs
@@ -484,11 +487,11 @@ def apply_lang_metadata(
     if not isinstance(elements, list):
         elements = list(elements)
 
-    full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
+    full_text = " ".join(str(e.text) for e in elements if hasattr(e, "text") and e.text)
     detected_languages = detect_languages(text=full_text, languages=languages)
     if (
         detected_languages is not None
-        and len(languages) == 1
+        and len(detected_languages) == 1
         and detect_language_per_element is False
     ):
         # -- apply detected language to each element's metadata --
@@ -498,7 +501,8 @@ def apply_lang_metadata(
     else:
         for e in elements:
             if hasattr(e, "text"):
-                e.metadata.languages = detect_languages(e.text)
+                text_value = str(e.text) if e.text is not None else ""
+                e.metadata.languages = detect_languages(text_value)
                 yield e
             else:
                 yield e

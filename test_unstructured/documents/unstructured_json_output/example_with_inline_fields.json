@@ -1,62 +1,38 @@
 [
     {
-        "element_id": "3a6b156a81764e17be128264241f8136",
+        "element_id": "7aeac07bad7f44359c3b2403d2ca3d2a",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_with_inline_fields.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "897a8a47377c4ad6aab839a929879537",
+            "parent_id": "8bf6d9316275493499a373771a6e46d0",
             "text_as_html": "<div class=\"Page\" data-page-number=\"1\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "45b3d0053468484ba1c7b53998115412",
+        "element_id": "f8f71f7ce10748f08bee0f9922a04406",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_with_inline_fields.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "3a6b156a81764e17be128264241f8136",
-            "text_as_html": "<header class=\"Header\" />"
+            "parent_id": "7aeac07bad7f44359c3b2403d2ca3d2a",
+            "text_as_html": "<header class=\"Header\"><p class=\"NarrativeText\">Table of Contents</p><address class=\"Address\">68 Prince Street Palmdale, CA 93550</address><a class=\"Hyperlink\">www.google.com</a><span class=\"UncategorizedText\">More text</span></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "6cd3c1ba79654abb9c86162b6d1dae46",
-        "metadata": {
-            "category_depth": 2,
-            "filetype": "text/html",
-            "languages": [
-                "eng"
-            ],
-            "page_number": 1,
-            "parent_id": "45b3d0053468484ba1c7b53998115412",
-            "text_as_html": "<p class=\"NarrativeText\">Table of Contents</p><address class=\"Address\">68 Prince Street Palmdale, CA 93550</address><a class=\"Hyperlink\">www.google.com</a>"
-        },
-        "text": "Table of Contents 68 Prince Street Palmdale, CA 93550 www.google.com",
-        "type": "NarrativeText"
-    },
-    {
-        "element_id": "cb0d6675109241428778c7b996e0b21c",
-        "metadata": {
-            "category_depth": 2,
-            "filetype": "text/html",
-            "languages": [
-                "eng"
-            ],
-            "page_number": 1,
-            "parent_id": "45b3d0053468484ba1c7b53998115412",
-            "text_as_html": "<span class=\"UncategorizedText\">More text</span>"
-        },
-        "text": "More text",
-        "type": "UncategorizedText"
+        "text": "Table of Contents 68 Prince Street Palmdale, CA 93550 www.google.com More text",
+        "type": "Header"
     }
 ]

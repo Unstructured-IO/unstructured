@@ -43,7 +43,9 @@ def test_partition_via_api_with_filename_correctly_calls_sdk(
 
     elements = partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
 
-    partition_mock_.assert_called_once_with(*expected_call_)
+    partition_mock_.assert_called_once_with(
+        expected_call_[0], request=expected_call_[1], retries=expected_call_[2]
+    )
     assert isinstance(partition_mock_.call_args_list[0].args[0], General)
     assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
@@ -66,7 +68,11 @@ def test_partition_via_api_with_file_correctly_calls_sdk(
     modified_expected_call = expected_call_[:]
     modified_expected_call[1].partition_parameters.files.content = f
 
-    partition_mock_.assert_called_once_with(*modified_expected_call)
+    partition_mock_.assert_called_once_with(
+        modified_expected_call[0],
+        request=modified_expected_call[1],
+        retries=modified_expected_call[2],
+    )
     assert isinstance(partition_mock_.call_args_list[0].args[0], General)
     assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
@@ -87,7 +93,11 @@ def test_partition_via_api_warns_with_file_and_filename_and_calls_sdk(
     modified_expected_call = expected_call_[:]
     modified_expected_call[1].partition_parameters.files.content = f
 
-    partition_mock_.assert_called_once_with(*modified_expected_call)
+    partition_mock_.assert_called_once_with(
+        modified_expected_call[0],
+        request=modified_expected_call[1],
+        retries=modified_expected_call[2],
+    )
     assert "WARNING" in caplog.text
     assert "The file_filename kwarg will be deprecated" in caplog.text
 

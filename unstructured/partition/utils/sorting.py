@@ -225,7 +225,6 @@ def sort_text_regions(
     bboxes = elements.element_coords
 
     def _bboxes_ok(strict_points: bool):
-
         if np.isnan(bboxes).any():
             trace_logger.detail(  # type: ignore
                 "some or all elements are missing bboxes, skipping sort",
