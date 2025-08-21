@@ -15,7 +15,6 @@ CACHE_MAX_SIZE: Final[int] = 128
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the image."""
 
-    # Use a generator expression for paths to avoid intermediate list allocation
     def _nltk_paths():
         for path in nltk.data.path:
             yield path if path.endswith("nltk_data") else os.path.join(path, "nltk_data")
