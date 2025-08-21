@@ -10,7 +10,7 @@ backoff==2.2.1
     # via -r ./base.in
 beautifulsoup4==4.13.4
     # via -r ./base.in
-certifi==2025.6.15
+certifi==2025.7.14
     # via
     #   httpcore
     #   httpx
@@ -18,17 +18,16 @@ certifi==2025.6.15
     #   unstructured-client
 cffi==1.17.1
     # via cryptography
-chardet==5.2.0
-    # via -r ./base.in
 charset-normalizer==3.4.2
     # via
+    #   -r ./base.in
     #   requests
     #   unstructured-client
 click==8.2.1
     # via
     #   nltk
     #   python-oxmsg
-cryptography==45.0.4
+cryptography==45.0.5
     # via unstructured-client
 dataclasses-json==0.6.7
     # via
@@ -62,7 +61,7 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.4.0
+lxml==6.0.0
     # via -r ./base.in
 marshmallow==3.26.1
     # via
@@ -80,7 +79,7 @@ numpy==2.2.6
     # via -r ./base.in
 olefile==0.47
     # via python-oxmsg
-orderly-set==5.4.1
+orderly-set==5.5.0
     # via deepdiff
 packaging==25.0
     # via
@@ -90,7 +89,7 @@ psutil==7.0.0
     # via -r ./base.in
 pycparser==2.22
     # via cffi
-pypdf==5.6.0
+pypdf==5.8.0
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
@@ -125,7 +124,7 @@ tqdm==4.67.1
     # via
     #   -r ./base.in
     #   nltk
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -r ./base.in
     #   anyio
@@ -143,7 +142,7 @@ unstructured-client==0.25.9
     # via
     #   -c requirements/deps/constraints.txt
     #   -r ./base.in
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -c requirements/deps/constraints.txt
     #   requests

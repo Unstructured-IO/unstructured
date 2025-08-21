@@ -16,13 +16,11 @@ anyio==4.9.0
     # via
     #   -c requirements/base.txt
     #   httpx
-astor==0.8.1
-    # via paddlepaddle
 beautifulsoup4==4.13.4
     # via
     #   -c requirements/base.txt
     #   unstructured-paddleocr
-certifi==2025.6.15
+certifi==2025.7.14
     # via
     #   -c requirements/base.txt
     #   httpcore
@@ -42,7 +40,7 @@ exceptiongroup==1.3.0
     #   anyio
 fire==0.7.0
     # via unstructured-paddleocr
-fonttools==4.58.4
+fonttools==4.58.5
     # via unstructured-paddleocr
 h11==0.16.0
     # via
@@ -66,7 +64,7 @@ imageio==2.37.0
     # via scikit-image
 lazy-loader==0.4
     # via scikit-image
-lxml==5.4.0
+lxml==6.0.0
     # via
     #   -c requirements/base.txt
     #   python-docx
@@ -90,11 +88,11 @@ numpy==2.2.6
     #   shapely
     #   tifffile
     #   unstructured-paddleocr
-opencv-contrib-python==4.11.0.86
+opencv-contrib-python==4.12.0.88
     # via unstructured-paddleocr
-opencv-python==4.11.0.86
+opencv-python==4.12.0.88
     # via unstructured-paddleocr
-opencv-python-headless==4.11.0.86
+opencv-python-headless==4.12.0.88
     # via
     #   albucore
     #   albumentations
@@ -105,9 +103,9 @@ packaging==25.0
     #   -c requirements/base.txt
     #   lazy-loader
     #   scikit-image
-paddlepaddle==3.0.0
+paddlepaddle==3.1.0
     # via -r ./extra-paddleocr.in
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   imageio
     #   paddlepaddle
@@ -145,7 +143,7 @@ scipy==1.15.3
     #   scikit-image
 shapely==2.1.1
     # via unstructured-paddleocr
-simsimd==6.4.9
+simsimd==6.5.0
     # via albucore
 sniffio==1.3.1
     # via
@@ -165,7 +163,7 @@ tqdm==4.67.1
     # via
     #   -c requirements/base.txt
     #   unstructured-paddleocr
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -c requirements/base.txt
     #   anyio
@@ -180,7 +178,7 @@ typing-inspection==0.4.1
     # via pydantic
 unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -c requirements/base.txt
     #   -c requirements/deps/constraints.txt

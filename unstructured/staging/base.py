@@ -15,6 +15,9 @@ from unstructured.documents.elements import (
     CheckBox,
     Element,
     ElementMetadata,
+    Image,
+    Table,
+    Title,
 )
 from unstructured.file_utils.ndjson import dumps as ndjson_dumps
 from unstructured.partition.common.common import exactly_one
@@ -127,6 +130,56 @@ def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
 # -- legacy aliases for elements_to_dicts() --
 convert_to_isd = elements_to_dicts
 convert_to_dict = elements_to_dicts
+
+
+def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> str:
+    match element:
+        case Title(text=text):
+            return f"# {text}"
+        case Table(metadata=metadata, text=text) if metadata.text_as_html is not None:
+            return metadata.text_as_html
+        case Image(metadata=metadata, text=text) if (
+            metadata.image_base64 is not None
+            and metadata.image_mime_type is None
+            and not exclude_binary_image_data
+        ):
+            return f"![{text}](data:image/*;base64,{metadata.image_base64})"
+        case Image(metadata=metadata, text=text) if (
+            metadata.image_base64 is not None and not exclude_binary_image_data
+        ):
+            return f"![{text}](data:{metadata.image_mime_type};base64,{metadata.image_base64})"
+        case Image(metadata=metadata, text=text) if metadata.image_url is not None:
+            return f"![{text}]({metadata.image_url})"
+        case _:
+            return element.text
+
+
+def elements_to_md(
+    elements: Iterable[Element],
+    filename: Optional[str] = None,
+    exclude_binary_image_data: bool = False,
+    encoding: str = "utf-8",
+) -> str:
+    """Convert elements to markdown format.
+
+    Args:
+        elements: Iterable of elements to convert
+        filename: Optional file path to write the markdown to
+        exclude_binary_image_data: If True, exclude base64 image data from output
+        encoding: File encoding when writing to file
+
+    Returns:
+        The markdown content as a string
+    """
+    markdown_content = "\n".join(
+        [element_to_md(el, exclude_binary_image_data=exclude_binary_image_data) for el in elements]
+    )
+
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(markdown_content)
+
+    return markdown_content
 
 
 def elements_to_json(

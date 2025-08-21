@@ -108,7 +108,6 @@ class OCRAgentTesseract(OCRAgent):
     def hocr_to_dataframe(
         self, hocr: str, character_confidence_threshold: float = 0.0
     ) -> pd.DataFrame:
-
         df_entries = []
 
         if not hocr:
