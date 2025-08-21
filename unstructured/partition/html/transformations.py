@@ -423,11 +423,24 @@ def extract_tag_and_ontology_class_from_tag(
         element_class = CSS_CLASS_TO_ELEMENT_TYPE_MAP.get(soup.attrs["class"][0])
         html_tag = element_class().allowed_tags[0]
 
-    # Scenario 3: CSS class incorrect, but HTML tag correct and exclusive in ontology
+    # Scenario 3: <input> elements, handled explicitly based on their 'type' attribute
+    if not element_class and soup.name == "input":
+        input_type = (str(soup.get("type")) or "").lower()
+        if input_type == "checkbox":
+            element_class = ontology.Checkbox
+        elif input_type == "radio":
+            element_class = ontology.RadioButton
+        else:
+            # Any other input (including missing type or text/number/etc.) is considered
+            # a generic form field value.
+            element_class = ontology.FormFieldValue
+        html_tag = "input"
+
+    # Scenario 4: CSS class incorrect, but HTML tag correct and exclusive in ontology
     if not element_class and soup.name in HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP:
         html_tag, element_class = soup.name, HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP[soup.name]
 
-    # Scenario 4: CSS class incorrect, HTML tag incorrect
+    # Scenario 5: CSS class incorrect, HTML tag incorrect
     # Fallback to default UncategorizedText
     if not element_class:
         # TODO (Pluto): Sometimes we could infer that from parent type and soup.name
@@ -436,7 +449,7 @@ def extract_tag_and_ontology_class_from_tag(
         html_tag = "span"
         element_class = ontology.UncategorizedText
 
-    # Scenario 5: UncategorizedText has image and no text
+    # Scenario 6: UncategorizedText has image and no text
     # Typically, this happens with a span or div tag with an image inside
     if element_class == ontology.UncategorizedText and soup.find("img") and not soup.text.strip():
         element_class = ontology.Image

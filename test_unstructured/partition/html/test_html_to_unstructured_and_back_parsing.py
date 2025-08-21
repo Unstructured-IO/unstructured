@@ -3,10 +3,10 @@
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
+    Header,
     NarrativeText,
     Table,
     Text,
-    Title,
 )
 from unstructured.documents.ontology import Address, Paragraph
 from unstructured.partition.html.html_utils import indent_html
@@ -303,6 +303,9 @@ def test_very_nested_structure_is_preserved():
         </div>
     </section>
     <div class='Column'>
+            <header class='Header'>
+                Page 1
+            </header>
             <blockquote class="Quote">
                 <p class="Paragraph">
                     Clever Quote
@@ -333,17 +336,19 @@ def test_very_nested_structure_is_preserved():
             text="",
             metadata=ElementMetadata(text_as_html='<div class="Column" />'),
         ),
-        Text(
-            text="",
-            metadata=ElementMetadata(text_as_html='<header class="Header" />'),
-        ),
-        Title(
+        Header(
             text="Title",
-            metadata=ElementMetadata(text_as_html='<h1 class="Title">Title</h1>'),
+            metadata=ElementMetadata(
+                text_as_html='<header class="Header"><h1 class="Title">Title</h1></header>'
+            ),
         ),
         Text(
             text="",
             metadata=ElementMetadata(text_as_html='<div class="Column" />'),
+        ),
+        Header(
+            text="Page 1",
+            metadata=ElementMetadata(text_as_html='<header class="Header">Page 1</header>'),
         ),
         NarrativeText(
             text="Clever Quote",

@@ -1,159 +1,143 @@
 [
     {
-        "element_id": "3a6b156a81764e17be128264241f8136",
+        "element_id": "eda37931eb954fcc8dec8804c7e8fa4c",
         "metadata": {
             "category_depth": 0,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "897a8a47377c4ad6aab839a929879537",
+            "parent_id": "037b418b76eb4ac1bd40326ff67e67b0",
             "text_as_html": "<div class=\"Page\" data-page-number=\"1\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "45b3d0053468484ba1c7b53998115412",
+        "element_id": "97eb491421584ad892074d039779fbfa",
         "metadata": {
             "category_depth": 1,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "3a6b156a81764e17be128264241f8136",
-            "text_as_html": "<header class=\"Header\" />"
+            "parent_id": "eda37931eb954fcc8dec8804c7e8fa4c",
+            "text_as_html": "<header class=\"Header\"><h1 class=\"Title\">Header</h1><time class=\"CalendarDate\">Date: October 30, 2023</time></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "Header Date: October 30, 2023",
+        "type": "Header"
     },
     {
-        "element_id": "c95473e8a3704fc2b418697f9fddb27b",
-        "metadata": {
-            "category_depth": 2,
-            "filename": "example.pdf",
-            "filetype": "text/html",
-            "languages": [
-                "eng"
-            ],
-            "page_number": 1,
-            "parent_id": "45b3d0053468484ba1c7b53998115412",
-            "text_as_html": "<h1 class=\"Title\">Header</h1>"
-        },
-        "text": "Header",
-        "type": "Title"
-    },
-    {
-        "element_id": "379cbfdc16d44bd6a59e6cfabe6438d5",
-        "metadata": {
-            "category_depth": 2,
-            "filename": "example.pdf",
-            "filetype": "text/html",
-            "languages": [
-                "eng"
-            ],
-            "page_number": 1,
-            "parent_id": "45b3d0053468484ba1c7b53998115412",
-            "text_as_html": "<time class=\"CalendarDate\">Date: October 30, 2023</time>"
-        },
-        "text": "Date: October 30, 2023",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "637c2f6935fb4353a5f73025ce04619d",
+        "element_id": "4afb6e4a90e14835b958dadb77cd8331",
         "metadata": {
             "category_depth": 1,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "parent_id": "eda37931eb954fcc8dec8804c7e8fa4c",
             "text_as_html": "<form class=\"Form\"><label class=\"FormField\" for=\"company-name\">From field name</label><input class=\"FormFieldValue\" value=\"Example value\" /></form>"
         },
         "text": "From field name Example value",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "592422373ed741b68a077e2003f8ed81",
+        "element_id": "d8f996f2bc9a49f4979aac58a2a9ee93",
         "metadata": {
             "category_depth": 1,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "parent_id": "eda37931eb954fcc8dec8804c7e8fa4c",
             "text_as_html": "<section class=\"Section\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "dc3792d4422e444f90876b56d0cfb20d",
+        "element_id": "d2c12f995ab248808900f66aec479e9d",
         "metadata": {
             "category_depth": 2,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "592422373ed741b68a077e2003f8ed81",
+            "parent_id": "d8f996f2bc9a49f4979aac58a2a9ee93",
             "text_as_html": "<table class=\"Table\"><thead><tr><th>Description</th><th>Row header</th></tr></thead><tbody><tr><td>Value description</td><td><span>50 $</span><span>(1.32 %)</span></td></tr></tbody></table>"
         },
         "text": "Description Row header Value description 50 $ (1.32 %)",
         "type": "Table"
     },
     {
-        "element_id": "1032242af75c4b37984ea7fea9aac74c",
+        "element_id": "8e3f0d85329343008593f43afcad3327",
         "metadata": {
             "category_depth": 1,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "3a6b156a81764e17be128264241f8136",
+            "parent_id": "eda37931eb954fcc8dec8804c7e8fa4c",
             "text_as_html": "<section class=\"Section\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "2a4e2c4a689f4f9a8c180b6b521e45c3",
+        "element_id": "5deaad75854741ccb69767881ef399db",
         "metadata": {
             "category_depth": 2,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "1032242af75c4b37984ea7fea9aac74c",
+            "parent_id": "8e3f0d85329343008593f43afcad3327",
             "text_as_html": "<h2 class=\"Subtitle\">2. Subtitle</h2>"
         },
         "text": "2. Subtitle",
         "type": "Title"
     },
     {
-        "element_id": "5591f7a4df01447e82515ce45f686fbe",
+        "element_id": "9e61f29755bc4b6dbb41ea575d41edb6",
         "metadata": {
             "category_depth": 2,
-            "filename": "example.pdf",
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example.html",
             "filetype": "text/html",
             "languages": [
                 "eng"
             ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "1032242af75c4b37984ea7fea9aac74c",
+            "parent_id": "8e3f0d85329343008593f43afcad3327",
             "text_as_html": "<p class=\"NarrativeText\">Paragraph text</p>"
         },
         "text": "Paragraph text",
