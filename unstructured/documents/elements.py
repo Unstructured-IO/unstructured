@@ -15,12 +15,11 @@ from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
-from unstructured.documents.coordinates import (
-    TYPE_TO_COORDINATE_SYSTEM_MAP,
-    CoordinateSystem,
-    RelativeCoordinateSystem,
-)
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.documents.coordinates import (TYPE_TO_COORDINATE_SYSTEM_MAP,
+                                                CoordinateSystem,
+                                                RelativeCoordinateSystem)
+from unstructured.partition.utils.constants import \
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 Point: TypeAlias = "tuple[float, float]"
