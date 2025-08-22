@@ -884,7 +884,10 @@ class _DocxPartitioner:
         """
 
         def _extract_number(suffix: str) -> int:
-            return int(suffix.split()[-1]) - 1 if suffix.split()[-1].isdigit() else 0
+            parts = suffix.split()
+            if parts and parts[-1].isdigit():
+                return int(parts[-1]) - 1
+            return 0
 
         # Heading styles
         if style_name.startswith("Heading"):
@@ -894,8 +897,8 @@ class _DocxPartitioner:
             return 1
 
         # List styles
-        list_prefixes = ["List", "List Bullet", "List Continue", "List Number"]
-        if any(style_name.startswith(prefix) for prefix in list_prefixes):
+        list_prefixes = ("List", "List Bullet", "List Continue", "List Number")
+        if style_name.startswith(list_prefixes):
             return _extract_number(style_name)
 
         # Other styles
