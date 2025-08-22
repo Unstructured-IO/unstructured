@@ -56,3 +56,10 @@ select = [
     "UP034",    # -- Avoid extraneous parentheses --
     "W",        # -- Warnings, including invalid escape-sequence --
 ]
+
+[tool.codeflash]
+module-root = "unstructured"
+tests-root = "test_unstructured"
+test-framework = "pytest"
+ignore-paths = []
+formatter-cmds = ["ruff check --exit-zero --fix-only $file", "autoflake --in-place $file", "black --line-length=100 $file"]
