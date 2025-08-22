@@ -2,6 +2,7 @@
 
 ### Enhancements
 
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
 - Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
 ### Features
