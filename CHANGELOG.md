@@ -6,7 +6,7 @@
 
 ### Fixes
 
-- updated requirements to fix CVEs -- [TODO] resolve the uv CVE once new clarifai version is available. clarifai:11.7.3 currently pins UV to 0.7.9 which has a medium CVE
+- updated requirements to fix CVEs
 
 
 ## 0.18.14-dev0
