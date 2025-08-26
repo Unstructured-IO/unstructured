@@ -1,12 +1,24 @@
-## 0.18.14-dev0
+## 0.18.14
 
 ### Enhancements
+- Speed up function sentence_count by 59% (codeflash)
+
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
 ### Features
 
 ### Fixes
 
 - **change short text language detection log to debug** reduce warning level log spamming
+  - Bumped dependencies via pip-compile to address the following CVEs:
+    - **Python 3.12/3.13**: CVE-2025-8194, GHSA-v594-44hm-2j7p
+    - **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1)**: CVE-2025-8058, GHSA-8xjp-c72j-67q8
+    - **aiohttp**: GHSA-9548-qrrj-x5pj
+    - **openjpeg**: CVE-2025-54874
+    - **pypdf**: GHSA-7hfw-26vp-jp8m
+    - **transformers**: GHSA-9356-575x-2w9m
+    - **urllib3**: GHSA-48p4-8xcf-vxj5
 
 ## 0.18.13
 
