@@ -1,4 +1,137 @@
-## 0.18.2-dev0
+## 0.18.14
+
+### Enhancements
+- Speed up function sentence_count by 59% (codeflash)
+
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
+
+### Features
+
+### Fixes
+
+- **change short text language detection log to debug** reduce warning level log spamming
+  - Bumped dependencies via pip-compile to address the following CVEs:
+    - **Python 3.12/3.13**: CVE-2025-8194, GHSA-v594-44hm-2j7p
+    - **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1)**: CVE-2025-8058, GHSA-8xjp-c72j-67q8
+    - **aiohttp**: GHSA-9548-qrrj-x5pj
+    - **openjpeg**: CVE-2025-54874
+    - **pypdf**: GHSA-7hfw-26vp-jp8m
+    - **transformers**: GHSA-9356-575x-2w9m
+    - **urllib3**: GHSA-48p4-8xcf-vxj5
+
+## 0.18.13
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Parse a wider variety of date formats in email headers** The `partition_email` function is now more robust to non-standard date formats, including ISO-8601 dates with "Z" suffixes. This prevents `ValueError` exceptions when partitioning emails with these date formats.
+
+## 0.18.12
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Prevent large file content in encoding exceptions** Replace UnicodeDecodeError with UnprocessableEntityError in encoding detection to avoid storing entire file content in exception objects, which can cause issues in logging and error reporting systems when processing large files.
+
+## 0.18.11
+
+### Enhancements
+- **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
+
+### Features
+- **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).
+
+
+### Fixes
+- **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.
+
+## 0.18.10
+
+### Enhancements
+- **Updated CodeQL** Updated CodeQL GHA to v3 from deprecated v2.
+
+### Features
+- **Add OCR_AGENT_CACHE_SIZE environment variable** Added configurable cache size for OCR agents to control memory usage.
+
+### Fixes
+
+## 0.18.9
+
+### Enhancements
+
+### Features
+- **Convert elements to markdown for output** Added function to convert elements to markdown format for easy viewing.
+
+### Fixes
+- *Language detection nit** Handle empty text
+
+## 0.18.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate
+
+## 0.18.7
+
+### Enhancements
+
+- **`text_as_html` for Table element now keeps both `input` and `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for both `input` and `img` tag in the table element's `metadata.text_as_html`.
+
+### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
+
+### Fixes
+
+## 0.18.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
+- **Fix type for serialized TableChunks** Use `TableChunk` for the string value of the field `type` when serializing elements of type `TableChunk`, rather than using the value `Table`.
+
+## 0.18.5
+
+### Enhancements
+
+- **Bump dependencies and remove lingering Python 3.9 artifacts** Cleaned up some references to 3.9 that were left When we dropped Python 3.9 support.
+- **`text_as_html` for Table element now keeps `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for `img` tag in the table element's `metadata.text_as_html`.
+
+### Features
+
+### Fixes
+- **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
+
+## 0.18.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Increase CSV field limit** Addresses failures in partition for csv files with large fields
+
+## 0.18.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Upgrade Pillow to 11.3.0** Addresses a high priority CVE
+
+## 0.18.2
 
 ### Enhancements
 
@@ -6,7 +139,10 @@
 
 ### Fixes
 - **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
-
+- **Failproof docx malformed or merged tables** This fix prevents docx file with complex or vertical merges or malformed tables from failing at `tc_at_grid_offset` and raised `ValueError: no tc element at grid_offset=X`.
+- **partition_md can read special characters on non- utf-8 files** `partition_md` reads the file as utf-8 previously. Now it uses `read_txt_file` that reads file with detected encoding.
+- xml code not getting escaped in a code block in a markdown file when in partition
+- **Fixes parsing HTML header and footer** Previously header and footer texts are partitioned as `UncategorizedText` or as the nested structure like `Title`. Now they are properly partitioned as `Header` and `Footer` element types.
 
 ## 0.18.1
 

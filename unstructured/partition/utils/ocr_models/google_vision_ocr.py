@@ -58,7 +58,6 @@ class OCRAgentGoogleVision(OCRAgent):
         return regions
 
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
-
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
         )

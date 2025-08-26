@@ -288,11 +288,13 @@ class TableEvalProcessor:
                 cutoff=self.cutoff,
             )
 
-            table_detection_recall, table_detection_precision, table_detection_f1 = (
-                calculate_table_detection_metrics(
-                    matched_indices=matched_indices,
-                    ground_truth_tables_number=len(ground_truth_table_data),
-                )
+            (
+                table_detection_recall,
+                table_detection_precision,
+                table_detection_f1,
+            ) = calculate_table_detection_metrics(
+                matched_indices=matched_indices,
+                ground_truth_tables_number=len(ground_truth_table_data),
             )
 
             evaluation = TableEvaluation(

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import itertools
+import logging
 import os
 import tempfile
 import zipfile
@@ -490,9 +491,15 @@ class _DocxPartitioner:
             for _ in range(row.grid_cols_before):
                 yield ""
 
-            for cell in row.cells:
-                cell_text = " ".join(iter_cell_block_items(cell))
-                yield " ".join(cell_text.split())
+            try:
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
+                # -- table has merged or malformed cells. always wrap in try/except.
+                for cell in row.cells:
+                    cell_text = " ".join(iter_cell_block_items(cell))
+                    yield " ".join(cell_text.split())
+            except Exception as e:
+                logging.warning(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
+                yield ""
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
@@ -744,9 +751,15 @@ class _DocxPartitioner:
     def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    yield from self._iter_paragraph_emphasis(paragraph)
+            try:
+                # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
+                # -- table has merged or malformed cells. always wrap in try/except.
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        yield from self._iter_paragraph_emphasis(paragraph)
+            except Exception as e:
+                logging.warning(f"Skipping row in _iter_table_emphasis due to: {e}")
+                continue
 
     def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
         """Generate text of each cell in `table` stripped of leading and trailing whitespace.
