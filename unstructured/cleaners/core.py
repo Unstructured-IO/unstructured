@@ -153,7 +153,6 @@ def group_broken_paragraphs(
     '''The big red fox is walking down the lane.
     At the end of the land the fox met a bear.'''
     """
-    # Precompile needed regex if not already compiled
     paragraph_pattern_re = (
         PARAGRAPH_PATTERN if isinstance(PARAGRAPH_PATTERN, re.Pattern) else re.compile(PARAGRAPH_PATTERN)
     )
@@ -165,7 +164,6 @@ def group_broken_paragraphs(
         if not stripped_par:
             continue
 
-        # Check for bullets quickly first (likely fast path)
         if UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par):
             clean_paragraphs.extend(group_bullet_paragraph(paragraph))
             continue
@@ -175,19 +173,14 @@ def group_broken_paragraphs(
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
-        # Short-circuit evaluation: if any line is not "short" we don't call all() over all lines
         all_lines_short = True
         for line in para_split:
-            # Use direct split (' ') since maxsplit=4 is faster for this check
-            # Strip only if there are leading/trailing spaces
-            if len(line.split()) >= 5:  # line.split() is already stripping by default
+            if len(line.split()) >= 5:
                 all_lines_short = False
                 break
         if all_lines_short:
-            # Only add non-empty lines
             clean_paragraphs.extend(line for line in para_split if line.strip())
         else:
-            # Replace paragraph linebreaks with space only once, using precompiled
             clean_paragraphs.append(paragraph_pattern_re.sub(" ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
