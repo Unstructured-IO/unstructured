@@ -16,7 +16,6 @@ jobs:
     name: Optimize new Python code
     if: ${{ github.actor != 'codeflash-ai[bot]' }}
     runs-on: ubuntu-latest
-    #needs: [setup, lint]
     env:
       CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
     steps:
