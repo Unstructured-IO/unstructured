@@ -5,8 +5,14 @@
 ### Features
 
 ### Fixes
-
-- updated requirements to fix CVEs
+  - Bumped dependencies via pip-compile to address the following CVEs:
+    - **Python 3.12/3.13**: CVE-2025-8194, GHSA-v594-44hm-2j7p
+    - **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1)**: CVE-2025-8058, GHSA-8xjp-c72j-67q8
+    - **aiohttp**: GHSA-9548-qrrj-x5pj
+    - **openjpeg**: CVE-2025-54874
+    - **pypdf**: GHSA-7hfw-26vp-jp8m
+    - **transformers**: GHSA-9356-575x-2w9m
+    - **urllib3**: GHSA-48p4-8xcf-vxj5
 
 
 ## 0.18.14-dev0
