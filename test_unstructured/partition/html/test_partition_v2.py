@@ -71,5 +71,7 @@ def test_attr_and_html_inside_table_cell_is_kept():
         html_parser_version="v2",
     )
 
-    assert '<input checked="" type="checkbox"/>' in table.metadata.text_as_html  # class is removed
+    assert (
+        '<input checked="" class="Checkbox" type="checkbox"/>' in table.metadata.text_as_html
+    )  # class is removed
     assert 'colspan="2"' in table.metadata.text_as_html

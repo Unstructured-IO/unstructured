@@ -521,9 +521,28 @@ class DescribeEmailPartitionerOptions:
         ctx = EmailPartitioningContext(metadata_last_modified=metadata_last_modified)
         assert ctx.metadata_last_modified == metadata_last_modified
 
-    def and_it_uses_the_msg_Date_header_date_when_metadata_last_modified_was_not_provided(self):
+    def and_it_uses_the_msg_Date_header_date_when_metadata_last_modified_was_not_provided(
+        self,
+    ):
         ctx = EmailPartitioningContext(example_doc_path("eml/simple-rfc-822.eml"))
         assert ctx.metadata_last_modified == "2024-10-01T17:34:56+00:00"
+
+    @pytest.mark.parametrize(
+        ("date_format", "expected_date"),
+        [
+            ("test-iso-8601-date.eml", "2025-07-29T12:42:06+00:00"),
+            ("test-rfc2822-date.eml", "2025-07-29T12:42:06+00:00"),
+        ],
+    )
+    def and_it_correctly_parses_various_date_formats_like_the_ones_that_occur_in_the_wild(
+        self, date_format: str, expected_date: str
+    ):
+        ctx = EmailPartitioningContext(example_doc_path(f"eml/{date_format}"))
+        assert ctx.metadata_last_modified == expected_date
+
+    def and_it_returns_none_when_date_header_is_invalid(self):
+        ctx = EmailPartitioningContext(example_doc_path("eml/test-invalid-date.eml"))
+        assert ctx._sent_date is None
 
     def and_it_falls_back_to_filesystem_last_modified_when_no_Date_header_is_present(
         self, get_last_modified_date_: Mock

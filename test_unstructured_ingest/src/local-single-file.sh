@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2329  # Functions are invoked indirectly
+
 set -e
 
 SRC_PATH=$(dirname "$(realpath "$0")")

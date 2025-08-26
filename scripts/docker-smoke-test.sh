@@ -3,6 +3,7 @@
 # Start the containerized repository and run ingest tests
 
 # shellcheck disable=SC2317  # Shellcheck complains that trap functions are unreachable...
+# shellcheck disable=SC2329  # Functions are invoked indirectly
 
 set -eux -o pipefail
 

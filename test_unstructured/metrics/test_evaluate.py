@@ -203,7 +203,6 @@ def test_process_document_returns_the_correct_amount_of_values(
 def test_TextExtractionMetricsCalculator_process_document_returns_the_correct_doctype(
     mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
 ):
-
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
     mock_calculate_accuracy = mock_dependencies["mock_calculate_accuracy"]
@@ -241,7 +240,6 @@ def test_TextExtractionMetricsCalculator_process_document_returns_the_correct_do
 def test_TableStructureMetricsCalculator_process_document_returns_the_correct_doctype(
     mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
 ):
-
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
     calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
@@ -278,7 +276,6 @@ def test_TableStructureMetricsCalculator_process_document_returns_the_correct_do
 def test_ElementTypeMetricsCalculator_process_document_returns_the_correct_doctype(
     mock_dependencies, calculator_class, output_dirname, source_dirname, path, kwargs
 ):
-
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
     calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
