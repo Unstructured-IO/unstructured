@@ -130,7 +130,7 @@ def group_bullet_paragraph(paragraph: str) -> list:
     clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
-            clean_paragraphs(paragraph_pattern_re.sub(" ", bullet))
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", bullet))
     return clean_paragraphs
 
 
