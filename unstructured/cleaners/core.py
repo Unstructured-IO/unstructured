@@ -154,7 +154,9 @@ def group_broken_paragraphs(
     At the end of the land the fox met a bear.'''
     """
     paragraph_pattern_re = (
-        PARAGRAPH_PATTERN if isinstance(PARAGRAPH_PATTERN, re.Pattern) else re.compile(PARAGRAPH_PATTERN)
+        PARAGRAPH_PATTERN
+        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
+        else re.compile(PARAGRAPH_PATTERN)
     )
 
     paragraphs = paragraph_split.split(text)
