@@ -1,7 +1,6 @@
 ## 0.18.15-dev0
 
 ### Enhancements
-- Added codeflash workflow
 
 ### Features
 
