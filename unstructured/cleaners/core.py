@@ -175,11 +175,7 @@ def group_broken_paragraphs(
         #     Version 2.0, January 2004
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
-        all_lines_short = True
-        for line in para_split:
-            if len(line.split()) >= 5:
-                all_lines_short = False
-                break
+        all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
         if all_lines_short:
             clean_paragraphs.extend(line for line in para_split if line.strip())
         else:
