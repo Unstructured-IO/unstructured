@@ -349,11 +349,15 @@ class _FileTypeDetectionContext:
         # -- get from file_path, or file when it has a name (path) --
         with self.open() as file:
             if hasattr(file, "name") and file.name:
-                return os.path.splitext(file.name)[1].lower()
+                splitext = os.path.splitext(file.name)
+                if len(splitext) > 1:
+                    return splitext[1].lower()
 
         # -- otherwise use metadata file-path when provided --
         if file_path := self._metadata_file_path:
-            return os.path.splitext(file_path)[1].lower()
+            splitext = os.path.splitext(file_path)
+            if len(splitext) > 1:
+                return splitext[1].lower()
 
         # -- otherwise empty str means no extension, same as a path like "a/b/name-no-ext" --
         return ""

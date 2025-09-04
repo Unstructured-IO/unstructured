@@ -1,10 +1,12 @@
-## 0.18.15-dev0
+## 0.18.15-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Handle filenames without extensions in file type detection**
 
 ## 0.18.14
 

@@ -619,6 +619,8 @@ class Describe_FileTypeDetectionContext:
             None,
             # -- case 2: file-like object has `.name` attribute but it's value is the empty string
             "",
+            # -- case 3: file-like object has name with no extension --
+            "q3_invoices",
         ],
     )
     def and_it_returns_the_empty_string_as_the_extension_when_there_are_no_file_name_sources(
@@ -630,6 +632,26 @@ class Describe_FileTypeDetectionContext:
                 file.name = file_name
 
         assert _FileTypeDetectionContext(file=file).extension == ""
+
+    @pytest.mark.parametrize(
+        "file_name",
+        [
+            # -- case 1: file-like object has no `.name` attribute
+            None,
+            # -- case 2: file-like object has `.name` attribute but it's value is the empty string
+            "",
+            # -- case 3: file-like object has name with no extension --
+            "q3_invoices",
+        ],
+    )
+    def and_it_returns_the_empty_string_as_the_extension_when_there_are_no_file_name_nor_metadata(
+        self, file_name: str | None
+    ):
+        with open(example_doc_path("ideas-page.html"), "rb") as f:
+            file = io.BytesIO(f.read())
+            file.name = None
+
+        assert _FileTypeDetectionContext(file=file, metadata_file_path=file_name).extension == ""
 
     # -- .file_head ---------------------------------------------
 
