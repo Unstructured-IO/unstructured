@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+  </title>
+ </head>
+ <body>
+  <h1 class="Title" id="5d45a28d875e403c7294a15f22a0162f">
+   LayoutParser: A Unified Toolkit for DL-Based DIA 5
+  </h1>
+  <p class="FigureCaption" id="d9d53799fbfc3f90096f9dc9d45ff667">
+   Table 1: Current layout detection models in the LayoutParser model zoo
+  </p>
+  <table class="Table" id="dddac446da6c93dc1449ecb5d997c423" style="border: 1px solid black; border-collapse: collapse;">
+   <thead>
+    <tr style="border: 1px solid black;">
+     <th style="border: 1px solid black;">
+      Dataset
+     </th>
+     <th style="border: 1px solid black;">
+      | Base Model!|
+     </th>
+     <th style="border: 1px solid black;">
+      Large Model
+     </th>
+     <th style="border: 1px solid black;">
+      | Notes
+     </th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr style="border: 1px solid black;">
+     <td style="border: 1px solid black;">
+      PubLayNet [33]
+     </td>
+     <td style="border: 1px solid black;">
+      P/M
+     </td>
+     <td style="border: 1px solid black;">
+      M
+     </td>
+     <td style="border: 1px solid black;">
+      Layouts of modern scientific documents
+     </td>
+    </tr>
+    <tr style="border: 1px solid black;">
+     <td style="border: 1px solid black;">
+      PRImA [3]
+     </td>
+     <td style="border: 1px solid black;">
+      M
+     </td>
+     <td style="border: 1px solid black;">
+     </td>
+     <td style="border: 1px solid black;">
+      Layouts of scanned modern magazines and scientific reports
+     </td>
+    </tr>
+    <tr style="border: 1px solid black;">
+     <td style="border: 1px solid black;">
+      Newspaper [17]
+     </td>
+     <td style="border: 1px solid black;">
+      P
+     </td>
+     <td style="border: 1px solid black;">
+     </td>
+     <td style="border: 1px solid black;">
+      Layouts of scanned US newspapers from the 20th century
+     </td>
+    </tr>
+    <tr style="border: 1px solid black;">
+     <td style="border: 1px solid black;">
+      TableBank [18]
+     </td>
+     <td style="border: 1px solid black;">
+      P
+     </td>
+     <td style="border: 1px solid black;">
+     </td>
+     <td style="border: 1px solid black;">
+      Table region on modern scientific and business document
+     </td>
+    </tr>
+    <tr style="border: 1px solid black;">
+     <td style="border: 1px solid black;">
+      HIDataset (31)
+     </td>
+     <td style="border: 1px solid black;">
+      P/M
+     </td>
+     <td style="border: 1px solid black;">
+     </td>
+     <td style="border: 1px solid black;">
+      Layouts of history Japanese documents
+     </td>
+    </tr>
+   </tbody>
+  </table>
+  <p class="FigureCaption" id="3d1c1bf1eb6a87a874d21d8f11b226b1">
+   2 For each dataset, we train several models of different sizes for different needs (the trade-off between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of different architectures, like Fuster R-CNN [28] (P) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has m Faster R-CNN model trained using the ResNet 10] backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.
+  </p>
+  <p class="NarrativeText" id="b68ca269882f83b03827b5edf0fec979">
+   layout data structures, which are optimized for efficiency and versatility. 3) When necessary, users can employ existing or customized OCR models via the unified API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and stomge of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component.
+  </p>
+  <h1 class="Title" id="a98721b4c18e53da7ee4e38512d91480">
+   3.1 Layout Detection Models
+  </h1>
+  <p class="NarrativeText" id="84bf4abf7f899f83b876d112cbe176f4">
+   In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Different from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:
+  </p>
+  <li class="ListItem" id="04d62ad595016d7b490dff67a00b9f35">
+   import layoutparser as lp
+  </li>
+  <p class="UncategorizedText" id="9d40bf1b2e2af1692f5689a1c44ab2ae">
+   wwe
+  </p>
+  <li class="ListItem" id="cafbdebf75706654ed769cd9785e8697">
+   image = cv2.imread("image_file") # load images
+  </li>
+  <li class="ListItem" id="e8455ed7a816cc15906468871b66a90a">
+   model = lp. Detectron2LayoutModel (
+  </li>
+  <li class="ListItem" id="44fd87fd2c9870a523e3b8cc3483da53">
+   ea "lp: //PubLayNet/faster_rcnn_R_50_FPN_3x/config")
+  </li>
+  <li class="ListItem" id="f4db9091ab6b62feee72d2bde0ff9e87">
+   layout = model.detect (image)
+  </li>
+  <p class="NarrativeText" id="e277edc46744590708425e453eea87c1">
+   LayoutParser provides a wealth of pre-trained model weights using various datasets covering different languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are significantly different from the training dataset. As document structures and layouts vary greatly in different domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in Layout Parser, using both the dataset name and model name 1p://&lt;dataset-name&gt;/&lt;model-architecture-name&gt;.
+  </p>
+ </body>
+</html>

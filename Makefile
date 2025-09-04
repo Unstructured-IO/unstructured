@@ -22,7 +22,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc install-paddleocr
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
@@ -79,6 +79,10 @@ install-odt:
 .PHONY: install-pypandoc
 install-pypandoc:
 	${PYTHON} -m pip install -r requirements/extra-pandoc.txt
+
+.PHONY: install-paddleocr
+install-paddleocr:
+	${PYTHON} -m pip install -r requirements/extra-paddleocr.txt
 
 .PHONY: install-markdown
 install-markdown:
@@ -138,7 +142,7 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 .PHONY: test
 test:
 	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-unstructured-api-unit
 test-unstructured-api-unit:
@@ -147,7 +151,7 @@ test-unstructured-api-unit:
 .PHONY: test-no-extras
 test-no-extras:
 	PYTHONPATH=. CI=$(CI) \
-		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest \
+		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n auto \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
@@ -155,52 +159,52 @@ test-no-extras:
 
 .PHONY: test-extra-csv
 test-extra-csv:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
 		test_unstructured/partition/test_csv.py \
 		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
 		test_unstructured/partition/test_doc.py \
 		test_unstructured/partition/test_docx.py
 
 .PHONY: test-extra-epub
 test-extra-epub:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_epub.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_md.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_odt.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/pdf_image
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
 		test_unstructured/partition/test_ppt.py \
 		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest \
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
 		test_unstructured/partition/test_org.py \
 		test_unstructured/partition/test_rst.py \
 		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/partition/test_xlsx.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_xlsx.py
 
 .PHONY: test-text-extraction-evaluate
 test-text-extraction-evaluate:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest test_unstructured/metrics/test_text_extraction.py
+	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/metrics/test_text_extraction.py
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
@@ -306,7 +310,8 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "CI=$(CI) \
+	bash -c "pip install -r requirements/test.txt -r requirements/dev.txt && \
+	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
 	python3 -m pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
@@ -327,3 +332,18 @@ docker-jupyter-notebook:
 .PHONY: run-jupyter
 run-jupyter:
 	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
+
+
+###########
+# Other #
+###########
+
+.PHONY: html-fixtures-update
+html-fixtures-update:
+	rm -r test_unstructured_ingest/expected-structured-output-html && \
+	test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+
+.PHONY: markdown-fixtures-update
+markdown-fixtures-update:
+	rm -r test_unstructured_ingest/expected-structured-output-markdown && \
+	test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown

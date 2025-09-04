@@ -535,7 +535,6 @@ class FinalLayoutDrawer(LayoutDrawer):
 
 
 class AnalysisDrawer(AnalysisProcessor):
-
     def __init__(
         self,
         filename: Optional[Union[str, Path]],
@@ -561,7 +560,6 @@ class AnalysisDrawer(AnalysisProcessor):
         self.drawers.append(drawer)
 
     def process(self):
-
         filename_stem = Path(self.filename).stem
         analysis_save_dir = Path(self.save_dir) / "analysis" / filename_stem / "bboxes"
         analysis_save_dir.mkdir(parents=True, exist_ok=True)

@@ -1,6 +1,17 @@
+from typing import Optional, Type
+
+import pytest
 from bs4 import BeautifulSoup
 
-from unstructured.documents.ontology import Form, FormFieldValue, OntologyElement, Page
+from unstructured.documents.ontology import (
+    Checkbox,
+    Form,
+    FormFieldValue,
+    Image,
+    OntologyElement,
+    Page,
+    RadioButton,
+)
 from unstructured.partition.html.html_utils import indent_html
 from unstructured.partition.html.transformations import RECURSION_LIMIT, parse_html_to_ontology
 
@@ -15,6 +26,26 @@ def remove_all_ids(html_str):
         if tag.has_attr("id"):
             del tag["id"]
     return str(soup)
+
+
+def test_parsing_header_and_footer_into_correct_ontologyelement():
+    input_html = """
+    <div class="Page">
+    <header class="Header">
+     this is a header
+    </header>
+    <footer class="Footer">
+     this is a footer
+    </footer>
+    </div>
+    """
+    page = parse_html_to_ontology(input_html)
+    assert len(page.children) == 2
+    header, footer = page.children
+    assert header.text == "this is a header"
+    assert header.html_tag_name == "header"
+    assert footer.text == "this is a footer"
+    assert footer.html_tag_name == "footer"
 
 
 def test_wrong_html_parser_causes_paragraph_to_be_nested_in_div():
@@ -310,7 +341,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
-                <input class="Checkbox" type="radio" name="option1" value="2" checked />
+                <input class="RadioButton" type="radio" name="option1" value="2" checked />
                 <span class="UncategorizedText">
                     Option 1 (Checked)
                 </span>
@@ -672,3 +703,51 @@ def test_get_text_when_recursion_limit_activated():
         last_child = last_child.children[0]
 
     assert last_child.to_text() == "some text"
+
+
+def test_uncategorizedtest_has_image_and_no_text():
+    # language=HTML
+    base_html = _wrap_with_body(
+        """
+        <div class="Page">
+    <div class="UncategorizedText">
+        <img src="https://www.example.com/image.jpg"/>
+    </div>
+    </div>
+    """
+    )
+
+    base_html = indent_html(base_html)
+
+    ontology: OntologyElement = parse_html_to_ontology(base_html)
+
+    element = ontology.children[0].children[0]
+    assert type(element) is Image
+    assert element.css_class_name == "Image"
+
+
+@pytest.mark.parametrize(
+    ("input_type", "expected_class"),
+    [
+        ("checkbox", Checkbox),
+        ("radio", RadioButton),
+        ("text", FormFieldValue),  # explicit non-specialised type
+        (None, FormFieldValue),  # missing type attribute
+    ],
+)
+def test_input_tag_type_is_mapped_to_correct_ontology_class(
+    input_type: Optional[str], expected_class: Type[OntologyElement]
+) -> None:
+    """Ensure bare <input> tags are classified based on their *type* attribute."""
+
+    type_attr = f' type="{input_type}"' if input_type is not None else ""
+    html_snippet = f'<div class="Page"><input{type_attr} name="field" /></div>'
+
+    page = parse_html_to_ontology(html_snippet)
+    assert len(page.children) == 1
+    element = page.children[0]
+
+    # Validate chosen ontology class and preserved HTML semantics
+    assert isinstance(element, expected_class)
+    assert element.html_tag_name == "input"
+    assert element.css_class_name == expected_class.__name__

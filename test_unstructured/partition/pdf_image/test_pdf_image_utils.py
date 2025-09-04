@@ -35,9 +35,8 @@ def test_write_image(image_type):
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
 @pytest.mark.parametrize("path_only", [True, False])
-def test_convert_pdf_to_image(
-    file_mode, path_only, filename=example_doc_path("pdf/embedded-images.pdf")
-):
+def test_convert_pdf_to_image(file_mode, path_only):
+    filename = example_doc_path("pdf/embedded-images.pdf")
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             images = pdf_image_utils.convert_pdf_to_image(
@@ -61,7 +60,8 @@ def test_convert_pdf_to_image(
             assert isinstance(images[0], PILImg.Image)
 
 
-def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-images.pdf")):
+def test_convert_pdf_to_image_raises_error():
+    filename = example_doc_path("embedded-images.pdf")
     with pytest.raises(ValueError) as exc_info:
         pdf_image_utils.convert_pdf_to_image(filename=filename, path_only=True, output_folder=None)
 
@@ -73,6 +73,7 @@ def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-i
     [
         (example_doc_path("pdf/layout-parser-paper-fast.pdf"), False),
         (example_doc_path("img/layout-parser-paper-fast.jpg"), True),
+        (example_doc_path("img/english-and-korean.png"), True),
     ],
 )
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
@@ -231,6 +232,7 @@ def test_pad_bbox():
         (["table", "image"], ["Table", "Image"]),
         (["unknown"], ["Unknown"]),
         (["Table", "image", "UnknOwn"], ["Table", "Image", "Unknown"]),
+        (["NarrativeText", "narrativetext"], ["NarrativeText", "NarrativeText"]),
     ],
 )
 def test_check_element_types_to_extract(input_types, expected):

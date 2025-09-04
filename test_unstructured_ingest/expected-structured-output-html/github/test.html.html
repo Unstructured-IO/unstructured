@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+  </title>
+ </head>
+ <body>
+  <h1 class="Title" id="218722ac66e142a570ab2053b430c6c4">
+   Downloadify Example
+  </h1>
+  <p class="UncategorizedText" id="bf0fab1925c4b2cbb23a53afce28ebd2">
+   More info available at the Github Project Page
+  </p>
+  <h1 class="Title" id="395aed29cd13842fede90a1a8677aa4b">
+   Downloadify Invoke Script For This Page
+  </h1>
+  <p class="NarrativeText" id="2e22c39e004cb7d566294080c976efc8">
+   Downloadify.create('downloadify',{
+  filename: function(){
+    return document.getElementById('filename').value;
+  },
+  data: function(){ 
+    return document.getElementById('data').value;
+  },
+  onComplete: function(){ 
+    alert('Your File Has Been Saved!'); 
+  },
+  onCancel: function(){ 
+    alert('You have cancelled the saving of this file.');
+  },
+  onError: function(){ 
+    alert('You must put something in the File Contents or there will be nothing to save!'); 
+  },
+  swf: 'media/downloadify.swf',
+  downloadImage: 'images/download.png',
+  width: 100,
+  height: 30,
+  transparent: true,
+  append: false
+});
+  </p>
+ </body>
+</html>

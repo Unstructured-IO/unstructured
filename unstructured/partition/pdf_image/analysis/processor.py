@@ -4,7 +4,6 @@ from typing import Union
 
 
 class AnalysisProcessor(ABC):
-
     def __init__(
         self,
         filename: Union[str, Path],

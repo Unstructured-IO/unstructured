@@ -36,10 +36,8 @@ from unstructured.documents.elements import (
     PageBreak,
     Text,
     Title,
-    process_metadata,
 )
 from unstructured.errors import PageCountExceededError
-from unstructured.file_utils.filetype import add_metadata_with_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -54,9 +52,8 @@ from unstructured.partition.common.common import (
 from unstructured.partition.common.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
-    tesseract_to_paddle_language,
 )
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
     FinalLayoutDumper,
@@ -88,7 +85,7 @@ from unstructured.partition.strategies import determine_pdf_or_image_strategy, v
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    OCR_AGENT_PADDLE,
+    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -123,8 +120,7 @@ def default_hi_res_model() -> str:
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
-@process_metadata()
-@add_metadata_with_filetype(FileType.PDF)
+@apply_metadata(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
     filename: Optional[str] = None,
@@ -134,7 +130,7 @@ def partition_pdf(
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
-    metadata_filename: Optional[str] = None,  # used by decorator
+    detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     hi_res_model_name: Optional[str] = None,
@@ -233,6 +229,7 @@ def partition_pdf(
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         languages=languages,
+        detect_language_per_element=detect_language_per_element,
         metadata_last_modified=metadata_last_modified,
         hi_res_model_name=hi_res_model_name,
         extract_images_in_pdf=extract_images_in_pdf,
@@ -259,6 +256,7 @@ def partition_pdf_or_image(
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     languages: Optional[list[str]] = None,
+    detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
@@ -273,6 +271,8 @@ def partition_pdf_or_image(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -280,9 +280,6 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
-
-    if languages is None:
-        languages = ["eng"]
 
     # init ability to process .heic files
     register_heif_opener()
@@ -331,9 +328,10 @@ def partition_pdf_or_image(
     if file is not None:
         file.seek(0)
 
+    if languages is None:
+        print("Warning: No languages specified, defaulting to English.")
+        languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
-    if env_config.OCR_AGENT == OCR_AGENT_PADDLE:
-        ocr_languages = tesseract_to_paddle_language(ocr_languages)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
@@ -359,9 +357,14 @@ def partition_pdf_or_image(
                 form_extraction_skip_tables=form_extraction_skip_tables,
                 password=password,
                 pdfminer_config=pdfminer_config,
+                ocr_agent=ocr_agent,
+                table_ocr_agent=table_ocr_agent,
                 **kwargs,
             )
-            out_elements = _process_uncategorized_text_elements(elements)
+            # NOTE(crag): do not call _process_uncategorized_text_elements here, because
+            # extracted elements (which are text blocks outside of OD-determined blocks)
+            # are likely not Titles and should not be identified as such.
+            return elements
 
     elif strategy == PartitionStrategy.FAST:
         out_elements = _partition_pdf_with_pdfparser(
@@ -419,8 +422,8 @@ def extractable_elements(
 def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
-    languages: list[str],
     metadata_last_modified: Optional[str],
+    languages: Optional[list[str]] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
@@ -434,8 +437,6 @@ def _partition_pdf_with_pdfminer(
 
     ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
     """
-    if languages is None:
-        languages = ["eng"]
 
     exactly_one(filename=filename, file=file)
     if filename:
@@ -471,8 +472,8 @@ def _partition_pdf_with_pdfminer(
 def _process_pdfminer_pages(
     fp: IO[bytes],
     filename: str,
-    languages: list[str],
     metadata_last_modified: Optional[str],
+    languages: Optional[list[str]] = None,
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     password: Optional[str] = None,
@@ -609,9 +610,12 @@ def _partition_pdf_or_image_local(
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    ocr_agent: str = OCR_AGENT_TESSERACT,
+    table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
+
     from unstructured_inference.inference.layout import (
         process_data_with_model,
         process_file_with_model,
@@ -690,11 +694,13 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
     else:
         inferred_document_layout = process_data_with_model(
@@ -749,19 +755,17 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
+            ocr_agent=ocr_agent,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
             pdf_image_dpi=pdf_image_dpi,
             ocr_layout_dumper=ocr_layout_dumper,
             password=password,
+            table_ocr_agent=table_ocr_agent,
         )
 
     # vectorization of the data structure ends here
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
-
-    for page in final_document_layout.pages:
-        for el in page.elements:
-            el.text = el.text or ""
 
     elements = document_to_element_list(
         final_document_layout,
@@ -875,6 +879,7 @@ def _partition_pdf_with_pdfparser(
     **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
+
     elements = []
 
     for page_elements in extracted_elements:
@@ -1192,11 +1197,24 @@ def document_to_element_list(
             else None
         )
 
-        for layout_element in page.elements:
+        head_line_type_class_ids = [
+            idx
+            for idx, class_type in page.elements_array.element_class_id_map.items()
+            if class_type in ("Headline", "Subheadline")
+        ]
+        if head_line_type_class_ids:
+            has_headline = any(
+                np.any(page.elements_array.element_class_ids == idx)
+                for idx in head_line_type_class_ids
+            )
+        else:
+            has_headline = False
+
+        for layout_element in page.elements_array.iter_elements():
             if (
                 image_width
                 and image_height
-                and getattr(layout_element.bbox, "x1") not in (None, np.nan)
+                and not np.isnan(getattr(layout_element.bbox, "x1", np.nan))
             ):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
@@ -1217,7 +1235,6 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
-
                 element.metadata.links = (
                     get_links_in_element(links, layout_element.bbox) if links else []
                 )
@@ -1227,8 +1244,8 @@ def document_to_element_list(
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
 
-                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
-                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
+                if (isinstance(element, Title) and element.metadata.category_depth is None) and (
+                    has_headline
                 ):
                     element.metadata.category_depth = 0
 

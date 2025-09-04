@@ -4,29 +4,47 @@
 #
 #    pip-compile ./extra-xlsx.in
 #
+cffi==1.17.1
+    # via
+    #   -c ./base.txt
+    #   cryptography
+cryptography==45.0.6
+    # via
+    #   -c ./base.txt
+    #   msoffcrypto-tool
 et-xmlfile==2.0.0
     # via openpyxl
+msoffcrypto-tool==5.4.2
+    # via -r ./extra-xlsx.in
 networkx==3.2.1
     # via -r ./extra-xlsx.in
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c ./base.txt
     #   pandas
+olefile==0.47
+    # via
+    #   -c ./base.txt
+    #   msoffcrypto-tool
 openpyxl==3.1.5
     # via -r ./extra-xlsx.in
-pandas==2.2.3
+pandas==2.3.2
     # via -r ./extra-xlsx.in
+pycparser==2.22
+    # via
+    #   -c ./base.txt
+    #   cffi
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   pandas
-pytz==2024.2
+pytz==2025.2
     # via pandas
 six==1.17.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-tzdata==2025.1
+tzdata==2025.2
     # via pandas
-xlrd==2.0.1
+xlrd==2.0.2
     # via -r ./extra-xlsx.in

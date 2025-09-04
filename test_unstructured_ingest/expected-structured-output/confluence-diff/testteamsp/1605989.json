@@ -308,7 +308,30 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d0b45e375f3a7207caacb7be289ebd62",
+    "element_id": "f8085d2948c73dfb968f7b221f3e8fab",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:56:40.842000",
+        "date_modified": "2023-07-09T12:57:59.173000",
+        "record_locator": {
+          "page_id": "1605989",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "image_url": "https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605989/image-20230709-015203.png?version=1&modificationDate=1688907429067&cacheVersion=1&api=v2&width=680&height=259",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "48d494bb12fd182b0106bff99dd2e3be",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -330,7 +353,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "351fc6ff4a9a491bf863ed7aa20fd5c5",
+    "element_id": "3f1b3ecb6515a47b94579cf7de892f09",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -352,7 +375,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "6688bffe9c19dca7cb61ee039a6ffa10",
+    "element_id": "171423f703a966d2616837ed489f6975",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -374,7 +397,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "e50d0b83f51c65bda0620ccec0368a41",
+    "element_id": "87daeeb71306ae76a90c0e6ccac0dd47",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -396,7 +419,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "91697f192743d0583d02cb3e232d3c83",
+    "element_id": "c4d15cc61c5d6a3f2350f758b82e487f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -418,7 +441,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "7e1f204c284d5e878639feca87a022c4",
+    "element_id": "e069a6333ef83f6f250880a500439da3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -440,7 +463,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "24fc2762132dbbf33824a2c8575f6c14",
+    "element_id": "2f030590e85c72dd4a2fc739cc05affe",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -462,7 +485,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c8d91bf0f74cf2d7474b81fa319cc0e5",
+    "element_id": "2db738cf60bf0471df90b6141fc6a8e5",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -490,7 +513,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ce274d7699a4270e902e3617c7cf6e36",
+    "element_id": "ab3005ca05b4f48396361646916154b4",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -512,7 +535,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "b54b171c49bbdb6f51308ff765b7f121",
+    "element_id": "ac70c0a823f0a1d56777036e77e77fd9",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -534,7 +557,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "712a4752864712c0ec58730edb76b2f1",
+    "element_id": "099fca1cec6f3eaa5f71ed9c2ed235e4",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -556,7 +579,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "f2e9daed509db420ecf36984f431900f",
+    "element_id": "85d4a299ad3ee61201530bf0030808b1",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -578,7 +601,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "3cb5f4888419631affdc50af8f020348",
+    "element_id": "a1a4f27d3b3cc32777e25b3bb0766083",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -606,7 +629,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "9f5d86ea05eeb0bf570d9141a5b8994b",
+    "element_id": "976749a5d532d1f18195d61fe8c04be3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -634,7 +657,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "64ba474681b32c7dbc2a00fb9ec3e757",
+    "element_id": "079d83c4a7622c70baab0336e3128ec4",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -656,7 +679,7 @@
     "type": "Title"
   },
   {
-    "element_id": "2d4a5727cd260bb321af0f777e2e699f",
+    "element_id": "68e58e6fec19f4ec291fd5bcca3dadd8",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -678,7 +701,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0a5dc104636145b04136d2eee7c4469b",
+    "element_id": "8dbaefc9dcf7af80f14871cdd2b0c1d6",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -700,7 +723,7 @@
     "type": "Title"
   },
   {
-    "element_id": "470c624d2702678b94685d916908136a",
+    "element_id": "2ca9400f81b794c7d595f9bcd719b18a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -722,7 +745,7 @@
     "type": "Title"
   },
   {
-    "element_id": "bd8ca6285c9717384bd456685550304b",
+    "element_id": "191672694e36e804e20214e8c9bd2d44",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -744,7 +767,7 @@
     "type": "Title"
   },
   {
-    "element_id": "99613e61c98f3e61b28c98d096524077",
+    "element_id": "10d98c7ebc4b2cd6e5508aa9563cc788",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:56:40.842000",
@@ -765,5 +788,28 @@
     },
     "text": "Testdoc3 Table: Column 1 Row 0 Testdoc3 Table: Column 2 Row 0 Testdoc3 Table: Column 3 Row 0 Testdoc3 Table: Column 1 Row 1 Testdoc3 Table: Column 2 Row 1 Testdoc3 Table: Column 3 Row 1 Testdoc3 Table: Column 1 Row 2 Testdoc3 Table: Column 2 Row 2 Testdoc3 Table: Column 3 Row 2",
     "type": "Table"
+  },
+  {
+    "element_id": "45b142b9287e8ebadbc1dfb48ee5245a",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:56:40.842000",
+        "date_modified": "2023-07-09T12:57:59.173000",
+        "record_locator": {
+          "page_id": "1605989",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605989",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "image_url": "https://unstructured-ingest-test.atlassian.net/wiki/download/thumbnails/1605989/image-20230709-020021.png?version=1&modificationDate=1688907429074&cacheVersion=1&api=v2&width=475&height=236",
+      "languages": [
+        "eng",
+        "fra"
+      ]
+    },
+    "text": "",
+    "type": "Image"
   }
 ]

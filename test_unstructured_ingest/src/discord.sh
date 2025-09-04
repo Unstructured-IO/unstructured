@@ -37,10 +37,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --download-dir "$DOWNLOAD_DIR" \
   --preserve-downloads \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --channels 1099442333440802930,1099601456321003600 \
   --token "$DISCORD_TOKEN" \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

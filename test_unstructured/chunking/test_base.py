@@ -31,6 +31,7 @@ from unstructured.documents.elements import (
     CompositeElement,
     Element,
     ElementMetadata,
+    Image,
     PageBreak,
     Table,
     TableChunk,
@@ -234,6 +235,10 @@ class DescribePreChunkBuilder:
         assert builder._text_length == 112
         assert builder._remaining_space == 36
 
+    def it_will_fit_when_element_has_none_as_text(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions())
+        assert builder.will_fit(Image(None))
+
     def it_will_fit_an_oversized_element_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions())
         assert builder.will_fit(Text("abcd " * 200))
@@ -404,6 +409,26 @@ class DescribePreChunk:
     def and_it_knows_it_is_NOT_equal_to_an_object_that_is_not_a_PreChunk(self):
         pre_chunk = PreChunk([], overlap_prefix="", opts=ChunkingOptions())
         assert pre_chunk != 42
+
+    def it_can_handle_element_with_none_as_text(self):
+        pre_chunk = PreChunk(
+            [Image(None), Text("hello")], overlap_prefix="", opts=ChunkingOptions()
+        )
+        assert pre_chunk._text == "hello"
+
+    def it_can_chunk_elements_with_none_text_without_error(self):
+        """Regression test for AttributeError when Image elements have None text."""
+        pre_chunk = PreChunk(
+            [Image(None), Text("hello world"), Image(None)],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
+        )
+
+        # Should not raise AttributeError when generating chunks
+        chunks = list(pre_chunk.iter_chunks())
+
+        assert len(chunks) == 1
+        assert chunks[0].text == "hello world"
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
@@ -1014,6 +1039,15 @@ class Describe_TableChunker:
         assert orig_element.metadata.orig_elements is None
         # -- computation is only on first call, all chunks get exactly the same orig-elements --
         assert table_chunker._orig_elements is orig_elements
+
+    def it_handles_table_with_none_text_without_error(self):
+        """Regression test for AttributeError when Table elements have None text."""
+        table = Table(None)  # Table with None text
+
+        # Should not raise AttributeError and should produce no chunks
+        chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
+
+        assert len(chunks) == 0
 
 
 # ================================================================================================

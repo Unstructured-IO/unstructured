@@ -4,21 +4,21 @@
 #
 #    pip-compile ./extra-csv.in
 #
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c ./base.txt
     #   pandas
-pandas==2.2.3
+pandas==2.3.2
     # via -r ./extra-csv.in
 python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   pandas
-pytz==2024.2
+pytz==2025.2
     # via pandas
 six==1.17.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-tzdata==2025.1
+tzdata==2025.2
     # via pandas

@@ -6,6 +6,8 @@
 # option which otherwise has no other coverage.
 # ------------------------------------------------------------------------------------------------
 
+# shellcheck disable=SC2329  # Functions are invoked indirectly
+
 set -e
 
 # -- Test Parameters: These vary by test file, others are common computed values --
@@ -43,10 +45,11 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path "$ABS_INPUT_PATH" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --num-processes "$max_processes" \
-  --output-dir "$OUTPUT_DIR" \
   --reprocess \
   --verbose \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

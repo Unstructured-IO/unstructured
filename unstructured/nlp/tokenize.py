@@ -14,14 +14,13 @@ CACHE_MAX_SIZE: Final[int] = 128
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the image."""
-    paths: list[str] = []
-    for path in nltk.data.path:
-        if not path.endswith("nltk_data"):
-            path = os.path.join(path, "nltk_data")
-        paths.append(path)
+
+    def _nltk_paths():
+        for path in nltk.data.path:
+            yield path if path.endswith("nltk_data") else os.path.join(path, "nltk_data")
 
     try:
-        nltk.find(f"{package_category}/{package_name}", paths=paths)
+        nltk.find(f"{package_category}/{package_name}", paths=_nltk_paths())
         return True
     except (LookupError, OSError):
         return False

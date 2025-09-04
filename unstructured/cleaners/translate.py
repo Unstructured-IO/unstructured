@@ -52,6 +52,7 @@ def translate_text(text: str, source_lang: Optional[str] = None, target_lang: st
         return text
 
     model_name = _get_opus_mt_model_name(_source_lang, target_lang)
+    print(f"Using model: {model_name}")
 
     try:
         tokenizer = MarianTokenizer.from_pretrained(model_name)
@@ -79,7 +80,7 @@ def _translate_text(text, model, tokenizer):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         translated = model.generate(
-            **tokenizer([text], return_tensors="pt", padding="max_length", max_length=512),
+            **tokenizer([text], return_tensors="pt", padding=True, truncation=True),
         )
     return [tokenizer.decode(t, max_new_tokens=512, skip_special_tokens=True) for t in translated][
         0

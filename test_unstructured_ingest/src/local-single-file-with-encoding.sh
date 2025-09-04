@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2329  # Functions are invoked indirectly
+
 set -e
 
 SRC_PATH=$(dirname "$(realpath "$0")")
@@ -25,12 +27,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \
   --metadata-exclude filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.data_source.filesize_bytes,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-  --output-dir "$OUTPUT_DIR" \
   --encoding cp1252 \
   --verbose \
   --reprocess \
   --input-path example-docs/fake-html-cp1252.html \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
