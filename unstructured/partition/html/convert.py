@@ -56,12 +56,15 @@ class ElementHtml(ABC):
         wrapper = soup.new_tag(name="div")
         wrapper.append(element_html)
         for child in self.children:
-            child_html = child.get_html_element(**kwargs)
+            child_html = child.get_html_element(_soup=soup, **kwargs)
             wrapper.append(child_html)
         return wrapper
 
     def get_html_element(self, **kwargs: Any) -> Tag:
-        soup = BeautifulSoup("", HTML_PARSER)
+        soup: Optional[BeautifulSoup] = kwargs.pop("_soup", None)
+        if soup is None:
+            soup = BeautifulSoup("", HTML_PARSER)
+
         element_html = self.get_text_as_html()
         if element_html is None:
             element_html = soup.new_tag(name=self.html_tag)
