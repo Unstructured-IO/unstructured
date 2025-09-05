@@ -1,6 +1,16 @@
+## 0.18.15-dev1
+
+### Enhancements
+- Speed up function group_broken_paragraphs by 30% (codeflash)
+
+### Features
+
+### Fixes
+
 ## 0.18.15-dev0
 
 ### Enhancements
+- Optimized the runtime of `ElementHtml._get_children_html`
 
 ### Features
 
@@ -10,7 +20,6 @@
 
 ### Enhancements
 - Speed up function sentence_count by 59% (codeflash)
-
 - Speed up function `check_for_nltk_package` by 111% (codeflash)
 - Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
