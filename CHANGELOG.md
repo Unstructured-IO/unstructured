@@ -1,16 +1,8 @@
 ## 0.18.15-dev1
 
 ### Enhancements
-- Speed up function group_broken_paragraphs by 30% (codeflash)
-
-### Features
-
-### Fixes
-
-## 0.18.15-dev0
-
-### Enhancements
 - Optimized the runtime of `ElementHtml._get_children_html`
+- Speed up function group_broken_paragraphs by 30% (codeflash)
 
 ### Features
 
