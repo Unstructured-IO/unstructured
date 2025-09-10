@@ -119,16 +119,18 @@ def group_bullet_paragraph(paragraph: str) -> list:
     '''○ The big red fox is walking down the lane.
     ○ At the end of the land the fox met a bear.'''
     """
-    clean_paragraphs = []
+    paragraph_pattern_re = re.compile(PARAGRAPH_PATTERN)
+
     # pytesseract converts some bullet points to standalone "e" characters.
     # Substitute "e" with bullets since they are later used in partition_text
     # to determine list element type.
-    paragraph = (re.sub(E_BULLET_PATTERN, "·", paragraph)).strip()
+    paragraph = E_BULLET_PATTERN.sub("·", paragraph).strip()
 
-    bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
+    bullet_paras = UNICODE_BULLETS_RE_0W.split(paragraph)
+    clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", bullet))
     return clean_paragraphs
 
 
@@ -151,10 +153,21 @@ def group_broken_paragraphs(
     '''The big red fox is walking down the lane.
     At the end of the land the fox met a bear.'''
     """
+    paragraph_pattern_re = (
+        PARAGRAPH_PATTERN
+        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
+        else re.compile(PARAGRAPH_PATTERN)
+    )
+
     paragraphs = paragraph_split.split(text)
     clean_paragraphs = []
     for paragraph in paragraphs:
-        if not paragraph.strip():
+        stripped_par = paragraph.strip()
+        if not stripped_par:
+            continue
+
+        if UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par):
+            clean_paragraphs.extend(group_bullet_paragraph(paragraph))
             continue
         # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
         # grouped together, but aren't separated by a double line break.
@@ -163,13 +176,10 @@ def group_broken_paragraphs(
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
-        # pytesseract converts some bullet points to standalone "e" characters
-        if UNICODE_BULLETS_RE.match(paragraph.strip()) or E_BULLET_PATTERN.match(paragraph.strip()):
-            clean_paragraphs.extend(group_bullet_paragraph(paragraph))
-        elif all_lines_short:
-            clean_paragraphs.extend([line for line in para_split if line.strip()])
+        if all_lines_short:
+            clean_paragraphs.extend(line for line in para_split if line.strip())
         else:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
 
