@@ -2,7 +2,7 @@
 
 ### Enhancements
 - Speed up function _assign_hash_ids by 34% (codeflash)
-- Optimized the runtime of `ElementHtml._get_children_html`
+- Speed up function ElementHtml._get_children_html by 234% (codeflash)
 - Speed up function group_broken_paragraphs by 30% (codeflash)
 
 ### Features
