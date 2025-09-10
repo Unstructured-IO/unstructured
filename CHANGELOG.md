@@ -1,25 +1,9 @@
-## 0.18.15-dev2
-
-### Enhancements
-- Speed up function _assign_hash_ids by 34% (codeflash)
-
-### Features
-
-### Fixes
-
 ## 0.18.15-dev1
 
 ### Enhancements
-- Speed up function group_broken_paragraphs by 30% (codeflash)
-
-### Features
-
-### Fixes
-
-## 0.18.15-dev0
-
-### Enhancements
+- Speed up function _assign_hash_ids by 34% (codeflash)
 - Optimized the runtime of `ElementHtml._get_children_html`
+- Speed up function group_broken_paragraphs by 30% (codeflash)
 
 ### Features
 
@@ -29,7 +13,6 @@
 
 ### Enhancements
 - Speed up function sentence_count by 59% (codeflash)
-
 - Speed up function `check_for_nltk_package` by 111% (codeflash)
 - Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
