@@ -6,11 +6,11 @@
 #
 cffi==2.0.0
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   cryptography
 cryptography==45.0.7
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   msoffcrypto-tool
 et-xmlfile==2.0.0
     # via openpyxl
@@ -20,11 +20,11 @@ networkx==3.4.2
     # via -r ./extra-xlsx.in
 numpy==2.2.6
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   pandas
 olefile==0.47
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   msoffcrypto-tool
 openpyxl==3.1.5
     # via -r ./extra-xlsx.in
@@ -32,17 +32,17 @@ pandas==2.3.2
     # via -r ./extra-xlsx.in
 pycparser==2.23
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   cffi
 python-dateutil==2.9.0.post0
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   pandas
 pytz==2025.2
     # via pandas
 six==1.17.0
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   python-dateutil
 tzdata==2025.2
     # via pandas

@@ -6,19 +6,19 @@
 #
 numpy==2.2.6
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   pandas
 pandas==2.3.2
     # via -r ./extra-csv.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   pandas
 pytz==2025.2
     # via pandas
 six==1.17.0
     # via
-    #   -c ./base.txt
+    #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   python-dateutil
 tzdata==2025.2
     # via pandas
