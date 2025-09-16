@@ -14,27 +14,27 @@ annotated-types==0.7.0
     # via pydantic
 anyio==4.10.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   httpx
 beautifulsoup4==4.13.5
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   unstructured-paddleocr
 certifi==2025.8.3
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   httpcore
     #   httpx
     #   requests
 charset-normalizer==3.4.3
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   requests
 cython==3.1.4
     # via unstructured-paddleocr
 exceptiongroup==1.3.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   anyio
 fire==0.7.1
     # via unstructured-paddleocr
@@ -42,19 +42,19 @@ fonttools==4.59.2
     # via unstructured-paddleocr
 h11==0.16.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   httpcore
 httpcore==1.0.9
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   httpx
 httpx==0.28.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   paddlepaddle
 idna==3.10
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   anyio
     #   httpx
     #   requests
@@ -64,7 +64,7 @@ lazy-loader==0.4
     # via scikit-image
 lxml==6.0.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-docx
 networkx==3.4.2
     # via
@@ -72,7 +72,7 @@ networkx==3.4.2
     #   scikit-image
 numpy==2.2.6
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   albucore
     #   albumentations
     #   imageio
@@ -98,7 +98,7 @@ opt-einsum==3.3.0
     # via paddlepaddle
 packaging==25.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   lazy-loader
     #   scikit-image
 paddlepaddle==3.2.0
@@ -111,7 +111,7 @@ pillow==11.3.0
     #   unstructured-paddleocr
 protobuf==6.32.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   paddlepaddle
 pyclipper==1.3.0.post6
     # via unstructured-paddleocr
@@ -127,11 +127,11 @@ pyyaml==6.0.2
     #   unstructured-paddleocr
 rapidfuzz==3.14.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   unstructured-paddleocr
 requests==2.32.5
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   unstructured-paddleocr
 safetensors==0.6.2
     # via paddlepaddle
@@ -147,11 +147,11 @@ simsimd==6.5.3
     # via albucore
 sniffio==1.3.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   anyio
 soupsieve==2.8
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   beautifulsoup4
 stringzilla==4.0.10
     # via albucore
@@ -161,11 +161,11 @@ tifffile==2025.5.10
     # via scikit-image
 tqdm==4.67.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   unstructured-paddleocr
 typing-extensions==4.15.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   anyio
     #   beautifulsoup4
     #   exceptiongroup
@@ -180,6 +180,6 @@ unstructured-paddleocr==2.10.0
     # via -r ./extra-paddleocr.in
 urllib3==2.5.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
-    #   -c /Users/luke/git/unstructured/requirements/deps/constraints.txt
+    #   -c ./base.txt
+    #   -c ./deps/constraints.txt
     #   requests

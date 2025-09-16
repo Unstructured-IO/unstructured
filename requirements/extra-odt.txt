@@ -6,7 +6,7 @@
 #
 lxml==6.0.1
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-docx
 pypandoc==1.15
     # via -r ./extra-odt.in
@@ -14,5 +14,5 @@ python-docx==1.2.0
     # via -r ./extra-odt.in
 typing-extensions==4.15.0
     # via
-    #   -c /Users/luke/git/unstructured/requirements/base.txt
+    #   -c ./base.txt
     #   python-docx
