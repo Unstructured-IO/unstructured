@@ -1,4 +1,4 @@
-## ## 0.18.15
+## 0.18.15
 
 ### Enhancements
 - Speed up function ElementHtml._get_children_html by 234% (codeflash)
