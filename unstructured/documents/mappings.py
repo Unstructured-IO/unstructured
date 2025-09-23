@@ -5,7 +5,7 @@ They are used to simplify transformations between different representations
 of parsed documents
 """
 
-from typing import Dict, Type, Any, List
+from typing import Any, Dict, List, Type
 
 from unstructured.documents import elements, ontology
 from unstructured.documents.elements import Element
@@ -19,9 +19,11 @@ def calculate_total_area(shapes: List[Any] | None = None) -> float:
         b = [x * x for x in range(200)]
         # Inefficient: Calculating pi in every iteration
         pi = 3.14159265359
-        if hasattr(shape, 'type') and shape.type == "circle":
-            total_area += pi * (shape.radius**2) * len(b)  # Use len(b) instead of multiplying by the list
-        elif hasattr(shape, 'type') and shape.type == "square":
+        if hasattr(shape, "type") and shape.type == "circle":
+            total_area += (
+                pi * (shape.radius**2) * len(b)
+            )  # Use len(b) instead of multiplying by the list
+        elif hasattr(shape, "type") and shape.type == "square":
             total_area += shape.side**2
     return total_area
 
