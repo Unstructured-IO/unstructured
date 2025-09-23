@@ -1,7 +1,11 @@
+## 0.18.16-dev0
+
+### Enhancement
+- Speed up function _assign_hash_ids by 34% (codeflash)
+
 ## 0.18.15
 
 ### Enhancements
-- Speed up function _assign_hash_ids by 34% (codeflash)
 - Speed up function ElementHtml._get_children_html by 234% (codeflash)
 - Speed up function group_broken_paragraphs by 30% (codeflash)
 
