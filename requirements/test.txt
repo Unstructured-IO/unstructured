@@ -32,7 +32,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.5
     # via -r ./test.in
-grpcio==1.74.0
+grpcio==1.75.0
     # via -r ./test.in
 iniconfig==2.1.0
     # via pytest
@@ -40,7 +40,7 @@ liccheck==0.9.2
     # via -r ./test.in
 mccabe==0.7.0
     # via flake8
-mypy==1.17.1
+mypy==1.18.1
     # via -r ./test.in
 mypy-extensions==1.1.0
     # via
@@ -66,7 +66,7 @@ pycodestyle==2.14.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.11.7
+pydantic==2.11.9
     # via -r ./test.in
 pydantic-core==2.33.2
     # via pydantic
@@ -83,7 +83,7 @@ pytest==8.4.2
     #   pytest-xdist
 pytest-cov==7.0.0
     # via -r ./test.in
-pytest-mock==3.15.0
+pytest-mock==3.15.1
     # via -r ./test.in
 pytest-xdist==3.8.0
     # via -r ./test.in
@@ -91,7 +91,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-ruff==0.12.12
+ruff==0.13.0
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck
@@ -112,7 +112,7 @@ types-click==7.1.8
     # via -r ./test.in
 types-markdown==3.9.0.20250906
     # via -r ./test.in
-types-requests==2.32.4.20250809
+types-requests==2.32.4.20250913
     # via -r ./test.in
 types-tabulate==0.9.0.20241207
     # via -r ./test.in
@@ -121,6 +121,7 @@ typing-extensions==4.15.0
     #   -c ./base.txt
     #   black
     #   exceptiongroup
+    #   grpcio
     #   mypy
     #   pydantic
     #   pydantic-core
@@ -129,6 +130,6 @@ typing-inspection==0.4.1
     # via pydantic
 urllib3==2.5.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
+    #   -c ./deps/constraints.txt
     #   types-requests

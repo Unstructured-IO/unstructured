@@ -25,9 +25,9 @@ fsspec==2025.9.0
     # via
     #   huggingface-hub
     #   torch
-hf-xet==1.1.9
+hf-xet==1.1.10
     # via huggingface-hub
-huggingface-hub==0.34.4
+huggingface-hub==0.35.0
     # via
     #   tokenizers
     #   transformers
@@ -88,7 +88,7 @@ sympy==1.14.0
     # via torch
 tokenizers==0.21.4
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   transformers
 torch==2.8.0
     # via -r ./huggingface.in
@@ -107,6 +107,6 @@ typing-extensions==4.15.0
     #   torch
 urllib3==2.5.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
+    #   -c ./deps/constraints.txt
     #   requests

@@ -62,15 +62,15 @@ googleapis-common-protos==1.70.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.74.0
+grpcio==1.75.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.74.0
+grpcio-status==1.75.0
     # via google-api-core
-hf-xet==1.1.9
+hf-xet==1.1.10
     # via huggingface-hub
-huggingface-hub==0.34.4
+huggingface-hub==0.35.0
     # via
     #   accelerate
     #   timm
@@ -145,12 +145,12 @@ pdf2image==1.17.0
     # via -r ./extra-pdf-image.in
 pdfminer-six==20250327
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
 pi-heif==1.1.0
     # via -r ./extra-pdf-image.in
-pikepdf==9.10.2
+pikepdf==9.11.0
     # via -r ./extra-pdf-image.in
 pillow==11.3.0
     # via
@@ -164,9 +164,9 @@ proto-plus==1.26.1
     # via
     #   google-api-core
     #   google-cloud-vision
-protobuf==6.32.0
+protobuf==6.32.1
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   google-api-core
     #   google-cloud-vision
     #   googleapis-common-protos
@@ -190,7 +190,7 @@ pycparser==2.23
     # via
     #   -c ./base.txt
     #   cffi
-pyparsing==3.2.3
+pyparsing==3.2.4
     # via matplotlib
 pypdf==6.0.0
     # via
@@ -251,7 +251,7 @@ timm==1.0.19
     #   unstructured-inference
 tokenizers==0.21.4
     # via
-    #   -c ././deps/constraints.txt
+    #   -c ./deps/constraints.txt
     #   transformers
 torch==2.8.0
     # via
@@ -274,6 +274,7 @@ transformers==4.55.4
 typing-extensions==4.15.0
     # via
     #   -c ./base.txt
+    #   grpcio
     #   huggingface-hub
     #   onnx
     #   pypdf
@@ -286,8 +287,8 @@ unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in
 urllib3==2.5.0
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
+    #   -c ./deps/constraints.txt
     #   requests
 wrapt==1.17.3
     # via

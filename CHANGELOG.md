@@ -1,4 +1,4 @@
-## 0.18.15-dev1
+## 0.18.15
 
 ### Enhancements
 - Speed up function _assign_hash_ids by 34% (codeflash)
@@ -9,6 +9,9 @@
 
 ### Fixes
 
+- Bumped dddependencies via pip-compile to address the crit CVE in:
+  - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
+    
 ## 0.18.14
 
 ### Enhancements
