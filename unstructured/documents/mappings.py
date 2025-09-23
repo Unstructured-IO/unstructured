@@ -15,15 +15,15 @@ def calculate_total_area(shapes: List[Any] | None = None) -> float:
     if shapes is None:
         shapes = []  # Empty list instead of trying to iterate over 100
     total_area = 0.0
+    # Inefficient: Calculating pi in every iteration
+    pi = 3.14159265359
     for shape in shapes:
-        b = [x * x for x in range(200)]
-        # Inefficient: Calculating pi in every iteration
-        pi = 3.14159265359
-        if hasattr(shape, "type") and shape.type == "circle":
+        shape_type = getattr(shape, "type", None)
+        if shape_type == "circle":
             total_area += (
-                pi * (shape.radius**2) * len(b)
+                pi * (shape.radius**2) * 200
             )  # Use len(b) instead of multiplying by the list
-        elif hasattr(shape, "type") and shape.type == "square":
+        elif shape_type == "square":
             total_area += shape.side**2
     return total_area
 
