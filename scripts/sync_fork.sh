@@ -6,9 +6,9 @@
 set -e
 
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 <fork_url> <fork_branch>"
-    echo "Example: $0 https://github.com/user/fork.git feature-branch"
-    exit 1
+  echo "Usage: $0 <fork_url> <fork_branch>"
+  echo "Example: $0 https://github.com/user/fork.git feature-branch"
+  exit 1
 fi
 
 FORK_URL="$1"
