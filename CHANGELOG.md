@@ -3,6 +3,10 @@
 ### Enhancement
 - Speed up function _assign_hash_ids by 34% (codeflash)
 
+### Features
+
+### Fixes
+
 ## 0.18.15
 
 ### Enhancements
