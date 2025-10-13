@@ -30,6 +30,7 @@ def test_clean_non_ascii_chars(text, expected):
         ("● An excellent point! ●●●", "An excellent point! ●●●"),
         ("An excellent point!", "An excellent point!"),
         ("Morse code! ●●●", "Morse code! ●●●"),
+        ("– An excellent point!", "An excellent point!")
     ],
 )
 def test_clean_bullets(text, expected):

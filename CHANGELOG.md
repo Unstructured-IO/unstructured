@@ -6,6 +6,7 @@
 ### Features
 
 ### Fixes
+- Improved clean_bullets in order to remove en-dashes if they are used as bullets
 
 ## 0.18.15
 
