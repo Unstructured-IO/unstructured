@@ -8,7 +8,7 @@ cffi==2.0.0
     # via
     #   -c ./base.txt
     #   cryptography
-cryptography==45.0.7
+cryptography==46.0.2
     # via
     #   -c ./base.txt
     #   msoffcrypto-tool
@@ -28,7 +28,7 @@ olefile==0.47
     #   msoffcrypto-tool
 openpyxl==3.1.5
     # via -r ./extra-xlsx.in
-pandas==2.3.2
+pandas==2.3.3
     # via -r ./extra-xlsx.in
 pycparser==2.23
     # via
@@ -44,6 +44,10 @@ six==1.17.0
     # via
     #   -c ./base.txt
     #   python-dateutil
+typing-extensions==4.15.0
+    # via
+    #   -c ./base.txt
+    #   cryptography
 tzdata==2025.2
     # via pandas
 xlrd==2.0.2

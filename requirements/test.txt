@@ -8,13 +8,13 @@ annotated-types==0.7.0
     # via pydantic
 autoflake==2.3.1
     # via -r ./test.in
-black==25.1.0
+black==25.9.0
     # via -r ./test.in
-click==8.2.1
+click==8.3.0
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.10.6
+coverage[toml]==7.11.0
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -32,7 +32,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.5
     # via -r ./test.in
-grpcio==1.75.0
+grpcio==1.75.1
     # via -r ./test.in
 iniconfig==2.1.0
     # via pytest
@@ -40,7 +40,7 @@ liccheck==0.9.2
     # via -r ./test.in
 mccabe==0.7.0
     # via flake8
-mypy==1.18.1
+mypy==1.18.2
     # via -r ./test.in
 mypy-extensions==1.1.0
     # via
@@ -56,7 +56,7 @@ pathspec==0.12.1
     # via
     #   black
     #   mypy
-platformdirs==4.4.0
+platformdirs==4.5.0
     # via black
 pluggy==1.6.0
     # via
@@ -66,9 +66,9 @@ pycodestyle==2.14.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.11.9
+pydantic==2.12.2
     # via -r ./test.in
-pydantic-core==2.33.2
+pydantic-core==2.41.4
     # via pydantic
 pyflakes==3.4.0
     # via
@@ -91,7 +91,9 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-ruff==0.13.0
+pytokens==0.2.0
+    # via black
+ruff==0.14.0
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck
@@ -101,7 +103,7 @@ six==1.17.0
     #   python-dateutil
 toml==0.10.2
     # via liccheck
-tomli==2.2.1
+tomli==2.3.0
     # via
     #   autoflake
     #   black
@@ -126,7 +128,7 @@ typing-extensions==4.15.0
     #   pydantic
     #   pydantic-core
     #   typing-inspection
-typing-inspection==0.4.1
+typing-inspection==0.4.2
     # via pydantic
 urllib3==2.5.0
     # via
