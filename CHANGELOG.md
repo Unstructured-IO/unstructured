@@ -1,4 +1,4 @@
-## 0.18.16-dev0
+## 0.18.16
 
 ### Enhancement
 - Speed up function _assign_hash_ids by 34% (codeflash)
@@ -6,6 +6,10 @@
 ### Features
 
 ### Fixes
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **authlib**: GHSA-pq5p-34cr-23v9
+  - **python-3.12/python03**.12-base: CVE-2025-8291, GHSA-49g5-f6qw-8mm7
+  - **libcrypto3/libssl3**: CVE-2025-9230, CVE-2025-9231, CVE-2025-9232, GHSA-76r2-c3cg-f5r9, GHSA-9mrx-mqmg-gwj9
 
 ## 0.18.15
 
@@ -17,7 +21,7 @@
 
 ### Fixes
 
-- Bumped dddependencies via pip-compile to address the crit CVE in:
+- Bumped dependencies via pip-compile to address the crit CVE in:
   - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
     
 ## 0.18.14
