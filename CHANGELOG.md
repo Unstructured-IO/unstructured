@@ -2,6 +2,8 @@
 
 ### Enhancement
 - Speed up function _assign_hash_ids by 34% (codeflash)
+- Improve the VoyageAI integration
+- Add voyage-context-3 support
 
 ### Features
 
