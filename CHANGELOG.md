@@ -244,7 +244,7 @@
 ## 0.18.13
 
 ### Enhancements
-- **VoyageAI's v3.5 models**
+- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
