@@ -1,10 +1,13 @@
 from PIL import Image
-
+from unstructured_inference.constants import IsExtracted
+from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
-from unstructured_inference.inference.elements import Rectangle
-from unstructured.partition.pdf_image.pdfminer_processing import merge_inferred_with_extracted_layout
-from unstructured_inference.constants import IsExtracted
+
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    merge_inferred_with_extracted_layout,
+)
+
 
 def test_text_source_preserved_during_merge():
     """Test that text_source property is preserved when elements are merged."""

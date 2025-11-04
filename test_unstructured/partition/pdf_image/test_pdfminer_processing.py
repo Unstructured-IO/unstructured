@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 from pdfminer.layout import LAParams
 from PIL import Image
-from unstructured_inference.constants import Source as InferenceSource, IsExtracted
+from unstructured_inference.constants import IsExtracted
+from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import (
     EmbeddedTextRegion,
     Rectangle,
