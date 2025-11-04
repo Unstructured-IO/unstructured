@@ -128,6 +128,7 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     extracted_to_remove = extracted_layout.slice(extracted_almost_the_same_as_inferred)
     # copy here in case we change the extracted layout later
     inferred_layout.texts[inferred_indices_to_update] = extracted_to_remove.texts.copy()
+    inferred_layout.is_extracted_array[inferred_indices_to_update] = extracted_to_remove.is_extracted_array.copy()
     # use coords that can bound BOTH the inferred and extracted region as final bounding box coords
     inferred_layout.element_coords[inferred_indices_to_update] = _minimum_containing_coords(
         inferred_layout.slice(inferred_indices_to_update),
@@ -426,6 +427,7 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
+            is_extracted_array=np.array([IsExtracted.TRUE] * len(element_class)),
         ),
         urls_metadata,
     )
