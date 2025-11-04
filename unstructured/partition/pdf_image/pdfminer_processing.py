@@ -8,7 +8,7 @@ from pdfminer.layout import LTChar, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
-from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
+from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
@@ -647,13 +647,14 @@ def merge_inferred_with_extracted_layout(
         merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
-
+        merged_layout.is_extracted_array = merged_layout.is_extracted_array.astype(object)
         for i, text in enumerate(merged_layout.texts):
             if text is None:
                 text = aggregate_embedded_text_by_block(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
+                merged_layout.is_extracted_array[i] = IsExtracted.TRUE
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
