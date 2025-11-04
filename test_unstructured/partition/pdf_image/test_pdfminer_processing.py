@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from pdfminer.layout import LAParams
 from PIL import Image
-from unstructured_inference.constants import Source as InferenceSource
+from unstructured_inference.constants import Source as InferenceSource, IsExtracted
 from unstructured_inference.inference.elements import (
     EmbeddedTextRegion,
     Rectangle,
@@ -247,6 +247,11 @@ def test_process_file_with_pdfminer():
     assert len(layout)
     assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"
+
+
+def test_process_file_with_pdfminer_is_extracted_array():
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[0].is_extracted_array)
 
 
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
