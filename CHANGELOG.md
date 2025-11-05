@@ -1,3 +1,12 @@
+## 0.18.17-dev0
+
+### Enhancement
+- Flag extracted elements as such in the metadata for downstream use
+
+### Features
+
+### Fixes
+
 ## 0.18.16
 
 ### Enhancement
