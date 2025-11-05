@@ -32,9 +32,9 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.5
     # via -r ./test.in
-grpcio==1.75.1
+grpcio==1.76.0
     # via -r ./test.in
-iniconfig==2.1.0
+iniconfig==2.3.0
     # via pytest
 liccheck==0.9.2
     # via -r ./test.in
@@ -66,9 +66,9 @@ pycodestyle==2.14.0
     # via
     #   flake8
     #   flake8-print
-pydantic==2.12.2
+pydantic==2.12.4
     # via -r ./test.in
-pydantic-core==2.41.4
+pydantic-core==2.41.5
     # via pydantic
 pyflakes==3.4.0
     # via
@@ -91,9 +91,9 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-pytokens==0.2.0
+pytokens==0.3.0
     # via black
-ruff==0.14.0
+ruff==0.14.3
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck

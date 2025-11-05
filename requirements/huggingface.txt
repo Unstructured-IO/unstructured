@@ -21,13 +21,13 @@ filelock==3.20.0
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2025.9.0
+fsspec==2025.10.0
     # via
     #   huggingface-hub
     #   torch
-hf-xet==1.1.10
+hf-xet==1.2.0
     # via huggingface-hub
-huggingface-hub==0.35.3
+huggingface-hub==0.36.0
     # via
     #   tokenizers
     #   transformers
@@ -64,7 +64,7 @@ pyyaml==6.0.3
     # via
     #   huggingface-hub
     #   transformers
-regex==2025.9.18
+regex==2025.11.3
     # via
     #   -c ./base.txt
     #   sacremoses
