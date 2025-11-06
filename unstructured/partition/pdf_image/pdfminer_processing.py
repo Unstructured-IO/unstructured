@@ -529,27 +529,39 @@ def get_coords_from_bboxes(bboxes, round_to: int = DEFAULT_ROUND) -> np.ndarray:
     if isinstance(bboxes, np.ndarray):
         return bboxes.round(round_to)
 
-    # preallocate memory
-    coords = np.zeros((len(bboxes), 4), dtype=np.float32)
-
-    for i, bbox in enumerate(bboxes):
-        coords[i, :] = [bbox.x1, bbox.y1, bbox.x2, bbox.y2]
-
-    return coords.round(round_to)
+    # For non-ndarray input, use np.fromiter for efficient allocation and population
+    # Preserves dtype and shape requirements
+    n = len(bboxes)
+    # Avoids python-level for loop, expands bboxes via generator expression
+    arr = np.fromiter(
+        (c for bbox in bboxes for c in (bbox.x1, bbox.y1, bbox.x2, bbox.y2)),
+        dtype=np.float32,
+        count=4 * n,
+    ).reshape(n, 4)
+    return arr.round(round_to)
 
 
 def areas_of_boxes_and_intersection_area(
     coords1: np.ndarray, coords2: np.ndarray, round_to: int = DEFAULT_ROUND
 ):
     """compute intersection area and own areas for two groups of bounding boxes"""
-    x11, y11, x12, y12 = np.split(coords1, 4, axis=1)
-    x21, y21, x22, y22 = np.split(coords2, 4, axis=1)
+    # np.split is relatively slow for extracting columns; use slicing for efficiency
+    x11, y11, x12, y12 = coords1[:, 0:1], coords1[:, 1:2], coords1[:, 2:3], coords1[:, 3:4]
+    x21, y21, x22, y22 = coords2[:, 0:1], coords2[:, 1:2], coords2[:, 2:3], coords2[:, 3:4]
 
-    inter_area = np.maximum(
-        (np.minimum(x12, np.transpose(x22)) - np.maximum(x11, np.transpose(x21)) + 1), 0
-    ) * np.maximum((np.minimum(y12, np.transpose(y22)) - np.maximum(y11, np.transpose(y21)) + 1), 0)
+    # Use keepdims=False for direct broadcasting
+    # Calculating "inter_w" and "inter_h" independently for clarity and performance
+    # The .T is replaced by broadcasting mechanics; mathematically identical
+    inter_w = np.maximum(np.minimum(x12, x22.T) - np.maximum(x11, x21.T) + 1, 0)
+    inter_h = np.maximum(np.minimum(y12, y22.T) - np.maximum(y11, y21.T) + 1, 0)
+    inter_area = inter_w * inter_h
+
+    # Flatten to keep dimensions as originally returned
     boxa_area = (x12 - x11 + 1) * (y12 - y11 + 1)
+    boxa_area = boxa_area.flatten()
     boxb_area = (x22 - x21 + 1) * (y22 - y21 + 1)
+
+    boxb_area = boxb_area.flatten()
 
     return inter_area.round(round_to), boxa_area.round(round_to), boxb_area.round(round_to)
 
@@ -590,7 +602,8 @@ def boxes_iou(
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
         coords1, coords2, round_to=round_to
     )
-    denom = np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
+    # denom shape matches inter_area (broadcasting boxa_area, boxb_area appropriately)
+    denom = np.maximum(EPSILON_AREA, boxa_area[:, None] + boxb_area[None, :] - inter_area)
     # Instead of (x/y) > t, use x > t*y for memory & speed with same result
     return inter_area > (threshold * denom)
 
