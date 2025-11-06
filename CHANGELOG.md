@@ -1,11 +1,20 @@
-## 0.18.17-dev0
+## 0.18.18-dev0
 
 ### Enhancement
 - Flag extracted elements as such in the metadata for downstream use
 
+## 0.18.17
+
+### Enhancement
+
 ### Features
 
 ### Fixes
+- Removed `Clardy` dependency as it is no longer used
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **pypdf**: GHSA-vr63-x8vc-m265
+  - **pip**: GHSA-4xh5-x5gv-qwph
+  - **uv**: GHSA-8qf3-x8v5-2pj8 GHSA-pqhf-p39g-3x64
 
 ## 0.18.16
 
