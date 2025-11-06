@@ -1,3 +1,7 @@
+## 0.18.18
+
+### Fixes
+- **Prevent path traversal in email MSG attachment filenames** Fixed a security vulnerability (GHSA-gm8q-m8mv-jj5m) where malicious attachment filenames containing path traversal sequences could write files outside the intended directory. The fix normalizes both Unix and Windows path separators before sanitizing filenames, preventing cross-platform path traversal attacks in `partition_msg` functions
 ## 0.18.17
 
 ### Enhancement
