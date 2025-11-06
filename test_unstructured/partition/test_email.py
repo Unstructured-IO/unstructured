@@ -388,6 +388,7 @@ def test_partition_email_silently_skips_attachments_it_cannot_partition():
 # ISOLATED UNIT TESTS
 # ================================================================================================
 
+
 class DescribeEmailPartitionerOptions:
     """Unit-test suite for `unstructured.partition.email.EmailPartitioningContext` objects."""
 
