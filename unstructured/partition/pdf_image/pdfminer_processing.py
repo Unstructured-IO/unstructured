@@ -57,14 +57,20 @@ def _validate_bbox(bbox: list[int | float]) -> bool:
 
 def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
     # TODO: refactor to just use np array as input
-    return np.vstack(
+    # Optimization: Use np.stack and np.column_stack to build output in a single step
+    x1s = np.array([region.x1 for region in regions])
+    y1s = np.array([region.y1 for region in regions])
+    x2s = np.array([region.x2 for region in regions])
+    y2s = np.array([region.y2 for region in regions])
+    # Use np.min/max reduction rather than create matrix then operate. Transpose last for shape (N, 4)
+    return np.column_stack(
         (
-            np.min([region.x1 for region in regions], axis=0),
-            np.min([region.y1 for region in regions], axis=0),
-            np.max([region.x2 for region in regions], axis=0),
-            np.max([region.y2 for region in regions], axis=0),
+            np.min(x1s, axis=0),
+            np.min(y1s, axis=0),
+            np.max(x2s, axis=0),
+            np.max(y2s, axis=0),
         )
-    ).T
+    )
 
 
 def _inferred_is_elementtype(
@@ -120,7 +126,7 @@ def _merge_extracted_into_inferred_when_almost_the_same(
         inferred_layout.element_coords,
         threshold=same_region_threshold,
     )
-    extracted_almost_the_same_as_inferred = boxes_almost_same.sum(axis=1).astype(bool)
+    extracted_almost_the_same_as_inferred = np.any(boxes_almost_same, axis=1)
     # NOTE: if a row is full of False the argmax returns first index; we use the mask above to
     # distinguish those (they would be False in the mask)
     first_match = np.argmax(boxes_almost_same, axis=1)
@@ -584,7 +590,9 @@ def boxes_iou(
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
         coords1, coords2, round_to=round_to
     )
-    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+    denom = np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
+    # Instead of (x/y) > t, use x > t*y for memory & speed with same result
+    return inter_area > (threshold * denom)
 
 
 @requires_dependencies("unstructured_inference")
