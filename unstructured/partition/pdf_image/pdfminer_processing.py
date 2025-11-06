@@ -62,7 +62,7 @@ def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
     y1s = np.array([region.y1 for region in regions])
     x2s = np.array([region.x2 for region in regions])
     y2s = np.array([region.y2 for region in regions])
-    # Use np.min/max reduction rather than create matrix then operate. Transpose last for shape (N, 4)
+    # Use np.min/max reduction rather than create matrix then operate.
     return np.column_stack(
         (
             np.min(x1s, axis=0),
