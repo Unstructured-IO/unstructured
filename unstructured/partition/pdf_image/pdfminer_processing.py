@@ -435,7 +435,7 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
-            is_extracted_array=np.array([IsExtracted.TRUE] * len(element_class)),
+            is_extracted_array=np.array([IsExtracted.TRUE if (this_class == 0) else None for this_class in element_class]),
         ),
         urls_metadata,
     )
@@ -666,7 +666,8 @@ def merge_inferred_with_extracted_layout(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
-                merged_layout.is_extracted_array[i] = IsExtracted.TRUE
+                if merged_layout.element_class_id_map[merged_layout.element_class_ids[i]] not in ("Image", "Picture"):
+                    merged_layout.is_extracted_array[i] = IsExtracted.TRUE
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
