@@ -206,6 +206,7 @@ class ElementMetadata:
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
+    is_extracted: Optional[str]
     table_as_cells: Optional[dict[str, str | int]]
     url: Optional[str]
 
@@ -498,6 +499,7 @@ class ConsolidationStrategy(enum.Enum):
             "image_base64": cls.DROP,
             "image_mime_type": cls.DROP,
             "is_continuation": cls.DROP,  # -- not expected, added by chunking, not before --
+            "is_extracted": cls.DROP,
             "languages": cls.LIST_UNIQUE,
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,

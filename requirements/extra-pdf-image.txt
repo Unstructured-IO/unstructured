@@ -283,7 +283,7 @@ typing-extensions==4.15.0
     #   torch
 tzdata==2025.2
     # via pandas
-unstructured-inference==1.0.5
+unstructured-inference==1.1.1
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in

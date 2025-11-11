@@ -15,9 +15,9 @@ cryptography==46.0.3
 et-xmlfile==2.0.0
     # via openpyxl
 msoffcrypto-tool==5.4.2
-    # via -r ./extra-xlsx.in
+    # via -r extra-xlsx.in
 networkx==3.4.2
-    # via -r ./extra-xlsx.in
+    # via -r extra-xlsx.in
 numpy==2.2.6
     # via
     #   -c /Users/luke/git/unstructured/requirements/base.txt
@@ -27,9 +27,9 @@ olefile==0.47
     #   -c /Users/luke/git/unstructured/requirements/base.txt
     #   msoffcrypto-tool
 openpyxl==3.1.5
-    # via -r ./extra-xlsx.in
+    # via -r extra-xlsx.in
 pandas==2.3.3
-    # via -r ./extra-xlsx.in
+    # via -r extra-xlsx.in
 pycparser==2.23
     # via
     #   -c /Users/luke/git/unstructured/requirements/base.txt
@@ -51,4 +51,4 @@ typing-extensions==4.15.0
 tzdata==2025.2
     # via pandas
 xlrd==2.0.2
-    # via -r ./extra-xlsx.in
+    # via -r extra-xlsx.in
