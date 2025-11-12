@@ -1,7 +1,7 @@
 <h3 align="center">
   <img
     src="https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/img/unstructured_logo.png"
-    height="300"
+    height="400"
   >
 </h3>
 
