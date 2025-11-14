@@ -1,12 +1,35 @@
-## 0.18.17
+## 0.18.20
 
 ### Enhancement
 - Improve the VoyageAI integration
 - Add voyage-context-3 support
 
+## 0.18.19-dev0
+
+### Enhancement
+- Flag extracted elements as such in the metadata for downstream use
+
 ### Features
 
 ### Fixes
+
+## 0.18.18
+
+### Fixes
+- **Prevent path traversal in email MSG attachment filenames** Fixed a security vulnerability (GHSA-gm8q-m8mv-jj5m) where malicious attachment filenames containing path traversal sequences could write files outside the intended directory. The fix normalizes both Unix and Windows path separators before sanitizing filenames, preventing cross-platform path traversal attacks in `partition_msg` functions
+
+## 0.18.17
+
+### Enhancement
+
+### Features
+
+### Fixes
+- Removed `Clardy` dependency as it is no longer used
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **pypdf**: GHSA-vr63-x8vc-m265
+  - **pip**: GHSA-4xh5-x5gv-qwph
+  - **uv**: GHSA-8qf3-x8v5-2pj8 GHSA-pqhf-p39g-3x64
 
 ## 0.18.16
 
