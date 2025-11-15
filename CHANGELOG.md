@@ -3,10 +3,6 @@
 ### Enhancement
 - Improve the VoyageAI integration
 - Add voyage-context-3 support
-
-## 0.18.19-dev0
-
-### Enhancement
 - Flag extracted elements as such in the metadata for downstream use
 
 ### Features
