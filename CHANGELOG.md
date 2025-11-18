@@ -1,7 +1,8 @@
-## 0.18.19-dev0
+## 0.18.19-dev1
 
 ### Enhancement
 - Flag extracted elements as such in the metadata for downstream use
+- Update save_elements unit test to check crop box padding behavior
 
 ### Features
 
