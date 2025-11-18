@@ -1,6 +1,8 @@
-## 0.18.19-dev1
+## 0.18.21-dev0
 
 ### Enhancement
+- Improve the VoyageAI integration
+- Add voyage-context-3 support
 - Flag extracted elements as such in the metadata for downstream use
 - Update save_elements unit test to check crop box padding behavior
 
