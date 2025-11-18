@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import tempfile
 from unittest.mock import MagicMock, patch
@@ -145,8 +147,6 @@ def test_save_elements(
             if extract_image_block_to_payload:
                 assert isinstance(el.metadata.image_base64, str)
                 assert isinstance(el.metadata.image_mime_type, str)
-                import base64
-                import io
                 image_bytes = base64.b64decode(el.metadata.image_base64)
                 image = PILImg.open(io.BytesIO(image_bytes))
                 x1, y1 = el.metadata.coordinates.points[0]
