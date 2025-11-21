@@ -1,4 +1,4 @@
-## 0.18.21-dev0
+## 0.18.21
 
 ### Enhancement
 - Update save_elements unit test to check crop box padding behavior
@@ -6,6 +6,7 @@
 ### Features
 
 ### Fixes
+- **Update `unstructured-inference`** to 1.1.2 to address CVEs
 
 ## 0.18.20
 
