@@ -8,7 +8,7 @@ from pdfminer.layout import LTChar, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
-from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
+from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
@@ -57,14 +57,20 @@ def _validate_bbox(bbox: list[int | float]) -> bool:
 
 def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
     # TODO: refactor to just use np array as input
-    return np.vstack(
+    # Optimization: Use np.stack and np.column_stack to build output in a single step
+    x1s = np.array([region.x1 for region in regions])
+    y1s = np.array([region.y1 for region in regions])
+    x2s = np.array([region.x2 for region in regions])
+    y2s = np.array([region.y2 for region in regions])
+    # Use np.min/max reduction rather than create matrix then operate.
+    return np.column_stack(
         (
-            np.min([region.x1 for region in regions], axis=0),
-            np.min([region.y1 for region in regions], axis=0),
-            np.max([region.x2 for region in regions], axis=0),
-            np.max([region.y2 for region in regions], axis=0),
+            np.min(x1s, axis=0),
+            np.min(y1s, axis=0),
+            np.max(x2s, axis=0),
+            np.max(y2s, axis=0),
         )
-    ).T
+    )
 
 
 def _inferred_is_elementtype(
@@ -120,7 +126,7 @@ def _merge_extracted_into_inferred_when_almost_the_same(
         inferred_layout.element_coords,
         threshold=same_region_threshold,
     )
-    extracted_almost_the_same_as_inferred = boxes_almost_same.sum(axis=1).astype(bool)
+    extracted_almost_the_same_as_inferred = np.any(boxes_almost_same, axis=1)
     # NOTE: if a row is full of False the argmax returns first index; we use the mask above to
     # distinguish those (they would be False in the mask)
     first_match = np.argmax(boxes_almost_same, axis=1)
@@ -128,6 +134,9 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     extracted_to_remove = extracted_layout.slice(extracted_almost_the_same_as_inferred)
     # copy here in case we change the extracted layout later
     inferred_layout.texts[inferred_indices_to_update] = extracted_to_remove.texts.copy()
+    inferred_layout.is_extracted_array[inferred_indices_to_update] = (
+        extracted_to_remove.is_extracted_array.copy()
+    )
     # use coords that can bound BOTH the inferred and extracted region as final bounding box coords
     inferred_layout.element_coords[inferred_indices_to_update] = _minimum_containing_coords(
         inferred_layout.slice(inferred_indices_to_update),
@@ -426,6 +435,9 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
+            is_extracted_array=np.array(
+                [IsExtracted.TRUE if (this_class == 0) else None for this_class in element_class]
+            ),
         ),
         urls_metadata,
     )
@@ -580,7 +592,9 @@ def boxes_iou(
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
         coords1, coords2, round_to=round_to
     )
-    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+    denom = np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
+    # Instead of (x/y) > t, use x > t*y for memory & speed with same result
+    return inter_area > (threshold * denom)
 
 
 @requires_dependencies("unstructured_inference")
@@ -647,13 +661,18 @@ def merge_inferred_with_extracted_layout(
         merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
-
+        merged_layout.is_extracted_array = merged_layout.is_extracted_array.astype(object)
         for i, text in enumerate(merged_layout.texts):
             if text is None:
                 text = aggregate_embedded_text_by_block(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
+                if merged_layout.element_class_id_map[merged_layout.element_class_ids[i]] not in (
+                    "Image",
+                    "Picture",
+                ):
+                    merged_layout.is_extracted_array[i] = IsExtracted.TRUE
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout

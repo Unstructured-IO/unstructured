@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numbers
 import subprocess
+from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from time import sleep
@@ -58,12 +59,17 @@ def normalize_layout_element(
     prob = layout_dict.get("prob")
     aux_origin = layout_dict.get("source", None)
     origin = None
+    if isinstance(layout_dict.get("is_extracted"), Enum):
+        is_extracted = layout_dict["is_extracted"].value
+    else:
+        is_extracted = None
     if aux_origin:
         origin = aux_origin.value
     if prob and isinstance(prob, (int, str, float, numbers.Number)):
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
+    class_prob_metadata.is_extracted = is_extracted
     common_kwargs = {
         "coordinates": coordinates,
         "coordinate_system": coordinate_system,

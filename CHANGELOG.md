@@ -1,4 +1,51 @@
-## 0.18.16-dev0
+## 0.18.21
+
+### Enhancement
+- Update save_elements unit test to check crop box padding behavior
+
+### Features
+
+### Fixes
+- **Update `unstructured-inference`** to 1.1.2 to address CVEs
+
+## 0.18.20
+
+### Enhancement
+- Improve the VoyageAI integration
+- Add voyage-context-3 support
+
+### Features
+
+### Fixes
+
+## 0.18.19
+
+### Enhancement
+- Flag extracted elements as such in the metadata for downstream use
+
+### Features
+
+### Fixes
+
+## 0.18.18
+
+### Fixes
+- **Prevent path traversal in email MSG attachment filenames** Fixed a security vulnerability (GHSA-gm8q-m8mv-jj5m) where malicious attachment filenames containing path traversal sequences could write files outside the intended directory. The fix normalizes both Unix and Windows path separators before sanitizing filenames, preventing cross-platform path traversal attacks in `partition_msg` functions
+
+## 0.18.17
+
+### Enhancement
+
+### Features
+
+### Fixes
+- Removed `Clardy` dependency as it is no longer used
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **pypdf**: GHSA-vr63-x8vc-m265
+  - **pip**: GHSA-4xh5-x5gv-qwph
+  - **uv**: GHSA-8qf3-x8v5-2pj8 GHSA-pqhf-p39g-3x64
+
+## 0.18.16
 
 ### Enhancement
 - Speed up function _assign_hash_ids by 34% (codeflash)
@@ -7,6 +54,10 @@
 
 ### Fixes
 - Improved clean_bullets in order to remove en-dashes if they are used as bullets
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **authlib**: GHSA-pq5p-34cr-23v9
+  - **python-3.12/python03**.12-base: CVE-2025-8291, GHSA-49g5-f6qw-8mm7
+  - **libcrypto3/libssl3**: CVE-2025-9230, CVE-2025-9231, CVE-2025-9232, GHSA-76r2-c3cg-f5r9, GHSA-9mrx-mqmg-gwj9
 
 ## 0.18.15
 
@@ -18,7 +69,7 @@
 
 ### Fixes
 
-- Bumped dddependencies via pip-compile to address the crit CVE in:
+- Bumped dependencies via pip-compile to address the crit CVE in:
   - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
     
 ## 0.18.14
