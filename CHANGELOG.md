@@ -1,3 +1,8 @@
+## 0.18.22
+
+### Fixes
+- Constrain fonttools to >=4.60.2 to address CVE-2025-66034
+
 ## 0.18.21
 
 ### Enhancement
