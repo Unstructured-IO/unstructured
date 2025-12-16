@@ -408,6 +408,9 @@ def text_is_embedded(obj, threshold=0.1):
 
     extract_chars(obj)
     if total_chars > 0:
+        # when there are no-trivial amount of hidden characters in the object it means there are
+        # text that is not rendered -> most likely OCR'ed text for the image content overlying the
+        # text and not embedded text that also shows in the rendered pdf
         invisible_ratio = invisible_chars / total_chars
         return invisible_ratio < threshold
     return True
@@ -768,12 +771,12 @@ def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
     threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-) -> tuple[str, IsExtracted]:
+) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
     if len(source_regions) == 0 or len(target_region) == 0:
-        return ""
+        return "", None
 
     mask = (
         bboxes1_is_almost_subregion_of_bboxes2(
