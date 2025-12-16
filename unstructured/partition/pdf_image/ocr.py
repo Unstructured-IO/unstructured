@@ -393,7 +393,7 @@ def merge_out_layout_with_ocr_layout(
     out_layout.texts = out_layout.texts.astype(object)
 
     for idx in invalid_text_indices:
-        out_layout.texts[idx] = aggregate_embedded_text_by_block(
+        out_layout.texts[idx], _ = aggregate_embedded_text_by_block(
             target_region=out_layout.slice([idx]),
             source_regions=ocr_layout,
             threshold=subregion_threshold,

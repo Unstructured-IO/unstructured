@@ -380,7 +380,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
-def _text_is_embedded(obj, threshold=0.1):
+def text_is_embedded(obj, threshold=0.1):
     invisible_chars = 0
     total_chars = 0
 
@@ -391,16 +391,14 @@ def _text_is_embedded(obj, threshold=0.1):
         if isinstance(layout_obj, LTChar):
             total_chars += 1
 
-            # Check if text is invisible (rendering mode 3)
+            # Check if text is invisible:
+            #   - rendering mode 3
+            #   - both stroke and non-stroke color are not present or 0
             if (
                 hasattr(layout_obj, "rendermode")
                 and layout_obj.rendermode == 3
-                or layout_obj.graphicstate.scolor in (0, None)
-                and layout_obj.graphicstate.ncolor
-                in (
-                    0,
-                    None,
-                )
+                or layout_obj.graphicstate.scolor is None
+                and layout_obj.graphicstate.ncolor is None
             ):
                 invisible_chars += 1
         elif isinstance(layout_obj, LTContainer):
@@ -409,12 +407,9 @@ def _text_is_embedded(obj, threshold=0.1):
                 extract_chars(child)
 
     extract_chars(obj)
-    print(f"text {obj.get_text()}")
     if total_chars > 0:
         invisible_ratio = invisible_chars / total_chars
-        print(f"invisible char ratio: {invisible_ratio}")
         return invisible_ratio < threshold
-    print("no char found")
     return True
 
 
@@ -457,7 +452,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(inner_obj.get_text())
                 element_coords.append(inner_bbox)
                 element_class.append(0)
-                is_extracted.append(IsExtracted.TRUE if _text_is_embedded(inner_obj) else None)
+                is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
         else:
             inner_image_objects = extract_image_objects(obj)
             for img_obj in inner_image_objects:
@@ -469,9 +464,6 @@ def process_page_layout_from_pdfminer(
                 element_class.append(1)
                 is_extracted.append(None)
 
-    import pdb
-
-    pdb.set_trace()
     return (
         LayoutElements(
             element_coords=coord_coef * np.array(element_coords),
@@ -706,7 +698,7 @@ def merge_inferred_with_extracted_layout(
         merged_layout.is_extracted_array = merged_layout.is_extracted_array.astype(object)
         for i, text in enumerate(merged_layout.texts):
             if text is None:
-                text = aggregate_embedded_text_by_block(
+                text, is_extracted = aggregate_embedded_text_by_block(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
@@ -714,14 +706,7 @@ def merge_inferred_with_extracted_layout(
                     "Image",
                     "Picture",
                 ):
-                    merged_layout.is_extracted_array[i] = (
-                        IsExtracted.TRUE
-                        if all(
-                            ele == IsExtracted.TRUE
-                            for ele in extracted_page_layout.is_extracted_array
-                        )
-                        else IsExtracted.FALSE
-                    )
+                    merged_layout.is_extracted_array[i] = is_extracted
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
@@ -783,7 +768,7 @@ def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
     threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-) -> str:
+) -> tuple[str, IsExtracted]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
@@ -801,7 +786,10 @@ def aggregate_embedded_text_by_block(
     )
 
     text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    return text
+    is_extracted = all(
+        flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array
+    )
+    return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:

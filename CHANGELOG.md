@@ -1,3 +1,8 @@
+## 0.18.23
+
+### Enhancement
+- Update logic to only consider text found by pdfminer with low fraction of invisible text as extracted
+
 ## 0.18.22
 
 ### Fixes
@@ -75,7 +80,7 @@
 
 - Bumped dependencies via pip-compile to address the crit CVE in:
   - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
-    
+
 ## 0.18.14
 
 ### Enhancements
