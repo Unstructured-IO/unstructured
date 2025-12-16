@@ -380,7 +380,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
-def text_is_embedded(obj, threshold=0.1):
+def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
     invisible_chars = 0
     total_chars = 0
 
