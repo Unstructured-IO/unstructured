@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTTextBox
+from pdfminer.layout import LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
@@ -380,6 +380,41 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
+def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
+    invisible_chars = 0
+    total_chars = 0
+
+    def extract_chars(layout_obj):
+        """Recursively extract all LTChar objects from layout."""
+        nonlocal invisible_chars, total_chars
+
+        if isinstance(layout_obj, LTChar):
+            total_chars += 1
+
+            # Check if text is invisible:
+            #   - rendering mode 3
+            #   - both stroke and non-stroke color are not present or 0
+            if (hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3) or (
+                hasattr(layout_obj, "graphicstate")
+                and layout_obj.graphicstate.scolor is None
+                and layout_obj.graphicstate.ncolor is None
+            ):
+                invisible_chars += 1
+        elif isinstance(layout_obj, LTContainer):
+            # Recursively process container's children
+            for child in layout_obj:
+                extract_chars(child)
+
+    extract_chars(obj)
+    if total_chars > 0:
+        # when there are no-trivial amount of hidden characters in the object it means there are
+        # text that is not rendered -> most likely OCR'ed text for the image content overlying the
+        # text and not embedded text that also shows in the rendered pdf
+        invisible_ratio = invisible_chars / total_chars
+        return invisible_ratio < threshold
+    return True
+
+
 @requires_dependencies("unstructured_inference")
 def process_page_layout_from_pdfminer(
     annotation_list: list,
@@ -392,6 +427,7 @@ def process_page_layout_from_pdfminer(
 
     urls_metadata: list[dict[str, Any]] = []
     element_coords, texts, element_class = [], [], []
+    is_extracted = []
     annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
 
     for obj in page_layout:
@@ -418,6 +454,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(inner_obj.get_text())
                 element_coords.append(inner_bbox)
                 element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
         else:
             inner_image_objects = extract_image_objects(obj)
             for img_obj in inner_image_objects:
@@ -427,6 +464,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(None)
                 element_coords.append(inner_bbox)
                 element_class.append(1)
+                is_extracted.append(None)
 
     return (
         LayoutElements(
@@ -435,9 +473,7 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
-            is_extracted_array=np.array(
-                [IsExtracted.TRUE if (this_class == 0) else None for this_class in element_class]
-            ),
+            is_extracted_array=np.array(is_extracted),
         ),
         urls_metadata,
     )
@@ -664,7 +700,7 @@ def merge_inferred_with_extracted_layout(
         merged_layout.is_extracted_array = merged_layout.is_extracted_array.astype(object)
         for i, text in enumerate(merged_layout.texts):
             if text is None:
-                text = aggregate_embedded_text_by_block(
+                text, is_extracted = aggregate_embedded_text_by_block(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
@@ -672,7 +708,7 @@ def merge_inferred_with_extracted_layout(
                     "Image",
                     "Picture",
                 ):
-                    merged_layout.is_extracted_array[i] = IsExtracted.TRUE
+                    merged_layout.is_extracted_array[i] = is_extracted
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
@@ -734,12 +770,12 @@ def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
     threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-) -> str:
+) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
     if len(source_regions) == 0 or len(target_region) == 0:
-        return ""
+        return "", None
 
     mask = (
         bboxes1_is_almost_subregion_of_bboxes2(
@@ -752,7 +788,11 @@ def aggregate_embedded_text_by_block(
     )
 
     text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    return text
+    # if nothing is sliced then it is not extracted
+    is_extracted = sum(mask) and all(
+        flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array
+    )
+    return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:

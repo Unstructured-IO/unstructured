@@ -1,8 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams
+from pdfminer.layout import LAParams, LTChar, LTContainer
 from PIL import Image
 from unstructured_inference.constants import IsExtracted
 from unstructured_inference.constants import Source as InferenceSource
@@ -25,6 +25,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_inner_elements,
     process_file_with_pdfminer,
     remove_duplicate_elements,
+    text_is_embedded,
 )
 from unstructured.partition.utils.constants import Source
 
@@ -169,7 +170,7 @@ def test_aggregate_by_block():
     )
     target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
 
-    text = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    text, _ = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == expected
 
 
@@ -255,6 +256,12 @@ def test_process_file_with_pdfminer_is_extracted_array():
     assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[0].is_extracted_array)
 
 
+def test_process_file_hidden_ocr_text():
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
+    assert all(is_extracted is None for is_extracted in layout[0].is_extracted_array[:-1])
+    assert layout[0].is_extracted_array[-1] == IsExtracted.TRUE
+
+
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
 def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
     partition(
@@ -269,3 +276,53 @@ def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
         "line_overlap": 0.0123,
         "word_margin": 3.21,
     }
+
+
+def create_mock_ltchar(text, invisible=False):
+    """Create a mock LTChar object"""
+
+    graphicstate = Mock()
+    if invisible:
+        graphicstate.scolor = None
+        graphicstate.ncolor = None
+
+    char = LTChar(
+        matrix=(1, 0, 0, 1, 0, 0),  # transformation matrix
+        font=Mock(),  # you'd need to mock PDFFont
+        fontsize=12,
+        scaling=1,
+        rise=0,
+        text=text,
+        textwidth=10,
+        textdisp=(0, 1),
+        ncs=Mock(),
+        graphicstate=graphicstate,
+    )
+
+    return char
+
+
+def create_mock_ltcontainer(chars):
+    """Create a mock LTContainer with LTChar objects"""
+    container = LTContainer(bbox=(0, 0, 1, 1))
+
+    # The container should be iterable
+    container.extend(chars)
+
+    return container
+
+
+# Now you can use it in tests
+def test_text_is_embedded():
+    chars = [
+        create_mock_ltchar("H"),
+        create_mock_ltchar("e"),
+        create_mock_ltchar("l"),
+        create_mock_ltchar("l"),
+        create_mock_ltchar("o", invisible=True),
+    ]
+
+    container = create_mock_ltcontainer(chars)
+
+    assert text_is_embedded(container, threshold=0.5)
+    assert not text_is_embedded(container, threshold=0.1)
