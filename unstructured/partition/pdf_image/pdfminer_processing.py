@@ -394,10 +394,9 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATI
             # Check if text is invisible:
             #   - rendering mode 3
             #   - both stroke and non-stroke color are not present or 0
-            if (
-                hasattr(layout_obj, "rendermode")
-                and layout_obj.rendermode == 3
-                or layout_obj.graphicstate.scolor is None
+            if (hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3) or (
+                hasattr(layout_obj, "graphicstate")
+                and layout_obj.graphicstate.scolor is None
                 and layout_obj.graphicstate.ncolor is None
             ):
                 invisible_chars += 1
@@ -789,7 +788,8 @@ def aggregate_embedded_text_by_block(
     )
 
     text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    is_extracted = all(
+    # if nothing is sliced then it is not extracted
+    is_extracted = sum(mask) and all(
         flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array
     )
     return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
