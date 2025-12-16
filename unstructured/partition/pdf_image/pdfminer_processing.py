@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTTextBox
+from pdfminer.layout import LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
@@ -380,6 +380,44 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
+def _text_is_embedded(obj, threshold=0.1):
+    invisible_chars = 0
+    total_chars = 0
+
+    def extract_chars(layout_obj):
+        """Recursively extract all LTChar objects from layout."""
+        nonlocal invisible_chars, total_chars
+
+        if isinstance(layout_obj, LTChar):
+            total_chars += 1
+
+            # Check if text is invisible (rendering mode 3)
+            if (
+                hasattr(layout_obj, "rendermode")
+                and layout_obj.rendermode == 3
+                or layout_obj.graphicstate.scolor in (0, None)
+                and layout_obj.graphicstate.ncolor
+                in (
+                    0,
+                    None,
+                )
+            ):
+                invisible_chars += 1
+        elif isinstance(layout_obj, LTContainer):
+            # Recursively process container's children
+            for child in layout_obj:
+                extract_chars(child)
+
+    extract_chars(obj)
+    print(f"text {obj.get_text()}")
+    if total_chars > 0:
+        invisible_ratio = invisible_chars / total_chars
+        print(f"invisible char ratio: {invisible_ratio}")
+        return invisible_ratio < threshold
+    print("no char found")
+    return True
+
+
 @requires_dependencies("unstructured_inference")
 def process_page_layout_from_pdfminer(
     annotation_list: list,
@@ -392,6 +430,7 @@ def process_page_layout_from_pdfminer(
 
     urls_metadata: list[dict[str, Any]] = []
     element_coords, texts, element_class = [], [], []
+    is_extracted = []
     annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
 
     for obj in page_layout:
@@ -418,6 +457,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(inner_obj.get_text())
                 element_coords.append(inner_bbox)
                 element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE if _text_is_embedded(inner_obj) else None)
         else:
             inner_image_objects = extract_image_objects(obj)
             for img_obj in inner_image_objects:
@@ -427,7 +467,11 @@ def process_page_layout_from_pdfminer(
                 texts.append(None)
                 element_coords.append(inner_bbox)
                 element_class.append(1)
+                is_extracted.append(None)
 
+    import pdb
+
+    pdb.set_trace()
     return (
         LayoutElements(
             element_coords=coord_coef * np.array(element_coords),
@@ -435,9 +479,7 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
-            is_extracted_array=np.array(
-                [IsExtracted.TRUE if (this_class == 0) else None for this_class in element_class]
-            ),
+            is_extracted_array=np.array(is_extracted),
         ),
         urls_metadata,
     )
@@ -672,7 +714,14 @@ def merge_inferred_with_extracted_layout(
                     "Image",
                     "Picture",
                 ):
-                    merged_layout.is_extracted_array[i] = IsExtracted.TRUE
+                    merged_layout.is_extracted_array[i] = (
+                        IsExtracted.TRUE
+                        if all(
+                            ele == IsExtracted.TRUE
+                            for ele in extracted_page_layout.is_extracted_array
+                        )
+                        else IsExtracted.FALSE
+                    )
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
