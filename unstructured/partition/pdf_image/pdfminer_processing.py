@@ -605,9 +605,12 @@ def bboxes1_is_almost_subregion_of_bboxes2(
         coords1, coords2, round_to=round_to
     )
 
-    return (inter_area / np.maximum(boxa_area, EPSILON_AREA) > threshold) & (
-        boxa_area <= boxb_area.T
-    )
+    # Precompute max(boxa_area, EPSILON_AREA). shape = (n1, 1)
+    boxa_area_clip = np.maximum(boxa_area, EPSILON_AREA)
+    # Compute division and thresholding in-place to minimize temporaries
+    overlap = inter_area / boxa_area_clip
+    mask = (overlap > threshold) & (boxa_area <= boxb_area.T)
+    return mask
 
 
 def boxes_self_iou(bboxes, threshold: float = 0.5, round_to: int = DEFAULT_ROUND) -> np.ndarray:
@@ -778,20 +781,20 @@ def aggregate_embedded_text_by_block(
     if len(source_regions) == 0 or len(target_region) == 0:
         return "", None
 
-    mask = (
-        bboxes1_is_almost_subregion_of_bboxes2(
-            source_regions.element_coords,
-            target_region.element_coords,
-            threshold,
-        )
-        .sum(axis=1)
-        .astype(bool)
-    )
+    mask = bboxes1_is_almost_subregion_of_bboxes2(
+        source_regions.element_coords,
+        target_region.element_coords,
+        threshold,
+    ).any(
+        axis=1
+    )  # Use any(axis=1) instead of sum(axis=1).astype(bool) for memory/efficiency
 
-    text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    is_extracted = all(
-        flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array
-    )
+    sliced = source_regions.slice(mask)
+    # Use a list comprehension for 'texts' as before; join efficiently:
+    text_chunks = [text for text in sliced.texts if text]
+    text = " ".join(text_chunks) if text_chunks else ""
+    # Use all() generator instead of list for clearer/efficient is_extracted
+    is_extracted = all(flag == IsExtracted.TRUE for flag in sliced.is_extracted_array)
     return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
 
 
