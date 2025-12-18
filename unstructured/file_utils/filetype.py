@@ -346,14 +346,15 @@ class _FileTypeDetectionContext:
     @lazyproperty
     def extension(self) -> str:
         """Best filename-extension we can muster, "" when there is no available source."""
-        # -- get from file_path, or file when it has a name (path) --
+
+        # -- use metadata file-path when provided --
+        if file_path := self._metadata_file_path:
+            return os.path.splitext(file_path)[1].lower()
+          
+        # -- otherwise get from file_path, or file when it has a name (path) --
         with self.open() as file:
             if hasattr(file, "name") and file.name:
                 return os.path.splitext(file.name)[1].lower()
-
-        # -- otherwise use metadata file-path when provided --
-        if file_path := self._metadata_file_path:
-            return os.path.splitext(file_path)[1].lower()
 
         # -- otherwise empty str means no extension, same as a path like "a/b/name-no-ext" --
         return ""
