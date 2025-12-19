@@ -1,3 +1,8 @@
+## 0.18.24-dev0
+
+### Enhancement
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
+
 ## 0.18.23
 
 ### Enhancement
