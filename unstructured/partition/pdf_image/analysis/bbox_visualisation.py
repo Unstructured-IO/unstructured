@@ -10,6 +10,7 @@ from typing import Any, Generator, List, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
+from numba import njit
 from PIL import Image, ImageDraw, ImageFont
 from unstructured_inference.constants import ElementType
 
@@ -75,6 +76,7 @@ def get_rgb_color(color: str) -> tuple[int, int, int]:
     return int(rgb_colors[0] * 255), int(rgb_colors[1] * 255), int(rgb_colors[2] * 255)
 
 
+@njit(cache=True)
 def _get_bbox_to_page_ratio(bbox: tuple[int, int, int, int], page_size: tuple[int, int]) -> float:
     """Compute the ratio of the bounding box to the page size.
 
