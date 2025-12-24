@@ -191,7 +191,7 @@ pycparser==2.23
     #   cffi
 pyparsing==3.2.5
     # via matplotlib
-pypdf==6.3.0
+pypdf==6.4.0
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
