@@ -10,9 +10,7 @@
   "packageRules": [
     {
       "matchDatasources": ["pypi"],
-      "vulnerabilityAlerts": {
-        "enabled": true
-      },
+      "matchIsVulnerabilityAlert": true,
       "postUpgradeTasks": {
         "commands": [
           "bash scripts/renovate-security-bump.sh"

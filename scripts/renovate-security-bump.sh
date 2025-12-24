@@ -58,7 +58,7 @@ else
 fi
 
 # Verify the update succeeded
-if ! grep -q "__version__ = ['\"]$RELEASE_VERSION['\"]" "$VERSION_FILE"; then
+if ! grep -q "__version__ = ['\"]${RELEASE_VERSION}['\"]" "$VERSION_FILE"; then
 	echo "Error: Failed to update version in $VERSION_FILE"
 	exit 1
 fi
@@ -67,11 +67,11 @@ rm -f "$VERSION_FILE.bak"
 
 # Detect changed packages from git diff (best effort, not critical)
 echo "Detecting changed dependencies..."
-CHANGED_PACKAGES=$(git diff --cached requirements/*.txt 2>/dev/null | grep -E "^[-+][a-zA-Z0-9_-]+==" | sed 's/^[+-]//' | sort -u | head -20 || true)
+CHANGED_PACKAGES=$(git diff --cached requirements/*.txt 2>/dev/null | grep -E "^[-+][a-zA-Z0-9_-]++=" | sed 's/^[+-]//' | sort -u | head -20 || true)
 
 if [ -z "$CHANGED_PACKAGES" ]; then
 	# Try without --cached
-	CHANGED_PACKAGES=$(git diff requirements/*.txt 2>/dev/null | grep -E "^[-+][a-zA-Z0-9_-]+==" | sed 's/^[+-]//' | sort -u | head -20 || true)
+	CHANGED_PACKAGES=$(git diff requirements/*.txt 2>/dev/null | grep -E "^[-+][a-zA-Z0-9_-]++=" | sed 's/^[+-]//' | sort -u | head -20 || true)
 fi
 
 # Build changelog entry (generic for now, can be manually edited)
