@@ -6,21 +6,17 @@
     "github>unstructured-io/renovate-config"
   ],
 
-  // Enable automatic version bumping for Python security updates
-  "packageRules": [
-    {
-      "matchDatasources": ["pypi"],
-      "matchIsVulnerabilityAlert": true,
-      "postUpgradeTasks": {
-        "commands": [
-          "bash scripts/renovate-security-bump.sh"
-        ],
-        "fileFilters": [
-          "unstructured/__version__.py",
-          "CHANGELOG.md"
-        ],
-        "executionMode": "branch"
-      }
+  // Run version bump script for all vulnerability alert PRs
+  "vulnerabilityAlerts": {
+    "postUpgradeTasks": {
+      "commands": [
+        "bash scripts/renovate-security-bump.sh"
+      ],
+      "fileFilters": [
+        "unstructured/__version__.py",
+        "CHANGELOG.md"
+      ],
+      "executionMode": "branch"
     }
-  ]
+  }
 }
