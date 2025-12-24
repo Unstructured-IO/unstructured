@@ -1,0 +1,9 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  // Extend shared security-only config from renovate-config repo
+  // Includes automatic version bumping and CHANGELOG updates via postUpgradeTasks
+  "extends": [
+    "github>unstructured-io/renovate-config",
+  ],
+}
