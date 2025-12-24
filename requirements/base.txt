@@ -63,7 +63,7 @@ langdetect==1.0.9
     # via -r base.in
 lxml==6.0.2
     # via -r base.in
-marshmallow==3.26.1
+marshmallow==3.26.2
     # via
     #   dataclasses-json
     #   unstructured-client
@@ -89,7 +89,7 @@ psutil==7.1.3
     # via -r base.in
 pycparser==2.23
     # via cffi
-pypdf==6.3.0
+pypdf==6.4.0
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
@@ -143,7 +143,7 @@ unstructured-client==0.25.9
     # via
     #   -c deps/constraints.txt
     #   -r base.in
-urllib3==2.5.0
+urllib3==2.6.0
     # via
     #   -c deps/constraints.txt
     #   requests

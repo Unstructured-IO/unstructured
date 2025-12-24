@@ -16,7 +16,7 @@ click==8.3.1
     # via
     #   -c base.txt
     #   sacremoses
-filelock==3.20.0
+filelock==3.20.1
     # via
     #   huggingface-hub
     #   torch
@@ -105,7 +105,7 @@ typing-extensions==4.15.0
     #   -c base.txt
     #   huggingface-hub
     #   torch
-urllib3==2.5.0
+urllib3==2.6.0
     # via
     #   -c base.txt
     #   -c deps/constraints.txt
