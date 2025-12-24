@@ -283,7 +283,7 @@ unstructured-inference==1.1.2
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in
-urllib3==2.5.0
+urllib3==2.6.0
     # via
     #   -c ./base.txt
     #   -c ././deps/constraints.txt
