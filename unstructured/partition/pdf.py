@@ -688,20 +688,23 @@ def _partition_pdf_or_image_local(
             hi_res_model_name=hi_res_model_name,
         )
 
-        final_document_layout = process_file_with_ocr(
-            filename,
-            merged_document_layout,
-            extracted_layout=extracted_layout,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            ocr_agent=ocr_agent,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-            ocr_layout_dumper=ocr_layout_dumper,
-            password=password,
-            table_ocr_agent=table_ocr_agent,
-        )
+        if ocr_mode == OCRMode.NONE.value:
+            final_document_layout = merged_document_layout
+        else:
+            final_document_layout = process_file_with_ocr(
+                filename,
+                merged_document_layout,
+                extracted_layout=extracted_layout,
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+                ocr_layout_dumper=ocr_layout_dumper,
+                password=password,
+                table_ocr_agent=table_ocr_agent,
+            )
     else:
         inferred_document_layout = process_data_with_model(
             file,
@@ -749,20 +752,24 @@ def _partition_pdf_or_image_local(
 
         if hasattr(file, "seek"):
             file.seek(0)
-        final_document_layout = process_data_with_ocr(
-            file,
-            merged_document_layout,
-            extracted_layout=extracted_layout,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            ocr_agent=ocr_agent,
-            ocr_languages=ocr_languages,
-            ocr_mode=ocr_mode,
-            pdf_image_dpi=pdf_image_dpi,
-            ocr_layout_dumper=ocr_layout_dumper,
-            password=password,
-            table_ocr_agent=table_ocr_agent,
-        )
+
+        if ocr_mode == OCRMode.NONE.value:
+            final_document_layout = merged_document_layout
+        else:
+            final_document_layout = process_data_with_ocr(
+                file,
+                merged_document_layout,
+                extracted_layout=extracted_layout,
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                pdf_image_dpi=pdf_image_dpi,
+                ocr_layout_dumper=ocr_layout_dumper,
+                password=password,
+                table_ocr_agent=table_ocr_agent,
+            )
 
     # vectorization of the data structure ends here
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
