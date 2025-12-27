@@ -1,3 +1,8 @@
+## Unreleased
+
+### Enhancement
+- Add `OCRMode.NONE` to disable OCR in hi-res mode
+
 ## 0.18.24
 
 ### Enhancement
