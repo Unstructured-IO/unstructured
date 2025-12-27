@@ -204,7 +204,13 @@ example-docs/*_images
 examples/**/output/
 
 outputdiff.txt
+outputhtmldiff.txt
 metricsdiff.txt
 
 # analysis
 annotated/
+.aider*
+pcaps
+python-output
+
+.vs/

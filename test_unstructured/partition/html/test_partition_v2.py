@@ -45,3 +45,33 @@ def test_alternative_image_text_can_be_included_when_nested_in_paragraph():
         html_parser_version="v2",
     )
     assert "ALT TEXT Logo" not in paragraph_none_alt_mode.text
+
+
+def test_attr_and_html_inside_table_cell_is_kept():
+    # language=HTML
+    html = """
+    <div class="Page">
+        <table class="Table">
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        Some text
+                    </td>
+                    <td>
+                        <input checked="" class="Checkbox" type="checkbox"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    """
+    page, table = partition_html(
+        text=html,
+        image_alt_mode="to_text",
+        html_parser_version="v2",
+    )
+
+    assert (
+        '<input checked="" class="Checkbox" type="checkbox"/>' in table.metadata.text_as_html
+    )  # class is removed
+    assert 'colspan="2"' in table.metadata.text_as_html

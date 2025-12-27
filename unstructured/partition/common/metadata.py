@@ -5,7 +5,6 @@ from __future__ import annotations
 import copy
 import datetime as dt
 import functools
-import itertools
 import os
 from typing import Any, Callable, Iterator, Sequence
 
@@ -252,15 +251,12 @@ def _assign_hash_ids(elements: list[Element]) -> list[Element]:
     or more fragments for parallel processing.
     """
     # -- generate sequence number for each element on a page --
-    page_numbers = [e.metadata.page_number for e in elements]
-    page_seq_numbers = [
-        seq_on_page
-        for _, group in itertools.groupby(page_numbers)
-        for seq_on_page, _ in enumerate(group)
-    ]
-
-    for element, seq_on_page_counter in zip(elements, page_seq_numbers):
+    page_seq_counts = {}
+    for element in elements:
+        page_number = element.metadata.page_number
+        seq_on_page_counter = page_seq_counts.get(page_number, 0)
         element.id_to_hash(seq_on_page_counter)
+        page_seq_counts[page_number] = seq_on_page_counter + 1
 
     return elements
 

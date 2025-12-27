@@ -11,9 +11,11 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_SEMICOLON_DELIMITER,
     EXPECTED_TABLE_WITH_EMOJI,
+    EXPECTED_TABLE_WITH_LINE_DELIMITER,
     EXPECTED_TEXT,
     EXPECTED_TEXT_SEMICOLON_DELIMITER,
     EXPECTED_TEXT_WITH_EMOJI,
+    EXPECTED_TEXT_WITH_LINE_DELIMITER,
     EXPECTED_TEXT_XLSX,
 )
 from test_unstructured.unit_utils import (
@@ -41,6 +43,11 @@ EXPECTED_FILETYPE = "text/csv"
             "table-semicolon-delimiter.csv",
             EXPECTED_TEXT_SEMICOLON_DELIMITER,
             EXPECTED_TABLE_SEMICOLON_DELIMITER,
+        ),
+        (
+            "csv-with-line-delimiter.csv",
+            EXPECTED_TEXT_WITH_LINE_DELIMITER,
+            EXPECTED_TABLE_WITH_LINE_DELIMITER,
         ),
     ],
 )

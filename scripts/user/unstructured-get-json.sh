@@ -16,12 +16,20 @@ Options:
   --hi-res        hi_res strategy: Enable high-resolution processing, with layout segmentation and OCR
   --fast          fast strategy: No OCR, just extract embedded text
   --ocr-only      ocr_only strategy: Perform OCR (Optical Character Recognition) only. No layout segmentation.
+  --vlm           vlm strategy: Use Vision Language Model for processing
+  --vlm-provider  Specify the VLM model provider
+                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
+  --vlm-model     Specify the VLM model when using
+                  (see: https://docs.unstructured.io/api-reference/workflow/workflows#vlm-strategy)
   --tables        Enable table extraction: tables are represented as html in metadata
   --images        Include base64images in json
   --coordinates   Include coordinates in the output
   --trace         Enable trace logging for debugging, useful to cut and paste the executed curl call
   --verbose       Enable verbose logging including printing first 8 elements to stdout
   --s3            Write the resulting output to s3 (like a pastebin)
+  --write-html    Convert JSON output to HTML. Set the env var $UNST_WRITE_HTML to skip providing this option.
+  --open-html     Automatically open HTML output in browser (macOS only) if --write-html. 
+                  Set the env var UNST_AUTO_OPEN_HTML=true to skip providing this option.
   --help          Display this help and exit.
 
 
@@ -42,8 +50,8 @@ fi
 
 IMAGE_BLOCK_TYPES=${IMAGE_BLOCK_TYPES:-'"image", "table"'}
 API_KEY=${UNST_API_KEY:-""}
-TMP_DOWNLOADS_DIR="$HOME/tmp/unst-downloads"
-TMP_OUTPUTS_DIR="$HOME/tmp/unst-outputs"
+TMP_DOWNLOADS_DIR=${UNST_SCRIPT_DOWNLOADS_DIR:-"$HOME/tmp/unst-downloads"}
+TMP_OUTPUTS_DIR=${UNST_SCRIPT_JSON_OUTPUTS_DIR:-"$HOME/tmp/unst-outputs"}
 # only applicable if writing .json output files to S3 when using --s3, e.g. s3://bucket-name/path/
 S3_URI_PREFIX=${UNST_S3_JSON_OUTPUT_URI:-""}
 # e.g. us-east-2, used to provide http links for above location
@@ -64,6 +72,7 @@ copy_to_clipboard() {
 HI_RES=false
 FAST=false
 OCR_ONLY=false
+VLM=false
 STRATEGY=""
 VERBOSE=false
 TRACE=false
@@ -72,6 +81,10 @@ FREEMIUM=false
 TABLES=true
 IMAGES=false
 S3=""
+WRITE_HTML=${UNST_WRITE_HTML:-false}
+OPEN_HTML=${UNST_AUTO_OPEN_HTML:-false}
+VLM_PROVIDER=""
+VLM_MODEL=""
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -87,6 +100,28 @@ while [[ "$#" -gt 0 ]]; do
     OCR_ONLY=true
     shift
     ;;
+  --vlm)
+    VLM=true
+    shift
+    ;;
+  --vlm-provider)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      VLM_PROVIDER=$2
+      shift 2
+    else
+      echo "Error: Argument for $1 is missing" >&2
+      exit 1
+    fi
+    ;;
+  --vlm-model)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      VLM_MODEL=$2
+      shift 2
+    else
+      echo "Error: Argument for $1 is missing" >&2
+      exit 1
+    fi
+    ;;
   --trace)
     TRACE=true
     shift
@@ -97,6 +132,14 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --s3)
     S3=true
+    shift
+    ;;
+  --write-html)
+    WRITE_HTML=true
+    shift
+    ;;
+  --open-html)
+    OPEN_HTML=true
     shift
     ;;
   --tables)
@@ -140,6 +183,24 @@ if [ -z "$INPUT" ]; then
   exit 1
 fi
 
+# Check for strategy conflicts after all arguments are processed
+STRATEGY_COUNT=0
+$HI_RES && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$FAST && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$OCR_ONLY && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+$VLM && STRATEGY_COUNT=$((STRATEGY_COUNT + 1))
+
+if [ "$STRATEGY_COUNT" -gt 1 ]; then
+  echo "Error: Only one strategy option (--hi-res, --fast, --ocr-only, --vlm) can be specified at a time."
+  exit 1
+fi
+
+# Check if vlm-provider or vlm-model are provided without --vlm
+if { [ -n "$VLM_PROVIDER" ] || [ -n "$VLM_MODEL" ]; } && ! $VLM; then
+  echo "Error: --vlm-provider or --vlm-model can only be used with --vlm strategy."
+  exit 1
+fi
+
 if $TRACE; then
   set -x
 fi
@@ -175,6 +236,25 @@ elif $OCR_ONLY; then
   STRATEGY="-ocr-only"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=ocr_only")
+elif $VLM; then
+  if $VERBOSE; then echo "Sending API request with vlm strategy"; fi
+  STRATEGY="-vlm"
+  # Add provider and model to filename if specified
+  if [ -n "$VLM_PROVIDER" ] && [ -n "$VLM_MODEL" ]; then
+    STRATEGY="-vlm-${VLM_PROVIDER}-${VLM_MODEL}"
+  elif [ -n "$VLM_PROVIDER" ]; then
+    STRATEGY="-vlm-${VLM_PROVIDER}"
+  elif [ -n "$VLM_MODEL" ]; then
+    STRATEGY="-vlm-model-${VLM_MODEL}"
+  fi
+  JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
+  CURL_STRATEGY=(-F "strategy=vlm")
+  if [ -n "$VLM_PROVIDER" ]; then
+    CURL_STRATEGY+=(-F "vlm_model_provider=$VLM_PROVIDER")
+  fi
+  if [ -n "$VLM_MODEL" ]; then
+    CURL_STRATEGY+=(-F "vlm_model=$VLM_MODEL")
+  fi
 else
   if $VERBOSE; then echo "Sending API request WITHOUT a strategy"; fi
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
@@ -212,6 +292,44 @@ else
   echo "total number of elements: " $(jq 'length' "${JSON_OUTPUT_FILEPATH}")
 fi
 echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
+
+# Convert JSON to HTML if requested
+if [ "$WRITE_HTML" = true ]; then
+  HTML_OUTPUT_FILEPATH=${JSON_OUTPUT_FILEPATH%.json}.html
+
+  if $VLM; then
+    # VLM output has all metadata.text_as_html fields defined, so
+    # create HTML directly from the metadata.text_as_html fields
+    {
+      echo "<!DOCTYPE html>"
+      echo "<html>"
+      echo "<head>"
+      echo "  <meta charset=\"UTF-8\">"
+      echo "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+      echo "  <title>${FILENAME}</title>"
+      echo "  <style>"
+      echo "    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }"
+      echo "  </style>"
+      echo "</head>"
+      echo "<body>"
+      jq -r 'map(.metadata.text_as_html) | join("\n")' "${JSON_OUTPUT_FILEPATH}"
+      echo "</body>"
+      echo "</html>"
+    } >"${HTML_OUTPUT_FILEPATH}"
+    echo "HTML written directly from metadata.text_as_html fields to: ${HTML_OUTPUT_FILEPATH}"
+  else
+    # most elements will not have metadata.text_as_html defined (by design on Table elements do),
+    # so use the unstructured library's python script for the conversion.
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PYTHONPATH="${SCRIPT_DIR}/../.." python3 "${SCRIPT_DIR}/../convert/elements_json_to_format.py" "${JSON_OUTPUT_FILEPATH}" --outdir "${TMP_OUTPUTS_DIR}"
+    echo "HTML written using Python script to: ${HTML_OUTPUT_FILEPATH}"
+  fi
+
+  # Open HTML file in browser if requested and on macOS
+  if [ "$OPEN_HTML" = true ] && [ "$(uname)" == "Darwin" ]; then
+    open "${HTML_OUTPUT_FILEPATH}"
+  fi
+fi
 
 # write .json output to s3 location
 if [ -n "$S3" ]; then

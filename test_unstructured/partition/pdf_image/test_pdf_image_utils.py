@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import tempfile
 from unittest.mock import MagicMock, patch
@@ -35,9 +37,8 @@ def test_write_image(image_type):
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
 @pytest.mark.parametrize("path_only", [True, False])
-def test_convert_pdf_to_image(
-    file_mode, path_only, filename=example_doc_path("pdf/embedded-images.pdf")
-):
+def test_convert_pdf_to_image(file_mode, path_only):
+    filename = example_doc_path("pdf/embedded-images.pdf")
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             images = pdf_image_utils.convert_pdf_to_image(
@@ -61,7 +62,8 @@ def test_convert_pdf_to_image(
             assert isinstance(images[0], PILImg.Image)
 
 
-def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-images.pdf")):
+def test_convert_pdf_to_image_raises_error():
+    filename = example_doc_path("embedded-images.pdf")
     with pytest.raises(ValueError) as exc_info:
         pdf_image_utils.convert_pdf_to_image(filename=filename, path_only=True, output_folder=None)
 
@@ -73,16 +75,26 @@ def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-i
     [
         (example_doc_path("pdf/layout-parser-paper-fast.pdf"), False),
         (example_doc_path("img/layout-parser-paper-fast.jpg"), True),
+        (example_doc_path("img/english-and-korean.png"), True),
     ],
 )
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+@pytest.mark.parametrize("horizontal_padding", [0, 20])
+@pytest.mark.parametrize("vertical_padding", [0, 10])
 def test_save_elements(
     element_category_to_save,
     extract_image_block_to_payload,
     filename,
     is_image,
+    horizontal_padding,
+    vertical_padding,
+    monkeypatch,
 ):
+    if horizontal_padding > 0:
+        monkeypatch.setenv("EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD", str(horizontal_padding))
+    if vertical_padding > 0:
+        monkeypatch.setenv("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", str(vertical_padding))
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = [
             Image(
@@ -135,10 +147,25 @@ def test_save_elements(
             if extract_image_block_to_payload:
                 assert isinstance(el.metadata.image_base64, str)
                 assert isinstance(el.metadata.image_mime_type, str)
+                image_bytes = base64.b64decode(el.metadata.image_base64)
+                image = PILImg.open(io.BytesIO(image_bytes))
+                x1, y1 = el.metadata.coordinates.points[0]
+                x2, y2 = el.metadata.coordinates.points[2]
+                width = x2 - x1
+                height = y2 - y1
+                assert image.width == width + 2 * horizontal_padding
+                assert image.height == height + 2 * vertical_padding
                 assert not el.metadata.image_path
                 assert not os.path.isfile(expected_image_path)
             else:
                 assert os.path.isfile(expected_image_path)
+                image = PILImg.open(expected_image_path)
+                x1, y1 = el.metadata.coordinates.points[0]
+                x2, y2 = el.metadata.coordinates.points[2]
+                width = x2 - x1
+                height = y2 - y1
+                assert image.width == width + 2 * horizontal_padding
+                assert image.height == height + 2 * vertical_padding
                 assert el.metadata.image_path == expected_image_path
                 assert not el.metadata.image_base64
                 assert not el.metadata.image_mime_type
@@ -231,6 +258,7 @@ def test_pad_bbox():
         (["table", "image"], ["Table", "Image"]),
         (["unknown"], ["Unknown"]),
         (["Table", "image", "UnknOwn"], ["Table", "Image", "Unknown"]),
+        (["NarrativeText", "narrativetext"], ["NarrativeText", "NarrativeText"]),
     ],
 )
 def test_check_element_types_to_extract(input_types, expected):

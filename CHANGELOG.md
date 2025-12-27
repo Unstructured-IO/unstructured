@@ -1,4 +1,117 @@
-## 0.16.19-dev1
+## 0.18.24
+
+### Enhancement
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
+
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
+## 0.18.23
+
+### Enhancement
+- Update logic to only consider text found by pdfminer with low fraction of invisible text as extracted
+
+## 0.18.22
+
+### Fixes
+- Constrain fonttools to >=4.60.2 to address CVE-2025-66034
+
+## 0.18.21
+
+### Enhancement
+- Update save_elements unit test to check crop box padding behavior
+
+### Features
+
+### Fixes
+- **Update `unstructured-inference`** to 1.1.2 to address CVEs
+
+## 0.18.20
+
+### Enhancement
+- Improve the VoyageAI integration
+- Add voyage-context-3 support
+
+### Features
+
+### Fixes
+
+## 0.18.19
+
+### Enhancement
+- Flag extracted elements as such in the metadata for downstream use
+
+### Features
+
+### Fixes
+
+## 0.18.18
+
+### Fixes
+- **Prevent path traversal in email MSG attachment filenames** Fixed a security vulnerability (GHSA-gm8q-m8mv-jj5m) where malicious attachment filenames containing path traversal sequences could write files outside the intended directory. The fix normalizes both Unix and Windows path separators before sanitizing filenames, preventing cross-platform path traversal attacks in `partition_msg` functions
+
+## 0.18.17
+
+### Enhancement
+
+### Features
+
+### Fixes
+- Removed `Clardy` dependency as it is no longer used
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **pypdf**: GHSA-vr63-x8vc-m265
+  - **pip**: GHSA-4xh5-x5gv-qwph
+  - **uv**: GHSA-8qf3-x8v5-2pj8 GHSA-pqhf-p39g-3x64
+
+## 0.18.16
+
+### Enhancement
+- Speed up function _assign_hash_ids by 34% (codeflash)
+
+### Features
+
+### Fixes
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **authlib**: GHSA-pq5p-34cr-23v9
+  - **python-3.12/python03**.12-base: CVE-2025-8291, GHSA-49g5-f6qw-8mm7
+  - **libcrypto3/libssl3**: CVE-2025-9230, CVE-2025-9231, CVE-2025-9232, GHSA-76r2-c3cg-f5r9, GHSA-9mrx-mqmg-gwj9
+
+## 0.18.15
+
+### Enhancements
+- Speed up function ElementHtml._get_children_html by 234% (codeflash)
+- Speed up function group_broken_paragraphs by 30% (codeflash)
+
+### Features
+
+### Fixes
+
+- Bumped dependencies via pip-compile to address the crit CVE in:
+  - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
+
+## 0.18.14
+
+### Enhancements
+- Speed up function sentence_count by 59% (codeflash)
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
+
+### Features
+
+### Fixes
+
+- **change short text language detection log to debug** reduce warning level log spamming
+  - Bumped dependencies via pip-compile to address the following CVEs:
+    - **Python 3.12/3.13**: CVE-2025-8194, GHSA-v594-44hm-2j7p
+    - **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1)**: CVE-2025-8058, GHSA-8xjp-c72j-67q8
+    - **aiohttp**: GHSA-9548-qrrj-x5pj
+    - **openjpeg**: CVE-2025-54874
+    - **pypdf**: GHSA-7hfw-26vp-jp8m
+    - **transformers**: GHSA-9356-575x-2w9m
+    - **urllib3**: GHSA-48p4-8xcf-vxj5
+
+## 0.18.13
 
 ### Enhancements
 
@@ -6,15 +119,344 @@
 
 ### Fixes
 
-## 0.16.18-dev1
+- **Parse a wider variety of date formats in email headers** The `partition_email` function is now more robust to non-standard date formats, including ISO-8601 dates with "Z" suffixes. This prevents `ValueError` exceptions when partitioning emails with these date formats.
+
+## 0.18.12
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+- **Prevent large file content in encoding exceptions** Replace UnicodeDecodeError with UnprocessableEntityError in encoding detection to avoid storing entire file content in exception objects, which can cause issues in logging and error reporting systems when processing large files.
+
+## 0.18.11
+
+### Enhancements
+- **Standardized on `charset-normalizer` library for encoding detection** Previously we had both `chardet` and `charset-normalizer` as dependencies. We are dropping `chardet` and only using `charset-normalizer`.
+
+### Features
+- **Type-aware `<input>` mapping in HTML transformations** Bare `<input>` elements are now classified by their `type` attribute (checkbox → Checkbox, radio → RadioButton, others → FormFieldValue).
+
+
+### Fixes
+- **Recognize '|' as a delimiter** csv parser will now recognize '|' as a delimiter in addition to ',' and ';'.
+
+## 0.18.10
+
+### Enhancements
+- **Updated CodeQL** Updated CodeQL GHA to v3 from deprecated v2.
+
+### Features
+- **Add OCR_AGENT_CACHE_SIZE environment variable** Added configurable cache size for OCR agents to control memory usage.
+
+### Fixes
+
+## 0.18.9
+
+### Enhancements
+
+### Features
+- **Convert elements to markdown for output** Added function to convert elements to markdown format for easy viewing.
+
+### Fixes
+- *Language detection nit** Handle empty text
+
+## 0.18.8
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Properly handle password protected xlsx** - detect password protection on XLSX files and raise appropriate
+
+## 0.18.7
+
+### Enhancements
+
+- **`text_as_html` for Table element now keeps both `input` and `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for both `input` and `img` tag in the table element's `metadata.text_as_html`.
+
+### Features
+- **Add language detection for PDFs** Add document and element level language detection to PDFs.
+
+### Fixes
+
+## 0.18.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Improved epub partition errors** EPUB partition will now produce new type of error on unprocessable files.
+- **Fix type for serialized TableChunks** Use `TableChunk` for the string value of the field `type` when serializing elements of type `TableChunk`, rather than using the value `Table`.
+
+## 0.18.5
+
+### Enhancements
+
+- **Bump dependencies and remove lingering Python 3.9 artifacts** Cleaned up some references to 3.9 that were left When we dropped Python 3.9 support.
+- **`text_as_html` for Table element now keeps `img` tag's `class` attribute** Previously in partition HTML any tag inside a table is stripped of its `class` attribute. Now this attribute is preserved for `img` tag in the table element's `metadata.text_as_html`.
+
+### Features
+
+### Fixes
+- **Improve markdown code block handling** Code blocks in markdown were previously being processed as embedded code instead of plain text.
+
+## 0.18.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Increase CSV field limit** Addresses failures in partition for csv files with large fields
+
+## 0.18.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Upgrade Pillow to 11.3.0** Addresses a high priority CVE
+
+## 0.18.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes empty HTML content** Previously, when the HTML content was empty, the partitioner would raise a TypeError: Invalid input object: NoneType. Now it will return an empty list of elements.
+- **Failproof docx malformed or merged tables** This fix prevents docx file with complex or vertical merges or malformed tables from failing at `tc_at_grid_offset` and raised `ValueError: no tc element at grid_offset=X`.
+- **partition_md can read special characters on non- utf-8 files** `partition_md` reads the file as utf-8 previously. Now it uses `read_txt_file` that reads file with detected encoding.
+- xml code not getting escaped in a code block in a markdown file when in partition
+- **Fixes parsing HTML header and footer** Previously header and footer texts are partitioned as `UncategorizedText` or as the nested structure like `Title`. Now they are properly partitioned as `Header` and `Footer` element types.
+
+## 0.18.1
+
+### Enhancements
+
+### Features
+- **Add DocumentData element type** This is helpful in scenarios where there is large data that does not make sense to represent across each element in the document.
+
+### Fixes
+- The `encoding` property of the `_CsvPartitioningContext` is now properly used.
+
+## 0.18.0
+
+### Enhancements
+
+### Features
+- Upgraded Python version to 3.12
+
+### Fixes
+- Fix type error when `result_file_type` is expected to be a `FileType` but is `None`
+- Fix chunking for elements with None text that has AttributeError 'NoneType' object has no attribute 'strip'.
+- Invalid elements IDs are not visible in VLM output. Parent-child hierarchy is now retrieved based on unstructured element ID, instead of id injected into HTML code of element.
+- Fix bs4 deprecation warnings by updating `findAll()` with `find_all()`.
+
+## 0.17.10
+- Drop Python 3.9 support as it reaches EOL in October 2025
+- Update pip-compile script to use Python 3.10 and newer
+- Update all packages using pip-compile
+
+## 0.17.9
+- Patch various CVEs
+
+## 0.17.8
+
+### Enhancements
+- **Bump `unstructured-inference` to `1.0.5`** It includes critical fix to ensure inference model initialization is thread safe
+
+### Features
+
+### Fixes
+
+## 0.17.7
+
+### Enhancements
+- **Updated Docker file with ENV HF_HUB_OFFLINE=1 to prevent the contianer from trying to access the internet
+
+### Features
+
+### Fixes
+- **Fix image extraction for PNG files.** When `extract_image_block_to_payload` is True, and the image is a PNG, we get a Pillow error. We need to remove the PNG transparency layer before saving the image.
+- **Fix logger deprecation warning**: Replaced usage of `logger.warn` with `logger.warning` to comply with the Python logging standards.
+- **Throw validation error when json is passed with invalid unstructured json
+
+## 0.17.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+- The sort_page_element() use the element id to sort the elements.
+Two executions of the same code, on the same file, produce different results. The order of the elements is random.
+This makes it impossible to write stable unit tests, for example, or to obtain reproducible results.
+- **Do not use NLP to determine element types for extracted elements with hi_res.** This avoids extraneous Title elements in hi_res outputs. This only applies to *extracted* elements, meaning text objects that are found outside of Object Detection objects which get mapped to *inferred* elements. (*extracted* and *inferred* elements get merged together to form the list of `Element`s returned by `pdf_partition()`)
+- Resolve open CVEs
+- Properly handle the case when an element's `text` attribute is None
+
+
+## 0.17.5
+
+### Enhancements
+- **Remove test and dev dependencies from docker image.** This reduces the docker image size slightly and reduces potential security vulnerabilities.
+
+### Features
+
+### Fixes
+- **Removed out of date ubuntu Dockerfile.** The Dockerfile was out of date and non-functional.
+- **Fix for 'PSSyntaxError' import error: "cannot import name 'PSSyntaxError' from 'pdfminer.pdfparser'"** PSSyntaxError needed to be imported from its source 'pdfminer.psexceptions'.
+
+## 0.17.4
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Deprecate `stage_for_label_studio` and drop `label_studio_sdk` dependency.** This resolves a CVE due to the dependency on `label_studio_sdk`.
+
+## 0.17.3
+
+### Enhancements
+
+### Features
+
+### Fixes
+- Resolve open CVEs
+
+## 0.17.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fixes wrong detection of office files** certain office files wrongly identified as .ZIP when office(.docx,.xlsx and .pptx) files containing files other than word/document.xml, xl/workbook.xml and ppt/presentation.xml respectively will now be identified correctly by looking for word/document\*.xml, xl/workbook\*.xml and ppt/presentation\*.xml
+
+## 0.17.2
+
+* Fix Image in a <div> tag is "UncategorizedText" with no .text
+
+## 0.17.1
+
+### Enhancements
+
+- **Add image_url of images in html partitioner** `<img>` tags with non-data content include a new image_url metadata field with the content of the src attribute.
+
+- **Use `lxml` instead of `bs4` to parse hOCR data.** `lxml` is much faster than `bs4` given the hOCR data format is regular (garanteed because it is programatically generated)
+
+- **bump `numpy` to `>2`**. And upgrade `paddlepaddle`, `unstructured-paddleocr`, `onnx` so they are compatible with `numpy>2`.
+
+### Features
+
+### Fixes
+
+## 0.17.0
+
+### Enhancements
+
+- **Add support for images in html partitioner** `<img>` tags will now be parsed as `Image` elements. When `extract_image_block_types` includes `Image` and `extract_image_block_to_payload`=True then the `image_base64` will be included for images that specify the base64 data (rather than url) as the source.
+
+- **Use kwargs instead of env to specify `ocr_agent` and `table_ocr_agent`** for `hi_res` strategy.
+
+- **stop using `PageLayout.elements` to save memory and cpu cost**. Now only use `PageLayout.elements_array` throughout the partition, except when `analysis=True` where the drawing logic still uses `elements`.
+
+### Features
+
+### Fixes
+
+## 0.16.25
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes filetype detection for jsons passed as byte streams** - Now it prioritizes magic mimetype prediction over file extension when detecting filetypes
+
+
+## 0.16.24
+
+### Enhancements
+
+- **Support dynamic partitioner file type registration**. Use `create_file_type` to create new file type that can be handled
+  in unstructured and `register_partitioner` to enable registering your own partitioner for any file type.
+
+- **`extract_image_block_types` now also works for CamelCase elemenet type names**. Previously `NarrativeText` and similar CamelCase element types can't be extracted using the mentioned parameter in `partition`. Now figures for those elements can be extracted like `Image` and `Table` elements
+
+- **use block matrix to reduce peak memory usage for pdf/image partition**.
+
+### Features
+
+- **Add JSON elements to HTML converter** - Converts JSON elements file into an HTML file.
+
+### Fixes
+
+
+## 0.16.23
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fixes detect_filetype when SpooledTemporaryFile is passed**. Previously some random name would get assigned to the file and the function raised error.
+
+## 0.16.22
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **Fix open CVES in and bump dependencies**
+
+## 0.16.21
+
+### Enhancements
+- **Use password** to load PDF with all modes
+
+- **use vectorized logic to merge inferred and extracted layouts**. Using the new `LayoutElements` data structure and numpy library to refactor the layout merging logic to improve compute performance as well as making logic more clear
+
+- **Add PDF Miner configuration** Now PDF Miner can be configured via `pdfminer_line_overlap`, `pdfminer_word_margin`, `pdfminer_line_margin` and `pdfminer_char_margin` parameters added to partition method.
+
+### Features
+
+### Fixes
+
+- **Fix file type detection for NDJSON files** NDJSON files were being detected as JSON due to having the same mime-type.
+- Base-image was updated to resolved CVEs, running pipline to manually build
+
+## 0.16.20
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fix a security issue where rst and org files could read files in the local filesystem**. Certain filetypes could 'include' or 'import' local files into their content, allowing partitioning of arbitrary files from the local filesystem. Partitioning of these files is now sandboxed.
+
+## 0.16.19
+
+### Enhancements
+
+### Features
+
+### Fixes
+- **Fix a bug where table extraction is skipped when it shouldn't**. Pages with just one table as its content or starts with a table misses table extraction. The routing logic is now fixed.
 - **Correct deprecated `ruff` invocation in `make tidy`**.  This will future-proof it or avoid surprises if someone happens to upgrade Ruff.
 - **Remove upper bound constraint on python version** in setup.py. Python3.13 is not yet officially supported, but allow users to try.
+- **Fixes removing HTML elements from the inside of table cells** in html partition v=2.0. The HTML partitioner now correctly preserves HTML elements from the inside of table cells.
 
 ## 0.16.17
 

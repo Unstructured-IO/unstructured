@@ -216,6 +216,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
@@ -226,7 +227,7 @@ def partition(
         )
         return augment_metadata(elements)
 
-    if file_type.partitioner_shortname == "image":
+    if file_type.partitioner_shortname and file_type.partitioner_shortname == "image":
         partition_image = partitioner_loader.get(file_type)
         elements = partition_image(
             filename=filename,
@@ -235,6 +236,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            detect_language_per_element=detect_language_per_element,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
@@ -283,6 +285,8 @@ def partition(
     partitioning_kwargs["languages"] = languages
     partitioning_kwargs["starting_page_number"] = starting_page_number
     partitioning_kwargs["strategy"] = strategy
+    partitioning_kwargs["extract_image_block_types"] = extract_image_block_types
+    partitioning_kwargs["extract_image_block_to_payload"] = extract_image_block_to_payload
 
     partition = partitioner_loader.get(file_type)
     elements = partition(filename=filename, file=file, **partitioning_kwargs)

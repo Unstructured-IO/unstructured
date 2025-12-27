@@ -1,1025 +1,1334 @@
 [
     {
-        "element_id": "630907012e0442ab8f9bf97a8d1fa8a0",
+        "element_id": "ea45939e43cf46f085fa9e6dc462f9e4",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"1\" id=\"630907012e0442ab8f9bf97a8d1fa8a0\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"1\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "d0a9edd181f542f0ba695489f14c4b75",
+        "element_id": "5a07599d1f6446eab1f7c3fbd17bf7d8",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<header class=\"Header\" id=\"d0a9edd181f542f0ba695489f14c4b75\" />"
-        },
-        "text": "",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "2a8866a868414163afee2ef24574fc9b",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 1,
-            "parent_id": "d0a9edd181f542f0ba695489f14c4b75",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"2a8866a868414163afee2ef24574fc9b\">Table of Contents </a> <time class=\"Time\" id=\"338375ec733a47f2a9544a74cfb4b11c\">11/7/23, 2:38 PM </time> <a class=\"Hyperlink\" id=\"770e80f0a903490892ee9ff1f1f76718\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<header class=\"Header\"><a class=\"Hyperlink\">Table of Contents</a><time class=\"Time\">11/7/23, 2:38 PM</time><a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a></header>"
         },
         "text": "Table of Contents 11/7/23, 2:38 PM https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
+        "type": "Header"
     },
     {
-        "element_id": "2bca4006451a405c87ebaf6eb9ff7bd9",
+        "element_id": "ba10f56f7a7845a39b28e05ae467fbf2",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<h1 class=\"Title\" id=\"2bca4006451a405c87ebaf6eb9ff7bd9\">ENTERPRISE PRODUCTS PARTNERS L.P. </h1>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<h1 class=\"Title\">ENTERPRISE PRODUCTS PARTNERS L.P.</h1>"
         },
         "text": "ENTERPRISE PRODUCTS PARTNERS L.P.",
         "type": "Title"
     },
     {
-        "element_id": "8da7d91b8f094acfb4caef69d96d17b9",
+        "element_id": "35d60a8e0bcc46698ca2120fc538f932",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<h2 class=\"Subtitle\" id=\"8da7d91b8f094acfb4caef69d96d17b9\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS </h2>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<h2 class=\"Subtitle\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS</h2>"
         },
         "text": "NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS",
         "type": "Title"
     },
     {
-        "element_id": "1a8af2164abc4fed820445c7d7a1652e",
+        "element_id": "13b090647b6d4842aa2325f71fbf909b",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<h3 class=\"Heading\" id=\"1a8af2164abc4fed820445c7d7a1652e\">Note 6. Intangible Assets and Goodwill </h3>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<h3 class=\"Heading\">Note 6. Intangible Assets and Goodwill</h3>"
         },
         "text": "Note 6. Intangible Assets and Goodwill",
         "type": "Title"
     },
     {
-        "element_id": "c9dcb08578704efeb997f7d3dd659a61",
+        "element_id": "be67f2481d414d80b2cb227b25779e69",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<h4 class=\"Heading\" id=\"c9dcb08578704efeb997f7d3dd659a61\">Identifiable Intangible Assets </h4>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<h4 class=\"Heading\">Identifiable Intangible Assets</h4>"
         },
         "text": "Identifiable Intangible Assets",
         "type": "Title"
     },
     {
-        "element_id": "2189d06e7f1f4d73b93c3f1845486b52",
+        "element_id": "c0454fb1d71144ad99c17331a9fae0f0",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"2189d06e7f1f4d73b93c3f1845486b52\">The following table summarizes our intangible assets by business segment at the dates indicated: </p>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<p class=\"NarrativeText\">The following table summarizes our intangible assets by business segment at the dates indicated:</p>"
         },
         "text": "The following table summarizes our intangible assets by business segment at the dates indicated:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "d0f9bd2adefa42e18357960d582588bd",
+        "element_id": "2a0e43cb1b9445e4ac56adf115fe3448",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<table class=\"Table\" id=\"d0f9bd2adefa42e18357960d582588bd\"> <thead> <tr> <th></th><th colspan=\"3\">June 30, 2023</th><th colspan=\"3\">December 31, 2022</th></tr><tr> <th></th><th>Gross Value</th><th>Accumulated Amortization</th><th>Carrying Value</th><th>Gross Value</th><th>Accumulated Amortization</th><th>Carrying Value</th></tr></thead><tbody> <tr> <td>NGL Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr> <td>Customer relationship intangibles</td><td>$ 449</td><td>$ (257)</td><td>$ 192</td><td>$ 449</td><td>$ (249)</td><td>$ 200</td></tr><tr> <td>Contract-based intangibles</td><td>751</td><td>(95)</td><td>656</td><td>749</td><td>(84)</td><td>665</td></tr><tr> <td>Segment total</td><td>1,200</td><td>(352)</td><td>848</td><td>1,198</td><td>(333)</td><td>865</td></tr><tr> <td>Crude Oil Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr> <td>Customer relationship intangibles</td><td>2,195</td><td>(477)</td><td>1,718</td><td>2,195</td><td>(431)</td><td>1,764</td></tr><tr> <td>Contract-based intangibles</td><td>283</td><td>(273)</td><td>10</td><td>283</td><td>(271)</td><td>12</td></tr><tr> <td>Segment total</td><td>2,478</td><td>(750)</td><td>1,728</td><td>2,478</td><td>(702)</td><td>1,776</td></tr><tr> <td>Natural Gas Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr> <td>Customer relationship intangibles</td><td>1,350</td><td>(607)</td><td>743</td><td>1,350</td><td>(588)</td><td>762</td></tr><tr> <td>Contract-based intangibles</td><td>639</td><td>(201)</td><td>438</td><td>639</td><td>(195)</td><td>444</td></tr><tr> <td>Segment total</td><td>1,989</td><td>(808)</td><td>1,181</td><td>1,989</td><td>(783)</td><td>1,206</td></tr><tr> <td>Petrochemical &amp; Refined Products Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr> <td>Customer relationship intangibles</td><td>181</td><td>(83)</td><td>98</td><td>181</td><td>(80)</td><td>101</td></tr><tr> <td>Contract-based intangibles</td><td>45</td><td>(29)</td><td>16</td><td>45</td><td>(28)</td><td>17</td></tr><tr> <td>Segment total</td><td>226</td><td>(112)</td><td>114</td><td>226</td><td>(108)</td><td>118</td></tr><tr> <td>Total intangible assets</td><td>$ 5,893</td><td>$ (2,022)</td><td>$ 3,871</td><td>$ 5,891</td><td>$ (1,926)</td><td>$ 3,965</td></tr></tbody></table>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th></th><th colspan=\"3\">June 30, 2023</th><th colspan=\"3\">December 31, 2022</th></tr><tr><th></th><th>Gross Value</th><th>Accumulated Amortization</th><th>Carrying Value</th><th>Gross Value</th><th>Accumulated Amortization</th><th>Carrying Value</th></tr></thead><tbody><tr><td>NGL Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Customer relationship intangibles</td><td><span>$</span><p>449</p></td><td><span>$</span><p>(257)</p></td><td><span>$</span><p>192</p></td><td><span>$</span><p>449</p></td><td><span>$</span><p>(249)</p></td><td><span>$</span><p>200</p></td></tr><tr><td>Contract-based intangibles</td><td>751</td><td>(95)</td><td>656</td><td>749</td><td>(84)</td><td>665</td></tr><tr><td>Segment total</td><td>1,200</td><td>(352)</td><td>848</td><td>1,198</td><td>(333)</td><td>865</td></tr><tr><td>Crude Oil Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Customer relationship intangibles</td><td>2,195</td><td>(477)</td><td>1,718</td><td>2,195</td><td>(431)</td><td>1,764</td></tr><tr><td>Contract-based intangibles</td><td>283</td><td>(273)</td><td>10</td><td>283</td><td>(271)</td><td>12</td></tr><tr><td>Segment total</td><td>2,478</td><td>(750)</td><td>1,728</td><td>2,478</td><td>(702)</td><td>1,776</td></tr><tr><td>Natural Gas Pipelines &amp; Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Customer relationship intangibles</td><td>1,350</td><td>(607)</td><td>743</td><td>1,350</td><td>(588)</td><td>762</td></tr><tr><td>Contract-based intangibles</td><td>639</td><td>(201)</td><td>438</td><td>639</td><td>(195)</td><td>444</td></tr><tr><td>Segment total</td><td>1,989</td><td>(808)</td><td>1,181</td><td>1,989</td><td>(783)</td><td>1,206</td></tr><tr><td>Petrochemical &amp; Refined Products Services:</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Customer relationship intangibles</td><td>181</td><td>(83)</td><td>98</td><td>181</td><td>(80)</td><td>101</td></tr><tr><td>Contract-based intangibles</td><td>45</td><td>(29)</td><td>16</td><td>45</td><td>(28)</td><td>17</td></tr><tr><td>Segment total</td><td>226</td><td>(112)</td><td>114</td><td>226</td><td>(108)</td><td>118</td></tr><tr><td>Total intangible assets</td><td><span>$</span><p>5,893</p></td><td><span>$</span><p>(2,022)</p></td><td><span>$</span><p>3,871</p></td><td><span>$</span><p>5,891</p></td><td><span>$</span><p>(1,926)</p></td><td><span>$</span><p>3,965</p></td></tr></tbody></table>"
         },
         "text": "June 30, 2023 December 31, 2022 Gross Value Accumulated Amortization Carrying Value Gross Value Accumulated Amortization Carrying Value NGL Pipelines & Services: Customer relationship intangibles $ 449 $ (257) $ 192 $ 449 $ (249) $ 200 Contract-based intangibles 751 (95) 656 749 (84) 665 Segment total 1,200 (352) 848 1,198 (333) 865 Crude Oil Pipelines & Services: Customer relationship intangibles 2,195 (477) 1,718 2,195 (431) 1,764 Contract-based intangibles 283 (273) 10 283 (271) 12 Segment total 2,478 (750) 1,728 2,478 (702) 1,776 Natural Gas Pipelines & Services: Customer relationship intangibles 1,350 (607) 743 1,350 (588) 762 Contract-based intangibles 639 (201) 438 639 (195) 444 Segment total 1,989 (808) 1,181 1,989 (783) 1,206 Petrochemical & Refined Products Services: Customer relationship intangibles 181 (83) 98 181 (80) 101 Contract-based intangibles 45 (29) 16 45 (28) 17 Segment total 226 (112) 114 226 (108) 118 Total intangible assets $ 5,893 $ (2,022) $ 3,871 $ 5,891 $ (1,926) $ 3,965",
         "type": "Table"
     },
     {
-        "element_id": "48d7d6313bc141c6945f7f5eee588db8",
+        "element_id": "819c4054a6e645eda9802ba05da3293a",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"48d7d6313bc141c6945f7f5eee588db8\">The following table presents the amortization expense of our intangible assets by business segment for the periods indicated: </p>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<p class=\"NarrativeText\">The following table presents the amortization expense of our intangible assets by business segment for the periods indicated:</p>"
         },
         "text": "The following table presents the amortization expense of our intangible assets by business segment for the periods indicated:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "d3dbbac8b8834b109421da2cbeda1399",
+        "element_id": "31a2e62ef97c4d0d8922b36673f4c6c9",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<table class=\"Table\" id=\"d3dbbac8b8834b109421da2cbeda1399\"> <thead> <tr> <th></th><th colspan=\"2\">For the Three Months Ended June 30,</th><th colspan=\"2\">For the Six Months Ended June 30,</th></tr><tr> <th></th><th>2023</th><th>2022</th><th>2023</th><th>2022</th></tr></thead><tbody> <tr> <td>NGL Pipelines &amp; Services</td><td>$ 10</td><td>$ 9</td><td>$ 19</td><td>$ 17</td></tr><tr> <td>Crude Oil Pipelines &amp; Services</td><td>25</td><td>21</td><td>48</td><td>41</td></tr><tr> <td>Natural Gas Pipelines &amp; Services</td><td>13</td><td>14</td><td>25</td><td>25</td></tr><tr> <td>Petrochemical &amp; Refined Products Services</td><td>2</td><td>1</td><td>4</td><td>3</td></tr><tr> <td>Total</td><td>$ 50</td><td>$ 45</td><td>$ 96</td><td>$ 86</td></tr></tbody></table>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th></th><th colspan=\"2\">For the Three Months Ended June 30,</th><th colspan=\"2\">For the Six Months Ended June 30,</th></tr><tr><th></th><th>2023</th><th>2022</th><th>2023</th><th>2022</th></tr></thead><tbody><tr><td>NGL Pipelines &amp; Services</td><td><span>$</span><p>10</p></td><td><span>$</span><p>9</p></td><td><span>$</span><p>19</p></td><td><span>$</span><p>17</p></td></tr><tr><td>Crude Oil Pipelines &amp; Services</td><td>25</td><td>21</td><td>48</td><td>41</td></tr><tr><td>Natural Gas Pipelines &amp; Services</td><td>13</td><td>14</td><td>25</td><td>25</td></tr><tr><td>Petrochemical &amp; Refined Products Services</td><td>2</td><td>1</td><td>4</td><td>3</td></tr><tr><td>Total</td><td><span>$</span><p>50</p></td><td><span>$</span><p>45</p></td><td><span>$</span><p>96</p></td><td><span>$</span><p>86</p></td></tr></tbody></table>"
         },
         "text": "For the Three Months Ended June 30, For the Six Months Ended June 30, 2023 2022 2023 2022 NGL Pipelines & Services $ 10 $ 9 $ 19 $ 17 Crude Oil Pipelines & Services 25 21 48 41 Natural Gas Pipelines & Services 13 14 25 25 Petrochemical & Refined Products Services 2 1 4 3 Total $ 50 $ 45 $ 96 $ 86",
         "type": "Table"
     },
     {
-        "element_id": "42c2678b8b5d4977a27e8ba6a8b2224f",
+        "element_id": "1815bd9276204144aabf65eb47986432",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"42c2678b8b5d4977a27e8ba6a8b2224f\">The following table presents our forecast of amortization expense associated with existing intangible assets for the periods indicated: </p>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<p class=\"NarrativeText\">The following table presents our forecast of amortization expense associated with existing intangible assets for the periods indicated:</p>"
         },
         "text": "The following table presents our forecast of amortization expense associated with existing intangible assets for the periods indicated:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "fb8c1e14c5ca44caa7359a4ace457701",
+        "element_id": "381c365f6c8548dda90e3cc99ffb3231",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<table class=\"Table\" id=\"fb8c1e14c5ca44caa7359a4ace457701\"> <thead> <tr> <th></th><th>Remainder of 2023</th><th>2024</th><th>2025</th><th>2026</th><th>2027</th></tr></thead><tbody> <tr> <td>$</td><td>107</td><td>222</td><td>230</td><td>237</td><td>235</td></tr></tbody></table>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th></th><th>Remainder of 2023</th><th>2024</th><th>2025</th><th>2026</th><th>2027</th></tr></thead><tbody><tr><td><span>$</span></td><td>107</td><td>222</td><td>230</td><td>237</td><td>235</td></tr></tbody></table>"
         },
         "text": "Remainder of 2023 2024 2025 2026 2027 $ 107 222 230 237 235",
         "type": "Table"
     },
     {
-        "element_id": "a5c180f735a846929e7d496ac5d49603",
+        "element_id": "396a85bf50364fe5af335b584984871e",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<h4 class=\"Heading\" id=\"a5c180f735a846929e7d496ac5d49603\">Goodwill </h4>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<h4 class=\"Heading\">Goodwill</h4>"
         },
         "text": "Goodwill",
         "type": "Title"
     },
     {
-        "element_id": "f1d9b3bb0fc04cae8e419a394f8c0e45",
+        "element_id": "d828a981ccc049859f308a1239737d2a",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"f1d9b3bb0fc04cae8e419a394f8c0e45\">Goodwill represents the excess of the purchase price of an acquired business over the amounts assigned to assets acquired and liabilities assumed in the transaction. There has been no change in our goodwill amounts since those reported in our 2022 Form 10-K. </p>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<p class=\"NarrativeText\">Goodwill represents the excess of the purchase price of an acquired business over the amounts assigned to assets acquired and liabilities assumed in the transaction. There has been no change in our goodwill amounts since those reported in our 2022 Form 10-K.</p>"
         },
         "text": "Goodwill represents the excess of the purchase price of an acquired business over the amounts assigned to assets acquired and liabilities assumed in the transaction. There has been no change in our goodwill amounts since those reported in our 2022 Form 10-K.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "9cc42bfd543943fe97a179576d1f0f09",
+        "element_id": "964ef694f3984ad3a61047a9830b18c2",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<span class=\"PageNumber\" id=\"9cc42bfd543943fe97a179576d1f0f09\">13 </span>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<span class=\"PageNumber\">13</span>"
         },
         "text": "13",
         "type": "PageNumber"
     },
     {
-        "element_id": "e29d700b4fd046dd82dcd5e9a2e1f5ab",
+        "element_id": "7bef6ac9879342e09e1a67286bdf0b86",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 1,
-            "parent_id": "630907012e0442ab8f9bf97a8d1fa8a0",
-            "text_as_html": "<footer class=\"Footer\" id=\"e29d700b4fd046dd82dcd5e9a2e1f5ab\" />"
-        },
-        "text": "",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "1bdf3b23522d4f8486da7c8f1e80dab9",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 1,
-            "parent_id": "e29d700b4fd046dd82dcd5e9a2e1f5ab",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"1bdf3b23522d4f8486da7c8f1e80dab9\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
+            "parent_id": "ea45939e43cf46f085fa9e6dc462f9e4",
+            "text_as_html": "<footer class=\"Footer\"><a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a></footer>"
         },
         "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
+        "type": "Footer"
     },
     {
-        "element_id": "2e27e54da8604c05a23d5c417dbb287b",
+        "element_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"2\" id=\"2e27e54da8604c05a23d5c417dbb287b\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"2\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "b4fc881aabd04a4e831acd7b4ff3c7a1",
+        "element_id": "6ceaf3ea4abd44f7a9c39d49ca300f02",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<header class=\"Header\" id=\"b4fc881aabd04a4e831acd7b4ff3c7a1\" />"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<header class=\"Header\"><span class=\"UncategorizedText\">11/7/23, 2:38 PM</span><a class=\"Hyperlink\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "11/7/23, 2:38 PM sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
+        "type": "Header"
     },
     {
-        "element_id": "f86671d66dc44eb6a384aa96ce78f8bf",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 2,
-            "parent_id": "b4fc881aabd04a4e831acd7b4ff3c7a1",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"f86671d66dc44eb6a384aa96ce78f8bf\">11/7/23, 2:38 PM </span>"
-        },
-        "text": "11/7/23, 2:38 PM",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "519b15617ee1441cbd04a7495fbdea84",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 2,
-            "parent_id": "b4fc881aabd04a4e831acd7b4ff3c7a1",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"519b15617ee1441cbd04a7495fbdea84\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "b24ff5e3cb9d43d98839b6411a66714d",
+        "element_id": "4bff134bb55242c48247caf8b464e621",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<h1 class=\"Title\" id=\"b24ff5e3cb9d43d98839b6411a66714d\">ENTERPRISE PRODUCTS PARTNERS L.P. </h1>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<h1 class=\"Title\">ENTERPRISE PRODUCTS PARTNERS L.P.</h1>"
         },
         "text": "ENTERPRISE PRODUCTS PARTNERS L.P.",
         "type": "Title"
     },
     {
-        "element_id": "922bdebd97784abaaa09635f544f4841",
+        "element_id": "4742f15ab2a743ba9b3bf1312a551544",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<h2 class=\"Subtitle\" id=\"922bdebd97784abaaa09635f544f4841\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS </h2>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<h2 class=\"Subtitle\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS</h2>"
         },
         "text": "NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS",
         "type": "Title"
     },
     {
-        "element_id": "3ba857831a884f378bb045476e1931f7",
+        "element_id": "afdd54440ca042f6a59e16e1f72574c4",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<h3 class=\"Heading\" id=\"3ba857831a884f378bb045476e1931f7\">Note 7. Debt Obligations </h3>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<h3 class=\"Heading\">Note 7. Debt Obligations</h3>"
         },
         "text": "Note 7. Debt Obligations",
         "type": "Title"
     },
     {
-        "element_id": "5e2f345bad8842a991619914b084de39",
+        "element_id": "53837493fc404e8182d0c6ad73c6e8e8",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<p class=\"Paragraph\" id=\"5e2f345bad8842a991619914b084de39\">The following table presents our consolidated debt obligations (arranged by company and maturity date) at the dates indicated: </p>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<p class=\"Paragraph\">The following table presents our consolidated debt obligations (arranged by company and maturity date) at the dates indicated:</p>"
         },
         "text": "The following table presents our consolidated debt obligations (arranged by company and maturity date) at the dates indicated:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "1561691cad504c5abeaa74a649196bb7",
+        "element_id": "dde9b2a5f6f7485a9654b2d990ba6ab9",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<table class=\"Table\" id=\"1561691cad504c5abeaa74a649196bb7\"> <thead> <tr> <th></th><th>June 30, 2023</th><th>December 31, 2022</th></tr></thead><tbody> <tr> <td>EPO senior debt obligations:</td><td></td><td></td></tr><tr> <td>Commercial Paper Notes, variable-rates</td><td>$ 355</td><td>$ 495</td></tr><tr> <td>Senior Notes HH, 3.35% fixed-rate, due March 2023</td><td>-</td><td>1,250</td></tr><tr> <td>Senior Notes JJ, 3.90% fixed-rate, due February 2024</td><td>850</td><td>850</td></tr><tr> <td>March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, variable-rate, due March 2024 (1)</td><td>-</td><td>-</td></tr><tr> <td>Senior Notes MM, 3.75% fixed-rate, due February 2025</td><td>1,150</td><td>1,150</td></tr><tr> <td>Senior Notes FFF, 5.05% fixed-rate, due January 2026</td><td>750</td><td>-</td></tr><tr> <td>Senior Notes PP, 3.70% fixed-rate, due February 2026</td><td>875</td><td>875</td></tr><tr> <td>Senior Notes SS, 3.95% fixed-rate, due February 2027</td><td>575</td><td>575</td></tr><tr> <td>March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, variable-rate, due March 2028 (2)</td><td>-</td><td>-</td></tr><tr> <td>Senior Notes WW, 4.15% fixed-rate, due October 2028</td><td>1,000</td><td>1,000</td></tr><tr> <td>Senior Notes YY, 3.125% fixed-rate, due July 2029</td><td>1,250</td><td>1,250</td></tr><tr> <td>Senior Notes AAA, 2.80% fixed-rate, due January 2030</td><td>1,250</td><td>1,250</td></tr><tr> <td>Senior Notes GGG, 5.35% fixed-rate, due January 2033</td><td>1,000</td><td>-</td></tr><tr> <td>Senior Notes D, 6.875% fixed-rate, due March 2033</td><td>500</td><td>500</td></tr><tr> <td>Senior Notes H, 6.65% fixed-rate, due October 2034</td><td>350</td><td>350</td></tr><tr> <td>Senior Notes J, 5.75% fixed-rate, due March 2035</td><td>250</td><td>250</td></tr><tr> <td>Senior Notes W, 7.95% fixed-rate, due April 2038</td><td>400</td><td>400</td></tr><tr> <td>Senior Notes R, 6.125% fixed-rate, due October 2039</td><td>600</td><td>600</td></tr><tr> <td>Senior Notes Z, 6.45% fixed-rate, due September 2040</td><td>600</td><td>600</td></tr><tr> <td>Senior Notes BB, 5.95% fixed-rate, due February 2041</td><td>750</td><td>750</td></tr><tr> <td>Senior Notes DD, 5.70% fixed-rate, due February 2042</td><td>600</td><td>600</td></tr><tr> <td>Senior Notes EE, 4.85% fixed-rate, due August 2042</td><td>750</td><td>750</td></tr><tr> <td>Senior Notes GG, 4.45% fixed-rate, due February 2043</td><td>1,100</td><td>1,100</td></tr><tr> <td>Senior Notes II, 4.85% fixed-rate, due March 2044</td><td>1,400</td><td>1,400</td></tr><tr> <td>Senior Notes KK, 5.10% fixed-rate, due February 2045</td><td>1,150</td><td>1,150</td></tr><tr> <td>Senior Notes QQ, 4.09% fixed-rate, due May 2046</td><td>975</td><td>975</td></tr><tr> <td>Senior Notes UU, 4.25% fixed-rate, due February 2048</td><td>1,250</td><td>1,250</td></tr><tr> <td>Senior Notes XX, 4.80% fixed-rate, due February 2049</td><td>1,250</td><td>1,250</td></tr><tr> <td>Senior Notes ZZ, 4.20% fixed-rate, due January 2051</td><td>1,250</td><td>1,250</td></tr><tr> <td>Senior Notes BB, 3.70% fixed-rate, due January 2051</td><td>1,000</td><td>1,000</td></tr><tr> <td>Senior Notes DDD, 3.30% fixed-rate, due February 2052</td><td>1,000</td><td>1,000</td></tr><tr> <td>Senior Notes EEE, 3.00% fixed-rate, due February 2053</td><td>1,000</td><td>1,000</td></tr><tr> <td>Senior Notes NN, 4.95% fixed-rate, due October 2054</td><td>400</td><td>400</td></tr><tr> <td>Senior Notes CCC, 3.95% fixed-rate, due January 2060</td><td>1,000</td><td>1,000</td></tr><tr> <td>Total principal amount of senior debt obligations</td><td>26,630</td><td>26,270</td></tr><tr> <td>EPO Junior Subordinated Notes C, variable-rate, due June 2067 (3)(7)</td><td>232</td><td>232</td></tr><tr> <td>EPO Junior Subordinated Notes D, variable-rate, due August 2077 (4)(7)</td><td>350</td><td>350</td></tr><tr> <td>EPO Junior Subordinated Notes E, fixed/variable-rate, due August 2077 (5)(7)</td><td>1,000</td><td>1,000</td></tr><tr> <td>EPO Junior Subordinated Notes F, fixed/variable-rate, due February 2078 (6)(7)</td><td>700</td><td>700</td></tr><tr> <td>TEPPCO Junior Subordinated Notes, variable-rate, due June 2067 (3)(7)</td><td>14</td><td>14</td></tr><tr> <td>Total principal amount of senior and junior debt obligations</td><td>28,926</td><td>28,566</td></tr><tr> <td>Other, non-principal amounts</td><td></td><td></td></tr><tr> <td>Less current maturities of debt</td><td>(279)</td><td>(271)</td></tr><tr> <td>Total long-term debt</td><td>(1,204)</td><td>(1,744)</td></tr><tr> <td></td><td>$ 27,443</td><td>$ 26,551</td></tr></tbody></table>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th></th><th>June 30, 2023</th><th>December 31, 2022</th></tr></thead><tbody><tr><td>EPO senior debt obligations:</td><td></td><td></td></tr><tr><td>Commercial Paper Notes, variable-rates</td><td><span>$</span><p>355</p></td><td><span>$</span><p>495</p></td></tr><tr><td>Senior Notes HH, 3.35% fixed-rate, due March 2023</td><td>-</td><td>1,250</td></tr><tr><td>Senior Notes JJ, 3.90% fixed-rate, due February 2024</td><td>850</td><td>850</td></tr><tr><td><p>March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, variable-rate, due March 2024</p><sub>(1)</sub></td><td>-</td><td>-</td></tr><tr><td>Senior Notes MM, 3.75% fixed-rate, due February 2025</td><td>1,150</td><td>1,150</td></tr><tr><td>Senior Notes FFF, 5.05% fixed-rate, due January 2026</td><td>750</td><td>-</td></tr><tr><td>Senior Notes PP, 3.70% fixed-rate, due February 2026</td><td>875</td><td>875</td></tr><tr><td>Senior Notes SS, 3.95% fixed-rate, due February 2027</td><td>575</td><td>575</td></tr><tr><td><p>March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, variable-rate, due March 2028</p><sub>(2)</sub></td><td>-</td><td>-</td></tr><tr><td>Senior Notes WW, 4.15% fixed-rate, due October 2028</td><td>1,000</td><td>1,000</td></tr><tr><td>Senior Notes YY, 3.125% fixed-rate, due July 2029</td><td>1,250</td><td>1,250</td></tr><tr><td>Senior Notes AAA, 2.80% fixed-rate, due January 2030</td><td>1,250</td><td>1,250</td></tr><tr><td>Senior Notes GGG, 5.35% fixed-rate, due January 2033</td><td>1,000</td><td>-</td></tr><tr><td>Senior Notes D, 6.875% fixed-rate, due March 2033</td><td>500</td><td>500</td></tr><tr><td>Senior Notes H, 6.65% fixed-rate, due October 2034</td><td>350</td><td>350</td></tr><tr><td>Senior Notes J, 5.75% fixed-rate, due March 2035</td><td>250</td><td>250</td></tr><tr><td>Senior Notes W, 7.95% fixed-rate, due April 2038</td><td>400</td><td>400</td></tr><tr><td>Senior Notes R, 6.125% fixed-rate, due October 2039</td><td>600</td><td>600</td></tr><tr><td>Senior Notes Z, 6.45% fixed-rate, due September 2040</td><td>600</td><td>600</td></tr><tr><td>Senior Notes BB, 5.95% fixed-rate, due February 2041</td><td>750</td><td>750</td></tr><tr><td>Senior Notes DD, 5.70% fixed-rate, due February 2042</td><td>600</td><td>600</td></tr><tr><td>Senior Notes EE, 4.85% fixed-rate, due August 2042</td><td>750</td><td>750</td></tr><tr><td>Senior Notes GG, 4.45% fixed-rate, due February 2043</td><td>1,100</td><td>1,100</td></tr><tr><td>Senior Notes II, 4.85% fixed-rate, due March 2044</td><td>1,400</td><td>1,400</td></tr><tr><td>Senior Notes KK, 5.10% fixed-rate, due February 2045</td><td>1,150</td><td>1,150</td></tr><tr><td>Senior Notes QQ, 4.09% fixed-rate, due May 2046</td><td>975</td><td>975</td></tr><tr><td>Senior Notes UU, 4.25% fixed-rate, due February 2048</td><td>1,250</td><td>1,250</td></tr><tr><td>Senior Notes XX, 4.80% fixed-rate, due February 2049</td><td>1,250</td><td>1,250</td></tr><tr><td>Senior Notes ZZ, 4.20% fixed-rate, due January 2051</td><td>1,250</td><td>1,250</td></tr><tr><td>Senior Notes BB, 3.70% fixed-rate, due January 2051</td><td>1,000</td><td>1,000</td></tr><tr><td>Senior Notes DDD, 3.30% fixed-rate, due February 2052</td><td>1,000</td><td>1,000</td></tr><tr><td>Senior Notes EEE, 3.00% fixed-rate, due February 2053</td><td>1,000</td><td>1,000</td></tr><tr><td>Senior Notes NN, 4.95% fixed-rate, due October 2054</td><td>400</td><td>400</td></tr><tr><td>Senior Notes CCC, 3.95% fixed-rate, due January 2060</td><td>1,000</td><td>1,000</td></tr><tr><td>Total principal amount of senior debt obligations</td><td>26,630</td><td>26,270</td></tr><tr><td><p>EPO Junior Subordinated Notes C, variable-rate, due June 2067</p><sub>(3)(7)</sub></td><td>232</td><td>232</td></tr><tr><td><p>EPO Junior Subordinated Notes D, variable-rate, due August 2077</p><sub>(4)(7)</sub></td><td>350</td><td>350</td></tr><tr><td><p>EPO Junior Subordinated Notes E, fixed/variable-rate, due August 2077</p><sub>(5)(7)</sub></td><td>1,000</td><td>1,000</td></tr><tr><td><p>EPO Junior Subordinated Notes F, fixed/variable-rate, due February 2078</p><sub>(6)(7)</sub></td><td>700</td><td>700</td></tr><tr><td><p>TEPPCO Junior Subordinated Notes, variable-rate, due June 2067</p><sub>(3)(7)</sub></td><td>14</td><td>14</td></tr><tr><td>Total principal amount of senior and junior debt obligations</td><td>28,926</td><td>28,566</td></tr><tr><td>Other, non-principal amounts</td><td></td><td></td></tr><tr><td>Less current maturities of debt</td><td>(279)</td><td>(271)</td></tr><tr><td>Total long-term debt</td><td>(1,204)</td><td>(1,744)</td></tr><tr><td></td><td><span>$</span><p>27,443</p></td><td><span>$</span><p>26,551</p></td></tr></tbody></table>"
         },
         "text": "June 30, 2023 December 31, 2022 EPO senior debt obligations: Commercial Paper Notes, variable-rates $ 355 $ 495 Senior Notes HH, 3.35% fixed-rate, due March 2023 - 1,250 Senior Notes JJ, 3.90% fixed-rate, due February 2024 850 850 March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, variable-rate, due March 2024 (1) - - Senior Notes MM, 3.75% fixed-rate, due February 2025 1,150 1,150 Senior Notes FFF, 5.05% fixed-rate, due January 2026 750 - Senior Notes PP, 3.70% fixed-rate, due February 2026 875 875 Senior Notes SS, 3.95% fixed-rate, due February 2027 575 575 March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, variable-rate, due March 2028 (2) - - Senior Notes WW, 4.15% fixed-rate, due October 2028 1,000 1,000 Senior Notes YY, 3.125% fixed-rate, due July 2029 1,250 1,250 Senior Notes AAA, 2.80% fixed-rate, due January 2030 1,250 1,250 Senior Notes GGG, 5.35% fixed-rate, due January 2033 1,000 - Senior Notes D, 6.875% fixed-rate, due March 2033 500 500 Senior Notes H, 6.65% fixed-rate, due October 2034 350 350 Senior Notes J, 5.75% fixed-rate, due March 2035 250 250 Senior Notes W, 7.95% fixed-rate, due April 2038 400 400 Senior Notes R, 6.125% fixed-rate, due October 2039 600 600 Senior Notes Z, 6.45% fixed-rate, due September 2040 600 600 Senior Notes BB, 5.95% fixed-rate, due February 2041 750 750 Senior Notes DD, 5.70% fixed-rate, due February 2042 600 600 Senior Notes EE, 4.85% fixed-rate, due August 2042 750 750 Senior Notes GG, 4.45% fixed-rate, due February 2043 1,100 1,100 Senior Notes II, 4.85% fixed-rate, due March 2044 1,400 1,400 Senior Notes KK, 5.10% fixed-rate, due February 2045 1,150 1,150 Senior Notes QQ, 4.09% fixed-rate, due May 2046 975 975 Senior Notes UU, 4.25% fixed-rate, due February 2048 1,250 1,250 Senior Notes XX, 4.80% fixed-rate, due February 2049 1,250 1,250 Senior Notes ZZ, 4.20% fixed-rate, due January 2051 1,250 1,250 Senior Notes BB, 3.70% fixed-rate, due January 2051 1,000 1,000 Senior Notes DDD, 3.30% fixed-rate, due February 2052 1,000 1,000 Senior Notes EEE, 3.00% fixed-rate, due February 2053 1,000 1,000 Senior Notes NN, 4.95% fixed-rate, due October 2054 400 400 Senior Notes CCC, 3.95% fixed-rate, due January 2060 1,000 1,000 Total principal amount of senior debt obligations 26,630 26,270 EPO Junior Subordinated Notes C, variable-rate, due June 2067 (3)(7) 232 232 EPO Junior Subordinated Notes D, variable-rate, due August 2077 (4)(7) 350 350 EPO Junior Subordinated Notes E, fixed/variable-rate, due August 2077 (5)(7) 1,000 1,000 EPO Junior Subordinated Notes F, fixed/variable-rate, due February 2078 (6)(7) 700 700 TEPPCO Junior Subordinated Notes, variable-rate, due June 2067 (3)(7) 14 14 Total principal amount of senior and junior debt obligations 28,926 28,566 Other, non-principal amounts Less current maturities of debt (279) (271) Total long-term debt (1,204) (1,744) $ 27,443 $ 26,551",
         "type": "Table"
     },
     {
-        "element_id": "468681e82f604eab8e6f6ae15a53a96a",
+        "element_id": "553a7ad97b304926b8ab7745725097cb",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<div class=\"Footnote\" id=\"468681e82f604eab8e6f6ae15a53a96a\">(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met). </div> <div class=\"Footnote\" id=\"f2d6c8f9760e4a4a8e3b6e0a50a8f60c\">(2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met). </div> <div class=\"Footnote\" id=\"0280310ce7fc4eab8cd05127c685ed1c\">(3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%. </div> <div class=\"Footnote\" id=\"8c733077ea2147b0a3b9ed43876f9316\">(4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%. </div> <div class=\"Footnote\" id=\"bca23b4745474ffb90edf3360164f8c9\">(5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%. </div> <div class=\"Footnote\" id=\"8420cc5f756948dea5629e3f9f76e2b1\">(6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%. </div> <div class=\"Footnote\" id=\"252fdbcf2a604555b2574c8ca3de20e7\">(7) </div> <a class=\"Hyperlink\" id=\"4a3cac0a4757441e8cc7b3cffa989403\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<div class=\"Footnote\">(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met).</div><div class=\"Footnote\">(2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met).</div><div class=\"Footnote\">(3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%.</div><div class=\"Footnote\">(4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%.</div><div class=\"Footnote\">(5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%.</div><div class=\"Footnote\">(6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%.</div><div class=\"Footnote\">(7)</div><a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a>"
         },
         "text": "(1) Under the terms of the agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election provided certain conditions are met). (2) Under the terms of the agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election provided certain conditions are met). (3) Variable rate is reset quarterly and based on 3-month London Interbank Offered Rate (\u201cLIBOR\u201d) plus 2.778%. (4) Variable rate is reset quarterly and based on 3-month LIBOR plus 2.986%. (5) Fixed rate of 5.250% through August 15, 2027; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 3.033%. (6) Fixed rate of 3.575% through February 14, 2028; thereafter, a variable rate reset quarterly and based on 3-month LIBOR plus 2.57%. (7) https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "f971da7ef2aa417b8ec28eae5d4c35d3",
+        "element_id": "4dddeeaf2e714ddf9ee1b40d27cc46d6",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 2,
-            "parent_id": "2e27e54da8604c05a23d5c417dbb287b",
-            "text_as_html": "<span class=\"PageNumber\" id=\"f971da7ef2aa417b8ec28eae5d4c35d3\">19/93 </span>"
+            "parent_id": "e2d5e011cb4c4d358f7bdc65dfea0504",
+            "text_as_html": "<span class=\"PageNumber\">19/93</span>"
         },
         "text": "19/93",
         "type": "PageNumber"
     },
     {
-        "element_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
+        "element_id": "d81bfd5f43bd473cad81070564c5eefd",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"3\" id=\"fd4de4f04649412bbbec8eb5ccde2e1e\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"3\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "7ed5284de8d648269ad87c964e41ac99",
+        "element_id": "d96aa1feba5f4fd7b4b46739f95d0e3d",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
-            "text_as_html": "<header class=\"Header\" id=\"7ed5284de8d648269ad87c964e41ac99\" />"
-        },
-        "text": "",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "2b7fa432d3d1435eb14b0085692fdb17",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 3,
-            "parent_id": "7ed5284de8d648269ad87c964e41ac99",
-            "text_as_html": "<time class=\"Time\" id=\"2b7fa432d3d1435eb14b0085692fdb17\">11/7/23, 2:38 PM </time> <a class=\"Hyperlink\" id=\"24d5d5cf160c4935aa73d0955234b32d\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
+            "parent_id": "d81bfd5f43bd473cad81070564c5eefd",
+            "text_as_html": "<header class=\"Header\"><time class=\"Time\">11/7/23, 2:38 PM</time><a class=\"Hyperlink\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a></header>"
         },
         "text": "11/7/23, 2:38 PM sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
+        "type": "Header"
     },
     {
-        "element_id": "208d027e8679464883ba46d491948c1b",
+        "element_id": "cfe5930cd5f2454f813809b46716e218",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
-            "text_as_html": "<div class=\"Footnote\" id=\"208d027e8679464883ba46d491948c1b\"> <sub class=\"FootnoteReference\" id=\"36d7b2b940dc4be2a43ffa1b5c6d9ccb\">(7) </sub><p class=\"Paragraph\" id=\"ccc64f04cac14fc4a954e9e84d87cd4a\">See discussion below in \u201cVariable Interest Rates\u201d regarding the LIBOR replacement and LIBOR replacement rate. </p></div>"
+            "parent_id": "d81bfd5f43bd473cad81070564c5eefd",
+            "text_as_html": "<div class=\"Footnote\"><sub class=\"FootnoteReference\">(7)</sub><p class=\"Paragraph\">See discussion below in \u201cVariable Interest Rates\u201d regarding the LIBOR replacement and LIBOR replacement rate.</p></div>"
         },
         "text": "(7) See discussion below in \u201cVariable Interest Rates\u201d regarding the LIBOR replacement and LIBOR replacement rate.",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "eb74a992f2254b7aa79e95fd9e89657e",
+        "element_id": "325b02cc0366424296cfdde153684161",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"eb74a992f2254b7aa79e95fd9e89657e\">References to \u201cTEPPCO\u201d mean TEPPCO Partners, L.P. prior to its merger with one of our wholly owned subsidiaries in October 2009. </p>"
+            "parent_id": "d81bfd5f43bd473cad81070564c5eefd",
+            "text_as_html": "<p class=\"NarrativeText\">References to \u201cTEPPCO\u201d mean TEPPCO Partners, L.P. prior to its merger with one of our wholly owned subsidiaries in October 2009.</p>"
         },
         "text": "References to \u201cTEPPCO\u201d mean TEPPCO Partners, L.P. prior to its merger with one of our wholly owned subsidiaries in October 2009.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "35ca4586f47d404ba05f827d844deb22",
+        "element_id": "7d7d5a9da2854cfa91b973fa4beb19fd",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
-            "text_as_html": "<span class=\"PageNumber\" id=\"35ca4586f47d404ba05f827d844deb22\">14 </span>"
+            "parent_id": "d81bfd5f43bd473cad81070564c5eefd",
+            "text_as_html": "<span class=\"PageNumber\">14</span>"
         },
         "text": "14",
         "type": "PageNumber"
     },
     {
-        "element_id": "17a785cf0b1e42489d358a0b2447c0a5",
+        "element_id": "b820199024c34b489637246d59a27e72",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 3,
-            "parent_id": "fd4de4f04649412bbbec8eb5ccde2e1e",
-            "text_as_html": "<footer class=\"Footer\" id=\"17a785cf0b1e42489d358a0b2447c0a5\" />"
+            "parent_id": "d81bfd5f43bd473cad81070564c5eefd",
+            "text_as_html": "<footer class=\"Footer\"><a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a><span class=\"UncategorizedText\">20/93</span></footer>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm 20/93",
+        "type": "Footer"
     },
     {
-        "element_id": "d00e64093a614d7b984dea19abb55998",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 3,
-            "parent_id": "17a785cf0b1e42489d358a0b2447c0a5",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"d00e64093a614d7b984dea19abb55998\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "5f18ba0a1ec44ad4908df51b11feb3b9",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 3,
-            "parent_id": "17a785cf0b1e42489d358a0b2447c0a5",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"5f18ba0a1ec44ad4908df51b11feb3b9\">20/93 </span>"
-        },
-        "text": "20/93",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "eb71967a1212460cb86e848464df7348",
+        "element_id": "63e8261327be47ad9afa049bc5fae3ba",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"4\" id=\"eb71967a1212460cb86e848464df7348\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"4\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "4936d17720d04f6d814d60f19031bf30",
+        "element_id": "0d507582b14f48848825c131a0b64cbc",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<header class=\"Header\" id=\"4936d17720d04f6d814d60f19031bf30\" />"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<header class=\"Header\"><a class=\"Hyperlink\">Table of Contents</a><span class=\"UncategorizedText\">11/7/23, 2:38 PM</span><a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "Table of Contents 11/7/23, 2:38 PM https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
+        "type": "Header"
     },
     {
-        "element_id": "a0541d3235b348f985d4acf6c36d95c8",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 4,
-            "parent_id": "4936d17720d04f6d814d60f19031bf30",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"a0541d3235b348f985d4acf6c36d95c8\">Table of Contents </a>"
-        },
-        "text": "Table of Contents",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "f6b0a427fda645d0addafb199d00dd3c",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 4,
-            "parent_id": "4936d17720d04f6d814d60f19031bf30",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"f6b0a427fda645d0addafb199d00dd3c\">11/7/23, 2:38 PM </span>"
-        },
-        "text": "11/7/23, 2:38 PM",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "c648b33da2b44e87a5f3cb7f672069cc",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 4,
-            "parent_id": "4936d17720d04f6d814d60f19031bf30",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"c648b33da2b44e87a5f3cb7f672069cc\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "e5124264becd463bb95a720a56455e1d",
+        "element_id": "cdf83e158a7542fb8a430c63e752363f",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<h1 class=\"Title\" id=\"e5124264becd463bb95a720a56455e1d\">ENTERPRISE PRODUCTS PARTNERS L.P. </h1>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<h1 class=\"Title\">ENTERPRISE PRODUCTS PARTNERS L.P.</h1>"
         },
         "text": "ENTERPRISE PRODUCTS PARTNERS L.P.",
         "type": "Title"
     },
     {
-        "element_id": "0f51253db26a40c0b05997ade54dded3",
+        "element_id": "92330f57bdbb46aeb686306a02580b4d",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<h2 class=\"Subtitle\" id=\"0f51253db26a40c0b05997ade54dded3\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS </h2>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<h2 class=\"Subtitle\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS</h2>"
         },
         "text": "NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS",
         "type": "Title"
     },
     {
-        "element_id": "e5347845caa24f598b4e6fcae3341fb2",
+        "element_id": "5e3d2f18e9504330abb26a55e8f3d18a",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<h3 class=\"Heading\" id=\"e5347845caa24f598b4e6fcae3341fb2\">Variable Interest Rates </h3>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<h3 class=\"Heading\">Variable Interest Rates</h3>"
         },
         "text": "Variable Interest Rates",
         "type": "Title"
     },
     {
-        "element_id": "938fd02289ea4c3ea5fc6f492b9ad90e",
+        "element_id": "93ff424cb33f4291bef740826bba4402",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"938fd02289ea4c3ea5fc6f492b9ad90e\">The following table presents the range of interest rates and weighted-average interest rates paid on our consolidated variable-rate debt during the six months ended June 30, 2023: </p>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<p class=\"NarrativeText\">The following table presents the range of interest rates and weighted-average interest rates paid on our consolidated variable-rate debt during the six months ended June 30, 2023:</p>"
         },
         "text": "The following table presents the range of interest rates and weighted-average interest rates paid on our consolidated variable-rate debt during the six months ended June 30, 2023:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "d684ba85acd446eb86b80a9b9dd47ee4",
+        "element_id": "e9b71f23a72e4435965936d53d15ba0d",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<table class=\"Table\" id=\"d684ba85acd446eb86b80a9b9dd47ee4\"> <thead> <tr> <th>Range of Interest Rates Paid</th><th>Weighted-Average Interest Rate Paid</th></tr></thead><tbody> <tr> <td>Commercial Paper Notes</td><td>4.59% to 5.34%</td><td>5.17%</td></tr><tr> <td>EPO Junior Subordinated Notes C and TEPPCO Junior Subordinated Notes</td><td>7.54% to 8.27%</td><td>7.76%</td></tr><tr> <td>EPO Junior Subordinated Notes D</td><td>7.63% to 8.30%</td><td>7.91%</td></tr></tbody></table>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th>Range of Interest Rates Paid</th><th>Weighted-Average Interest Rate Paid</th></tr></thead><tbody><tr><td>Commercial Paper Notes</td><td>4.59% to 5.34%</td><td>5.17%</td></tr><tr><td>EPO Junior Subordinated Notes C and TEPPCO Junior Subordinated Notes</td><td>7.54% to 8.27%</td><td>7.76%</td></tr><tr><td>EPO Junior Subordinated Notes D</td><td>7.63% to 8.30%</td><td>7.91%</td></tr></tbody></table>"
         },
         "text": "Range of Interest Rates Paid Weighted-Average Interest Rate Paid Commercial Paper Notes 4.59% to 5.34% 5.17% EPO Junior Subordinated Notes C and TEPPCO Junior Subordinated Notes 7.54% to 8.27% 7.76% EPO Junior Subordinated Notes D 7.63% to 8.30% 7.91%",
         "type": "Table"
     },
     {
-        "element_id": "47bfd9fcb41945d08892088e02f8e361",
+        "element_id": "3ce4142edcd34a15976386fecbf3b14b",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"47bfd9fcb41945d08892088e02f8e361\">Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings. </p> <p class=\"NarrativeText\" id=\"3e49b69a0dcf43d8949cf607f3dae2cc\">In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us. </p>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<p class=\"NarrativeText\">Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings.</p><p class=\"NarrativeText\">In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us.</p>"
         },
         "text": "Amounts borrowed under EPO\u2019s March 2023 $1.5 Billion 364-Day Revolving Credit Agreement and March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement bear interest, at EPO\u2019s election, equal to: (i) the Secured Overnight Financing Rate (\u201cSOFR\u201d), plus an additional variable spread; or (ii) an alternate base rate, which is the greatest of (a) the Prime Rate in effect on such day, (b) the Federal Funds Effective Rate in effect on such day plus 0.5%, or (c) Adjusted Term SOFR, for an interest period of one month in effect on such day plus 1%, and a variable spread. The applicable spreads are determined based on EPO\u2019s debt ratings. In July 2017, the Financial Conduct Authority in the U.K. announced a desire to phase out LIBOR as a benchmark by the end of June 2023. In December 2022, the Board of Governors of the Federal Reserve System approved a final rule to implement the Adjustable Interest Rate (LIBOR) Act, which established benchmark replacements for certain contracts that reference various tenors of LIBOR and do not provide an alternative rate or would result in a rate that is expressed in terms of the last known value of LIBOR (typically referred to as a \u201cfrozen LIBOR\u201d provision). The final rule became effective during the first quarter of 2023. As a result of the LIBOR Act, our Junior Subordinated Notes C and D and the TEPPCO Junior Subordinated Notes, which were subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR (in each case, a \u201cLIBOR Rate\u201d) through June 30, 2023, replaced the applicable LIBOR Rate with a variable rate based on the three-month CME Term SOFR (\u201cSOFR Rate\u201d) as administered by the CME Group Benchmark Administration, Ltd. plus a 0.26161% tenor spread adjustment beginning on July 1, 2023. Additionally, our Junior Subordinated Notes D and F, which would have been subject to a variable rate (as defined by the applicable agreement) based on three-month LIBOR beginning in August 2027 and February 2028, respectively, will replace the applicable LIBOR Rate with the three-month SOFR rate plus a 0.26161% tenor spread adjustment. The foregoing tenor spread adjustment will be in addition to the applicable spread under the terms of each series of Junior Subordinated Notes. We do not expect the transition from LIBOR to have a material financial impact on us.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "f89261ee4ba3454ebb3ffded6905e59f",
+        "element_id": "ffcc16396351495e9534c03a237c0e84",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<h3 class=\"Heading\" id=\"f89261ee4ba3454ebb3ffded6905e59f\">Scheduled Maturities of Debt </h3>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<h3 class=\"Heading\">Scheduled Maturities of Debt</h3>"
         },
         "text": "Scheduled Maturities of Debt",
         "type": "Title"
     },
     {
-        "element_id": "a1ffe5cc79104fbdb1b0071438ecadf4",
+        "element_id": "cc7d97f1d0f942808589d19041959042",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"a1ffe5cc79104fbdb1b0071438ecadf4\">The following table presents the scheduled maturities of principal amounts of EPO\u2019s consolidated debt obligations at June 30, 2023 for the next five years, and in total thereafter: </p>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<p class=\"NarrativeText\">The following table presents the scheduled maturities of principal amounts of EPO\u2019s consolidated debt obligations at June 30, 2023 for the next five years, and in total thereafter:</p>"
         },
         "text": "The following table presents the scheduled maturities of principal amounts of EPO\u2019s consolidated debt obligations at June 30, 2023 for the next five years, and in total thereafter:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "b5c1f40eb58a48f090583fc8b8057574",
+        "element_id": "7df26b4c13a74c28a13c50a4b45f5415",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<table class=\"Table\" id=\"b5c1f40eb58a48f090583fc8b8057574\"> <thead> <tr> <th>Scheduled Maturities of Debt</th></tr></thead><tbody> <tr> <td>Total</td><td>Remainder of 2023</td><td>2024</td><td>2025</td><td>2026</td><td>2027</td><td>Thereafter</td></tr><tr> <td>Commercial Paper Notes</td><td>$ 355</td><td>$ 355</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td></tr><tr> <td>Senior Notes</td><td>$ 26,275</td><td>$ \u2014</td><td>$ 850</td><td>$ 1,150</td><td>$ 1,625</td><td>$ 575</td><td>$ 22,075</td></tr><tr> <td>Junior Subordinated Notes</td><td>$ 2,296</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ 2,296</td></tr><tr> <td>Total</td><td>$ 28,926</td><td>$ 355</td><td>$ 850</td><td>$ 1,150</td><td>$ 1,625</td><td>$ 575</td><td>$ 24,371</td></tr></tbody></table>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th>Scheduled Maturities of Debt</th></tr></thead><tbody><tr><td>Total</td><td>Remainder of 2023</td><td>2024</td><td>2025</td><td>2026</td><td>2027</td><td>Thereafter</td></tr><tr><td>Commercial Paper Notes</td><td>$ 355</td><td>$ 355</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td></tr><tr><td>Senior Notes</td><td>$ 26,275</td><td>$ \u2014</td><td>$ 850</td><td>$ 1,150</td><td>$ 1,625</td><td>$ 575</td><td>$ 22,075</td></tr><tr><td>Junior Subordinated Notes</td><td>$ 2,296</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ \u2014</td><td>$ 2,296</td></tr><tr><td>Total</td><td>$ 28,926</td><td>$ 355</td><td>$ 850</td><td>$ 1,150</td><td>$ 1,625</td><td>$ 575</td><td>$ 24,371</td></tr></tbody></table>"
         },
         "text": "Scheduled Maturities of Debt Total Remainder of 2023 2024 2025 2026 2027 Thereafter Commercial Paper Notes $ 355 $ 355 $ \u2014 $ \u2014 $ \u2014 $ \u2014 $ \u2014 Senior Notes $ 26,275 $ \u2014 $ 850 $ 1,150 $ 1,625 $ 575 $ 22,075 Junior Subordinated Notes $ 2,296 $ \u2014 $ \u2014 $ \u2014 $ \u2014 $ \u2014 $ 2,296 Total $ 28,926 $ 355 $ 850 $ 1,150 $ 1,625 $ 575 $ 24,371",
         "type": "Table"
     },
     {
-        "element_id": "17a8b3295f7d4a66ba6633801a48a70a",
+        "element_id": "0f7ff4f1a24d42dc87d36ff16dd7065f",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<span class=\"PageNumber\" id=\"17a8b3295f7d4a66ba6633801a48a70a\">15 </span>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<span class=\"PageNumber\">15</span>"
         },
         "text": "15",
         "type": "PageNumber"
     },
     {
-        "element_id": "d8f2d73276fa4d28ab52d60843131a99",
+        "element_id": "e5c8c16ee59c417093357ea19641ac5f",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 4,
-            "parent_id": "eb71967a1212460cb86e848464df7348",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"d8f2d73276fa4d28ab52d60843131a99\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </a>"
+            "parent_id": "63e8261327be47ad9afa049bc5fae3ba",
+            "text_as_html": "<a class=\"Hyperlink\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</a>"
         },
         "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "c87c976496724b618db33dd6f54e25a4",
+        "element_id": "addf0a62b37b4c07adace2d7759485a5",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"5\" id=\"c87c976496724b618db33dd6f54e25a4\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"5\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "3648e0c6b38248109ba4e0231056d109",
+        "element_id": "d85f87592b4449b59386cbe3c5631453",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<header class=\"Header\" id=\"3648e0c6b38248109ba4e0231056d109\" />"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<header class=\"Header\"><a class=\"Hyperlink\">Table of Contents</a><span class=\"UncategorizedText\">sec.gov/Archives/edgar/data/1061219/000106121923000017/</span></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "Table of Contents sec.gov/Archives/edgar/data/1061219/000106121923000017/",
+        "type": "Header"
     },
     {
-        "element_id": "3375d8680a0d4857a98249a180fb0646",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "3648e0c6b38248109ba4e0231056d109",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"3375d8680a0d4857a98249a180fb0646\">Table of Contents </a>"
-        },
-        "text": "Table of Contents",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "a08319ebbcec4ab3849b06e0c92328e6",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "3648e0c6b38248109ba4e0231056d109",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"a08319ebbcec4ab3849b06e0c92328e6\">sec.gov/Archives/edgar/data/1061219/000106121923000017/ </span>"
-        },
-        "text": "sec.gov/Archives/edgar/data/1061219/000106121923000017/",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "236dd513fea64134adec0a28e0bfb520",
+        "element_id": "c5f4155165634057a51d464532ed0ef8",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<h1 class=\"Title\" id=\"236dd513fea64134adec0a28e0bfb520\">ENTERPRISE PRODUCTS PARTNERS L.P. </h1>"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<h1 class=\"Title\">ENTERPRISE PRODUCTS PARTNERS L.P.</h1>"
         },
         "text": "ENTERPRISE PRODUCTS PARTNERS L.P.",
         "type": "Title"
     },
     {
-        "element_id": "a62f3e94448248d986d419550bd2ff6e",
+        "element_id": "45d2696152994492a8f37df1a6da56c9",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<h2 class=\"Subtitle\" id=\"a62f3e94448248d986d419550bd2ff6e\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS </h2>"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<h2 class=\"Subtitle\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS</h2>"
         },
         "text": "NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS",
         "type": "Title"
     },
     {
-        "element_id": "3f997e55979144e988d9b8ab43c24bdc",
+        "element_id": "2f6ce33300da49c38e2898ac41cc662f",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<section class=\"Section\" id=\"3f997e55979144e988d9b8ab43c24bdc\" />"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<section class=\"Section\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "75e55e88f9384dfcbb17ca046bd5a47c",
+        "element_id": "a8094c3eb4424c849991c252ecc144e9",
         "metadata": {
             "category_depth": 2,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<h3 class=\"Heading\" id=\"75e55e88f9384dfcbb17ca046bd5a47c\">March 2023 $1.5 Billion 364-Day Revolving Credit Agreement </h3>"
+            "parent_id": "2f6ce33300da49c38e2898ac41cc662f",
+            "text_as_html": "<h3 class=\"Heading\">March 2023 $1.5 Billion 364-Day Revolving Credit Agreement</h3>"
         },
         "text": "March 2023 $1.5 Billion 364-Day Revolving Credit Agreement",
         "type": "Title"
     },
     {
-        "element_id": "3d64cd42b70e477a97ff3ad97449855e",
+        "element_id": "ae6139357bf04b8fa67324ac79b0d4bc",
         "metadata": {
             "category_depth": 2,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "3f997e55979144e988d9b8ab43c24bdc",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"3d64cd42b70e477a97ff3ad97449855e\">In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. </p> <p class=\"NarrativeText\" id=\"570b3d9642a14861bb8b91bb1d3961f5\">Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p> <p class=\"NarrativeText\" id=\"56d9b05b20224314bd4a70a64211ff06\">The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p> <p class=\"NarrativeText\" id=\"b4cfb3e1a3ca49818c82337a3f2072fe\">EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
+            "parent_id": "2f6ce33300da49c38e2898ac41cc662f",
+            "text_as_html": "<p class=\"NarrativeText\">In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement.</p><p class=\"NarrativeText\">Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes.</p><p class=\"NarrativeText\">The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom.</p><p class=\"NarrativeText\">EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.</p>"
         },
         "text": "In March 2023, EPO entered into a new 364-Day Revolving Credit Agreement (the \u201cMarch 2023 $1.5 Billion 364-Day Revolving Credit Agreement\u201d) that replaced its September 2022 364-Day Revolving Credit Agreement. There were no principal amounts outstanding under the September 2022 364-Day Revolving Credit Agreement when it was replaced by the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement. Under the terms of the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement, EPO may borrow up to $1.5 billion (which may be increased by up to $200 million to $1.7 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of up to 364 days, subject to the terms and conditions set forth therein. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement matures in March 2024. To the extent that principal amounts are outstanding at the maturity date, EPO may elect to have the entire principal balance then outstanding continued as non-revolving term loans for a period of one additional year, payable in March 2025. Borrowings under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $1.5 Billion 364-Day Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. EPO\u2019s obligations under the March 2023 $1.5 Billion 364-Day Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "ceaccac5d835484da1b4ae655d615737",
+        "element_id": "954cec760b0e4683b4e41e23fae078ef",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<section class=\"Section\" id=\"ceaccac5d835484da1b4ae655d615737\" />"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<section class=\"Section\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "14982083aad04d4b8748af238873b84b",
+        "element_id": "625f1235a8c04922bd93d8a1274a995b",
         "metadata": {
             "category_depth": 2,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<h3 class=\"Heading\" id=\"14982083aad04d4b8748af238873b84b\">March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement </h3>"
+            "parent_id": "954cec760b0e4683b4e41e23fae078ef",
+            "text_as_html": "<h3 class=\"Heading\">March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement</h3>"
         },
         "text": "March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement",
         "type": "Title"
     },
     {
-        "element_id": "f7b22f8600604980bc6a26728ef072f8",
+        "element_id": "e0badce1423c4e5cb10a699cc047c385",
         "metadata": {
             "category_depth": 2,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "ceaccac5d835484da1b4ae655d615737",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"f7b22f8600604980bc6a26728ef072f8\">In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. </p> <p class=\"NarrativeText\" id=\"e444e4e4f3e743be89d70025d89a5811\">Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. </p> <p class=\"NarrativeText\" id=\"3b72e18541fb4bf7af2dcc3b986fea0c\">The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. </p> <p class=\"NarrativeText\" id=\"ff8ccdef860749a9b9fe93c92beb598e\">EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership. </p>"
+            "parent_id": "954cec760b0e4683b4e41e23fae078ef",
+            "text_as_html": "<p class=\"NarrativeText\">In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement.</p><p class=\"NarrativeText\">Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes.</p><p class=\"NarrativeText\">The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom.</p><p class=\"NarrativeText\">EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.</p>"
         },
         "text": "In March 2023, EPO entered into a new revolving credit agreement that matures in March 2028 (the \u201cMarch 2023 $2.7 Billion Multi-Year Revolving Credit Agreement\u201d). The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement replaced EPO\u2019s prior multi-year revolving credit agreement that was scheduled to mature in September 2026. There were no principal amounts outstanding under the prior multi-year revolving credit agreement when it was replaced by the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. As of June 30, 2023, there were no principal amounts outstanding under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Under the terms of the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement, EPO may borrow up to $2.7 billion (which may be increased by up to $500 million to $3.2 billion at EPO\u2019s election, provided certain conditions are met) at a variable interest rate for a term of five years, subject to the terms and conditions set forth therein. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement matures in March 2028, although the maturity date may be extended at EPO\u2019s request (up to two requests) for a one-year extension of the maturity date by delivering a request prior to the maturity date and with the consent of required lenders as set forth under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement. Borrowings under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement may be used for working capital, capital expenditures, acquisitions and general company purposes. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement contains customary representations, warranties, covenants (affirmative and negative) and events of default, the occurrence of which would permit the lenders to accelerate the maturity date of any amounts borrowed under this credit agreement. The March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement also restricts EPO\u2019s ability to pay cash distributions to the Partnership, if an event of default (as defined in the credit agreement) has occurred and is continuing at the time such distribution is scheduled to be paid or would result therefrom. EPO\u2019s obligations under the March 2023 $2.7 Billion Multi-Year Revolving Credit Agreement are not secured by any collateral; however, they are guaranteed by the Partnership.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "eaee74cb6a274f17ad4da68fabda1f84",
+        "element_id": "0b3c1a93a0744842968fc3a035c5efc4",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 5,
-            "parent_id": "c87c976496724b618db33dd6f54e25a4",
-            "text_as_html": "<footer class=\"Footer\" id=\"eaee74cb6a274f17ad4da68fabda1f84\" />"
+            "parent_id": "addf0a62b37b4c07adace2d7759485a5",
+            "text_as_html": "<footer class=\"Footer\"><span class=\"UncategorizedText\">16</span><span class=\"UncategorizedText\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</span></footer>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "16 https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
+        "type": "Footer"
     },
     {
-        "element_id": "42250d2fd87944daa50aa1fb79b880ed",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "eaee74cb6a274f17ad4da68fabda1f84",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"42250d2fd87944daa50aa1fb79b880ed\">16 </span>"
-        },
-        "text": "16",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "24428fed9eb94c2ea64520afad0097c4",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 5,
-            "parent_id": "eaee74cb6a274f17ad4da68fabda1f84",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"24428fed9eb94c2ea64520afad0097c4\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </span>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "45edf6da59c84d498a308817970fed6e",
+        "element_id": "006c9328da8b401b82612b1dd2fdcbb2",
         "metadata": {
             "category_depth": 0,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "a77ae2bba17845d6bcce44f6aebadfb5",
-            "text_as_html": "<div class=\"Page\" data-page-number=\"6\" id=\"45edf6da59c84d498a308817970fed6e\" />"
+            "parent_id": "c0793dcb5e234a31842106ed102f1274",
+            "text_as_html": "<div class=\"Page\" data-page-number=\"6\" />"
         },
         "text": "",
         "type": "UncategorizedText"
     },
     {
-        "element_id": "b0ee0dee5a494c33acc3e078f464485c",
+        "element_id": "7f255b24e30b4a5ba9cbfd12824a552a",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<header class=\"Header\" id=\"b0ee0dee5a494c33acc3e078f464485c\" />"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<header class=\"Header\"><a class=\"Hyperlink\">Table of Contents</a><span class=\"UncategorizedText\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</span></header>"
         },
-        "text": "",
-        "type": "UncategorizedText"
+        "text": "Table of Contents sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
+        "type": "Header"
     },
     {
-        "element_id": "63bff23c22e44c5383b7af575b87ddf5",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 6,
-            "parent_id": "b0ee0dee5a494c33acc3e078f464485c",
-            "text_as_html": "<a class=\"Hyperlink\" id=\"63bff23c22e44c5383b7af575b87ddf5\">Table of Contents </a>"
-        },
-        "text": "Table of Contents",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "9af9a32f04a640df8fdc1020eb4131f8",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 6,
-            "parent_id": "b0ee0dee5a494c33acc3e078f464485c",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"9af9a32f04a640df8fdc1020eb4131f8\">sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </span>"
-        },
-        "text": "sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "80609a3bef47439ea357bc640e615461",
+        "element_id": "56ffce287c3f4a738504b2346010039b",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h1 class=\"Title\" id=\"80609a3bef47439ea357bc640e615461\">ENTERPRISE PRODUCTS PARTNERS L.P. </h1>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h1 class=\"Title\">ENTERPRISE PRODUCTS PARTNERS L.P.</h1>"
         },
         "text": "ENTERPRISE PRODUCTS PARTNERS L.P.",
         "type": "Title"
     },
     {
-        "element_id": "fd34434d23be485f80a2e595bc4c5403",
+        "element_id": "dbc4f58e7358475394bf7f69a9136c04",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h2 class=\"Subtitle\" id=\"fd34434d23be485f80a2e595bc4c5403\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS </h2>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h2 class=\"Subtitle\">NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS</h2>"
         },
         "text": "NOTES TO UNAUDITED CONDENSED CONSOLIDATED FINANCIAL STATEMENTS",
         "type": "Title"
     },
     {
-        "element_id": "11f55a3de8e94de9883d8689416d682f",
+        "element_id": "fb29b6cd355b400491d9ca693b0534a5",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h3 class=\"Heading\" id=\"11f55a3de8e94de9883d8689416d682f\">Issuance of $1.75 Billion of Senior Notes in January 2023 </h3>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h3 class=\"Heading\">Issuance of $1.75 Billion of Senior Notes in January 2023</h3>"
         },
         "text": "Issuance of $1.75 Billion of Senior Notes in January 2023",
         "type": "Title"
     },
     {
-        "element_id": "e33761e8b88546f28c56c248058ea575",
+        "element_id": "4a08a5c45a0b45618cdca95ad1fa7c46",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"e33761e8b88546f28c56c248058ea575\">In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program). </p> <p class=\"NarrativeText\" id=\"b079ed55f0934d0abba8ca5bc4283074\">Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis. </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program).</p><p class=\"NarrativeText\">Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis.</p>"
         },
         "text": "In January 2023, EPO issued $1.75 billion aggregate principal amount of senior notes comprised of (i) $750 million principal amount of senior notes due January 2026 (\u201cSenior Notes FFF\u201d) and (ii) $1.0 billion principal amount of senior notes due January 2033 (\u201cSenior Notes GGG\u201d). Net proceeds from this offering were used by EPO for general company purposes, including for growth capital investments, and the repayment of debt (including the repayment of all of our $1.25 billion principal amount of 3.35% Senior Notes HH at their maturity in March 2023 and amounts outstanding under our commercial paper program). Senior Notes FFF were issued at 99.893% of their principal amount and have a fixed-rate interest rate of 5.05% per year. Senior Notes GGG were issued at 99.803% of their principal amount and have a fixed-rate interest rate of 5.35% per year. The Partnership guaranteed these senior notes through an unconditional guarantee on an unsecured and unsubordinated basis.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "a1593085e5744ea783ee0c03dd956176",
+        "element_id": "9716ea7ab99b41ab806c247b3e602854",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h3 class=\"Heading\" id=\"a1593085e5744ea783ee0c03dd956176\">Letters of Credit </h3>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h3 class=\"Heading\">Letters of Credit</h3>"
         },
         "text": "Letters of Credit",
         "type": "Title"
     },
     {
-        "element_id": "4b670b5f31604908a175397aa155bbe9",
+        "element_id": "b4aad2bc89df4ca5b2bce81283ff2410",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"4b670b5f31604908a175397aa155bbe9\">At June 30, 2023, EPO had $110 million of letters of credit outstanding primarily related to our commodity hedging activities. </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">At June 30, 2023, EPO had $110 million of letters of credit outstanding primarily related to our commodity hedging activities.</p>"
         },
         "text": "At June 30, 2023, EPO had $110 million of letters of credit outstanding primarily related to our commodity hedging activities.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "805a151ed14e4e3387ca6b3f447e318d",
+        "element_id": "8cf39cc83a114d9c9afd0c1e504c6c14",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h3 class=\"Heading\" id=\"805a151ed14e4e3387ca6b3f447e318d\">Lender Financial Covenants </h3>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h3 class=\"Heading\">Lender Financial Covenants</h3>"
         },
         "text": "Lender Financial Covenants",
         "type": "Title"
     },
     {
-        "element_id": "e605fcdef4434b2abdf91576340d2b3f",
+        "element_id": "be89fc174c8e4c4dadba9c8b472439b3",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"e605fcdef4434b2abdf91576340d2b3f\">We were in compliance with the financial covenants of our consolidated debt agreements at June 30, 2023. </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">We were in compliance with the financial covenants of our consolidated debt agreements at June 30, 2023.</p>"
         },
         "text": "We were in compliance with the financial covenants of our consolidated debt agreements at June 30, 2023.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "db0f5285f80448f4b06e9fa444b7b78b",
+        "element_id": "b949cf931fb9472fa140841d515da112",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h3 class=\"Heading\" id=\"db0f5285f80448f4b06e9fa444b7b78b\">Parent-Subsidiary Guarantor Relationships </h3>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h3 class=\"Heading\">Parent-Subsidiary Guarantor Relationships</h3>"
         },
         "text": "Parent-Subsidiary Guarantor Relationships",
         "type": "Title"
     },
     {
-        "element_id": "54fc727495e34763addb92721f9eed44",
+        "element_id": "4b3913884ee74b9cb81eb15646f0343d",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"54fc727495e34763addb92721f9eed44\">The Partnership acts as guarantor of the consolidated debt obligations of EPO, with the exception of the remaining debt obligations of TEPPCO. If EPO were to default on any of its guaranteed debt, the Partnership would be responsible for full and unconditional repayment of such obligations. </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">The Partnership acts as guarantor of the consolidated debt obligations of EPO, with the exception of the remaining debt obligations of TEPPCO. If EPO were to default on any of its guaranteed debt, the Partnership would be responsible for full and unconditional repayment of such obligations.</p>"
         },
         "text": "The Partnership acts as guarantor of the consolidated debt obligations of EPO, with the exception of the remaining debt obligations of TEPPCO. If EPO were to default on any of its guaranteed debt, the Partnership would be responsible for full and unconditional repayment of such obligations.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "8d1e134baa364bd49f63ce949d3e3d57",
+        "element_id": "d906b1ad351b4fdb9c3705dbd8505f4c",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h3 class=\"Heading\" id=\"8d1e134baa364bd49f63ce949d3e3d57\">Note 8. Capital Accounts </h3>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h3 class=\"Heading\">Note 8. Capital Accounts</h3>"
         },
         "text": "Note 8. Capital Accounts",
         "type": "Title"
     },
     {
-        "element_id": "84481b5795ee4f468c4b9b30b0ef3a9c",
+        "element_id": "f0989899e1af436a9cb12a45a3451423",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h4 class=\"Heading\" id=\"84481b5795ee4f468c4b9b30b0ef3a9c\">Common Limited Partner Interests </h4>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h4 class=\"Heading\">Common Limited Partner Interests</h4>"
         },
         "text": "Common Limited Partner Interests",
         "type": "Title"
     },
     {
-        "element_id": "7a470a77df444c8eae241d51ae24d38a",
+        "element_id": "9983061b33434857af7d177fb114da8f",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"7a470a77df444c8eae241d51ae24d38a\">The following table summarizes changes in the number of our common units outstanding since December 31, 2022: </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">The following table summarizes changes in the number of our common units outstanding since December 31, 2022:</p>"
         },
         "text": "The following table summarizes changes in the number of our common units outstanding since December 31, 2022:",
         "type": "NarrativeText"
     },
     {
-        "element_id": "27b7b51420204c059e6b446e45677c78",
+        "element_id": "90bc18fe4e3f43d98b5461ab73bb8552",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<table class=\"Table\" id=\"27b7b51420204c059e6b446e45677c78\"> <thead> <tr> <th>Common units outstanding at December 31, 2022</th><th></th></tr></thead><tbody> <tr> <td>Common unit repurchases under 2019 Buyback Program</td><td>(682,589)</td></tr><tr> <td>Common units issued in connection with the vesting of phantom unit awards, net</td><td>4,364,301</td></tr><tr> <td>Other</td><td>20,892</td></tr><tr> <td>Common units outstanding at March 31, 2023</td><td>2,174,508,951</td></tr><tr> <td>Common unit repurchases under 2019 Buyback Program</td><td>(2,910,121)</td></tr><tr> <td>Common units issued in connection with the vesting of phantom unit awards, net</td><td>153,502</td></tr><tr> <td>Common units outstanding at June 30, 2023</td><td>2,171,752,332</td></tr></tbody></table>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<table class=\"Table\"><thead><tr><th>Common units outstanding at December 31, 2022</th><th></th></tr></thead><tbody><tr><td>Common unit repurchases under 2019 Buyback Program</td><td>(682,589)</td></tr><tr><td>Common units issued in connection with the vesting of phantom unit awards, net</td><td>4,364,301</td></tr><tr><td>Other</td><td>20,892</td></tr><tr><td>Common units outstanding at March 31, 2023</td><td>2,174,508,951</td></tr><tr><td>Common unit repurchases under 2019 Buyback Program</td><td>(2,910,121)</td></tr><tr><td>Common units issued in connection with the vesting of phantom unit awards, net</td><td>153,502</td></tr><tr><td>Common units outstanding at June 30, 2023</td><td>2,171,752,332</td></tr></tbody></table>"
         },
         "text": "Common units outstanding at December 31, 2022 Common unit repurchases under 2019 Buyback Program (682,589) Common units issued in connection with the vesting of phantom unit awards, net 4,364,301 Other 20,892 Common units outstanding at March 31, 2023 2,174,508,951 Common unit repurchases under 2019 Buyback Program (2,910,121) Common units issued in connection with the vesting of phantom unit awards, net 153,502 Common units outstanding at June 30, 2023 2,171,752,332",
         "type": "Table"
     },
     {
-        "element_id": "6f17b23593d44a4aaba1620feec468e7",
+        "element_id": "9dd8da0ddd2d451fbda4cbbdca66e593",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<h4 class=\"Heading\" id=\"6f17b23593d44a4aaba1620feec468e7\">Registration Statements </h4>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<h4 class=\"Heading\">Registration Statements</h4>"
         },
         "text": "Registration Statements",
         "type": "Title"
     },
     {
-        "element_id": "c72e9e5f207541dbaaff035a7352652f",
+        "element_id": "3b0551e5d70841a69a85653bac2e79cb",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<p class=\"NarrativeText\" id=\"c72e9e5f207541dbaaff035a7352652f\">We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively. </p> <p class=\"NarrativeText\" id=\"f0435fa594c4478faf396f599d8d3f4e\">In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023. </p> <p class=\"NarrativeText\" id=\"b007a2e3e13f416d9bff83091081b852\">We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments. </p>"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<p class=\"NarrativeText\">We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively.</p><p class=\"NarrativeText\">In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023.</p><p class=\"NarrativeText\">We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments.</p>"
         },
         "text": "We have a universal shelf registration statement on file with the SEC which allows the Partnership and EPO (each on a standalone basis) to issue an unlimited amount of equity and debt securities, respectively. In addition, the Partnership has a registration statement on file with the SEC covering the issuance of up to $2.5 billion of its common units in amounts, at prices and on terms based on market conditions and other factors at the time of such offerings (referred to as the Partnership\u2019s at-the-market (\u201cATM\u201d) program). The Partnership did not issue any common units under its ATM program during the six months ended June 30, 2023. The Partnership\u2019s capacity to issue additional common units under the ATM program remains at $2.5 billion as of June 30, 2023. We may issue additional equity and debt securities to assist us in meeting our future liquidity requirements, including those related to capital investments.",
         "type": "NarrativeText"
     },
     {
-        "element_id": "5ab9ec0ed8a047b7bff244889ce9647f",
+        "element_id": "cd9f5567b38c4e258a95d4fa874bb6dc",
         "metadata": {
             "category_depth": 1,
+            "file_directory": "test_unstructured/documents/html_files",
+            "filename": "example_full_doc.html",
+            "filetype": "text/html",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2025-06-12T11:12:20",
             "page_number": 6,
-            "parent_id": "45edf6da59c84d498a308817970fed6e",
-            "text_as_html": "<footer class=\"Footer\" id=\"5ab9ec0ed8a047b7bff244889ce9647f\" />"
+            "parent_id": "006c9328da8b401b82612b1dd2fdcbb2",
+            "text_as_html": "<footer class=\"Footer\"><span class=\"PageNumber\">17</span><span class=\"UncategorizedText\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm</span><span class=\"PageNumber\">23/93</span></footer>"
         },
-        "text": "",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "cfed078ea7ef441294b993356ba4052d",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 6,
-            "parent_id": "5ab9ec0ed8a047b7bff244889ce9647f",
-            "text_as_html": "<span class=\"PageNumber\" id=\"cfed078ea7ef441294b993356ba4052d\">17 </span>"
-        },
-        "text": "17",
-        "type": "PageNumber"
-    },
-    {
-        "element_id": "a064d74e2f8b4a8db717671734740a69",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 6,
-            "parent_id": "5ab9ec0ed8a047b7bff244889ce9647f",
-            "text_as_html": "<span class=\"UncategorizedText\" id=\"a064d74e2f8b4a8db717671734740a69\">https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm </span>"
-        },
-        "text": "https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm",
-        "type": "UncategorizedText"
-    },
-    {
-        "element_id": "39656678575748fd884fc583c474d79d",
-        "metadata": {
-            "category_depth": 2,
-            "page_number": 6,
-            "parent_id": "5ab9ec0ed8a047b7bff244889ce9647f",
-            "text_as_html": "<span class=\"PageNumber\" id=\"39656678575748fd884fc583c474d79d\">23/93 </span>"
-        },
-        "text": "23/93",
-        "type": "PageNumber"
+        "text": "17 https://www.sec.gov/Archives/edgar/data/1061219/000106121923000017/form10q.htm 23/93",
+        "type": "Footer"
     }
 ]

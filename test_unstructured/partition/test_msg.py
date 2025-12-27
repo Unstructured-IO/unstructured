@@ -141,7 +141,7 @@ def test_partition_msg_can_process_attachments():
         "Text",
         "Text",
         "Image",
-        "Title",
+        "Text",
         "Text",
         "Title",
         "Title",
@@ -307,6 +307,153 @@ def test_partition_msg_raises_TypeError_for_invalid_languages():
 # These test components used by `partition_msg()` in isolation such that all edge cases can be
 # exercised.
 # ================================================================================================
+
+
+class DescribeMsgAttachmentFilenameSanitization:
+    """Unit-test suite for filename sanitization in MSG attachments (GHSA-gm8q-m8mv-jj5m)."""
+
+    def it_sanitizes_path_traversal_attempts(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "../../../etc/passwd"
+        attachment.file_bytes = b"malicious content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "passwd"
+
+    def it_sanitizes_absolute_unix_paths(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "/etc/passwd"
+        attachment.file_bytes = b"malicious content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "passwd"
+
+    def it_sanitizes_absolute_windows_paths(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "C:\\Windows\\System32\\config\\sam"
+        attachment.file_bytes = b"malicious content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "sam"
+
+    def it_removes_null_bytes_from_filenames(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "file\x00.txt"
+        attachment.file_bytes = b"content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "file.txt"
+        assert "\x00" not in partitioner._attachment_file_name
+
+    def it_handles_dot_and_dotdot_filenames(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        # Test single dot
+        attachment1 = Mock()
+        attachment1.file_name = "."
+        attachment1.file_bytes = b"content"
+        attachment1.last_modified = None
+        partitioner1 = _AttachmentPartitioner(attachment1, opts)
+        assert partitioner1._attachment_file_name == "unknown"
+
+        # Test double dot
+        attachment2 = Mock()
+        attachment2.file_name = ".."
+        attachment2.file_bytes = b"content"
+        attachment2.last_modified = None
+        partitioner2 = _AttachmentPartitioner(attachment2, opts)
+        assert partitioner2._attachment_file_name == "unknown"
+
+    def it_handles_missing_filename(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = None
+        attachment.file_bytes = b"content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "unknown"
+
+    def it_allows_valid_filenames_through(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "document.pdf"
+        attachment.file_bytes = b"content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "document.pdf"
+
+    def it_handles_complex_path_traversal_with_mixed_separators(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = "..\\../\\..\\etc/passwd"
+        attachment.file_bytes = b"malicious content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "passwd"
+
+    def it_handles_empty_string_filename(self, request: FixtureRequest):
+        from unstructured.partition.msg import _AttachmentPartitioner
+
+        attachment = Mock()
+        attachment.file_name = ""
+        attachment.file_bytes = b"content"
+        attachment.last_modified = None
+
+        opts = Mock()
+        opts.metadata_last_modified = None
+
+        partitioner = _AttachmentPartitioner(attachment, opts)
+
+        assert partitioner._attachment_file_name == "unknown"
 
 
 class DescribeMsgPartitionerOptions:

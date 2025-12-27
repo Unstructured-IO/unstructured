@@ -4,6 +4,7 @@ from multiprocessing import Pool
 import numpy as np
 import pytest
 from PIL import Image
+from unstructured_inference.constants import IsExtracted
 from unstructured_inference.inference import layout
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layoutelement import LayoutElement
@@ -331,7 +332,6 @@ def test_normalize_layout_element_bulleted_list():
 
 
 class MockRunOutput:
-
     def __init__(self, returncode, stdout, stderr):
         self.returncode = returncode
         self.stdout = stdout
@@ -401,9 +401,8 @@ def test_get_page_image_metadata_and_coordinate_system():
     assert isinstance(metadata, dict)
 
 
-def test_ocr_data_to_elements(
-    filename=example_doc_path("img/layout-parser-paper-fast.jpg"),
-):
+def test_ocr_data_to_elements():
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
     text_regions = [
         TextRegion.from_coords(
             163.0,
@@ -447,3 +446,23 @@ def test_ocr_data_to_elements(
             points=layout_el.bbox.coordinates,
             system=coordinate_system,
         )
+
+
+def test_normalize_layout_element_layout_element_text_source_metadata():
+    layout_element = LayoutElement.from_coords(
+        type="NarrativeText",
+        x1=1,
+        y1=2,
+        x2=3,
+        y2=4,
+        text="Some lovely text",
+        is_extracted=IsExtracted.TRUE,
+    )
+    coordinate_system = PixelSpace(width=10, height=20)
+    element = common.normalize_layout_element(
+        layout_element,
+        coordinate_system=coordinate_system,
+    )
+    assert hasattr(element, "metadata")
+    assert hasattr(element.metadata, "is_extracted")
+    assert element.metadata.is_extracted == "true"

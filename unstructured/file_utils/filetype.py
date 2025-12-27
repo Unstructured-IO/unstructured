@@ -31,9 +31,11 @@ from __future__ import annotations
 import contextlib
 import functools
 import importlib.util
+import io
 import json
 import os
 import re
+import tempfile
 import zipfile
 from typing import IO, Callable, Iterator, Optional
 
@@ -46,7 +48,7 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.nlp.patterns import DICT_PATTERN, EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
+from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults, lazyproperty
@@ -60,7 +62,7 @@ except ImportError:
 
 def detect_filetype(
     file_path: str | None = None,
-    file: IO[bytes] | None = None,
+    file: IO[bytes] | tempfile.SpooledTemporaryFile | None = None,
     encoding: str | None = None,
     content_type: str | None = None,
     metadata_file_path: Optional[str] = None,
@@ -92,9 +94,14 @@ def detect_filetype(
           filesystem.
         - Neither `file_path` nor `file` were specified.
     """
+    file_buffer = file
+    if isinstance(file, tempfile.SpooledTemporaryFile):
+        file_buffer = io.BytesIO(file.read())
+        file.seek(0)
+
     ctx = _FileTypeDetectionContext.new(
         file_path=file_path,
-        file=file,
+        file=file_buffer,
         encoding=encoding,
         content_type=content_type,
         metadata_file_path=metadata_file_path,
@@ -140,8 +147,7 @@ def is_ndjson_processable(
         file_text = _FileTypeDetectionContext.new(
             file_path=filename, file=file, encoding=encoding
         ).text_head
-
-    return re.match(DICT_PATTERN, file_text) is not None
+    return file_text.lstrip().startswith("{")
 
 
 class _FileTypeDetector:
@@ -163,26 +169,31 @@ class _FileTypeDetector:
         # -- accuracy. So start with binary types and only then consider an asserted content-type,
         # -- generally as a last resort.
 
-        # -- strategy 1: most binary types can be detected with 100% accuracy --
-        if file_type := self._known_binary_file_type:
-            return file_type
+        if (
+            (  # strategy 1: most binary types can be detected with 100% accuracy
+                predicted_file_type := self._known_binary_file_type
+            )
+            or (  # strategy 2: use content-type asserted by caller
+                predicted_file_type := self._file_type_from_content_type
+            )
+            or (  # strategy 3: guess MIME-type using libmagic and use that
+                predicted_file_type := self._file_type_from_guessed_mime_type
+            )
+            or (  # strategy 4: use filename-extension, like ".docx" -> FileType.DOCX
+                predicted_file_type := self._file_type_from_file_extension
+            )
+        ):
+            result_file_type = predicted_file_type
+        else:
+            # give up and report FileType.UNK
+            result_file_type = FileType.UNK
 
-        # -- strategy 2: use content-type asserted by caller --
-        if file_type := self._file_type_from_content_type:
-            return file_type
+        if result_file_type == FileType.JSON:
+            # edge case where JSON/NDJSON content without file extension
+            # (magic lib can't distinguish them)
+            result_file_type = self._disambiguate_json_file_type
 
-        # -- strategy 3: guess MIME-type using libmagic and use that --
-        if file_type := self._file_type_from_guessed_mime_type:
-            return file_type
-
-        # -- strategy 4: use filename-extension, like ".docx" -> FileType.DOCX --
-        if file_type := self._file_type_from_file_extension:
-            return file_type
-
-        # -- strategy 5: give up and report FileType.UNK --
-        return FileType.UNK
-
-    # == STRATEGIES ============================================================
+        return result_file_type
 
     @property
     def _known_binary_file_type(self) -> FileType | None:
@@ -209,6 +220,15 @@ class _FileTypeDetector:
 
         # -- otherwise we trust the passed `content_type` as long as `FileType` recognizes it --
         return FileType.from_mime_type(self._ctx.content_type)
+
+    @property
+    def _disambiguate_json_file_type(self) -> FileType:
+        """Disambiguate JSON/NDJSON file-type based on file contents."""
+        if is_json_processable(file_text=self._ctx.text_head):
+            return FileType.JSON
+        if is_ndjson_processable(file_text=self._ctx.text_head):
+            return FileType.NDJSON
+        raise ValueError("Unable to process JSON file")
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
@@ -239,6 +259,9 @@ class _FileTypeDetector:
 
         if mime_type.endswith("empty"):
             return FileType.EMPTY
+
+        if mime_type.endswith("json") and self._ctx.extension == ".ndjson":
+            return FileType.NDJSON
 
         # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
         file_type = FileType.from_mime_type(mime_type)
@@ -719,13 +742,13 @@ class _ZipFileDetector:
 
             filenames = zip.namelist()
 
-            if "word/document.xml" in filenames:
+            if any(re.match(r"word/document.*\.xml$", filename) for filename in filenames):
                 return FileType.DOCX
 
-            if "xl/workbook.xml" in filenames:
+            if any(re.match(r"xl/workbook.*\.xml$", filename) for filename in filenames):
                 return FileType.XLSX
 
-            if "ppt/presentation.xml" in filenames:
+            if any(re.match(r"ppt/presentation.*\.xml$", filename) for filename in filenames):
                 return FileType.PPTX
 
             # -- ODT and EPUB files place their MIME-type in `mimetype` in the archive root --

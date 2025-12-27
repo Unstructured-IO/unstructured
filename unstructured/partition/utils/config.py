@@ -112,6 +112,11 @@ class ENVConfig:
         return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
 
     @property
+    def OCR_AGENT_CACHE_SIZE(self) -> int:
+        """Maximum number of OCR agents to cache per process"""
+        return self._get_int("OCR_AGENT_CACHE_SIZE", 1)
+
+    @property
     def EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD(self) -> int:
         """extra image block content to add around an identified element(`Image`, `Table`) region
         horizontally; measured in pixels
@@ -167,6 +172,11 @@ class ENVConfig:
         """
 
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
+
+    @property
+    def PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO(self) -> float:
+        """maximum ratio of invisible text for a text to be considered embedded text"""
+        return self._get_float("PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO", 0.1)
 
     @property
     def GLOBAL_WORKING_DIR_ENABLED(self) -> bool:

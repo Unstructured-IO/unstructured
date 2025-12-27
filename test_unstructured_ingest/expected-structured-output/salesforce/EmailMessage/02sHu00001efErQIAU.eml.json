@@ -26,5 +26,34 @@
         "date_modified": "1692542155.0"
       }
     }
+  },
+  {
+    "type": "Image",
+    "element_id": "68870d055535f48c7439ce67092768f6",
+    "text": "",
+    "metadata": {
+      "image_url": "https://unstructuredio-dev-ed.develop.my.salesforce.com/servlet/servlet.ImageServer?oid=00DHu0000018RDe&esid=018Hu00001JMmTa&from=int",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "message/rfc822",
+      "email_message_id": "CuWky000000000000000000000000000000000000000000000RZP1VO00MaLK8OmEQm2Bw-c3ek6uNg@sfdc.net",
+      "sent_from": [
+        "devops+salesforce-connector@unstructured.io"
+      ],
+      "sent_to": [
+        "sean@edge.com"
+      ],
+      "subject": "Test of Salesforce 2",
+      "data_source": {
+        "url": "/services/data/v57.0/sobjects/EmailMessage/02sHu00001efErQIAU",
+        "version": "1694691603.0",
+        "record_locator": {
+          "id": "02sHu00001efErQIAU"
+        },
+        "date_created": "1692542149.0",
+        "date_modified": "1692542155.0"
+      }
+    }
   }
 ]

@@ -780,7 +780,6 @@ class ObjectDetectionMetricsCalculatorBase(BaseMetricsCalculator, ABC):
 
 
 class ObjectDetectionPerClassMetricsCalculator(ObjectDetectionMetricsCalculatorBase):
-
     def __post_init__(self):
         super().__post_init__()
         self.per_class_metric_names: list[str] | None = None

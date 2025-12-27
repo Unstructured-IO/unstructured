@@ -14,14 +14,14 @@ def test_partition_epub_from_filename():
 
     assert len(elements) > 0
     assert isinstance(elements[0], Text)
-    assert elements[0].text.startswith("a shared culture")
+    assert elements[1].text.startswith("a shared culture")
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"epub"}
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():
     elements = partition_epub(example_doc_path("winter-sports.epub"))
-    assert elements[10] == Table(
+    assert elements[12] == Table(
         "Contents. List of Illustrations (In certain versions of this etext [in certain\nbrowsers]"
         " clicking on the image will bring up a larger\nversion.) (etext transcriber's note)"
     )
@@ -32,7 +32,7 @@ def test_partition_epub_from_file():
         elements = partition_epub(file=f)
 
     assert len(elements) > 0
-    assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
+    assert elements[2].text.startswith("The Project Gutenberg eBook of Winter Sports")
 
 
 # -- .metadata.filename --------------------------------------------------------------------------

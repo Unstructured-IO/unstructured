@@ -26,12 +26,13 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --strategy hi_res \
   --reprocess \
-  --output-dir "$OUTPUT_DIR" \
   --verbose \
   --file-glob "*.html" \
   --input-path example-docs \
-  --work-dir "$WORK_DIR"
+  --work-dir "$WORK_DIR" \
+  local \
+  --output-dir "$OUTPUT_DIR"
 
-"$SCRIPT_DIR"/check-num-files-output.sh 13 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 15 $OUTPUT_FOLDER_NAME
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

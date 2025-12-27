@@ -39,14 +39,9 @@
 
 The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://docs.unstructured.io/open-source/core-functionality/partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
-## Try the Unstructured Serverless API!
+## Try the Unstructured Platform Product
 
-Looking for better pre-processing performance and less setup?
-Check out our new [Serverless API](https://unstructured.io/api-key-hosted)!
-The Unstructured Serverless API is our most performant API yet, delivering a more responsive,
-production-grade solution to better support your business and LLM needs.
-Head to our [signup page](https://app.unstructured.io/) page to get started for
-free.
+Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Platform](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichment generation, all from a low code UI or an API. [Request a demo](https://unstructured.io/contact) from our sales team to learn more about how to get started.
 
 ## :eight_pointed_black_star: Quick Start
 
@@ -257,5 +252,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-We’ve partnered with Scarf (https://scarf.sh) to collect anonymized user statistics to understand which features our community is using and how to prioritize product decision-making in the future. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
-To opt out of this data collection, you can set the environment variable `SCARF_NO_ANALYTICS=true` before running any `unstructured` commands.
+This library includes a very lightweight analytics "ping" when the library is loaded, however you can opt out of this data collection by setting the environment variable `DO_NOT_TRACK=true` before executing any `unstructured` code. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).

@@ -5,16 +5,15 @@
 ####################################################################################################
 # we are using v3 client https://weaviate.io/developers/weaviate/client-libraries/python/python_v3
 weaviate-client>=3.26.7,<4.0.0
-# TODO: Constriant due to multiple versions being installed during pip-compile
-grpcio>=1.65.5
 # TODO: Pinned in transformers package, remove when that gets updated (https://github.com/huggingface/transformers/blob/main/setup.py)
-tokenizers>=0.19,<0.20
-# TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
-# updated or we drop support for 3.9
-urllib3<1.27
-# TODO: Constriant due to aiobotocore, remove when that gets updates:
-botocore<1.34.132
-# TODO: Constriant due to both 8.5.0 and 8.4.0 being installed during pip-compile
-importlib-metadata>=8.5.0
+tokenizers>=0.21,<0.22
+# NOTE(alan): Okay to drop pin once this version exists and we verify compatibility.
+urllib3<3.0.0
 # (austin): Versions below this have a different interface for passing parameters
 unstructured-client>=0.23.0,<0.26.0
+# paddle constrains protobuf; maybe we should put paddle here since its version is pinned in .in file
+protobuf>=6.30.0
+# (yao) issues with pdfminer-six above 20250416
+pdfminer.six<20250416
+# nickf: CVE-2025-66034 fix for fonttools
+fonttools>=4.60.2

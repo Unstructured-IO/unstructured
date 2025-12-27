@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 import io
+import os
 import pathlib
-from typing import Any
+import tempfile
+from typing import Any, Optional
 
 import pytest
 from lxml import etree
@@ -24,6 +26,7 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     CompositeElement,
+    ElementType,
     ListItem,
     NarrativeText,
     Table,
@@ -294,6 +297,69 @@ def test_it_does_not_extract_text_in_style_tags():
 
     assert isinstance(element, Text)
     assert element.text == "Lorem ipsum dolor"
+
+
+# -- image parsing behaviors ---------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("extract_to_payload", "extract_types", "expect_base64"),
+    [
+        (True, ["Image"], True),
+        (True, [], False),
+        (True, None, False),
+        (False, ["Image"], False),
+    ],
+)
+def test_partition_html_base64_for_images(
+    opts_args: dict[str, Any],
+    extract_to_payload: bool,
+    extract_types: Optional[list[str]],
+    expect_base64: bool,
+):
+    base64 = (
+        "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/"
+        "w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+    )
+    src = "data:image/png;base64," + base64
+    alt_text = "Base64 Image"
+
+    html = f"""
+    <div class="Page">
+        <img src="{src}" alt="{alt_text}">
+    </div>
+    """
+    opts_args["text"] = html
+    opts_args["extract_image_block_to_payload"] = extract_to_payload
+    opts_args["extract_image_block_types"] = extract_types
+    opts = HtmlPartitionerOptions(**opts_args)
+    (element,) = list(_HtmlPartitioner.iter_elements(opts))
+
+    assert element.category == ElementType.IMAGE
+    assert element.text == alt_text
+    if expect_base64:
+        assert element.metadata.image_base64 == base64
+        assert element.metadata.image_mime_type == "image/png"
+    else:
+        assert element.metadata.image_base64 is None
+        assert element.metadata.image_mime_type is None
+
+
+def test_partition_html_includes_url_for_images():
+    image_url = "https://example.com/image.png"
+    alt_text = "URL Image"
+    # language=HTML
+    html = f"""
+    <div class="Page">
+        <img src="{image_url}" alt="{alt_text}">
+    </div>
+    """
+    (image,) = partition_html(
+        text=html,
+    )
+    assert image.category == ElementType.IMAGE
+    assert image.text == alt_text
+    assert image.metadata.image_url == image_url
 
 
 # -- table parsing behaviors ---------------------------------------------------------------------
@@ -1413,3 +1479,40 @@ class Describe_HtmlPartitioner:
         opts = HtmlPartitionerOptions(**opts_args)
 
         assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+
+@pytest.mark.parametrize(
+    ("test_case", "content"),
+    [
+        ("empty_file", ""),
+        ("empty_bytes", b""),
+        ("whitespace_only", "   \n\t  \n  "),
+    ],
+)
+def test_partition_html_with_empty_content_raises_error(test_case, content):
+    """Test that partitioning empty/whitespace-only HTML content won't
+    raise TypeError: Invalid input object: NoneType.
+
+    This reproduces the production error where lxml.etree.strip_elements is called with None
+    when the HTML content is empty, causing etree.fromstring to return None.
+
+    Args:
+        test_case: Description of the test scenario
+        content: The content to test (empty string, empty bytes, or whitespace)
+    """
+    if test_case == "empty_bytes":
+        # Create a file-like object with empty content
+        empty_file = io.BytesIO(content)
+        partition_html(file=empty_file)
+    else:
+        # Create a temporary file with the given content
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".html", delete=False) as f:
+            f.write(content)
+            f.flush()
+            temp_filename = f.name
+
+        try:
+            elements = partition_html(filename=temp_filename)
+            assert len(elements) == 0
+        finally:
+            os.unlink(temp_filename)

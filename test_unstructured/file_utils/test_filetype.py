@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 
 import pytest
@@ -14,6 +15,7 @@ from test_unstructured.unit_utils import (
     LogCaptureFixture,
     Mock,
     example_doc_path,
+    input_path,
     patch,
     property_mock,
 )
@@ -25,9 +27,10 @@ from unstructured.file_utils.filetype import (
     detect_filetype,
     is_json_processable,
 )
-from unstructured.file_utils.model import FileType
+from unstructured.file_utils.model import FileType, create_file_type
 
 is_in_docker = os.path.exists("/.dockerenv")
+
 
 # ================================================================================================
 # STRATEGY #1 - DIRECT DETECTION OF CFB/ZIP-BASED BINARY FILE TYPES (8 TYPES)
@@ -77,7 +80,6 @@ def test_it_detects_correct_file_type_for_CFB_and_ZIP_subtypes_detected_by_direc
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
-        (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -116,7 +118,6 @@ def test_it_detects_correct_file_type_from_file_path_with_correct_asserted_conte
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
-        (FileType.JSON, "spring-weather.html.json", "application/json"),
         (FileType.MD, "README.md", "text/markdown"),
         (FileType.ORG, "README.org", "text/org"),
         (FileType.PDF, "pdf/layout-parser-paper-fast.pdf", "application/pdf"),
@@ -154,10 +155,10 @@ def test_it_identifies_NDJSON_for_file_like_object_with_no_name_but_NDJSON_conte
     assert detect_filetype(file=file, content_type=FileType.NDJSON.mime_type) == FileType.NDJSON
 
 
-# TODO: ideally this test should pass, currently fails
-# def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
-#     file_path = example_doc_path("simple.ndjson")
-#     assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_type():
+    file_path = example_doc_path("simple.ndjson")
+    assert detect_filetype(file_path, content_type=FileType.JSON.mime_type) == FileType.NDJSON
+
 
 # ================================================================================================
 # STRATEGY #3 - GUESS MIME-TYPE WITH LIBMAGIC/FILETYPE LIBRARY
@@ -268,7 +269,6 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
         (FileType.UNK, "stanley-cups.csv"),
         (FileType.UNK, "eml/fake-email.eml"),
         (FileType.UNK, "example-10k-1p.html"),
-        (FileType.UNK, "spring-weather.html.json"),
         (FileType.UNK, "README.md"),
         (FileType.UNK, "README.org"),
         (FileType.UNK, "README.rst"),
@@ -333,6 +333,7 @@ def test_detect_filetype_from_file_warns_when_libmagic_is_not_installed(
         (FileType.TXT, "norwich-city.txt"),
         (FileType.WAV, "CantinaBand3.wav"),
         (FileType.XML, "factbook.xml"),
+        (FileType.NDJSON, "simple.ndjson"),
     ],
 )
 def test_it_detects_correct_file_type_from_extension_when_that_maps_to_a_file_type(
@@ -396,6 +397,27 @@ def test_it_detects_HTML_from_guessed_mime_type_ending_with_xml_and_html_extensi
 
 
 @pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_without_extension(expected_value: FileType, file_name: str):
+    with open(example_doc_path(file_name), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    filetype = detect_filetype(file=file)
+    assert filetype == expected_value
+
+
+@pytest.mark.parametrize(
+    ("expected_value", "file_name"),
+    [(FileType.NDJSON, "simple.ndjson"), (FileType.JSON, "spring-weather.html.json")],
+)
+def test_it_detects_correct_json_type_with_extension(expected_value: FileType, file_name: str):
+    filetype = detect_filetype(file_path=example_doc_path(file_name))
+    assert filetype == expected_value
+
+
+@pytest.mark.parametrize(
     ("mime_type", "file_name"),
     [
         ("text/x-script.python", "logger.py"),
@@ -446,6 +468,13 @@ def test_it_detect_CSV_from_path_and_file_when_content_contains_escaped_commas()
     assert detect_filetype(file_path) == FileType.CSV
     with open(file_path, "rb") as f:
         assert detect_filetype(file=f) == FileType.CSV
+
+
+def test_it_detects_correct_file_type_for_custom_types(tmp_path):
+    file_type = create_file_type("FOO", canonical_mime_type="application/foo", extensions=[".foo"])
+    dumb_file = tmp_path / "dumb.foo"
+    dumb_file.write_bytes(b"38v8df889qw8sdfj")
+    assert detect_filetype(file_path=str(dumb_file), content_type="application/foo") is file_type
 
 
 # ================================================================================================
@@ -918,3 +947,52 @@ class Describe_ZipFileDetector:
     ):
         ctx = _FileTypeDetectionContext(example_doc_path(file_name))
         assert _ZipFileDetector.file_type(ctx) is expected_value
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_json():
+    json_bytes = json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
+
+
+def test_mimetype_magic_detection_is_used_before_filename_when_filetype_is_detected_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.NDJSON
+
+
+def test_json_content_type_is_disambiguated_for_ndjson():
+    data = [{"example": "data1"}, {"example": "data2"}, {"example": "data3"}]
+    ndjson_string = "\n".join(json.dumps(item) for item in data) + "\n"
+    ndjson_bytes = ndjson_string.encode("utf-8")
+
+    file_buffer = io.BytesIO(ndjson_bytes)
+    predicted_type = detect_filetype(
+        file=file_buffer, metadata_file_path="filename.pdf", content_type="application/json"
+    )
+    assert predicted_type == FileType.NDJSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer, content_type="application/json")
+    assert predicted_type == FileType.NDJSON
+
+
+def test_office_files_when_document_archive_has_non_standard_prefix():
+    predicted_type = detect_filetype(
+        file_path=input_path("file_type/test_document_from_office365.docx")
+    )
+    assert predicted_type == FileType.DOCX

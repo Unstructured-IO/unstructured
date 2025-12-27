@@ -1,7 +1,8 @@
 -c ./deps/constraints.txt
 -c base.txt
 
-onnx
+onnx>=1.17.0
+onnxruntime>=1.19.0
 pdf2image
 pdfminer.six
 pikepdf
@@ -11,5 +12,5 @@ google-cloud-vision
 effdet
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
-unstructured-inference>=0.8.6
+unstructured-inference>=1.1.1
 unstructured.pytesseract>=0.3.12

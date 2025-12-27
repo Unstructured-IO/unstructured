@@ -3,6 +3,7 @@
 # Start the containerized repository and run ingest tests
 
 # shellcheck disable=SC2317  # Shellcheck complains that trap functions are unreachable...
+# shellcheck disable=SC2329  # Functions are invoked indirectly
 
 set -eux -o pipefail
 
@@ -41,7 +42,7 @@ await_container
 docker cp test_unstructured_ingest $CONTAINER_NAME:/app
 docker cp requirements/ingest $CONTAINER_NAME:/app/requirements/ingest
 docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R notebook-user:notebook-user /app/test_unstructured_ingest"
-docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/wikipedia.sh"
+docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/local.sh"
 
 result=$?
 exit $result
