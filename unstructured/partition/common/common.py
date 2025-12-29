@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import chardet
 import numbers
 import subprocess
 from enum import Enum
@@ -302,7 +303,9 @@ def convert_office_doc(
         wait_time = 0
         sleep_time = 0.1
         output = subprocess.run(command, capture_output=True)
-        message = output.stdout.decode().strip()
+        detected_encoding = chardet.detect(output.stdout)
+        encoding = detected_encoding['encoding'] or 'utf-8'  # Default to utf-8 if detection fails
+        message = output.stdout.decode(encoding).strip()
         # we can't rely on returncode unfortunately because on macOS it would return 0 even when the
         # command failed to run; instead we have to rely on the stdout being empty as a sign of the
         # process failed
