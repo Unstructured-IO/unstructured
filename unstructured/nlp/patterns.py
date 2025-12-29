@@ -56,6 +56,7 @@ UNICODE_BULLETS: Final[List[str]] = [
     r"\*",
     "\x95",
     "·",
+    "\u2013",
 ]
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
 UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")

@@ -72,6 +72,7 @@
 ### Features
 
 ### Fixes
+- Improved clean_bullets in order to remove en-dashes if they are used as bullets
 - Bumped dependencies via pip-compile to address the following CVEs:
   - **authlib**: GHSA-pq5p-34cr-23v9
   - **python-3.12/python03**.12-base: CVE-2025-8291, GHSA-49g5-f6qw-8mm7
