@@ -1,3 +1,8 @@
+## 0.18.25
+
+### Fixes
+- **Security update**: Removed pdfminer.six version constraint and bumped pdfminer.six and urllib3 to address high severity CVEs
+
 ## 0.18.24
 
 ### Enhancement
