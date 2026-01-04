@@ -4,7 +4,7 @@
 #
 #    pip-compile --no-strip-extras ./huggingface.in
 #
-certifi==2025.11.12
+certifi==2026.1.4
     # via
     #   -c base.txt
     #   requests
@@ -16,12 +16,12 @@ click==8.3.1
     # via
     #   -c base.txt
     #   sacremoses
-filelock==3.20.1
+filelock==3.20.2
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2025.10.0
+fsspec==2025.12.0
     # via
     #   huggingface-hub
     #   torch
@@ -37,7 +37,7 @@ idna==3.11
     #   requests
 jinja2==3.1.6
     # via torch
-joblib==1.5.2
+joblib==1.5.3
     # via
     #   -c base.txt
     #   sacremoses
@@ -105,7 +105,7 @@ typing-extensions==4.15.0
     #   -c base.txt
     #   huggingface-hub
     #   torch
-urllib3==2.6.0
+urllib3==2.6.2
     # via
     #   -c base.txt
     #   -c deps/constraints.txt
