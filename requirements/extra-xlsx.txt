@@ -48,7 +48,7 @@ typing-extensions==4.15.0
     # via
     #   -c base.txt
     #   cryptography
-tzdata==2025.2
+tzdata==2025.3
     # via pandas
 xlrd==2.0.2
     # via -r extra-xlsx.in
