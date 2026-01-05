@@ -1,3 +1,8 @@
+## 0.18.27-dev1
+
+### Enhancements
+- Optimize `contains_verb` (codeflash)
+
 ## 0.18.26
 
 ### Fixes
