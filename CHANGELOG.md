@@ -1,3 +1,8 @@
+## 0.18.27-dev0
+
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+
 ## 0.18.26
 
 ### Fixes
