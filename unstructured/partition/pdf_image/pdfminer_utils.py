@@ -13,6 +13,29 @@ from unstructured.logger import logger
 from unstructured.utils import requires_dependencies
 
 
+class CustomPDFPageInterpreter(PDFPageInterpreter):
+
+    def _patch_current_chars_with_render_mode(self):
+        """Add render_mode to recently created LTChar objects"""
+        if hasattr(self.device, "cur_item") and self.device.cur_item:
+            render_mode = self.textstate.render
+            for item in (
+                self.device.cur_item._objs if hasattr(self.device.cur_item, "_objs") else []
+            ):
+                if hasattr(item, "rendermode"):
+                    continue  # Already patched
+                if item.__class__.__name__ == "LTChar":
+                    item.rendermode = render_mode
+
+    def do_TJ(self, seq):
+        super().do_TJ(seq)
+        self._patch_current_chars_with_render_mode()
+
+    def do_Tj(self, s):
+        super().do_Tj(s)
+        self._patch_current_chars_with_render_mode()
+
+
 class PDFMinerConfig(BaseModel):
     line_overlap: Optional[float] = None
     word_margin: Optional[float] = None
@@ -27,7 +50,7 @@ def init_pdfminer(pdfminer_config: Optional[PDFMinerConfig] = None):
     laparams = LAParams(**laparams_kwargs)
 
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    interpreter = CustomPDFPageInterpreter(rsrcmgr, device)
 
     return device, interpreter
 
