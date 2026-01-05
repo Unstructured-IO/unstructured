@@ -460,23 +460,17 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
 
     moved_indices = np.zeros(len(text))
 
-    # Optimize by using lookup instead of re.match in main loop
-    len(text)
     cleaned_len = len(cleaned_text)
 
-    ws_chars = {"\xa0", "\n"}  # For quick lookup
+    ws_chars = {"\xa0", "\n"}  # For a quick lookup
 
     distance = 0
     original_index = 0
     cleaned_index = 0
 
-    # Fetch once for performance
-    text_chars = text
-    cleaned_chars = cleaned_text
-
     while cleaned_index < cleaned_len:
-        c_orig = text_chars[original_index]
-        c_clean = cleaned_chars[cleaned_index]
+        c_orig = text[original_index]
+        c_clean = cleaned_text[cleaned_index]
 
         if c_orig == c_clean or (c_orig in ws_chars and c_clean == " "):
             moved_indices[cleaned_index] = distance
