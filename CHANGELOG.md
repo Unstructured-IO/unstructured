@@ -1,7 +1,12 @@
-## 0.18.26
+## 0.18.27
 
 ### Enhancement
 - use render mode data to determine if a character extracted by pdfminer is invisible or not
+
+## 0.18.26
+
+### Fixes
+- Pin `deltalake<1.3.0` to fix ARM64 Docker builds (1.3.0 missing Linux ARM64 wheels)
 
 ## 0.18.25
 
