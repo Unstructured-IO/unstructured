@@ -48,7 +48,7 @@ if os.getenv("AUTO_DOWNLOAD_NLTK", "True").lower() == "true":
 
 
 def sent_tokenize(text: str) -> List[str]:
-    """A wrapper so that we can cache the result of NLTKs _sent_tokenize as an 
+    """A wrapper so that we can cache the result of NLTKs _sent_tokenize as an
     immutable, while returning the expected return type (list)."""
     # Return as List[str] to preserve external interface and avoid unnecessary list copying
     return list(_tokenize_for_cache(text))
