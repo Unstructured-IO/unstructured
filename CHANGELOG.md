@@ -1,3 +1,8 @@
+## 0.18.26
+
+### Fixes
+- Pin `deltalake<1.3.0` to fix ARM64 Docker builds (1.3.0 missing Linux ARM64 wheels)
+
 ## 0.18.25
 
 ### Fixes
