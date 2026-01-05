@@ -456,8 +456,6 @@ def detect_languages(
                     langdetect_langs.append(language.part3)
 
         # remove duplicate chinese (if exists) without modifying order
-
-        # remove duplicate chinese (if exists) without modifying order
         seen = set(doc_languages)
         for lang in langdetect_langs:
             if lang not in seen:
