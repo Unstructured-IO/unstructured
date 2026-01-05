@@ -1,3 +1,8 @@
+## 0.18.27-dev2
+
+### Enhancement
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+
 ## 0.18.26
 
 ### Fixes
