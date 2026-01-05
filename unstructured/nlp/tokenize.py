@@ -73,5 +73,5 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
-    # Returns a tuple of sentences for caching (hashable)
+    """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
     return tuple(_sent_tokenize(text))
