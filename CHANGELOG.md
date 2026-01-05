@@ -1,3 +1,8 @@
+## 0.18.26
+
+### Enhancement
+- use render mode data to determine if a character extracted by pdfminer is invisible or not
+
 ## 0.18.25
 
 ### Fixes

@@ -381,14 +381,7 @@ def array_merge_inferred_layout_with_extracted_layout(
 
 
 def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
-    """Check if text object contains visible embedded text vs invisible OCR text.
-
-    Note: With pdfminer >= 20251230, invisible text detection is limited:
-    - rendermode check: LTChar doesn't expose textstate.render, so rendermode 3 can't be detected
-    - color check: pdfminer PR #1140 fixed color state handling, so scolor/ncolor are no longer
-      None for invisible text (they now correctly preserve their values)
-    As a result, this function will return True for most text, including hidden OCR layers.
-    """
+    """Check if text object contains visible embedded text vs invisible OCR text."""
     invisible_chars = 0
     total_chars = 0
 
@@ -400,13 +393,8 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATI
             total_chars += 1
 
             # Check if text is invisible:
-            #   - rendering mode 3 (doesn't work: LTChar lacks rendermode attribute)
-            #   - both stroke and non-stroke color are None (doesn't work with pdfminer >= 20251230)
-            if (hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3) or (
-                hasattr(layout_obj, "graphicstate")
-                and layout_obj.graphicstate.scolor is None
-                and layout_obj.graphicstate.ncolor is None
-            ):
+            #   - rendering mode 3 (requires custom pdf interpreter comes with this library)
+            if hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3:
                 invisible_chars += 1
         elif isinstance(layout_obj, LTContainer):
             # Recursively process container's children
