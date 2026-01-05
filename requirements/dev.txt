@@ -15,11 +15,11 @@ click==8.3.1
     #   pip-tools
 distlib==0.4.0
     # via virtualenv
-filelock==3.20.0
+filelock==3.20.2
     # via virtualenv
 identify==2.6.15
     # via pre-commit
-nodeenv==1.9.1
+nodeenv==1.10.0
     # via pre-commit
 packaging==25.0
     # via
@@ -28,11 +28,11 @@ packaging==25.0
     #   build
 pip-tools==7.5.2
     # via -r dev.in
-platformdirs==4.5.0
+platformdirs==4.5.1
     # via
     #   -c test.txt
     #   virtualenv
-pre-commit==4.4.0
+pre-commit==4.5.1
     # via -r dev.in
 pyproject-hooks==1.2.0
     # via

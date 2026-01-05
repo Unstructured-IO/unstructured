@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  // Extend shared security-only config from renovate-config repo
+  "extends": [
+    "github>unstructured-io/renovate-config"
+  ],
+
+  // Run version bump script for all vulnerability alert PRs
+  "vulnerabilityAlerts": {
+    "postUpgradeTasks": {
+      "commands": [
+        "bash scripts/renovate-security-bump.sh"
+      ],
+      "fileFilters": [
+        "unstructured/__version__.py",
+        "CHANGELOG.md"
+      ],
+      "executionMode": "branch"
+    }
+  }
+}
