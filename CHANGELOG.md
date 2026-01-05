@@ -1,3 +1,8 @@
+## 0.18.27-dev3
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+
 ## 0.18.23
 
 ### Enhancement
