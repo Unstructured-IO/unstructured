@@ -1,3 +1,7 @@
+## 0.18.27-dev4
+
+### Enhancement 
+- Optimize `detect_languages` (codeflash)
 ## 0.18.26
 
 ### Fixes
