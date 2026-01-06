@@ -20,5 +20,5 @@ six==1.17.0
     # via
     #   -c base.txt
     #   python-dateutil
-tzdata==2025.2
+tzdata==2025.3
     # via pandas
