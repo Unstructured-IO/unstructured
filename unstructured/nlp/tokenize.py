@@ -73,6 +73,7 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     # Use itertools.chain for efficient flattening of POS-tagged results
     return list(chain.from_iterable(_pos_tag(tokens) for tokens in tokenized_sentences))
 
+
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
