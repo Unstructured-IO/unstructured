@@ -1,3 +1,8 @@
+## 0.18.27-dev5
+
+### Enhancement
+- Optimize `get_bbox_thickness` (codeflash)
+
 ## 0.18.26
 
 ### Fixes
