@@ -1,7 +1,10 @@
-## 0.18.27-dev4
+## 0.18.27-dev2
 
-### Enhancement 
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
 - Optimize `detect_languages` (codeflash)
+
 ## 0.18.26
 
 ### Fixes
