@@ -255,8 +255,6 @@ def zoom_image(image: PILImage.Image, zoom: float = 1) -> PILImage.Image:
         interpolation=cv2.INTER_CUBIC,
     )
 
-    kernel = np.ones((1, 1), np.uint8)
-    new_image = cv2.dilate(new_image, kernel, iterations=1)
-    new_image = cv2.erode(new_image, kernel, iterations=1)
+    # Skip dilation and erosion for 1x1 kernel as they are no-ops
 
     return PILImage.fromarray(new_image)

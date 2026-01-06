@@ -1,4 +1,7 @@
-## 0.18.27-dev2
+## 0.18.27-dev3
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
 
 ### Enhancement
 - Optimize `sentence_count` (codeflash)
