@@ -1,11 +1,13 @@
-## 0.18.27-dev1
+## 0.18.27-dev4
 
-### Enhancements
-- Optimize `contains_verb` (codeflash)
-## 0.18.27-dev0
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
 
 ### Enhancement
 - Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
 
 ## 0.18.26
 
