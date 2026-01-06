@@ -17,7 +17,6 @@
 
 ### Enhancement
 - Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
-
 ### Fixes
 - **Security update**: Bumped dependencies to address security vulnerabilities
 
