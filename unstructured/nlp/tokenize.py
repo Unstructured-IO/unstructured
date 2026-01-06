@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from itertools import chain
 from typing import Final, List, Tuple
 
 import nltk
@@ -64,7 +65,9 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
     # Splitting into sentences before tokenizing.
     sentences = _sent_tokenize(text)
-    tokens = []
-    for sentence in sentences:
-        tokens.extend(_word_tokenize(sentence))
-    return _pos_tag(tokens)
+    if not sentences:
+        return []
+    # Single list comprehension for tokens per sentence
+    tokenized_sentences = [_word_tokenize(sentence) for sentence in sentences]
+    # Use itertools.chain for efficient flattening of POS-tagged results
+    return list(chain.from_iterable(_pos_tag(tokens) for tokens in tokenized_sentences))
