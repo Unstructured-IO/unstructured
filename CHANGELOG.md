@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ## 0.18.26
 
 ### Fixes
@@ -9,6 +10,14 @@
 - **Security update**: Removed pdfminer.six version constraint and bumped pdfminer.six and urllib3 to address high severity CVEs
 
 ## 0.18.24
+=======
+## 0.18.27-dev6
+
+### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+
+## 0.18.24-dev0
+>>>>>>> Stashed changes
 
 ### Enhancement
 - Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
