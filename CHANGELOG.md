@@ -1,6 +1,7 @@
-## 0.18.27-dev2
+## 0.18.27-dev1
 
 ### Enhancement
+- Optimize `sentence_count` (codeflash)
 - Optimize `_PartitionerLoader._load_partitioner` (codeflash)
 
 ## 0.18.26
