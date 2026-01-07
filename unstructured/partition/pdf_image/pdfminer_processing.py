@@ -793,7 +793,7 @@ def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
     subregion_threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-    embed_region_threshold: float = 0.25,
+    text_coverage_threshold: float = env_config.TEXT_COVERAGE_THRESHOLD,
 ) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
@@ -821,7 +821,7 @@ def aggregate_embedded_text_by_block(
 
         is_extracted = (
             all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
-            and iou > embed_region_threshold
+            and iou > text_coverage_threshold
         )
     else:
         # if nothing is sliced then it is not extracted
