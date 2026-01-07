@@ -146,7 +146,7 @@ pandas==2.3.3
     # via unstructured-inference
 pdf2image==1.17.0
     # via -r extra-pdf-image.in
-pdfminer-six==20251230
+pdfminer-six==20260107
     # via
     #   -r extra-pdf-image.in
     #   unstructured-inference
