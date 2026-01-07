@@ -1,3 +1,8 @@
+## 0.18.27-dev5
+
+### Enhancement
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
+
 ## 0.18.27-dev4
 
 ### Fixes
