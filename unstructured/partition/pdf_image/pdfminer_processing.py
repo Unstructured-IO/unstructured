@@ -774,38 +774,15 @@ def remove_duplicate_elements(
     return elements.slice(np.concatenate(ious))
 
 
-def _inter_union(box1, box2):
-    x0_1, y0_1, x1_1, y1_1 = box1
-    x0_2, y0_2, x1_2, y1_2 = box2
-
-    # Calculate intersection coordinates
-    x0_inter = max(x0_1, x0_2)
-    y0_inter = max(y0_1, y0_2)
-    x1_inter = min(x1_1, x1_2)
-    y1_inter = min(y1_1, y1_2)
-
-    # Calculate intersection area
-    inter_width = max(0, x1_inter - x0_inter)
-    inter_height = max(0, y1_inter - y0_inter)
-    intersection = inter_width * inter_height
-
-    # Calculate area of both boxes
-    area1 = (x1_1 - x0_1) * (y1_1 - y0_1)
-    area2 = (x1_2 - x0_2) * (y1_2 - y0_2)
-
-    # Calculate union area
-    union = area1 + area2 - intersection
-    return intersection, union
-
-
 def _aggregated_iou(box1s, box2):
     intersection = 0.0
-    union = 0.0
+    sum_areas = calculate_bbox_area(box2)
 
     for i in range(box1s.shape[0]):
-        _intersection, _union = _inter_union(box1s[i, :], box2)
-        intersection += _intersection
-        union += _union
+        intersection += calculate_intersection_area(box1s[i, :], box2)
+        sum_areas += calculate_bbox_area(box1s[i, :])
+
+    union = sum_areas - intersection
 
     if union == 0:
         return 1.0
@@ -838,7 +815,6 @@ def aggregate_embedded_text_by_block(
 
     if sum(mask):
         source_bboxes = source_regions.slice(mask).element_coords
-
         target_bboxes = target_region.element_coords
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
