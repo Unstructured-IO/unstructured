@@ -367,8 +367,7 @@ tbl = dict.fromkeys(punkt)
 
 def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
-    s = s.translate(tbl)
-    return s
+    return s.translate(tbl)
 
 
 def remove_sentence_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
