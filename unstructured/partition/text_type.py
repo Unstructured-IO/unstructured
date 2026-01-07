@@ -218,19 +218,23 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     """
     sentences = sent_tokenize(text)
     count = 0
-    for sentence in sentences:
-        stripped = remove_punctuation(sentence)
-        # Fast token count after punctuation is removed: just split on whitespace
-        if min_length:
+    if min_length:
+        trace_detail = trace_logger.detail  # type: ignore
+        for sentence in sentences:
+            stripped = remove_punctuation(sentence)
+            # Fast token count after punctuation is removed: just split on whitespace
             word_count = sum(1 for token in stripped.split() if token != ".")
             if word_count < min_length:
-                trace_logger.detail(  # type: ignore
+                trace_detail(
                     f"Sentence does not exceed {min_length} word tokens, it will not count toward "
                     "sentence count.\n"
                     f"{stripped}",
                 )
                 continue
-        count += 1
+            count += 1
+    else:
+        for sentence in sentences:
+            count += 1
     return count
 
 
