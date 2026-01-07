@@ -1,6 +1,13 @@
 ## 0.18.27-dev5
 
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+
 ### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
 - Optimize `get_bbox_thickness` (codeflash)
 
 ## 0.18.26
