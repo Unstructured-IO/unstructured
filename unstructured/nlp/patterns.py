@@ -52,6 +52,7 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\u29BE",
     "\u29BF",
     "\u002D",
+    "\u2013",
     "",
     r"\*",
     "\x95",
