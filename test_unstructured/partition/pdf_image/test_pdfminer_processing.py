@@ -188,6 +188,20 @@ def test_aggregate_only_partially_fill_target():
 
     text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == expected
+    assert extracted.value == "partial"
+
+
+def test_aggregate_not_filling_target():
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(300, 0, 400, 20, "outside"),
+        ]
+    )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE])
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
+
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == ""
     assert extracted.value == "false"
 
 
