@@ -61,6 +61,8 @@ jsonpath-python==1.1.4
     # via unstructured-client
 langdetect==1.0.9
     # via -r base.in
+llvmlite==0.46.0
+    # via numba
 lxml==6.0.2
     # via -r base.in
 marshmallow==3.26.2
@@ -75,8 +77,12 @@ nest-asyncio==1.6.0
     # via unstructured-client
 nltk==3.9.2
     # via -r base.in
-numpy==2.2.6
+numba==0.63.1
     # via -r base.in
+numpy==2.2.6
+    # via
+    #   -r base.in
+    #   numba
 olefile==0.47
     # via python-oxmsg
 orderly-set==5.5.0
