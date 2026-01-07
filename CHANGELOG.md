@@ -1,3 +1,8 @@
+## 0.18.27-dev7
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+
 ## 0.18.27-dev4
 
 ### Fixes
