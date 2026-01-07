@@ -1,6 +1,7 @@
 import re
 import sys
 import unicodedata
+
 import pytest
 
 from unstructured.cleaners import core
@@ -303,7 +304,7 @@ def test_bytes_string_to_string():
     assert core.bytes_string_to_string(text, "utf-8") == "每日新闻"
 
 def test_unicode_punctuations():
-    tbl = set(
+    tbl = {
         i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")
-    )
+    }
     assert set(core.punkt) == tbl
