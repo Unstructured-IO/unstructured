@@ -54,7 +54,7 @@ packaging==25.0
     #   -c base.txt
     #   black
     #   pytest
-pathspec==0.12.1
+pathspec==1.0.1
     # via
     #   black
     #   mypy
@@ -116,7 +116,7 @@ types-click==7.1.8
     # via -r test.in
 types-markdown==3.10.0.20251106
     # via -r test.in
-types-requests==2.32.4.20250913
+types-requests==2.32.4.20260107
     # via -r test.in
 types-tabulate==0.9.0.20241207
     # via -r test.in
@@ -132,7 +132,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   -c base.txt
     #   -c deps/constraints.txt
