@@ -1,3 +1,35 @@
+## 0.18.27-dev6
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
+
+## 0.18.26
+
+### Fixes
+- Pin `deltalake<1.3.0` to fix ARM64 Docker builds (1.3.0 missing Linux ARM64 wheels)
+
+## 0.18.25
+
+### Fixes
+- **Security update**: Removed pdfminer.six version constraint and bumped pdfminer.six and urllib3 to address high severity CVEs
+
+## 0.18.24
+
+### Enhancement
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
+
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
 ## 0.18.23
 
 ### Enhancement
