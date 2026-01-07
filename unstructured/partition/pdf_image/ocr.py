@@ -18,7 +18,7 @@ from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
 from unstructured.partition.pdf_image.pdf_image_utils import valid_text
 from unstructured.partition.pdf_image.pdfminer_processing import (
-    aggregate_embedded_text_by_block,
+    aggregate_embedded_text_batch,
     bboxes1_is_almost_subregion_of_bboxes2,
 )
 from unstructured.partition.utils.config import env_config
@@ -390,14 +390,19 @@ def merge_out_layout_with_ocr_layout(
         return out_layout
 
     invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]
-    out_layout.texts = out_layout.texts.astype(object)
 
-    for idx in invalid_text_indices:
-        out_layout.texts[idx], _ = aggregate_embedded_text_by_block(
-            target_region=out_layout.slice([idx]),
-            source_regions=ocr_layout,
+    if invalid_text_indices:
+        out_layout.texts = out_layout.texts.astype(object)
+
+        aggregated_texts = aggregate_embedded_text_batch(
+            invalid_text_indices,
+            out_layout,
+            ocr_layout,
             subregion_threshold=subregion_threshold,
         )
+
+        for idx, text in zip(invalid_text_indices, aggregated_texts):
+            out_layout.texts[idx] = text
 
     final_layout = (
         supplement_layout_with_ocr_elements(out_layout, ocr_layout)

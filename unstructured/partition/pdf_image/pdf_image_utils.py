@@ -259,9 +259,7 @@ def check_element_types_to_extract(
 
 def valid_text(text: str) -> bool:
     """a helper that determines if the text is valid ascii text"""
-    if not text:
-        return False
-    return "(cid:" not in text
+    return text and "(cid:" not in text
 
 
 def cid_ratio(text: str) -> float:

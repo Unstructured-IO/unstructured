@@ -793,7 +793,7 @@ def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
     subregion_threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-    text_coverage_threshold: float = env_config.TEXT_COVERAGE_THRESHOLD,
+    embed_region_threshold: float = 0.25,
 ) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
@@ -819,15 +819,14 @@ def aggregate_embedded_text_by_block(
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
 
-        fully_filled = (
+        is_extracted = (
             all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
-            and iou > text_coverage_threshold
+            and iou > embed_region_threshold
         )
-        is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
     else:
         # if nothing is sliced then it is not extracted
-        is_extracted = IsExtracted.FALSE
-    return text, is_extracted
+        is_extracted = False
+    return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
@@ -1171,3 +1170,37 @@ def try_argmin(array: np.ndarray) -> int:
         return int(np.argmin(array))
     except IndexError:
         return -1
+
+
+def aggregate_embedded_text_batch(
+    target_indices: list[int],
+    target_layout: "LayoutElements",
+    source_regions: TextRegions,
+    subregion_threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+) -> list[str]:
+    """Batch process multiple target regions to extract aggregated text efficiently."""
+    if not target_indices or len(source_regions) == 0:
+        return [""] * len(target_indices)
+
+    # Get all target regions at once
+    target_coords = target_layout.element_coords[target_indices]
+
+    # Compute masks for all targets in one operation
+    # Result shape: (len(source_regions), len(target_indices))
+    all_masks = bboxes1_is_almost_subregion_of_bboxes2(
+        source_regions.element_coords,
+        target_coords,
+        subregion_threshold,
+    )
+
+    # Extract texts for each target
+    texts = []
+    for i in range(len(target_indices)):
+        mask = all_masks[:, i].astype(bool)
+        if mask.any():
+            text = " ".join([text for text in source_regions.slice(mask).texts if text])
+        else:
+            text = ""
+        texts.append(text)
+
+    return texts
