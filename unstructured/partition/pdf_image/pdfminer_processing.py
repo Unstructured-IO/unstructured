@@ -818,7 +818,6 @@ def aggregate_embedded_text_by_block(
         target_bboxes = target_region.element_coords
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
-        print(text, iou)
 
         is_extracted = (
             all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
