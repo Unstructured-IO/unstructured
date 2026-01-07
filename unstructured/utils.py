@@ -317,7 +317,7 @@ def ngrams(s: list[str], n: int) -> list[tuple[str, ...]]:
     """Generate n-grams from a list of strings where `n` (int) is the size of each n-gram."""
 
     if n <= 0:
-        return [tuple() for _ in range(len(s) - n + 1)]
+        raise ValueError(f"n must be positive, received n = {n}")
     return [tuple(s[i : i + n]) for i in range(len(s) - n + 1)]
 
 
