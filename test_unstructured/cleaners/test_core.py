@@ -305,5 +305,14 @@ def test_bytes_string_to_string():
 
 
 def test_unicode_punctuations():
-    tbl = {i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")}
-    assert set(core.punkt) == tbl
+    """Test that punkt contains all Unicode punctuation characters for the current Python version.
+
+    The punkt list is generated from Unicode 15.0.0 (Python 3.12) to be a superset that works
+    across Python 3.10-3.12. Earlier Python versions may have fewer punctuation characters
+    in their unicodedata, but punkt should always contain at least those characters.
+    """
+    runtime_punct = {
+        i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")
+    }
+    # punkt should be a superset of the runtime Unicode punctuation
+    assert runtime_punct <= set(core.punkt)
