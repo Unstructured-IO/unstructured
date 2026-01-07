@@ -1,7 +1,8 @@
-## 0.18.27-dev6
+## 0.18.27
 
 ### Fixes
 - Comment no-ops in `zoom_image` (codeflash)
+- Fix an issue where elements with partially filled extracted text are marked as extracted
 
 ### Enhancement
 - Optimize `sentence_count` (codeflash)
