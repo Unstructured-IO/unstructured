@@ -1,3 +1,8 @@
+## 0.18.27-dev8
+
+### Enhancement
+- Optimize `ngrams` (codeflash)
+
 ## 0.18.27-dev6
 
 ### Fixes
