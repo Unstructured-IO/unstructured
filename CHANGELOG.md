@@ -1,9 +1,4 @@
-## 0.18.27-dev5
-
-### Enhancement
-- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
-
-## 0.18.27-dev4
+## 0.18.27-dev6
 
 ### Fixes
 - Comment no-ops in `zoom_image` (codeflash)
@@ -13,6 +8,8 @@
 - Optimize `_PartitionerLoader._load_partitioner` (codeflash)
 - Optimize `detect_languages` (codeflash)
 - Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
 
 ## 0.18.26
 
