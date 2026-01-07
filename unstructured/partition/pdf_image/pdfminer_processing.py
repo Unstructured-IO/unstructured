@@ -811,16 +811,17 @@ def aggregate_embedded_text_by_block(
         .astype(bool)
     )
 
-    text = " ".join([text for text in source_regions.slice(mask).texts if text])
+    sliced_source = source_regions.slice(mask)
+    text = " ".join([text for text in sliced_source.texts if text])
 
-    if sum(mask):
-        source_bboxes = source_regions.slice(mask).element_coords
+    if mask.sum():
+        source_bboxes = sliced_source.element_coords
         target_bboxes = target_region.element_coords
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
 
         fully_filled = (
-            all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
+            all(flag == IsExtracted.TRUE for flag in sliced_source.is_extracted_array)
             and iou > text_coverage_threshold
         )
         is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
