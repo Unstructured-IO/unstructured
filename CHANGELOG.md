@@ -1,4 +1,4 @@
-## 0.18.27-dev3
+## 0.18.27-dev4
 
 ### Fixes
 - Comment no-ops in `zoom_image` (codeflash)
@@ -7,6 +7,7 @@
 - Optimize `sentence_count` (codeflash)
 - Optimize `_PartitionerLoader._load_partitioner` (codeflash)
 - Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
 
 ## 0.18.26
 
