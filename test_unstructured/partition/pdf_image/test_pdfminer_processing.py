@@ -162,16 +162,33 @@ def test_aggregate_by_block():
     expected = "Inside region1 Inside region2"
     embedded_regions = TextRegions.from_list(
         [
-            TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
-            TextRegion.from_coords(20, 20, 80, 80, None),
-            TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
+            TextRegion.from_coords(0, 0, 300, 20, "Inside region1"),
+            TextRegion.from_coords(0, 20, 300, 80, None),
+            TextRegion.from_coords(0, 80, 200, 300, "Inside region2"),
             TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
         ]
     )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE] * 4)
     target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
 
-    text, _ = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == expected
+    assert extracted.value == "true"
+
+
+def test_aggregate_only_partially_fill_target():
+    expected = "Inside region1"
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
+        ]
+    )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE])
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
+
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == expected
+    assert extracted.value == "false"
 
 
 @pytest.mark.parametrize(
