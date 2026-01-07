@@ -9,6 +9,7 @@
 - Optimize `_PartitionerLoader._load_partitioner` (codeflash)
 - Optimize `detect_languages` (codeflash)
 - Optimize `contains_verb` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
 
 ## 0.18.26
 
