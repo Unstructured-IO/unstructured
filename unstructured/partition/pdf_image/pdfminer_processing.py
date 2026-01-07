@@ -819,14 +819,15 @@ def aggregate_embedded_text_by_block(
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
 
-        is_extracted = (
+        fully_filled = (
             all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
             and iou > text_coverage_threshold
         )
+        is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
     else:
         # if nothing is sliced then it is not extracted
-        is_extracted = False
-    return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
+        is_extracted = IsExtracted.FALSE
+    return text, is_extracted
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
