@@ -1,4 +1,4 @@
-## 0.18.28-dev4
+## 0.18.28-dev5
 
 ### Enhancement
 - Optimize `clean_extra_whitespace_with_index_run` (codeflash)
@@ -6,6 +6,7 @@
 - Optimize `_DocxPartitioner._parse_category_depth_by_style_name` (codeflash)
 - Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements` (codeflash)
 - Optimize `ngrams` (codeflash)
+- Optimize `stage_for_datasaur` (codeflash)
 
 ## 0.18.27
 
