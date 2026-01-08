@@ -1,12 +1,14 @@
-## 0.18.27-dev7
+## 0.18.28-dev1
 
 ### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
 - Optimize `recursive_xy_cut_swapped` (codeflash)
 
-## 0.18.27-dev6
+## 0.18.27
 
 ### Fixes
 - Comment no-ops in `zoom_image` (codeflash)
+- Fix an issue where elements with partially filled extracted text are marked as extracted
 
 ### Enhancement
 - Optimize `sentence_count` (codeflash)
