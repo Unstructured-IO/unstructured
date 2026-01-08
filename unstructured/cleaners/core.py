@@ -119,16 +119,18 @@ def group_bullet_paragraph(paragraph: str) -> list:
     '''○ The big red fox is walking down the lane.
     ○ At the end of the land the fox met a bear.'''
     """
-    clean_paragraphs = []
+    paragraph_pattern_re = re.compile(PARAGRAPH_PATTERN)
+
     # pytesseract converts some bullet points to standalone "e" characters.
     # Substitute "e" with bullets since they are later used in partition_text
     # to determine list element type.
-    paragraph = (re.sub(E_BULLET_PATTERN, "·", paragraph)).strip()
+    paragraph = E_BULLET_PATTERN.sub("·", paragraph).strip()
 
-    bullet_paras = re.split(UNICODE_BULLETS_RE_0W, paragraph)
+    bullet_paras = UNICODE_BULLETS_RE_0W.split(paragraph)
+    clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", bullet))
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", bullet))
     return clean_paragraphs
 
 
@@ -151,10 +153,21 @@ def group_broken_paragraphs(
     '''The big red fox is walking down the lane.
     At the end of the land the fox met a bear.'''
     """
+    paragraph_pattern_re = (
+        PARAGRAPH_PATTERN
+        if isinstance(PARAGRAPH_PATTERN, re.Pattern)
+        else re.compile(PARAGRAPH_PATTERN)
+    )
+
     paragraphs = paragraph_split.split(text)
     clean_paragraphs = []
     for paragraph in paragraphs:
-        if not paragraph.strip():
+        stripped_par = paragraph.strip()
+        if not stripped_par:
+            continue
+
+        if UNICODE_BULLETS_RE.match(stripped_par) or E_BULLET_PATTERN.match(stripped_par):
+            clean_paragraphs.extend(group_bullet_paragraph(paragraph))
             continue
         # NOTE(robinson) - This block is to account for lines like the following that shouldn't be
         # grouped together, but aren't separated by a double line break.
@@ -163,13 +176,10 @@ def group_broken_paragraphs(
         #     http://www.apache.org/licenses/
         para_split = line_split.split(paragraph)
         all_lines_short = all(len(line.strip().split(" ")) < 5 for line in para_split)
-        # pytesseract converts some bullet points to standalone "e" characters
-        if UNICODE_BULLETS_RE.match(paragraph.strip()) or E_BULLET_PATTERN.match(paragraph.strip()):
-            clean_paragraphs.extend(group_bullet_paragraph(paragraph))
-        elif all_lines_short:
-            clean_paragraphs.extend([line for line in para_split if line.strip()])
+        if all_lines_short:
+            clean_paragraphs.extend(line for line in para_split if line.strip())
         else:
-            clean_paragraphs.append(re.sub(PARAGRAPH_PATTERN, " ", paragraph))
+            clean_paragraphs.append(paragraph_pattern_re.sub(" ", paragraph))
 
     return "\n\n".join(clean_paragraphs)
 
@@ -300,8 +310,7 @@ tbl = dict.fromkeys(
 
 def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
-    s = s.translate(tbl)
-    return s
+    return s.translate(tbl)
 
 
 def remove_sentence_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
@@ -440,19 +449,29 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
     array([0., 0., 0., 0., 0., 0., 0., 0., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4.]))
     """
 
-    cleaned_text = re.sub(r"[\xa0\n]", " ", text)
+    # Replace non-breaking space and newlines with a space (using translation table for speed)
+    translate_table = {ord("\xa0"): ord(" "), ord("\n"): ord(" ")}
+    cleaned_text = text.translate(translate_table)
+    # Collapse multiple spaces into one (keeps only single runs)
     cleaned_text = re.sub(r"([ ]{2,})", " ", cleaned_text)
 
     cleaned_text = cleaned_text.strip()
 
     moved_indices = np.zeros(len(text))
 
-    distance, original_index, cleaned_index = 0, 0, 0
-    while cleaned_index < len(cleaned_text):
-        if text[original_index] == cleaned_text[cleaned_index] or (
-            bool(re.match("[\xa0\n]", text[original_index]))
-            and bool(re.match(" ", cleaned_text[cleaned_index]))
-        ):
+    cleaned_len = len(cleaned_text)
+
+    ws_chars = {"\xa0", "\n"}  # For a quick lookup
+
+    distance = 0
+    original_index = 0
+    cleaned_index = 0
+
+    while cleaned_index < cleaned_len:
+        c_orig = text[original_index]
+        c_clean = cleaned_text[cleaned_index]
+
+        if c_orig == c_clean or (c_orig in ws_chars and c_clean == " "):
             moved_indices[cleaned_index] = distance
             original_index += 1
             cleaned_index += 1

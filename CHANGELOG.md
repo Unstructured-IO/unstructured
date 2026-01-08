@@ -1,12 +1,145 @@
-## 0.18.14-dev0
+## 0.18.28-dev1
+
+### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+- Optimize `recursive_xy_cut_swapped` (codeflash)
+
+## 0.18.27
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+- Fix an issue where elements with partially filled extracted text are marked as extracted
+
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
+
+## 0.18.26
+
+### Fixes
+- Pin `deltalake<1.3.0` to fix ARM64 Docker builds (1.3.0 missing Linux ARM64 wheels)
+
+## 0.18.25
+
+### Fixes
+- **Security update**: Removed pdfminer.six version constraint and bumped pdfminer.six and urllib3 to address high severity CVEs
+
+## 0.18.24
+
+### Enhancement
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
+
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
+## 0.18.23
+
+### Enhancement
+- Update logic to only consider text found by pdfminer with low fraction of invisible text as extracted
+
+## 0.18.22
+
+### Fixes
+- Constrain fonttools to >=4.60.2 to address CVE-2025-66034
+
+## 0.18.21
+
+### Enhancement
+- Update save_elements unit test to check crop box padding behavior
+
+### Features
+
+### Fixes
+- **Update `unstructured-inference`** to 1.1.2 to address CVEs
+
+## 0.18.20
+
+### Enhancement
+- Improve the VoyageAI integration
+- Add voyage-context-3 support
+
+### Features
+
+### Fixes
+
+## 0.18.19
+
+### Enhancement
+- Flag extracted elements as such in the metadata for downstream use
+
+### Features
+
+### Fixes
+
+## 0.18.18
+
+### Fixes
+- **Prevent path traversal in email MSG attachment filenames** Fixed a security vulnerability (GHSA-gm8q-m8mv-jj5m) where malicious attachment filenames containing path traversal sequences could write files outside the intended directory. The fix normalizes both Unix and Windows path separators before sanitizing filenames, preventing cross-platform path traversal attacks in `partition_msg` functions
+
+## 0.18.17
+
+### Enhancement
+
+### Features
+
+### Fixes
+- Removed `Clardy` dependency as it is no longer used
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **pypdf**: GHSA-vr63-x8vc-m265
+  - **pip**: GHSA-4xh5-x5gv-qwph
+  - **uv**: GHSA-8qf3-x8v5-2pj8 GHSA-pqhf-p39g-3x64
+
+## 0.18.16
+
+### Enhancement
+- Speed up function _assign_hash_ids by 34% (codeflash)
+
+### Features
+
+### Fixes
+- Bumped dependencies via pip-compile to address the following CVEs:
+  - **authlib**: GHSA-pq5p-34cr-23v9
+  - **python-3.12/python03**.12-base: CVE-2025-8291, GHSA-49g5-f6qw-8mm7
+  - **libcrypto3/libssl3**: CVE-2025-9230, CVE-2025-9231, CVE-2025-9232, GHSA-76r2-c3cg-f5r9, GHSA-9mrx-mqmg-gwj9
+
+## 0.18.15
 
 ### Enhancements
+- Speed up function ElementHtml._get_children_html by 234% (codeflash)
+- Speed up function group_broken_paragraphs by 30% (codeflash)
+
+### Features
+
+### Fixes
+
+- Bumped dependencies via pip-compile to address the crit CVE in:
+  - deepdiff: 8.6.0 -> 8.6.1: GHSA-mw26-5g2v-hqw3
+
+## 0.18.14
+
+### Enhancements
+- Speed up function sentence_count by 59% (codeflash)
+- Speed up function `check_for_nltk_package` by 111% (codeflash)
+- Speed up function `under_non_alpha_ratio` by 76% (codeflash)
 
 ### Features
 
 ### Fixes
 
 - **change short text language detection log to debug** reduce warning level log spamming
+  - Bumped dependencies via pip-compile to address the following CVEs:
+    - **Python 3.12/3.13**: CVE-2025-8194, GHSA-v594-44hm-2j7p
+    - **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1)**: CVE-2025-8058, GHSA-8xjp-c72j-67q8
+    - **aiohttp**: GHSA-9548-qrrj-x5pj
+    - **openjpeg**: CVE-2025-54874
+    - **pypdf**: GHSA-7hfw-26vp-jp8m
+    - **transformers**: GHSA-9356-575x-2w9m
+    - **urllib3**: GHSA-48p4-8xcf-vxj5
 
 ## 0.18.13
 

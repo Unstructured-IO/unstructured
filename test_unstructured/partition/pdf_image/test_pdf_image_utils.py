@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import tempfile
 from unittest.mock import MagicMock, patch
@@ -78,12 +80,21 @@ def test_convert_pdf_to_image_raises_error():
 )
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+@pytest.mark.parametrize("horizontal_padding", [0, 20])
+@pytest.mark.parametrize("vertical_padding", [0, 10])
 def test_save_elements(
     element_category_to_save,
     extract_image_block_to_payload,
     filename,
     is_image,
+    horizontal_padding,
+    vertical_padding,
+    monkeypatch,
 ):
+    if horizontal_padding > 0:
+        monkeypatch.setenv("EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD", str(horizontal_padding))
+    if vertical_padding > 0:
+        monkeypatch.setenv("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", str(vertical_padding))
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = [
             Image(
@@ -136,10 +147,25 @@ def test_save_elements(
             if extract_image_block_to_payload:
                 assert isinstance(el.metadata.image_base64, str)
                 assert isinstance(el.metadata.image_mime_type, str)
+                image_bytes = base64.b64decode(el.metadata.image_base64)
+                image = PILImg.open(io.BytesIO(image_bytes))
+                x1, y1 = el.metadata.coordinates.points[0]
+                x2, y2 = el.metadata.coordinates.points[2]
+                width = x2 - x1
+                height = y2 - y1
+                assert image.width == width + 2 * horizontal_padding
+                assert image.height == height + 2 * vertical_padding
                 assert not el.metadata.image_path
                 assert not os.path.isfile(expected_image_path)
             else:
                 assert os.path.isfile(expected_image_path)
+                image = PILImg.open(expected_image_path)
+                x1, y1 = el.metadata.coordinates.points[0]
+                x2, y2 = el.metadata.coordinates.points[2]
+                width = x2 - x1
+                height = y2 - y1
+                assert image.width == width + 2 * horizontal_padding
+                assert image.height == height + 2 * vertical_padding
                 assert el.metadata.image_path == expected_image_path
                 assert not el.metadata.image_base64
                 assert not el.metadata.image_mime_type

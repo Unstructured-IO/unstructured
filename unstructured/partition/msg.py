@@ -279,8 +279,23 @@ class _AttachmentPartitioner:
         """The original name of the attached file, no path.
 
         This value is 'unknown' if it is not present in the MSG file (not expected).
+        The filename is sanitized to prevent path traversal attacks.
         """
-        return self._attachment.file_name or "unknown"
+        raw_filename = self._attachment.file_name or "unknown"
+
+        # Sanitize the filename to prevent path traversal attacks
+        # Remove any path components for both Unix and Windows paths
+        # Use both separators to handle cross-platform attacks
+        safe_filename = os.path.basename(raw_filename.replace("\\", "/"))
+
+        # Remove null bytes and other control characters
+        safe_filename = safe_filename.replace("\0", "")
+
+        # If the filename becomes empty after sanitization, use a default
+        if not safe_filename or safe_filename in (".", ".."):
+            safe_filename = "unknown"
+
+        return safe_filename
 
     @lazyproperty
     def _attachment_last_modified(self) -> str | None:

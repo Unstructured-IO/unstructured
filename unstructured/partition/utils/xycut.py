@@ -1,6 +1,7 @@
 from typing import List
 
 import numpy as np
+from numba import njit
 
 from unstructured.utils import requires_dependencies
 
@@ -12,6 +13,7 @@ from: https://github.com/Sanster/xy-cut
 """
 
 
+@njit(cache=True)
 def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
     """
     Obtain the projection histogram through a set of bboxes and finally output it in per-pixel form
@@ -29,10 +31,12 @@ def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
 
     assert axis in [0, 1]
     length = np.max(boxes[:, axis::2])
-    res = np.zeros(length, dtype=int)
-    # TODO: how to remove for loop?
-    for start, end in boxes[:, axis::2]:
-        res[start:end] += 1
+    res = np.zeros(length, dtype=np.int64)
+    for i in range(boxes.shape[0]):
+        start = boxes[i, axis]
+        end = boxes[i, axis + 2]
+        for j in range(start, end):
+            res[j] += 1
     return res
 
 
@@ -40,6 +44,7 @@ def projection_by_bboxes(boxes: np.ndarray, axis: int) -> np.ndarray:
 # %E5%88%86%E5%89%B2%E7%AE%97%E6%B3%95/#:~:text=%E9%80%92%E5%BD%92%E6%8A%95%E5%BD%B1
 # %E5%88%86%E5%89%B2%EF%BC%88Recursive%20XY,%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%88%92
 # %E5%88%86%E6%AE%B5%E8%90%BD%E3%80%81%E8%A1%8C%E3%80%82
+@njit(cache=True)
 def split_projection_profile(arr_values: np.ndarray, min_value: float, min_gap: float):
     """Split projection profile:
 
@@ -64,7 +69,7 @@ def split_projection_profile(arr_values: np.ndarray, min_value: float, min_gap: 
     # all indexes with projection height exceeding the threshold
     arr_index = np.where(arr_values > min_value)[0]
     if not len(arr_index):
-        return
+        return None
 
     # find zero intervals between adjacent projections
     # |  |                    ||
@@ -75,9 +80,14 @@ def split_projection_profile(arr_values: np.ndarray, min_value: float, min_gap: 
     arr_zero_intvl_end = arr_index[arr_diff_index + 1]
 
     # convert to index of projection range:
-    # the start index of zero interval is the end index of projection
-    arr_start = np.insert(arr_zero_intvl_end, 0, arr_index[0])
-    arr_end = np.append(arr_zero_intvl_start, arr_index[-1])
+    arr_start = np.empty(arr_zero_intvl_end.shape[0] + 1, dtype=arr_zero_intvl_end.dtype)
+    arr_end = np.empty(arr_zero_intvl_start.shape[0] + 1, dtype=arr_zero_intvl_start.dtype)
+    arr_start[0] = arr_index[0]
+    for i in range(arr_zero_intvl_end.shape[0]):
+        arr_start[i + 1] = arr_zero_intvl_end[i]
+    for i in range(arr_zero_intvl_start.shape[0]):
+        arr_end[i] = arr_zero_intvl_start[i]
+    arr_end[-1] = arr_index[-1]
     arr_end += 1  # end index will be excluded as index slice
 
     return arr_start, arr_end

@@ -1,0 +1,54 @@
+name: Codeflash Optimization
+
+on:
+  pull_request:
+    paths:
+      - 'unstructured/**' 
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  optimize:
+    name: Optimize new Python code
+    if: ${{ github.actor != 'codeflash-ai[bot]' }}
+    runs-on: ubuntu-latest
+    env:
+      NLTK_DATA: ${{ github.workspace }}/nltk_data
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 🐍 Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: 📦 Install Environment
+        uses: ./.github/actions/base-cache
+        with:
+          python-version: 3.12
+      - name: ⚡️ Codeflash Optimization
+        env:
+          UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+          TESSERACT_VERSION: "5.5.1"
+          CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
+        run: |
+          source .venv/bin/activate
+          sudo apt-get update
+          sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+          sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+          tesseract --version
+          installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
+          if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
+            echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
+            exit 1
+          fi
+          # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
+          make install-ci
+          pip install codeflash
+          codeflash

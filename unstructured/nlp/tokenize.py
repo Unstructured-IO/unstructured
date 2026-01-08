@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from itertools import chain
 from typing import Final, List, Tuple
 
 import nltk
@@ -14,14 +15,13 @@ CACHE_MAX_SIZE: Final[int] = 128
 
 def check_for_nltk_package(package_name: str, package_category: str) -> bool:
     """Checks to see if the specified NLTK package exists on the image."""
-    paths: list[str] = []
-    for path in nltk.data.path:
-        if not path.endswith("nltk_data"):
-            path = os.path.join(path, "nltk_data")
-        paths.append(path)
+
+    def _nltk_paths():
+        for path in nltk.data.path:
+            yield path if path.endswith("nltk_data") else os.path.join(path, "nltk_data")
 
     try:
-        nltk.find(f"{package_category}/{package_name}", paths=paths)
+        nltk.find(f"{package_category}/{package_name}", paths=_nltk_paths())
         return True
     except (LookupError, OSError):
         return False
@@ -48,10 +48,11 @@ if os.getenv("AUTO_DOWNLOAD_NLTK", "True").lower() == "true":
     download_nltk_packages()
 
 
-@lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
-    """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
-    return _sent_tokenize(text)
+    """A wrapper so that we can cache the result of NLTKs _sent_tokenize as an
+    immutable, while returning the expected return type (list)."""
+    # Return as List[str] to preserve external interface and avoid unnecessary list copying
+    return list(_tokenize_for_cache(text))
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
@@ -65,8 +66,15 @@ def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the NLTK POS tagger with LRU caching enabled."""
     # Splitting into sentences before tokenizing.
     sentences = _sent_tokenize(text)
-    parts_of_speech: list[tuple[str, str]] = []
-    for sentence in sentences:
-        tokens = _word_tokenize(sentence)
-        parts_of_speech.extend(_pos_tag(tokens))
-    return parts_of_speech
+    if not sentences:
+        return []
+    # Single list comprehension for tokens per sentence
+    tokenized_sentences = [_word_tokenize(sentence) for sentence in sentences]
+    # Use itertools.chain for efficient flattening of POS-tagged results
+    return list(chain.from_iterable(_pos_tag(tokens) for tokens in tokenized_sentences))
+
+
+@lru_cache(maxsize=CACHE_MAX_SIZE)
+def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
+    """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
+    return tuple(_sent_tokenize(text))

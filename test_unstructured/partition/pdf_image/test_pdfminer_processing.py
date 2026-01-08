@@ -1,9 +1,10 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams
+from pdfminer.layout import LAParams, LTChar, LTContainer
 from PIL import Image
+from unstructured_inference.constants import IsExtracted
 from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import (
     EmbeddedTextRegion,
@@ -24,6 +25,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_inner_elements,
     process_file_with_pdfminer,
     remove_duplicate_elements,
+    text_is_embedded,
 )
 from unstructured.partition.utils.constants import Source
 
@@ -160,16 +162,47 @@ def test_aggregate_by_block():
     expected = "Inside region1 Inside region2"
     embedded_regions = TextRegions.from_list(
         [
-            TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
-            TextRegion.from_coords(20, 20, 80, 80, None),
-            TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
+            TextRegion.from_coords(0, 0, 300, 20, "Inside region1"),
+            TextRegion.from_coords(0, 20, 300, 80, None),
+            TextRegion.from_coords(0, 80, 200, 300, "Inside region2"),
             TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
         ]
     )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE] * 4)
     target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
 
-    text = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
     assert text == expected
+    assert extracted.value == "true"
+
+
+def test_aggregate_only_partially_fill_target():
+    expected = "Inside region1"
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
+        ]
+    )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE])
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
+
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == expected
+    assert extracted.value == "partial"
+
+
+def test_aggregate_not_filling_target():
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(300, 0, 400, 20, "outside"),
+        ]
+    )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE])
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 300, 300)])
+
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == ""
+    assert extracted.value == "false"
 
 
 @pytest.mark.parametrize(
@@ -249,6 +282,26 @@ def test_process_file_with_pdfminer():
     assert links[0][0]["url"] == "https://layout-parser.github.io"
 
 
+def test_process_file_with_pdfminer_is_extracted_array():
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[0].is_extracted_array)
+
+
+def test_process_file_hidden_ocr_text():
+    """Test processing a PDF that contains hidden OCR text layer.
+
+    Note: pdfminer >= 20251230 fixed color state handling (PR #1140), which means
+    invisible OCR text can no longer be detected via scolor/ncolor being None.
+    The rendermode check also doesn't work as LTChar doesn't expose textstate.render.
+    As a result, all text is now marked as IsExtracted.TRUE.
+    """
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
+    # Only check text elements (class_id == 0); images (class_id == 1) always have None
+    text_mask = layout[0].element_class_ids == 0
+    text_is_extracted = layout[0].is_extracted_array[text_mask]
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in text_is_extracted)
+
+
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
 def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
     partition(
@@ -263,3 +316,53 @@ def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
         "line_overlap": 0.0123,
         "word_margin": 3.21,
     }
+
+
+def create_mock_ltchar(text, invisible=False):
+    """Create a mock LTChar object"""
+
+    graphicstate = Mock()
+    if invisible:
+        graphicstate.scolor = None
+        graphicstate.ncolor = None
+
+    char = LTChar(
+        matrix=(1, 0, 0, 1, 0, 0),  # transformation matrix
+        font=Mock(),  # you'd need to mock PDFFont
+        fontsize=12,
+        scaling=1,
+        rise=0,
+        text=text,
+        textwidth=10,
+        textdisp=(0, 1),
+        ncs=Mock(),
+        graphicstate=graphicstate,
+    )
+
+    return char
+
+
+def create_mock_ltcontainer(chars):
+    """Create a mock LTContainer with LTChar objects"""
+    container = LTContainer(bbox=(0, 0, 1, 1))
+
+    # The container should be iterable
+    container.extend(chars)
+
+    return container
+
+
+# Now you can use it in tests
+def test_text_is_embedded():
+    chars = [
+        create_mock_ltchar("H"),
+        create_mock_ltchar("e"),
+        create_mock_ltchar("l"),
+        create_mock_ltchar("l"),
+        create_mock_ltchar("o", invisible=True),
+    ]
+
+    container = create_mock_ltcontainer(chars)
+
+    assert text_is_embedded(container, threshold=0.5)
+    assert not text_is_embedded(container, threshold=0.1)

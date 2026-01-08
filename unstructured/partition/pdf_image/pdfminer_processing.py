@@ -4,11 +4,11 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTTextBox
+from pdfminer.layout import LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
-from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
+from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
@@ -57,14 +57,20 @@ def _validate_bbox(bbox: list[int | float]) -> bool:
 
 def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
     # TODO: refactor to just use np array as input
-    return np.vstack(
+    # Optimization: Use np.stack and np.column_stack to build output in a single step
+    x1s = np.array([region.x1 for region in regions])
+    y1s = np.array([region.y1 for region in regions])
+    x2s = np.array([region.x2 for region in regions])
+    y2s = np.array([region.y2 for region in regions])
+    # Use np.min/max reduction rather than create matrix then operate.
+    return np.column_stack(
         (
-            np.min([region.x1 for region in regions], axis=0),
-            np.min([region.y1 for region in regions], axis=0),
-            np.max([region.x2 for region in regions], axis=0),
-            np.max([region.y2 for region in regions], axis=0),
+            np.min(x1s, axis=0),
+            np.min(y1s, axis=0),
+            np.max(x2s, axis=0),
+            np.max(y2s, axis=0),
         )
-    ).T
+    )
 
 
 def _inferred_is_elementtype(
@@ -120,7 +126,7 @@ def _merge_extracted_into_inferred_when_almost_the_same(
         inferred_layout.element_coords,
         threshold=same_region_threshold,
     )
-    extracted_almost_the_same_as_inferred = boxes_almost_same.sum(axis=1).astype(bool)
+    extracted_almost_the_same_as_inferred = np.any(boxes_almost_same, axis=1)
     # NOTE: if a row is full of False the argmax returns first index; we use the mask above to
     # distinguish those (they would be False in the mask)
     first_match = np.argmax(boxes_almost_same, axis=1)
@@ -128,6 +134,9 @@ def _merge_extracted_into_inferred_when_almost_the_same(
     extracted_to_remove = extracted_layout.slice(extracted_almost_the_same_as_inferred)
     # copy here in case we change the extracted layout later
     inferred_layout.texts[inferred_indices_to_update] = extracted_to_remove.texts.copy()
+    inferred_layout.is_extracted_array[inferred_indices_to_update] = (
+        extracted_to_remove.is_extracted_array.copy()
+    )
     # use coords that can bound BOTH the inferred and extracted region as final bounding box coords
     inferred_layout.element_coords[inferred_indices_to_update] = _minimum_containing_coords(
         inferred_layout.slice(inferred_indices_to_update),
@@ -371,6 +380,49 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
+def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
+    """Check if text object contains visible embedded text vs invisible OCR text.
+
+    Note: With pdfminer >= 20251230, invisible text detection is limited:
+    - rendermode check: LTChar doesn't expose textstate.render, so rendermode 3 can't be detected
+    - color check: pdfminer PR #1140 fixed color state handling, so scolor/ncolor are no longer
+      None for invisible text (they now correctly preserve their values)
+    As a result, this function will return True for most text, including hidden OCR layers.
+    """
+    invisible_chars = 0
+    total_chars = 0
+
+    def extract_chars(layout_obj):
+        """Recursively extract all LTChar objects from layout."""
+        nonlocal invisible_chars, total_chars
+
+        if isinstance(layout_obj, LTChar):
+            total_chars += 1
+
+            # Check if text is invisible:
+            #   - rendering mode 3 (doesn't work: LTChar lacks rendermode attribute)
+            #   - both stroke and non-stroke color are None (doesn't work with pdfminer >= 20251230)
+            if (hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3) or (
+                hasattr(layout_obj, "graphicstate")
+                and layout_obj.graphicstate.scolor is None
+                and layout_obj.graphicstate.ncolor is None
+            ):
+                invisible_chars += 1
+        elif isinstance(layout_obj, LTContainer):
+            # Recursively process container's children
+            for child in layout_obj:
+                extract_chars(child)
+
+    extract_chars(obj)
+    if total_chars > 0:
+        # when there are no-trivial amount of hidden characters in the object it means there are
+        # text that is not rendered -> most likely OCR'ed text for the image content overlying the
+        # text and not embedded text that also shows in the rendered pdf
+        invisible_ratio = invisible_chars / total_chars
+        return invisible_ratio < threshold
+    return True
+
+
 @requires_dependencies("unstructured_inference")
 def process_page_layout_from_pdfminer(
     annotation_list: list,
@@ -383,6 +435,7 @@ def process_page_layout_from_pdfminer(
 
     urls_metadata: list[dict[str, Any]] = []
     element_coords, texts, element_class = [], [], []
+    is_extracted = []
     annotation_threshold = env_config.PDF_ANNOTATION_THRESHOLD
 
     for obj in page_layout:
@@ -409,6 +462,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(inner_obj.get_text())
                 element_coords.append(inner_bbox)
                 element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
         else:
             inner_image_objects = extract_image_objects(obj)
             for img_obj in inner_image_objects:
@@ -418,6 +472,7 @@ def process_page_layout_from_pdfminer(
                 texts.append(None)
                 element_coords.append(inner_bbox)
                 element_class.append(1)
+                is_extracted.append(None)
 
     return (
         LayoutElements(
@@ -426,6 +481,7 @@ def process_page_layout_from_pdfminer(
             element_class_ids=np.array(element_class),
             element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
             sources=np.array([Source.PDFMINER] * len(element_class)),
+            is_extracted_array=np.array(is_extracted),
         ),
         urls_metadata,
     )
@@ -580,7 +636,9 @@ def boxes_iou(
     inter_area, boxa_area, boxb_area = areas_of_boxes_and_intersection_area(
         coords1, coords2, round_to=round_to
     )
-    return (inter_area / np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)) > threshold
+    denom = np.maximum(EPSILON_AREA, boxa_area + boxb_area.T - inter_area)
+    # Instead of (x/y) > t, use x > t*y for memory & speed with same result
+    return inter_area > (threshold * denom)
 
 
 @requires_dependencies("unstructured_inference")
@@ -647,13 +705,18 @@ def merge_inferred_with_extracted_layout(
         merged_layout = sort_text_regions(merged_layout, SORT_MODE_BASIC)
         # so that we can modify the text without worrying about hitting length limit
         merged_layout.texts = merged_layout.texts.astype(object)
-
+        merged_layout.is_extracted_array = merged_layout.is_extracted_array.astype(object)
         for i, text in enumerate(merged_layout.texts):
             if text is None:
-                text = aggregate_embedded_text_by_block(
+                text, is_extracted = aggregate_embedded_text_by_block(
                     target_region=merged_layout.slice([i]),
                     source_regions=extracted_page_layout,
                 )
+                if merged_layout.element_class_id_map[merged_layout.element_class_ids[i]] not in (
+                    "Image",
+                    "Picture",
+                ):
+                    merged_layout.is_extracted_array[i] = is_extracted
             merged_layout.texts[i] = remove_control_characters(text)
 
         inferred_page.elements_array = merged_layout
@@ -711,29 +774,60 @@ def remove_duplicate_elements(
     return elements.slice(np.concatenate(ious))
 
 
+def _aggregated_iou(box1s, box2):
+    intersection = 0.0
+    sum_areas = calculate_bbox_area(box2)
+
+    for i in range(box1s.shape[0]):
+        intersection += calculate_intersection_area(box1s[i, :], box2)
+        sum_areas += calculate_bbox_area(box1s[i, :])
+
+    union = sum_areas - intersection
+
+    if union == 0:
+        return 1.0
+    return intersection / union
+
+
 def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
-    threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
-) -> str:
+    subregion_threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+    text_coverage_threshold: float = env_config.TEXT_COVERAGE_THRESHOLD,
+) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
 
     if len(source_regions) == 0 or len(target_region) == 0:
-        return ""
+        return "", None
 
     mask = (
         bboxes1_is_almost_subregion_of_bboxes2(
             source_regions.element_coords,
             target_region.element_coords,
-            threshold,
+            subregion_threshold,
         )
         .sum(axis=1)
         .astype(bool)
     )
 
     text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    return text
+
+    if sum(mask):
+        source_bboxes = source_regions.slice(mask).element_coords
+        target_bboxes = target_region.element_coords
+
+        iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
+
+        fully_filled = (
+            all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
+            and iou > text_coverage_threshold
+        )
+        is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
+    else:
+        # if nothing is sliced then it is not extracted
+        is_extracted = IsExtracted.FALSE
+    return text, is_extracted
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
