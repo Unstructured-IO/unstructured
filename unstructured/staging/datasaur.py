@@ -19,7 +19,9 @@ def stage_for_datasaur(
 
         _entities = entities
 
-    return [{"text": item.text, "entities": _entities[i]} for i, item in enumerate(elements)]
+    result = [{"text": item.text, "entities": _entities[i]} for i, item in enumerate(elements)]
+
+    return result
 
 
 def _validate_datasaur_entity(entity: Dict[str, Any]):
