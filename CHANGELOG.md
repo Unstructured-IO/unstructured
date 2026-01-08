@@ -1,8 +1,9 @@
-## 0.18.28-dev1
+## 0.18.28-dev2
 
 ### Enhancement
 - Optimize `clean_extra_whitespace_with_index_run` (codeflash)
 - Optimize `recursive_xy_cut_swapped` (codeflash)
+- Optimize `_DocxPartitioner._parse_category_depth_by_style_name` (codeflash)
 
 ## 0.18.27
 
