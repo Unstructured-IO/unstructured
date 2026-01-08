@@ -1,3 +1,8 @@
+## 0.18.28-dev0
+
+### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+
 ## 0.18.27
 
 ### Fixes
