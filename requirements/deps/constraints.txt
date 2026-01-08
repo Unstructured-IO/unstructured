@@ -13,7 +13,5 @@ urllib3<3.0.0
 unstructured-client>=0.23.0,<0.26.0
 # paddle constrains protobuf; maybe we should put paddle here since its version is pinned in .in file
 protobuf>=6.30.0
-# (yao) issues with pdfminer-six above 20250416
-pdfminer.six<20250416
 # nickf: CVE-2025-66034 fix for fonttools
 fonttools>=4.60.2

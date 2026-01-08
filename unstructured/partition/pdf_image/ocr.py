@@ -396,7 +396,7 @@ def merge_out_layout_with_ocr_layout(
         out_layout.texts[idx], _ = aggregate_embedded_text_by_block(
             target_region=out_layout.slice([idx]),
             source_regions=ocr_layout,
-            threshold=subregion_threshold,
+            subregion_threshold=subregion_threshold,
         )
 
     final_layout = (

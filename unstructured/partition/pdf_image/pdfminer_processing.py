@@ -381,6 +381,14 @@ def array_merge_inferred_layout_with_extracted_layout(
 
 
 def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
+    """Check if text object contains visible embedded text vs invisible OCR text.
+
+    Note: With pdfminer >= 20251230, invisible text detection is limited:
+    - rendermode check: LTChar doesn't expose textstate.render, so rendermode 3 can't be detected
+    - color check: pdfminer PR #1140 fixed color state handling, so scolor/ncolor are no longer
+      None for invisible text (they now correctly preserve their values)
+    As a result, this function will return True for most text, including hidden OCR layers.
+    """
     invisible_chars = 0
     total_chars = 0
 
@@ -392,8 +400,8 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATI
             total_chars += 1
 
             # Check if text is invisible:
-            #   - rendering mode 3
-            #   - both stroke and non-stroke color are not present or 0
+            #   - rendering mode 3 (doesn't work: LTChar lacks rendermode attribute)
+            #   - both stroke and non-stroke color are None (doesn't work with pdfminer >= 20251230)
             if (hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3) or (
                 hasattr(layout_obj, "graphicstate")
                 and layout_obj.graphicstate.scolor is None
@@ -766,10 +774,26 @@ def remove_duplicate_elements(
     return elements.slice(np.concatenate(ious))
 
 
+def _aggregated_iou(box1s, box2):
+    intersection = 0.0
+    sum_areas = calculate_bbox_area(box2)
+
+    for i in range(box1s.shape[0]):
+        intersection += calculate_intersection_area(box1s[i, :], box2)
+        sum_areas += calculate_bbox_area(box1s[i, :])
+
+    union = sum_areas - intersection
+
+    if union == 0:
+        return 1.0
+    return intersection / union
+
+
 def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
-    threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+    subregion_threshold: float = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
+    text_coverage_threshold: float = env_config.TEXT_COVERAGE_THRESHOLD,
 ) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
@@ -781,18 +805,29 @@ def aggregate_embedded_text_by_block(
         bboxes1_is_almost_subregion_of_bboxes2(
             source_regions.element_coords,
             target_region.element_coords,
-            threshold,
+            subregion_threshold,
         )
         .sum(axis=1)
         .astype(bool)
     )
 
     text = " ".join([text for text in source_regions.slice(mask).texts if text])
-    # if nothing is sliced then it is not extracted
-    is_extracted = sum(mask) and all(
-        flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array
-    )
-    return text, IsExtracted.TRUE if is_extracted else IsExtracted.FALSE
+
+    if sum(mask):
+        source_bboxes = source_regions.slice(mask).element_coords
+        target_bboxes = target_region.element_coords
+
+        iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
+
+        fully_filled = (
+            all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
+            and iou > text_coverage_threshold
+        )
+        is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
+    else:
+        # if nothing is sliced then it is not extracted
+        is_extracted = IsExtracted.FALSE
+    return text, is_extracted
 
 
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
