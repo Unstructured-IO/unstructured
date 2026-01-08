@@ -26,6 +26,8 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegions
     from unstructured_inference.inference.layoutelement import LayoutElements
 
+_RE_X_CONF = re.compile(r"x_conf (\d+\.\d+)")
+
 # -- force tesseract to be single threaded, otherwise we see major performance problems --
 if "OMP_THREAD_LIMIT" not in os.environ:
     os.environ["OMP_THREAD_LIMIT"] = "1"
@@ -152,12 +154,12 @@ class OCRAgentTesseract(OCRAgent):
         if len(character_spans) == 0:
             return ""
 
-        word_text = ""
+        chars = []
         for character_span in character_spans:
             char = character_span.text
 
             char_title = character_span.get("title", "")
-            conf_match = re.search(r"x_conf (\d+\.\d+)", char_title)
+            conf_match = _RE_X_CONF.search(char_title)
 
             if not (char and conf_match):
                 continue
@@ -165,9 +167,9 @@ class OCRAgentTesseract(OCRAgent):
             character_probability = float(conf_match.group(1)) / 100
 
             if character_probability >= character_confidence_threshold:
-                word_text += char
+                chars.append(char)
 
-        return word_text
+        return "".join(chars)
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
@@ -253,8 +255,6 @@ def zoom_image(image: PILImage.Image, zoom: float = 1) -> PILImage.Image:
         interpolation=cv2.INTER_CUBIC,
     )
 
-    kernel = np.ones((1, 1), np.uint8)
-    new_image = cv2.dilate(new_image, kernel, iterations=1)
-    new_image = cv2.erode(new_image, kernel, iterations=1)
+    # Skip dilation and erosion for 1x1 kernel as they are no-ops
 
     return PILImage.fromarray(new_image)

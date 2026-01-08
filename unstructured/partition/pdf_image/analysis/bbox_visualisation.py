@@ -117,8 +117,9 @@ def _get_optimal_value_for_bbox(
         The optimal value for the given bounding box and parameters given.
     """
     bbox_to_page_ratio = _get_bbox_to_page_ratio(bbox, page_size)
-    coefficients = np.polyfit((ratio_for_min_value, ratio_for_max_value), (min_value, max_value), 1)
-    value = int(bbox_to_page_ratio * coefficients[0] + coefficients[1])
+    # Direct linear interpolation instead of np.polyfit for better performance
+    slope = (max_value - min_value) / (ratio_for_max_value - ratio_for_min_value)
+    value = int(min_value + slope * (bbox_to_page_ratio - ratio_for_min_value))
     return max(min_value, min(max_value, value))
 
 
