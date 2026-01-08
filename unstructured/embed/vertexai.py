@@ -71,8 +71,6 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
         assert len(elements) == len(embeddings)
-        elements_w_embedding = []
-        for i, element in enumerate(elements):
-            element.embeddings = embeddings[i]
-            elements_w_embedding.append(element)
+        for element, embedding in zip(elements, embeddings):
+            element.embeddings = embedding
         return elements
