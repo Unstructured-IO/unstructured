@@ -885,9 +885,7 @@ class _DocxPartitioner:
 
         def _extract_number(suffix: str) -> int:
             parts = suffix.split()
-            if parts and parts[-1].isdigit():
-                return int(parts[-1]) - 1
-            return 0
+            return int(parts[-1]) - 1 if (parts and parts[-1].isdigit()) else 0
 
         # Heading styles
         if style_name.startswith("Heading"):
