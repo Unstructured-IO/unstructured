@@ -1,3 +1,45 @@
+## 0.18.28-dev4
+
+### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+- Optimize `recursive_xy_cut_swapped` (codeflash)
+- Optimize `_DocxPartitioner._parse_category_depth_by_style_name` (codeflash)
+- Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements` (codeflash)
+- Optimize `ngrams` (codeflash)
+
+## 0.18.27
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+- Fix an issue where elements with partially filled extracted text are marked as extracted
+
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
+
+## 0.18.26
+
+### Fixes
+- Pin `deltalake<1.3.0` to fix ARM64 Docker builds (1.3.0 missing Linux ARM64 wheels)
+
+## 0.18.25
+
+### Fixes
+- **Security update**: Removed pdfminer.six version constraint and bumped pdfminer.six and urllib3 to address high severity CVEs
+
+## 0.18.24
+
+### Enhancement
+- Optimize `OCRAgentTesseract.extract_word_from_hocr` (codeflash)
+
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
 ## 0.18.23
 
 ### Enhancement
