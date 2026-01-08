@@ -50,7 +50,7 @@ typing-extensions==4.15.0
     #   -c base.txt
     #   -c test.txt
     #   virtualenv
-virtualenv==20.35.4
+virtualenv==20.36.0
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
