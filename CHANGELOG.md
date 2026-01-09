@@ -1,3 +1,8 @@
+## 0.18.28-dev7
+
+### Enhancement
+- Optimize `_get_optimal_value_for_bbox` (codeflash)
+
 ## 0.18.28-dev5
 
 ### Enhancement

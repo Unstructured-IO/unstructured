@@ -10,6 +10,7 @@ from typing import Any, Generator, List, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
+from numba import njit
 from PIL import Image, ImageDraw, ImageFont
 from unstructured_inference.constants import ElementType
 
@@ -75,6 +76,7 @@ def get_rgb_color(color: str) -> tuple[int, int, int]:
     return int(rgb_colors[0] * 255), int(rgb_colors[1] * 255), int(rgb_colors[2] * 255)
 
 
+@njit(cache=True, fastmath=True)
 def _get_bbox_to_page_ratio(bbox: tuple[int, int, int, int], page_size: tuple[int, int]) -> float:
     """Compute the ratio of the bounding box to the page size.
 
@@ -117,9 +119,10 @@ def _get_optimal_value_for_bbox(
         The optimal value for the given bounding box and parameters given.
     """
     bbox_to_page_ratio = _get_bbox_to_page_ratio(bbox, page_size)
-    # Direct linear interpolation instead of np.polyfit for better performance
-    slope = (max_value - min_value) / (ratio_for_max_value - ratio_for_min_value)
-    value = int(min_value + slope * (bbox_to_page_ratio - ratio_for_min_value))
+    slope, intercept = _linear_polyfit_2point(
+        ratio_for_min_value, ratio_for_max_value, min_value, max_value
+    )
+    value = int(bbox_to_page_ratio * slope + intercept)
     return max(min_value, min(max_value, value))
 
 
@@ -382,6 +385,18 @@ def draw_bbox_on_image(
                 font_size=font_size * 2,
                 background_color=color,
             )
+
+
+@njit(cache=True, fastmath=True)
+def _linear_polyfit_2point(x0: float, x1: float, y0: float, y1: float):
+    """Compute slope and intercept for a line passing through (x0, y0), (x1, y1)."""
+    if x1 == x0:
+        slope = 0.0
+        intercept = (y0 + y1) / 2.0
+    else:
+        slope = (y1 - y0) / (x1 - x0)
+        intercept = y0 - slope * x0
+    return slope, intercept
 
 
 class LayoutDrawer(ABC):
