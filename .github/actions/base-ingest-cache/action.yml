@@ -42,6 +42,12 @@ runs:
         make install-nltk-models
         make install-all-docs
         make install-ingest
+    - name: Clean up disk space
+      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        sudo rm -rf /tmp/*
+        python -m pip cache purge
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: ingest-virtualenv-cache-save
