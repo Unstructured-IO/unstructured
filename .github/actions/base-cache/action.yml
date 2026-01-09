@@ -48,6 +48,7 @@ runs:
         df -h
         du -sh .venv
         sudo rm -rf /tmp/*
+        sudo apt-get clean
         find .venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
         find .venv -type f -name "*.pyc" -delete
         find .venv -type f -name "*.pyo" -delete
