@@ -1,3 +1,8 @@
+## 0.18.29
+
+### Enhancement
+- use render mode data to determine if a character extracted by pdfminer is invisible or not
+
 ## 0.18.28
 
 ### Enhancement
@@ -7,7 +12,6 @@
 - Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements` (codeflash)
 - Optimize `ngrams` (codeflash)
 - Optimize `stage_for_datasaur` (codeflash)
-- use render mode data to determine if a character extracted by pdfminer is invisible or not
 
 ## 0.18.27
 
