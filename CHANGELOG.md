@@ -1,3 +1,8 @@
+## 0.18.28-dev8
+
+### Enhancement
+- Optimize `_DocxPartitioner._style_based_element_type` (codeflash)
+
 ## 0.18.28-dev5
 
 ### Enhancement
