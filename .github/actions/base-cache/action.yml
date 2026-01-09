@@ -41,6 +41,11 @@ runs:
         fi
         make install-ci
         make install-nltk-models
+    - name: Clean up disk space
+      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        sudo rm -rf /tmp/*
     - name: Save Cache
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: virtualenv-cache-save
