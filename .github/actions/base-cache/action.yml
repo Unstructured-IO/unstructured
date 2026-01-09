@@ -50,6 +50,7 @@ runs:
         find .venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
         find .venv -type f -name "*.pyc" -delete
         find .venv -type f -name "*.pyo" -delete
+        python -m pip cache purge
     - name: Save Cache
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: virtualenv-cache-save
