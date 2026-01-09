@@ -310,8 +310,7 @@ tbl = dict.fromkeys(
 
 def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
-    s = s.translate(tbl)
-    return s
+    return s.translate(tbl)
 
 
 def remove_sentence_punctuation(s: str, exclude_punctuation: Optional[list]) -> str:
@@ -450,19 +449,29 @@ def clean_extra_whitespace_with_index_run(text: str) -> Tuple[str, np.ndarray]:
     array([0., 0., 0., 0., 0., 0., 0., 0., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4., 4.]))
     """
 
-    cleaned_text = re.sub(r"[\xa0\n]", " ", text)
+    # Replace non-breaking space and newlines with a space (using translation table for speed)
+    translate_table = {ord("\xa0"): ord(" "), ord("\n"): ord(" ")}
+    cleaned_text = text.translate(translate_table)
+    # Collapse multiple spaces into one (keeps only single runs)
     cleaned_text = re.sub(r"([ ]{2,})", " ", cleaned_text)
 
     cleaned_text = cleaned_text.strip()
 
     moved_indices = np.zeros(len(text))
 
-    distance, original_index, cleaned_index = 0, 0, 0
-    while cleaned_index < len(cleaned_text):
-        if text[original_index] == cleaned_text[cleaned_index] or (
-            bool(re.match("[\xa0\n]", text[original_index]))
-            and bool(re.match(" ", cleaned_text[cleaned_index]))
-        ):
+    cleaned_len = len(cleaned_text)
+
+    ws_chars = {"\xa0", "\n"}  # For a quick lookup
+
+    distance = 0
+    original_index = 0
+    cleaned_index = 0
+
+    while cleaned_index < cleaned_len:
+        c_orig = text[original_index]
+        c_clean = cleaned_text[cleaned_index]
+
+        if c_orig == c_clean or (c_orig in ws_chars and c_clean == " "):
             moved_indices[cleaned_index] = distance
             original_index += 1
             cleaned_index += 1
