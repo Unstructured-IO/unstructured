@@ -234,5 +234,11 @@ class ENVConfig:
         """The format for analysed pages with bboxes drawn on them. Default is 'png'."""
         return self._get_string("ANALYSIS_BBOX_FORMAT", "png")
 
+    @property
+    def TEXT_COVERAGE_THRESHOLD(self) -> float:
+        """the minimum iou between extracted text bboxes and their target inferred element bbox for
+        the inferred element to be considered contaning extracted text"""
+        return self._get_float("TEXT_COVERAGE_THRESHOLD", 0.25)
+
 
 env_config = ENVConfig()

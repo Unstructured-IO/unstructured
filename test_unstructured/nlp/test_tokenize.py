@@ -37,10 +37,10 @@ def test_sent_tokenize_caches(monkeypatch):
     monkeypatch.setattr(tokenize, "_sent_tokenize", mock_sent_tokenize)
     monkeypatch.setattr(tokenize, "_word_tokenize", mock_word_tokenize)
     monkeypatch.setattr(tokenize, "_pos_tag", mock_pos_tag)
-    tokenize.sent_tokenize.cache_clear()
-    assert tokenize.sent_tokenize.cache_info().currsize == 0
-    tokenize.sent_tokenize("Greetings! I am from outer space.")
-    assert tokenize.sent_tokenize.cache_info().currsize == 1
+    tokenize._tokenize_for_cache.cache_clear()
+    assert tokenize._tokenize_for_cache.cache_info().currsize == 0
+    tokenize._tokenize_for_cache("Greetings! I am from outer space.")
+    assert tokenize._tokenize_for_cache.cache_info().currsize == 1
 
 
 def test_pos_tag_caches(monkeypatch):
