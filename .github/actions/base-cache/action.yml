@@ -46,6 +46,7 @@ runs:
       shell: bash
       run: |
         sudo rm -rf /tmp/*
+        python -m pip cache purge
     - name: Save Cache
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: virtualenv-cache-save
