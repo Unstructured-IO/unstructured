@@ -3,7 +3,7 @@ import tempfile
 from typing import BinaryIO, List, Optional, Tuple
 
 from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTContainer, LTImage, LTItem, LTTextLine
+from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.psexceptions import PSSyntaxError
@@ -14,6 +14,8 @@ from unstructured.utils import requires_dependencies
 
 
 class CustomPDFPageInterpreter(PDFPageInterpreter):
+    """a custom pdfminer page interpreter that adds character render mode information to LTChar
+    object as `rendermode` attribute. This is intended to be used to detect invisible text."""
 
     def _patch_current_chars_with_render_mode(self):
         """Add render_mode to recently created LTChar objects"""
@@ -24,7 +26,7 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
             ):
                 if hasattr(item, "rendermode"):
                     continue  # Already patched
-                if item.__class__.__name__ == "LTChar":
+                if isinstance(item, LTChar):
                     item.rendermode = render_mode
 
     def do_TJ(self, seq):

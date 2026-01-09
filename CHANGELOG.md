@@ -1,7 +1,27 @@
-## 0.18.27
+## 0.18.28
 
 ### Enhancement
+- Optimize `clean_extra_whitespace_with_index_run` (codeflash)
+- Optimize `recursive_xy_cut_swapped` (codeflash)
+- Optimize `_DocxPartitioner._parse_category_depth_by_style_name` (codeflash)
+- Optimize `VertexAIEmbeddingEncoder._add_embeddings_to_elements` (codeflash)
+- Optimize `ngrams` (codeflash)
+- Optimize `stage_for_datasaur` (codeflash)
 - use render mode data to determine if a character extracted by pdfminer is invisible or not
+
+## 0.18.27
+
+### Fixes
+- Comment no-ops in `zoom_image` (codeflash)
+- Fix an issue where elements with partially filled extracted text are marked as extracted
+
+### Enhancement
+- Optimize `sentence_count` (codeflash)
+- Optimize `_PartitionerLoader._load_partitioner` (codeflash)
+- Optimize `detect_languages` (codeflash)
+- Optimize `contains_verb` (codeflash)
+- Optimize `get_bbox_thickness` (codeflash)
+- Upgrade pdfminer-six to 20260107 to fix ~15-18% performance regression from eager f-string evaluation
 
 ## 0.18.26
 
