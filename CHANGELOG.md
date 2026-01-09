@@ -1,3 +1,7 @@
+## 0.18.28-dev6
+
+### Enhancement
+- Optimize `_get_bbox_to_page_ratio` (codeflash)
 ## 0.18.28-dev5
 
 ### Enhancement
