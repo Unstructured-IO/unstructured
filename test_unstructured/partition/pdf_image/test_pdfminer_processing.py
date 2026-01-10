@@ -288,18 +288,10 @@ def test_process_file_with_pdfminer_is_extracted_array():
 
 
 def test_process_file_hidden_ocr_text():
-    """Test processing a PDF that contains hidden OCR text layer.
-
-    Note: pdfminer >= 20251230 fixed color state handling (PR #1140), which means
-    invisible OCR text can no longer be detected via scolor/ncolor being None.
-    The rendermode check also doesn't work as LTChar doesn't expose textstate.render.
-    As a result, all text is now marked as IsExtracted.TRUE.
-    """
+    """Test processing a PDF that contains hidden OCR text layer."""
     layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
-    # Only check text elements (class_id == 0); images (class_id == 1) always have None
-    text_mask = layout[0].element_class_ids == 0
-    text_is_extracted = layout[0].is_extracted_array[text_mask]
-    assert all(is_extracted is IsExtracted.TRUE for is_extracted in text_is_extracted)
+    assert all(is_extracted is None for is_extracted in layout[0].is_extracted_array[:-1])
+    assert layout[0].is_extracted_array[-1] == IsExtracted.TRUE
 
 
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
@@ -322,9 +314,6 @@ def create_mock_ltchar(text, invisible=False):
     """Create a mock LTChar object"""
 
     graphicstate = Mock()
-    if invisible:
-        graphicstate.scolor = None
-        graphicstate.ncolor = None
 
     char = LTChar(
         matrix=(1, 0, 0, 1, 0, 0),  # transformation matrix
@@ -338,6 +327,10 @@ def create_mock_ltchar(text, invisible=False):
         ncs=Mock(),
         graphicstate=graphicstate,
     )
+    if invisible:
+        char.rendermode = 3
+    else:
+        char.rendermode = 0
 
     return char
 
