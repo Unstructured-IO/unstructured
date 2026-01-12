@@ -1,3 +1,8 @@
+## 0.18.30-dev0
+
+### Enhancement
+- Replace `pdf2image` with PyPDFium2 for PDF rendering
+
 ## 0.18.29
 
 ### Enhancement
