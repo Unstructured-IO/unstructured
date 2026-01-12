@@ -84,7 +84,9 @@ def _render_pdf_pages(
                 bitmap.close()
     finally:
         pdf.close()
-    if not path_only:
+    if not output_folder:
+        if path_only:
+            raise ValueError("output_folder must be specified if path_only is true.")
         return list(images.values())
     else:
         # Save images to output_folder
@@ -95,7 +97,7 @@ def _render_pdf_pages(
             fn: str = os.path.join(str(output_folder), f"page_{i}.png")
             image.save(fn)
             filenames.append(fn)
-        return filenames
+        return filenames if path_only else list(images.values())
 
 
 def convert_pdf_to_image(
