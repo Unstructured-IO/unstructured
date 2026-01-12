@@ -30,6 +30,9 @@ def test_clean_non_ascii_chars(text, expected):
         ("● An excellent point! ●●●", "An excellent point! ●●●"),
         ("An excellent point!", "An excellent point!"),
         ("Morse code! ●●●", "Morse code! ●●●"),
+        ("– An EN DASH bullet point!", "An EN DASH bullet point!"),
+        ("\u2013 Another EN DASH bullet!", "Another EN DASH bullet!"),
+        ("Text with – inside", "Text with – inside"),
     ],
 )
 def test_clean_bullets(text, expected):
