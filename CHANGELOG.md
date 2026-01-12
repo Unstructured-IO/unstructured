@@ -1,7 +1,10 @@
-## 0.18.30-dev0
+## 0.18.30-dev1
 
 ### Enhancement
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
+
+### Fixes
+- **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
 
 ## 0.18.29
 
