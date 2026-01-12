@@ -34,6 +34,34 @@ def clean_non_ascii_chars(text) -> str:
     return en.decode()
 
 
+def clean_newline(text: str, pattern: str = r"(\w+)-\s+(\w+)") -> str:
+    """Cleans hyphenated words that are split across line breaks.
+
+    This function concatenates words that were split at the end of a line with
+    a hyphen, commonly found in text extracted from PDFs and other documents
+    where text wrapping causes words to break across lines.
+
+    Example
+    -------
+    "The docu-\\nment is ready" -> "The document is ready"
+    "impor-\\n   tant information" -> "important information"
+
+    Parameters
+    ----------
+    text
+        The text to clean
+    pattern
+        The regex pattern to match hyphenated line breaks.
+        Default matches word-hyphen-whitespace(including newlines)-word.
+
+    Returns
+    -------
+    str
+        The text with hyphenated line breaks resolved
+    """
+    return re.sub(pattern, r"\1\2", text)
+
+
 def clean_bullets(text: str) -> str:
     """Cleans unicode bullets from a section of text.
 
