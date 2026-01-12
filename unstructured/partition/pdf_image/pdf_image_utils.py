@@ -71,13 +71,19 @@ def _render_pdf_pages(
     pdf = pdfium.PdfDocument(filename or file, password=password)
     try:
         images: dict[int, Image.Image] = {}
-        scale = (dpi or 200) / 72
+        scale = (dpi or 400) / 72.0
         for i, page in enumerate(pdf, start=1):
             if first_page is not None and i < first_page:
                 continue
             if last_page is not None and i > last_page:
                 break
-            bitmap = page.render(scale=scale)
+            bitmap = page.render(
+                scale=scale,
+                no_smoothtext=False,
+                no_smoothimage=False,
+                no_smoothpath=False,
+                optimize_mode="print",
+            )
             try:
                 images[i] = bitmap.to_pil()
             finally:
