@@ -89,7 +89,8 @@ def _render_pdf_pages(
     else:
         # Save images to output_folder
         filenames: list[str] = []
-        assert Path(output_folder).exists() and Path(output_folder).is_dir()
+        assert Path(output_folder).exists()
+        assert Path(output_folder).is_dir()
         for i, image in images.items():
             fn: str = os.path.join(str(output_folder), f"page_{i}.png")
             image.save(fn)
