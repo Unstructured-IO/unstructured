@@ -68,7 +68,7 @@ def _render_pdf_pages(
     """
     if filename is None and file is None:
         raise ValueError("Either filename or file must be provided")
-    assert filename is None or file is None, "Only one of filename or file must be provided"
+    assert (not filename) or (not file), "Only one of filename or file must be provided"
     pdf = pdfium.PdfDocument(filename or file, password=password)
     try:
         images: dict[int, Image.Image] = {}
