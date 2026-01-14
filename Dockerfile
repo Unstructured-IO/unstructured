@@ -42,6 +42,9 @@ RUN $PIP uninstall -y setuptools
 
 USER notebook-user
 
+# NOTE(alan): Uninstall setuptools to fix GHSA-58pv-8j8x-9vj2 by getting rid of jaraco.context
+RUN $PIP uninstall -y --user setuptools
+
 ENV HF_HUB_OFFLINE=1
 
 CMD ["/bin/bash"]
