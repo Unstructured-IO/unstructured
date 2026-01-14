@@ -673,7 +673,7 @@ class AnalysisDrawer(AnalysisProcessor):
             else:
                 try:
                     image_paths = convert_pdf_to_image(
-                        filename=str(self.filename) if not self.file else None,
+                        filename=str(self.filename) if not self.file else "",
                         file=self.file,
                         output_folder=temp_dir,
                         path_only=True,
