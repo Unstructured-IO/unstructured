@@ -102,7 +102,7 @@ def _render_pdf_pages(
             assert Path(output_folder).is_dir()
             for i, image in images.items():
                 fn: str = os.path.join(str(output_folder), f"page_{i}.png")
-                image.save(fn)
+                image.save(fn, format="PNG", compress_level=1, optimize=False)
                 filenames.append(fn)
             return filenames if path_only else list(images.values())
     finally:
