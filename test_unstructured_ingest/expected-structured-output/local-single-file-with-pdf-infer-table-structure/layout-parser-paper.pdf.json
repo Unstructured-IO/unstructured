@@ -4,7 +4,6 @@
     "element_id": "04fa31034847cbbf6c840f4da683ccf8",
     "text": "1",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -49,7 +48,6 @@
     "element_id": "fc05a198b2ff732119edea8986775994",
     "text": "2",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -72,7 +70,6 @@
     "element_id": "4a90480c2297c31b4d7ad43b0801ae98",
     "text": "0",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -95,7 +92,7 @@
     "element_id": "e3a383b7e9439f39773c13ea769297b7",
     "text": "2 n u J 1 2 ] V C . s c [ 2 v 8 4 3 5 1 . 3 0 1 2 :",
     "metadata": {
-      "is_extracted": "true",
+      "is_extracted": "partial",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -118,7 +115,6 @@
     "element_id": "4608f9aa33a0cab158565817b0d15743",
     "text": "v",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -163,7 +159,6 @@
     "element_id": "ed4e590932b333f40d0e1367b6b0e32e",
     "text": "i",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -186,7 +181,6 @@
     "element_id": "8cb024fb60457b7c572b167801037f75",
     "text": "X",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -209,7 +203,6 @@
     "element_id": "c202bdacd2daf4c52fa3a6ddd64a0728",
     "text": "r",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -232,7 +225,6 @@
     "element_id": "3db474893ec321c81ef9d1a2afd5f660",
     "text": "a",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
