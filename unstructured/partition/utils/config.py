@@ -174,9 +174,9 @@ class ENVConfig:
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
     @property
-    def PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO(self) -> float:
-        """maximum ratio of invisible text for a text to be considered embedded text"""
-        return self._get_float("PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO", 0.1)
+    def PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO(self) -> float:
+        """maximum ratio of low fidelity charcaters for a text to be considered embedded text"""
+        return self._get_float("PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO", 0.1)
 
     @property
     def GLOBAL_WORKING_DIR_ENABLED(self) -> bool:
