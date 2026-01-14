@@ -1,4 +1,4 @@
-FROM quay.io/unstructured-io/base-images:wolfi-base-latest AS base
+FROM cgr.dev/chainguard/wolfi-base:latest AS base
 
 ARG PYTHON=python3.12
 ARG PIP="${PYTHON} -m pip"
@@ -12,11 +12,29 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
-RUN chown -R notebook-user:notebook-user /app && \
+RUN apk update && \
+    apk add libxml2 python-3.12 python-3.12-base py3.12-pip glib \
+      mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
+      poppler poppler-utils poppler-glib libreoffice pandoc tesseract && \
+    apk cache clean && \
+    ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/libreoffice && \
+    ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
+    chmod +x /usr/lib/libreoffice/program/soffice.bin && \
+    chown -R notebook-user:notebook-user /app && \
     apk add --no-cache font-ubuntu fontconfig git && \
     apk upgrade --no-cache py3.12-pip && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
+
+ARG NB_UID=1000
+ARG NB_USER=notebook-user
+RUN addgroup --gid ${NB_UID} ${NB_USER} && \
+    adduser --disabled-password --gecos "" --uid ${NB_UID} -G ${NB_USER} ${NB_USER}
+
+ENV USER ${NB_USER}
+ENV HOME /home/${NB_USER}
+COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
+RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
 
 USER notebook-user
 
