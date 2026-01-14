@@ -66,9 +66,7 @@ def _render_pdf_pages(
     """
     Centralized function to render PDF pages using pypdfium.
     """
-    if not any([filename, file]):
-        raise ValueError("Either filename or file must be provided")
-    assert (not filename) or (not file), "Only one of filename or file can be provided"
+    exactly_one(filename=filename, file=file)
     pdf = pdfium.PdfDocument(filename or file, password=password)
     try:
         images: dict[int, Image.Image] = {}
