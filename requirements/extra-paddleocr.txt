@@ -103,7 +103,7 @@ packaging==25.0
     #   -c base.txt
     #   lazy-loader
     #   scikit-image
-paddlepaddle==3.2.2
+paddlepaddle==3.3.0
     # via -r extra-paddleocr.in
 pillow==12.1.0
     # via
@@ -111,7 +111,7 @@ pillow==12.1.0
     #   paddlepaddle
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==6.33.2
+protobuf==6.33.4
     # via
     #   -c deps/constraints.txt
     #   paddlepaddle
