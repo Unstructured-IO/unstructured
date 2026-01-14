@@ -73,7 +73,7 @@ def _render_pdf_pages(
     try:
         images: dict[int, Image.Image] = {}
         if dpi is None:
-            dpi = env_config.GLOBAL_PDF_IMAGE_DPI
+            dpi = env_config.PDF_RENDER_DPI
         scale = (dpi or 400) / 72.0
         for i, page in enumerate(pdf, start=1):
             if first_page is not None and i < first_page:
