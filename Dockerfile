@@ -31,10 +31,10 @@ ARG NB_USER=notebook-user
 RUN addgroup --gid ${NB_UID} ${NB_USER} && \
     adduser --disabled-password --gecos "" --uid ${NB_UID} -G ${NB_USER} ${NB_USER}
 
-ENV USER ${NB_USER}
-ENV HOME /home/${NB_USER}
+ENV USER=${NB_USER}
+ENV HOME=/home/${NB_USER}
 COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
-RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
+RUN ${HOME}/initialize-libreoffice.sh && rm ${HOME}/initialize-libreoffice.sh
 
 USER notebook-user
 
