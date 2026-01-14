@@ -11,11 +11,14 @@ COPY ./requirements requirements/
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
+COPY ./docker/packages/*.apk /tmp/packages/
 
 RUN apk update && \
     apk add libxml2 python-3.12 python-3.12-base py3.12-pip glib \
       mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
-      poppler poppler-utils poppler-glib libreoffice pandoc tesseract && \
+      poppler poppler-utils poppler-glib libreoffice tesseract && \
+    apk add --allow-untrusted /tmp/packages/pandoc-3.1.8-r0.apk && \
+    rm -rf /tmp/packages && \
     apk cache clean && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/libreoffice && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
