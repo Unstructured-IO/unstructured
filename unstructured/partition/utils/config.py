@@ -245,4 +245,5 @@ class ENVConfig:
         """The DPI to use for rendering PDF pages"""
         return self._get_int("PDF_RENDER_DPI", 400)
 
+
 env_config = ENVConfig()
