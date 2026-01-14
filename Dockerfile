@@ -26,7 +26,7 @@ ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV NLTK_DATA=/home/notebook-user/nltk_data
 
 # Upgrade pip to fix CVE-2025-8869
-RUN $PIP install --no-cache-dir --user --upgrade "pip>=25.3"
+RUN $PIP install --no-cache-dir --user --upgrade "pip>=25.3" "jaraco.context>=6.1"
 
 # Install Python dependencies and download required NLTK packages
 RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
