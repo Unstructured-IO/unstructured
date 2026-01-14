@@ -385,13 +385,23 @@ def _ltchar_is_rotated(char: LTChar) -> bool:
     # Calculate rotation angle in degrees
     # For standard text: a=1, b=0, c=0, d=1 (no rotation)
     rotation_radians = math.atan2(char.matrix[1], char.matrix[0])
-    rotation_degrees = math.degrees(rotation_radians)
-    # 0.1 is the tolerance for nearly flat angles
-    return abs(rotation_degrees) > 0.1
+    # 0.001 is the tolerance for nearly flat angles; mainly for handling numerical precision
+    return abs(rotation_radians) > 0.001
 
 
 def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
-    """Check if text object contains too many low_fidelity text: invisible or rotated"""
+    """Check if text object contains too many low_fidelity text: invisible or rotated
+
+    Low fidelity text means that even though the text is extracted from pdf data but its
+    representation in the partitioned elements may require post processing to make senmatic sense.
+    This includes:
+      - invisible text: text not rendered on the pdf are not present visually when reading the page
+        so those texts may not be high quality information for understanding the page
+      - rotated text: text rotated usually are extracted in the order they appear in the dominant
+        reading order of the page (e.g., left->right, top->down). But if a text is rotated so the
+        last character is at the top (y position) and first character is at the bottom the extracted
+        element would contain words written in reverse order. This makes the extraction low quality.
+    """
     low_fidelity_chars = 0
     total_chars = 0
 
@@ -403,12 +413,11 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_R
             total_chars += 1
 
             # Check if text is low_fidelity:
-            #   - rendering mode 3 (requires custom pdf interpreter comes with this library)
+            #  - rendering mode 3 (requires custom pdf interpreter comes with this library)
+            #  - text is rotated
             if (
-                hasattr(layout_obj, "rendermode")
-                and layout_obj.rendermode == 3
-                or _ltchar_is_rotated(layout_obj)
-            ):
+                hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3
+            ) or _ltchar_is_rotated(layout_obj):
                 low_fidelity_chars += 1
         elif isinstance(layout_obj, LTContainer):
             # Recursively process container's children
