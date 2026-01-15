@@ -23,8 +23,7 @@ RUN apk update && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/libreoffice && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
     chmod +x /usr/lib/libreoffice/program/soffice.bin && \
-    chown -R notebook-user:notebook-user /app && \
-    apk add --no-cache font-ubuntu fontconfig git && \
+    apk add --no-cache font-ubuntu fontconfig && \
     apk upgrade --no-cache py3.12-pip && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
