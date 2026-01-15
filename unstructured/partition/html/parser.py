@@ -87,6 +87,7 @@ from unstructured.cleaners.core import clean_bullets
 from unstructured.common.html_table import htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import (
     Address,
+    CodeSnippet,
     Element,
     ElementMetadata,
     EmailAddress,
@@ -470,8 +471,11 @@ class ListItemBlock(Flow):
 class Pre(BlockItem):
     """Custom element-class for `<pre>` element.
 
-    Can only contain phrasing content.
+    Can only contain phrasing content. Generates CodeSnippet elements to preserve
+    code formatting including whitespace and line breaks.
     """
+
+    _ElementCls = CodeSnippet
 
     @lazyproperty
     def _element_accum(self) -> _ElementAccumulator:
