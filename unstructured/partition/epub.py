@@ -18,7 +18,7 @@ def partition_epub(
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
+    languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
