@@ -24,15 +24,6 @@ RUN rm -rf /usr/lib/python3.10 && \
     rm -rf /usr/lib/python3.13 && \
     rm /usr/bin/python3.13
 
-# Manually patch jaraco.context to fix GHSA-58pv-8j8x-9vj2
-# We cant' use pip since it's vendored in setuptools
-RUN pip download --no-binary :all: jaraco.context==6.1.0 && \
-    tar -xvf jaraco_context-6.1.0.tar.gz && \
-    rm jaraco_context-6.1.0.tar.gz && \
-    rm /usr/lib/python3.12/site-packages/setuptools/_vendor/jaraco/context.py && \
-    cp -r jaraco_context-6.1.0/jaraco/context /usr/lib/python3.12/site-packages/setuptools/_vendor/jaraco/ && \
-    rm -rf jaraco_context-6.1.0
-
 USER notebook-user
 
 # append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
@@ -51,5 +42,12 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 ENV HF_HUB_OFFLINE=1
+
+USER root
+
+# Remove setuptools to remove jaraco.context to fix GHSA-58pv-8j8x-9vj2
+RUN $PIP uninstall -y setuptools
+
+USER notebook-user
 
 CMD ["/bin/bash"]
