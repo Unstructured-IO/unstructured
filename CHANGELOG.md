@@ -1,4 +1,4 @@
-## 0.18.30-dev2
+## 0.18.30-dev3
 
 ### Enhancement
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
+- **Preserve line breaks in code blocks during chunking**: `<pre>` elements now generate `CodeSnippet` elements instead of `Text`, and chunking preserves internal whitespace for code snippets. (fixes #4095)
 
 ## 0.18.29
 
