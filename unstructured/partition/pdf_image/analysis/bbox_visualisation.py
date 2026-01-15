@@ -673,9 +673,11 @@ class AnalysisDrawer(AnalysisProcessor):
             else:
                 try:
                     str_filename = (
-                        str(self.filename)
-                        if isinstance(self.filename, Path)
-                        else "" if (self.filename is None) else self.filename
+                        ""
+                        if (self.filename is None or self.file is not None)
+                        else (
+                            str(self.filename) if isinstance(self.filename, Path) else self.filename
+                        )
                     )
                     image_paths = convert_pdf_to_image(
                         filename=str_filename,
