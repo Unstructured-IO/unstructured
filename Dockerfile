@@ -36,9 +36,15 @@ RUN addgroup --gid ${NB_UID} ${NB_USER} && \
 ENV USER=${NB_USER}
 ENV HOME=/home/${NB_USER}
 COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
-RUN ${HOME}/initialize-libreoffice.sh && rm ${HOME}/initialize-libreoffice.sh
 
 USER notebook-user
+WORKDIR ${HOME}
+
+# Initialize libreoffice config as non-root user (required for soffice to work properly)
+# See: https://github.com/Unstructured-IO/unstructured/issues/3105
+RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
+
+WORKDIR /app
 
 # append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
 ENV PATH="${PATH}:/home/notebook-user/.local/bin"
