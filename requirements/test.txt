@@ -36,7 +36,7 @@ grpcio==1.76.0
     # via -r test.in
 iniconfig==2.3.0
     # via pytest
-librt==0.7.7
+librt==0.7.8
     # via mypy
 liccheck==0.9.2
     # via -r test.in
@@ -54,7 +54,7 @@ packaging==25.0
     #   -c base.txt
     #   black
     #   pytest
-pathspec==1.0.1
+pathspec==1.0.3
     # via
     #   black
     #   mypy
@@ -95,7 +95,7 @@ python-dateutil==2.9.0.post0
     #   freezegun
 pytokens==0.3.0
     # via black
-ruff==0.14.10
+ruff==0.14.11
     # via -r test.in
 semantic-version==2.10.0
     # via liccheck
@@ -105,7 +105,7 @@ six==1.17.0
     #   python-dateutil
 toml==0.10.2
     # via liccheck
-tomli==2.3.0
+tomli==2.4.0
     # via
     #   autoflake
     #   black

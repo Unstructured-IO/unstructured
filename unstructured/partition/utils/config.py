@@ -240,5 +240,10 @@ class ENVConfig:
         the inferred element to be considered contaning extracted text"""
         return self._get_float("TEXT_COVERAGE_THRESHOLD", 0.25)
 
+    @property
+    def PDF_RENDER_DPI(self) -> int:
+        """The DPI to use for rendering PDF pages"""
+        return self._get_int("PDF_RENDER_DPI", 400)
+
 
 env_config = ENVConfig()
