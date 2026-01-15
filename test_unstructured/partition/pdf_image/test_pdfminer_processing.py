@@ -284,7 +284,9 @@ def test_process_file_with_pdfminer():
 
 def test_process_file_with_pdfminer_is_extracted_array():
     layout, _ = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
-    assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[0].is_extracted_array)
+    # first page contains rotated text that are considered low fidelity, i.e., is_extracted=partial
+    assert layout[0].is_extracted_array[0] is None
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[1].is_extracted_array)
 
 
 def test_process_file_hidden_ocr_text():
@@ -310,13 +312,14 @@ def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
     }
 
 
-def create_mock_ltchar(text, invisible=False):
+def create_mock_ltchar(text, invisible=False, rotated=False):
     """Create a mock LTChar object"""
 
     graphicstate = Mock()
+    matrix = (1, 0.5, 0, 1, 0, 0) if rotated else (1, 0, 0, 1, 0, 0)
 
     char = LTChar(
-        matrix=(1, 0, 0, 1, 0, 0),  # transformation matrix
+        matrix=matrix,  # transformation matrix
         font=Mock(),  # you'd need to mock PDFFont
         fontsize=12,
         scaling=1,
@@ -351,11 +354,11 @@ def test_text_is_embedded():
         create_mock_ltchar("H"),
         create_mock_ltchar("e"),
         create_mock_ltchar("l"),
-        create_mock_ltchar("l"),
+        create_mock_ltchar("l", rotated=True),
         create_mock_ltchar("o", invisible=True),
     ]
 
     container = create_mock_ltcontainer(chars)
 
     assert text_is_embedded(container, threshold=0.5)
-    assert not text_is_embedded(container, threshold=0.1)
+    assert not text_is_embedded(container, threshold=0.3)

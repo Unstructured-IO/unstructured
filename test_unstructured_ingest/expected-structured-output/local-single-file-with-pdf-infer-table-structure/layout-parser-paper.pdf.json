@@ -4,7 +4,6 @@
     "element_id": "04fa31034847cbbf6c840f4da683ccf8",
     "text": "1",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -49,7 +48,6 @@
     "element_id": "fc05a198b2ff732119edea8986775994",
     "text": "2",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -72,7 +70,6 @@
     "element_id": "4a90480c2297c31b4d7ad43b0801ae98",
     "text": "0",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -95,7 +92,7 @@
     "element_id": "e3a383b7e9439f39773c13ea769297b7",
     "text": "2 n u J 1 2 ] V C . s c [ 2 v 8 4 3 5 1 . 3 0 1 2 :",
     "metadata": {
-      "is_extracted": "true",
+      "is_extracted": "partial",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -118,7 +115,6 @@
     "element_id": "4608f9aa33a0cab158565817b0d15743",
     "text": "v",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -163,7 +159,6 @@
     "element_id": "ed4e590932b333f40d0e1367b6b0e32e",
     "text": "i",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -186,7 +181,6 @@
     "element_id": "8cb024fb60457b7c572b167801037f75",
     "text": "X",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -209,7 +203,6 @@
     "element_id": "c202bdacd2daf4c52fa3a6ddd64a0728",
     "text": "r",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -232,7 +225,6 @@
     "element_id": "3db474893ec321c81ef9d1a2afd5f660",
     "text": "a",
     "metadata": {
-      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -1241,8 +1233,8 @@
   },
   {
     "type": "Image",
-    "element_id": "285d83f3098b26302329b33637fd265f",
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘A >) ¥ DIA Model Hub a Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (store Visualization LY",
+    "element_id": "c4f9a0b797137c8c8f492f1af753f9a0",
+    "text": "Model Customization Efficient Data Annotation Customized Model Training} === | Layout Detection Models | === DIA Pipeline Sharing OCR Module | = | Layout Data Structure ) = { storage & Visualization Community Platform DIA Model Hub",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1509,7 +1501,7 @@
           "start_index": 65
         }
       ],
-      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model'|</th><th>| Notes</th></tr></thead><tbody><tr><td>PubLayNet B8]|</td><td>F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>Layouts of scanned modern magazines and scientific report</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model'|</th><th>Large Model |</th><th>Notes</th></tr></thead><tbody><tr><td>PubLayNet [38]</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>F</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -1823,8 +1815,8 @@
   },
   {
     "type": "Image",
-    "element_id": "fd2288e4e3cf90f109d1c1198cea4ca0",
-    "text": "3 a a 4 a 3 Rectangle vada 4 8 4 iS v 2 [S) af : fa & o a 6 ‘ g 4 Coordinate g 2 8 3 + 4 * v 8 Extra features =| 9%) | Hock) Reading é ret | | Type | | order 2 & a ¢ @ [ coordinatel textblock1 , 8 » , ee 3 , textblock2 , layoutl ] 8 q ® A list of the layout elements ‘sf",
+    "element_id": "403965f98f47c92554207f7628ffeefe",
+    "text": "o 3 4 9 s a 8 4 8 3 8 8 . g . £ o 3 ¥ Coordinate § F g 3 + § 3 Block Block Reading| 4 $ Extra features Tea | [ye | | ower é 2 a o ¢ 8 [ coordinatel textblock1 | 3 a , see 3 i A .., textblock2 , layouti ] § \" @ A list of the layout elements é",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2230,7 +2222,7 @@
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
     "metadata": {
       "is_extracted": "true",
-      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of blockl to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th></th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift (dx, dy)</td><td></td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Coordinate type to be determined based on the inputs Convert the absolute coordinates of block1 to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image</td><td>(image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -2440,8 +2432,8 @@
   },
   {
     "type": "Image",
-    "element_id": "02a078081972f7bdb26f06a787773a30",
-    "text": "0g Burpunog uayor Aeydsiq:1 vondo 10g Guypunog usyou ap:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR’ Text at the Correspoding Position",
+    "element_id": "0f24d2d9d336ceae460a3852785eee67",
+    "text": "10g Buypunog uayoy Aeydsiq 1 vondo 10g 6ulpunog usyoy api :z uondo, Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR’ Text at the Correspoding Position",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2596,8 +2588,8 @@
   },
   {
     "type": "Image",
-    "element_id": "747f46c43a88768fd543e10bac84203b",
-    "text": "Intra-column reading order Token Categories tie (Adress tee Ewumber Variable Column reading order HEE company ype Column Categories (J tite Adress 1] ree [7] Section Header Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
+    "element_id": "1dd15be7cc0092ea5c221a34bf854869",
+    "text": "Intra-column reading order ‘Token Categories Variabte (EE company type Column Categories J tie Adatress () tet [J Section Header Column reading order Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2920,8 +2912,8 @@
   },
   {
     "type": "Image",
-    "element_id": "2b90153124fb6f9e9f5539b9db75d240",
-    "text": "———————_+ (| ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ alae Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing Ee apis for Layout Dat a Ae ror yon Oats 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
+    "element_id": "0ae05b73a88b238b80c4d18c6f9274ec",
+    "text": "“Active Learning Layout Annotate Layout Dataset | Annotation Toolkit ¥ Tayo betetion Deep Learning Layout \" Model Training & Inference, ¥ Post processing Handy Data Structures & APIs for Layout Data ¥ Text Recognition | <—— Default and bustomized ¥ pon Wa i — ayout Structure Visualization & Export | <—— | vic alization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3231,8 +3223,8 @@
   },
   {
     "type": "Image",
-    "element_id": "1359eaa601a24c083e143b8bf5114127",
-    "text": "(@) Partial table at the bottom (6) Full page table (©) Partial table at the top (@) Mis-detected text line",
+    "element_id": "e45bde8fddca133387e91d96fa2d136a",
+    "text": "(6) Partial table atthe bottom (b) Ful page table (©) Partial table atthe top (4) Mis detected text line",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

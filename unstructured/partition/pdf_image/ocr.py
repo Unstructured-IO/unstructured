@@ -5,7 +5,6 @@ import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import numpy as np
-import pdf2image
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
 # unstructured.documents.elements.Image
@@ -16,7 +15,7 @@ from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
-from unstructured.partition.pdf_image.pdf_image_utils import valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
 from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
@@ -172,12 +171,12 @@ def process_file_with_ocr(
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
-                _image_paths = pdf2image.convert_from_path(
+                _image_paths = convert_pdf_to_image(
                     filename,
                     dpi=pdf_image_dpi,
                     output_folder=temp_dir,
-                    paths_only=True,
-                    userpw=password or "",
+                    path_only=True,
+                    password=password,
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):

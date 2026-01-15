@@ -2,6 +2,9 @@
 
 ### Enhancements
 - Updated the Dockerfile to build from the chainguard base. Implemented updating and added base-packages that was done in the base-images repo to instead all be done here.
+- `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
+- Replace `pdf2image` with PyPDFium2 for PDF rendering
+
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
