@@ -672,8 +672,15 @@ class AnalysisDrawer(AnalysisProcessor):
                     image_paths = [self.filename]
             else:
                 try:
+                    str_filename = (
+                        ""
+                        if (self.filename is None or self.file is not None)
+                        else (
+                            str(self.filename) if isinstance(self.filename, Path) else self.filename
+                        )
+                    )
                     image_paths = convert_pdf_to_image(
-                        filename=self.filename,
+                        filename=str_filename,
                         file=self.file,
                         output_folder=temp_dir,
                         path_only=True,
@@ -685,5 +692,5 @@ class AnalysisDrawer(AnalysisProcessor):
                     )
 
             for image_path in image_paths:
-                with Image.open(image_path) as image:
+                with Image.open(str(image_path)) as image:
                     yield image.convert("RGB")

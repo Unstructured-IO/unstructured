@@ -4,7 +4,7 @@
 #
 #    pip-compile --no-strip-extras ./dev.in
 #
-build==1.3.0
+build==1.4.0
     # via pip-tools
 cfgv==3.5.0
     # via pre-commit
@@ -15,9 +15,9 @@ click==8.3.1
     #   pip-tools
 distlib==0.4.0
     # via virtualenv
-filelock==3.20.2
+filelock==3.20.3
     # via virtualenv
-identify==2.6.15
+identify==2.6.16
     # via pre-commit
 nodeenv==1.10.0
     # via pre-commit
@@ -40,7 +40,7 @@ pyproject-hooks==1.2.0
     #   pip-tools
 pyyaml==6.0.3
     # via pre-commit
-tomli==2.3.0
+tomli==2.4.0
     # via
     #   -c test.txt
     #   build
@@ -50,7 +50,7 @@ typing-extensions==4.15.0
     #   -c base.txt
     #   -c test.txt
     #   virtualenv
-virtualenv==20.36.0
+virtualenv==20.36.1
     # via pre-commit
 wheel==0.45.1
     # via pip-tools

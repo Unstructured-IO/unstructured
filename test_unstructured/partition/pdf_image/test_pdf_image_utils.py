@@ -67,7 +67,7 @@ def test_convert_pdf_to_image_raises_error():
     with pytest.raises(ValueError) as exc_info:
         pdf_image_utils.convert_pdf_to_image(filename=filename, path_only=True, output_folder=None)
 
-    assert str(exc_info.value) == "output_folder must be specified if path_only is true"
+    assert str(exc_info.value) == "output_folder must be specified if path_only is True"
 
 
 @pytest.mark.parametrize(
