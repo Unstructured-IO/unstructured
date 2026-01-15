@@ -20,7 +20,7 @@
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
 - **Change `languages` parameter default from `["auto"]` to `None`**: Updated default value in `detect_languages()` and `partition_epub()` functions. Behavior unchanged as `None` is converted to `["auto"]` internally. (fixes #2471)
-- Resolve GHSA-58pv-8j8x-9vj2
+- **Preserve line breaks in code blocks during chunking**: `<pre>` elements now generate `CodeSnippet` elements instead of `Text`, and chunking preserves internal whitespace for code snippets. (fixes #4095)
 
 ## 0.18.29
 
