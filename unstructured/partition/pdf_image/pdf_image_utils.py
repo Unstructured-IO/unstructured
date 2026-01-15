@@ -119,9 +119,6 @@ def convert_pdf_to_image(
     if dpi is None:
         dpi = env_config.PDF_RENDER_DPI
 
-    if path_only and not output_folder:
-        raise ValueError("output_folder must be specified if path_only is true")
-
     return _render_pdf_pages(
         filename=filename,
         file=file,
