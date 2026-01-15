@@ -25,6 +25,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.html import partition_html
+from unstructured.partition.xlsx import partition_xlsx
 from unstructured.staging.base import elements_from_json
 
 # ================================================================================================
@@ -33,25 +34,6 @@ from unstructured.staging.base import elements_from_json
 # These test `chunk_by_title()` as an integrated whole, calling `chunk_by_title()` and inspecting
 # the outputs.
 # ================================================================================================
-
-
-def test_it_chunks_text_followed_by_table_together_when_both_fit():
-    elements = elements_from_json(input_path("chunking/title_table_200.json"))
-
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
-
-    assert len(chunks) == 1
-    assert isinstance(chunks[0], CompositeElement)
-
-
-def test_it_chunks_table_followed_by_text_together_when_both_fit():
-    elements = elements_from_json(input_path("chunking/table_text_200.json"))
-
-    # -- disable chunk combining so we test pre-chunking behavior, not chunk-combining --
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
-
-    assert len(chunks) == 1
-    assert isinstance(chunks[0], CompositeElement)
 
 
 def test_it_splits_oversized_table():
@@ -116,7 +98,7 @@ def test_it_splits_elements_by_title_and_table():
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=True)
 
-    assert len(chunks) == 3
+    assert len(chunks) == 4
     # --
     chunk = chunks[0]
     assert isinstance(chunk, CompositeElement)
@@ -124,10 +106,15 @@ def test_it_splits_elements_by_title_and_table():
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
-        Table("Heading\nCell text"),
     ]
     # --
     chunk = chunks[1]
+    assert isinstance(chunk, Table)
+    assert chunk.metadata.orig_elements == [
+        Table("Heading\nCell text"),
+    ]
+    # --
+    chunk = chunks[2]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
@@ -135,7 +122,7 @@ def test_it_splits_elements_by_title_and_table():
         Text("It is rainy outside."),
     ]
     # --
-    chunk = chunks[2]
+    chunk = chunks[3]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("A Bad Day"),
@@ -150,7 +137,7 @@ def test_chunk_by_title():
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
         Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
-        Table("Heading\nCell text"),
+        Text("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -179,7 +166,7 @@ def test_chunk_by_title_separates_by_page_number():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("Heading\nCell text"),
+        Text("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -207,7 +194,7 @@ def test_chuck_by_title_respects_multipage():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("Heading\nCell text"),
+        Text("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -233,7 +220,7 @@ def test_chunk_by_title_groups_across_pages():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("Heading\nCell text"),
+        Text("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -456,19 +443,19 @@ class Describe_chunk_by_title:
         ],
     )
     def it_supports_the_include_orig_elements_option(
-        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+        self, kwargs: dict[str, Any], expected_value: bool, mocked_chunk_by_title_: Mock
     ):
         # -- this line would raise if "include_orig_elements" was not an available parameter on
         # -- `chunk_by_title()`.
         chunk_by_title([], **kwargs)
 
-        _, opts = _chunk_by_title_.call_args.args
+        _, opts = mocked_chunk_by_title_.call_args.args
         assert opts.include_orig_elements is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_by_title_(self, request: FixtureRequest):
+    def mocked_chunk_by_title_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.chunking.title._chunk_by_title")
 
 
@@ -539,3 +526,12 @@ class Describe_ByTitleChunkingOptions:
     ):
         opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
         assert opts.multipage_sections is expected_value
+
+
+def test_basic_chunk_isolates_tables():
+    elements = partition_xlsx("example-docs/stanley-cups.xlsx")
+    assert elements[1].category == "Table"
+    assert elements[3].category == "Table"
+    chunks = chunk_by_title(elements)
+    assert chunks[1].category == "Table"
+    assert chunks[3].category == "Table"

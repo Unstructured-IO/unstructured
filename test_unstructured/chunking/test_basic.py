@@ -14,6 +14,7 @@ from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import CompositeElement, Text, Title
 from unstructured.partition.docx import partition_docx
+from unstructured.partition.xlsx import partition_xlsx
 
 
 def test_it_chunks_a_document_when_basic_chunking_strategy_is_specified_on_partition_function():
@@ -152,17 +153,26 @@ class Describe_chunk_elements:
         ],
     )
     def it_supports_the_include_orig_elements_option(
-        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+        self, kwargs: dict[str, Any], expected_value: bool, mocked_chunk_elements_: Mock
     ):
         # -- this line would raise if "include_orig_elements" was not an available parameter on
         # -- `chunk_elements()`.
         chunk_elements([], **kwargs)
 
-        _, opts = _chunk_elements_.call_args.args
+        _, opts = mocked_chunk_elements_.call_args.args
         assert opts.include_orig_elements is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_elements_(self, request: FixtureRequest):
+    def mocked_chunk_elements_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.chunking.basic._chunk_elements")
+
+
+def test_basic_chunk_isolates_tables():
+    elements = partition_xlsx("example-docs/stanley-cups.xlsx")
+    assert elements[1].category == "Table"
+    assert elements[3].category == "Table"
+    chunks = chunk_elements(elements)
+    assert chunks[1].category == "Table"
+    assert chunks[3].category == "Table"
