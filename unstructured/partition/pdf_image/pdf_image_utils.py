@@ -110,12 +110,14 @@ def _render_pdf_pages(
 def convert_pdf_to_image(
     filename: str,
     file: Optional[Union[bytes, BinaryIO]] = None,
-    dpi: int = 200,
+    dpi: Optional[int] = None,
     output_folder: Optional[Union[str, PurePath]] = None,
     path_only: bool = False,
     password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
     """Get the image renderings of the pdf pages using pdf2image"""
+    if dpi is None:
+        dpi = env_config.PDF_RENDER_DPI
 
     if path_only and not output_folder:
         raise ValueError("output_folder must be specified if path_only is true")
