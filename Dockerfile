@@ -18,6 +18,21 @@ RUN chown -R notebook-user:notebook-user /app && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
 
+# Remove unused Python versions
+RUN rm -rf /usr/lib/python3.10 && \
+    rm -rf /usr/lib/python3.11 && \
+    rm -rf /usr/lib/python3.13 && \
+    rm /usr/bin/python3.13
+
+# Manually patch jaraco.context to fix GHSA-58pv-8j8x-9vj2
+# We cant' use pip since it's vendored in setuptools
+RUN pip download --no-binary :all: jaraco.context==6.1.0 && \
+    tar -xvf jaraco_context-6.1.0.tar.gz && \
+    rm jaraco_context-6.1.0.tar.gz && \
+    rm /usr/lib/python3.12/site-packages/setuptools/_vendor/jaraco/context.py && \
+    cp -r jaraco_context-6.1.0/jaraco/context /usr/lib/python3.12/site-packages/setuptools/_vendor/jaraco/ && \
+    rm -rf jaraco_context-6.1.0
+
 USER notebook-user
 
 # append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
