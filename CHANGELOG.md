@@ -6,7 +6,7 @@
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
-- Patch jaraco.context to latest version in container to resolve GHSA-58pv-8j8x-9vj2
+- Resolve GHSA-58pv-8j8x-9vj2
 
 ## 0.18.29
 
