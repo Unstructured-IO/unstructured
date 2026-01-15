@@ -66,6 +66,8 @@ def _render_pdf_pages(
     """
     Centralized function to render PDF pages using pypdfium.
     """
+    if path_only and not output_folder:
+        raise ValueError("output_folder must be specified if path_only is True")
     exactly_one(filename=filename, file=file)
     pdf = pdfium.PdfDocument(filename or file, password=password)
     try:
@@ -90,8 +92,6 @@ def _render_pdf_pages(
             finally:
                 bitmap.close()
         if not output_folder:
-            if path_only:
-                raise ValueError("output_folder must be specified if path_only is true.")
             return list(images.values())
         else:
             # Save images to output_folder
