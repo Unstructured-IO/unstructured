@@ -1,6 +1,7 @@
-## 0.18.30-dev1
+## 0.18.30-dev2
 
 ### Enhancement
+- `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
 
 ### Fixes

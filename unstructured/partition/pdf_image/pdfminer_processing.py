@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
@@ -380,22 +381,44 @@ def array_merge_inferred_layout_with_extracted_layout(
     return final_layout
 
 
-def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO):
-    """Check if text object contains visible embedded text vs invisible OCR text."""
-    invisible_chars = 0
+def _ltchar_is_rotated(char: LTChar) -> bool:
+    # Calculate rotation angle in degrees
+    # For standard text: a=1, b=0, c=0, d=1 (no rotation)
+    rotation_radians = math.atan2(char.matrix[1], char.matrix[0])
+    # 0.001 is the tolerance for nearly flat angles; mainly for handling numerical precision
+    return abs(rotation_radians) > 0.001
+
+
+def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
+    """Check if text object contains too many low_fidelity text: invisible or rotated
+
+    Low fidelity text means that even though the text is extracted from pdf data but its
+    representation in the partitioned elements may require post processing to make senmatic sense.
+    This includes:
+      - invisible text: text not rendered on the pdf are not present visually when reading the page
+        so those texts may not be high quality information for understanding the page
+      - rotated text: text rotated usually are extracted in the order they appear in the dominant
+        reading order of the page (e.g., left->right, top->down). But if a text is rotated so the
+        last character is at the top (y position) and first character is at the bottom the extracted
+        element would contain words written in reverse order. This makes the extraction low quality.
+    """
+    low_fidelity_chars = 0
     total_chars = 0
 
     def extract_chars(layout_obj):
         """Recursively extract all LTChar objects from layout."""
-        nonlocal invisible_chars, total_chars
+        nonlocal low_fidelity_chars, total_chars
 
         if isinstance(layout_obj, LTChar):
             total_chars += 1
 
-            # Check if text is invisible:
-            #   - rendering mode 3 (requires custom pdf interpreter comes with this library)
-            if hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3:
-                invisible_chars += 1
+            # Check if text is low_fidelity:
+            #  - rendering mode 3 (requires custom pdf interpreter comes with this library)
+            #  - text is rotated
+            if (
+                hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3
+            ) or _ltchar_is_rotated(layout_obj):
+                low_fidelity_chars += 1
         elif isinstance(layout_obj, LTContainer):
             # Recursively process container's children
             for child in layout_obj:
@@ -406,8 +429,8 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_INVISIBLE_TEXT_RATI
         # when there are no-trivial amount of hidden characters in the object it means there are
         # text that is not rendered -> most likely OCR'ed text for the image content overlying the
         # text and not embedded text that also shows in the rendered pdf
-        invisible_ratio = invisible_chars / total_chars
-        return invisible_ratio < threshold
+        low_fidelity_ratio = low_fidelity_chars / total_chars
+        return low_fidelity_ratio < threshold
     return True
 
 
