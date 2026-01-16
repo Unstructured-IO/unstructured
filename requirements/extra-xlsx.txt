@@ -14,7 +14,7 @@ cryptography==46.0.3
     #   msoffcrypto-tool
 et-xmlfile==2.0.0
     # via openpyxl
-msoffcrypto-tool==5.4.2
+msoffcrypto-tool==6.0.0
     # via -r extra-xlsx.in
 networkx==3.4.2
     # via -r extra-xlsx.in
