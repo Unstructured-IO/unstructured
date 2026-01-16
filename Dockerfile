@@ -80,7 +80,8 @@ ENV HF_HUB_OFFLINE=1
 USER root
 
 # Remove setuptools to remove jaraco.context to fix GHSA-58pv-8j8x-9vj2
-RUN $PIP uninstall -y setuptools
+RUN $PIP uninstall -y setuptools && \
+    chown -R notebook-user:notebook-user /app
 
 USER notebook-user
 
