@@ -7,8 +7,8 @@ import pandas as pd
 import pytest
 import unstructured_pytesseract
 from lxml import etree
-from pdf2image.exceptions import PDFPageCountError
 from PIL import Image, UnidentifiedImageError
+from pypdfium2 import PdfiumError
 from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion, TextRegions
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
@@ -42,7 +42,7 @@ from unstructured.partition.utils.ocr_models.tesseract_ocr import (
     ("is_image", "expected_error"),
     [
         (True, UnidentifiedImageError),
-        (False, PDFPageCountError),
+        (False, PdfiumError),
     ],
 )
 def test_process_data_with_ocr_invalid_file(is_image, expected_error):

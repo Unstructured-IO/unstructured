@@ -174,9 +174,9 @@ class ENVConfig:
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
     @property
-    def PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO(self) -> float:
-        """maximum ratio of invisible text for a text to be considered embedded text"""
-        return self._get_float("PDF_MAX_EMBED_INVISIBLE_TEXT_RATIO", 0.1)
+    def PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO(self) -> float:
+        """maximum ratio of low fidelity charcaters for a text to be considered embedded text"""
+        return self._get_float("PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO", 0.1)
 
     @property
     def GLOBAL_WORKING_DIR_ENABLED(self) -> bool:
@@ -239,6 +239,11 @@ class ENVConfig:
         """the minimum iou between extracted text bboxes and their target inferred element bbox for
         the inferred element to be considered contaning extracted text"""
         return self._get_float("TEXT_COVERAGE_THRESHOLD", 0.25)
+
+    @property
+    def PDF_RENDER_DPI(self) -> int:
+        """The DPI to use for rendering PDF pages"""
+        return self._get_int("PDF_RENDER_DPI", 400)
 
 
 env_config = ENVConfig()
