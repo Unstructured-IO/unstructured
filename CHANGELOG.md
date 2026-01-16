@@ -1,4 +1,4 @@
-## 0.18.30
+## 0.18.30 
 
 ### Enhancements
 - Updated the Dockerfile to build from the chainguard base. Implemented updating and added base-packages that was done in the base-images repo to instead all be done here.
@@ -8,6 +8,7 @@
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
+- Resolve GHSA-58pv-8j8x-9vj2
 
 ## 0.18.29
 
