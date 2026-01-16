@@ -1,4 +1,4 @@
-## 0.18.30-dev3
+## 0.18.30-dev4
 
 ### Enhancement
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
