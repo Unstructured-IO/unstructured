@@ -18,6 +18,12 @@ RUN chown -R notebook-user:notebook-user /app && \
     fc-cache -fv && \
     [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
 
+# Remove unused Python versions
+RUN rm -rf /usr/lib/python3.10 && \
+    rm -rf /usr/lib/python3.11 && \
+    rm -rf /usr/lib/python3.13 && \
+    rm /usr/bin/python3.13
+
 USER notebook-user
 
 # append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
@@ -36,5 +42,12 @@ RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt
     $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 ENV HF_HUB_OFFLINE=1
+
+USER root
+
+# Remove setuptools to remove jaraco.context to fix GHSA-58pv-8j8x-9vj2
+RUN $PIP uninstall -y setuptools
+
+USER notebook-user
 
 CMD ["/bin/bash"]
