@@ -3,7 +3,7 @@
 ### Enhancement
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
-- `chunk_elements` and `chunk_by_title` now always isolate `Table` elements on their own instead of combining them with other elements when conditions (character count, title boundary, etc) allow
+- Add new chunking option `isolate_tables`, default to `False`. When `True`, table elements are not chunked with any other elements.
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)

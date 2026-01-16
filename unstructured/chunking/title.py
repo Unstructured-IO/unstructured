@@ -30,6 +30,7 @@ def chunk_by_title(
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
+    isolate_tables: bool = False,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
@@ -80,6 +81,7 @@ def chunk_by_title(
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
         overlap_all=overlap_all,
+        isolate_tables=isolate_tables,
     )
     return _chunk_by_title(elements, opts)
 

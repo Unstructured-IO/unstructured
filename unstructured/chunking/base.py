@@ -134,6 +134,14 @@ class ChunkingOptions:
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
     @lazyproperty
+    def isolate_tables(self) -> bool:
+        """when True tables are not combined with any other elements no matter the circumstances.
+        Default to False.
+        """
+        arg_value = self._kwargs.get("isolate_tables")
+        return False if arg_value is None else bool(arg_value)
+
+    @lazyproperty
     def include_orig_elements(self) -> bool:
         """When True, add original elements from pre-chunk to `.metadata.orig_elements` of chunk.
 
@@ -383,8 +391,10 @@ class PreChunkBuilder:
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
-        # -- table will only fit into an empty pre-chunk --
-        if element.category == "Table" or self._elements[-1].category == "Table":
+        # -- table will only fit into an empty pre-chunk if isolate tables--
+        if self._opts.isolate_tables and (
+            element.category == "Table" or self._elements[-1].category == "Table"
+        ):
             return False
         # -- a pre-chunk that already exceeds the soft-max is considered "full" --
         if self._text_length > self._opts.soft_max:
@@ -451,7 +461,9 @@ class PreChunk:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
-        if self._elements[-1].category == "Table" or pre_chunk._elements[0].category == "Table":
+        if self._opts.isolate_tables and (
+            self._elements[-1].category == "Table" or pre_chunk._elements[0].category == "Table"
+        ):
             return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
         # -- efficient and definitely more robust than hoping two different computations of combined

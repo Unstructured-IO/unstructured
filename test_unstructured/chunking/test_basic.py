@@ -174,5 +174,8 @@ def test_basic_chunk_isolates_tables():
     assert elements[1].category == "Table"
     assert elements[3].category == "Table"
     chunks = chunk_elements(elements)
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], CompositeElement)
+    chunks = chunk_elements(elements, isolate_tables=True)
     assert chunks[1].category == "Table"
     assert chunks[3].category == "Table"
