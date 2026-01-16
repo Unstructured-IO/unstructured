@@ -19,6 +19,14 @@ RUN apk update && \
       poppler poppler-utils poppler-glib libreoffice tesseract && \
     apk add --allow-untrusted /tmp/packages/pandoc-3.1.8-r0.apk && \
     rm -rf /tmp/packages && \
+    git clone --depth 1 https://github.com/tesseract-ocr/tessdata.git /tmp/tessdata && \
+    mkdir -p /usr/local/share/tessdata && \
+    cp /tmp/tessdata/*.traineddata /usr/local/share/tessdata && \
+    rm -rf /tmp/tessdata && \
+    git clone --depth 1 https://github.com/tesseract-ocr/tessconfigs /tmp/tessconfigs && \
+    cp -r /tmp/tessconfigs/configs /usr/local/share/tessdata && \
+    cp -r /tmp/tessconfigs/tessconfigs /usr/local/share/tessdata && \
+    rm -rf /tmp/tessconfigs && \
     apk cache clean && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/libreoffice && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
