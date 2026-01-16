@@ -44,6 +44,16 @@ def test_it_chunks_text_followed_by_table_together_when_both_fit():
     assert isinstance(chunks[0], CompositeElement)
 
 
+def test_isolate_table_works():
+    elements = elements_from_json(input_path("chunking/title_table_200.json"))
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, isolate_tables=True)
+
+    assert len(chunks) == 2
+    assert isinstance(chunks[0], CompositeElement)
+    assert isinstance(chunks[1], Table)
+
+
 def test_it_chunks_table_followed_by_text_together_when_both_fit():
     elements = elements_from_json(input_path("chunking/table_text_200.json"))
 
@@ -456,19 +466,19 @@ class Describe_chunk_by_title:
         ],
     )
     def it_supports_the_include_orig_elements_option(
-        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+        self, kwargs: dict[str, Any], expected_value: bool, mocked_chunk_by_title_: Mock
     ):
         # -- this line would raise if "include_orig_elements" was not an available parameter on
         # -- `chunk_by_title()`.
         chunk_by_title([], **kwargs)
 
-        _, opts = _chunk_by_title_.call_args.args
+        _, opts = mocked_chunk_by_title_.call_args.args
         assert opts.include_orig_elements is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
-    def _chunk_by_title_(self, request: FixtureRequest):
+    def mocked_chunk_by_title_(self, request: FixtureRequest):
         return function_mock(request, "unstructured.chunking.title._chunk_by_title")
 
 

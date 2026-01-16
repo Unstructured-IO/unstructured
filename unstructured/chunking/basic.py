@@ -29,6 +29,7 @@ def chunk_elements(
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
+    isolate_tables: bool = False,
 ) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
@@ -71,6 +72,7 @@ def chunk_elements(
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
         overlap_all=overlap_all,
+        isolate_tables=isolate_tables,
     )
 
     return _chunk_elements(elements, opts)
