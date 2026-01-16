@@ -1,9 +1,10 @@
-## 0.18.30-dev4
+## 0.18.30-dev5
 
 ### Enhancement
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
 - Optimize `_get_optimal_value_for_bbox` (codeflash)
+- Optimize `_DocxPartitioner._style_based_element_type` (codeflash)
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
