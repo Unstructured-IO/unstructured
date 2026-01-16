@@ -45,6 +45,7 @@ ENV USER=${NB_USER}
 ENV HOME=/home/${NB_USER}
 COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-libreoffice.sh
 
+# Remove unused Python versions
 RUN rm -rf /usr/lib/python3.10 && \
     rm -rf /usr/lib/python3.11 && \
     rm -rf /usr/lib/python3.13 && \
