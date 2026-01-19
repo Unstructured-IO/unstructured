@@ -81,6 +81,8 @@ class OCRAgentPaddle(OCRAgent):
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
+        from unstructured_inference.inference.layoutelement import LayoutElements
+
         ocr_regions = self.get_layout_from_image(image)
 
         # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
