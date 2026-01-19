@@ -26,6 +26,37 @@ def test_clean_non_ascii_chars(text, expected):
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
+        # Basic hyphenated line break
+        ("The docu-\nment is ready", "The document is ready"),
+        # Hyphen with multiple whitespace
+        ("impor-\n   tant information", "important information"),
+        # Multiple hyphenated words
+        ("The docu-\nment con-\ntains impor-\ntant info", "The document contains important info"),
+        # Hyphen at end of line with carriage return
+        ("This is a multi-\r\nline text", "This is a multiline text"),
+        # Hyphen with just spaces (no newline)
+        ("hyph-  enated word", "hyphenated word"),
+        # No hyphens should remain unchanged
+        ("This text has no hyphens", "This text has no hyphens"),
+        # Legitimate hyphens should remain (no whitespace after)
+        ("This has a self-contained word", "This has a self-contained word"),
+    ],
+)
+def test_clean_newline(text, expected):
+    assert core.clean_newline(text) == expected
+
+
+def test_clean_newline_custom_pattern():
+    """Test clean_newline with a custom pattern."""
+    text = "word1--word2"
+    custom_pattern = r"(\w+)--(\w+)"
+    result = core.clean_newline(text, pattern=custom_pattern)
+    assert result == "word1word2"
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
         ("● An excellent point!", "An excellent point!"),
         ("● An excellent point! ●●●", "An excellent point! ●●●"),
         ("An excellent point!", "An excellent point!"),
