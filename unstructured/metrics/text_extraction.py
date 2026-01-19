@@ -50,7 +50,10 @@ _SINGLE_QUOTES = {
     "｣": "U+FF63",  # HALFWIDTH RIGHT CORNER BRACKET
 }
 
-_TRANSLATION_TABLE = {}
+_TRANSLATION_TABLE = str.maketrans(
+    {chr(int(v.replace("U+", ""), 16)): '"' for v in _DOUBLE_QUOTES.values()}
+    | {chr(int(v.replace("U+", ""), 16)): "'" for v in _SINGLE_QUOTES.values()}
+)
 
 
 def calculate_accuracy(
@@ -223,23 +226,3 @@ def standardize_quotes(text: str) -> str:
     return text.translate(_TRANSLATION_TABLE)
 
 
-def unicode_to_char(unicode_val: str) -> str:
-    """
-    Converts a Unicode value to a character.
-
-    Args:
-        unicode_val (str): The Unicode value to convert.
-
-    Returns:
-        str: The character corresponding to the Unicode value.
-    """
-    return chr(int(unicode_val.replace("U+", ""), 16))
-
-
-for unicode_val in _DOUBLE_QUOTES.values():
-    char_code = int(unicode_val.replace("U+", ""), 16)
-    _TRANSLATION_TABLE[char_code] = ord('"')
-
-for unicode_val in _SINGLE_QUOTES.values():
-    char_code = int(unicode_val.replace("U+", ""), 16)
-    _TRANSLATION_TABLE[char_code] = ord("'")
