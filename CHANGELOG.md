@@ -1,4 +1,4 @@
-## 0.18.30-dev5
+## 0.18.30
 
 ### Enhancement
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
@@ -7,6 +7,7 @@
 - Optimize `_DocxPartitioner._style_based_element_type` (codeflash)
 
 ### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
 - **Change `languages` parameter default from `["auto"]` to `None`**: Updated default value in `detect_languages()` and `partition_epub()` functions. Behavior unchanged as `None` is converted to `["auto"]` internally. (fixes #2471)
 - Resolve GHSA-58pv-8j8x-9vj2
