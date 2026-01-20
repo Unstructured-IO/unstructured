@@ -1,11 +1,16 @@
-## 0.18.30-dev6
+## 0.18.31-dev0
 
-### Enhancement
+### Enhancements
+- Changed default DPI to 350
+
+## 0.18.30 
+
+### Enhancements
+- Updated the Dockerfile to build from the chainguard base. Implemented updating and added base-packages that was done in the base-images repo to instead all be done here.
 - `is_text_embedded` now considers rotated text as low fidelity and and elements with no trivial amount of it are considered not embedded
 - Replace `pdf2image` with PyPDFium2 for PDF rendering
 - Optimize `_get_optimal_value_for_bbox` (codeflash)
 - Optimize `_DocxPartitioner._style_based_element_type` (codeflash)
-- Changed default DPI to 350
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
