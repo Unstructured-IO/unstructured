@@ -2,6 +2,7 @@ import base64
 import io
 import os
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -60,6 +61,29 @@ def test_convert_pdf_to_image(file_mode, path_only):
             assert isinstance(images[0], str)
         else:
             assert isinstance(images[0], PILImg.Image)
+
+
+def test_convert_pdf_to_image_multithread():
+    filenames = [
+        example_doc_path("pdf/embedded-images.pdf"),
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        example_doc_path("pdf/embedded-images.pdf"),
+    ]
+    with tempfile.TemporaryDirectory() as tmpdir:
+
+        def _task(filename):
+            return pdf_image_utils.convert_pdf_to_image(
+                filename=filename,
+                file=None,
+                output_folder=tmpdir,
+                path_only=True,
+            )
+
+        with ThreadPoolExecutor(max_workers=3) as exe:
+            results = exe.map(_task, filenames)
+
+        for result in results:
+            assert isinstance(result[0], str)
 
 
 def test_convert_pdf_to_image_raises_error():
