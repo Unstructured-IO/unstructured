@@ -321,9 +321,7 @@ class ChunkingOptions:
         # -- want to know about
         new_after_n_chars = self._kwargs.get("new_after_n_chars")
         if new_after_n_chars is not None and new_after_n_chars < 0:
-            raise ValueError(
-                f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}"
-            )
+            raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
 
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
