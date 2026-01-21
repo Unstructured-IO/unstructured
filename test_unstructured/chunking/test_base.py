@@ -15,6 +15,7 @@ from unstructured.chunking.base import (
     PreChunkBuilder,
     PreChunkCombiner,
     PreChunker,
+    TokenCounter,
     _CellAccumulator,
     _Chunker,
     _HtmlTableSplitter,
@@ -157,6 +158,180 @@ class DescribeChunkingOptions:
 
     def it_knows_the_text_separator_string(self):
         assert ChunkingOptions().text_separator == "\n\n"
+
+    # -- Token-based chunking tests --
+
+    def it_rejects_max_tokens_and_max_characters_together(self):
+        with pytest.raises(
+            ValueError,
+            match="'max_tokens' and 'max_characters' are mutually exclusive",
+        ):
+            ChunkingOptions(max_tokens=100, max_characters=500)._validate()
+
+    def it_rejects_max_tokens_without_tokenizer(self):
+        with pytest.raises(
+            ValueError,
+            match="'tokenizer' is required when using 'max_tokens'",
+        ):
+            ChunkingOptions(max_tokens=100)._validate()
+
+    @pytest.mark.parametrize("max_tokens", [0, -1, -42])
+    def it_rejects_max_tokens_not_greater_than_zero(self, max_tokens: int):
+        with pytest.raises(
+            ValueError,
+            match=f"'max_tokens' argument must be > 0, got {max_tokens}",
+        ):
+            ChunkingOptions(max_tokens=max_tokens, tokenizer="cl100k_base")._validate()
+
+    def it_rejects_new_after_n_tokens_without_max_tokens(self):
+        with pytest.raises(
+            ValueError,
+            match="'new_after_n_tokens' requires 'max_tokens' to be specified",
+        ):
+            ChunkingOptions(new_after_n_tokens=50)._validate()
+
+    @pytest.mark.parametrize("n_tokens", [-1, -42])
+    def it_rejects_new_after_n_tokens_for_n_less_than_zero(self, n_tokens: int):
+        with pytest.raises(
+            ValueError,
+            match=f"'new_after_n_tokens' argument must be >= 0, got {n_tokens}",
+        ):
+            ChunkingOptions(
+                max_tokens=100, new_after_n_tokens=n_tokens, tokenizer="cl100k_base"
+            )._validate()
+
+    def it_knows_when_token_counting_is_enabled(self):
+        opts_char = ChunkingOptions(max_characters=500)
+        opts_token = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        assert opts_char.use_token_counting is False
+        assert opts_token.use_token_counting is True
+
+    def it_returns_hard_max_in_tokens_when_token_counting_is_enabled(self):
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        assert opts.hard_max == 100
+
+    def it_returns_soft_max_in_tokens_when_token_counting_is_enabled(self):
+        opts = ChunkingOptions(max_tokens=100, new_after_n_tokens=80, tokenizer="cl100k_base")
+        assert opts.soft_max == 80
+
+    def it_defaults_soft_max_to_hard_max_for_token_counting(self):
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        assert opts.soft_max == 100
+
+    def it_creates_token_counter_when_tokenizer_is_specified(self):
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        assert opts.token_counter is not None
+
+    def it_returns_no_token_counter_when_tokenizer_is_not_specified(self):
+        opts = ChunkingOptions(max_characters=500)
+        assert opts.token_counter is None
+
+    def it_measures_text_in_characters_by_default(self):
+        opts = ChunkingOptions(max_characters=500)
+        text = "Hello, World!"
+        assert opts.measure(text) == len(text)
+
+
+# ================================================================================================
+# TOKEN COUNTER
+# ================================================================================================
+
+
+class DescribeTokenCounter:
+    """Unit-test suite for `unstructured.chunking.base.TokenCounter` objects."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    def it_counts_tokens_using_encoding_name(self, _tiktoken_installed: None):
+        from unstructured.chunking.base import TokenCounter
+
+        counter = TokenCounter("cl100k_base")
+        # -- "Hello, World!" is typically tokenized as ["Hello", ",", " World", "!"] = 4 tokens --
+        count = counter.count("Hello, World!")
+        assert isinstance(count, int)
+        assert count > 0
+
+    def it_counts_tokens_using_model_name(self, _tiktoken_installed: None):
+        from unstructured.chunking.base import TokenCounter
+
+        counter = TokenCounter("gpt-4")
+        count = counter.count("Hello, World!")
+        assert isinstance(count, int)
+        assert count > 0
+
+    def it_lazily_imports_tiktoken(self, _tiktoken_installed: None):
+        from unstructured.chunking.base import TokenCounter
+
+        counter = TokenCounter("cl100k_base")
+        # -- encoder should not be initialized until count is called --
+        assert "_encoder" not in counter.__dict__
+        counter.count("test")
+        # -- now encoder should be cached --
+        assert "_encoder" in counter.__dict__
+
+
+# ================================================================================================
+# TEXT SPLITTER (TOKEN MODE)
+# ================================================================================================
+
+
+class DescribeTextSplitterTokenMode:
+    """Unit-test suite for `_TextSplitter` in token-based chunking mode."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    def it_returns_text_unchanged_when_under_token_limit(self, _tiktoken_installed: None):
+        opts = ChunkingOptions(max_tokens=100, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+
+        text = "Hello, World!"
+        fragment, remainder = split(text)
+
+        assert fragment == text
+        assert remainder == ""
+
+    def it_splits_oversized_text_respecting_token_limit(self, _tiktoken_installed: None):
+        opts = ChunkingOptions(max_tokens=10, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+
+        # -- create text that exceeds 10 tokens --
+        text = "The quick brown fox jumps over the lazy dog. " * 5
+        fragment, remainder = split(text)
+
+        # -- fragment should be non-empty and have fewer tokens than the limit --
+        assert len(fragment) > 0
+        assert len(remainder) > 0
+        assert opts.measure(fragment) <= 10
+
+    def it_prefers_separator_boundaries_when_splitting(self, _tiktoken_installed: None):
+        opts = ChunkingOptions(max_tokens=15, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+
+        # -- text with clear sentence boundaries --
+        text = "First sentence here. Second sentence here. Third sentence here."
+        fragment, remainder = split(text)
+
+        # -- should split on a sentence/word boundary, not mid-word --
+        assert fragment.endswith(".") or fragment[-1].isalnum()
+        assert not fragment.endswith(" ")
+
+    def it_handles_text_with_no_good_split_points(self, _tiktoken_installed: None):
+        opts = ChunkingOptions(max_tokens=5, tokenizer="cl100k_base")
+        split = _TextSplitter(opts)
+
+        # -- single long word repeated --
+        text = "Supercalifragilisticexpialidocious " * 10
+        fragment, remainder = split(text)
+
+        # -- should still produce a valid split --
+        assert len(fragment) > 0
+        assert opts.measure(fragment) <= 5
 
 
 # ================================================================================================

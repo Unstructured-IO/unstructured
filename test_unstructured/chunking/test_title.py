@@ -539,3 +539,93 @@ class Describe_ByTitleChunkingOptions:
     ):
         opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
         assert opts.multipage_sections is expected_value
+
+
+# ================================================================================================
+# TOKEN-BASED CHUNKING INTEGRATION TESTS
+# ================================================================================================
+
+
+class DescribeTokenBasedChunking:
+    """Integration tests for token-based chunking with chunk_by_title()."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    def it_chunks_elements_by_token_count(self, _tiktoken_installed: None):
+        """Test that chunk_by_title works with max_tokens parameter."""
+        elements: list[Element] = [
+            Title("Introduction"),
+            Text("This is a test document with some text content."),
+            Text("Here is more content that should be chunked appropriately."),
+        ]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=20,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=0,
+        )
+
+        # -- verify chunks were created --
+        assert len(chunks) >= 1
+        assert all(isinstance(chunk, (CompositeElement, Table, TableChunk)) for chunk in chunks)
+
+    def it_respects_new_after_n_tokens_soft_limit(self, _tiktoken_installed: None):
+        """Test that new_after_n_tokens creates smaller chunks."""
+        elements: list[Element] = [
+            Title("Section 1"),
+            Text("Some text for section one."),
+            Text("More text for section one."),
+            Title("Section 2"),
+            Text("Text for section two."),
+        ]
+
+        # -- with a low soft limit, each section should become its own chunk --
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=100,
+            new_after_n_tokens=10,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=0,
+        )
+
+        # -- verify we get multiple chunks --
+        assert len(chunks) >= 2
+
+    def it_rejects_max_tokens_and_max_characters_together(self, _tiktoken_installed: None):
+        """Test that specifying both max_tokens and max_characters raises ValueError."""
+        elements: list[Element] = [Text("Some text")]
+
+        with pytest.raises(ValueError, match="mutually exclusive"):
+            chunk_by_title(
+                elements,
+                max_tokens=100,
+                max_characters=500,
+                tokenizer="cl100k_base",
+            )
+
+    def it_rejects_max_tokens_without_tokenizer(self, _tiktoken_installed: None):
+        """Test that max_tokens requires tokenizer to be specified."""
+        elements: list[Element] = [Text("Some text")]
+
+        with pytest.raises(ValueError, match="'tokenizer' is required"):
+            chunk_by_title(elements, max_tokens=100)
+
+    def it_accepts_model_name_as_tokenizer(self, _tiktoken_installed: None):
+        """Test that model names like 'gpt-4' work as tokenizer."""
+        elements: list[Element] = [
+            Title("Test"),
+            Text("Some test content."),
+        ]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=50,
+            tokenizer="gpt-4",
+            combine_text_under_n_chars=0,
+        )
+
+        assert len(chunks) >= 1
