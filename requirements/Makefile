@@ -8,19 +8,19 @@ all: compile-all-base
 
 .PHONY: compile-test
 compile-test:
-	pip-compile --upgrade test.in
+	uv pip compile --upgrade test.in -o test.txt
 
 .PHONY: compile-dev
 compile-dev:
-	pip-compile --upgrade dev.in
+	uv pip compile --upgrade dev.in -o dev.txt
 
 .PHONY: compile-base
 compile-base:
-	pip-compile --upgrade base.in
+	uv pip compile --upgrade base.in -o base.txt
 
 .PHONY: compile-all-base
 compile-all-base: compile-base compile-test compile-dev
-	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --upgrade $(file) || exit;)
+	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && uv pip compile --no-strip-extras --upgrade $(file) -o $${file%.in}.txt || exit;)
 
 .PHONY: clean
 clean: clean-base
