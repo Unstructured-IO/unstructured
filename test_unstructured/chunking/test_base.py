@@ -246,8 +246,6 @@ class DescribeTokenCounter:
         pytest.importorskip("tiktoken")
 
     def it_counts_tokens_using_encoding_name(self, _tiktoken_installed: None):
-        from unstructured.chunking.base import TokenCounter
-
         counter = TokenCounter("cl100k_base")
         # -- "Hello, World!" is typically tokenized as ["Hello", ",", " World", "!"] = 4 tokens --
         count = counter.count("Hello, World!")
@@ -255,16 +253,12 @@ class DescribeTokenCounter:
         assert count > 0
 
     def it_counts_tokens_using_model_name(self, _tiktoken_installed: None):
-        from unstructured.chunking.base import TokenCounter
-
         counter = TokenCounter("gpt-4")
         count = counter.count("Hello, World!")
         assert isinstance(count, int)
         assert count > 0
 
     def it_lazily_imports_tiktoken(self, _tiktoken_installed: None):
-        from unstructured.chunking.base import TokenCounter
-
         counter = TokenCounter("cl100k_base")
         # -- encoder should not be initialized until count is called --
         assert "_encoder" not in counter.__dict__
