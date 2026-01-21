@@ -46,6 +46,32 @@ BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 TextAndHtml: TypeAlias = tuple[str, str]
 
 
+class TokenCounter:
+    """Token counting using tiktoken for token-based chunking.
+
+    Lazily imports tiktoken only when token counting is first used.
+    """
+
+    def __init__(self, tokenizer: str):
+        self._tokenizer_name = tokenizer
+
+    @lazyproperty
+    def _encoder(self):
+        """Lazily initialize the tiktoken encoder."""
+        import tiktoken
+
+        try:
+            # -- try as model name first (e.g., "gpt-4") --
+            return tiktoken.encoding_for_model(self._tokenizer_name)
+        except KeyError:
+            # -- fall back to encoding name (e.g., "cl100k_base") --
+            return tiktoken.get_encoding(self._tokenizer_name)
+
+    def count(self, text: str) -> int:
+        """Return the number of tokens in `text`."""
+        return len(self._encoder.encode(text))
+
+
 # ================================================================================================
 # CHUNKING OPTIONS
 # ================================================================================================
@@ -58,7 +84,11 @@ class ChunkingOptions:
     ----------
     max_characters
         Hard-maximum text-length of chunk. A chunk longer than this will be split mid-text and be
-        emitted as two or more chunks.
+        emitted as two or more chunks. Mutually exclusive with `max_tokens`.
+    max_tokens
+        Hard-maximum token count of chunk. A chunk with more tokens than this will be split mid-text
+        and be emitted as two or more chunks. Requires `tokenizer` to be specified. Mutually
+        exclusive with `max_characters`.
     new_after_n_chars
         Preferred approximate chunk size. A chunk composed of elements totalling this size or
         greater is considered "full" and will not be enlarged by adding another element, even if it
@@ -66,6 +96,9 @@ class ChunkingOptions:
         when not specified, which effectively disables this behavior. Specifying 0 for this
         argument causes each element to appear in a chunk by itself (although an element with text
         longer than `max_characters` will be still be split into two or more chunks).
+    new_after_n_tokens
+        Token-based equivalent of `new_after_n_chars`. Preferred approximate chunk size in tokens.
+        Requires `tokenizer` and `max_tokens` to be specified.
     combine_text_under_n_chars
         Provides a way to "recombine" small chunks formed by breaking on a semantic boundary. Only
         relevant for a chunking strategy that specifies higher-level semantic boundaries to be
@@ -92,6 +125,9 @@ class ChunkingOptions:
         This separator should not be specified in this sequence because it is always the separator
         of last-resort. Note that because the separator is removed during text-splitting, only
         whitespace character sequences are suitable.
+    tokenizer
+        The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
+        "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
     """
 
     def __init__(self, **kwargs: Any):
@@ -124,12 +160,16 @@ class ChunkingOptions:
 
     @lazyproperty
     def hard_max(self) -> int:
-        """The maximum size for a chunk.
+        """The maximum size for a chunk (in characters or tokens depending on mode).
 
         A pre-chunk will only exceed this size when it contains exactly one element which by itself
         exceeds this size. Such a pre-chunk is subject to mid-text splitting later in the chunking
         process.
         """
+        if self.use_token_counting:
+            # -- token-based chunking: max_tokens is required and validated --
+            return self._kwargs["max_tokens"]
+
         arg_value = self._kwargs.get("max_characters")
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
@@ -170,6 +210,17 @@ class ChunkingOptions:
         each element into its own chunk.
         """
         hard_max = self.hard_max
+
+        if self.use_token_counting:
+            new_after_n_tokens_arg = self._kwargs.get("new_after_n_tokens")
+            # -- default value is == max_tokens --
+            if new_after_n_tokens_arg is None:
+                return hard_max
+            # -- new_after_n_tokens > max_tokens behaves the same as ==max_tokens --
+            if new_after_n_tokens_arg > hard_max:
+                return hard_max
+            return new_after_n_tokens_arg
+
         new_after_n_chars_arg = self._kwargs.get("new_after_n_chars")
 
         # -- default value is == max_characters --
@@ -212,26 +263,73 @@ class ChunkingOptions:
             else tuple(text_splitting_separators_arg)
         )
 
+    @lazyproperty
+    def token_counter(self) -> TokenCounter | None:
+        """The token counter for token-based chunking, or None for character-based chunking."""
+        tokenizer = self._kwargs.get("tokenizer")
+        return TokenCounter(tokenizer) if tokenizer else None
+
+    @lazyproperty
+    def use_token_counting(self) -> bool:
+        """True when token-based chunking is configured, False for character-based."""
+        return self._kwargs.get("max_tokens") is not None
+
+    def measure(self, text: str) -> int:
+        """Return the size of `text` in the configured units (characters or tokens)."""
+        if self.use_token_counting and self.token_counter:
+            return self.token_counter.count(text)
+        return len(text)
+
     def _validate(self) -> None:
         """Raise ValueError if requestion option-set is invalid."""
-        max_characters = self.hard_max
+        max_tokens = self._kwargs.get("max_tokens")
+        max_characters = self._kwargs.get("max_characters")
+        tokenizer = self._kwargs.get("tokenizer")
+
+        # -- max_tokens and max_characters are mutually exclusive --
+        if max_tokens is not None and max_characters is not None:
+            raise ValueError(
+                "'max_tokens' and 'max_characters' are mutually exclusive;"
+                " specify one or the other, not both"
+            )
+
+        # -- max_tokens requires tokenizer --
+        if max_tokens is not None and tokenizer is None:
+            raise ValueError("'tokenizer' is required when using 'max_tokens'")
+
+        # -- max_tokens must be positive --
+        if max_tokens is not None and max_tokens <= 0:
+            raise ValueError(f"'max_tokens' argument must be > 0, got {max_tokens}")
+
+        # -- new_after_n_tokens requires max_tokens --
+        new_after_n_tokens = self._kwargs.get("new_after_n_tokens")
+        if new_after_n_tokens is not None and max_tokens is None:
+            raise ValueError("'new_after_n_tokens' requires 'max_tokens' to be specified")
+
+        # -- new_after_n_tokens must be non-negative --
+        if new_after_n_tokens is not None and new_after_n_tokens < 0:
+            raise ValueError(
+                f"'new_after_n_tokens' argument must be >= 0, got {new_after_n_tokens}"
+            )
+
         # -- chunking window must have positive length --
-        if max_characters <= 0:
-            raise ValueError(f"'max_characters' argument must be > 0," f" got {max_characters}")
+        hard_max = self.hard_max
+        if hard_max <= 0:
+            raise ValueError(f"'max_characters' argument must be > 0, got {hard_max}")
 
         # -- a negative value for `new_after_n_chars` is assumed to be a mistake the caller will
         # -- want to know about
         new_after_n_chars = self._kwargs.get("new_after_n_chars")
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(
-                f"'new_after_n_chars' argument must be >= 0," f" got {new_after_n_chars}"
+                f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}"
             )
 
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
-        if self.overlap >= max_characters:
+        if self.overlap >= hard_max:
             raise ValueError(
                 f"'overlap' argument must be less than `max_characters`,"
-                f" got {self.overlap} >= {max_characters}"
+                f" got {self.overlap} >= {hard_max}"
             )
 
 
@@ -347,6 +445,7 @@ class PreChunkBuilder:
         self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
+            # -- only track char-based length; token-based length computed on demand --
             self._text_len += len(element.text)
 
     def flush(self) -> Iterator[PreChunk]:
@@ -376,9 +475,9 @@ class PreChunkBuilder:
           pre-chunk.
         - No element will fit in a pre-chunk that already contains a `Table` element.
         - A text-element will not fit in a pre-chunk that already exceeds the soft-max
-          (aka. new_after_n_chars).
+          (aka. new_after_n_chars/new_after_n_tokens).
         - A text-element will not fit when together with the elements already present it would
-          exceed the hard-max (aka. max_characters).
+          exceed the hard-max (aka. max_characters/max_tokens).
         """
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
@@ -387,6 +486,13 @@ class PreChunkBuilder:
         if self._text_length > self._opts.soft_max:
             return False
         # -- don't add an element if it would increase total size beyond the hard-max --
+        # -- for token counting, compute what the new total would be --
+        if self._opts.use_token_counting:
+            new_text = self._opts.text_separator.join(
+                self._text_segments + ([element.text] if element.text else [])
+            )
+            return self._opts.measure(new_text) <= self._opts.hard_max
+        # -- for character counting, use the efficient incremental approach --
         return not self._remaining_space < len(element.text or "")
 
     @property
@@ -405,7 +511,7 @@ class PreChunkBuilder:
 
     @property
     def _text_length(self) -> int:
-        """Length of the text in this pre-chunk.
+        """Size of the text in this pre-chunk (in characters or tokens depending on mode).
 
         This value represents the chunk-size that would result if this pre-chunk was flushed in its
         current state. In particular, it does not include the length of a trailing separator (since
@@ -413,6 +519,14 @@ class PreChunkBuilder:
 
         Not suitable for judging remaining space, use `.remaining_space` for that value.
         """
+        # -- for token counting, compute the actual token count of the joined text --
+        if self._opts.use_token_counting:
+            if not self._text_segments:
+                return 0
+            text = self._opts.text_separator.join(self._text_segments)
+            return self._opts.measure(text)
+
+        # -- for character counting, use the efficient incremental approach --
         # -- number of text separators present in joined text of elements. This includes only
         # -- separators *between* text segments, not one at the end. Note there are zero separators
         # -- for both 0 and 1 text-segments.
@@ -714,7 +828,11 @@ class _TableChunker:
 
         # -- only text-split a table when it's longer than the chunking window --
         maxlen = self._opts.hard_max
-        if len(self._text_with_overlap) <= maxlen and len(self._html) <= maxlen:
+        measure = self._opts.measure
+        text_size = measure(self._text_with_overlap)
+        html_size = measure(self._html) if self._html else 0
+
+        if text_size <= maxlen and html_size <= maxlen:
             # -- use the compactified html for .text_as_html, even though we're not splitting --
             metadata = self._metadata
             metadata.text_as_html = self._html or None
@@ -723,11 +841,11 @@ class _TableChunker:
             return
 
         # -- When there's no HTML, split it like a normal element. Also fall back to text-only
-        # -- chunks when `max_characters` is less than 50. `.text_as_html` metadata is impractical
-        # -- for a chunking window that small because the 33 characters of HTML overhead for each
-        # -- chunk (`<table><tr><td>...</td></tr></table>`) would produce a very large number of
-        # -- very small chunks.
-        if not self._html or self._opts.hard_max < 50:
+        # -- chunks when `max_characters` is less than 50 (or in token mode, less than 15 tokens).
+        # -- `.text_as_html` metadata is impractical for a chunking window that small because the
+        # -- 33 characters of HTML overhead for each chunk would produce many very small chunks.
+        min_html_threshold = 15 if self._opts.use_token_counting else 50
+        if not self._html or self._opts.hard_max < min_html_threshold:
             yield from self._iter_text_only_table_chunks()
             return
 
@@ -928,7 +1046,17 @@ class _HtmlTableSplitter:
     def _iter_cell_splits(self, cell: HtmlCell) -> Iterator[TextAndHtml]:
         """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
         # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
-        opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
+        # -- For token-based chunking, we subtract 33 chars worth of overhead but still use tokens
+        # -- for the actual content limit. For character-based, we use the reduced character limit.
+        if self._opts.use_token_counting:
+            # -- In token mode, keep token limit but account for HTML overhead in char terms --
+            # -- The HTML tags themselves are usually ~10-15 tokens, so we reduce by a small amount
+            opts = ChunkingOptions(
+                max_tokens=max(1, self._opts.hard_max - 10),
+                tokenizer=self._opts._kwargs.get("tokenizer"),
+            )
+        else:
+            opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
         split = _TextSplitter(opts)
 
         text, remainder = split(cell.text)
@@ -966,9 +1094,9 @@ class _TextSplitter:
         """Return pair of strings split from `s` on the best match of configured patterns.
 
         The first string is the split, the second is the remainder of the string. The split string
-        will never be longer than `maxlen`. The separators are tried in order until a match is
-        found. The last separator is "" which matches between any two characters so there will
-        always be a split.
+        will never be longer than `maxlen` (in characters or tokens depending on mode). The
+        separators are tried in order until a match is found. The last separator is "" which matches
+        between any two characters so there will always be a split.
 
         The separator is removed and does not appear in the split or remainder.
 
@@ -978,6 +1106,13 @@ class _TextSplitter:
         """
         maxlen = self._opts.hard_max
 
+        # -- for token counting, use the measurement abstraction for size check --
+        if self._opts.use_token_counting:
+            if self._opts.measure(s) <= maxlen:
+                return s, ""
+            return self._split_by_tokens(s)
+
+        # -- character-based splitting (original logic) --
         if len(s) <= maxlen:
             return s, ""
 
@@ -998,6 +1133,75 @@ class _TextSplitter:
         # -- trivial and provides a hard back-stop here in this method. No separator is used between
         # -- tail and remainder on arb-char split.
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
+
+    def _split_by_tokens(self, s: str) -> tuple[str, str]:
+        """Split text `s` on a separator boundary while respecting token limits.
+
+        Tries each separator in order of preference, looking for the rightmost split position
+        that keeps the fragment under the token limit. Falls back to splitting on whitespace
+        boundaries if no separator works.
+        """
+        maxlen = self._opts.hard_max
+        overlap = self._opts.overlap
+        measure = self._opts.measure
+
+        # -- try each separator in order of preference --
+        for pattern, _ in self._patterns:
+            # -- find all matches of this separator in the string --
+            matches = list(pattern.finditer(s))
+            # -- try matches from right to left to find rightmost valid split --
+            for match in reversed(matches):
+                match_start, match_end = match.span()
+                # -- skip if fragment would be too short (less than overlap) --
+                if match_start <= overlap:
+                    continue
+                fragment = s[:match_start].rstrip()
+                # -- check if fragment fits within token limit --
+                if measure(fragment) <= maxlen:
+                    raw_remainder = s[match_end:].lstrip()
+                    # -- add overlap if configured --
+                    if overlap > 0:
+                        # -- for token-based overlap, take approximately `overlap` chars --
+                        tail = fragment[-overlap:].lstrip() if len(fragment) > overlap else fragment
+                        overlapped_remainder = tail + " " + raw_remainder
+                        return fragment, overlapped_remainder
+                    return fragment, raw_remainder
+
+        # -- fallback: split on whitespace boundary using binary search to find token limit --
+        # -- find the approximate character position that corresponds to maxlen tokens --
+        low, high = 0, len(s)
+        best_pos = max(overlap + 1, 1)  # -- minimum viable position --
+
+        while low <= high:
+            mid = (low + high) // 2
+            if measure(s[:mid]) <= maxlen:
+                best_pos = mid
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        # -- try to find a whitespace boundary near best_pos, searching backwards --
+        split_pos = best_pos
+        for i in range(best_pos, max(overlap, 0), -1):
+            if i < len(s) and s[i].isspace():
+                split_pos = i
+                break
+
+        # -- ensure the fragment still fits after whitespace adjustment --
+        fragment = s[:split_pos].rstrip()
+        if measure(fragment) > maxlen and split_pos > overlap + 1:
+            # -- whitespace boundary pushed us over; use the binary search result directly --
+            fragment = s[:best_pos].rstrip()
+            split_pos = best_pos
+
+        raw_remainder = s[split_pos:].lstrip()
+
+        if overlap > 0 and fragment:
+            tail = fragment[-overlap:].lstrip() if len(fragment) > overlap else fragment
+            overlapped_remainder = tail + " " + raw_remainder
+            return fragment, overlapped_remainder
+
+        return fragment, raw_remainder
 
     @lazyproperty
     def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
