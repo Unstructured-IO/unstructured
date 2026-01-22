@@ -8,6 +8,7 @@
 ### Enhancements
 - Changed default DPI to 350
 - **Add token-based chunking support**: Added `max_tokens`, `new_after_n_tokens`, and `tokenizer` parameters to `chunk_by_title()` and `chunk_elements()` for chunking by token count instead of character count. Uses tiktoken for token counting. Install with `pip install "unstructured[chunking-tokens]"`. (fixes #4127)
+- **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
 
 ### Fixes
 - Resolved security vulnerabilities in base system dependencies
