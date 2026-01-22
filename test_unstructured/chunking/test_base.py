@@ -1060,8 +1060,7 @@ class Describe_HtmlTableSplitter:
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <table border="1" class="dataframe">
               <tbody>
                 <tr>
@@ -1092,8 +1091,7 @@ class Describe_HtmlTableSplitter:
                 </tr>
               </tbody>
             </table>
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1118,8 +1116,7 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
         opts = ChunkingOptions(max_characters=(93))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <html><body><table>
               <tr>
                 <td>Lorem ipsum dolor sit amet.</td>
@@ -1138,8 +1135,7 @@ class Describe_HtmlTableSplitter:
                 <td>Cillum</td>
               </tr>
             </table></body></html>
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1164,8 +1160,7 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_cell_on_an_even_word_boundary(self):
         opts = ChunkingOptions(max_characters=(100))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <table>
               <thead>
                 <tr>
@@ -1184,8 +1179,7 @@ class Describe_HtmlTableSplitter:
                 <tr><td>In reprehenderit voluptate.</td></tr>
               </tbody>
             </table
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
