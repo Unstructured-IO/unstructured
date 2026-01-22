@@ -333,25 +333,19 @@ class DescribeTextSplitterTokenMode:
         opts = ChunkingOptions(max_tokens=10, tokenizer="cl100k_base", overlap=3)
         split = _TextSplitter(opts)
 
-        # -- text that will need to be split --
+        # -- text that will need to be split (14 tokens total) --
         text = "apple banana cherry date elderberry fig grape honeydew kiwi lemon"
         fragment, remainder = split(text)
 
-        # -- fragment should respect token limit --
-        assert opts.measure(fragment) <= 10
+        # -- verify exact fragment content (8 tokens, split at sentence boundary) --
+        assert fragment == "apple banana cherry date elderberry fig grape"
+        assert opts.measure(fragment) == 8
 
-        # -- remainder should start with overlap content from end of fragment --
-        # -- the overlap should be approximately 3 tokens worth --
-        assert len(remainder) > 0
-
-        # -- verify that the overlap in remainder is token-based --
-        # -- extract what appears to be the overlap portion --
-        # -- it should be a few words, not just 3 characters --
-        words_in_remainder = remainder.split()
-        # -- with token-based overlap, we expect multiple words (not just 3 chars) --
-        assert (
-            len(words_in_remainder) >= 2
-        ), "Token-based overlap should include multiple words, not just characters"
+        # -- verify exact remainder content (overlap + remaining text) --
+        # -- "fig grape" is the 3-token overlap from end of fragment --
+        assert remainder == "fig grape honeydew kiwi lemon"
+        # -- remainder starts with overlap words from fragment --
+        assert remainder.startswith("fig grape")
 
     def it_computes_token_overlap_tail_correctly(self, _tiktoken_installed: None):
         """Test the _get_token_overlap_tail helper method."""
@@ -365,16 +359,9 @@ class DescribeTextSplitterTokenMode:
         # -- request 3 tokens worth of tail --
         tail = splitter._get_token_overlap_tail(text, 3)
 
-        # -- tail should contain approximately 3 tokens --
-        tail_tokens = len(enc.encode(tail))
-        assert tail_tokens <= 3, f"Expected ~3 tokens, got {tail_tokens}"
-        # -- tail should be from the end of the text --
-        assert tail in text
-        # -- tail should start at a word boundary (no partial words) --
-        assert not tail[0].isspace(), "Tail should not start with whitespace"
-        # -- first character should be a letter (complete word, not mid-word) --
-        first_word = tail.split()[0]
-        assert first_word[0].isalpha(), f"Tail starts with partial word: {first_word}"
+        # -- verify exact tail content: "lazy dog." is exactly 3 tokens --
+        assert tail == "lazy dog."
+        assert len(enc.encode(tail)) == 3
 
     def it_handles_overlap_when_text_has_fewer_tokens_than_target(self, _tiktoken_installed: None):
         """When text has fewer tokens than overlap target, return all text."""
@@ -392,25 +379,25 @@ class DescribeTextSplitterTokenMode:
         opts = ChunkingOptions(max_tokens=8, tokenizer="cl100k_base", overlap=2)
         split = _TextSplitter(opts)
 
-        # -- create text that will need multiple splits --
+        # -- create text that will need multiple splits (12 tokens total) --
         text = "one two three four five six seven eight nine ten eleven twelve"
 
         # -- first split --
         fragment1, remainder1 = split(text)
-        assert opts.measure(fragment1) <= 8
 
-        # -- second split --
+        # -- verify exact first fragment (8 tokens) --
+        assert fragment1 == "one two three four five six seven eight"
+        assert opts.measure(fragment1) == 8
+
+        # -- verify exact remainder with overlap --
+        # -- "seven eight" is the 2-token overlap from end of fragment1 --
+        assert remainder1 == "seven eight nine ten eleven twelve"
+        assert remainder1.startswith("seven eight")
+
+        # -- second split consumes remainder completely (6 tokens, under limit) --
         fragment2, remainder2 = split(remainder1)
-        assert opts.measure(fragment2) <= 8
-
-        # -- verify the overlap appears at start of remainder --
-        # -- remainder1 should start with tokens from end of fragment1 --
-        # -- with 2-token overlap, we expect overlap words at start of remainder --
-        # -- the exact overlap depends on tokenization, but should be present --
-        assert len(remainder1.split()) > 0
-        # -- verify some content from fragment1 appears at start of remainder1 --
-        # -- (overlap mechanism prepends tail to remainder) --
-        assert any(word in remainder1 for word in fragment1.split()[-3:])
+        assert fragment2 == "seven eight nine ten eleven twelve"
+        assert remainder2 == ""
 
 
 # ================================================================================================
