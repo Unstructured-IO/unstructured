@@ -1146,21 +1146,22 @@ class _TextSplitter:
         # -- try each separator in order of preference --
         for pattern, _ in self._patterns:
             # -- find all matches of this separator in the string --
+            # -- note: (?r) flag makes finditer return matches right-to-left --
             matches = list(pattern.finditer(s))
-            # -- try matches from right to left to find rightmost valid split --
-            for match in reversed(matches):
+            # -- iterate through matches (already right-to-left due to (?r) flag) --
+            for match in matches:
                 match_start, match_end = match.span()
-                # -- skip if fragment would be too short (less than overlap) --
-                if match_start <= overlap:
-                    continue
                 fragment = s[:match_start].rstrip()
                 # -- check if fragment fits within token limit --
                 if measure(fragment) <= maxlen:
+                    # -- skip if fragment is too short (needs at least some content) --
+                    if measure(fragment) == 0:
+                        continue
                     raw_remainder = s[match_end:].lstrip()
                     # -- add overlap if configured --
                     if overlap > 0:
-                        # -- for token-based overlap, take approximately `overlap` chars --
-                        tail = fragment[-overlap:].lstrip() if len(fragment) > overlap else fragment
+                        # -- token-based overlap: find tail with ~overlap tokens --
+                        tail = self._get_token_overlap_tail(fragment, overlap)
                         overlapped_remainder = tail + " " + raw_remainder
                         return fragment, overlapped_remainder
                     return fragment, raw_remainder
@@ -1195,11 +1196,49 @@ class _TextSplitter:
         raw_remainder = s[split_pos:].lstrip()
 
         if overlap > 0 and fragment:
-            tail = fragment[-overlap:].lstrip() if len(fragment) > overlap else fragment
+            tail = self._get_token_overlap_tail(fragment, overlap)
             overlapped_remainder = tail + " " + raw_remainder
             return fragment, overlapped_remainder
 
         return fragment, raw_remainder
+
+    def _get_token_overlap_tail(self, text: str, target_tokens: int) -> str:
+        """Extract tail of text containing approximately `target_tokens` tokens.
+
+        Uses binary search to find the character position from which the tail contains
+        approximately the specified number of tokens. Adjusts to word boundaries to avoid
+        splitting words.
+        """
+        measure = self._opts.measure
+
+        # -- if the entire text has fewer tokens than target, return all of it --
+        if measure(text) <= target_tokens:
+            return text.strip()
+
+        # -- binary search to find the character position that yields ~target_tokens --
+        low, high = 0, len(text)
+
+        while low < high:
+            mid = (low + high) // 2
+            tail = text[mid:]
+            token_count = measure(tail)
+            if token_count > target_tokens:
+                low = mid + 1
+            else:
+                high = mid
+
+        # -- adjust to word boundary: search forward for whitespace then skip it --
+        pos = low
+        while pos < len(text) and not text[pos].isspace():
+            pos += 1
+        while pos < len(text) and text[pos].isspace():
+            pos += 1
+
+        # -- if we've moved too far, fall back to just stripping leading whitespace --
+        if pos >= len(text):
+            return text[low:].lstrip()
+
+        return text[pos:]
 
     @lazyproperty
     def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
