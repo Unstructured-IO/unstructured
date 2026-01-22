@@ -810,9 +810,7 @@ class DescribePreChunk:
         semantically meaningful.
         """
         code_text = "def hello():\n    print('Hello')\n    return True"
-        pre_chunk = PreChunk(
-            [CodeSnippet(code_text)], overlap_prefix="", opts=ChunkingOptions()
-        )
+        pre_chunk = PreChunk([CodeSnippet(code_text)], overlap_prefix="", opts=ChunkingOptions())
 
         # The text should preserve newlines, not collapse them to spaces
         assert "\n" in pre_chunk._text
