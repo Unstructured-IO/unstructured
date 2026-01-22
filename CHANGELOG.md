@@ -1,4 +1,12 @@
-## 0.18.31-dev0
+## 0.18.31
+
+### Fixes
+- Resolved security vulnerabilities in base system dependencies
+  Bumped dependencies to address the following CVEs:
+  **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1, posix-libc-utils, posix-libc-utils-bin)**: CVE-2026-0915, CVE-2026-0861, GHSA-5pf6-63v3-88hw, GHSA-xp56-6525-9chf
+  **pyasn1**: GHSA-63vm-454h-vhhq
+  **py3-setuptools** (Python 3.12/3.13): GHSA-58pv-8j8x-9vj2
+  **ffmpeg (via OpenCV)**: CVE-2025-9951, CVE-2025-1594, CVE-2023-6604, CVE-2023-49502, CVE-2023-6602, CVE-2023-6605, CVE-2025-0518, CVE-2023-6601, CVE-2025-22919, CVE-2023-50010, CVE-2023-50008, CVE-2024-31582, CVE-2025-59729, CVE-2025-59730, CVE-2023-50007
 
 ### Enhancements
 - Changed default DPI to 350

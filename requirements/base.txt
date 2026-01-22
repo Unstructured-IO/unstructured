@@ -83,13 +83,13 @@ olefile==0.47
     # via python-oxmsg
 orderly-set==5.5.0
     # via deepdiff
-packaging==25.0
+packaging==26.0
     # via
     #   marshmallow
     #   unstructured-client
 psutil==7.2.1
     # via -r ./base.in
-pycparser==2.23
+pycparser==3.0
     # via cffi
 pypdf==6.6.0
     # via unstructured-client
@@ -103,7 +103,7 @@ python-oxmsg==0.0.2
     # via -r ./base.in
 rapidfuzz==3.14.3
     # via -r ./base.in
-regex==2025.11.3
+regex==2026.1.15
     # via nltk
 requests==2.32.5
     # via
@@ -118,7 +118,7 @@ six==1.17.0
     #   langdetect
     #   python-dateutil
     #   unstructured-client
-soupsieve==2.8.1
+soupsieve==2.8.3
     # via beautifulsoup4
 tqdm==4.67.1
     # via

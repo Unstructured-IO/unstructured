@@ -19,11 +19,12 @@ importlib-metadata==8.7.1
     # via build
 nodeenv==1.10.0
     # via pre-commit
-packaging==25.0
+packaging==26.0
     # via
     #   -c ./base.txt
     #   -c ./test.txt
     #   build
+    #   wheel
 pip-tools==7.5.2
     # via -r ./dev.in
 platformdirs==4.5.1
@@ -50,7 +51,7 @@ typing-extensions==4.15.0
     #   virtualenv
 virtualenv==20.36.1
     # via pre-commit
-wheel==0.45.1
+wheel==0.46.3
     # via pip-tools
 zipp==3.23.0
     # via importlib-metadata
