@@ -32,6 +32,7 @@ from test_unstructured.unit_utils import (
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
+    CodeSnippet,
     CompositeElement,
     Element,
     ElementMetadata,
@@ -272,7 +273,7 @@ def test_auto_partition_html_pre_from_file():
     assert len(elements) > 0
     assert "PageBreak" not in [elem.category for elem in elements]
     assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
-    assert isinstance(elements[0], NarrativeText)
+    assert isinstance(elements[0], CodeSnippet)
     assert all(e.metadata.filetype == "text/html" for e in elements)
     assert all(e.metadata.filename == "fake-html-pre.htm" for e in elements)
 
