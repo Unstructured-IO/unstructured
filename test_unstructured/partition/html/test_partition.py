@@ -25,6 +25,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
+    CodeSnippet,
     CompositeElement,
     ElementType,
     ListItem,
@@ -627,7 +628,7 @@ def test_partition_html_with_widely_encompassing_pre_tag():
     print(f"{len(elements)=}")
     assert len(elements) > 0
     assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
-    assert isinstance(elements[0], NarrativeText)
+    assert isinstance(elements[0], CodeSnippet)
     assert elements[0].metadata.filetype == "text/html"
     assert elements[0].metadata.filename == "fake-html-pre.htm"
 
@@ -641,9 +642,9 @@ def test_pre_tag_parsing_respects_order():
             "<div>The Big Blue Bear</div>\n"
         )
     ) == [
-        Text("The Big Brown Bear"),
+        CodeSnippet("The Big Brown Bear"),
         NarrativeText("The big brown bear is growling."),
-        NarrativeText("The big brown bear is sleeping."),
+        CodeSnippet("The big brown bear is sleeping."),
         Text("The Big Blue Bear"),
     ]
 
@@ -672,7 +673,7 @@ def test_partition_html_br_tag_parsing():
         Title("Header 1"),
         Text("Text"),
         Title("Header 2"),
-        Text(
+        CodeSnippet(
             "    Param1 = Y\nParam2 = 1\nParam3 = 2\nParam4 = A\n    \nParam5 = A,B,C,D,E\n"
             "Param6 = 7\nParam7 = Five\n\n  "
         ),
