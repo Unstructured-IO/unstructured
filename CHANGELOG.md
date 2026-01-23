@@ -6,6 +6,7 @@
 
 ### Fixes
 - **Fix Pandoc exitcode 97 during ODT conversion**: Try with sandbox=True first, fallback without sandbox only if `ALLOW_PANDOC_NO_SANDBOX=true` env var is set (fixes #3997)
+- **Fix `coordinates=True` causing TypeError in hi_res PDF processing**: Filter out `coordinates` and `coordinate_system` from kwargs before passing to `add_element_metadata()` to prevent conflict with explicit parameters (fixes #4126)
 
 ## 0.18.30 
 
