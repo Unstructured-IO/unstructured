@@ -618,13 +618,13 @@ class PreChunk:
             yield self._overlap_prefix
         for e in self._elements:
             if e.text and len(e.text):
-                # -- preserve whitespace for code snippets to maintain formatting --
+                # -- preserve all whitespace for code snippets to maintain formatting --
                 if isinstance(e, CodeSnippet):
-                    text = e.text.strip()
+                    yield e.text
                 else:
                     text = " ".join(e.text.strip().split())
-                if text:
-                    yield text
+                    if text:
+                        yield text
 
     @lazyproperty
     def _text(self) -> str:
