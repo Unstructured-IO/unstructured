@@ -19,8 +19,7 @@
 
 ### Fixes
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
-- **Change `languages` parameter default from `["auto"]` to `None`**: Updated default value in `detect_languages()` and `partition_epub()` functions. Behavior unchanged as `None` is converted to `["auto"]` internally. (fixes #2471)
-- Resolve GHSA-58pv-8j8x-9vj2
+- **Fix NameError in paddle_ocr.py**: Added missing import for `LayoutElements` from `unstructured_inference.inference.layoutelement` in `OCRAgentPaddle.get_layout_elements_from_image` method
 
 ## 0.18.29
 
