@@ -34,6 +34,8 @@ from unstructured.documents.elements import (
     Link,
     ListItem,
     PageBreak,
+    Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -823,11 +825,13 @@ def _partition_pdf_or_image_local(
             out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
-            el.text = re.sub(
-                RE_MULTISPACE_INCLUDING_NEWLINES,
-                " ",
-                el.text or "",
-            ).strip()
+            # Skip newline normalization for Table/TableChunk - newlines carry structural meaning
+            if not isinstance(el, (Table, TableChunk)):
+                el.text = re.sub(
+                    RE_MULTISPACE_INCLUDING_NEWLINES,
+                    " ",
+                    el.text or "",
+                ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
 
