@@ -640,11 +640,11 @@ def test_partition_pdf_with_copy_protection():
     filename = example_doc_path("pdf/copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    title_elements = [e for e in elements if e.text == title]
-    assert len(title_elements) > 0, f"Expected to find title '{title}' in elements"
+    idx = 22
+    assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
-    assert title_elements[0].metadata.detection_class_prob is not None
-    assert isinstance(title_elements[0].metadata.detection_class_prob, float)
+    assert elements[idx].metadata.detection_class_prob is not None
+    assert isinstance(elements[idx].metadata.detection_class_prob, float)
 
 
 def test_partition_pdf_with_dpi():
