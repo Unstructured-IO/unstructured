@@ -10,7 +10,15 @@ from collections import deque
 import pytest
 from lxml import etree
 
-from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import (
+    Address,
+    CodeSnippet,
+    Element,
+    ListItem,
+    NarrativeText,
+    Text,
+    Title,
+)
 from unstructured.partition.html.parser import (
     Annotation,
     DefaultElement,
@@ -536,7 +544,7 @@ class DescribePre:
         elements = pre.iter_elements()
 
         e = next(elements)
-        assert e == Text(
+        assert e == CodeSnippet(
             "  The Answer to the Great Question...   Of Life, the Universe and Everything...\n"
             "  Is... Forty-two, said Deep Thought, with infinite majesty and calm."
         )
@@ -584,6 +592,19 @@ class DescribePre:
         assert e.metadata.emphasized_text_tags == ["b"]
         assert e.metadata.link_texts == ["penguin"]
         assert e.metadata.link_urls == ["http://eie.io"]
+
+    def it_generates_CodeSnippet_elements_to_preserve_code_formatting(self):
+        """Pre elements should generate CodeSnippet elements, not generic Text elements.
+
+        This ensures code formatting (whitespace, line breaks) is preserved during chunking.
+        """
+        html_text = "<pre>def hello():\n    print('Hello')\n    return True</pre>"
+        pre = etree.fromstring(html_text, html_parser).xpath(".//pre")[0]
+
+        e = next(pre.iter_elements())
+
+        assert isinstance(e, CodeSnippet)
+        assert e.text == "def hello():\n    print('Hello')\n    return True"
 
 
 class DescribeRemovedBlock:
