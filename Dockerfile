@@ -34,7 +34,7 @@ RUN apk update && \
     apk add --no-cache font-ubuntu fontconfig && \
     apk upgrade --no-cache py3.12-pip && \
     fc-cache -fv && \
-    [ -e /usr/bin/python3 ] || ln -s /usr/bin/$PYTHON /usr/bin/python3
+    ln -sf /usr/bin/$PYTHON /usr/bin/python3
 
 ARG NB_UID=1000
 ARG NB_USER=notebook-user

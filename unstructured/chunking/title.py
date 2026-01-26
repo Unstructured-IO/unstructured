@@ -26,16 +26,19 @@ def chunk_by_title(
     combine_text_under_n_chars: Optional[int] = None,
     include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
+    max_tokens: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
     new_after_n_chars: Optional[int] = None,
+    new_after_n_tokens: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
+    tokenizer: Optional[str] = None,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
     Splits off into a new CompositeElement when a title is detected or if metadata changes, which
     happens when page numbers or sections change. Cuts off sections once they have exceeded a
-    character length of max_characters.
+    character length of max_characters (or token count of max_tokens).
 
     Parameters
     ----------
@@ -54,7 +57,10 @@ def chunk_by_title(
         chunking.
     max_characters
         Chunks elements text and text_as_html (if present) into chunks of length
-        n characters (hard max)
+        n characters (hard max). Mutually exclusive with `max_tokens`.
+    max_tokens
+        Chunks elements into chunks of n tokens (hard max). Requires `tokenizer` to be specified.
+        Mutually exclusive with `max_characters`.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     new_after_n_chars
@@ -63,6 +69,9 @@ def chunk_by_title(
         Specifying 0 for this argument causes each element to appear in a chunk by itself (although
         an element with text longer than `max_characters` will be still be split into two or more
         chunks).
+    new_after_n_tokens
+        Token-based equivalent of `new_after_n_chars`. Cuts off new sections once they reach
+        n tokens (soft max). Requires `max_tokens` and `tokenizer` to be specified.
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
@@ -71,15 +80,21 @@ def chunk_by_title(
         Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
         elements and not subject to text-splitting. Use this with caution as it entails a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
+    tokenizer
+        The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
+        "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
         include_orig_elements=include_orig_elements,
         max_characters=max_characters,
+        max_tokens=max_tokens,
         multipage_sections=multipage_sections,
         new_after_n_chars=new_after_n_chars,
+        new_after_n_tokens=new_after_n_tokens,
         overlap=overlap,
         overlap_all=overlap_all,
+        tokenizer=tokenizer,
     )
     return _chunk_by_title(elements, opts)
 

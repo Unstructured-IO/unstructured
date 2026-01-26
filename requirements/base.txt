@@ -91,7 +91,7 @@ psutil==7.2.1
     # via -r ./base.in
 pycparser==3.0
     # via cffi
-pypdf==6.6.0
+pypdf==6.6.1
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client

@@ -144,7 +144,7 @@ pdfminer-six==20260107
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-pi-heif==1.1.1
+pi-heif==1.2.0
     # via -r ./extra-pdf-image.in
 pikepdf==10.2.0
     # via -r ./extra-pdf-image.in
@@ -188,7 +188,7 @@ pycparser==3.0
     #   cffi
 pyparsing==3.3.2
     # via matplotlib
-pypdf==6.6.0
+pypdf==6.6.1
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -199,7 +199,7 @@ python-dateutil==2.9.0.post0
     #   -c ./base.txt
     #   matplotlib
     #   pandas
-python-multipart==0.0.21
+python-multipart==0.0.22
     # via unstructured-inference
 pytz==2025.2
     # via pandas

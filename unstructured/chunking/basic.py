@@ -26,9 +26,12 @@ def chunk_elements(
     *,
     include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
+    max_tokens: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
+    new_after_n_tokens: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
+    tokenizer: Optional[str] = None,
 ) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
@@ -45,7 +48,11 @@ def chunk_elements(
         chunking.
     max_characters
         Hard maximum chunk length. No chunk will exceed this length. A single element that exceeds
-        this length will be divided into two or more chunks using text-splitting.
+        this length will be divided into two or more chunks using text-splitting. Mutually
+        exclusive with `max_tokens`.
+    max_tokens
+        Hard maximum chunk token count. No chunk will exceed this token count. Requires `tokenizer`
+        to be specified. Mutually exclusive with `max_characters`.
     new_after_n_chars
         A chunk that of this length or greater is not extended to include the next element, even if
         that element would fit without exceeding `max_characters`. A "soft max" length that can be
@@ -55,6 +62,9 @@ def chunk_elements(
         any soft window. Specifying 0 for this argument causes each element to appear in a chunk by
         itself (although an element with text longer than `max_characters` will be still be split
         into two or more chunks).
+    new_after_n_tokens
+        Token-based equivalent of `new_after_n_chars`. A chunk with this token count or greater is
+        not extended. Requires `max_tokens` and `tokenizer` to be specified.
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
@@ -63,14 +73,20 @@ def chunk_elements(
         Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
         elements and not subject to text-splitting. Use this with caution as it produces a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
+    tokenizer
+        The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
+        "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
     """
     # -- raises ValueError on invalid parameters --
     opts = _BasicChunkingOptions.new(
         include_orig_elements=include_orig_elements,
         max_characters=max_characters,
+        max_tokens=max_tokens,
         new_after_n_chars=new_after_n_chars,
+        new_after_n_tokens=new_after_n_tokens,
         overlap=overlap,
         overlap_all=overlap_all,
+        tokenizer=tokenizer,
     )
 
     return _chunk_elements(elements, opts)

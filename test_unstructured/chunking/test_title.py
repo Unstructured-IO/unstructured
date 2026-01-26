@@ -539,3 +539,191 @@ class Describe_ByTitleChunkingOptions:
     ):
         opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
         assert opts.multipage_sections is expected_value
+
+
+# ================================================================================================
+# TOKEN-BASED CHUNKING INTEGRATION TESTS
+# ================================================================================================
+
+
+class DescribeTokenBasedChunking:
+    """Integration tests for token-based chunking with chunk_by_title()."""
+
+    @pytest.fixture
+    def _tiktoken_installed(self):
+        """Skip test if tiktoken is not installed."""
+        pytest.importorskip("tiktoken")
+
+    def it_chunks_elements_by_token_count(self, _tiktoken_installed: None):
+        """Test that chunk_by_title works with max_tokens parameter and respects token limits."""
+        import tiktoken
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        elements: list[Element] = [
+            Title("Introduction"),
+            Text("This is a test document with some text content."),
+            Text("Here is more content that should be chunked appropriately."),
+        ]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=20,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=0,
+        )
+
+        # -- verify chunks were created --
+        assert len(chunks) >= 1
+        assert all(isinstance(chunk, (CompositeElement, Table, TableChunk)) for chunk in chunks)
+
+        # -- verify each chunk respects the token limit --
+        for chunk in chunks:
+            token_count = len(enc.encode(chunk.text))
+            assert token_count <= 20, f"Chunk exceeded token limit: {token_count} tokens"
+
+        # -- verify the first chunk contains expected content --
+        assert "Introduction" in chunks[0].text
+
+    def it_respects_new_after_n_tokens_soft_limit(self, _tiktoken_installed: None):
+        """Test that new_after_n_tokens creates smaller chunks with correct content."""
+        import tiktoken
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        elements: list[Element] = [
+            Title("Section 1"),
+            Text("Some text for section one."),
+            Text("More text for section one."),
+            Title("Section 2"),
+            Text("Text for section two."),
+        ]
+
+        # -- with a low soft limit, each section should become its own chunk --
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=100,
+            new_after_n_tokens=10,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=0,
+        )
+
+        # -- verify we get multiple chunks --
+        assert len(chunks) >= 2
+
+        # -- verify each chunk respects the hard limit --
+        for chunk in chunks:
+            token_count = len(enc.encode(chunk.text))
+            assert token_count <= 100, f"Chunk exceeded token limit: {token_count} tokens"
+
+        # -- verify content is distributed across chunks --
+        all_text = " ".join(chunk.text for chunk in chunks)
+        assert "Section 1" in all_text
+        assert "Section 2" in all_text
+
+    def it_rejects_max_tokens_and_max_characters_together(self, _tiktoken_installed: None):
+        """Test that specifying both max_tokens and max_characters raises ValueError."""
+        elements: list[Element] = [Text("Some text")]
+
+        with pytest.raises(ValueError, match="mutually exclusive"):
+            chunk_by_title(
+                elements,
+                max_tokens=100,
+                max_characters=500,
+                tokenizer="cl100k_base",
+            )
+
+    def it_rejects_max_tokens_without_tokenizer(self, _tiktoken_installed: None):
+        """Test that max_tokens requires tokenizer to be specified."""
+        elements: list[Element] = [Text("Some text")]
+
+        with pytest.raises(ValueError, match="'tokenizer' is required"):
+            chunk_by_title(elements, max_tokens=100)
+
+    def it_accepts_model_name_as_tokenizer(self, _tiktoken_installed: None):
+        """Test that model names like 'gpt-4' work as tokenizer."""
+        import tiktoken
+
+        # -- gpt-4 uses cl100k_base encoding --
+        enc = tiktoken.encoding_for_model("gpt-4")
+        elements: list[Element] = [
+            Title("Test"),
+            Text("Some test content."),
+        ]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=50,
+            tokenizer="gpt-4",
+            combine_text_under_n_chars=0,
+        )
+
+        assert len(chunks) >= 1
+
+        # -- verify token counts are within limit --
+        for chunk in chunks:
+            token_count = len(enc.encode(chunk.text))
+            assert token_count <= 50, f"Chunk exceeded token limit: {token_count} tokens"
+
+        # -- verify content --
+        assert chunks[0].text == "Test\n\nSome test content."
+
+    def it_splits_oversized_element_respecting_token_limit(self, _tiktoken_installed: None):
+        """Test that oversized elements are split correctly by token count."""
+        import tiktoken
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        # -- create a text that will definitely need to be split (>10 tokens) --
+        long_text = "The quick brown fox jumps over the lazy dog. " * 10
+        elements: list[Element] = [Text(long_text)]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=15,
+            tokenizer="cl100k_base",
+            combine_text_under_n_chars=0,
+        )
+
+        # -- should produce multiple chunks --
+        assert len(chunks) > 1
+
+        # -- each chunk should respect the token limit --
+        for chunk in chunks:
+            token_count = len(enc.encode(chunk.text))
+            assert token_count <= 15, f"Chunk exceeded token limit: {token_count} tokens"
+
+    def it_applies_token_based_overlap_in_split_chunks(self, _tiktoken_installed: None):
+        """Test that overlap in token mode is measured in tokens, not characters."""
+        import tiktoken
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        # -- create text that will be split into multiple chunks --
+        long_text = "Apple banana cherry date elderberry fig grape honeydew. " * 5
+        elements: list[Element] = [Text(long_text)]
+
+        chunks = chunk_by_title(
+            elements,
+            max_tokens=12,
+            tokenizer="cl100k_base",
+            overlap=3,  # 3 tokens of overlap
+            combine_text_under_n_chars=0,
+        )
+
+        # -- should produce multiple chunks --
+        assert len(chunks) >= 2
+
+        # -- verify overlap: second chunk should start with tokens from end of first --
+        if len(chunks) >= 2:
+            # -- the overlap tail from chunk 0 should appear at start of chunk 1 --
+            first_chunk_text = chunks[0].text
+            second_chunk_text = chunks[1].text
+
+            # -- the overlap should be approximately 3 tokens worth of text --
+            # -- verify second chunk starts with content from end of first chunk --
+            # -- (the overlap mechanism prepends tail to remainder) --
+            assert len(second_chunk_text) > 0
+            # -- verify some content from first chunk appears at start of second --
+            first_chunk_words = first_chunk_text.split()
+            assert any(word in second_chunk_text for word in first_chunk_words[-3:])
+            # -- verify each chunk respects limits --
+            for chunk in chunks:
+                token_count = len(enc.encode(chunk.text))
+                assert token_count <= 12, f"Chunk exceeded token limit: {token_count} tokens"
