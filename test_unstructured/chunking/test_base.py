@@ -29,6 +29,7 @@ from unstructured.chunking.base import (
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
+    CodeSnippet,
     CompositeElement,
     Element,
     ElementMetadata,
@@ -801,6 +802,37 @@ class DescribePreChunk:
         """
         pre_chunk = PreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
+
+    def it_preserves_whitespace_in_CodeSnippet_elements(self):
+        """CodeSnippet elements should preserve their internal whitespace including newlines.
+
+        This is important for code blocks where formatting (indentation, line breaks) is
+        semantically meaningful.
+        """
+        code_text = "def hello():\n    print('Hello')\n    return True"
+        pre_chunk = PreChunk([CodeSnippet(code_text)], overlap_prefix="", opts=ChunkingOptions())
+
+        # The text should preserve newlines, not collapse them to spaces
+        assert "\n" in pre_chunk._text
+        assert pre_chunk._text == code_text
+
+    def it_preserves_whitespace_in_CodeSnippet_when_mixed_with_other_elements(self):
+        """CodeSnippet whitespace is preserved even when mixed with regular Text elements."""
+        code_text = "for i in range(10):\n    print(i)"
+        pre_chunk = PreChunk(
+            [
+                Text("Here is some code:"),
+                CodeSnippet(code_text),
+                Text("That was the code."),
+            ],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
+        )
+
+        # The combined text should have the code with preserved newlines
+        assert "for i in range(10):\n    print(i)" in pre_chunk._text
+        # Regular text elements are still joined with blank line separators
+        assert "Here is some code:\n\n" in pre_chunk._text
 
 
 # ================================================================================================

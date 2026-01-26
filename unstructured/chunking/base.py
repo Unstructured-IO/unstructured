@@ -11,6 +11,7 @@ from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
+    CodeSnippet,
     CompositeElement,
     ConsolidationStrategy,
     Element,
@@ -610,15 +611,20 @@ class PreChunk:
     def _iter_text_segments(self) -> Iterator[str]:
         """Generate overlap text and each element text segment in order.
 
-        Empty text segments are not included.
+        Empty text segments are not included. CodeSnippet elements preserve their
+        original whitespace (including newlines) to maintain code formatting.
         """
         if self._overlap_prefix:
             yield self._overlap_prefix
         for e in self._elements:
             if e.text and len(e.text):
-                text = " ".join(e.text.strip().split())
-                if text:
-                    yield text
+                # -- preserve all whitespace for code snippets to maintain formatting --
+                if isinstance(e, CodeSnippet):
+                    yield e.text
+                else:
+                    text = " ".join(e.text.strip().split())
+                    if text:
+                        yield text
 
     @lazyproperty
     def _text(self) -> str:
