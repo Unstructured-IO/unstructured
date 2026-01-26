@@ -1,4 +1,4 @@
-## 0.18.31-dev1
+## 0.18.31-dev2
 
 ### Enhancements
 - Changed default DPI to 350
