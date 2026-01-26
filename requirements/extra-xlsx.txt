@@ -26,7 +26,7 @@ openpyxl==3.1.5
     # via -r ./extra-xlsx.in
 pandas==2.3.3
     # via -r ./extra-xlsx.in
-pycparser==2.23
+pycparser==3.0
     # via
     #   -c ./base.txt
     #   cffi

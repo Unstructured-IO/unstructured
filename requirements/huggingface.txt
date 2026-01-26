@@ -51,7 +51,7 @@ numpy==2.2.6
     # via
     #   -c ./base.txt
     #   transformers
-packaging==25.0
+packaging==26.0
     # via
     #   -c ./base.txt
     #   huggingface-hub
@@ -60,7 +60,7 @@ pyyaml==6.0.3
     # via
     #   huggingface-hub
     #   transformers
-regex==2025.11.3
+regex==2026.1.15
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -86,7 +86,7 @@ tokenizers==0.21.4
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.9.1
+torch==2.10.0
     # via -r ./huggingface.in
 tqdm==4.67.1
     # via

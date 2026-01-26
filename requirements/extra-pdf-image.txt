@@ -52,7 +52,7 @@ google-auth==2.47.0
     # via
     #   google-api-core
     #   google-cloud-vision
-google-cloud-vision==3.11.0
+google-cloud-vision==3.12.0
     # via -r ./extra-pdf-image.in
 googleapis-common-protos==1.72.0
     # via
@@ -124,9 +124,9 @@ onnxruntime==1.23.2
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-opencv-python==4.12.0.88
+opencv-python==4.13.0.90
     # via unstructured-inference
-packaging==25.0
+packaging==26.0
     # via
     #   -c ./base.txt
     #   accelerate
@@ -144,7 +144,7 @@ pdfminer-six==20260107
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-pi-heif==1.1.1
+pi-heif==1.2.0
     # via -r ./extra-pdf-image.in
 pikepdf==10.2.0
     # via -r ./extra-pdf-image.in
@@ -174,7 +174,7 @@ psutil==7.2.1
     # via
     #   -c ./base.txt
     #   accelerate
-pyasn1==0.6.1
+pyasn1==0.6.2
     # via
     #   pyasn1-modules
     #   rsa
@@ -182,13 +182,13 @@ pyasn1-modules==0.4.2
     # via google-auth
 pycocotools==2.0.11
     # via effdet
-pycparser==2.23
+pycparser==3.0
     # via
     #   -c ./base.txt
     #   cffi
-pyparsing==3.3.1
+pyparsing==3.3.2
     # via matplotlib
-pypdf==6.6.0
+pypdf==6.6.1
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -199,7 +199,7 @@ python-dateutil==2.9.0.post0
     #   -c ./base.txt
     #   matplotlib
     #   pandas
-python-multipart==0.0.21
+python-multipart==0.0.22
     # via unstructured-inference
 pytz==2025.2
     # via pandas
@@ -214,7 +214,7 @@ rapidfuzz==3.14.3
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2025.11.3
+regex==2026.1.15
     # via
     #   -c ./base.txt
     #   transformers
@@ -249,14 +249,14 @@ tokenizers==0.21.4
     # via
     #   -c ././deps/constraints.txt
     #   transformers
-torch==2.9.1
+torch==2.10.0
     # via
     #   accelerate
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.24.1
+torchvision==0.25.0
     # via
     #   effdet
     #   timm
@@ -278,7 +278,7 @@ typing-extensions==4.15.0
     #   torch
 tzdata==2025.3
     # via pandas
-unstructured-inference==1.1.4
+unstructured-inference==1.1.7
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in

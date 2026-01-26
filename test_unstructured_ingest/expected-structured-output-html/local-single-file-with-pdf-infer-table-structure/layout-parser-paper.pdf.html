@@ -91,9 +91,9 @@
   <p class="NarrativeText" id="583775f22c8080098beebbef960e2fbf">
    LayoutParser is well aligned with recent eﬀorts for improving DL model reusability in other disciplines like natural language processing [8, 34] and com- puter vision [35], but with a focus on unique challenges in DIA. We show LayoutParser can be applied in sophisticated and large-scale digitization projects
   </p>
-  <div class="Header" id="f5a6697190c20bf6030d8e4ae8f6861a">
+  <h1 class="Title" id="f5a6697190c20bf6030d8e4ae8f6861a">
    LayoutParser: A Uniﬁed Toolkit for DL-Based DIA
-  </div>
+  </h1>
   <p class="NarrativeText" id="50846086f4d9ece02052735686278699">
    that require precision, eﬃciency, and robustness, as well as simple and light- weight document processing tasks focusing on eﬃcacy and ﬂexibility (Section 5). LayoutParser is being actively maintained, and support for more deep learning models and novel methods in text-based layout analysis methods [37, 34] is planned.
   </p>
@@ -118,9 +118,9 @@
   <p class="UncategorizedText" id="db639db124b6064248de0c0dc71510a4">
    7 https://ocr-d.de/en/about
   </p>
-  <p class="UncategorizedText" id="d881ce84f017d89f6e35e2bc4b133bfc">
+  <div class="Footer" id="d881ce84f017d89f6e35e2bc4b133bfc">
    8 https://github.com/BobLd/DocumentLayoutAnalysis
-  </p>
+  </div>
   <p class="UncategorizedText" id="9b96c128deddda1a32c739a2df157496">
    9 https://github.com/leonlulu/DeepLayout
   </p>
@@ -158,7 +158,7 @@
   <li class="ListItem" id="cd1112d2b15a0d27a29b1c83b2afd0dd">
    LayoutParser: A Uniﬁed Toolkit for DL-Based DIA
   </li>
-  <p class="FigureCaption" id="0b9956dc7ccd1d758263217beda63196">
+  <p class="UncategorizedText" id="0b9956dc7ccd1d758263217beda63196">
    Table 1: Current layout detection models in the LayoutParser model zoo
   </p>
   <table class="Table" id="cb534ba64da736dc53d60b660f5e1153" style="border: 1px solid black; border-collapse: collapse;">
@@ -230,7 +230,7 @@
       F
      </td>
      <td style="border: 1px solid black;">
-      Table region on modern scientific and business document
+      Table region on modern scientific and business document.
      </td>
     </tr>
     <tr style="border: 1px solid black;">
@@ -248,31 +248,34 @@
     </tr>
    </tbody>
   </table>
-  <p class="FigureCaption" id="f978160527177fa39c13774ec8dfa9cb">
-   1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.
+  <p class="UncategorizedText" id="2ec98f0a0b35309e06494a35af88d51c">
+   1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy
   </p>
-  <p class="NarrativeText" id="55b33df7609960c3552a0b7bc1a5a9c6">
+  <p class="FigureCaption" id="59e8b34937e08c490512e38b5803dce3">
+   vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.
+  </p>
+  <p class="NarrativeText" id="0b9e7697400602ac472eda5564c0f44d">
    layout data structures, which are optimized for eﬃciency and versatility. 3) When necessary, users can employ existing or customized OCR models via the uniﬁed API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and storage of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component.
   </p>
-  <h1 class="Title" id="6e9df774416cc71548308e324b4bdbb7">
+  <h1 class="Title" id="9e349da0d3169a69ebef29f87c80aa84">
    3.1 Layout Detection Models
   </h1>
-  <p class="NarrativeText" id="bbcc10c2b92de0cbdce8629f18b0d7ad">
+  <p class="NarrativeText" id="f446727c56457e21e13708bf3821774d">
    In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Diﬀerent from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:
   </p>
-  <li class="ListItem" id="508a6705bb0bfb693616cc14fec5e1b9">
+  <li class="ListItem" id="53b448c75f1556b1f60b4e3324bd0724">
    1 import layoutparser as lp
   </li>
-  <p class="NarrativeText" id="7d55b80ca5a0c2888ff44b931430b0d8">
+  <p class="NarrativeText" id="eaf41ed9e5bb3da52339a954727209eb">
    2 image = cv2.imread("image_file") # load images 3 model = lp.Detectron2LayoutModel( 4 "lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config")
   </p>
-  <li class="ListItem" id="f30541418a7dca51e3e4cd880486ab9c">
+  <li class="ListItem" id="dd05ea3368e0313a428d5e2b45401718">
    3 model = lp.Detectron2LayoutModel(
   </li>
-  <li class="ListItem" id="ecaf88c55d275f8fdc8c25e2d919077f">
+  <li class="ListItem" id="9fd6cd6d821c887bffbf2d5059354e02">
    5 layout = model.detect(image)
   </li>
-  <p class="NarrativeText" id="f888c5e8f5b1339f2af75612ea13c719">
+  <p class="NarrativeText" id="a396a606cfc323c02a0de45d91b69d6d">
    LayoutParser provides a wealth of pre-trained model weights using various datasets covering diﬀerent languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are signiﬁcantly diﬀerent from the training dataset. As document structures and layouts vary greatly in diﬀerent domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name lp://&lt;dataset-name&gt;/&lt;model-architecture-name&gt;.
   </p>
   <p class="UncategorizedText" id="676118b62c2261113a23a610c2ac50cb">
@@ -309,16 +312,22 @@
   <p class="NarrativeText" id="16565416942e53cf65f75a8a845df211">
    LayoutParser provides a uniﬁed interface for existing OCR tools. Though there are many OCR tools available, they are usually conﬁgured diﬀerently with distinct APIs or protocols for using them. It can be ineﬃcient to add new OCR tools into an existing pipeline, and diﬃcult to make direct comparisons among the available tools to ﬁnd the best option for a particular project. To this end, LayoutParser builds a series of wrappers among existing OCR engines, and provides nearly the same syntax for using them. It supports a plug-and-play style of using OCR engines, making it eﬀortless to switch, evaluate, and compare diﬀerent OCR modules:
   </p>
-  <p class="NarrativeText" id="2e605dfb574532cf2ab54ded080a2ab9">
-   1 ocr_agent = lp.TesseractAgent() 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent.detect(image)
+  <li class="ListItem" id="e9e376b644bc78af6977b31e86e1d36f">
+   1 ocr_agent = lp.TesseractAgent()
+  </li>
+  <li class="ListItem" id="7f736fc72998c81eaff74b157ed4b005">
+   2 # Can be easily switched to other OCR software
+  </li>
+  <p class="NarrativeText" id="ffb8f709daf70f8dad507c4d212cd8b2">
+   3 tokens = ocr_agent.detect(image)
   </p>
-  <p class="NarrativeText" id="5bc3c9470dc53c60c1fd04828105afdd">
+  <p class="NarrativeText" id="6ff992f959960183ac0634ba464f4ea6">
    The OCR outputs will also be stored in the aforementioned layout data structures and can be seamlessly incorporated into the digitization pipeline. Currently LayoutParser supports the Tesseract and Google Cloud Vision OCR engines.
   </p>
-  <p class="NarrativeText" id="fa023ccf2ac1042ef254ecf47cc592ca">
+  <p class="NarrativeText" id="133a1ca14b4ac51df67e495098e6abd7">
    LayoutParser also comes with a DL-based CNN-RNN OCR model [6] trained with the Connectionist Temporal Classiﬁcation (CTC) loss [10]. It can be used like the other OCR modules, and can be easily trained on customized datasets.
   </p>
-  <p class="UncategorizedText" id="a2a0a2ef0279f0710f3cd34474ca8645">
+  <p class="UncategorizedText" id="468ac925065859a6c0100affc38e4c08">
    13 This is also available in the LayoutParser documentation pages.
   </p>
   <li class="ListItem" id="5498a550b5367fa8dc935013956d09fa">
@@ -331,9 +340,10 @@
    <thead>
     <tr style="border: 1px solid black;">
      <th style="border: 1px solid black;">
-      block.pad(top, bottom,
+      block.pad(top,
      </th>
      <th style="border: 1px solid black;">
+      bottom,
      </th>
      <th style="border: 1px solid black;">
       right,
@@ -401,7 +411,7 @@
      <td style="border: 1px solid black;">
      </td>
      <td style="border: 1px solid black;">
-      Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs
+      Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs.
      </td>
     </tr>
     <tr style="border: 1px solid black;">
@@ -415,7 +425,7 @@
      <td style="border: 1px solid black;">
      </td>
      <td style="border: 1px solid black;">
-      Return the union region of block1 and block2.
+      Return the union region of block1 and block2. Coordinate type to be determined based the inputs.
      </td>
     </tr>
     <tr style="border: 1px solid black;">
@@ -429,7 +439,7 @@
      <td style="border: 1px solid black;">
      </td>
      <td style="border: 1px solid black;">
-      Coordinate type to be determined based on the inputs Convert the absolute coordinates of block1 to relative coordinates to block2
+      Convert the absolute coordinates of block1 to relative coordinates to block2
      </td>
     </tr>
     <tr style="border: 1px solid black;">
