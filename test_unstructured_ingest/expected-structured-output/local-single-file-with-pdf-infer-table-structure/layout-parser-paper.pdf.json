@@ -709,7 +709,7 @@
     }
   },
   {
-    "type": "Header",
+    "type": "Title",
     "element_id": "f5a6697190c20bf6030d8e4ae8f6861a",
     "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA",
     "metadata": {
@@ -1071,7 +1071,7 @@
     }
   },
   {
-    "type": "UncategorizedText",
+    "type": "Footer",
     "element_id": "d881ce84f017d89f6e35e2bc4b133bfc",
     "text": "8 https://github.com/BobLd/DocumentLayoutAnalysis",
     "metadata": {
@@ -1446,7 +1446,7 @@
     }
   },
   {
-    "type": "FigureCaption",
+    "type": "UncategorizedText",
     "element_id": "0b9956dc7ccd1d758263217beda63196",
     "text": "Table 1: Current layout detection models in the LayoutParser model zoo",
     "metadata": {
@@ -1501,7 +1501,30 @@
           "start_index": 65
         }
       ],
-      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model'|</th><th>Large Model |</th><th>Notes</th></tr></thead><tbody><tr><td>PubLayNet [38]</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>F</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>F</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model'|</th><th>Large Model |</th><th>Notes</th></tr></thead><tbody><tr><td>PubLayNet [38]</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>F</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>F</td><td>F</td><td>Table region on modern scientific and business document.</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2ec98f0a0b35309e06494a35af88d51c",
+    "text": "1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy",
+    "metadata": {
+      "is_extracted": "true",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -1521,8 +1544,8 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "f978160527177fa39c13774ec8dfa9cb",
-    "text": "1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
+    "element_id": "59e8b34937e08c490512e38b5803dce3",
+    "text": "vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
     "metadata": {
       "is_extracted": "true",
       "links": [
@@ -1561,7 +1584,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "55b33df7609960c3552a0b7bc1a5a9c6",
+    "element_id": "0b9e7697400602ac472eda5564c0f44d",
     "text": "layout data structures, which are optimized for eﬃciency and versatility. 3) When necessary, users can employ existing or customized OCR models via the uniﬁed API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and storage of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component.",
     "metadata": {
       "is_extracted": "true",
@@ -1584,7 +1607,7 @@
   },
   {
     "type": "Title",
-    "element_id": "6e9df774416cc71548308e324b4bdbb7",
+    "element_id": "9e349da0d3169a69ebef29f87c80aa84",
     "text": "3.1 Layout Detection Models",
     "metadata": {
       "is_extracted": "true",
@@ -1607,7 +1630,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "bbcc10c2b92de0cbdce8629f18b0d7ad",
+    "element_id": "f446727c56457e21e13708bf3821774d",
     "text": "In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Diﬀerent from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:",
     "metadata": {
       "is_extracted": "true",
@@ -1647,7 +1670,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "508a6705bb0bfb693616cc14fec5e1b9",
+    "element_id": "53b448c75f1556b1f60b4e3324bd0724",
     "text": "1 import layoutparser as lp",
     "metadata": {
       "is_extracted": "true",
@@ -1670,7 +1693,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7d55b80ca5a0c2888ff44b931430b0d8",
+    "element_id": "eaf41ed9e5bb3da52339a954727209eb",
     "text": "2 image = cv2.imread(\"image_file\") # load images 3 model = lp.Detectron2LayoutModel( 4 \"lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config\")",
     "metadata": {
       "is_extracted": "true",
@@ -1693,7 +1716,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "f30541418a7dca51e3e4cd880486ab9c",
+    "element_id": "dd05ea3368e0313a428d5e2b45401718",
     "text": "3 model = lp.Detectron2LayoutModel(",
     "metadata": {
       "is_extracted": "true",
@@ -1716,7 +1739,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ecaf88c55d275f8fdc8c25e2d919077f",
+    "element_id": "9fd6cd6d821c887bffbf2d5059354e02",
     "text": "5 layout = model.detect(image)",
     "metadata": {
       "is_extracted": "true",
@@ -1739,7 +1762,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f888c5e8f5b1339f2af75612ea13c719",
+    "element_id": "a396a606cfc323c02a0de45d91b69d6d",
     "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering diﬀerent languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are signiﬁcantly diﬀerent from the training dataset. As document structures and layouts vary greatly in diﬀerent domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name lp://<dataset-name>/<model-architecture-name>.",
     "metadata": {
       "is_extracted": "true",
@@ -2067,9 +2090,32 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "2e605dfb574532cf2ab54ded080a2ab9",
-    "text": "1 ocr_agent = lp.TesseractAgent() 2 # Can be easily switched to other OCR software 3 tokens = ocr_agent.detect(image)",
+    "type": "ListItem",
+    "element_id": "e9e376b644bc78af6977b31e86e1d36f",
+    "text": "1 ocr_agent = lp.TesseractAgent()",
+    "metadata": {
+      "is_extracted": "true",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "7f736fc72998c81eaff74b157ed4b005",
+    "text": "2 # Can be easily switched to other OCR software",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -2091,7 +2137,30 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "5bc3c9470dc53c60c1fd04828105afdd",
+    "element_id": "ffb8f709daf70f8dad507c4d212cd8b2",
+    "text": "3 tokens = ocr_agent.detect(image)",
+    "metadata": {
+      "is_extracted": "true",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6ff992f959960183ac0634ba464f4ea6",
     "text": "The OCR outputs will also be stored in the aforementioned layout data structures and can be seamlessly incorporated into the digitization pipeline. Currently LayoutParser supports the Tesseract and Google Cloud Vision OCR engines.",
     "metadata": {
       "is_extracted": "true",
@@ -2114,7 +2183,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "fa023ccf2ac1042ef254ecf47cc592ca",
+    "element_id": "133a1ca14b4ac51df67e495098e6abd7",
     "text": "LayoutParser also comes with a DL-based CNN-RNN OCR model [6] trained with the Connectionist Temporal Classiﬁcation (CTC) loss [10]. It can be used like the other OCR modules, and can be easily trained on customized datasets.",
     "metadata": {
       "is_extracted": "true",
@@ -2149,7 +2218,7 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "a2a0a2ef0279f0710f3cd34474ca8645",
+    "element_id": "468ac925065859a6c0100affc38e4c08",
     "text": "13 This is also available in the LayoutParser documentation pages.",
     "metadata": {
       "is_extracted": "true",
@@ -2222,7 +2291,7 @@
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
     "metadata": {
       "is_extracted": "true",
-      "text_as_html": "<table><thead><tr><th>block.pad(top, bottom,</th><th></th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift (dx, dy)</td><td></td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Coordinate type to be determined based on the inputs Convert the absolute coordinates of block1 to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image</td><td>(image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>block.pad(top,</th><th>bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift (dx, dy)</td><td></td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2. Coordinate type to be determined based the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Convert the absolute coordinates of block1 to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image</td><td>(image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
