@@ -812,31 +812,28 @@ def aggregate_embedded_text_by_block(
     if len(source_regions) == 0 or len(target_region) == 0:
         return "", None
 
-    mask = (
-        bboxes1_is_almost_subregion_of_bboxes2(
-            source_regions.element_coords,
-            target_region.element_coords,
-            subregion_threshold,
-        )
-        .sum(axis=1)
-        .astype(bool)
-    )
+    mask = bboxes1_is_almost_subregion_of_bboxes2(
+        source_regions.element_coords,
+        target_region.element_coords,
+        subregion_threshold,
+    ).any(axis=1)
 
-    text = " ".join([text for text in source_regions.slice(mask).texts if text])
-
-    if sum(mask):
-        source_bboxes = source_regions.slice(mask).element_coords
+    if mask.any():
+        sliced = source_regions.slice(mask)
+        text = " ".join([text for text in sliced.texts if text])
+        source_bboxes = sliced.element_coords
         target_bboxes = target_region.element_coords
 
         iou = _aggregated_iou(source_bboxes, target_bboxes[0, :])
 
         fully_filled = (
-            all(flag == IsExtracted.TRUE for flag in source_regions.slice(mask).is_extracted_array)
+            all(flag == IsExtracted.TRUE for flag in sliced.is_extracted_array)
             and iou > text_coverage_threshold
         )
         is_extracted = IsExtracted.TRUE if fully_filled else IsExtracted.PARTIAL
     else:
         # if nothing is sliced then it is not extracted
+        text = ""
         is_extracted = IsExtracted.FALSE
     return text, is_extracted
 

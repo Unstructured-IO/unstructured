@@ -1,3 +1,8 @@
+## 0.18.32-dev0
+
+### Enhancements
+- Optimized `merge_out_layout_with_ocr_layout` (codeflash)
+
 ## 0.18.31
 
 ### Enhancements
