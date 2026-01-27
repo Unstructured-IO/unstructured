@@ -51,7 +51,7 @@ def normalize_layout_element(
     else:
         layout_dict = layout_element
 
-    text = layout_dict.get("text", "")
+    text = layout_dict.get("text") or ""
     # Both `coordinates` and `coordinate_system` must be present
     # in order to add coordinates metadata to the element.
     coordinates = layout_dict.get("coordinates") if coordinate_system else None
