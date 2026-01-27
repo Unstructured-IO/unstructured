@@ -1259,6 +1259,11 @@ def document_to_element_list(
                 layout_element.image_path if hasattr(layout_element, "image_path") else None
             )
 
+            # Filter out parameters from kwargs that conflict with explicit parameters
+            # (fixes issue where e.g. coordinates=True boolean conflicts with coordinate tuple data)
+            filtered_kwargs = {
+                k: v for k, v in kwargs.items() if k not in ("coordinates", "coordinate_system")
+            }
             add_element_metadata(
                 element,
                 page_number=page_number,
@@ -1269,7 +1274,7 @@ def document_to_element_list(
                 image_path=el_image_path,
                 detection_origin=detection_origin,
                 languages=languages,
-                **kwargs,
+                **filtered_kwargs,
             )
 
         for layout_element, element in translation_mapping:

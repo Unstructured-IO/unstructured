@@ -56,13 +56,11 @@ def _parse_to_unstructured_elements_and_back_to_html(html_as_str: str):
 
 def test_simple_narrative_text_with_id():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
     <p class="NarrativeText">
      DEALER ONLY
     </p>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -86,11 +84,9 @@ def test_simple_narrative_text_with_id():
 
 def test_input_with_radio_button_checked():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
        <input class="RadioButton" name="health-comparison" type="radio" checked/>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -115,8 +111,7 @@ def test_input_with_radio_button_checked():
 
 def test_multiple_elements():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
     <p class="Paragraph">
         About the same
     </p>
@@ -124,8 +119,7 @@ def test_multiple_elements():
     <p class="Paragraph">
         Some text
     </p>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -207,8 +201,7 @@ def test_multiple_pages():
 
 def test_forms():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
         <form class="Form">
             <label class="FormField" for="option1">
                 <input class="FormFieldValue" type="radio"
@@ -218,8 +211,7 @@ def test_forms():
                 </p>
             </label>
         </form>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -249,8 +241,7 @@ def test_forms():
 
 def test_table():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
     <table class="Table">
         <tbody class="TableBody">
             <tr class="TableRow">
@@ -263,8 +254,7 @@ def test_table():
            </tr>
        </tbody>
     </table>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -291,8 +281,7 @@ def test_table():
 
 def test_very_nested_structure_is_preserved():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
     <section class='Section'>
         <div class='Column'>
             <header class='Header'>
@@ -317,8 +306,7 @@ def test_very_nested_structure_is_preserved():
                 </span>
             </div>
     </div>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -376,8 +364,7 @@ def test_very_nested_structure_is_preserved():
 
 def test_ordered_list():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
     <ul class="UnorderedList">
         <li class="ListItem">
             Item 1
@@ -389,8 +376,7 @@ def test_ordered_list():
             Item 3
         </li>
     </ul>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str
@@ -420,8 +406,7 @@ def test_ordered_list():
 
 def test_squeezed_elements_are_parsed_back():
     # language=HTML
-    html_as_str = _wrap_in_body_and_page(
-        """
+    html_as_str = _wrap_in_body_and_page("""
        <p class="NarrativeText">
         Table of Contents
        </p>
@@ -431,8 +416,7 @@ def test_squeezed_elements_are_parsed_back():
        <a class="Hyperlink">
         www.google.com
        </a>
-    """
-    )
+    """)
 
     unstructured_elements, parsed_ontology = _parse_to_unstructured_elements_and_back_to_html(
         html_as_str

@@ -121,6 +121,7 @@ setup(
         "tsv": tsv_reqs,
         "xlsx": xlsx_reqs,
         # Legacy extra requirements
+        "chunking-tokens": load_requirements("requirements/extra-chunking-tokens.in"),
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,
         "paddleocr": load_requirements("requirements/extra-paddleocr.in"),

@@ -3,10 +3,22 @@
 ### Enhancements
 - Optimized `merge_out_layout_with_ocr_layout` (codeflash)
 
-## 0.18.31-dev0
+## 0.18.31
 
 ### Enhancements
 - Changed default DPI to 350
+- **Add token-based chunking support**: Added `max_tokens`, `new_after_n_tokens`, and `tokenizer` parameters to `chunk_by_title()` and `chunk_elements()` for chunking by token count instead of character count. Uses tiktoken for token counting. Install with `pip install "unstructured[chunking-tokens]"`. (fixes #4127)
+
+### Fixes
+- Resolved security vulnerabilities in base system dependencies
+  Bumped dependencies to address the following CVEs:
+  **glibc & related (glibc, glibc-locale-posix, ld-linux, libcrypt1, posix-libc-utils, posix-libc-utils-bin)**: CVE-2026-0915, CVE-2026-0861, GHSA-5pf6-63v3-88hw, GHSA-xp56-6525-9chf
+  **pyasn1**: GHSA-63vm-454h-vhhq
+  **py3-setuptools** (Python 3.12/3.13): GHSA-58pv-8j8x-9vj2
+  **ffmpeg (via OpenCV)**: CVE-2025-9951, CVE-2025-1594, CVE-2023-6604, CVE-2023-49502, CVE-2023-6602, CVE-2023-6605, CVE-2025-0518, CVE-2023-6601, CVE-2025-22919, CVE-2023-50010, CVE-2023-50008, CVE-2024-31582, CVE-2025-59729, CVE-2025-59730, CVE-2023-50007
+- **Fix Pandoc exitcode 97 during ODT conversion**: Try with sandbox=True first, fallback without sandbox only if `ALLOW_PANDOC_NO_SANDBOX=true` env var is set (fixes #3997)
+- **Fix `coordinates=True` causing TypeError in hi_res PDF processing**: Filter out `coordinates` and `coordinate_system` from kwargs before passing to `add_element_metadata()` to prevent conflict with explicit parameters (fixes #4126)
+- **Preserve line breaks in code blocks during chunking**: `<pre>` elements now generate `CodeSnippet` elements instead of `Text`, and chunking preserves internal whitespace for code snippets. (fixes #4095)
 
 ## 0.18.30 
 

@@ -8,19 +8,22 @@ all: compile-all-base
 
 .PHONY: compile-test
 compile-test:
-	pip-compile --upgrade test.in
+	uv pip compile --python-version 3.10 --upgrade test.in -o test.txt --no-emit-package pip --no-emit-package setuptools
 
 .PHONY: compile-dev
 compile-dev:
-	pip-compile --upgrade dev.in
+	uv pip compile --python-version 3.10 --upgrade dev.in -o dev.txt --no-emit-package pip --no-emit-package setuptools
 
 .PHONY: compile-base
 compile-base:
-	pip-compile --upgrade base.in
+	uv pip compile --python-version 3.10 --upgrade base.in -o base.txt --no-emit-package pip --no-emit-package setuptools
 
 .PHONY: compile-all-base
 compile-all-base: compile-base compile-test compile-dev
-	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --upgrade $(file) || exit;)
+	@for file in $(BASE_REQUIREMENTS); do \
+		echo -e "\n\ncompiling: $$file"; \
+		uv pip compile --python-version 3.10 --upgrade --no-strip-extras $$file -o $${file%.in}.txt --no-emit-package pip --no-emit-package setuptools || exit 1; \
+	done
 
 .PHONY: clean
 clean: clean-base

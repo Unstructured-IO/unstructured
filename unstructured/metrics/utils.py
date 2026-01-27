@@ -24,10 +24,8 @@ def _prepare_output_cct(docpath: str, output_type: str) -> str:
         elif output_type == "txt":
             output_cct = _read_text_file(docpath)
         else:
-            raise ValueError(
-                f"File type not supported. Expects one of `json` or `txt`, \
-                    but received {output_type} instead."
-            )
+            raise ValueError(f"File type not supported. Expects one of `json` or `txt`, \
+                    but received {output_type} instead.")
     except ValueError as e:
         logger.error(f"Could not read the file {docpath}")
         raise e
