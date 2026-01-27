@@ -1,3 +1,8 @@
+## 0.18.33-dev0
+
+### Enhancements
+- **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
+
 ## 0.18.32
 
 ### Enhancements
@@ -8,7 +13,6 @@
 ### Enhancements
 - Changed default DPI to 350
 - **Add token-based chunking support**: Added `max_tokens`, `new_after_n_tokens`, and `tokenizer` parameters to `chunk_by_title()` and `chunk_elements()` for chunking by token count instead of character count. Uses tiktoken for token counting. Install with `pip install "unstructured[chunking-tokens]"`. (fixes #4127)
-- **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
 
 ### Fixes
 - Resolved security vulnerabilities in base system dependencies
@@ -34,10 +38,6 @@
 - **Fix EN DASH not cleaned by `clean_bullets`**: Added EN DASH (`\u2013`) to `UNICODE_BULLETS` pattern so `clean_bullets` properly removes EN DASH bullet points without requiring `clean_dashes` (fixes #4105)
 - **Change `languages` parameter default from `["auto"]` to `None`**: Updated default value in `detect_languages()` and `partition_epub()` functions. Behavior unchanged as `None` is converted to `["auto"]` internally. (fixes #2471)
 - Resolve GHSA-58pv-8j8x-9vj2
-
-## 0.18.29
-
-### Enhancement
 - use render mode data to determine if a character extracted by pdfminer is invisible or not
 
 ## 0.18.28
