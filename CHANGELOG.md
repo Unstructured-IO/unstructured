@@ -1,3 +1,8 @@
+## 0.18.32
+
+### Enhancements
+- put `pdfium` calls behind a thread lock
+
 ## 0.18.31
 
 ### Enhancements
@@ -15,7 +20,7 @@
 - **Fix `coordinates=True` causing TypeError in hi_res PDF processing**: Filter out `coordinates` and `coordinate_system` from kwargs before passing to `add_element_metadata()` to prevent conflict with explicit parameters (fixes #4126)
 - **Preserve line breaks in code blocks during chunking**: `<pre>` elements now generate `CodeSnippet` elements instead of `Text`, and chunking preserves internal whitespace for code snippets. (fixes #4095)
 
-## 0.18.30 
+## 0.18.30
 
 ### Enhancements
 - Updated the Dockerfile to build from the chainguard base. Implemented updating and added base-packages that was done in the base-images repo to instead all be done here.

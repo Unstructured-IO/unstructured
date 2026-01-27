@@ -62,6 +62,45 @@ def test_convert_pdf_to_image(file_mode, path_only):
             assert isinstance(images[0], PILImg.Image)
 
 
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize("path_only", [True, False])
+def test_convert_pdf_to_image_twice(file_mode, path_only):
+    filename = example_doc_path("pdf/embedded-images.pdf")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if file_mode == "filename":
+            images = pdf_image_utils.convert_pdf_to_image(
+                filename=filename,
+                file=None,
+                output_folder=tmpdir,
+                path_only=path_only,
+            )
+            images = pdf_image_utils.convert_pdf_to_image(
+                filename=filename,
+                file=None,
+                output_folder=tmpdir,
+                path_only=path_only,
+            )
+        else:
+            with open(filename, "rb") as f:
+                images = pdf_image_utils.convert_pdf_to_image(
+                    filename="",
+                    file=f,
+                    output_folder=tmpdir,
+                    path_only=path_only,
+                )
+                images = pdf_image_utils.convert_pdf_to_image(
+                    filename="",
+                    file=f,
+                    output_folder=tmpdir,
+                    path_only=path_only,
+                )
+
+        if path_only:
+            assert isinstance(images[0], str)
+        else:
+            assert isinstance(images[0], PILImg.Image)
+
+
 def test_convert_pdf_to_image_raises_error():
     filename = example_doc_path("embedded-images.pdf")
     with pytest.raises(ValueError) as exc_info:
