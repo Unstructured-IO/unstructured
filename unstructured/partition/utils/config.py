@@ -241,6 +241,16 @@ class ENVConfig:
         return self._get_float("TEXT_COVERAGE_THRESHOLD", 0.25)
 
     @property
+    def PDF_CHAR_DUPLICATE_THRESHOLD(self) -> float:
+        """Maximum pixel distance to consider two characters as duplicates (fake bold rendering).
+
+        Some PDFs create bold text by rendering the same character twice at slightly offset
+        positions. This threshold determines how close two identical characters must be to be
+        considered duplicates. Set to 0 to disable duplicate character removal.
+        """
+        return self._get_float("PDF_CHAR_DUPLICATE_THRESHOLD", 3.0)
+
+    @property
     def PDF_RENDER_DPI(self) -> int:
         """The DPI to use for rendering PDF pages"""
         return self._get_int("PDF_RENDER_DPI", 350)

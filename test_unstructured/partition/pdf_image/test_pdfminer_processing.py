@@ -18,6 +18,7 @@ from unstructured_inference.inference.layoutelement import LayoutElements
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    _deduplicate_ltchars,
     _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
@@ -362,3 +363,93 @@ def test_text_is_embedded():
 
     assert text_is_embedded(container, threshold=0.5)
     assert not text_is_embedded(container, threshold=0.3)
+
+
+# -- Tests for _deduplicate_ltchars (fake bold fix) --
+
+
+def _create_positioned_ltchar(text: str, x0: float, y0: float) -> LTChar:
+    """Create an LTChar with a specific position for deduplication testing."""
+    graphicstate = Mock()
+    # Matrix format: (a, b, c, d, e, f) where e=x, f=y for translation
+    matrix = (1, 0, 0, 1, x0, y0)
+
+    char = LTChar(
+        matrix=matrix,
+        font=Mock(),
+        fontsize=12,
+        scaling=1,
+        rise=0,
+        text=text,
+        textwidth=10,
+        textdisp=(0, 1),
+        ncs=Mock(),
+        graphicstate=graphicstate,
+    )
+    return char
+
+
+class TestDeduplicateLtchars:
+    """Tests for _deduplicate_ltchars function."""
+
+    def test_empty_list_returns_empty(self):
+        """Empty character list should return empty list."""
+        result = _deduplicate_ltchars([], threshold=3.0)
+        assert result == []
+
+    def test_threshold_zero_disables_deduplication(self):
+        """Threshold of 0 should disable deduplication and return original list."""
+        chars = [
+            _create_positioned_ltchar("A", 10.0, 20.0),
+            _create_positioned_ltchar("A", 10.5, 20.0),  # Would be duplicate
+        ]
+        result = _deduplicate_ltchars(chars, threshold=0)
+        assert len(result) == 2
+
+    def test_fake_bold_duplicates_removed(self):
+        """Fake bold (double-rendered) characters should be deduplicated."""
+        # Simulate "AB" rendered as "AABB" with fake bold
+        chars = [
+            _create_positioned_ltchar("A", 10.0, 20.0),
+            _create_positioned_ltchar("A", 10.5, 20.0),  # Duplicate - close position
+            _create_positioned_ltchar("B", 25.0, 20.0),
+            _create_positioned_ltchar("B", 25.5, 20.0),  # Duplicate - close position
+        ]
+        result = _deduplicate_ltchars(chars, threshold=3.0)
+        assert len(result) == 2
+        assert result[0].get_text() == "A"
+        assert result[1].get_text() == "B"
+
+    def test_legitimate_repeated_chars_preserved(self):
+        """Legitimate repeated characters at different positions should be preserved."""
+        # "AA" where both A's are at legitimately different positions
+        chars = [
+            _create_positioned_ltchar("A", 10.0, 20.0),
+            _create_positioned_ltchar("A", 25.0, 20.0),  # Far enough - not duplicate
+        ]
+        result = _deduplicate_ltchars(chars, threshold=3.0)
+        assert len(result) == 2
+
+    def test_single_char_returns_single(self):
+        """Single character should return single character."""
+        chars = [_create_positioned_ltchar("X", 10.0, 20.0)]
+        result = _deduplicate_ltchars(chars, threshold=3.0)
+        assert len(result) == 1
+        assert result[0].get_text() == "X"
+
+    def test_mixed_duplicates_and_normal(self):
+        """Mix of duplicated and normal characters should be handled correctly."""
+        # "HELLO" where only H and L are fake-bold
+        chars = [
+            _create_positioned_ltchar("H", 10.0, 20.0),
+            _create_positioned_ltchar("H", 10.5, 20.0),  # Duplicate
+            _create_positioned_ltchar("E", 20.0, 20.0),  # Normal
+            _create_positioned_ltchar("L", 30.0, 20.0),
+            _create_positioned_ltchar("L", 30.5, 20.0),  # Duplicate
+            _create_positioned_ltchar("L", 40.0, 20.0),  # Second L (normal, different position)
+            _create_positioned_ltchar("O", 50.0, 20.0),  # Normal
+        ]
+        result = _deduplicate_ltchars(chars, threshold=3.0)
+        assert len(result) == 5
+        text = "".join(c.get_text() for c in result)
+        assert text == "HELLO"

@@ -3,6 +3,9 @@
 ### Enhancements
 - **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
 
+### Fixes
+- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity. Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 3.0 pixels, set to 0 to disable).
+
 ## 0.18.32
 
 ### Enhancements
