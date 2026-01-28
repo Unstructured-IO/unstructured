@@ -825,8 +825,11 @@ def _partition_pdf_or_image_local(
             out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
-            # Skip newline normalization for Table/TableChunk - newlines carry structural meaning
-            if not isinstance(el, (Table, TableChunk)):
+            if isinstance(el, (Table, TableChunk)):
+                # For Table/TableChunk, preserve newlines (they carry structural meaning)
+                # but still collapse multiple horizontal whitespace (spaces, tabs) to single space
+                el.text = re.sub(r"[^\S\n]+", " ", el.text or "").strip()
+            else:
                 el.text = re.sub(
                     RE_MULTISPACE_INCLUDING_NEWLINES,
                     " ",
