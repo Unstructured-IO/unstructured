@@ -331,3 +331,55 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
     percent, common_ngrams = utils.calculate_shared_ngram_percentage(str1, str2, n)
     assert percent == 0
     assert not bool(common_ngrams)
+
+
+class DescribeGroupElementsByParentId:
+    """Unit tests for group_elements_by_parent_id function."""
+
+    def it_groups_elements_by_parent_id_with_orphans_in_none_group(self):
+        e1 = Title("Title 1")
+        e1.metadata.parent_id = "parent_A"
+        e2 = NarrativeText("Child of A")
+        e2.metadata.parent_id = "parent_A"
+        e3 = NarrativeText("Orphan 1")  # parent_id = None
+        e4 = Title("Title 2")
+        e4.metadata.parent_id = "parent_B"
+        e5 = NarrativeText("Orphan 2")  # parent_id = None
+
+        elements = [e1, e2, e3, e4, e5]
+        result = utils.group_elements_by_parent_id(elements)
+
+        assert list(result.keys()) == ["parent_A", None, "parent_B"]
+        assert [e.text for e in result["parent_A"]] == ["Title 1", "Child of A"]
+        assert [e.text for e in result[None]] == ["Orphan 1", "Orphan 2"]
+        assert [e.text for e in result["parent_B"]] == ["Title 2"]
+
+    def it_assigns_orphans_to_previous_element_group_when_assign_orphans_is_true(self):
+        e1 = Title("Title 1")
+        e1.metadata.parent_id = "parent_A"
+        e2 = NarrativeText("Child of A")
+        e2.metadata.parent_id = "parent_A"
+        e3 = NarrativeText("Orphan 1")  # parent_id = None
+        e4 = Title("Title 2")
+        e4.metadata.parent_id = "parent_B"
+        e5 = NarrativeText("Orphan 2")  # parent_id = None
+
+        elements = [e1, e2, e3, e4, e5]
+        result = utils.group_elements_by_parent_id(elements, assign_orphans=True)
+
+        assert list(result.keys()) == ["parent_A", "parent_B"]
+        assert [e.text for e in result["parent_A"]] == ["Title 1", "Child of A", "Orphan 1"]
+        assert [e.text for e in result["parent_B"]] == ["Title 2", "Orphan 2"]
+
+    def it_keeps_first_orphan_in_none_group_when_assign_orphans_is_true(self):
+        e1 = NarrativeText("First orphan")  # parent_id = None
+        e2 = Title("Title 1")
+        e2.metadata.parent_id = "parent_A"
+        e3 = NarrativeText("Orphan 2")  # parent_id = None
+
+        elements = [e1, e2, e3]
+        result = utils.group_elements_by_parent_id(elements, assign_orphans=True)
+
+        assert list(result.keys()) == [None, "parent_A"]
+        assert [e.text for e in result[None]] == ["First orphan"]
+        assert [e.text for e in result["parent_A"]] == ["Title 1", "Orphan 2"]
