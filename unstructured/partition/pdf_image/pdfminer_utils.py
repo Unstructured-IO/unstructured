@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Optional, Tuple
+from typing import BinaryIO, List, Optional, Tuple, Union
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
@@ -104,6 +104,102 @@ def rect_to_bbox(
     y1 = height - y1
     y2 = height - y2
     return (x1, y1, x2, y2)
+
+
+def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
+    """Detect if two characters are duplicates caused by fake bold rendering.
+
+    Some PDF generators create bold text by rendering the same character twice at slightly
+    offset positions. This function detects such duplicates by checking if two characters
+    have the same text content and nearly identical positions.
+
+    Args:
+        char1: First LTChar object.
+        char2: Second LTChar object.
+        threshold: Maximum pixel distance to consider as duplicate.
+
+    Returns:
+        True if char2 appears to be a duplicate of char1.
+    """
+    # Must be the same character
+    if char1.get_text() != char2.get_text():
+        return False
+
+    # Check if positions are nearly identical (within threshold)
+    x_diff = abs(char1.x0 - char2.x0)
+    y_diff = abs(char1.y0 - char2.y0)
+
+    return x_diff < threshold and y_diff < threshold
+
+
+def deduplicate_chars_in_text_line(text_line: LTTextLine, threshold: float) -> str:
+    """Extract text from an LTTextLine with duplicate characters removed.
+
+    Some PDFs create bold text by rendering each character twice at slightly offset
+    positions. This function removes such duplicates by keeping only the first instance
+    when two identical characters appear at nearly the same position.
+
+    Args:
+        text_line: An LTTextLine object containing characters to extract.
+        threshold: Maximum pixel distance to consider characters as duplicates.
+                   Set to 0 to disable deduplication.
+
+    Returns:
+        The extracted text with duplicate characters removed.
+    """
+    if threshold <= 0:
+        return text_line.get_text()
+
+    # Build deduplicated text while preserving non-LTChar items (like LTAnno for spaces)
+    result_parts: List[str] = []
+    last_ltchar: Optional[LTChar] = None
+
+    for item in text_line:
+        if isinstance(item, LTChar):
+            # Check if this is a duplicate of the last LTChar
+            if last_ltchar is not None and _is_duplicate_char(last_ltchar, item, threshold):
+                # Skip this duplicate character
+                continue
+            last_ltchar = item
+            result_parts.append(item.get_text())
+        else:
+            # Non-LTChar items (e.g., LTAnno for spaces) - keep as-is
+            if hasattr(item, "get_text"):
+                result_parts.append(item.get_text())
+
+    return "".join(result_parts)
+
+
+def get_text_with_deduplication(
+    text_obj: Union[LTTextLine, LTContainer, LTItem],
+    threshold: float,
+) -> str:
+    """Get text from a text object with optional character deduplication.
+
+    This is the main entry point for extracting text with fake-bold deduplication.
+    It handles LTTextLine objects and recursively processes containers.
+
+    Args:
+        text_obj: An LTTextLine, LTContainer, or other LTItem object.
+        threshold: Maximum pixel distance to consider characters as duplicates.
+                   Set to 0 to disable deduplication.
+
+    Returns:
+        The extracted text with duplicate characters removed.
+    """
+    if isinstance(text_obj, LTTextLine):
+        return deduplicate_chars_in_text_line(text_obj, threshold)
+    elif isinstance(text_obj, LTContainer):
+        parts: List[str] = []
+        for child in text_obj:
+            if isinstance(child, LTTextLine):
+                parts.append(deduplicate_chars_in_text_line(child, threshold))
+            elif hasattr(child, "get_text"):
+                parts.append(child.get_text())
+        return "".join(parts)
+    elif hasattr(text_obj, "get_text"):
+        return text_obj.get_text()
+    return ""
 
 
 @requires_dependencies(["pikepdf", "pypdf"])
