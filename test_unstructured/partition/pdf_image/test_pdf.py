@@ -283,6 +283,20 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+def test_partition_pdf_passes_configured_dpi_to_inference(
+    monkeypatch,
+):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        return_value=MockDocumentLayout(),
+    ) as mock_process:
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+        assert mock_process.call_args[1]["pdf_image_dpi"] == 350
+
+
 @pytest.mark.parametrize("model_name", ["checkbox", "yolox"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
