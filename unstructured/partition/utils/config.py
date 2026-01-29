@@ -243,7 +243,7 @@ class ENVConfig:
     @property
     def PDF_RENDER_DPI(self) -> int:
         """The DPI to use for rendering PDF pages"""
-        return self._get_int("PDF_RENDER_DPI", 350)
+        return self._get_int("PDF_RENDER_DPI", 300)
 
 
 env_config = ENVConfig()
