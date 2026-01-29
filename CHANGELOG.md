@@ -1,7 +1,10 @@
-## 0.18.33-dev0
+## 0.18.33
 
 ### Enhancements
 - **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
+
+### Fixes
+- Fix inconsistent pdf_image_dpi value in partition pdf with hi_res strategy
 
 ## 0.18.32
 
