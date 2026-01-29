@@ -554,6 +554,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
         languages=["kor"],
         strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
+        pdf_image_dpi=200,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert elements[0].metadata.languages == ["kor"]
