@@ -1,11 +1,12 @@
 """Diagnostic script to verify fake-bold PDF deduplication is working."""
 import os
+from importlib import reload
 
-# Test 1: Extract WITHOUT deduplication
+# Set environment variable BEFORE importing unstructured modules
 os.environ["PDF_CHAR_DUPLICATE_THRESHOLD"] = "0"
 
 from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.utils.config import env_config
+from unstructured.partition.utils import config as partition_config
 
 PDF_PATH = "example-docs/pdf/fake-bold-sample.pdf"
 
@@ -28,9 +29,7 @@ print(f"\n2. WITH deduplication (threshold=3.0):")
 print("-" * 50)
 
 os.environ["PDF_CHAR_DUPLICATE_THRESHOLD"] = "3.0"
-from importlib import reload
-from unstructured.partition.utils import config
-reload(config)
+reload(partition_config)
 
 elements_with_dedup = partition_pdf(filename=PDF_PATH, strategy="fast")
 text_with_dedup = " ".join([el.text for el in elements_with_dedup])
