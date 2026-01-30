@@ -4,6 +4,7 @@
 - **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
 
 ### Fixes
+- **Preserve newlines in Table/TableChunk elements during PDF partitioning**: Skip whitespace normalization for Table and TableChunk elements so newlines that carry structural meaning (row separation) are preserved (fixes #3983)
 - Fix inconsistent pdf_image_dpi value in partition pdf with hi_res strategy
 
 ## 0.18.32
