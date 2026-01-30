@@ -636,7 +636,7 @@ def _partition_pdf_or_image_local(
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
-        pdf_image_dpi = 200
+        pdf_image_dpi = env_config.PDF_RENDER_DPI
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
     extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None

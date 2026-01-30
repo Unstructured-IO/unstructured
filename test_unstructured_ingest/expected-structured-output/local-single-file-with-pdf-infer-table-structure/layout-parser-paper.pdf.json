@@ -134,8 +134,8 @@
   },
   {
     "type": "UncategorizedText",
-    "element_id": "6f69e5f921907e689f1a52bd84282b31",
-    "text": "arXiv",
+    "element_id": "32c128c3cfeca2ab12b98d336ccfddfc",
+    "text": "arX1V",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -267,8 +267,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "97c951d2dd3a1b5452d0c55e62e8ea78",
-    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson’, and Weining Li®",
+    "element_id": "4dfee7e352ae892814e46bb220094b0f",
+    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson®, and Weining Li>",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -365,9 +365,32 @@
     }
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "fac7bfe169d228f12a722b04ec288ac3",
+    "text": "1",
+    "metadata": {
+      "is_extracted": "true",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "Title",
-    "element_id": "3a170066f972d25cc303a05ddc16d52c",
-    "text": "1 Introduction",
+    "element_id": "b80c5d03ae12c07fd94fe7ce85ff75e5",
+    "text": "Introduction",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -389,7 +412,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "8de96d1e80af35f9b6954252e14c2caf",
+    "element_id": "c676c7c3cc942056073be2efe4a7fbfc",
     "text": "Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks including document image classiﬁcation [11,",
     "metadata": {
       "is_extracted": "true",
@@ -709,7 +732,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "f5a6697190c20bf6030d8e4ae8f6861a",
     "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA",
     "metadata": {
@@ -1025,7 +1048,7 @@
     }
   },
   {
-    "type": "Footer",
+    "type": "ListItem",
     "element_id": "b1fa4bbd1bdda08489faab5bf3adf5cc",
     "text": "6 The number shown is obtained by specifying the search type as ‘code’.",
     "metadata": {
@@ -1071,7 +1094,7 @@
     }
   },
   {
-    "type": "Footer",
+    "type": "UncategorizedText",
     "element_id": "d881ce84f017d89f6e35e2bc4b133bfc",
     "text": "8 https://github.com/BobLd/DocumentLayoutAnalysis",
     "metadata": {
@@ -1186,32 +1209,9 @@
     }
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "fe238f610fe610b8ce1abaa08a0e3e63",
-    "text": "4",
-    "metadata": {
-      "is_extracted": "true",
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4,
-      "data_source": {
-        "record_locator": {
-          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-        },
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "92c4289ad4af7c0793e40d5662707e0a",
-    "text": "Z. Shen et al.",
+    "type": "ListItem",
+    "element_id": "4ee4b32d55cf115add5734b1958b078d",
+    "text": "4 Z. Shen et al.",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -1233,8 +1233,8 @@
   },
   {
     "type": "Image",
-    "element_id": "c4f9a0b797137c8c8f492f1af753f9a0",
-    "text": "Model Customization Efficient Data Annotation Customized Model Training} === | Layout Detection Models | === DIA Pipeline Sharing OCR Module | = | Layout Data Structure ) = { storage & Visualization Community Platform DIA Model Hub",
+    "element_id": "e264392de87494789d1192a5dbc5af77",
+    "text": "Model Customization Document Images Community Platform DIA Model Hub “| Efficient Data Annotation Customized Model Training} === | Layout Detection Models | === DIA Pipeline Sharing OCR Module =— | Layout Data Structure | == | Storage & Visualization iF",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1255,7 +1255,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "466f0bc21599ccf0fa27c021cb023f90",
+    "element_id": "cefd08a6e022c1288d551ca4d088e7a0",
     "text": "Fig.1: The overall architecture of LayoutParser. For an input document image, the core LayoutParser library provides a set of oﬀ-the-shelf tools for layout detection, OCR, visualization, and storage, backed by a carefully designed layout data structure. LayoutParser also supports high level customization via eﬃcient layout annotation and model training functions. These improve model accuracy on the target samples. The community platform enables the easy sharing of DIA models and whole digitization pipelines to promote reusability and reproducibility. A collection of detailed documentation, tutorials and exemplar projects make LayoutParser easy to learn and use.",
     "metadata": {
       "is_extracted": "true",
@@ -1278,7 +1278,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b4948db85ca791e99aa92589fc41734f",
+    "element_id": "bc4e71c1982fa113c76dea6b5821d3e4",
     "text": "AllenNLP [8] and transformers [34] have provided the community with complete DL-based support for developing and deploying models for general computer vision and natural language processing problems. LayoutParser, on the other hand, specializes speciﬁcally in DIA tasks. LayoutParser is also equipped with a community platform inspired by established model hubs such as Torch Hub [23] and TensorFlow Hub [1]. It enables the sharing of pretrained models as well as full document processing pipelines that are unique to DIA tasks.",
     "metadata": {
       "is_extracted": "true",
@@ -1323,7 +1323,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "7651db80014a85ab253367d3bd3e4f88",
+    "element_id": "d2119cdfef98e3e3c177c44175be69a4",
     "text": "There have been a variety of document data collections to facilitate the development of DL models. Some examples include PRImA [3](magazine layouts), PubLayNet [38](academic paper layouts), Table Bank [18](tables in academic papers), Newspaper Navigator Dataset [16, 17](newspaper ﬁgure layouts) and HJDataset [31](historical Japanese document layouts). A spectrum of models trained on these datasets are currently available in the LayoutParser model zoo to support diﬀerent use cases.",
     "metadata": {
       "is_extracted": "true",
@@ -1378,7 +1378,7 @@
   },
   {
     "type": "Title",
-    "element_id": "5a1838a8f40b4523094652cf14ab974c",
+    "element_id": "695dba85a54c05b38377a5960b7dca52",
     "text": "3 The Core LayoutParser Library",
     "metadata": {
       "is_extracted": "true",
@@ -1401,7 +1401,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "47e45d28d96fc14ddc709835de35ece5",
+    "element_id": "cf23ea5ede08492b2715a8a3b5b23daf",
     "text": "At the core of LayoutParser is an oﬀ-the-shelf toolkit that streamlines DL- based document image analysis. Five components support a simple interface with comprehensive functionalities: 1) The layout detection models enable using pre-trained or self-trained DL models for layout detection with just four lines of code. 2) The detected layout information is stored in carefully engineered",
     "metadata": {
       "is_extracted": "true",
@@ -1501,30 +1501,7 @@
           "start_index": 65
         }
       ],
-      "text_as_html": "<table><thead><tr><th>Dataset</th><th>| Base Model'|</th><th>Large Model |</th><th>Notes</th></tr></thead><tbody><tr><td>PubLayNet [38]</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>F</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>F</td><td>F</td><td>Table region on modern scientific and business document.</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5,
-      "data_source": {
-        "record_locator": {
-          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-        },
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "2ec98f0a0b35309e06494a35af88d51c",
-    "text": "1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy",
-    "metadata": {
-      "is_extracted": "true",
+      "text_as_html": "<table><thead><tr><th>Dataset</th><th>Base Model’</th><th>Large Model</th><th>Notes</th></tr></thead><tbody><tr><td>PubLayNet [38]</td><td>F/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>F</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>F</td><td></td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset [31]</td><td>F/M</td><td></td><td>Layouts of history Japanese documents</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -1544,8 +1521,8 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "59e8b34937e08c490512e38b5803dce3",
-    "text": "vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
+    "element_id": "f978160527177fa39c13774ec8dfa9cb",
+    "text": "1 For each dataset, we train several models of diﬀerent sizes for diﬀerent needs (the trade-oﬀ between accuracy vs. computational cost). For “base model” and “large model”, we refer to using the ResNet 50 or ResNet 101 backbones [13], respectively. One can train models of diﬀerent architectures, like Faster R-CNN [28] (F) and Mask R-CNN [12] (M). For example, an F in the Large Model column indicates it has a Faster R-CNN model trained using the ResNet 101 backbone. The platform is maintained and a number of additions will be made to the model zoo in coming months.",
     "metadata": {
       "is_extracted": "true",
       "links": [
@@ -1584,7 +1561,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "0b9e7697400602ac472eda5564c0f44d",
+    "element_id": "55b33df7609960c3552a0b7bc1a5a9c6",
     "text": "layout data structures, which are optimized for eﬃciency and versatility. 3) When necessary, users can employ existing or customized OCR models via the uniﬁed API provided in the OCR module. 4) LayoutParser comes with a set of utility functions for the visualization and storage of the layout data. 5) LayoutParser is also highly customizable, via its integration with functions for layout data annotation and model training. We now provide detailed descriptions for each component.",
     "metadata": {
       "is_extracted": "true",
@@ -1607,7 +1584,7 @@
   },
   {
     "type": "Title",
-    "element_id": "9e349da0d3169a69ebef29f87c80aa84",
+    "element_id": "6e9df774416cc71548308e324b4bdbb7",
     "text": "3.1 Layout Detection Models",
     "metadata": {
       "is_extracted": "true",
@@ -1630,7 +1607,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "f446727c56457e21e13708bf3821774d",
+    "element_id": "bbcc10c2b92de0cbdce8629f18b0d7ad",
     "text": "In LayoutParser, a layout model takes a document image as an input and generates a list of rectangular boxes for the target content regions. Diﬀerent from traditional methods, it relies on deep convolutional neural networks rather than manually curated rules to identify content regions. It is formulated as an object detection problem and state-of-the-art models like Faster R-CNN [28] and Mask R-CNN [12] are used. This yields prediction results of high accuracy and makes it possible to build a concise, generalized interface for layout detection. LayoutParser, built upon Detectron2 [35], provides a minimal API that can perform layout detection with only four lines of code in Python:",
     "metadata": {
       "is_extracted": "true",
@@ -1670,7 +1647,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "53b448c75f1556b1f60b4e3324bd0724",
+    "element_id": "508a6705bb0bfb693616cc14fec5e1b9",
     "text": "1 import layoutparser as lp",
     "metadata": {
       "is_extracted": "true",
@@ -1692,9 +1669,9 @@
     }
   },
   {
-    "type": "NarrativeText",
-    "element_id": "eaf41ed9e5bb3da52339a954727209eb",
-    "text": "2 image = cv2.imread(\"image_file\") # load images 3 model = lp.Detectron2LayoutModel( 4 \"lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config\")",
+    "type": "ListItem",
+    "element_id": "d7eccf8affb9442c47b466236f1dc3d4",
+    "text": "2 image = cv2.imread(\"image_file\") # load images",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -1716,7 +1693,7 @@
   },
   {
     "type": "ListItem",
-    "element_id": "dd05ea3368e0313a428d5e2b45401718",
+    "element_id": "f30541418a7dca51e3e4cd880486ab9c",
     "text": "3 model = lp.Detectron2LayoutModel(",
     "metadata": {
       "is_extracted": "true",
@@ -1738,8 +1715,54 @@
     }
   },
   {
+    "type": "UncategorizedText",
+    "element_id": "29e642de3b82879282412bc518a0b561",
+    "text": "\"lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config\")",
+    "metadata": {
+      "is_extracted": "true",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "ListItem",
-    "element_id": "9fd6cd6d821c887bffbf2d5059354e02",
+    "element_id": "4d9fec76fbadfe7f4577be24fa1b646f",
+    "text": "4",
+    "metadata": {
+      "is_extracted": "partial",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2b6917b3494980ac75bb52f0f07baf43",
     "text": "5 layout = model.detect(image)",
     "metadata": {
       "is_extracted": "true",
@@ -1762,7 +1785,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a396a606cfc323c02a0de45d91b69d6d",
+    "element_id": "7548183e8c62fd95c88ba09f48403e0e",
     "text": "LayoutParser provides a wealth of pre-trained model weights using various datasets covering diﬀerent languages, time periods, and document types. Due to domain shift [7], the prediction performance can notably drop when models are ap- plied to target samples that are signiﬁcantly diﬀerent from the training dataset. As document structures and layouts vary greatly in diﬀerent domains, it is important to select models trained on a dataset similar to the test samples. A semantic syntax is used for initializing the model weights in LayoutParser, using both the dataset name and model name lp://<dataset-name>/<model-architecture-name>.",
     "metadata": {
       "is_extracted": "true",
@@ -1791,32 +1814,9 @@
     }
   },
   {
-    "type": "UncategorizedText",
-    "element_id": "676118b62c2261113a23a610c2ac50cb",
-    "text": "6",
-    "metadata": {
-      "is_extracted": "true",
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6,
-      "data_source": {
-        "record_locator": {
-          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-        },
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "UncategorizedText",
-    "element_id": "710ac103981c6363195774b02ee582d4",
-    "text": "Z. Shen et al.",
+    "type": "NarrativeText",
+    "element_id": "9822d87165468afaadb6f46d821030af",
+    "text": "6 Z. Shen et al.",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -1838,8 +1838,8 @@
   },
   {
     "type": "Image",
-    "element_id": "403965f98f47c92554207f7628ffeefe",
-    "text": "o 3 4 9 s a 8 4 8 3 8 8 . g . £ o 3 ¥ Coordinate § F g 3 + § 3 Block Block Reading| 4 $ Extra features Tea | [ye | | ower é 2 a o ¢ 8 [ coordinatel textblock1 | 3 a , see 3 i A .., textblock2 , layouti ] § \" @ A list of the layout elements é",
+    "element_id": "b03c134c31ac99a48d297deeb16360c4",
+    "text": "o ) # ay Ss cH 3 Rectangle Quadrilateral g 4 M< -d fe) 3 v Es 4 4 o for) ° q a Coordinate 8S 4 P 9 + () ‘ 3 ri) Block Block Reading] g Extra features Text Tye | | onder E ° 4 a ¢ a [ coordinatel textblock1 4 » 1 pees ‘ 3 ES .., textblock2 layout1 ] F 1 Uf lf a q o A list of the layout elements E",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1860,7 +1860,7 @@
   },
   {
     "type": "FigureCaption",
-    "element_id": "9f11aa6b22dea1bba7eb0d122c0c5562",
+    "element_id": "0a9486298b412d0a5afd62b652c6ccda",
     "text": "Fig.2: The relationship between the three types of layout data structures. Coordinate supports three kinds of variation; TextBlock consists of the co- ordinate information and extra features like block text, types, and reading orders; a Layout object is a list of all possible layout elements, including other Layout objects. They all support the same set of transformation and operation APIs for maximum ﬂexibility.",
     "metadata": {
       "is_extracted": "true",
@@ -1883,7 +1883,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "d997f63fd79c7e03050ca01b58dfdf0a",
+    "element_id": "43f1ee92756d0ae08882e548ff4c83d8",
     "text": "Shown in Table 1, LayoutParser currently hosts 9 pre-trained models trained on 5 diﬀerent datasets. Description of the training dataset is provided alongside with the trained models such that users can quickly identify the most suitable models for their tasks. Additionally, when such a model is not readily available, LayoutParser also supports training customized layout models and community sharing of the models (detailed in Section 3.5).",
     "metadata": {
       "is_extracted": "true",
@@ -1913,7 +1913,7 @@
   },
   {
     "type": "Title",
-    "element_id": "836e9227ef393d8b00369e6300fbba4c",
+    "element_id": "74d4520c77d6971b927aa01c65f7129e",
     "text": "3.2 Layout Data Structures",
     "metadata": {
       "is_extracted": "true",
@@ -1936,7 +1936,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "601f7d95172984c75de081023ca64c15",
+    "element_id": "bf2dab9cd733e9dab6ef649810667a00",
     "text": "A critical feature of LayoutParser is the implementation of a series of data structures and operations that can be used to eﬃciently process and manipulate the layout elements. In document image analysis pipelines, various post-processing on the layout analysis model outputs is usually required to obtain the ﬁnal outputs. Traditionally, this requires exporting DL model outputs and then loading the results into other pipelines. All model outputs from LayoutParser will be stored in carefully engineered data types optimized for further processing, which makes it possible to build an end-to-end document digitization pipeline within LayoutParser. There are three key components in the data structure, namely the Coordinate system, the TextBlock, and the Layout. They provide diﬀerent levels of abstraction for the layout data, and a set of APIs are supported for transformations or operations on these classes.",
     "metadata": {
       "is_extracted": "true",
@@ -2113,7 +2113,7 @@
     }
   },
   {
-    "type": "ListItem",
+    "type": "NarrativeText",
     "element_id": "7f736fc72998c81eaff74b157ed4b005",
     "text": "2 # Can be easily switched to other OCR software",
     "metadata": {
@@ -2136,7 +2136,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "ListItem",
     "element_id": "ffb8f709daf70f8dad507c4d212cd8b2",
     "text": "3 tokens = ocr_agent.detect(image)",
     "metadata": {
@@ -2291,7 +2291,7 @@
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
     "metadata": {
       "is_extracted": "true",
-      "text_as_html": "<table><thead><tr><th>block.pad(top,</th><th>bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx, fy)</td><td></td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift (dx, dy)</td><td></td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect</td><td>(block2)</td><td></td><td></td><td>Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td></td><td>Return the union region of block1 and block2. Coordinate type to be determined based the inputs.</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td></td><td>Convert the absolute coordinates of block1 to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td></td><td>Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image</td><td>(image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></tbody></table>",
+      "text_as_html": "<table><thead><tr><th>block.pad(top,</th><th>bottom, right,</th><th>left)</th><th>Enlarge the current block according to the input</th></tr></thead><tbody><tr><td>block.scale(fx,</td><td>fy)</td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx,</td><td>dy)</td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1.intersect</td><td>(block2)</td><td></td><td>Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs.</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs. Convert the absolute coordinates of block1 to</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>relative coordinates to block2 Calculate the absolute coordinates of block1 given</td></tr><tr><td>block1.condition_on(block2) block. crop_image</td><td>(image)</td><td></td><td>the canvas block2’s absolute coordinates Obtain the image segments in the block region</td></tr></tbody></table>",
       "filetype": "application/pdf",
       "languages": [
         "eng"
@@ -2478,7 +2478,30 @@
   },
   {
     "type": "ListItem",
-    "element_id": "c069937e6c2bfc0f856835f3af4d6181",
+    "element_id": "8c43dbfa734bf2d766c260f253381da8",
+    "text": "9",
+    "metadata": {
+      "is_extracted": "partial",
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 9,
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "dfa95a5d6dec88cb5c802366b8841672",
     "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA",
     "metadata": {
       "is_extracted": "true",
@@ -2501,8 +2524,8 @@
   },
   {
     "type": "Image",
-    "element_id": "0f24d2d9d336ceae460a3852785eee67",
-    "text": "10g Buypunog uayoy Aeydsiq 1 vondo 10g 6ulpunog usyoy api :z uondo, Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR’ Text at the Correspoding Position",
+    "element_id": "8c7735c2c17a96741a9d5d6b3740f8d6",
+    "text": "4 Anonymous ICDAR 2021 Submission 3 ynonymous_)FCDAR_] 2021) Submission <= + + xog Buipunog uayo, Aejdsig :1 uondo ated | vith fimetions for! layout | ‘etailed descriptions for’ each! xog Bulpunog uayo) apiy :z uondo Mode |: Showing Layout on the Original Image Mode II: Drawing OCR’d Text at the Correspoding Position",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2523,7 +2546,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4d1b9566e792683b9559b778be4f4046",
+    "element_id": "fb0f4f71d292bd9f2f935ca0c76cf6a3",
     "text": "Fig.3: Layout detection and OCR results visualization generated by the LayoutParser APIs. Mode I directly overlays the layout region bounding boxes and categories over the original image. Mode II recreates the original document via drawing the OCR’d texts at their corresponding positions on the image canvas. In this ﬁgure, tokens in textual regions are ﬁltered using the API and then displayed.",
     "metadata": {
       "is_extracted": "true",
@@ -2546,7 +2569,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "625c9e1d41a9740f094041595f79953d",
+    "element_id": "7d5983166b8a43afc2202b6200f5afa9",
     "text": "can also be highly sensitive and not sharable publicly. To overcome these chal- lenges, LayoutParser is built with rich features for eﬃcient data annotation and customized model training.",
     "metadata": {
       "is_extracted": "true",
@@ -2569,7 +2592,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "a3498730b5cd3fe9405fad69bcf37882",
+    "element_id": "9561eae776a8a4c9b8e7a92d2e2b54ae",
     "text": "LayoutParser incorporates a toolkit optimized for annotating document lay- outs using object-level active learning [32]. With the help from a layout detection model trained along with labeling, only the most important layout objects within each image, rather than the whole image, are required for labeling. The rest of the regions are automatically annotated with high conﬁdence predictions from the layout detection model. This allows a layout dataset to be created more eﬃciently with only around 60% of the labeling budget.",
     "metadata": {
       "is_extracted": "true",
@@ -2599,7 +2622,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c4ccf2cf2e7495668221cbe51534f90b",
+    "element_id": "cd9ff032b8a80f56188ad2b5b7156573",
     "text": "After the training dataset is curated, LayoutParser supports diﬀerent modes for training the layout models. Fine-tuning can be used for training models on a small newly-labeled dataset by initializing the model with existing pre-trained weights. Training from scratch can be helpful when the source dataset and target are signiﬁcantly diﬀerent and a large training set is available. However, as suggested in Studer et al.’s work[33], loading pre-trained weights on large-scale datasets like ImageNet [5], even from totally diﬀerent domains, can still boost model performance. Through the integrated API provided by LayoutParser, users can easily compare model performances on the benchmark datasets.",
     "metadata": {
       "is_extracted": "true",
@@ -2657,8 +2680,8 @@
   },
   {
     "type": "Image",
-    "element_id": "1dd15be7cc0092ea5c221a34bf854869",
-    "text": "Intra-column reading order ‘Token Categories Variabte (EE company type Column Categories J tie Adatress () tet [J Section Header Column reading order Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
+    "element_id": "a6aa8357c70f57fb94d3168f2f32c24a",
+    "text": "Intra-column reading order Token Categories 2 (Address £ = / Number 3 Variable {7 company type Column Categories Title = ier, Ba KS ie A ATL ge HR a OH a A a S| Rolls Soper ee eres be] Address B Rm a Sanne i es g ee a RUC AH unl een cen RENE Section Header S| ganm Bin MR TR RM AM L_ ES Baap hn} 4 Hb es GH A AR 25% B ei FE : ie § Aa at FL eta BE & ih 3 as GJ rr S me (b) Illustration of the recreated document with dense text structure for better OCR performance",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2981,8 +3004,8 @@
   },
   {
     "type": "Image",
-    "element_id": "0ae05b73a88b238b80c4d18c6f9274ec",
-    "text": "“Active Learning Layout Annotate Layout Dataset | Annotation Toolkit ¥ Tayo betetion Deep Learning Layout \" Model Training & Inference, ¥ Post processing Handy Data Structures & APIs for Layout Data ¥ Text Recognition | <—— Default and bustomized ¥ pon Wa i — ayout Structure Visualization & Export | <—— | vic alization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
+    "element_id": "22458898f1f58cfb0b54a438a4737567",
+    "text": "Active Learning Layout Annotate Layout Dataset | + Model Training & Inference Post processing Handy Dat Structures & —e—e€v Text Recognition | <—— ations Layout Structure Visualization & Export | «| V3. alization & Storage Default and Customized OCR Models The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3048,7 +3071,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "9d917f215b0115c679105482b80d2d2d",
     "text": "12 Z. Shen et al.",
     "metadata": {
@@ -3292,8 +3315,8 @@
   },
   {
     "type": "Image",
-    "element_id": "e45bde8fddca133387e91d96fa2d136a",
-    "text": "(6) Partial table atthe bottom (b) Ful page table (©) Partial table atthe top (4) Mis detected text line",
+    "element_id": "d7ab3da5ec0adb1b2b4fb5f800a545a0",
+    "text": "ra (a) Partial table at the bottom (b) Full page table (c) Partial table at the top (d) Mis-detected text line",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -3336,7 +3359,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "ListItem",
     "element_id": "60e4fa05c78628ec1c6fa6003b86b52e",
     "text": "5.2 A light-weight Visual Table Extractor",
     "metadata": {
@@ -3814,8 +3837,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "0176491ee2584bffdfb943caa8aefab4",
-    "text": "Lukasz Garncarek, Powalski, R., Stanistawek, T., Topolski, B., Halama, P., Graliriski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
+    "element_id": "b28cae31cc0ad503c9658c6b3e3bd4d7",
+    "text": "Lukasz Garncarek, Powalski, R., Stanistawek, T., Topolski, B., Halama, P., Gralinski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",

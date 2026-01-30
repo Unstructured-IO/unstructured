@@ -40,7 +40,7 @@ DEFAULT_ROUND = 15
 
 def process_file_with_pdfminer(
     filename: str = "",
-    dpi: int = 200,
+    dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
@@ -501,7 +501,7 @@ def process_page_layout_from_pdfminer(
 @requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
-    dpi: int = 200,
+    dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
