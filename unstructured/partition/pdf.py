@@ -80,6 +80,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
+    get_text_with_deduplication,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -520,7 +521,10 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets: list[str] = [obj.get_text()]
+                # Use deduplication to handle fake bold text (characters rendered twice)
+                _text_snippets: list[str] = [
+                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
+                ]
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
