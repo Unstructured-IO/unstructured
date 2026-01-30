@@ -1,3 +1,8 @@
+## 0.18.34-dev0
+
+### Fixes
+- lower the default dpi value so most images will fit into PIL's default max image pixel size
+
 ## 0.18.33
 
 ### Enhancements
