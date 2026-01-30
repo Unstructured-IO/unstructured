@@ -1,3 +1,4 @@
+from importlib import reload
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,6 +12,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_text_objects,
     get_text_with_deduplication,
 )
+from unstructured.partition.utils import config as partition_config
 
 
 def test_extract_text_objects_nested_containers():
@@ -246,13 +248,7 @@ class TestFakeBoldPdfIntegration:
         """
         # Disable deduplication by setting threshold to 0
         monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
-
-        # Reload config to pick up the environment variable change
-        from importlib import reload
-
-        from unstructured.partition.utils import config
-
-        reload(config)
+        reload(partition_config)
 
         filename = example_doc_path("pdf/fake-bold-sample.pdf")
 
@@ -275,18 +271,14 @@ class TestFakeBoldPdfIntegration:
 
         # First, extract WITHOUT deduplication
         monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
-        from importlib import reload
-
-        from unstructured.partition.utils import config
-
-        reload(config)
+        reload(partition_config)
 
         elements_no_dedup = partition_pdf(filename=filename, strategy="fast")
         text_no_dedup = " ".join([el.text for el in elements_no_dedup])
 
         # Then, extract WITH deduplication (reset to default)
         monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
-        reload(config)
+        reload(partition_config)
 
         elements_with_dedup = partition_pdf(filename=filename, strategy="fast")
         text_with_dedup = " ".join([el.text for el in elements_with_dedup])

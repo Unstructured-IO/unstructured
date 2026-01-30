@@ -6,6 +6,7 @@ import math
 import os
 import tempfile
 from dataclasses import dataclass
+from importlib import reload
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -38,6 +39,7 @@ from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
+from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
@@ -449,11 +451,7 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
 
     # First, extract WITHOUT deduplication (threshold=0)
     monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
-    from importlib import reload
-
-    from unstructured.partition.utils import config
-
-    reload(config)
+    reload(partition_config)
 
     elements_no_dedup = pdf.partition_pdf(
         filename=filename, strategy=PartitionStrategy.FAST
@@ -462,7 +460,7 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
 
     # Then, extract WITH deduplication (threshold=3.0)
     monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
-    reload(config)
+    reload(partition_config)
 
     elements_with_dedup = pdf.partition_pdf(
         filename=filename, strategy=PartitionStrategy.FAST
