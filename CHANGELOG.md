@@ -1,7 +1,7 @@
 ## 0.18.34-dev0
 
 ### Fixes
-- lower the default dpi value so most images will fit into PIL's default max image pixel size
+- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
 
 ## 0.18.33
 
