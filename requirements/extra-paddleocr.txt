@@ -107,7 +107,7 @@ pillow==12.1.0
     #   paddlepaddle
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==6.33.4
+protobuf==6.33.5
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle
@@ -153,7 +153,7 @@ termcolor==3.3.0
     # via fire
 tifffile==2025.5.10
     # via scikit-image
-tqdm==4.67.1
+tqdm==4.67.2
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
