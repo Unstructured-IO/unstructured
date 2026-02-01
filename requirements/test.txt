@@ -50,7 +50,7 @@ packaging==26.0
     #   -c ./base.txt
     #   black
     #   pytest
-pathspec==1.0.3
+pathspec==1.0.4
     # via
     #   black
     #   mypy
@@ -89,7 +89,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-pytokens==0.4.0
+pytokens==0.4.1
     # via black
 ruff==0.14.14
     # via -r ./test.in

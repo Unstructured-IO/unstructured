@@ -4,7 +4,7 @@ cffi==2.0.0
     # via
     #   -c ./base.txt
     #   cryptography
-cryptography==46.0.3
+cryptography==46.0.4
     # via
     #   -c ./base.txt
     #   msoffcrypto-tool
