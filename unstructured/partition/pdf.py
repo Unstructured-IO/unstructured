@@ -95,6 +95,7 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
+from unstructured.partition.pdf_hierarchy import infer_heading_levels
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
@@ -369,6 +370,23 @@ def partition_pdf_or_image(
             # NOTE(crag): do not call _process_uncategorized_text_elements here, because
             # extracted elements (which are text blocks outside of OD-determined blocks)
             # are likely not Titles and should not be identified as such.
+            # Infer heading levels for PDF documents
+            if not is_image:
+                try:
+                    # Prepare file for outline extraction
+                    file_for_outline = None
+                    if file is not None:
+                        file.seek(0)
+                        file_for_outline = file.read() if hasattr(file, 'read') else file
+                    elements = infer_heading_levels(
+                        elements,
+                        filename=filename,
+                        file=file_for_outline,
+                        use_outline=True,
+                        use_font_analysis=True,
+                    )
+                except Exception as e:
+                    logger.debug(f"Failed to infer heading levels: {e}")
             return elements
 
     elif strategy == PartitionStrategy.FAST:
@@ -377,6 +395,23 @@ def partition_pdf_or_image(
             include_page_breaks=include_page_breaks,
             **kwargs,
         )
+
+        # Infer heading levels for PDF documents
+        if not is_image:
+            try:
+                file_for_outline = None
+                if file is not None:
+                    file.seek(0)
+                    file_for_outline = file.read() if hasattr(file, 'read') else file
+                out_elements = infer_heading_levels(
+                    out_elements,
+                    filename=filename,
+                    file=file_for_outline,
+                    use_outline=True,
+                    use_font_analysis=True,
+                )
+            except Exception as e:
+                logger.debug(f"Failed to infer heading levels: {e}")
 
         return out_elements
 
@@ -396,6 +431,23 @@ def partition_pdf_or_image(
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
+
+        # Infer heading levels for PDF documents
+        if not is_image:
+            try:
+                file_for_outline = None
+                if file is not None:
+                    file.seek(0)
+                    file_for_outline = file.read() if hasattr(file, 'read') else file
+                out_elements = infer_heading_levels(
+                    out_elements,
+                    filename=filename,
+                    file=file_for_outline,
+                    use_outline=True,
+                    use_font_analysis=True,
+                )
+            except Exception as e:
+                logger.debug(f"Failed to infer heading levels: {e}")
 
     return out_elements
 
