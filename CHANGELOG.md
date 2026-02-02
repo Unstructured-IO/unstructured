@@ -1,7 +1,16 @@
-## 0.18.34-dev0
+## 0.18.35-dev0
+
+### Enhancements
+- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+
+## 0.18.34
+
+### Enhancements
+- Bump `unstructured-inference` to 1.2.0
 
 ### Fixes
-- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- **Security update**: Bumped `cryptography` to 46.0.4 to address security vulnerabilities
+- Bumped dependencies: `psutil`, `pypdf`, `python-iso639`, `tqdm`, `wrapt`, `protobuf`, `google-auth`, `pikepdf`, `pathspec`, `pytokens`
 
 ## 0.18.33
 

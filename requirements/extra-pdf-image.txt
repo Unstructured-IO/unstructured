@@ -21,9 +21,10 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.3.2
     # via matplotlib
-cryptography==46.0.3
+cryptography==46.0.4
     # via
     #   -c ./base.txt
+    #   google-auth
     #   pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -48,7 +49,7 @@ fsspec==2026.1.0
     #   torch
 google-api-core[grpc]==2.29.0
     # via google-cloud-vision
-google-auth==2.47.0
+google-auth==2.48.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -146,7 +147,7 @@ pdfminer-six==20260107
     #   unstructured-inference
 pi-heif==1.2.0
     # via -r ./extra-pdf-image.in
-pikepdf==10.2.0
+pikepdf==10.3.0
     # via -r ./extra-pdf-image.in
 pillow==12.1.0
     # via
@@ -160,7 +161,7 @@ proto-plus==1.27.0
     # via
     #   google-api-core
     #   google-cloud-vision
-protobuf==6.33.4
+protobuf==6.33.5
     # via
     #   -c ././deps/constraints.txt
     #   google-api-core
@@ -170,7 +171,7 @@ protobuf==6.33.4
     #   onnx
     #   onnxruntime
     #   proto-plus
-psutil==7.2.1
+psutil==7.2.2
     # via
     #   -c ./base.txt
     #   accelerate
@@ -188,7 +189,7 @@ pycparser==3.0
     #   cffi
 pyparsing==3.3.2
     # via matplotlib
-pypdf==6.6.1
+pypdf==6.6.2
     # via
     #   -c ./base.txt
     #   -r ./extra-pdf-image.in
@@ -260,7 +261,7 @@ torchvision==0.25.0
     # via
     #   effdet
     #   timm
-tqdm==4.67.1
+tqdm==4.67.2
     # via
     #   -c ./base.txt
     #   huggingface-hub
@@ -278,7 +279,7 @@ typing-extensions==4.15.0
     #   torch
 tzdata==2025.3
     # via pandas
-unstructured-inference==1.1.7
+unstructured-inference==1.2.0
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.15
     # via -r ./extra-pdf-image.in
@@ -287,7 +288,7 @@ urllib3==2.6.3
     #   -c ./base.txt
     #   -c ././deps/constraints.txt
     #   requests
-wrapt==2.0.1
+wrapt==2.1.0
     # via
     #   -c ./base.txt
     #   deprecated

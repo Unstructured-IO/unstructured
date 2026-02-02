@@ -23,7 +23,7 @@ click==8.3.1
     # via
     #   nltk
     #   python-oxmsg
-cryptography==46.0.3
+cryptography==46.0.4
     # via unstructured-client
 dataclasses-json==0.6.7
     # via
@@ -87,15 +87,15 @@ packaging==26.0
     # via
     #   marshmallow
     #   unstructured-client
-psutil==7.2.1
+psutil==7.2.2
     # via -r ./base.in
 pycparser==3.0
     # via cffi
-pypdf==6.6.1
+pypdf==6.6.2
     # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
-python-iso639==2025.11.16
+python-iso639==2026.1.31
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
@@ -120,7 +120,7 @@ six==1.17.0
     #   unstructured-client
 soupsieve==2.8.3
     # via beautifulsoup4
-tqdm==4.67.1
+tqdm==4.67.2
     # via
     #   -r ./base.in
     #   nltk
@@ -150,5 +150,5 @@ urllib3==2.6.3
     #   unstructured-client
 webencodings==0.5.1
     # via html5lib
-wrapt==2.0.1
+wrapt==2.1.0
     # via -r ./base.in
