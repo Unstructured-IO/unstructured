@@ -213,72 +213,80 @@ class TestGetTextWithDeduplication:
 
 
 class TestFakeBoldPdfIntegration:
-    """Integration tests for fake-bold PDF deduplication using real PDF files."""
+    """Integration tests for fake-bold PDF deduplication using real PDF files.
 
-    def test_fake_bold_pdf_deduplication_enabled(self):
-        """Test that fake-bold text is properly deduplicated from a real PDF.
+    The test PDF (fake-bold-sample.pdf) contains text rendered with the "fake bold"
+    technique where each character is drawn twice at slightly offset positions.
+    This causes text extraction to show doubled characters (e.g., "BBOOLLDD" instead
+    of "BOLD") unless deduplication is applied.
+    """
 
-        Uses a PDF file that contains text rendered with the "fake bold" technique,
-        where each character is drawn twice at slightly offset positions.
-        With deduplication enabled (default), the extracted text should be clean.
-        """
-        filename = example_doc_path("pdf/fake-bold-sample.pdf")
-
-        # Extract with deduplication enabled (default, threshold=3.0)
-        elements = partition_pdf(filename=filename, strategy="fast")
-
-        # Combine all extracted text
-        extracted_text = " ".join([el.text for el in elements])
-
-        # Basic validation - text should be extracted successfully
-        assert len(elements) > 0, "Should extract elements from the PDF"
-
-    def test_fake_bold_pdf_deduplication_disabled(self, monkeypatch):
-        """Test PDF extraction with deduplication disabled shows raw text.
+    def test_fake_bold_pdf_without_deduplication_shows_doubled_chars(self, monkeypatch):
+        """Test that extraction WITHOUT deduplication shows doubled characters.
 
         When PDF_CHAR_DUPLICATE_THRESHOLD is set to 0, deduplication is disabled
-        and the raw text (potentially with doubled characters) should be visible.
+        and the raw text shows the fake-bold doubled characters.
         """
-        # Disable deduplication by setting threshold to 0
         monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
         reload(partition_config)
 
         filename = example_doc_path("pdf/fake-bold-sample.pdf")
-
-        # Extract with deduplication disabled
         elements = partition_pdf(filename=filename, strategy="fast")
-
-        # Combine all extracted text
         extracted_text = " ".join([el.text for el in elements])
 
-        # Text should still be extracted
-        assert len(extracted_text) > 0, "Should extract some text from the PDF"
+        # Without deduplication, fake-bold text appears with doubled characters
+        assert "BBOOLLDD" in extracted_text, (
+            "Without deduplication, fake-bold text should show doubled characters "
+            "like 'BBOOLLDD' instead of 'BOLD'"
+        )
 
-    def test_fake_bold_deduplication_reduces_text_length(self, monkeypatch):
-        """Test that deduplication actually reduces text length for fake-bold PDFs.
+    def test_fake_bold_pdf_with_deduplication_shows_clean_text(self, monkeypatch):
+        """Test that extraction WITH deduplication shows clean text.
 
-        If the PDF truly has fake-bold text, the deduplicated version should be
-        shorter than the non-deduplicated version.
+        When PDF_CHAR_DUPLICATE_THRESHOLD is set to default (3.0), deduplication
+        removes the duplicate characters and produces clean, readable text.
         """
-        filename = example_doc_path("pdf/fake-bold-sample.pdf")
-
-        # First, extract WITHOUT deduplication
-        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
-        reload(partition_config)
-
-        elements_no_dedup = partition_pdf(filename=filename, strategy="fast")
-        text_no_dedup = " ".join([el.text for el in elements_no_dedup])
-
-        # Then, extract WITH deduplication (reset to default)
         monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
         reload(partition_config)
 
+        filename = example_doc_path("pdf/fake-bold-sample.pdf")
+        elements = partition_pdf(filename=filename, strategy="fast")
+        extracted_text = " ".join([el.text for el in elements])
+
+        # With deduplication, fake-bold text should be clean (no doubled chars)
+        assert "BOLD" in extracted_text, (
+            "With deduplication, text should contain clean 'BOLD' not 'BBOOLLDD'"
+        )
+        # Verify the doubled pattern is NOT present in the deduplicated fake-bold section
+        # Note: The PDF contains 'BBOOLLDD' as explanatory text, so we check for
+        # the specific pattern that would appear if deduplication failed on the
+        # fake-bold rendered text (e.g., "TTEEXXTT" from "TEXT")
+        assert "TTEEXXTT" not in extracted_text, (
+            "With deduplication, fake-bold 'TEXT' should not appear as 'TTEEXXTT'"
+        )
+
+    def test_fake_bold_deduplication_reduces_text_length(self, monkeypatch):
+        """Test that deduplication reduces text length for fake-bold PDFs.
+
+        Compares extraction with and without deduplication to verify that
+        the deduplicated text is shorter due to removal of duplicate characters.
+        """
+        filename = example_doc_path("pdf/fake-bold-sample.pdf")
+
+        # Extract WITHOUT deduplication (threshold=0)
+        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
+        reload(partition_config)
+        elements_no_dedup = partition_pdf(filename=filename, strategy="fast")
+        text_no_dedup = " ".join([el.text for el in elements_no_dedup])
+
+        # Extract WITH deduplication (threshold=3.0)
+        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
+        reload(partition_config)
         elements_with_dedup = partition_pdf(filename=filename, strategy="fast")
         text_with_dedup = " ".join([el.text for el in elements_with_dedup])
 
-        # If the PDF has fake-bold text, deduplicated text should be shorter
-        # or at minimum the same length (if no duplicates were found)
-        assert len(text_with_dedup) <= len(text_no_dedup), (
-            f"Deduplicated text ({len(text_with_dedup)} chars) should not be longer "
+        # Deduplicated text should be shorter than non-deduplicated text
+        assert len(text_with_dedup) < len(text_no_dedup), (
+            f"Deduplicated text ({len(text_with_dedup)} chars) should be shorter "
             f"than non-deduplicated text ({len(text_no_dedup)} chars)"
         )
