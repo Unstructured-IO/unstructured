@@ -88,7 +88,7 @@ tokenizers==0.21.4
     #   transformers
 torch==2.10.0
     # via -r ./huggingface.in
-tqdm==4.67.1
+tqdm==4.67.2
     # via
     #   -c ./base.txt
     #   huggingface-hub
