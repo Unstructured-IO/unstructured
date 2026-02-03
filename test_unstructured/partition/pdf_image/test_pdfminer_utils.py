@@ -1,7 +1,6 @@
 from importlib import reload
 from unittest.mock import MagicMock
 
-import pytest
 from pdfminer.layout import LTChar, LTContainer, LTTextLine
 
 from test_unstructured.unit_utils import example_doc_path
