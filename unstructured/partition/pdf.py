@@ -111,6 +111,9 @@ patch_psparser()
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
+# increase the max pixels so high dpi values like 300 can still be under the PIL limit
+PILImage.MAX_IMAGE_PIXELS = 5e8
+
 
 @requires_dependencies("unstructured_inference")
 def default_hi_res_model() -> str:
