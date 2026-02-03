@@ -142,7 +142,7 @@ locally if you are planning to contribute to the project.
 
 * Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
 
-	`pyenv  virtualenv 3.10 unstructured` <br />
+	`pyenv virtualenv 3.10 unstructured` <br />
 	`pyenv activate unstructured`
 
 * Run `make install`
