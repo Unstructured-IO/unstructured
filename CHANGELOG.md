@@ -1,7 +1,8 @@
-## 0.18.35-dev0
+## 0.18.35-dev1
 
 ### Enhancements
 - increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- Add `Form` type element
 
 ## 0.18.34
 

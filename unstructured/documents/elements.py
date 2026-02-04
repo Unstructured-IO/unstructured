@@ -876,6 +876,12 @@ class Formula(Text):
     category = "Formula"
 
 
+class Form(Text):
+    "An element containing form in a document"
+
+    category = "Form"
+
+
 class CompositeElement(Text):
     """A chunk formed from text (non-Table) elements.
 
@@ -1000,7 +1006,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
-    ElementType.FORM: NarrativeText,
+    ElementType.FORM: Form,
     ElementType.VALUE: NarrativeText,
     ElementType.LINK: NarrativeText,
     ElementType.LIST_ITEM: ListItem,
