@@ -179,13 +179,13 @@ def infer_heading_levels_from_outline(
     from difflib import SequenceMatcher
 
     # Create a mapping of outline titles to levels
-        outline_map = {}
-        for entry in outline_entries:
-            title = entry.get('title', '').strip()
-            level = entry.get('level', 0)
-            # Normalize level to 1-6 range (H1-H6)
-            normalized_level = min(max(level + 1, 1), 6)
-            outline_map[title.lower()] = normalized_level
+    outline_map = {}
+    for entry in outline_entries:
+        title = entry.get('title', '').strip()
+        level = entry.get('level', 0)
+        # Normalize level to 1-6 range (H1-H6)
+        normalized_level = min(max(level + 1, 1), 6)
+        outline_map[title.lower()] = normalized_level
 
     # Match Title elements to outline entries
     for element in elements:
