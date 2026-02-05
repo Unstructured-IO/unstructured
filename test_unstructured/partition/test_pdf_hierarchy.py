@@ -60,6 +60,10 @@ def test_infer_heading_levels_from_outline():
     assert elements[0].metadata.heading_level == 1  # level 0 + 1
     assert elements[1].metadata.heading_level == 2  # level 1 + 1
     assert elements[2].metadata.heading_level == 3  # level 2 + 1
+    # Levels are normalized to 1-6 range
+    assert 1 <= elements[0].metadata.heading_level <= 6
+    assert 1 <= elements[1].metadata.heading_level <= 6
+    assert 1 <= elements[2].metadata.heading_level <= 6
 
 
 def test_infer_heading_levels_from_font_sizes():
@@ -78,7 +82,7 @@ def test_infer_heading_levels_from_font_sizes():
     # Check that heading levels were assigned
     levels = [e.metadata.heading_level for e in elements if e.metadata.heading_level is not None]
     assert len(levels) > 0
-    assert all(1 <= level <= 4 for level in levels)
+    assert all(1 <= level <= 6 for level in levels)
 
 
 def test_infer_heading_levels_integration():
@@ -106,7 +110,7 @@ def test_infer_heading_levels_integration():
 
 
 def test_heading_levels_are_in_range():
-    """Test that assigned heading levels are always in the valid range (1-4)."""
+    """Test that assigned heading levels are always in the valid range (1-6)."""
     from unstructured.documents.elements import ElementMetadata
 
     elements = [
@@ -121,7 +125,7 @@ def test_heading_levels_are_in_range():
 
     for element in elements:
         if element.metadata and element.metadata.heading_level is not None:
-            assert 1 <= element.metadata.heading_level <= 4
+            assert 1 <= element.metadata.heading_level <= 6
 
 
 def test_fuzzy_matching_in_outline():
@@ -140,5 +144,5 @@ def test_fuzzy_matching_in_outline():
 
     # Should match "Introduction to the Project" with "Introduction"
     if elements[0].metadata.heading_level is not None:
-        assert 1 <= elements[0].metadata.heading_level <= 4
+        assert 1 <= elements[0].metadata.heading_level <= 6
 

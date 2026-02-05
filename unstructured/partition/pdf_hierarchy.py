@@ -1,6 +1,6 @@
 """Utilities for detecting hierarchical heading levels in PDF documents.
 
-This module provides functionality to infer heading levels (H1, H2, H3, H4) for PDF documents
+This module provides functionality to infer heading levels (H1, H2, H3, H4, H5, H6) for PDF documents
 by analyzing:
 1. PDF document outline/bookmarks
 2. Font sizes relative to page size and other headings
@@ -179,13 +179,13 @@ def infer_heading_levels_from_outline(
     from difflib import SequenceMatcher
 
     # Create a mapping of outline titles to levels
-    outline_map = {}
-    for entry in outline_entries:
-        title = entry.get('title', '').strip()
-        level = entry.get('level', 0)
-        # Normalize level to 1-4 range
-        normalized_level = min(max(level + 1, 1), 4)
-        outline_map[title.lower()] = normalized_level
+        outline_map = {}
+        for entry in outline_entries:
+            title = entry.get('title', '').strip()
+            level = entry.get('level', 0)
+            # Normalize level to 1-6 range (H1-H6)
+            normalized_level = min(max(level + 1, 1), 6)
+            outline_map[title.lower()] = normalized_level
 
     # Match Title elements to outline entries
     for element in elements:
@@ -207,7 +207,8 @@ def infer_heading_levels_from_outline(
                         best_match_level = level
 
             if best_match_level is not None:
-                element.metadata.heading_level = best_match_level
+                # Ensure level is in valid range (1-6)
+                element.metadata.heading_level = min(max(best_match_level, 1), 6)
 
 
 def infer_heading_levels_from_font_sizes(
@@ -289,25 +290,29 @@ def infer_heading_levels_from_font_sizes(
         title_scores.sort(key=lambda x: x[1], reverse=True)
 
         # Assign levels based on ranking
-        # Top 25% get H1, next 25% get H2, etc.
+        # Distribute across H1-H6 based on percentile
         num_titles = len(title_scores)
         for idx, (element, _) in enumerate(title_scores):
-            if num_titles <= 4:
+            if num_titles <= 6:
                 level = idx + 1
             else:
                 percentile = (idx + 1) / num_titles
-                if percentile <= 0.25:
+                if percentile <= 1/6:
                     level = 1
-                elif percentile <= 0.5:
+                elif percentile <= 2/6:
                     level = 2
-                elif percentile <= 0.75:
+                elif percentile <= 3/6:
                     level = 3
-                else:
+                elif percentile <= 4/6:
                     level = 4
+                elif percentile <= 5/6:
+                    level = 5
+                else:
+                    level = 6
             
             # Only assign if not already set
             if element.metadata.heading_level is None:
-                element.metadata.heading_level = min(max(level, 1), 4)
+                element.metadata.heading_level = min(max(level, 1), 6)
 
 
 def infer_heading_levels(
@@ -317,7 +322,7 @@ def infer_heading_levels(
     use_outline: bool = True,
     use_font_analysis: bool = True,
 ) -> list[Element]:
-    """Infer hierarchical heading levels (H1-H4) for Title elements in PDF.
+    """Infer hierarchical heading levels (H1-H6) for Title elements in PDF.
 
     This function combines multiple strategies to determine heading levels:
     1. PDF outline/bookmarks (most reliable)
