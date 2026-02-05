@@ -452,28 +452,22 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
     # Extract WITHOUT deduplication (threshold=0) - shows doubled characters
     monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
     reload(partition_config)
-    elements_no_dedup = pdf.partition_pdf(
-        filename=filename, strategy=PartitionStrategy.FAST
-    )
+    elements_no_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     text_no_dedup = " ".join([el.text for el in elements_no_dedup])
 
     # Extract WITH deduplication (threshold=3.0) - shows clean text
     monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
     reload(partition_config)
-    elements_with_dedup = pdf.partition_pdf(
-        filename=filename, strategy=PartitionStrategy.FAST
-    )
+    elements_with_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     text_with_dedup = " ".join([el.text for el in elements_with_dedup])
 
     # Verify fake-bold text shows doubled characters without deduplication
-    assert "BBOOLLDD" in text_no_dedup, (
-        "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
-    )
+    assert (
+        "BBOOLLDD" in text_no_dedup
+    ), "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
 
     # Verify deduplication produces clean text
-    assert "BOLD" in text_with_dedup, (
-        "With deduplication, text should contain clean 'BOLD'"
-    )
+    assert "BOLD" in text_with_dedup, "With deduplication, text should contain clean 'BOLD'"
 
     # Verify deduplicated text is shorter
     assert len(text_with_dedup) < len(text_no_dedup), (

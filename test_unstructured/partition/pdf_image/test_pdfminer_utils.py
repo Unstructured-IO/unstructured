@@ -253,16 +253,16 @@ class TestFakeBoldPdfIntegration:
         extracted_text = " ".join([el.text for el in elements])
 
         # With deduplication, fake-bold text should be clean (no doubled chars)
-        assert "BOLD" in extracted_text, (
-            "With deduplication, text should contain clean 'BOLD' not 'BBOOLLDD'"
-        )
+        assert (
+            "BOLD" in extracted_text
+        ), "With deduplication, text should contain clean 'BOLD' not 'BBOOLLDD'"
         # Verify the doubled pattern is NOT present in the deduplicated fake-bold section
         # Note: The PDF contains 'BBOOLLDD' as explanatory text, so we check for
         # the specific pattern that would appear if deduplication failed on the
         # fake-bold rendered text (e.g., "TTEEXXTT" from "TEXT")
-        assert "TTEEXXTT" not in extracted_text, (
-            "With deduplication, fake-bold 'TEXT' should not appear as 'TTEEXXTT'"
-        )
+        assert (
+            "TTEEXXTT" not in extracted_text
+        ), "With deduplication, fake-bold 'TEXT' should not appear as 'TTEEXXTT'"
 
     def test_fake_bold_deduplication_reduces_text_length(self, monkeypatch):
         """Test that deduplication reduces text length for fake-bold PDFs.
