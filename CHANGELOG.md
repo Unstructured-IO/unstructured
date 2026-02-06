@@ -3,6 +3,9 @@
 ### Enhancements
 - increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
 
+### Fixes
+- **Fix Black formatting violations in PDF test files**: Corrected code formatting in `test_pdfminer_utils.py` and `test_pdf.py` to comply with Black style guidelines and updated expected element IDs in tests to match new deterministic ID generation
+
 ## 0.18.34
 
 ### Enhancements

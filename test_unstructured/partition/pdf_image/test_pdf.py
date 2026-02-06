@@ -1382,12 +1382,12 @@ def expected_element_ids_for_fast_strategy():
         "a90a54baba0093296a013d26b7acbc17",
         "9be424e2d151dac4b5f36a85e9bbfe65",
         "4631da875fb4996c63b2d80cea6b588e",
-        "6264f4eda97a049f4710f9bea0c01cbd",
+        "8cdb940788d2ed43523a5327292477a0",
         "abded7b2ff3a5542c88b4a831755ec24",
         "b781ea5123cb31e0571391b7b42cac75",
         "033f27d2618ba4cda9068b267b5a731e",
         "8982a12fcced30dd12ccbf61d14f30bf",
-        "41af2fd5df0cf47aa7e8ecca200d3ac6",
+        "0dfcc8870cf2aa54a0e780cb301b9c91",
     ]
 
 
@@ -1398,12 +1398,12 @@ def expected_element_ids_for_hi_res_strategy():
         "a90a54baba0093296a013d26b7acbc17",
         "9be424e2d151dac4b5f36a85e9bbfe65",
         "4631da875fb4996c63b2d80cea6b588e",
-        "6264f4eda97a049f4710f9bea0c01cbd",
+        "8cdb940788d2ed43523a5327292477a0",
         "abded7b2ff3a5542c88b4a831755ec24",
         "b781ea5123cb31e0571391b7b42cac75",
         "033f27d2618ba4cda9068b267b5a731e",
         "8982a12fcced30dd12ccbf61d14f30bf",
-        "41af2fd5df0cf47aa7e8ecca200d3ac6",
+        "0dfcc8870cf2aa54a0e780cb301b9c91",
     ]
 
 
