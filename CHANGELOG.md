@@ -1,3 +1,11 @@
+## 0.18.36
+
+### Enhancements
+- Add character-level deduplication for PDF text extraction to handle fake-bold rendering
+
+### Fixes
+- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity. Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 3.0 pixels, set to 0 to disable)(fixes #3864).
+
 ## 0.18.35-dev0
 
 ### Enhancements
@@ -21,7 +29,6 @@
 - **Add `group_elements_by_parent_id` utility function**: Groups elements by their `parent_id` metadata field for easier document hierarchy traversal (fixes #1489)
 
 ### Fixes
-- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity. Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 3.0 pixels, set to 0 to disable)(fixes #3864).
 - **Preserve newlines in Table/TableChunk elements during PDF partitioning**: Skip whitespace normalization for Table and TableChunk elements so newlines that carry structural meaning (row separation) are preserved (fixes #3983)
 - Fix inconsistent pdf_image_dpi value in partition pdf with hi_res strategy
 
