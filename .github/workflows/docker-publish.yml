@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         docker-platform: ["linux/arm64", "linux/amd64"]
-    runs-on: ubuntu-latest-m
+    runs-on: ubuntu-latest
     needs: set-short-sha
     env:
       SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
@@ -74,7 +74,7 @@ jobs:
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
   publish-images:
-    runs-on: ubuntu-latest-m
+    runs-on: ubuntu-latest
     needs: [set-short-sha, build-images]
     env:
       SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
