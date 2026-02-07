@@ -166,7 +166,7 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "uv sync --frozen --group test --no-install-project && \
+	bash -c "uv sync --frozen --all-extras --group test --no-install-project && \
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
 	uv run pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
