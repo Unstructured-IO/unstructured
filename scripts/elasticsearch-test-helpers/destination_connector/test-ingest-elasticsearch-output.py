@@ -95,7 +95,7 @@ def validate_embeddings(client: Elasticsearch, embeddings: list[float]):
 
 
 def validate(num_elements: int, embeddings: list[float]):
-    print(f"Checking contents of index" f"{INDEX_NAME} at {CLUSTER_URL}")
+    print(f"Checking contents of index {INDEX_NAME} at {CLUSTER_URL}")
 
     print("Connecting to the Elasticsearch cluster.")
     client = Elasticsearch(CLUSTER_URL, basic_auth=(USER, PASSWORD), request_timeout=30)

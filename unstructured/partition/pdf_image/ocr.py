@@ -473,13 +473,9 @@ def supplement_layout_with_ocr_elements(
         else:
             ocr_regions_to_add = ocr_layout
     else:
-        mask = (
-            ~bboxes1_is_almost_subregion_of_bboxes2(
-                ocr_layout.element_coords, layout.element_coords, subregion_threshold
-            )
-            .sum(axis=1)
-            .astype(bool)
-        )
+        mask = ~bboxes1_is_almost_subregion_of_bboxes2(
+            ocr_layout.element_coords, layout.element_coords, subregion_threshold
+        ).sum(axis=1).astype(bool)
 
         # add ocr regions that are not covered by layout
         ocr_regions_to_add = ocr_layout.slice(mask)

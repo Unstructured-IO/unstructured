@@ -680,9 +680,9 @@ def test_hash_ids_are_unique_for_duplicate_elements():
         assert updated_element.id != elements[idx].id, "IDs haven't changed after recalculation"
         if updated_element.metadata.parent_id is not None:
             assert updated_element.metadata.parent_id in ids, "Parent ID not in the list of IDs"
-            assert (
-                updated_element.metadata.parent_id != elements[idx].metadata.parent_id
-            ), "Parent ID hasn't changed after recalculation"
+            assert updated_element.metadata.parent_id != elements[idx].metadata.parent_id, (
+                "Parent ID hasn't changed after recalculation"
+            )
 
 
 def test_hash_ids_can_handle_duplicated_element_instances():

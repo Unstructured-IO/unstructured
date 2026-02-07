@@ -1,13 +1,12 @@
 FROM cgr.dev/chainguard/wolfi-base:latest AS base
 
 ARG PYTHON=python3.12
-ARG PIP="${PYTHON} -m pip"
 
 USER root
 
 WORKDIR /app
 
-COPY ./requirements requirements/
+COPY pyproject.toml uv.lock ./
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
@@ -60,28 +59,26 @@ RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
 
 WORKDIR /app
 
-# append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
-ENV PATH="${PATH}:/home/notebook-user/.local/bin"
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV NLTK_DATA=/home/notebook-user/nltk_data
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_PYTHON_DOWNLOADS=never
 
-# Upgrade pip to fix CVE-2025-8869
-RUN $PIP install --no-cache-dir --user --upgrade "pip>=25.3"
-
-# Install Python dependencies and download required NLTK packages
-RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
+# Install Python dependencies via uv and download required NLTK packages
+RUN uv sync --frozen --all-extras --no-group dev --no-group lint --no-group test && \
     mkdir -p ${NLTK_DATA} && \
-    $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
-    $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
-    $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+    uv run $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
+    uv run $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
+    uv run $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
+ENV PATH="/app/.venv/bin:${PATH}"
 ENV HF_HUB_OFFLINE=1
 
 USER root
-
-# Remove setuptools to remove jaraco.context to fix GHSA-58pv-8j8x-9vj2
-RUN $PIP uninstall -y setuptools && \
-    chown -R notebook-user:notebook-user /app
+RUN chown -R notebook-user:notebook-user /app
 
 USER notebook-user
 

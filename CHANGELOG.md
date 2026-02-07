@@ -2,6 +2,16 @@
 
 ### Enhancements
 - increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- Migrate project to native uv: replace setup.py/setuptools with pyproject.toml/hatchling, use uv sync/lock for dependency management, consolidate linting to ruff (drop black, flake8, autoflake)
+- Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
+- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`) superseded by uv
+- Update `check-licenses.sh` and `renovate-security-bump.sh` for uv-based workflow
+
+### Fixes
+- Fix corrupted `FigureCaption`/`Image` color-map key in `bbox_visualisation.py` caused by implicit string concatenation
+- Fix missing space in HTML radio-button test expectation (`test_html_to_unstructured_and_back_parsing.py`)
+- Fix missing space in elasticsearch test output message
+- Fix `unstructured-client` constraint version mismatch (was `>=0.23.0`, now `>=0.25.9` matching the actual dependency)
 
 ## 0.18.34
 

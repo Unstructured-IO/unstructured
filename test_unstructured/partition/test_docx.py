@@ -375,9 +375,9 @@ def test_parse_category_depth_by_style(opts_args: dict[str, Any]):
         paragraph = paragraphs[idx]
         actual_depth = partitioner._parse_category_depth_by_style(paragraph)
         assert text in paragraph.text, f"paragraph[{[idx]}].text does not contain {text}"
-        assert (
-            actual_depth == depth
-        ), f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
+        assert actual_depth == depth, (
+            f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
+        )
 
 
 def test_parse_category_depth_by_style_name(opts_args: dict[str, Any]):
@@ -400,9 +400,9 @@ def test_parse_category_depth_by_style_name(opts_args: dict[str, Any]):
     ]
 
     for idx, (depth, text) in enumerate(test_cases):
-        assert (
-            partitioner._parse_category_depth_by_style_name(text) == depth
-        ), f"test case {test_cases[idx]} failed"
+        assert partitioner._parse_category_depth_by_style_name(text) == depth, (
+            f"test case {test_cases[idx]} failed"
+        )
 
 
 def test_parse_category_depth_by_style_ilvl(opts_args: dict[str, Any]):

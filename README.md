@@ -134,18 +134,34 @@ print("\n\n".join([str(el) for el in elements]))
 The following instructions are intended to help you get up and running with `unstructured`
 locally if you are planning to contribute to the project.
 
-* Using `pyenv` to manage virtualenv's is recommended but not necessary
-	* Mac install instructions. See [here](https://github.com/Unstructured-IO/community#mac--homebrew) for more detailed instructions.
-		* `brew install pyenv-virtualenv`
-	  * `pyenv install 3.10`
-  * Linux instructions are available [here](https://github.com/Unstructured-IO/community#linux).
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management. Install it first:
 
-* Create a virtualenv to work in and activate it, e.g. for one named `unstructured`:
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-	`pyenv  virtualenv 3.10 unstructured` <br />
-	`pyenv activate unstructured`
+Then install all dependencies (base, extras, dev, test, and lint groups):
 
-* Run `make install`
+```bash
+make install
+```
+
+This runs `uv sync --frozen --all-extras --all-groups`, which creates a virtual environment
+and installs everything in one step. No need to manually create or activate a virtualenv.
+
+To install only specific document-type extras:
+
+```bash
+uv sync --extra pdf
+uv sync --extra csv --extra docx
+```
+
+To update the lock file after changing dependencies in `pyproject.toml`:
+
+```bash
+make lock
+```
 
 * Optional:
   * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.

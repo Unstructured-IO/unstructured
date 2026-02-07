@@ -26,35 +26,6 @@ jobs:
     - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
-        check-only: 'true'
-
-  check-deps:
-    strategy:
-      matrix:
-        python-version: ["3.10","3.11", "3.12"]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Check for dependency conflicts
-      run: make check-deps
-
-  check-extras:
-    strategy:
-      matrix:
-        python-version: ["3.10","3.11","3.12"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install all extras
-        run: make check-extras
 
   check-licenses:
     strategy:
@@ -63,17 +34,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ matrix.python-version }}
-      # NOTE(robinson) - dependencies are installed first because liccheck
-      # produces an error if there is a a mismatch between the dep version
-      # in the requirements file and the dep version in site packages
-      - name: Install all doc and test dependencies
-        run: |
-          make install-ci
-          make check-licenses
+      - name: Check licenses
+        run: make check-licenses
 
   lint:
     strategy:
@@ -83,19 +48,11 @@ jobs:
     needs: [setup, changelog]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Lint
-      run: |
-        source .venv/bin/activate
-        make install-ci
-        make check
+      run: make check
 
   shellcheck:
     runs-on: ubuntu-latest
@@ -122,12 +79,7 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test
@@ -135,7 +87,6 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         TESSERACT_VERSION : "5.5.1"
       run: |
-        source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
@@ -147,8 +98,6 @@ jobs:
           echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
           exit 1
         fi
-        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
-        make install-ci
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
         make check-coverage
 
@@ -160,20 +109,19 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Test
+    - name: Install base dependencies only (no extras)
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        source .venv/bin/activate
-        make install-ci
+        uv sync --frozen --group test
         make install-nltk-models
         make test-no-extras CI=true
 
@@ -182,34 +130,41 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
+        include:
+          - extra: csv
+            uv-extras: "--extra csv"
+          - extra: docx
+            uv-extras: "--extra docx"
+          - extra: odt
+            uv-extras: "--extra odt"
+          - extra: markdown
+            uv-extras: "--extra md"
+          - extra: pypandoc
+            uv-extras: "--extra epub --extra org --extra rtf --extra rst"
+          - extra: pdf-image
+            uv-extras: "--extra pdf --extra image --extra paddleocr"
+          - extra: pptx
+            uv-extras: "--extra pptx"
+          - extra: xlsx
+            uv-extras: "--extra xlsx"
     runs-on: ubuntu-latest
     needs: [setup, lint, test_unit_no_extras]
     steps:
     - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: actions/cache/restore@v4
-      id: virtualenv-cache
-      with:
-        path: |
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements/*.txt') }}
-    - name: Setup virtual environment
+    - name: Install extra dependencies
       run: |
-        python${{ matrix.python-version}} -m venv .venv-${{ matrix.extra }}
-        source .venv-${{ matrix.extra }}/bin/activate
-        make install-base-ci
-        make install-${{ matrix.extra }}
-    - name: Test
-      env:
-        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        uv sync --frozen ${{ matrix.uv-extras }} --group test
+        make install-nltk-models
+    - name: Install system dependencies
       run: |
-        source .venv-${{ matrix.extra }}/bin/activate
-        # NOTE(newelh) - determine what needs to be installed here
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -217,8 +172,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-${{ matrix.extra }}
-        [[ ${{ matrix.extra }} == "pdf-image" ]] && make install-paddleocr
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
         make test-extra-${{ matrix.extra }} CI=true
 
   setup_ingest:
@@ -232,7 +190,6 @@ jobs:
       - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ matrix.python-version }}
-          check-only: 'true'
 
   test_ingest_src:
     strategy:
@@ -243,15 +200,7 @@ jobs:
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Get full Python version
-      id: full-python-version
-      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-ingest-cache
+    - uses: ./.github/actions/base-ingest-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
@@ -304,9 +253,7 @@ jobs:
         MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
-        PYTHON: python${{ matrix.python-version }}
       run: |
-        source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
@@ -316,9 +263,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make install-all-docs
-        make install-ingest
-        ./test_unstructured_ingest/test-ingest-src.sh
+        uv run ./test_unstructured_ingest/test-ingest-src.sh
 
   test_json_to_html:
     strategy:
@@ -328,25 +273,15 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Get full Python version
-      id: full-python-version
-      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test HTML fixtures
       env:
         OVERWRITE_FIXTURES: "false"
-        PYTHONPATH: ${{ github.workspace }}
       run: |
-        source .venv/bin/activate
         sudo apt-get install diffstat
-        ./test_unstructured_ingest/check-diff-expected-output-html.sh
+        uv run ./test_unstructured_ingest/check-diff-expected-output-html.sh
 
   test_json_to_markdown:
     strategy:
@@ -356,25 +291,15 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Get full Python version
-      id: full-python-version
-      run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Test markdown fixtures
       env:
         OVERWRITE_FIXTURES: "false"
-        PYTHONPATH: ${{ github.workspace }}
       run: |
-        source .venv/bin/activate
         sudo apt-get install diffstat
-        ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
+        uv run ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
 
   test_unstructured_api_unit:
     strategy:
@@ -385,8 +310,7 @@ jobs:
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
-    - name: Setup virtual environment
-      uses: ./.github/actions/base-cache
+    - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up flag for running Unstructured API unit tests
@@ -394,30 +318,14 @@ jobs:
         # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
         # TODO: Change env back to false once API unit tests is in sync with unstructured repo
         echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
-    - name: Set up Python ${{ matrix.python-version }}
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Setup virtual environment (no cache hit)
-      if: steps.virtualenv-cache.outputs.cache-hit != 'true' &&  env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      run: |
-        python${{ matrix.python-version}} -m venv .venv
-        source .venv/bin/activate
-        mkdir "$NLTK_DATA"
-        make install-ci
     - name: Test Unstructured API Unit
       if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
       run: |
-        source .venv/bin/activate
-        # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
-        make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-nltk-models
         make test-unstructured-api-unit
 
   changelog:
