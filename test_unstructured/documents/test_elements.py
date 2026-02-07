@@ -395,16 +395,20 @@ class DescribeElementMetadata:
             page_number=2,
         )
 
-        assert meta.to_dict() == {
-            "category_depth": 1,
-            "orig_elements": (
-                "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
-                "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
-                "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp"
-                "1LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
-            ),
-            "page_number": 2,
-        }
+        meta_dict = meta.to_dict()
+
+        assert meta_dict["category_depth"] == 1
+        assert meta_dict["page_number"] == 2
+        # Verify the orig_elements value is a base64 string that round-trips correctly.
+        # We don't compare the exact compressed bytes because zlib output varies across
+        # implementations (e.g. standard zlib vs zlib-ng).
+        assert isinstance(meta_dict["orig_elements"], str)
+        from unstructured.staging.base import elements_from_base64_gzipped_json
+
+        restored = elements_from_base64_gzipped_json(meta_dict["orig_elements"])
+        assert len(restored) == 2
+        assert restored[0].text == "Lorem"
+        assert restored[1].text == "Lorem Ipsum"
 
     def but_unlike_in_ElementMetadata_unknown_fields_in_sub_objects_are_ignored(self):
         """Metadata sub-objects ignore fields they do not explicitly define.
