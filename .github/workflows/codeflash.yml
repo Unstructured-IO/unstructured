@@ -41,6 +41,4 @@ jobs:
         env:
           UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
           CODEFLASH_API_KEY: ${{ secrets.CODEFLASH_API_KEY }}
-        run: |
-          uv pip install codeflash
-          uv run codeflash
+        run: uvx codeflash

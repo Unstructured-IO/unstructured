@@ -148,7 +148,7 @@ DOCKER_IMAGE ?= unstructured:dev
 
 .PHONY: docker-build
 docker-build:
-	DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
+	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-build.sh
 
 .PHONY: docker-start-bash
 docker-start-bash:
@@ -157,7 +157,7 @@ docker-start-bash:
 .PHONY: docker-start-dev
 docker-start-dev:
 	docker run --rm \
-	-v ${CURRENT_DIR}:/mnt/local_unstructued \
+	-v ${CURRENT_DIR}:/mnt/local_unstructured \
 	-ti ${DOCKER_IMAGE}
 
 .PHONY: docker-test

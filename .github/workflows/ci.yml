@@ -85,7 +85,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        TESSERACT_VERSION : "5.5.1"
+        TESSERACT_VERSION: "5.5.1"
       run: |
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
@@ -126,7 +126,6 @@ jobs:
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
-    # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
     strategy:
       matrix:
         python-version: ["3.12"]

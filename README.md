@@ -164,7 +164,7 @@ make lock
 ```
 
 * Optional:
-  * To install models and dependencies for processing images and PDFs locally, run `make install-local-inference`.
+  * To install extras for processing images and PDFs locally, run `uv sync --extra pdf --extra image`.
   * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
   * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
 

@@ -44,7 +44,7 @@ COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-lib
 RUN rm -rf /usr/lib/python3.10 && \
     rm -rf /usr/lib/python3.11 && \
     rm -rf /usr/lib/python3.13 && \
-    rm /usr/bin/python3.13
+    rm -f /usr/bin/python3.13
 
 # Install uv (as root, into a system-wide location)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
