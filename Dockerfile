@@ -6,7 +6,7 @@ USER root
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
