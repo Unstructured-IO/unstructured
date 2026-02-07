@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.12"
 
 permissions:
   id-token: write
@@ -27,11 +27,10 @@ jobs:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     needs: [setup]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          check-only: "true"
 
   update-fixtures-and-pr:
     runs-on: ubuntu-latest-m
@@ -39,15 +38,7 @@ jobs:
     steps:
       # actions/checkout MUST come before auth
       - uses: "actions/checkout@v4"
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Get full Python version
-        id: full-python-version
-        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-      - name: Setup virtual environment
-        uses: ./.github/actions/base-ingest-cache
+      - uses: ./.github/actions/base-ingest-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup docker-compose
@@ -100,7 +91,6 @@ jobs:
           OVERWRITE_FIXTURES: "true"
           CI: "true"
         run: |
-          source .venv/bin/activate
           sudo apt-get update
           sudo apt-get install -y libmagic-dev poppler-utils libreoffice
           make install-pandoc
@@ -109,16 +99,11 @@ jobs:
           sudo apt-get install -y tesseract-ocr-kor
           sudo apt-get install diffstat
           tesseract --version
-          python -m nltk.downloader punkt_tab averaged_perceptron_tagger_eng
-          ./test_unstructured_ingest/test-ingest-src.sh
+          uv run ./test_unstructured_ingest/test-ingest-src.sh
       - name: Update HTML fixtures
-        run: |
-          source .venv/bin/activate
-          make html-fixtures-update
+        run: make html-fixtures-update
       - name: Update markdown fixtures
-        run: |
-          source .venv/bin/activate
-          make markdown-fixtures-update
+        run: make markdown-fixtures-update
 
       - name: Save branch name to environment file
         id: branch

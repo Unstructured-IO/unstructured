@@ -1,7 +1,7 @@
 [project]
 name = "unstructured"
 description = "A library that prepares raw documents for downstream ML tasks."
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -11,8 +11,6 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
@@ -120,7 +118,7 @@ paddleocr = [
     "unstructured.paddleocr==2.10.0",
 ]
 ingest = [
-    "unstructured-ingest[airtable,astradb,azure,azure-ai-search,bedrock,biomed,box,chroma,confluence,couchbase,databricks-volumes,delta-table,discord,dropbox,elasticsearch,gcs,github,gitlab,google-drive,hubspot,huggingface,jira,kafka,kdbai,milvus,mongodb,notion,octoai,onedrive,openai,opensearch,outlook,pinecone,postgres,qdrant,reddit,remote,s3,salesforce,sftp,sharepoint,singlestore,slack,vectara,vertexai,voyageai,weaviate,wikipedia]>=1.3.1, <2.0.0; python_version >= '3.12'",
+    "unstructured-ingest[airtable,astradb,azure,azure-ai-search,bedrock,biomed,box,chroma,confluence,couchbase,databricks-volumes,delta-table,discord,dropbox,elasticsearch,gcs,github,gitlab,google-drive,hubspot,huggingface,jira,kafka,kdbai,milvus,mongodb,notion,octoai,onedrive,openai,opensearch,outlook,pinecone,postgres,qdrant,reddit,remote,s3,salesforce,sftp,sharepoint,singlestore,slack,vectara,vertexai,voyageai,weaviate,wikipedia]>=1.3.1, <2.0.0",
 ]
 
 [project.urls]
@@ -179,7 +177,7 @@ constraint-dependencies = [
 
 [tool.pyright]
 pythonPlatform = "Linux"
-pythonVersion = "3.10"
+pythonVersion = "3.12"
 reportUnnecessaryCast = true
 reportUnnecessaryTypeIgnoreComment = true
 stubPath = "./typings"
@@ -188,7 +186,7 @@ verboseOutput = true
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 ignore = [

@@ -8,8 +8,7 @@ on:
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
-  PIP_VERSION: "23.2.1"
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.12"
 
 jobs:
   set-short-sha:
@@ -50,7 +49,6 @@ jobs:
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_BUILDKIT=1 docker buildx build --platform=${{ matrix.docker-platform }} --load \
           -f Dockerfile \
-          --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \

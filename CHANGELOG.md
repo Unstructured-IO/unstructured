@@ -4,8 +4,11 @@
 - increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
 - Migrate project to native uv: replace setup.py/setuptools with pyproject.toml/hatchling, use uv sync/lock for dependency management, consolidate linting to ruff (drop black, flake8, autoflake)
 - Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
-- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`) superseded by uv
+- Migrate Dockerfile from pip to uv for dependency installation
+- Add `unstructured-ingest` as a native optional dependency extra (`unstructured[ingest]`)
+- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`, `pip-compile.sh`) superseded by uv
 - Update `check-licenses.sh` and `renovate-security-bump.sh` for uv-based workflow
+- Drop Python 3.10 and 3.11 support; minimum required version is now Python 3.12
 
 ### Fixes
 - Fix corrupted `FigureCaption`/`Image` color-map key in `bbox_visualisation.py` caused by implicit string concatenation
