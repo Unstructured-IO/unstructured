@@ -7,10 +7,10 @@ set -euo pipefail
 TMPFILE=$(mktemp)
 trap 'rm -f "$TMPFILE"' EXIT
 
-uv pip freeze > "$TMPFILE"
+uv pip freeze >"$TMPFILE"
 
 echo "Checking licenses for installed packages..."
-liccheck -r "$TMPFILE"
+uv run liccheck -r "$TMPFILE"
 EXIT_CODE=$?
 
 if [ "$EXIT_CODE" -eq 0 ]; then
