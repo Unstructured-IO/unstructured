@@ -50,6 +50,13 @@ RUN rm -rf /usr/lib/python3.10 && \
     rm -rf /usr/lib/python3.13 && \
     rm /usr/bin/python3.13
 
+# Install uv (as root, into a system-wide location)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# Hand /app to notebook-user before switching to that user.
+# This must happen before uv sync so it can create .venv inside /app.
+RUN chown -R ${NB_USER}:${NB_USER} /app
+
 USER notebook-user
 WORKDIR ${HOME}
 
@@ -58,9 +65,6 @@ WORKDIR ${HOME}
 RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
 
 WORKDIR /app
-
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 ENV NLTK_DATA=/home/notebook-user/nltk_data
@@ -76,10 +80,5 @@ RUN uv sync --frozen --all-extras --no-group dev --no-group lint --no-group test
 
 ENV PATH="/app/.venv/bin:${PATH}"
 ENV HF_HUB_OFFLINE=1
-
-USER root
-RUN chown -R notebook-user:notebook-user /app
-
-USER notebook-user
 
 CMD ["/bin/bash"]
