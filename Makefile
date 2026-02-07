@@ -1,6 +1,5 @@
 PACKAGE_NAME := unstructured
 CURRENT_DIR := $(shell pwd)
-ARCH := $(shell uname -m)
 
 .PHONY: help
 help: Makefile

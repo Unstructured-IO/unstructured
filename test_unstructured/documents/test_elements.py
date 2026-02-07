@@ -14,7 +14,6 @@ import pytest
 
 from test_unstructured.unit_utils import assign_hash_ids, example_doc_path
 from unstructured.cleaners.core import clean_bullets, clean_prefix
-from unstructured.staging.base import elements_from_base64_gzipped_json
 from unstructured.documents.coordinates import (
     CoordinateSystem,
     Orientation,
@@ -33,6 +32,7 @@ from unstructured.documents.elements import (
     assign_and_map_hash_ids,
 )
 from unstructured.partition.json import partition_json
+from unstructured.staging.base import elements_from_base64_gzipped_json
 
 
 @pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
