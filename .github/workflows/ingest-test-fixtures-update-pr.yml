@@ -21,24 +21,13 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-  setup_ingest:
-    runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/base-ingest-cache
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
   update-fixtures-and-pr:
     runs-on: ubuntu-latest
-    needs: [setup_ingest]
+    needs: [setup]
     steps:
       # actions/checkout MUST come before auth
       - uses: "actions/checkout@v4"
-      - uses: ./.github/actions/base-ingest-cache
+      - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup docker-compose
@@ -93,7 +82,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-          make install-pandoc
           sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
           sudo apt-get install -y tesseract-ocr
           sudo apt-get install -y tesseract-ocr-kor

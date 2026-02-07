@@ -6,7 +6,10 @@
 - Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
 - Migrate Dockerfile from pip to uv for dependency installation
 - Add `unstructured-ingest` as a native optional dependency extra (`unstructured[ingest]`)
-- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`, `pip-compile.sh`) superseded by uv
+- Replace `pypandoc` with `pypandoc-binary` to bundle pandoc in the Python wheel (no system install needed)
+- Replace `liccheck` with `pip-licenses` for license checking (no pip dependency needed)
+- Add `sentencepiece` to `huggingface` extra; add `xlrd` to `xlsx` extra
+- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`, `pip-compile.sh`, `install-pandoc.sh`) superseded by uv and bundled deps
 - Update `check-licenses.sh` and `renovate-security-bump.sh` for uv-based workflow
 - Drop Python 3.10 and 3.11 support; minimum required version is now Python 3.12
 

@@ -53,7 +53,7 @@ docx = [
     "python-docx>=1.2.0, <2.0.0",
 ]
 epub = [
-    "pypandoc>=1.16.2, <2.0.0",
+    "pypandoc-binary>=1.16.2, <2.0.0",
 ]
 image = [
     "google-cloud-vision>=3.12.1, <4.0.0",
@@ -69,11 +69,11 @@ md = [
     "markdown>=3.10.1, <4.0.0",
 ]
 odt = [
-    "pypandoc>=1.16.2, <2.0.0",
+    "pypandoc-binary>=1.16.2, <2.0.0",
     "python-docx>=1.2.0, <2.0.0",
 ]
 org = [
-    "pypandoc>=1.16.2, <2.0.0",
+    "pypandoc-binary>=1.16.2, <2.0.0",
 ]
 pdf = [
     "unstructured[image]",
@@ -85,10 +85,10 @@ pptx = [
     "python-pptx>=1.0.2, <2.0.0",
 ]
 rtf = [
-    "pypandoc>=1.16.2, <2.0.0",
+    "pypandoc-binary>=1.16.2, <2.0.0",
 ]
 rst = [
-    "pypandoc>=1.16.2, <2.0.0",
+    "pypandoc-binary>=1.16.2, <2.0.0",
 ]
 tsv = [
     "pandas>=2.0.0, <4.0.0",

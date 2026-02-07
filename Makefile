@@ -19,7 +19,7 @@ install:
 
 ## install-ci:              install all dependencies for CI
 .PHONY: install-ci
-install-ci: install install-pandoc
+install-ci: install
 
 ## lock:                    update and lock all dependencies
 .PHONY: lock
@@ -29,10 +29,6 @@ lock:
 .PHONY: install-nltk-models
 install-nltk-models:
 	uv run --frozen python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
-
-.PHONY: install-pandoc
-install-pandoc:
-	ARCH=${ARCH} ./scripts/install-pandoc.sh
 
 .PHONY: install-ingest
 install-ingest:
@@ -232,9 +228,9 @@ run-jupyter:
 .PHONY: html-fixtures-update
 html-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-html && \
-	test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+	uv run test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
 
 .PHONY: markdown-fixtures-update
 markdown-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-markdown && \
-	test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown
+	uv run test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown
