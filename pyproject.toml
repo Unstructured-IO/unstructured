@@ -63,7 +63,7 @@ image = [
     "pikepdf>=10.3.0, <11.0.0",
     "pypdf>=6.6.2, <7.0.0",
     "unstructured-inference>=1.2.0, <2.0.0",
-    "unstructured.pytesseract>=0.3.15, <1.0.0",
+    "unstructured-pytesseract>=0.3.15, <1.0.0",
 ]
 md = [
     "markdown>=3.10.1, <4.0.0",
@@ -101,7 +101,7 @@ xlsx = [
     "xlrd>=2.0.1, <3.0.0",
 ]
 all-docs = [
-    "unstructured[csv,docx,epub,image,md,odt,org,pdf,pptx,rtf,rst,tsv,xlsx]",
+    "unstructured[csv,doc,docx,epub,image,md,odt,org,pdf,ppt,pptx,rtf,rst,tsv,xlsx]",
 ]
 # Feature extras
 chunking-tokens = [
@@ -117,7 +117,7 @@ local-inference = [
 ]
 paddleocr = [
     "paddlepaddle>=3.3.0, <4.0.0",
-    "unstructured.paddleocr==2.10.0",
+    "unstructured-paddleocr==2.10.0",
 ]
 ingest = [
     "unstructured-ingest[airtable,astradb,azure,azure-ai-search,bedrock,biomed,box,chroma,confluence,couchbase,databricks-volumes,delta-table,discord,dropbox,elasticsearch,gcs,github,gitlab,google-drive,hubspot,huggingface,jira,kafka,kdbai,milvus,mongodb,notion,octoai,onedrive,openai,opensearch,outlook,pinecone,postgres,qdrant,reddit,remote,s3,salesforce,sftp,sharepoint,singlestore,slack,vectara,vertexai,voyageai,weaviate,wikipedia]>=1.3.1, <2.0.0",

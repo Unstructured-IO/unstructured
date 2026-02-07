@@ -1,7 +1,7 @@
 ## 0.18.35-dev0
 
 ### Enhancements
-- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accommodate higher dpi values
 - Migrate project to native uv: replace setup.py/setuptools with pyproject.toml/hatchling, use uv sync/lock for dependency management, consolidate linting to ruff (drop black, flake8, autoflake)
 - Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
 - Migrate Dockerfile from pip to uv for dependency installation

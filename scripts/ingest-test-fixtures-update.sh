@@ -6,7 +6,7 @@
 # To update ingest-test expected outputs (structured .json files), this script:
 #   * builds an ubuntu image that
 #      * matches CI with respect to tesseract and OS deps
-#      * installs python dependencies from the local requirements/ directory
+#      * installs python dependencies via uv
 #   * runs each test ingest script with OVERWRITE_FIXTURES=true
 #      * so updates are written to test_unstructured_ingest/expected-structured-output/
 #      * using local unstructured/ directory (i.e. from local git branch)

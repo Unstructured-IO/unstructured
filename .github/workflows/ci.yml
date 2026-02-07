@@ -287,32 +287,6 @@ jobs:
         sudo apt-get install diffstat
         uv run ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
 
-  test_unstructured_api_unit:
-    strategy:
-      matrix:
-        python-version: ["3.12"]
-    runs-on: ubuntu-latest
-    needs: [setup, lint]
-    steps:
-    - uses: actions/checkout@v4
-    - uses: ./.github/actions/base-cache
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set up flag for running Unstructured API unit tests
-      run: |
-        # NOTE: Change env `SKIP_API_UNIT_FOR_BREAKING_CHANGE` to true if there is a breaking change in Unstructured repo that will break unstructured api unit tests
-        # TODO: Change env back to false once API unit tests is in sync with unstructured repo
-        echo "SKIP_API_UNIT_FOR_BREAKING_CHANGE=true" >> $GITHUB_ENV
-    - name: Test Unstructured API Unit
-      if: env.SKIP_API_UNIT_FOR_BREAKING_CHANGE == 'false'
-      run: |
-        sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
-        tesseract --version
-        make test-unstructured-api-unit
-
   changelog:
     runs-on: ubuntu-latest
     steps:

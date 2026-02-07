@@ -17,10 +17,6 @@ install:
 	@uv sync --frozen --all-extras --all-groups
 	@$(MAKE) install-nltk-models
 
-## install-ci:              install all dependencies for CI
-.PHONY: install-ci
-install-ci: install
-
 ## lock:                    update and lock all dependencies
 .PHONY: lock
 lock:
@@ -29,14 +25,6 @@ lock:
 .PHONY: install-nltk-models
 install-nltk-models:
 	uv run --frozen python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
-
-.PHONY: install-ingest
-install-ingest:
-	uv sync --frozen --extra ingest
-
-## install-local-inference: installs requirements for local inference
-.PHONY: install-local-inference
-install-local-inference: install
 
 
 #################
@@ -52,10 +40,6 @@ test:
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
 	uv run --frozen --no-sync pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
-
-.PHONY: test-unstructured-api-unit
-test-unstructured-api-unit:
-	scripts/test-unstructured-api-unit.sh
 
 .PHONY: test-no-extras
 test-no-extras:
@@ -112,10 +96,6 @@ test-extra-pypandoc:
 test-extra-xlsx:
 	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_xlsx.py
 
-.PHONY: test-text-extraction-evaluate
-test-text-extraction-evaluate:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/metrics/test_text_extraction.py
-
 ## check:                   runs all linters and checks
 .PHONY: check
 check: check-ruff check-version
@@ -126,19 +106,9 @@ check-ruff:
 	uv run --frozen --no-sync ruff check .
 	uv run --frozen --no-sync ruff format --check .
 
-.PHONY: check-shfmt
-check-shfmt:
-	shfmt -i 2 -d .
-
 .PHONY: check-licenses
 check-licenses:
 	@scripts/check-licenses.sh
-
-## check-scripts:           run shellcheck
-.PHONY: check-scripts
-check-scripts:
-    # Fail if any of these files have warnings
-	scripts/shellcheck.sh
 
 ## check-version:           run check to ensure version in CHANGELOG.md matches version in package
 .PHONY: check-version
@@ -218,7 +188,7 @@ docker-jupyter-notebook:
 
 .PHONY: run-jupyter
 run-jupyter:
-	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
+	uv run jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
 
 
 ###########
