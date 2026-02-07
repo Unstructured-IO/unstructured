@@ -35,6 +35,7 @@ IGNORED_PACKAGES=(
   google-crc32c  # Apache-2.0 (googleapis/python-crc32c)
   iopath         # MIT (facebookresearch/iopath)
   pypdfium2      # BSD-3-Clause (PDFium/PDFium)
+  sentencepiece  # Apache-2.0 (google/sentencepiece)
   voyageai       # MIT (voyage-ai/voyageai-python)
 
   # Permissive but non-standard classifier
