@@ -461,3 +461,56 @@ def _get_metadata(
         filename=opts.metadata_file_path,
         last_modified=opts.last_modified,
     )
+
+
+@apply_metadata(FileType.XLSM)
+@add_chunking_strategy
+def partition_xlsm(
+    filename: Optional[str] = None,
+    *,
+    file: Optional[IO[bytes]] = None,
+    find_subtable: bool = True,
+    include_header: bool = False,
+    infer_table_structure: bool = True,
+    starting_page_number: int = 1,
+    **kwargs: Any,
+) -> list[Element]:
+    """Partitions Microsoft Excel Macro-Enabled Documents in .xlsm format into document elements.
+
+    XLSM files are Excel workbooks that can contain VBA macros. They have the same structure as
+    XLSX files (Office Open XML format) but with a different MIME type. This function extracts
+    only the data content; macros are not processed.
+
+    Parameters
+    ----------
+    filename
+        A string defining the target filename path.
+    file
+        A file-like object using "rb" mode --> open(filename, "rb").
+    find_subtable
+        Detect "subtables" on each worksheet and partition each of those as a separate `Table`
+        element. When `False`, each worksheet is partitioned as a single `Table` element. A
+        subtable is a contiguous block of cells with more than two cells in each row.
+    infer_table_structure
+        If True, any Table elements that are extracted will also have a metadata field
+        named "text_as_html" where the table's text content is rendered into an html string.
+        I.e., rows and cells are preserved.
+        Whether True or False, the "text" field is always present in any Table element
+        and is the text content of the table (no structure).
+    include_header
+        Determines whether or not header info is included in text and metadata.text_as_html
+    starting_page_number
+        The starting page number to assign to the first worksheet. Subsequent sheets are
+        numbered sequentially.
+    """
+    # -- XLSM files have the same data structure as XLSX files, so we can use the same
+    # -- partitioning logic. The only difference is the file extension and MIME type.
+    return partition_xlsx(
+        filename=filename,
+        file=file,
+        find_subtable=find_subtable,
+        include_header=include_header,
+        infer_table_structure=infer_table_structure,
+        starting_page_number=starting_page_number,
+        **kwargs,
+    )
