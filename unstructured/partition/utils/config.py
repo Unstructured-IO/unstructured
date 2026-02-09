@@ -246,9 +246,11 @@ class ENVConfig:
 
         Some PDFs create bold text by rendering the same character twice at slightly offset
         positions. This threshold determines how close two identical characters must be to be
-        considered duplicates. Set to 0 to disable duplicate character removal.
+        considered duplicates. The algorithm also checks for bounding box overlap to avoid
+        false positives with legitimate double letters. Set to 0 to disable duplicate character
+        removal.
         """
-        return self._get_float("PDF_CHAR_DUPLICATE_THRESHOLD", 3.0)
+        return self._get_float("PDF_CHAR_DUPLICATE_THRESHOLD", 2.0)
 
     @property
     def PDF_RENDER_DPI(self) -> int:

@@ -4,7 +4,7 @@
 - Add character-level deduplication for PDF text extraction to handle fake-bold rendering
 
 ### Fixes
-- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity. Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 3.0 pixels, set to 0 to disable)(fixes #3864).
+- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
 
 ## 0.18.35-dev0
 

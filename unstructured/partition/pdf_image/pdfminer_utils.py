@@ -111,7 +111,10 @@ def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
 
     Some PDF generators create bold text by rendering the same character twice at slightly
     offset positions. This function detects such duplicates by checking if two characters
-    have the same text content and nearly identical positions.
+    have the same text content and overlapping bounding boxes.
+
+    Key insight: Fake-bold duplicates OVERLAP significantly, while legitimate consecutive
+    identical letters (like "ll" in "skills") are ADJACENT with minimal/no overlap.
 
     Args:
         char1: First LTChar object.
@@ -125,11 +128,37 @@ def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
     if char1.get_text() != char2.get_text():
         return False
 
-    # Check if positions are nearly identical (within threshold)
+    # Calculate horizontal and vertical distances between character origins
     x_diff = abs(char1.x0 - char2.x0)
     y_diff = abs(char1.y0 - char2.y0)
 
-    return x_diff < threshold and y_diff < threshold
+    # Characters must be very close in position
+    if x_diff >= threshold or y_diff >= threshold:
+        return False
+
+    # Additional check: Calculate bounding box overlap to distinguish
+    # fake-bold (high overlap) from legitimate doubles (low/no overlap)
+    
+    # Get character widths and heights
+    char1_width = char1.x1 - char1.x0
+    char2_width = char2.x1 - char2.x0
+    
+    # Calculate horizontal overlap
+    overlap_x_start = max(char1.x0, char2.x0)
+    overlap_x_end = min(char1.x1, char2.x1)
+    horizontal_overlap = max(0, overlap_x_end - overlap_x_start)
+    
+    # Calculate overlap percentage relative to character width
+    avg_width = (char1_width + char2_width) / 2
+    if avg_width > 0:
+        overlap_ratio = horizontal_overlap / avg_width
+    else:
+        overlap_ratio = 0
+    
+    # Fake-bold duplicates typically have >70% overlap
+    # Legitimate consecutive letters have <30% overlap (or none)
+    # Use 50% as threshold to be conservative
+    return overlap_ratio > 0.5
 
 
 def deduplicate_chars_in_text_line(text_line: LTTextLine, threshold: float) -> str:

@@ -455,8 +455,8 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
     elements_no_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     text_no_dedup = " ".join([el.text for el in elements_no_dedup])
 
-    # Extract WITH deduplication (threshold=3.0) - shows clean text
-    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
+    # Extract WITH deduplication (threshold=2.0) - shows clean text
+    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "2.0")
     reload(partition_config)
     elements_with_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     text_with_dedup = " ".join([el.text for el in elements_with_dedup])

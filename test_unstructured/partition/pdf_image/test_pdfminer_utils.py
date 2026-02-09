@@ -242,10 +242,10 @@ class TestFakeBoldPdfIntegration:
     def test_fake_bold_pdf_with_deduplication_shows_clean_text(self, monkeypatch):
         """Test that extraction WITH deduplication shows clean text.
 
-        When PDF_CHAR_DUPLICATE_THRESHOLD is set to default (3.0), deduplication
+        When PDF_CHAR_DUPLICATE_THRESHOLD is set to default (2.0), deduplication
         removes the duplicate characters and produces clean, readable text.
         """
-        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
+        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "2.0")
         reload(partition_config)
 
         filename = example_doc_path("pdf/fake-bold-sample.pdf")
@@ -278,8 +278,8 @@ class TestFakeBoldPdfIntegration:
         elements_no_dedup = partition_pdf(filename=filename, strategy="fast")
         text_no_dedup = " ".join([el.text for el in elements_no_dedup])
 
-        # Extract WITH deduplication (threshold=3.0)
-        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "3.0")
+        # Extract WITH deduplication (threshold=2.0)
+        monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "2.0")
         reload(partition_config)
         elements_with_dedup = partition_pdf(filename=filename, strategy="fast")
         text_with_dedup = " ".join([el.text for el in elements_with_dedup])
