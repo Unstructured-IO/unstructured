@@ -4,7 +4,7 @@ cffi==2.0.0
     # via
     #   -c ./base.txt
     #   cryptography
-cryptography==46.0.3
+cryptography==46.0.4
     # via
     #   -c ./base.txt
     #   msoffcrypto-tool
@@ -26,7 +26,7 @@ openpyxl==3.1.5
     # via -r ./extra-xlsx.in
 pandas==2.3.3
     # via -r ./extra-xlsx.in
-pycparser==2.23
+pycparser==3.0
     # via
     #   -c ./base.txt
     #   cffi

@@ -34,6 +34,8 @@ from unstructured.documents.elements import (
     Link,
     ListItem,
     PageBreak,
+    Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -107,6 +109,9 @@ patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
+
+# increase the max pixels so high dpi values like 300 can still be under the PIL limit
+PILImage.MAX_IMAGE_PIXELS = 5e8
 
 
 @requires_dependencies("unstructured_inference")
@@ -634,7 +639,7 @@ def _partition_pdf_or_image_local(
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
-        pdf_image_dpi = 200
+        pdf_image_dpi = env_config.PDF_RENDER_DPI
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
     extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None
@@ -823,11 +828,16 @@ def _partition_pdf_or_image_local(
             out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
-            el.text = re.sub(
-                RE_MULTISPACE_INCLUDING_NEWLINES,
-                " ",
-                el.text or "",
-            ).strip()
+            if isinstance(el, (Table, TableChunk)):
+                # For Table/TableChunk, preserve newlines (they carry structural meaning)
+                # but still collapse multiple horizontal whitespace (spaces, tabs) to single space
+                el.text = re.sub(r"[^\S\n]+", " ", el.text or "").strip()
+            else:
+                el.text = re.sub(
+                    RE_MULTISPACE_INCLUDING_NEWLINES,
+                    " ",
+                    el.text or "",
+                ).strip()
             if el.text or isinstance(el, PageBreak):
                 out_elements.append(cast(Element, el))
 

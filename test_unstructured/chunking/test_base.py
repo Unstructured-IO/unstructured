@@ -29,6 +29,7 @@ from unstructured.chunking.base import (
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
+    CodeSnippet,
     CompositeElement,
     Element,
     ElementMetadata,
@@ -802,6 +803,37 @@ class DescribePreChunk:
         pre_chunk = PreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
 
+    def it_preserves_whitespace_in_CodeSnippet_elements(self):
+        """CodeSnippet elements should preserve their internal whitespace including newlines.
+
+        This is important for code blocks where formatting (indentation, line breaks) is
+        semantically meaningful.
+        """
+        code_text = "def hello():\n    print('Hello')\n    return True"
+        pre_chunk = PreChunk([CodeSnippet(code_text)], overlap_prefix="", opts=ChunkingOptions())
+
+        # The text should preserve newlines, not collapse them to spaces
+        assert "\n" in pre_chunk._text
+        assert pre_chunk._text == code_text
+
+    def it_preserves_whitespace_in_CodeSnippet_when_mixed_with_other_elements(self):
+        """CodeSnippet whitespace is preserved even when mixed with regular Text elements."""
+        code_text = "for i in range(10):\n    print(i)"
+        pre_chunk = PreChunk(
+            [
+                Text("Here is some code:"),
+                CodeSnippet(code_text),
+                Text("That was the code."),
+            ],
+            overlap_prefix="",
+            opts=ChunkingOptions(),
+        )
+
+        # The combined text should have the code with preserved newlines
+        assert "for i in range(10):\n    print(i)" in pre_chunk._text
+        # Regular text elements are still joined with blank line separators
+        assert "Here is some code:\n\n" in pre_chunk._text
+
 
 # ================================================================================================
 # CHUNKING HELPER/SPLITTERS
@@ -1301,8 +1333,7 @@ class Describe_HtmlTableSplitter:
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <table border="1" class="dataframe">
               <tbody>
                 <tr>
@@ -1333,8 +1364,7 @@ class Describe_HtmlTableSplitter:
                 </tr>
               </tbody>
             </table>
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1359,8 +1389,7 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
         opts = ChunkingOptions(max_characters=(93))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <html><body><table>
               <tr>
                 <td>Lorem ipsum dolor sit amet.</td>
@@ -1379,8 +1408,7 @@ class Describe_HtmlTableSplitter:
                 <td>Cillum</td>
               </tr>
             </table></body></html>
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1405,8 +1433,7 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_cell_on_an_even_word_boundary(self):
         opts = ChunkingOptions(max_characters=(100))
-        html_table = HtmlTable.from_html_text(
-            """
+        html_table = HtmlTable.from_html_text("""
             <table>
               <thead>
                 <tr>
@@ -1425,8 +1452,7 @@ class Describe_HtmlTableSplitter:
                 <tr><td>In reprehenderit voluptate.</td></tr>
               </tbody>
             </table
-            """
-        )
+            """)
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (

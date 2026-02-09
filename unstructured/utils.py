@@ -485,7 +485,7 @@ def identify_overlapping_case(
     type1, type2 = label_pair
     text1, text2 = text_pair
     ix_element1, ix_element2 = ix_pair
-    (overlap_percentage, max_area, min_area, total_area) = calculate_overlap_percentage(
+    overlap_percentage, max_area, min_area, total_area = calculate_overlap_percentage(
         box1,
         box2,
         intersection_ratio_method="partial",
@@ -744,6 +744,50 @@ def catch_overlapping_and_nested_bboxes(
                 document_with_overlapping_flag = True
 
     return document_with_overlapping_flag, overlapping_cases
+
+
+def group_elements_by_parent_id(
+    elements: Iterable["Element"],
+    assign_orphans: bool = False,
+) -> dict[Optional[str], list["Element"]]:
+    """Group elements by their parent_id metadata field.
+
+    Elements with the same parent_id are grouped together.
+
+    Args:
+        elements: An iterable of Element objects to group.
+        assign_orphans: If True, elements with no parent_id (None) will be assigned to
+            the same group as the previous element. If False (default), elements with
+            no parent are grouped under the None key.
+
+    Returns:
+        A dictionary mapping parent_id values to lists of elements sharing that parent_id.
+
+    Example:
+        >>> elements = partition("example.pdf")
+        >>> grouped = group_elements_by_parent_id(elements)
+        >>> for parent_id, children in grouped.items():
+        ...     print(f"Parent {parent_id}: {len(children)} children")
+
+        >>> # Assign orphan elements to previous element's group
+        >>> grouped = group_elements_by_parent_id(elements, assign_orphans=True)
+    """
+    from collections import defaultdict
+
+    groups: dict[Optional[str], list["Element"]] = defaultdict(list)
+    last_parent_id: Optional[str] = None
+
+    for element in elements:
+        parent_id = getattr(element.metadata, "parent_id", None)
+
+        if parent_id is None and assign_orphans:
+            parent_id = last_parent_id
+        elif parent_id is not None:
+            last_parent_id = parent_id
+
+        groups[parent_id].append(element)
+
+    return dict(groups)
 
 
 class FileHandler:

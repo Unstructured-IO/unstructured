@@ -76,24 +76,20 @@ def test_wrong_html_parser_causes_paragraph_to_be_nested_in_div():
 
 def test_when_class_is_missing_it_can_be_inferred_from_type():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <aside>Some text</aside>
     </div>
-    """
-    )
+    """)
 
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <aside class='Sidebar'><p class='Paragraph'>Some text</p></aside>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -104,24 +100,20 @@ def test_when_class_is_missing_it_can_be_inferred_from_type():
 
 def test_when_class_is_wrong_tag_name_is_overwritten():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <p class='Sidebar'>Some text</p>
     </div>
-    """
-    )
+    """)
 
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <aside class='Sidebar'><p class='Paragraph'>Some text</p></aside>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -132,28 +124,24 @@ def test_when_class_is_wrong_tag_name_is_overwritten():
 
 def test_when_tag_not_supported_by_ontology_and_wrong_then_consider_them_text():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <newtag class="wrongclass">Some text
         </newtag>
     </div>
-    """
-    )
+    """)
 
     base_html = indent_html(base_html)
 
     # TODO (Pluto): Maybe it should be considered as plain text?
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <span class="UncategorizedText">Some text
         </span>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -164,26 +152,22 @@ def test_when_tag_not_supported_by_ontology_and_wrong_then_consider_them_text():
 
 def test_div_are_ignored_when_no_attrs():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
       <div>
            <input class="RadioButton" name="health-comparison" type="radio"/>
       </div>
     </div>
-    """
-    )
+    """)
 
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
        <input class="RadioButton" name="health-comparison" type="radio"/>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -194,27 +178,23 @@ def test_div_are_ignored_when_no_attrs():
 
 def test_ids_are_preserved():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
       <div style="background-color: lightblue" id="important_div">
            <input class="RadioButton" name="health-comparison" type="radio"/>
       </div>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
       <div class="UncategorizedText" style="background-color: lightblue" id="important_div">
            <input class="RadioButton" name="health-comparison" type="radio"/>
       </div>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -226,23 +206,19 @@ def test_ids_are_preserved():
 
 def test_br_is_not_considered_uncategorized_text():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <br/>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <br/>
     </div>
-    """
-    )
+    """)
 
     expected_html = indent_html(expected_html)
 
@@ -254,19 +230,16 @@ def test_br_is_not_considered_uncategorized_text():
 
 def test_text_without_tag_is_marked_as_uncategorized_text_when_there_are_other_elements():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         About the same
         <input class="RadioButton" name="health-comparison" type="radio"/>
         Some text
     </div>
-    """
-    )
+    """)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <p class="Paragraph">
             About the same
@@ -276,8 +249,7 @@ def test_text_without_tag_is_marked_as_uncategorized_text_when_there_are_other_e
             Some text
         </p>
     </div>
-    """
-    )
+    """)
     expected_html = indent_html(expected_html)
 
     ontology: OntologyElement = parse_html_to_ontology(base_html)
@@ -288,19 +260,15 @@ def test_text_without_tag_is_marked_as_uncategorized_text_when_there_are_other_e
 
 def test_keyword_only_attributes_are_preserved_during_mapping():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <input class="FormFieldValue" type="radio" name="options" value="2" checked>
-    """
-    )  # noqa: E501
+    """)  # noqa: E501
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <input class="FormFieldValue" type="radio" name="options" value="2" checked>
-    """
-    )  # noqa: E501
+    """)  # noqa: E501
 
     expected_html = indent_html(expected_html)
 
@@ -315,8 +283,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     #  thus we assign it to UncategorizedText
 
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
@@ -327,8 +294,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
             </label>
         </form>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # TODO(Pluto): Maybe tag also should be overwritten? Or just leave it as it is?
@@ -336,8 +302,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
     #  for UnstructuredElement so it make sense now as well
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <form class="Form">
             <label class="FormField" for="option1">
@@ -348,8 +313,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
             </label>
         </form>
     </div>
-    """
-    )  # noqa: E501
+    """)  # noqa: E501
 
     expected_html = indent_html(expected_html)
 
@@ -361,8 +325,7 @@ def test_when_unknown_element_keyword_only_attributes_are_preserved_during_mappi
 
 def test_broken_cell_is_not_raising_error():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <tbody class="TableBody">
@@ -377,13 +340,11 @@ def test_broken_cell_is_not_raising_error():
            </tbody>
         </table>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <tbody>
@@ -398,8 +359,7 @@ def test_broken_cell_is_not_raising_error():
            </tbody>
         </table>
     </div>
-    """
-    )
+    """)
 
     expected_html = indent_html(expected_html)
 
@@ -411,8 +371,7 @@ def test_broken_cell_is_not_raising_error():
 
 def test_table():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <tbody class="TableBody">
@@ -427,13 +386,11 @@ def test_table():
            </tbody>
         </table>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <tbody>
@@ -448,8 +405,7 @@ def test_table():
            </tbody>
         </table>
     </div>
-    """
-    )
+    """)
 
     expected_html = indent_html(expected_html)
 
@@ -461,8 +417,7 @@ def test_table():
 
 def test_table_and_time():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <thead class='TableHeader'>
@@ -488,13 +443,11 @@ def test_table_and_time():
             </tbody>
         </table>
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <table class="Table">
             <thead>
@@ -520,8 +473,7 @@ def test_table_and_time():
             </tbody>
         </table>
     </div>
-    """
-    )
+    """)
 
     expected_html = indent_html(expected_html)
 
@@ -600,23 +552,19 @@ def test_malformed_html():
 
 def test_text_is_wrapped_inside_layout_element():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
     <div class="Page">
         Text
     </div>
-    """
-    )
+    """)
     base_html = indent_html(base_html)
 
     # language=HTML
-    expected_html = _wrap_with_body(
-        """
+    expected_html = _wrap_with_body("""
     <div class="Page">
         <p class='Paragraph'>Text</p>
     </div>
-    """
-    )
+    """)
 
     expected_html = indent_html(expected_html)
 
@@ -707,15 +655,13 @@ def test_get_text_when_recursion_limit_activated():
 
 def test_uncategorizedtest_has_image_and_no_text():
     # language=HTML
-    base_html = _wrap_with_body(
-        """
+    base_html = _wrap_with_body("""
         <div class="Page">
     <div class="UncategorizedText">
         <img src="https://www.example.com/image.jpg"/>
     </div>
     </div>
-    """
-    )
+    """)
 
     base_html = indent_html(base_html)
 

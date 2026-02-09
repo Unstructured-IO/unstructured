@@ -84,17 +84,17 @@ numpy==2.2.6
     #   shapely
     #   tifffile
     #   unstructured-paddleocr
-opencv-contrib-python==4.12.0.88
+opencv-contrib-python==4.13.0.90
     # via unstructured-paddleocr
-opencv-python==4.12.0.88
+opencv-python==4.13.0.90
     # via unstructured-paddleocr
-opencv-python-headless==4.12.0.88
+opencv-python-headless==4.13.0.90
     # via
     #   albucore
     #   albumentations
 opt-einsum==3.3.0
     # via paddlepaddle
-packaging==25.0
+packaging==26.0
     # via
     #   -c ./base.txt
     #   lazy-loader
@@ -107,7 +107,7 @@ pillow==12.1.0
     #   paddlepaddle
     #   scikit-image
     #   unstructured-paddleocr
-protobuf==6.33.4
+protobuf==6.33.5
     # via
     #   -c ././deps/constraints.txt
     #   paddlepaddle
@@ -143,7 +143,7 @@ shapely==2.1.2
     # via unstructured-paddleocr
 simsimd==6.5.12
     # via albucore
-soupsieve==2.8.1
+soupsieve==2.8.3
     # via
     #   -c ./base.txt
     #   beautifulsoup4
@@ -153,7 +153,7 @@ termcolor==3.3.0
     # via fire
 tifffile==2025.5.10
     # via scikit-image
-tqdm==4.67.1
+tqdm==4.67.2
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr

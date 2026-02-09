@@ -25,7 +25,7 @@ class OpenAIEmbeddingConfig(EmbeddingConfig):
 
         openai_client = OpenAIEmbeddings(
             openai_api_key=self.api_key.get_secret_value(),
-            model=self.model_name,  # type:ignore
+            model=self.model_name,  # type: ignore
         )
         return openai_client
 

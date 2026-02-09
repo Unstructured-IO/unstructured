@@ -4,13 +4,13 @@ annotated-types==0.7.0
     # via pydantic
 autoflake==2.3.1
     # via -r ./test.in
-black==25.12.0
+black==26.1.0
     # via -r ./test.in
 click==8.3.1
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.13.1
+coverage[toml]==7.13.2
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -45,12 +45,12 @@ mypy-extensions==1.1.0
     #   -c ./base.txt
     #   black
     #   mypy
-packaging==25.0
+packaging==26.0
     # via
     #   -c ./base.txt
     #   black
     #   pytest
-pathspec==1.0.3
+pathspec==1.0.4
     # via
     #   black
     #   mypy
@@ -89,9 +89,9 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./base.txt
     #   freezegun
-pytokens==0.3.0
+pytokens==0.4.1
     # via black
-ruff==0.14.11
+ruff==0.14.14
     # via -r ./test.in
 semantic-version==2.10.0
     # via liccheck

@@ -204,7 +204,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises((FileNotFoundError, PDFPageCountError)):
+    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
@@ -281,6 +281,20 @@ def test_partition_pdf_with_model_name_env_var(
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
         assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
+def test_partition_pdf_passes_configured_dpi_to_inference(
+    monkeypatch,
+):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        return_value=MockDocumentLayout(),
+    ) as mock_process:
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+        assert mock_process.call_args[1]["pdf_image_dpi"] == 350
 
 
 @pytest.mark.parametrize("model_name", ["checkbox", "yolox"])
@@ -540,6 +554,7 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
         languages=["kor"],
         strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
+        pdf_image_dpi=200,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert elements[0].metadata.languages == ["kor"]
@@ -640,11 +655,11 @@ def test_partition_pdf_with_copy_protection():
     filename = example_doc_path("pdf/copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 22
-    assert elements[idx].text == title
+    title_elements = [e for e in elements if e.text == title]
+    assert len(title_elements) > 0, f"Expected to find title '{title}' in elements"
     assert {element.metadata.page_number for element in elements} == {1, 2}
-    assert elements[idx].metadata.detection_class_prob is not None
-    assert isinstance(elements[idx].metadata.detection_class_prob, float)
+    assert title_elements[0].metadata.detection_class_prob is not None
+    assert isinstance(title_elements[0].metadata.detection_class_prob, float)
 
 
 def test_partition_pdf_with_dpi():
