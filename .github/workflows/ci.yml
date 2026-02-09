@@ -130,6 +130,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12"]
+        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
         include:
           - extra: csv
             uv-extras: "--extra csv"

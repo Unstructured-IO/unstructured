@@ -1,4 +1,4 @@
-## 0.18.35-dev0
+## 0.19.0
 
 ### Enhancements
 - increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accommodate higher dpi values
