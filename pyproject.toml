@@ -116,7 +116,7 @@ local-inference = [
     "unstructured[all-docs]",
 ]
 paddleocr = [
-    "paddlepaddle>=3.3.0, <4.0.0",
+    "paddlepaddle>=3.3.0, <4.0.0; platform_machine != 'aarch64'",
     "unstructured-paddleocr==2.10.0",
 ]
 ingest = [
@@ -166,6 +166,12 @@ lint = [
 ]
 
 [tool.uv]
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'win32' and platform_machine == 'AMD64'",
+]
 constraint-dependencies = [
     # deltalake 1.3.0 is missing Linux ARM64 wheels, causing Docker ARM64 builds to fail
     "deltalake<1.3.0",
