@@ -18,7 +18,7 @@
 # - flameprof and snakeviz for time profiling and visualization.
 # - AWS CLI for syncing files from S3 (if applicable).
 
-# Package dependencies can be installed with `pip install -r scripts/performance/requirements.txt`
+# Package dependencies can be installed with `uv pip install -r scripts/performance/requirements.txt`
 
 # Usage example:
 # ./scripts/performance/profile.sh
@@ -28,7 +28,7 @@
 # Validate dependencies
 check_python_module() {
   if ! python3 -c "import $1" >/dev/null 2>&1; then
-    echo "Error: Python module $1 is not installed. Please install required depencies with 'pip install -r scripts/performance/requirements.txt'."
+    echo "Error: Python module $1 is not installed. Please install required dependencies with 'uv pip install -r scripts/performance/requirements.txt'."
     exit 1
   fi
 }
@@ -59,7 +59,7 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
   SCRIPT_PARENT_DIR=$(dirname "$(dirname "$(realpath "$0")")")
   docker run -it --rm -v "$SCRIPT_PARENT_DIR:/home/unstructured/scripts" unstructured:dev /bin/bash -c "
   cd unstructured/
-  pip install -r scripts/performance/requirements.txt
+  uv pip install -r scripts/performance/requirements.txt
   echo \"Warming the Docker container by running a small partitioning job..\"
   python3 -c 'from unstructured.partition.auto import partition; partition(\"'""$SCRIPT_DIR/warmup_docs/warmup.pdf'\", strategy=\"hi_res\")[1]'
   ./scripts/performance/profile.sh

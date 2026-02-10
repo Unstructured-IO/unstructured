@@ -48,12 +48,14 @@ def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_fro
 def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
     elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
 
-    assert base.elements_to_base64_gzipped_json(elements) == (
-        "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
-        "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
-        "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp1"
-        "LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
-    )
+    b64_str = base.elements_to_base64_gzipped_json(elements)
+
+    # Verify round-trip: decompress and check the JSON content rather than the
+    # exact compressed bytes, which vary across zlib implementations (e.g. zlib-ng).
+    round_tripped = base.elements_from_base64_gzipped_json(b64_str)
+    assert len(round_tripped) == 2
+    assert round_tripped[0].text == "Lorem"
+    assert round_tripped[1].text == "Lorem Ipsum"
 
 
 def test_elements_to_dicts():

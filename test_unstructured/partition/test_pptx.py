@@ -479,9 +479,9 @@ def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
             element,
             test_case[1],
         ), f"expected {test_case[1]}, got {type(element).__name__} for {element.text}"
-        assert (
-            element.metadata.category_depth == test_case[0]
-        ), f"expected {test_case[0]}, got {element.metadata.category_depth} for {element.text}"
+        assert element.metadata.category_depth == test_case[0], (
+            f"expected {test_case[0]}, got {element.metadata.category_depth} for {element.text}"
+        )
 
 
 def test_partition_pptx_hierarchy_sample_document():

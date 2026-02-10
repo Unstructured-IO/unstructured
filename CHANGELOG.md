@@ -1,4 +1,4 @@
-## 0.18.36
+## 0.19.1
 
 ### Enhancements
 - Add character-level deduplication for PDF text extraction to handle fake-bold rendering
@@ -6,10 +6,26 @@
 ### Fixes
 - **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
 
-## 0.18.35-dev0
+## 0.19.0
 
 ### Enhancements
-- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accommodate higher dpi values
+- Migrate project to native uv: replace setup.py/setuptools with pyproject.toml/hatchling, use uv sync/lock for dependency management, consolidate linting to ruff (drop black, flake8, autoflake)
+- Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
+- Migrate Dockerfile from pip to uv for dependency installation
+- Add `unstructured-ingest` as a native optional dependency extra (`unstructured[ingest]`)
+- Replace `pypandoc` with `pypandoc-binary` to bundle pandoc in the Python wheel (no system install needed)
+- Replace `liccheck` with `pip-licenses` for license checking (no pip dependency needed)
+- Add `sentencepiece` to `huggingface` extra; add `xlrd` to `xlsx` extra
+- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`, `pip-compile.sh`, `install-pandoc.sh`) superseded by uv and bundled deps
+- Update `check-licenses.sh` and `renovate-security-bump.sh` for uv-based workflow
+- Drop Python 3.10 and 3.11 support; minimum required version is now Python 3.12
+
+### Fixes
+- Fix corrupted `FigureCaption`/`Image` color-map key in `bbox_visualisation.py` caused by implicit string concatenation
+- Fix missing space in HTML radio-button test expectation (`test_html_to_unstructured_and_back_parsing.py`)
+- Fix missing space in elasticsearch test output message
+- Fix `unstructured-client` constraint version mismatch (was `>=0.23.0`, now `>=0.25.9` matching the actual dependency)
 
 ## 0.18.34
 

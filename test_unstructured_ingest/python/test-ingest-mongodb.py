@@ -85,9 +85,9 @@ def check(ctx, expected_records: int):
     collection = db[ctx.parent.params["collection"]]
     count = collection.count_documents(filter={})
     print(f"checking the count in the db ({count}) matches what's expected: {expected_records}")
-    assert (
-        count == expected_records
-    ), f"expected count ({expected_records}) does not match how many records were found: {count}"
+    assert count == expected_records, (
+        f"expected count ({expected_records}) does not match how many records were found: {count}"
+    )
     print("successfully checked that the expected number of records was found in the db!")
 
 

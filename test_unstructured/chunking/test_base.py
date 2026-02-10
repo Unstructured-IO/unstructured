@@ -1383,7 +1383,7 @@ class Describe_HtmlTableSplitter:
             ),
             (
                 "Maple Leafs TOR 13",
-                "<table>" "<tr><td>Maple Leafs</td><td>TOR</td><td>13</td></tr>" "</table>",
+                "<table><tr><td>Maple Leafs</td><td>TOR</td><td>13</td></tr></table>",
             ),
         ]
 
@@ -1491,8 +1491,7 @@ class Describe_TextSplitter:
         opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
         split = _TextSplitter(opts)
         text = (
-            "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
-            "In rhoncus ipsum sed lectus porta."
+            "Lorem ipsum dolor amet consectetur adipiscing.  \n  In rhoncus ipsum sed lectus porta."
         )
 
         s, remainder = split(text)
@@ -1747,10 +1746,7 @@ class Describe_RowAccumulator:
 
         assert text == "abcde fghij klmno pqrst uvwxy z"
         assert html == (
-            "<table>"
-            "<tr><td>abcde fghij klmno</td></tr>"
-            "<tr><td>pqrst uvwxy z</td></tr>"
-            "</table>"
+            "<table><tr><td>abcde fghij klmno</td></tr><tr><td>pqrst uvwxy z</td></tr></table>"
         )
         assert accum._rows == []
 
@@ -2094,7 +2090,7 @@ class Describe_is_title:
         "element",
         [
             PageBreak(""),
-            Table("Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"),
+            Table("Header Col 1  Header Col 2\nLorem ipsum   adipiscing"),
             Text("abcd"),
         ],
     )
