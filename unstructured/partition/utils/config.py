@@ -253,6 +253,17 @@ class ENVConfig:
         return self._get_float("PDF_CHAR_DUPLICATE_THRESHOLD", 2.0)
 
     @property
+    def PDF_CHAR_OVERLAP_RATIO_THRESHOLD(self) -> float:
+        """Minimum overlap ratio to consider two characters as duplicates (fake bold rendering).
+
+        When detecting fake-bold duplicates, this threshold determines the minimum bounding box
+        overlap ratio required. Fake-bold duplicates typically have >70% overlap, while legitimate
+        consecutive identical letters (like "ll" in "skills") have <30% overlap. Default is 0.5
+        (50%) as a conservative threshold. Valid range is 0.0 to 1.0.
+        """
+        return self._get_float("PDF_CHAR_OVERLAP_RATIO_THRESHOLD", 0.5)
+
+    @property
     def PDF_RENDER_DPI(self) -> int:
         """The DPI to use for rendering PDF pages"""
         return self._get_int("PDF_RENDER_DPI", 350)

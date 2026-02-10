@@ -10,6 +10,7 @@ from pdfminer.psexceptions import PSSyntaxError
 from pydantic import BaseModel
 
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
 
 
@@ -157,8 +158,9 @@ def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
     
     # Fake-bold duplicates typically have >70% overlap
     # Legitimate consecutive letters have <30% overlap (or none)
-    # Use 50% as threshold to be conservative
-    return overlap_ratio > 0.5
+    # Use configurable threshold (default 50%) to be conservative
+    overlap_ratio_threshold = env_config.PDF_CHAR_OVERLAP_RATIO_THRESHOLD
+    return overlap_ratio > overlap_ratio_threshold
 
 
 def deduplicate_chars_in_text_line(text_line: LTTextLine, threshold: float) -> str:
