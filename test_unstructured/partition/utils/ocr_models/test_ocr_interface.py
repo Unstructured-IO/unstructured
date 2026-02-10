@@ -53,10 +53,13 @@ class DescribeOCRAgent:
         self, _get_ocr_agent_cls_qname_: Mock, exception_cls: type[Exception], _clear_cache
     ):
         _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_TESSERACT
-        with patch(
-            "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
-            side_effect=exception_cls,
-        ), pytest.raises(RuntimeError, match="Could not get the OCRAgent instance"):
+        with (
+            patch(
+                "unstructured.partition.utils.ocr_models.ocr_interface.importlib.import_module",
+                side_effect=exception_cls,
+            ),
+            pytest.raises(RuntimeError, match="Could not get the OCRAgent instance"),
+        ):
             OCRAgent.get_agent(language="eng")
 
     @pytest.mark.parametrize(

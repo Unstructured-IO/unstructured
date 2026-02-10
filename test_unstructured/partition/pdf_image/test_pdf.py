@@ -474,14 +474,17 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(monkeypatch, caplog):
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
     mock_return = [[Text("Hello there!")], []]
-    with mock.patch.object(
-        pdf,
-        "extractable_elements",
-        return_value=mock_return,
-    ) as mock_partition, mock.patch.object(
-        pdf,
-        "_partition_pdf_or_image_with_ocr",
-    ) as mock_partition_ocr:
+    with (
+        mock.patch.object(
+            pdf,
+            "extractable_elements",
+            return_value=mock_return,
+        ) as mock_partition,
+        mock.patch.object(
+            pdf,
+            "_partition_pdf_or_image_with_ocr",
+        ) as mock_partition_ocr,
+    ):
         pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.OCR_ONLY)
 
     mock_partition.assert_called_once()

@@ -44,9 +44,9 @@ def check(connection_string: str, container: str, blob_path: str, expected_files
         f"Checking that the number of files found ({found}) "
         f"matches what's expected: {expected_files}"
     )
-    assert (
-        found == expected_files
-    ), f"number of files found ({found}) doesn't match what's expected: {expected_files}"
+    assert found == expected_files, (
+        f"number of files found ({found}) doesn't match what's expected: {expected_files}"
+    )
     print("successfully checked the number of files!")
 
 

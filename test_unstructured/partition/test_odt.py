@@ -45,10 +45,7 @@ def test_partition_odt_from_filename():
     assert elements == [
         Text("Lorem ipsum dolor sit amet."),
         Table(
-            "Header row Mon Wed Fri"
-            " Color Blue Red Green"
-            " Time 1pm 2pm 3pm"
-            " Leader Sarah Mark Ryan"
+            "Header row Mon Wed Fri Color Blue Red Green Time 1pm 2pm 3pm Leader Sarah Mark Ryan"
         ),
     ]
     assert all(e.metadata.filename == "fake.odt" for e in elements)
@@ -64,10 +61,7 @@ def test_partition_odt_from_file():
     assert elements == [
         Text("Lorem ipsum dolor sit amet."),
         Table(
-            "Header row Mon Wed Fri"
-            " Color Blue Red Green"
-            " Time 1pm 2pm 3pm"
-            " Leader Sarah Mark Ryan"
+            "Header row Mon Wed Fri Color Blue Red Green Time 1pm 2pm 3pm Leader Sarah Mark Ryan"
         ),
     ]
 

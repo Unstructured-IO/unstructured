@@ -31,17 +31,6 @@ all_tests=(
   'local-single-file-with-pdf-infer-table-structure.sh'
 )
 
-full_python_matrix_tests=(
-  #  'sharepoint.sh'
-  'local.sh'
-  'local-single-file.sh'
-  'local-single-file-with-encoding.sh'
-  'local-single-file-with-pdf-infer-table-structure.sh'
-  # NOTE(scanny): This test is disabled because it routinely flakes on OCR differences
-  # 's3.sh'
-  'azure.sh'
-)
-
 CURRENT_TEST="none"
 
 function print_last_run() {
@@ -54,8 +43,6 @@ function print_last_run() {
 
 trap print_last_run EXIT
 
-python_version=$(${PYTHON} --version 2>&1)
-
 tests_to_ignore=(
   'notion.sh'
   'local-embed-mixedbreadai.sh'
@@ -64,12 +51,6 @@ tests_to_ignore=(
 
 for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
-  # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
-  # Note: to test we expand the full_python_matrix_tests array to a string and then regex match the current test
-  if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]]; then
-    echo "--------- SKIPPING SCRIPT $test ---------"
-    continue
-  fi
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
   ./test_unstructured_ingest/src/"$test"

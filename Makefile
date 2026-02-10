@@ -1,8 +1,5 @@
 PACKAGE_NAME := unstructured
-PIP_VERSION := 23.2.1
 CURRENT_DIR := $(shell pwd)
-ARCH := $(shell uname -m)
-PYTHON ?= python3
 
 .PHONY: help
 help: Makefile
@@ -13,123 +10,21 @@ help: Makefile
 # Install #
 ###########
 
-## install-base:            installs core requirements needed for text processing bricks
-.PHONY: install-base
-install-base: install-base-pip-packages install-nltk-models
-
-## install:                 installs all test, dev, and experimental requirements
+## install:                 install all dependencies via uv
 .PHONY: install
-install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
+install:
+	@uv sync --frozen --all-extras --all-groups
+	@$(MAKE) install-nltk-models
 
-.PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc install-paddleocr
-
-.PHONY: install-base-ci
-install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
-
-.PHONY: install-base-pip-packages
-install-base-pip-packages:
-	${PYTHON} -m pip install pip==${PIP_VERSION}
-	${PYTHON} -m pip install -r requirements/base.txt
-
-.PHONY: install-huggingface
-install-huggingface:
-	${PYTHON} -m pip install pip==${PIP_VERSION}
-	${PYTHON} -m pip install -r requirements/huggingface.txt
+## lock:                    update and lock all dependencies
+.PHONY: lock
+lock:
+	@uv lock --upgrade
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	${PYTHON} -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
+	uv run --frozen python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
-.PHONY: install-test
-install-test:
-	${PYTHON} -m pip install -r requirements/test.txt
-	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
-	# pytesseract installation into the virtual env for testing
-	${PYTHON} -m pip install unstructured_pytesseract
-	# ${PYTHON} -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
-	# NOTE(robinson) - Installing weaviate-client separately here because the requests
-	# version conflicts with label_studio_sdk
-	${PYTHON} -m pip install weaviate-client -c requirements/deps/constraints.txt
-
-.PHONY: install-dev
-install-dev:
-	${PYTHON} -m pip install -r requirements/dev.txt
-
-.PHONY: install-build
-install-build:
-	${PYTHON} -m pip install -r requirements/build.txt
-
-.PHONY: install-csv
-install-csv:
-	${PYTHON} -m pip install -r requirements/extra-csv.txt
-
-.PHONY: install-docx
-install-docx:
-	${PYTHON} -m pip install -r requirements/extra-docx.txt
-
-.PHONY: install-epub
-install-epub:
-	${PYTHON} -m pip install -r requirements/extra-epub.txt
-
-.PHONY: install-odt
-install-odt:
-	${PYTHON} -m pip install -r requirements/extra-odt.txt
-
-.PHONY: install-pypandoc
-install-pypandoc:
-	${PYTHON} -m pip install -r requirements/extra-pandoc.txt
-
-.PHONY: install-paddleocr
-install-paddleocr:
-	${PYTHON} -m pip install -r requirements/extra-paddleocr.txt
-
-.PHONY: install-markdown
-install-markdown:
-	${PYTHON} -m pip install -r requirements/extra-markdown.txt
-
-.PHONY: install-pdf-image
-install-pdf-image:
-	${PYTHON} -m pip install -r requirements/extra-pdf-image.txt
-
-.PHONY: install-pptx
-install-pptx:
-	${PYTHON} -m pip install -r requirements/extra-pptx.txt
-
-.PHONY: install-xlsx
-install-xlsx:
-	${PYTHON} -m pip install -r requirements/extra-xlsx.txt
-
-.PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-pdf-image install-pptx install-xlsx
-
-.PHONY: install-ingest
-install-ingest:
-	python3 -m pip install -r requirements/ingest/ingest.txt
-
-## install-local-inference: installs requirements for local inference
-.PHONY: install-local-inference
-install-local-inference: install install-all-docs
-
-.PHONY: install-pandoc
-install-pandoc:
-	ARCH=${ARCH} ./scripts/install-pandoc.sh
-
-## pip-compile:             compiles all base/dev/test requirements
-.PHONY: pip-compile
-pip-compile:
-	@scripts/pip-compile.sh
-
-## install-project-local:   install unstructured into your local python environment
-.PHONY: install-project-local
-install-project-local: install
-	# MAYBE TODO: fail if already exists?
-	${PYTHON} -m pip install -e .
-
-## uninstall-project-local: uninstall unstructured from your local python environment
-.PHONY: uninstall-project-local
-uninstall-project-local:
-	${PYTHON} -m pip uninstall ${PACKAGE_NAME}
 
 #################
 # Test and Lint #
@@ -141,17 +36,15 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 ## test:                    runs all unittests
 .PHONY: test
 test:
-	PYTHONPATH=. CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
-
-.PHONY: test-unstructured-api-unit
-test-unstructured-api-unit:
-	scripts/test-unstructured-api-unit.sh
+	CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	uv run --frozen --no-sync pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-no-extras
 test-no-extras:
-	PYTHONPATH=. CI=$(CI) \
-		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) ${PYTHON} -m pytest -n auto \
+	CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	uv run --frozen --no-sync pytest -n auto \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
@@ -159,87 +52,62 @@ test-no-extras:
 
 .PHONY: test-extra-csv
 test-extra-csv:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
 		test_unstructured/partition/test_csv.py \
 		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
 		test_unstructured/partition/test_doc.py \
 		test_unstructured/partition/test_docx.py
 
 .PHONY: test-extra-epub
 test-extra-epub:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_epub.py
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_md.py
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_odt.py
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/pdf_image
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
 		test_unstructured/partition/test_ppt.py \
 		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto \
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
 		test_unstructured/partition/test_org.py \
 		test_unstructured/partition/test_rst.py \
 		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/partition/test_xlsx.py
+	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_xlsx.py
 
-.PHONY: test-text-extraction-evaluate
-test-text-extraction-evaluate:
-	PYTHONPATH=. CI=$(CI) ${PYTHON} -m pytest -n auto test_unstructured/metrics/test_text_extraction.py
-
-## check:                   runs linters (includes tests)
+## check:                   runs all linters and checks
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version
+check: check-ruff check-version
 
-.PHONY: check-shfmt
-check-shfmt:
-	shfmt -i 2 -d .
-
-.PHONY: check-black
-check-black:
-	${PYTHON} -m black . --check --line-length=100
-
-.PHONY: check-flake8
-check-flake8:
-	${PYTHON} -m flake8 .
+## check-ruff:              runs ruff linter and formatter check
+.PHONY: check-ruff
+check-ruff:
+	uv run --frozen --no-sync ruff check .
+	uv run --frozen --no-sync ruff format --check .
 
 .PHONY: check-licenses
 check-licenses:
 	@scripts/check-licenses.sh
-
-.PHONY: check-ruff
-check-ruff:
-    # -- ruff options are determined by pyproject.toml --
-	ruff check .
-
-.PHONY: check-autoflake
-check-autoflake:
-	autoflake --check-diff .
-
-## check-scripts:           run shellcheck
-.PHONY: check-scripts
-check-scripts:
-    # Fail if any of these files have warnings
-	scripts/shellcheck.sh
 
 ## check-version:           run check to ensure version in CHANGELOG.md matches version in package
 .PHONY: check-version
@@ -248,19 +116,15 @@ check-version:
 	scripts/version-sync.sh -c \
 		-f "unstructured/__version__.py" semver
 
-## tidy:                    run black
+## tidy:                    auto-format and fix lint issues
 .PHONY: tidy
-tidy: tidy-python
+tidy:
+	uv run --frozen --no-sync ruff format .
+	uv run --frozen --no-sync ruff check --fix-only --show-fixes .
 
-.PHONY: tidy_shell
+.PHONY: tidy-shell
 tidy-shell:
 	shfmt -i 2 -l -w .
-
-.PHONY: tidy-python
-tidy-python:
-	ruff check . --fix-only || true
-	autoflake --in-place .
-	black --line-length=100 .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
@@ -268,18 +132,10 @@ version-sync:
 	scripts/version-sync.sh \
 		-f "unstructured/__version__.py" semver
 
+## check-coverage:          check test coverage meets threshold
 .PHONY: check-coverage
 check-coverage:
-	${PYTHON} -m coverage report --fail-under=90
-
-## check-deps:              check consistency of dependencies
-.PHONY: check-deps
-check-deps:
-	scripts/consistent-deps.sh
-
-.PHONY: check-extras
-check-extras:
-	scripts/check-extras.sh
+	uv run --frozen --no-sync coverage report --fail-under=90
 
 ##########
 # Docker #
@@ -291,7 +147,7 @@ DOCKER_IMAGE ?= unstructured:dev
 
 .PHONY: docker-build
 docker-build:
-	PIP_VERSION=${PIP_VERSION} DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
+	DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/docker-build.sh
 
 .PHONY: docker-start-bash
 docker-start-bash:
@@ -300,7 +156,7 @@ docker-start-bash:
 .PHONY: docker-start-dev
 docker-start-dev:
 	docker run --rm \
-	-v ${CURRENT_DIR}:/mnt/local_unstructued \
+	-v ${CURRENT_DIR}:/mnt/local_unstructured \
 	-ti ${DOCKER_IMAGE}
 
 .PHONY: docker-test
@@ -310,10 +166,10 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "pip install -r requirements/test.txt -r requirements/dev.txt && \
+	bash -c "uv sync --frozen --all-extras --group test --no-install-project && \
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	python3 -m pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
+	uv run pytest $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
@@ -331,7 +187,7 @@ docker-jupyter-notebook:
 
 .PHONY: run-jupyter
 run-jupyter:
-	PYTHONPATH=$(realpath .) JUPYTER_PATH=$(realpath .) jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
+	uv run jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
 
 
 ###########
@@ -341,9 +197,9 @@ run-jupyter:
 .PHONY: html-fixtures-update
 html-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-html && \
-	test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+	uv run test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
 
 .PHONY: markdown-fixtures-update
 markdown-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-markdown && \
-	test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown
+	uv run test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown
