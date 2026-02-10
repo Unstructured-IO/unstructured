@@ -1,3 +1,9 @@
+## 0.19.2
+
+### Fixes
+- Fix Docker ARM64 image build failure in CD by moving `setup-qemu-action` before the build step in `docker-publish.yml` so QEMU binfmt_misc handlers are properly registered before cross-platform builds
+- Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
+
 ## 0.19.1
 
 ### Fixes

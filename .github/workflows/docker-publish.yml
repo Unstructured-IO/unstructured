@@ -28,6 +28,8 @@ jobs:
     env:
       SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
     steps:
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
     - name: Set up Docker
       # Use the `docker` driver for AMD builds because the `docker-container` driver may fail to locally load the built image.
       # This could be due to the larger size of the AMD build and the `docker-container` driver needing to load the tarball.
@@ -52,8 +54,6 @@ jobs:
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
     - name: Test images
       run: |
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
