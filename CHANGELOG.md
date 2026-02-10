@@ -1,3 +1,8 @@
+## 0.19.1
+
+### Fixes
+- Fix Docker ARM64 (`linux/aarch64`) image build failure by adding `platform_machine != 'aarch64'` marker to `paddlepaddle` (no Linux ARM64 wheels available) and adding `required-environments` to `[tool.uv]` for cross-platform lockfile resolution
+
 ## 0.19.0
 
 ### Enhancements
