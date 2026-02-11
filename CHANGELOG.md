@@ -1,4 +1,4 @@
-## 0.19.2
+## 0.19.3
 
 ### Enhancements
 - Use native ARM64 runner (`ubuntu-24.04-arm`) for Docker ARM64 builds in CD, replacing QEMU emulation for faster and more reliable builds
