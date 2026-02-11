@@ -1,7 +1,8 @@
 ## 0.19.2
 
 ### Enhancements
-- Use native ARM64 runner (`opensource-linux-arm64-4core`) for Docker ARM64 builds in CD, replacing QEMU emulation for significantly faster and more reliable builds
+- Use native ARM64 runner (`ubuntu-24.04-arm`) for Docker ARM64 builds in CD, replacing QEMU emulation for faster and more reliable builds
+- Add `workflow_dispatch` trigger to CD workflow for manual testing
 - Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
 - Enable parallel test execution (`pytest -n auto`) in Docker test target
 

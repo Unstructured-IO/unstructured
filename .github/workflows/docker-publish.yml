@@ -27,29 +27,12 @@ jobs:
           - docker-platform: "linux/amd64"
             runs-on: ubuntu-latest
           - docker-platform: "linux/arm64"
-            runs-on: opensource-linux-arm64-4core
+            runs-on: ubuntu-24.04-arm
     runs-on: ${{ matrix.runs-on }}
     needs: set-short-sha
     env:
       SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}
     steps:
-    - name: Debug runner environment
-      if: matrix.docker-platform == 'linux/arm64'
-      run: |
-        echo "=== OS ==="
-        uname -a
-        cat /etc/os-release
-        echo "=== PATH ==="
-        echo "$PATH"
-        echo "=== Docker lookup ==="
-        which docker 2>/dev/null || echo "docker not in PATH"
-        dpkg -l | grep -i docker || echo "no docker packages installed"
-        find /usr /snap -name 'docker' -type f 2>/dev/null || echo "docker binary not found on disk"
-        echo "=== Buildx lookup ==="
-        docker buildx version 2>/dev/null || echo "buildx not available"
-        echo "=== Disk and memory ==="
-        df -h /
-        free -h
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
       with:
