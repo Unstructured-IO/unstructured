@@ -139,23 +139,20 @@ def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
 
     # Additional check: Calculate bounding box overlap to distinguish
     # fake-bold (high overlap) from legitimate doubles (low/no overlap)
-    
+
     # Get character widths and heights
     char1_width = char1.x1 - char1.x0
     char2_width = char2.x1 - char2.x0
-    
+
     # Calculate horizontal overlap
     overlap_x_start = max(char1.x0, char2.x0)
     overlap_x_end = min(char1.x1, char2.x1)
     horizontal_overlap = max(0, overlap_x_end - overlap_x_start)
-    
+
     # Calculate overlap percentage relative to character width
     avg_width = (char1_width + char2_width) / 2
-    if avg_width > 0:
-        overlap_ratio = horizontal_overlap / avg_width
-    else:
-        overlap_ratio = 0
-    
+    overlap_ratio = horizontal_overlap / avg_width if avg_width > 0 else 0
+
     # Fake-bold duplicates typically have >70% overlap
     # Legitimate consecutive letters have <30% overlap (or none)
     # Use configurable threshold (default 50%) to be conservative
