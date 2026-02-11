@@ -1,11 +1,16 @@
-## 0.19.2
+## 0.19.3
 
 ### Enhancements
-- Use native ARM64 runner (`opensource-linux-arm64-4core`) for Docker ARM64 builds in CD, replacing QEMU emulation for significantly faster and more reliable builds
+- Use native ARM64 runner (`ubuntu-24.04-arm`) for Docker ARM64 builds in CD, replacing QEMU emulation for faster and more reliable builds
+- Use `opensource-linux-8core` runner for Docker AMD64 builds in CD
+- Add `workflow_dispatch` trigger to CD workflow for manual testing
 - Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
 - Enable parallel test execution (`pytest -n auto`) in Docker test target
+- Reduce CD test step to smoke tests only (full suite already runs in CI)
 
 ### Fixes
+- Add retry logic (up to 3 attempts) for `apk add` in Dockerfile to handle transient Chainguard APK mirror failures
+- Add `fail-fast: false` to CD build matrix so a flaky failure on one architecture doesn't cancel the other
 - Remove `.python-version` from `.gitignore`
 
 ## 0.19.1

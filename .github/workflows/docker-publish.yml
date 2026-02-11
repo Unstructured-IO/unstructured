@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
@@ -21,12 +22,13 @@ jobs:
 
   build-images:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - docker-platform: "linux/amd64"
-            runs-on: ubuntu-latest
+            runs-on: opensource-linux-8core
           - docker-platform: "linux/arm64"
-            runs-on: opensource-linux-arm64-4core
+            runs-on: ubuntu-24.04-arm
     runs-on: ${{ matrix.runs-on }}
     needs: set-short-sha
     env:
@@ -58,13 +60,8 @@ jobs:
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
         echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" >> uns_test_env_file
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-        if [ "$ARCH" = "amd64" ]; then
         DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
-          make docker-test CI=true
-        else
-          DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
-            make docker-test CI=true TEST_FILE=test_unstructured/partition/test_text.py
-        fi
+          make docker-test CI=true TEST_FILE=test_unstructured/partition/test_text.py
         DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
     - name: Push images
       run: |
