@@ -183,7 +183,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12"]
-    runs-on: ubuntu-latest-m
+    runs-on: opensource-linux-8core
     needs: [setup, lint]
     steps:
     # actions/checkout MUST come before auth
@@ -256,7 +256,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12"]
-    runs-on: ubuntu-latest-m
+    runs-on: opensource-linux-8core
     needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
@@ -274,7 +274,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12"]
-    runs-on: ubuntu-latest-m
+    runs-on: opensource-linux-8core
     needs: [setup, lint]
     steps:
     - uses: 'actions/checkout@v4'
@@ -307,7 +307,7 @@ jobs:
   # TODO - figure out best practice for caching docker images
   # (Using the virtualenv to get pytest)
   test_dockerfile:
-    runs-on: ubuntu-latest-m
+    runs-on: opensource-linux-8core
     needs: [ setup, lint ]
     steps:
       - uses: actions/checkout@v4

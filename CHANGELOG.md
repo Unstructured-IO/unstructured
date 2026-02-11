@@ -1,3 +1,13 @@
+## 0.19.2
+
+### Enhancements
+- Use native ARM64 runner (`opensource-linux-arm64-4core`) for Docker ARM64 builds in CD, replacing QEMU emulation for significantly faster and more reliable builds
+- Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
+- Enable parallel test execution (`pytest -n auto`) in Docker test target
+
+### Fixes
+- Remove `.python-version` from `.gitignore`
+
 ## 0.19.1
 
 ### Fixes
