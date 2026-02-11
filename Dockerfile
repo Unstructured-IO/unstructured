@@ -11,10 +11,15 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
-RUN apk update && \
-    apk add libxml2 python-3.12 python-3.12-base glib \
-      mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
-      poppler poppler-utils poppler-glib libreoffice tesseract && \
+RUN apk_ok=false; \
+    for attempt in 1 2 3; do \
+      apk update && \
+      apk add libxml2 python-3.12 python-3.12-base glib \
+        mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
+        poppler poppler-utils poppler-glib libreoffice tesseract && \
+      apk_ok=true && break; \
+      echo "apk install failed (attempt $attempt/3), retrying in 5s..."; sleep 5; \
+    done; $apk_ok && \
     git clone --depth 1 https://github.com/tesseract-ocr/tessdata.git /tmp/tessdata && \
     mkdir -p /usr/local/share/tessdata && \
     cp /tmp/tessdata/*.traineddata /usr/local/share/tessdata && \

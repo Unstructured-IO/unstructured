@@ -1,10 +1,30 @@
-## 0.19.1
+## 0.19.4
 
 ### Enhancements
 - Add character-level deduplication for PDF text extraction to handle fake-bold rendering
 
 ### Fixes
 - **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
+
+## 0.19.3
+
+### Enhancements
+- Use native ARM64 runner (`ubuntu-24.04-arm`) for Docker ARM64 builds in CD, replacing QEMU emulation for faster and more reliable builds
+- Use `opensource-linux-8core` runner for Docker AMD64 builds in CD
+- Add `workflow_dispatch` trigger to CD workflow for manual testing
+- Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
+- Enable parallel test execution (`pytest -n auto`) in Docker test target
+- Reduce CD test step to smoke tests only (full suite already runs in CI)
+
+### Fixes
+- Add retry logic (up to 3 attempts) for `apk add` in Dockerfile to handle transient Chainguard APK mirror failures
+- Add `fail-fast: false` to CD build matrix so a flaky failure on one architecture doesn't cancel the other
+- Remove `.python-version` from `.gitignore`
+
+## 0.19.1
+
+### Fixes
+- Fix Docker ARM64 (`linux/aarch64`) image build failure by adding `platform_machine != 'aarch64'` marker to `paddlepaddle` (no Linux ARM64 wheels available) and adding `required-environments` to `[tool.uv]` for cross-platform lockfile resolution
 
 ## 0.19.0
 
