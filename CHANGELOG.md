@@ -1,8 +1,11 @@
 ## 0.19.2
 
-### Fixes
-- Fix Docker ARM64 image build failure in CD by moving `setup-qemu-action` before the build step in `docker-publish.yml` so QEMU binfmt_misc handlers are properly registered before cross-platform builds
+### Enhancements
+- Use native ARM64 runner (`opensource-linux-arm64-4core`) for Docker ARM64 builds in CD, replacing QEMU emulation for significantly faster and more reliable builds
 - Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
+
+### Fixes
+- Remove `.python-version` from `.gitignore`
 
 ## 0.19.1
 
