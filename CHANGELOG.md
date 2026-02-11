@@ -1,3 +1,13 @@
+## 0.20.0
+
+### Enhancements
+- Add Python 3.11 and 3.13 support (`requires-python = ">=3.11, <3.14"`)
+- Expand CI matrix to test against Python 3.11, 3.12, and 3.13 for lint, unit tests, no-extras tests, and per-extra tests
+- Move lightweight CI jobs (`test_json_to_html`, `test_json_to_markdown`) from `opensource-linux-8core` to `ubuntu-latest` runners
+- Bump `unstructured-ingest` lower bound to `>=1.4.0` (first release with Python 3.11 and 3.13 support)
+- Remove dead `sys.version_info < (3, 8)` conditional import in `unstructured/nlp/patterns.py`
+- Update ruff `target-version` to `py311` and pyright `pythonVersion` to `3.11` to match new minimum
+
 ## 0.19.3
 
 ### Enhancements
