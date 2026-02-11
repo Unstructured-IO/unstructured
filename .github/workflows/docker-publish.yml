@@ -22,6 +22,7 @@ jobs:
 
   build-images:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - docker-platform: "linux/amd64"
