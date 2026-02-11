@@ -9,6 +9,8 @@
 - Reduce CD test step to smoke tests only (full suite already runs in CI)
 
 ### Fixes
+- Add retry logic (up to 3 attempts) for `apk add` in Dockerfile to handle transient Chainguard APK mirror failures
+- Add `fail-fast: false` to CD build matrix so a flaky failure on one architecture doesn't cancel the other
 - Remove `.python-version` from `.gitignore`
 
 ## 0.19.1
