@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish package to Azure Artifacts
         run: |
-          if twine upload -r azure dist/*; then
+          if uv run --no-sync twine upload -r azure dist/*; then
             echo "✅ Successfully published to Azure Artifacts (or already existed)"
           else
             EXIT_CODE=$?
