@@ -462,9 +462,9 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
     text_with_dedup = " ".join([el.text for el in elements_with_dedup])
 
     # Verify fake-bold text shows doubled characters without deduplication
-    assert (
-        "BBOOLLDD" in text_no_dedup
-    ), "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
+    assert "BBOOLLDD" in text_no_dedup, (
+        "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
+    )
 
     # Verify deduplication produces clean text
     assert "BOLD" in text_with_dedup, "With deduplication, text should contain clean 'BOLD'"
