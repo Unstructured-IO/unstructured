@@ -1,3 +1,8 @@
+## 0.20.1
+
+### Fixes
+- Switch CD `publish-images` job runner from `ubuntu-latest` to `ubuntu-latest-m` to fix "no space left on device" error when pulling multi-arch Docker images
+
 ## 0.20.0
 
 ### Enhancements
