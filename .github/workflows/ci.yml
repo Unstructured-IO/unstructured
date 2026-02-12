@@ -122,7 +122,7 @@ jobs:
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
-        uv sync --frozen --group test
+        uv sync --locked --group test
         make install-nltk-models
         make test-no-extras CI=true
 
@@ -162,7 +162,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install extra dependencies
       run: |
-        uv sync --frozen ${{ matrix.uv-extras }} --group test
+        uv sync --locked ${{ matrix.uv-extras }} --group test
         make install-nltk-models
     - name: Install system dependencies
       run: |
@@ -250,7 +250,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        uv run ./test_unstructured_ingest/test-ingest-src.sh
+        uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
 
   test_json_to_html:
     strategy:
@@ -268,7 +268,7 @@ jobs:
         OVERWRITE_FIXTURES: "false"
       run: |
         sudo apt-get install diffstat
-        uv run ./test_unstructured_ingest/check-diff-expected-output-html.sh
+        uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-html.sh
 
   test_json_to_markdown:
     strategy:
@@ -286,7 +286,7 @@ jobs:
         OVERWRITE_FIXTURES: "false"
       run: |
         sudo apt-get install diffstat
-        uv run ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
+        uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
 
   changelog:
     runs-on: ubuntu-latest

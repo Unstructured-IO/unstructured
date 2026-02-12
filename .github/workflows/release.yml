@@ -1,0 +1,66 @@
+name: Pypi Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --locked --group release
+
+      - name: Build artifact
+        run: |
+          uv build --no-sync
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
+
+      - name: Create .pypirc for Azure Artifacts
+        run: |
+          cat <<EOF > ~/.pypirc
+          [distutils]
+          index-servers =
+              azure
+
+          [azure]
+          repository: https://pkgs.dev.azure.com/${{ secrets.AZURE_ARTIFACTS_FEED }}/_packaging/${{ secrets.AZURE_ARTIFACTS_FEED }}/pypi/upload/
+          username: ${{ secrets.AZURE_ARTIFACTS_USERNAME }}
+          password: ${{ secrets.AZURE_ARTIFACTS_PAT }}
+          EOF
+
+      - name: Publish package to Azure Artifacts
+        run: |
+          if twine upload -r azure dist/*; then
+            echo "✅ Successfully published to Azure Artifacts (or already existed)"
+          else
+            EXIT_CODE=$?
+            echo "❌ Azure Artifacts upload failed, but PyPI upload succeeded"
+            if [[ $EXIT_CODE == 1 ]]; then
+              echo "⚠️  This may be due to version conflicts or connectivity issues"
+            fi
+            echo "This is non-critical - the package is available on PyPI"
+            exit 0
+          fi
