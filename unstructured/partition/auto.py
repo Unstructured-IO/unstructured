@@ -42,6 +42,7 @@ def partition(
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
+    language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
     pdf_infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
@@ -98,6 +99,10 @@ def partition(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+            language_fallback
+                Optional callable for short text (e.g. when detection defaults to English).
+                Called with the text; return a list of ISO 639-3 codes or None to leave
+                language unspecified.
     pdf_infer_table_structure
         Deprecated! Use `skip_infer_table_types` to opt out of table extraction for any document
         type.
@@ -280,6 +285,7 @@ def partition(
 
     partitioning_kwargs = copy.deepcopy(kwargs)
     partitioning_kwargs["detect_language_per_element"] = detect_language_per_element
+    partitioning_kwargs["language_fallback"] = language_fallback
     partitioning_kwargs["encoding"] = encoding
     partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages

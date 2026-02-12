@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from functools import lru_cache
-from typing import Iterable, Iterator, Optional
+from typing import Callable, Iterable, Iterator, Optional
 
 import iso639  # pyright: ignore[reportMissingTypeStubs]
 from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
@@ -383,10 +383,16 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
 def detect_languages(
     text: str,
     languages: Optional[list[str]] = None,
+    language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
 ) -> Optional[list[str]]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
+
+    For short ASCII text (fewer than 5 words), language detection is unreliable. By default
+    such text is assigned English (["eng"]). Use ``language_fallback`` to override:
+    pass a callable that takes the text and returns a list of ISO 639-3 codes or None.
+    Return None to leave language unspecified so the user can handle it.
     """
     if languages is None:
         languages = ["auto"]
@@ -406,6 +412,9 @@ def detect_languages(
     # If text contains special characters (like ñ, å, or Korean/Mandarin/etc.) it will NOT default
     # to English. It will default to English if text is only ascii characters and is short.
     if _ASCII_RE.match(text) and len(text.split()) < 5:
+        if language_fallback is not None:
+            result = language_fallback(text)
+            return result
         logger.debug(f'short text: "{text}". Defaulting to English.')
         return ["eng"]
 
@@ -469,10 +478,12 @@ def apply_lang_metadata(
     elements: Iterable[Element],
     languages: Optional[list[str]],
     detect_language_per_element: bool = False,
+    language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
 ) -> Iterator[Element]:
     """Detect language and apply it to metadata.languages for each element in `elements`.
     If languages is None, default to auto detection.
-    If languages is and empty string, skip."""
+    If languages is and empty string, skip.
+    language_fallback is used for short text when detection is unreliable; see detect_languages."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
 
@@ -493,8 +504,13 @@ def apply_lang_metadata(
     if not isinstance(elements, list):
         elements = list(elements)
 
+    def detect(text: str) -> Optional[list[str]]:
+        return detect_languages(
+            text=text, languages=languages, language_fallback=language_fallback
+        )
+
     full_text = " ".join(str(e.text) for e in elements if hasattr(e, "text") and e.text)
-    detected_languages = detect_languages(text=full_text, languages=languages)
+    detected_languages = detect(full_text)
     if (
         detected_languages is not None
         and len(detected_languages) == 1
@@ -508,7 +524,7 @@ def apply_lang_metadata(
         for e in elements:
             if hasattr(e, "text"):
                 text_value = str(e.text) if e.text is not None else ""
-                e.metadata.languages = detect_languages(text_value)
+                e.metadata.languages = detect(text_value)
                 yield e
             else:
                 yield e
