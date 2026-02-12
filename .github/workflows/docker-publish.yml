@@ -69,7 +69,7 @@ jobs:
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         docker push "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
   publish-images:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     needs: [set-short-sha, build-images]
     env:
       SHORT_SHA: ${{ needs.set-short-sha.outputs.short_sha }}

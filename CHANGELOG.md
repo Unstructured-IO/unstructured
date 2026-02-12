@@ -1,10 +1,25 @@
-## 0.19.4
+## 0.20.2
 
 ### Enhancements
 - Add character-level deduplication for PDF text extraction to handle fake-bold rendering
 
 ### Fixes
 - **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
+
+## 0.20.1
+
+### Fixes
+- Switch CD `publish-images` job runner from `ubuntu-latest` to `ubuntu-latest-m` to fix "no space left on device" error when pulling multi-arch Docker images
+
+## 0.20.0
+
+### Enhancements
+- Add Python 3.11 and 3.13 support (`requires-python = ">=3.11, <3.14"`)
+- Expand CI matrix to test against Python 3.11, 3.12, and 3.13 for lint, unit tests, no-extras tests, and per-extra tests
+- Move lightweight CI jobs (`test_json_to_html`, `test_json_to_markdown`) from `opensource-linux-8core` to `ubuntu-latest` runners
+- Bump `unstructured-ingest` lower bound to `>=1.4.0` (first release with Python 3.11 and 3.13 support)
+- Remove dead `sys.version_info < (3, 8)` conditional import in `unstructured/nlp/patterns.py`
+- Update ruff `target-version` to `py311` and pyright `pythonVersion` to `3.11` to match new minimum
 
 ## 0.19.3
 
