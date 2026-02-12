@@ -248,6 +248,15 @@ def test_partition_md_respects_detect_language_per_element():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
+def test_partition_md_languages_empty_disables_detection():
+    """Passing languages=[\"\"] disables language detection (no metadata.languages set)."""
+    filename = "example-docs/README.md"
+    elements = partition_md(filename=filename, languages=[""])
+    # When detection is disabled, metadata.languages should not be set (None)
+    for el in elements:
+        assert el.metadata.languages is None
+
+
 def test_partition_md_parse_table():
     filename = example_doc_path("simple-table.md")
     elements = partition_md(filename=filename)
