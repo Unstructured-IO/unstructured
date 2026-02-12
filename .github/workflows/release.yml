@@ -38,7 +38,7 @@ jobs:
 
       - name: Build artifact
         run: |
-          uv build --no-sync
+          uv build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
