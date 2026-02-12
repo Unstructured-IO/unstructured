@@ -167,7 +167,7 @@ lint = [
     "ruff>=0.15.0, <1.0.0",
 ]
 release = [
-    "twine",
+    "twine>=6.0.0, <7.0.0",
 ]
 
 [tool.uv]

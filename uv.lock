@@ -6941,7 +6941,7 @@ provides-extras = ["all-docs", "chunking-tokens", "csv", "doc", "docx", "epub", 
 [package.metadata.requires-dev]
 dev = [{ name = "pre-commit", specifier = ">=4.5.1,<5.0.0" }]
 lint = [{ name = "ruff", specifier = ">=0.15.0,<1.0.0" }]
-release = [{ name = "twine" }]
+release = [{ name = "twine", specifier = ">=6.0.0,<7.0.0" }]
 test = [
     { name = "coverage", specifier = ">=7.13.3,<8.0.0" },
     { name = "freezegun", specifier = ">=1.5.5,<2.0.0" },

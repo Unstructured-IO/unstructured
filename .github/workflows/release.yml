@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 env:
   PYTHON_VERSION: "3.12"
@@ -27,6 +26,15 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --locked --group release
+
+      - name: Validate version matches release tag
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          PKG_VERSION=$(uv run --no-sync python -c "from unstructured.__version__ import __version__; print(__version__)")
+          if [[ "$TAG" != "$PKG_VERSION" && "$TAG" != "v$PKG_VERSION" ]]; then
+            echo "Tag '$TAG' does not match package version '$PKG_VERSION'"
+            exit 1
+          fi
 
       - name: Build artifact
         run: |
@@ -53,14 +61,14 @@ jobs:
 
       - name: Publish package to Azure Artifacts
         run: |
-          if uv run --no-sync twine upload -r azure dist/*; then
+          EXIT_CODE=0
+          uv run --no-sync twine upload -r azure dist/* || EXIT_CODE=$?
+          if [[ $EXIT_CODE -eq 0 ]]; then
             echo "✅ Successfully published to Azure Artifacts (or already existed)"
           else
-            EXIT_CODE=$?
             echo "❌ Azure Artifacts upload failed, but PyPI upload succeeded"
-            if [[ $EXIT_CODE == 1 ]]; then
+            if [[ $EXIT_CODE -eq 1 ]]; then
               echo "⚠️  This may be due to version conflicts or connectivity issues"
             fi
             echo "This is non-critical - the package is available on PyPI"
-            exit 0
           fi
