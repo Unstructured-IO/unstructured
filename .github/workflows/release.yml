@@ -28,8 +28,9 @@ jobs:
         run: uv sync --locked --group release
 
       - name: Validate version matches release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG="${{ github.event.release.tag_name }}"
           PKG_VERSION=$(uv run --no-sync python -c "from unstructured.__version__ import __version__; print(__version__)")
           if [[ "$TAG" != "$PKG_VERSION" && "$TAG" != "v$PKG_VERSION" ]]; then
             echo "Tag '$TAG' does not match package version '$PKG_VERSION'"
