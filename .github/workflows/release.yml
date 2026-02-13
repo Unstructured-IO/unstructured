@@ -49,6 +49,8 @@ jobs:
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
+        with:
+          verbose: true
 
       # Best-effort: attempt Azure upload even if PyPI fails, but only if build succeeded.
       - name: Create .pypirc for Azure Artifacts
