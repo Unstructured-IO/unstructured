@@ -7,7 +7,11 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write       # Required for PyPI trusted publishing / attestations
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 env:
   PYTHON_VERSION: "3.12"
@@ -16,9 +20,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -26,7 +31,7 @@ jobs:
         run: uv python install
 
       - name: Install dependencies
-        run: uv sync --locked --group release
+        run: uv sync --locked --only-group release --no-install-project
 
       - name: Validate version matches release tag
         env:
@@ -39,16 +44,15 @@ jobs:
           fi
 
       - name: Build artifact
-        run: |
-          uv build
+        id: build
+        run: uv build
 
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          skip-existing: true
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
 
+      # Best-effort: attempt Azure upload even if PyPI fails, but only if build succeeded.
       - name: Create .pypirc for Azure Artifacts
+        if: always() && steps.build.outcome == 'success'
         run: |
           cat <<EOF > ~/.pypirc
           [distutils]
@@ -62,15 +66,16 @@ jobs:
           EOF
 
       - name: Publish package to Azure Artifacts
+        if: always() && steps.build.outcome == 'success'
         run: |
           EXIT_CODE=0
           uv run --no-sync twine upload -r azure dist/* || EXIT_CODE=$?
           if [[ $EXIT_CODE -eq 0 ]]; then
-            echo "✅ Successfully published to Azure Artifacts (or already existed)"
+            echo "Successfully published to Azure Artifacts (or already existed)"
           else
-            echo "❌ Azure Artifacts upload failed, but PyPI upload succeeded"
+            echo "Azure Artifacts upload failed, but PyPI upload succeeded"
             if [[ $EXIT_CODE -eq 1 ]]; then
-              echo "⚠️  This may be due to version conflicts or connectivity issues"
+              echo "This may be due to version conflicts or connectivity issues"
             fi
             echo "This is non-critical - the package is available on PyPI"
           fi
