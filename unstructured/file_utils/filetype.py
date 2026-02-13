@@ -731,8 +731,8 @@ class _ZipFileDetector:
     def _file_type(self) -> FileType | None:
         """Differentiated file-type for a Zip archive.
 
-        Returns `FileType.DOCX`, `FileType.PPTX`, or `FileType.XLSX` when one of those applies,
-        `None` otherwise.
+        Returns `FileType.DOCX`, `FileType.PPTX`, `FileType.XLSX`, or `FileType.XLSM` when one of
+        those applies, `None` otherwise.
         """
         if not self._ctx.is_zipfile:
             return None
@@ -746,6 +746,10 @@ class _ZipFileDetector:
                 return FileType.DOCX
 
             if any(re.match(r"xl/workbook.*\.xml$", filename) for filename in filenames):
+                # -- Both XLSX and XLSM have the same internal structure (xl/workbook.xml).
+                # -- Distinguish them by file extension since XLSM is macro-enabled XLSX.
+                if self._ctx.extension == ".xlsm":
+                    return FileType.XLSM
                 return FileType.XLSX
 
             if any(re.match(r"ppt/presentation.*\.xml$", filename) for filename in filenames):

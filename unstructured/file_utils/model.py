@@ -472,6 +472,15 @@ class FileType(enum.Enum):
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         cast(list[str], []),
     )
+    XLSM = (
+        "xlsm",
+        "xlsx",  # -- uses the same partitioner as XLSX --
+        ["pandas", "openpyxl"],
+        "xlsx",
+        [".xlsm"],
+        "application/vnd.ms-excel.sheet.macroEnabled.12",
+        cast(list[str], []),
+    )
     XML = ("xml", "xml", cast(list[str], []), None, [".xml"], "application/xml", ["text/xml"])
     ZIP = ("zip", None, cast(list[str], []), None, [".zip"], "application/zip", cast(list[str], []))
 
