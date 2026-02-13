@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, List, Optional, Tuple
+from typing import BinaryIO, List, Optional, Tuple, Union
 
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
@@ -10,6 +10,7 @@ from pdfminer.psexceptions import PSSyntaxError
 from pydantic import BaseModel
 
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
 
 
@@ -104,6 +105,129 @@ def rect_to_bbox(
     y1 = height - y1
     y2 = height - y2
     return (x1, y1, x2, y2)
+
+
+def _is_duplicate_char(char1: LTChar, char2: LTChar, threshold: float) -> bool:
+    """Detect if two characters are duplicates caused by fake bold rendering.
+
+    Some PDF generators create bold text by rendering the same character twice at slightly
+    offset positions. This function detects such duplicates by checking if two characters
+    have the same text content and overlapping bounding boxes.
+
+    Key insight: Fake-bold duplicates OVERLAP significantly, while legitimate consecutive
+    identical letters (like "ll" in "skills") are ADJACENT with minimal/no overlap.
+
+    Args:
+        char1: First LTChar object.
+        char2: Second LTChar object.
+        threshold: Maximum pixel distance to consider as duplicate.
+
+    Returns:
+        True if char2 appears to be a duplicate of char1.
+    """
+    # Must be the same character
+    if char1.get_text() != char2.get_text():
+        return False
+
+    # Calculate horizontal and vertical distances between character origins
+    x_diff = abs(char1.x0 - char2.x0)
+    y_diff = abs(char1.y0 - char2.y0)
+
+    # Characters must be very close in position
+    if x_diff >= threshold or y_diff >= threshold:
+        return False
+
+    # Additional check: Calculate bounding box overlap to distinguish
+    # fake-bold (high overlap) from legitimate doubles (low/no overlap)
+
+    # Get character widths and heights
+    char1_width = char1.x1 - char1.x0
+    char2_width = char2.x1 - char2.x0
+
+    # Calculate horizontal overlap
+    overlap_x_start = max(char1.x0, char2.x0)
+    overlap_x_end = min(char1.x1, char2.x1)
+    horizontal_overlap = max(0, overlap_x_end - overlap_x_start)
+
+    # Calculate overlap percentage relative to character width
+    avg_width = (char1_width + char2_width) / 2
+    overlap_ratio = horizontal_overlap / avg_width if avg_width > 0 else 0
+
+    # Fake-bold duplicates typically have >70% overlap
+    # Legitimate consecutive letters have <30% overlap (or none)
+    # Use configurable threshold (default 50%) to be conservative
+    overlap_ratio_threshold = env_config.PDF_CHAR_OVERLAP_RATIO_THRESHOLD
+    return overlap_ratio > overlap_ratio_threshold
+
+
+def deduplicate_chars_in_text_line(text_line: LTTextLine, threshold: float) -> str:
+    """Extract text from an LTTextLine with duplicate characters removed.
+
+    Some PDFs create bold text by rendering each character twice at slightly offset
+    positions. This function removes such duplicates by keeping only the first instance
+    when two identical characters appear at nearly the same position.
+
+    Args:
+        text_line: An LTTextLine object containing characters to extract.
+        threshold: Maximum pixel distance to consider characters as duplicates.
+                   Set to 0 to disable deduplication.
+
+    Returns:
+        The extracted text with duplicate characters removed.
+    """
+    if threshold <= 0:
+        return text_line.get_text()
+
+    # Build deduplicated text while preserving non-LTChar items (like LTAnno for spaces)
+    result_parts: List[str] = []
+    last_ltchar: Optional[LTChar] = None
+
+    for item in text_line:
+        if isinstance(item, LTChar):
+            # Check if this is a duplicate of the last LTChar
+            if last_ltchar is not None and _is_duplicate_char(last_ltchar, item, threshold):
+                # Skip this duplicate character
+                continue
+            last_ltchar = item
+            result_parts.append(item.get_text())
+        else:
+            # Non-LTChar items (e.g., LTAnno for spaces) - keep as-is
+            if hasattr(item, "get_text"):
+                result_parts.append(item.get_text())
+
+    return "".join(result_parts)
+
+
+def get_text_with_deduplication(
+    text_obj: Union[LTTextLine, LTContainer, LTItem],
+    threshold: float,
+) -> str:
+    """Get text from a text object with optional character deduplication.
+
+    This is the main entry point for extracting text with fake-bold deduplication.
+    It handles LTTextLine objects and recursively processes containers.
+
+    Args:
+        text_obj: An LTTextLine, LTContainer, or other LTItem object.
+        threshold: Maximum pixel distance to consider characters as duplicates.
+                   Set to 0 to disable deduplication.
+
+    Returns:
+        The extracted text with duplicate characters removed.
+    """
+    if isinstance(text_obj, LTTextLine):
+        return deduplicate_chars_in_text_line(text_obj, threshold)
+    elif isinstance(text_obj, LTContainer):
+        parts: List[str] = []
+        for child in text_obj:
+            if isinstance(child, LTTextLine):
+                parts.append(deduplicate_chars_in_text_line(child, threshold))
+            elif hasattr(child, "get_text"):
+                parts.append(child.get_text())
+        return "".join(parts)
+    elif hasattr(text_obj, "get_text"):
+        return text_obj.get_text()
+    return ""
 
 
 @requires_dependencies(["pikepdf", "pypdf"])

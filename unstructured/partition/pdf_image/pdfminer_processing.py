@@ -17,8 +17,10 @@ from unstructured.documents.elements import CoordinatesMetadata, ElementType
 from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
+    _is_duplicate_char,
     extract_image_objects,
     extract_text_objects,
+    get_text_with_deduplication,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -466,11 +468,13 @@ def process_page_layout_from_pdfminer(
 
         if hasattr(obj, "get_text"):
             inner_text_objects = extract_text_objects(obj)
+            char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
             for inner_obj in inner_text_objects:
                 inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
                 if not _validate_bbox(inner_bbox):
                     continue
-                texts.append(inner_obj.get_text())
+                # Use deduplication to handle fake bold text (characters rendered twice)
+                texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
                 element_coords.append(inner_bbox)
                 element_class.append(0)
                 is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
@@ -1006,6 +1010,33 @@ def check_annotations_within_element(
     return annotations_within_element
 
 
+def _deduplicate_ltchars(
+    chars: list[LTChar],
+    threshold: float,
+) -> list[LTChar]:
+    """Remove duplicate characters caused by fake bold rendering.
+
+    Some PDFs create bold text by rendering the same character twice at slightly offset
+    positions. This function removes such duplicates.
+
+    Args:
+        chars: List of LTChar objects to deduplicate.
+        threshold: Maximum pixel distance to consider characters as duplicates.
+                   Set to 0 to disable deduplication.
+
+    Returns:
+        Deduplicated list of LTChar objects.
+    """
+    if threshold <= 0 or not chars:
+        return chars
+
+    result = [chars[0]]
+    for char in chars[1:]:
+        if not _is_duplicate_char(result[-1], char, threshold):
+            result.append(char)
+    return result
+
+
 def get_words_from_obj(
     obj: LTTextBox,
     height: float,
@@ -1026,13 +1057,25 @@ def get_words_from_obj(
     characters = []
     words = []
     text_len = 0
+    char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
 
     for text_line in obj:
         word = ""
         x1, y1, x2, y2 = None, None, None, None
         start_index = 0
+        last_char: LTChar | None = None  # Track last character for deduplication
+
         for index, character in enumerate(text_line):
             if isinstance(character, LTChar):
+                # Skip duplicate characters (fake bold fix)
+                if (
+                    char_dedup_threshold > 0
+                    and last_char is not None
+                    and _is_duplicate_char(last_char, character, char_dedup_threshold)
+                ):
+                    continue
+
+                last_char = character
                 characters.append(character)
                 char = character.get_text()
 
@@ -1066,6 +1109,7 @@ def get_words_from_obj(
 
                 word += char
             else:
+                # Non-LTChar items (e.g., LTAnno) act as word boundaries
                 words.append(
                     {"text": word, "bbox": (x1, y1, x2, y2), "start_index": start_index},
                 )

@@ -6,6 +6,7 @@ import math
 import os
 import tempfile
 from dataclasses import dataclass
+from importlib import reload
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -38,6 +39,7 @@ from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
+from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
@@ -437,6 +439,41 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(caplog):
     assert "unstructured_inference is not installed" not in caplog.text
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
+
+
+def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
+    """Test that fast strategy properly deduplicates fake-bold text in PDFs.
+
+    Some PDFs create bold text by rendering each character twice at slightly offset
+    positions (fake-bold). The fast strategy should remove these duplicate characters.
+    """
+    filename = example_doc_path("pdf/fake-bold-sample.pdf")
+
+    # Extract WITHOUT deduplication (threshold=0) - shows doubled characters
+    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
+    reload(partition_config)
+    elements_no_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    text_no_dedup = " ".join([el.text for el in elements_no_dedup])
+
+    # Extract WITH deduplication (threshold=2.0) - shows clean text
+    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "2.0")
+    reload(partition_config)
+    elements_with_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    text_with_dedup = " ".join([el.text for el in elements_with_dedup])
+
+    # Verify fake-bold text shows doubled characters without deduplication
+    assert "BBOOLLDD" in text_no_dedup, (
+        "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
+    )
+
+    # Verify deduplication produces clean text
+    assert "BOLD" in text_with_dedup, "With deduplication, text should contain clean 'BOLD'"
+
+    # Verify deduplicated text is shorter
+    assert len(text_with_dedup) < len(text_no_dedup), (
+        f"Deduplicated text ({len(text_with_dedup)} chars) should be shorter "
+        f"than non-deduplicated text ({len(text_no_dedup)} chars)"
+    )
 
 
 def test_partition_pdf_raises_with_bad_strategy():
