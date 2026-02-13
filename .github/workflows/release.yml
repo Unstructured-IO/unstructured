@@ -73,9 +73,9 @@ jobs:
           if [[ $EXIT_CODE -eq 0 ]]; then
             echo "Successfully published to Azure Artifacts (or already existed)"
           else
-            echo "Azure Artifacts upload failed, but PyPI upload succeeded"
+            echo "Azure Artifacts upload failed (exit code: $EXIT_CODE)"
             if [[ $EXIT_CODE -eq 1 ]]; then
               echo "This may be due to version conflicts or connectivity issues"
             fi
-            echo "This is non-critical - the package is available on PyPI"
+            echo "Azure Artifacts upload is non-critical - skipping failure"
           fi
