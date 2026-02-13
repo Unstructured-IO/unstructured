@@ -40,12 +40,21 @@ def test_extract_text_objects_nested_containers():
 # -- Tests for character deduplication (fake bold fix) --
 
 
-def _create_mock_ltchar(text: str, x0: float, y0: float) -> MagicMock:
-    """Helper to create a mock LTChar with specified text and position."""
+def _create_mock_ltchar(
+    text: str, x0: float, y0: float, width: float = 6.0, height: float = 2.0
+) -> MagicMock:
+    """Helper to create a mock LTChar with specified text and position.
+
+    Includes x1, y1 so _is_duplicate_char overlap logic works (fake-bold detection
+    uses bounding box overlap). Default width/height give overlap ratio > 0.5 for
+    chars within threshold distance.
+    """
     mock_char = MagicMock(spec=LTChar)
     mock_char.get_text.return_value = text
     mock_char.x0 = x0
     mock_char.y0 = y0
+    mock_char.x1 = x0 + width
+    mock_char.y1 = y0 + height
     return mock_char
 
 
