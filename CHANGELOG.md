@@ -1,7 +1,14 @@
-## 0.20.2
+## 0.20.3
 
 ### Fixes
 - **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
+
+## 0.20.2
+
+### Enhancements
+- Add automated PyPI publishing: new `release.yml` GitHub Actions workflow triggers on GitHub release, builds the package with `uv build`, publishes to PyPI via `pypa/gh-action-pypi-publish`, and uploads to Azure Artifacts via `twine`
+- Replace `uv sync --frozen` with `uv sync --locked` across all CI workflows, Dockerfile, and Makefile to fail fast on stale lockfiles
+- Add `--no-sync` to all `uv run` and `uv build` commands that follow a prior `uv sync` step to prevent implicit re-syncing
 
 ## 0.20.1
 

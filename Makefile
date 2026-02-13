@@ -13,7 +13,7 @@ help: Makefile
 ## install:                 install all dependencies via uv
 .PHONY: install
 install:
-	@uv sync --frozen --all-extras --all-groups
+	@uv sync --locked --all-extras --all-groups
 	@$(MAKE) install-nltk-models
 
 ## lock:                    update and lock all dependencies
@@ -23,7 +23,7 @@ lock:
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	uv run --frozen python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
+	uv run --no-sync python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 
 #################
@@ -38,13 +38,13 @@ export UNSTRUCTURED_INCLUDE_DEBUG_METADATA ?= false
 test:
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	uv run --frozen --no-sync pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
+	uv run --no-sync pytest -n auto test_${PACKAGE_NAME} --cov=${PACKAGE_NAME} --cov-report term-missing --durations=40
 
 .PHONY: test-no-extras
 test-no-extras:
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	uv run --frozen --no-sync pytest -n auto \
+	uv run --no-sync pytest -n auto \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
 		test_${PACKAGE_NAME}/partition/html/test_partition.py \
@@ -52,48 +52,48 @@ test-no-extras:
 
 .PHONY: test-extra-csv
 test-extra-csv:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
+	CI=$(CI) uv run --no-sync pytest -n auto \
 		test_unstructured/partition/test_csv.py \
 		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
+	CI=$(CI) uv run --no-sync pytest -n auto \
 		test_unstructured/partition/test_doc.py \
 		test_unstructured/partition/test_docx.py
 
 .PHONY: test-extra-epub
 test-extra-epub:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_epub.py
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_md.py
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_odt.py
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/pdf_image
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
+	CI=$(CI) uv run --no-sync pytest -n auto \
 		test_unstructured/partition/test_ppt.py \
 		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto \
+	CI=$(CI) uv run --no-sync pytest -n auto \
 		test_unstructured/partition/test_org.py \
 		test_unstructured/partition/test_rst.py \
 		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	CI=$(CI) uv run --frozen --no-sync pytest -n auto test_unstructured/partition/test_xlsx.py
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/test_xlsx.py
 
 ## check:                   runs all linters and checks
 .PHONY: check
@@ -102,8 +102,8 @@ check: check-ruff check-version
 ## check-ruff:              runs ruff linter and formatter check
 .PHONY: check-ruff
 check-ruff:
-	uv run --frozen --no-sync ruff check .
-	uv run --frozen --no-sync ruff format --check .
+	uv run --no-sync ruff check .
+	uv run --no-sync ruff format --check .
 
 .PHONY: check-licenses
 check-licenses:
@@ -119,8 +119,8 @@ check-version:
 ## tidy:                    auto-format and fix lint issues
 .PHONY: tidy
 tidy:
-	uv run --frozen --no-sync ruff format .
-	uv run --frozen --no-sync ruff check --fix-only --show-fixes .
+	uv run --no-sync ruff format .
+	uv run --no-sync ruff check --fix-only --show-fixes .
 
 .PHONY: tidy-shell
 tidy-shell:
@@ -135,7 +135,7 @@ version-sync:
 ## check-coverage:          check test coverage meets threshold
 .PHONY: check-coverage
 check-coverage:
-	uv run --frozen --no-sync coverage report --fail-under=90
+	uv run --no-sync coverage report --fail-under=90
 
 ##########
 # Docker #
@@ -166,10 +166,10 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	bash -c "uv sync --frozen --all-extras --group test --no-install-project && \
+	bash -c "uv sync --locked --all-extras --group test --no-install-project && \
 	CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	uv run pytest -n auto $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
+	uv run --no-sync pytest -n auto $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
@@ -187,7 +187,7 @@ docker-jupyter-notebook:
 
 .PHONY: run-jupyter
 run-jupyter:
-	uv run jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
+	uv run --no-sync jupyter-notebook --NotebookApp.token='' --NotebookApp.password=''
 
 
 ###########
@@ -197,9 +197,9 @@ run-jupyter:
 .PHONY: html-fixtures-update
 html-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-html && \
-	uv run test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
+	uv run --no-sync test_unstructured_ingest/structured-json-to-html.sh test_unstructured_ingest/expected-structured-output-html
 
 .PHONY: markdown-fixtures-update
 markdown-fixtures-update:
 	rm -r test_unstructured_ingest/expected-structured-output-markdown && \
-	uv run test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown
+	uv run --no-sync test_unstructured_ingest/structured-json-to-markdown.sh test_unstructured_ingest/expected-structured-output-markdown

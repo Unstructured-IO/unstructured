@@ -147,7 +147,7 @@ Then install all dependencies (base, extras, dev, test, and lint groups):
 make install
 ```
 
-This runs `uv sync --frozen --all-extras --all-groups`, which creates a virtual environment
+This runs `uv sync --locked --all-extras --all-groups`, which creates a virtual environment
 and installs everything in one step. No need to manually create or activate a virtualenv.
 
 To install only specific document-type extras:

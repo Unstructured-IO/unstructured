@@ -89,7 +89,7 @@ jobs:
           sudo apt-get install -y tesseract-ocr-kor
           sudo apt-get install diffstat
           tesseract --version
-          uv run ./test_unstructured_ingest/test-ingest-src.sh
+          uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
       - name: Update HTML fixtures
         run: make html-fixtures-update
       - name: Update markdown fixtures

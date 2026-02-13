@@ -19,5 +19,5 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        uv sync --frozen --all-extras --all-groups
+        uv sync --locked --all-extras --all-groups
         make install-nltk-models
