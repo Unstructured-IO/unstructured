@@ -1,3 +1,10 @@
+## 0.20.2
+
+### Enhancements
+- Add automated PyPI publishing: new `release.yml` GitHub Actions workflow triggers on GitHub release, builds the package with `uv build`, publishes to PyPI via `pypa/gh-action-pypi-publish`, and uploads to Azure Artifacts via `twine`
+- Replace `uv sync --frozen` with `uv sync --locked` across all CI workflows, Dockerfile, and Makefile to fail fast on stale lockfiles
+- Add `--no-sync` to all `uv run` and `uv build` commands that follow a prior `uv sync` step to prevent implicit re-syncing
+
 ## 0.20.1
 
 ### Fixes
