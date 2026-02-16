@@ -389,6 +389,15 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
         with open(file.name, "rb") as f:
             return f.read()
 
+    if hasattr(file, "read"):
+        f_bytes = file.read()
+        if hasattr(file, "seek"):
+            try:
+                file.seek(0)
+            except OSError:
+                pass
+        return f_bytes
+
     raise ValueError("Invalid file-like object type")
 
 

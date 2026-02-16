@@ -1,3 +1,15 @@
+## 0.20.4
+
+### Fixes
+- **Fix `ValueError` when partitioning a text file loaded from a zip archive**: `convert_to_bytes()`
+  rejected any file-like object not in its hardcoded type whitelist (`BytesIO`, `BufferedReader`,
+  `SpooledTemporaryFile`, `TextIOWrapper`), causing a `ValueError: Invalid file-like object type`
+  crash when callers passed a `zipfile.ZipExtFile` (returned by `zipfile.ZipFile.open()`). Fixed
+  by adding a duck-typing fallback that accepts any object with a `.read()` method, which covers
+  `ZipExtFile` as well as other standard `IO[bytes]` types not previously handled (e.g.
+  `GzipFile`, `tarfile.ExFileObject`). The file cursor is reset via `seek(0)` where supported so
+  callers can re-read the file after `convert_to_bytes()` returns.
+
 ## 0.20.3
 
 ### Fixes
