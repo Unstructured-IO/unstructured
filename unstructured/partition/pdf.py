@@ -16,8 +16,6 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
-from unstructured_inference.inference.layout import DocumentLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -56,27 +54,11 @@ from unstructured.partition.common.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.pdf_image.analysis.layout_dump import (
-    ExtractedLayoutDumper,
-    FinalLayoutDumper,
-    ObjectDetectionLayoutDumper,
-    OCRLayoutDumper,
-)
-from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
-from unstructured.partition.pdf_image.form_extraction import run_form_extraction
-from unstructured.partition.pdf_image.pdf_image_utils import (
-    check_element_types_to_extract,
-    convert_pdf_to_images,
-    save_elements,
-)
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
-    clean_pdfminer_inner_elements,
-    get_links_in_element,
     get_uris,
     get_words_from_obj,
     map_bbox_and_index,
-    merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
@@ -100,7 +82,8 @@ from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 # Correct a bug that was introduced by a previous patch to
@@ -630,8 +613,22 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
+    from unstructured.partition.pdf_image.analysis.layout_dump import (
+        ExtractedLayoutDumper,
+        FinalLayoutDumper,
+        ObjectDetectionLayoutDumper,
+        OCRLayoutDumper,
+    )
+    from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
+    from unstructured.partition.pdf_image.form_extraction import run_form_extraction
+    from unstructured.partition.pdf_image.pdf_image_utils import (
+        check_element_types_to_extract,
+        save_elements,
+    )
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
+        clean_pdfminer_inner_elements,
+        merge_inferred_with_extracted_layout,
         process_data_with_pdfminer,
         process_file_with_pdfminer,
     )
@@ -925,6 +922,7 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_images
 
     elements = []
     if is_image:
@@ -1192,6 +1190,8 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
+    from unstructured.partition.pdf_image.pdfminer_processing import get_links_in_element
+
     elements: list[Element] = []
 
     num_pages = len(document.pages)
