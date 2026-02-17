@@ -1,3 +1,9 @@
+## 0.20.4
+
+### Enhancements
+- Improve PDF `fast` strategy cold-start performance by lazy-loading hi-res-only imports in `partition/pdf.py`, reducing first-call startup overhead while keeping warm runtime behavior effectively unchanged.
+
+
 ## 0.20.3
 
 ### Fixes

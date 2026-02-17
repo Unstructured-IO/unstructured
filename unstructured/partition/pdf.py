@@ -621,11 +621,11 @@ def _partition_pdf_or_image_local(
     )
     from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
     from unstructured.partition.pdf_image.form_extraction import run_form_extraction
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdf_image_utils import (
         check_element_types_to_extract,
         save_elements,
     )
-    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
         clean_pdfminer_inner_elements,
         merge_inferred_with_extracted_layout,
