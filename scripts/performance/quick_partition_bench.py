@@ -237,7 +237,8 @@ def main() -> None:
         print(
             f"  {mode} succeeded_files={succeeded} failed_files={failed} "
             f"file_mean={file_mean:.4f}s mean={s['mean_s']:.4f}s median={s['median_s']:.4f}s "
-            f"min={s['min_s']:.4f}s max={s['max_s']:.4f}s stdev={s['stdev_s']:.4f}s samples={len(times)}",
+            f"min={s['min_s']:.4f}s max={s['max_s']:.4f}s "
+            f"stdev={s['stdev_s']:.4f}s samples={len(times)}",
             flush=True,
         )
 
