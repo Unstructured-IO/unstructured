@@ -690,6 +690,8 @@ This makes it impossible to write stable unit tests, for example, or to obtain r
 - **Improve element-type mapping for Chinese text.** Fixes bug where Chinese text would produce large numbers of false-positive `Title` elements.
 - **Improve element-type mapping for HTML.** Fixes bug where certain non-title elements were classified as `Title`.
 
+- **Remind contributors to update the changelog**.  CI fails if you don't add an entry to `CHANGELOG.md` but this is not mentioned in the development documentation.
+
 ## 0.16.11
 
 ### Enhancements
