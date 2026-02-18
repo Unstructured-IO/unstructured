@@ -192,9 +192,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup docker-compose
-      uses: KengoTODA/actions-setup-docker-compose@v1
-      with:
-        version: '2.22.0'
+      uses: docker/setup-compose-action@v1
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
