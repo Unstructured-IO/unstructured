@@ -191,8 +191,12 @@ jobs:
     - uses: ./.github/actions/base-cache
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set up Docker
+      uses: docker/setup-docker-action@v4
     - name: Setup docker-compose
-      uses: docker/setup-compose-action@v1
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.22.0'
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
