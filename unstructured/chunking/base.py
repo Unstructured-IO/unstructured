@@ -8,6 +8,7 @@ import logging
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
+from lxml.etree import ParserError
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
@@ -886,7 +887,7 @@ class _TableChunker:
 
         try:
             return HtmlTable.from_html_text(text_as_html)
-        except Exception:
+        except ParserError:
             logger.warning(
                 "Could not parse text_as_html for table element; skipping HTML-based chunking."
                 " text_as_html: %.80r",
