@@ -1,4 +1,4 @@
-## 0.20.4
+## 0.20.5
 
 ### Fixes
 - **Fix `ValueError` when partitioning a text file loaded from a zip archive**: `convert_to_bytes()`
@@ -9,6 +9,12 @@
   `ZipExtFile` as well as other standard `IO[bytes]` types not previously handled (e.g.
   `GzipFile`, `tarfile.ExFileObject`). The file cursor is reset via `seek(0)` where supported so
   callers can re-read the file after `convert_to_bytes()` returns.
+
+## 0.20.4
+
+### Enhancements
+- Improve PDF `fast` strategy cold-start performance by lazy-loading hi-res-only imports in `partition/pdf.py`, reducing first-call startup overhead while keeping warm runtime behavior effectively unchanged.
+
 
 ## 0.20.3
 
