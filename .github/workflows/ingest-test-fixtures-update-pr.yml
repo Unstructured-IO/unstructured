@@ -29,10 +29,8 @@ jobs:
       - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Setup docker-compose
-        uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: "2.22.0"
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
