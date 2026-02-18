@@ -252,7 +252,7 @@ class _PptxPartitioner:
             return
 
         html_text = htmlify_matrix_of_cell_texts(
-            [[cell.text for cell in row.cells] for row in rows]
+            [[cell.text.replace("\n", " ") for cell in row.cells] for row in rows]
         )
         html_table = HtmlTable.from_html_text(html_text)
 
