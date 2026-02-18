@@ -1322,6 +1322,27 @@ class Describe_TableChunker:
 
         assert len(chunks) == 0
 
+    def it_handles_invalid_html_in_text_as_html_without_error(self):
+        """Regression test: gracefully skip HTML-based chunking when text_as_html is not valid HTML.
+
+        `lxml` raises `ParserError` for strings that are not valid HTML fragments (e.g. plain text
+        with no tags). The chunker should log a warning and fall back to text-only chunking rather
+        than raising.
+        """
+        table = Table(
+            "Header Col 1  Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="not valid html"),
+        )
+
+        # -- should not raise ParserError --
+        chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
+
+        # -- falls back to text-only: a single Table chunk with no .text_as_html --
+        assert len(chunks) == 1
+        chunk = chunks[0]
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.text_as_html is None
+
 
 # ================================================================================================
 # HTML SPLITTERS
@@ -1333,7 +1354,8 @@ class Describe_HtmlTableSplitter:
 
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))
-        html_table = HtmlTable.from_html_text("""
+        html_table = HtmlTable.from_html_text(
+            """
             <table border="1" class="dataframe">
               <tbody>
                 <tr>
@@ -1364,7 +1386,8 @@ class Describe_HtmlTableSplitter:
                 </tr>
               </tbody>
             </table>
-            """)
+            """
+        )
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1389,7 +1412,8 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_row_on_an_even_cell_boundary_when_possible(self):
         opts = ChunkingOptions(max_characters=(93))
-        html_table = HtmlTable.from_html_text("""
+        html_table = HtmlTable.from_html_text(
+            """
             <html><body><table>
               <tr>
                 <td>Lorem ipsum dolor sit amet.</td>
@@ -1408,7 +1432,8 @@ class Describe_HtmlTableSplitter:
                 <td>Cillum</td>
               </tr>
             </table></body></html>
-            """)
+            """
+        )
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
@@ -1433,7 +1458,8 @@ class Describe_HtmlTableSplitter:
 
     def and_it_splits_an_oversized_cell_on_an_even_word_boundary(self):
         opts = ChunkingOptions(max_characters=(100))
-        html_table = HtmlTable.from_html_text("""
+        html_table = HtmlTable.from_html_text(
+            """
             <table>
               <thead>
                 <tr>
@@ -1452,7 +1478,8 @@ class Describe_HtmlTableSplitter:
                 <tr><td>In reprehenderit voluptate.</td></tr>
               </tbody>
             </table
-            """)
+            """
+        )
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
