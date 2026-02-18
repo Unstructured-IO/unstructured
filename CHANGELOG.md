@@ -1,7 +1,7 @@
 ## 0.20.5
 
 ### Fixes
-- Add max size for JSON decompression.
+- Add max for elements JSON decompression size.
 
 ## 0.20.4
 
