@@ -37,6 +37,7 @@ if dependency_exists("pandas"):
 
 MAX_DECOMPRESSED_SIZE = 200 * 1024 * 1024  # 200MB
 
+
 def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element]:
     """Restore Base64-encoded gzipped JSON elements to element objects.
 
