@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import collections
 import copy
-import logging
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
@@ -22,9 +21,8 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
+from unstructured.logger import logger
 from unstructured.utils import lazyproperty
-
-logger = logging.getLogger(__name__)
 
 # ================================================================================================
 # MODEL
@@ -887,11 +885,11 @@ class _TableChunker:
 
         try:
             return HtmlTable.from_html_text(text_as_html)
-        except ParserError:
+        except (ParserError, ValueError):
             logger.warning(
                 "Could not parse text_as_html for table element; skipping HTML-based chunking."
-                " text_as_html: %.80r",
-                text_as_html,
+                " text_as_html: %s",
+                text_as_html[:100] + "..." if len(text_as_html) > 100 else text_as_html,
             )
             return None
 

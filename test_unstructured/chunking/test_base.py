@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Sequence
 
 import pytest
@@ -1322,7 +1323,7 @@ class Describe_TableChunker:
 
         assert len(chunks) == 0
 
-    def it_handles_invalid_html_in_text_as_html_without_error(self):
+    def it_handles_invalid_html_in_text_as_html_without_error(self, caplog):
         """Regression test: gracefully skip HTML-based chunking when text_as_html is not valid HTML.
 
         `lxml` raises `ParserError` for strings that are not valid HTML fragments (e.g. plain text
@@ -1334,6 +1335,7 @@ class Describe_TableChunker:
             metadata=ElementMetadata(text_as_html="not valid html"),
         )
 
+        caplog.set_level(logging.WARNING)
         # -- should not raise ParserError --
         chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
 
@@ -1342,6 +1344,34 @@ class Describe_TableChunker:
         chunk = chunks[0]
         assert isinstance(chunk, Table)
         assert chunk.metadata.text_as_html is None
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message.startswith("Could not parse text_as_html")
+        assert caplog.records[0].message.endswith("not valid html")
+
+    def it_handles_html_without_table_element_in_text_as_html_without_error(self, caplog):
+        """Regression test: gracefully skip HTML-based chunking when text_as_html has no <table>.
+
+        `HtmlTable.from_html_text` raises `ValueError` when the HTML is valid but contains no
+        `<table>` element. The chunker should log a warning and fall back to text-only chunking
+        rather than raising.
+        """
+        table = Table(
+            "Header Col 1  Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<div>no table here</div>"),
+        )
+
+        caplog.set_level(logging.WARNING)
+        # -- should not raise ValueError --
+        chunks = list(_TableChunker.iter_chunks(table, "", ChunkingOptions()))
+
+        # -- falls back to text-only: a single Table chunk with no .text_as_html --
+        assert len(chunks) == 1
+        chunk = chunks[0]
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.text_as_html is None
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message.startswith("Could not parse text_as_html")
+        assert "<div>no table here</div>" in caplog.records[0].message
 
 
 # ================================================================================================
