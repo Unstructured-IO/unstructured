@@ -1,3 +1,8 @@
+## 0.20.5
+
+### Fixes
+- **Gracefully handle invalid `text_as_html` during chunking**: `_TableChunker` now catches parse errors (e.g. `lxml.etree.ParserError` when `text_as_html` contains a markdown code-fence like `` ```html\n ``) and returns `None` instead of raising, allowing chunking to continue using plain-text fallback. A `WARNING` log is emitted with a truncated preview of the offending value.
+
 ## 0.20.4
 
 ### Enhancements
