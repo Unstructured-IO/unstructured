@@ -244,11 +244,16 @@ def apply_metadata(
 
 
 def _assign_hash_ids(elements: list[Element]) -> list[Element]:
-    """Converts `.id` of each element from UUID to hash.
+    """Converts `.id` of each element from UUID to hash and remaps `parent_id` accordingly.
 
     The hash is based on the `.text` of the element, but also on its page-number and sequence number
     on that page. This provides for deterministic results even when the document is split into one
     or more fragments for parallel processing.
+
+    After hashing, any `element.metadata.parent_id` that references a known original UUID is
+    updated to the corresponding new hash ID. Parent IDs that do not appear in the mapping (e.g.
+    because the parent element was filtered out before hashing, or the ID was set manually to an
+    external value) are left unchanged.
     """
     # -- generate sequence number for each element on a page --
     page_seq_counts = {}
@@ -262,7 +267,7 @@ def _assign_hash_ids(elements: list[Element]) -> list[Element]:
         page_seq_counts[page_number] = seq_on_page_counter + 1
 
     for element in elements:
-        if element.metadata.parent_id is not None:
+        if element.metadata.parent_id is not None and element.metadata.parent_id in id_mapping:
             element.metadata.parent_id = id_mapping[element.metadata.parent_id]
 
     return elements
