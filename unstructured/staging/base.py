@@ -19,6 +19,7 @@ from unstructured.documents.elements import (
     Table,
     Title,
 )
+from unstructured.errors import DecompressedSizeExceededError
 from unstructured.file_utils.ndjson import dumps as ndjson_dumps
 from unstructured.partition.common.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
@@ -35,6 +36,8 @@ if dependency_exists("pandas"):
 
 # == DESERIALIZERS ===============================
 
+MAX_DECOMPRESSED_SIZE = 200 * 1024 * 1024  # 200MB
+
 
 def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element]:
     """Restore Base64-encoded gzipped JSON elements to element objects.
@@ -45,7 +48,17 @@ def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element
     # -- Base64 str -> gzip-encoded (JSON) bytes --
     decoded_b64_bytes = base64.b64decode(b64_encoded_elements)
     # -- undo gzip compression --
-    elements_json_bytes = zlib.decompress(decoded_b64_bytes)
+    dobj = zlib.decompressobj()
+    elements_json_bytes = dobj.decompress(decoded_b64_bytes, max_length=MAX_DECOMPRESSED_SIZE)
+    # -- Check if decompression completed successfully --
+    if not dobj.eof:
+        # Check if we hit the size limit or if data is actually incomplete
+        if len(elements_json_bytes) >= MAX_DECOMPRESSED_SIZE:
+            raise DecompressedSizeExceededError(
+                max_size=MAX_DECOMPRESSED_SIZE,
+            )
+        else:
+            raise zlib.error("Incomplete or corrupted compressed data")
     # -- JSON (bytes) to JSON (str) --
     elements_json_str = elements_json_bytes.decode("utf-8")
     # -- JSON (str) -> dicts --
