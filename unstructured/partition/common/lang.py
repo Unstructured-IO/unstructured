@@ -384,6 +384,7 @@ def _validate_fallback_languages(
     value: Optional[list[str]],
 ) -> Optional[list[str]]:
     """Validate and normalize language_fallback return value to ISO 639-3 codes.
+
     Returns None for None, non-list, or when no valid codes remain (invalid entries
     are logged and skipped).
     """
@@ -417,12 +418,13 @@ def detect_languages(
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
 
-    For short ASCII text (fewer than 5 words), language detection is unreliable. By default
-    such text is assigned English (["eng"]). Use ``language_fallback`` to override:
-    pass a callable that takes the text and returns a list of ISO 639-3 codes or None.
-    Return None to leave language unspecified. The caller is responsible for returning
-    valid ISO 639-3 codes (e.g. "eng", "fra"); invalid entries are filtered out and
-    a warning is logged; if none remain, this function returns None.
+    For short ASCII text (fewer than 5 words), language detection is unreliable. By
+    default such text is assigned English (["eng"]). Use ``language_fallback`` to
+    override: pass a callable that takes the text and returns a list of ISO 639-3
+    codes or None. Return None to leave language unspecified. The caller is
+    responsible for returning valid ISO 639-3 codes (e.g. "eng", "fra"); invalid
+    entries are filtered out and a warning is logged; if none remain, this function
+    returns None.
     """
     if languages is None:
         languages = ["auto"]
