@@ -1,5 +1,11 @@
+## 0.20.7
+
+### Fixes
+- **Cap size when decompressing elements JSON file**: Prevents situations where decompression can consume an arbitrarily large portion in memory and on the filesystem.
+
 ## 0.20.6
 
+### Fixes
 - fix: remap parent id after hashing to preserve right reference
 
 ## 0.20.5
