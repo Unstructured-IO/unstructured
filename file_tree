@@ -1,0 +1,1701 @@
+.
+├── benchmark_results.json
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── discord-test
+│   └── 1100149908494876775.txt
+├── docker
+│   └── packages
+│       └── pandoc-3.1.8-r0.apk
+├── Dockerfile
+├── environment.yml
+├── example-docs
+│   ├── 2023-half-year-analyses-by-segment.xlsx
+│   ├── book-war-and-peace-1225p.txt
+│   ├── book-war-and-peace-1p.txt
+│   ├── CantinaBand3.wav
+│   ├── category-level.docx
+│   ├── codeblock.md
+│   ├── contains-pictures.docx
+│   ├── csv-with-escaped-commas.csv
+│   ├── csv-with-line-delimiter.csv
+│   ├── csv-with-long-lines.csv
+│   ├── docx-hdrftr.docx
+│   ├── docx-shapes.docx
+│   ├── docx-tables.docx
+│   ├── duplicate-paragraphs.doc
+│   ├── duplicate-paragraphs.docx
+│   ├── eml
+│   │   ├── email-equals-attachment-filename.eml
+│   │   ├── email-inline-content-disposition.eml
+│   │   ├── email-no-html-content-1.eml
+│   │   ├── email-no-utf8-2008-07-16.062410.eml
+│   │   ├── email-no-utf8-2014-03-17.111517.eml
+│   │   ├── email-replace-mime-encodings-error-1.eml
+│   │   ├── email-replace-mime-encodings-error-2.eml
+│   │   ├── email-replace-mime-encodings-error-3.eml
+│   │   ├── email-replace-mime-encodings-error-4.eml
+│   │   ├── email-replace-mime-encodings-error-5.eml
+│   │   ├── email-with-image.eml
+│   │   ├── empty.eml
+│   │   ├── fake-email-attachment.eml
+│   │   ├── fake-email-b64.eml
+│   │   ├── fake-email-header.eml
+│   │   ├── fake-email-image-embedded.eml
+│   │   ├── fake-email-malformed-encoding.eml
+│   │   ├── fake-email-utf-16-be.eml
+│   │   ├── fake-email-utf-16-le.eml
+│   │   ├── fake-email-utf-16.eml
+│   │   ├── fake-email.eml
+│   │   ├── fake-email.txt
+│   │   ├── fake-encrypted.eml
+│   │   ├── family-day.eml
+│   │   ├── mime-attach-mp3.eml
+│   │   ├── mime-different-plain-html.eml
+│   │   ├── mime-html-only.eml
+│   │   ├── mime-multi-to-cc-bcc.eml
+│   │   ├── mime-multipart-digest.eml
+│   │   ├── mime-no-body.eml
+│   │   ├── mime-no-subject.eml
+│   │   ├── mime-no-to.eml
+│   │   ├── mime-simple.eml
+│   │   ├── mime-word-encoded-subject.eml
+│   │   ├── rfc822-no-date.eml
+│   │   ├── signed-doc.p7s
+│   │   ├── simple-rfc-822.eml
+│   │   ├── test-invalid-date.eml
+│   │   ├── test-iso-8601-date.eml
+│   │   └── test-rfc2822-date.eml
+│   ├── emoji.xlsx
+│   ├── empty.txt
+│   ├── empty.xlsx
+│   ├── example-10k-1p.html
+│   ├── example-10k-230p.html
+│   ├── example-10k-utf-16.html
+│   ├── example-10k.html
+│   ├── example-list-items-multiple.docx
+│   ├── example-steelJIS-datasheet-utf-16.html
+│   ├── example-steelJIS-datasheet.html
+│   ├── example-with-scripts.html
+│   ├── factbook-utf-16.xml
+│   ├── factbook.xml
+│   ├── fake_table.docx
+│   ├── fake-doc-emphasized-text.doc
+│   ├── fake-doc-emphasized-text.docx
+│   ├── fake-doc.rtf
+│   ├── fake-email-attachment.msg
+│   ├── fake-email-multiple-attachments.msg
+│   ├── fake-email-with-cc-and-bcc.msg
+│   ├── fake-email.eml
+│   ├── fake-email.msg
+│   ├── fake-email.txt
+│   ├── fake-encrypted.msg
+│   ├── fake-html-cp1252.html
+│   ├── fake-html-lang-de.html
+│   ├── fake-html-pre.htm
+│   ├── fake-html-with-base64-image.html
+│   ├── fake-html-with-duplicate-elements.html
+│   ├── fake-html-with-footer-and-header.html
+│   ├── fake-html-with-image-from-url.html
+│   ├── fake-html.html
+│   ├── fake-incomplete-json.txt
+│   ├── fake-power-point-malformed.pptx
+│   ├── fake-power-point-many-pages.pptx
+│   ├── fake-power-point-table.pptx
+│   ├── fake-power-point.ppt
+│   ├── fake-power-point.pptx
+│   ├── fake-text-all-whitespace.txt
+│   ├── fake-text-utf-16-be.txt
+│   ├── fake-text-utf-16-le.txt
+│   ├── fake-text-utf-16.txt
+│   ├── fake-text-utf-32.txt
+│   ├── fake-text.txt
+│   ├── fake.doc
+│   ├── fake.docx
+│   ├── fake.go
+│   ├── fake.odt
+│   ├── file_we_dont_want_imported
+│   ├── grid_offset_error.docx
+│   ├── group-shapes-nested.pptx
+│   ├── handbook-1p-no-rendered-page-breaks.docx
+│   ├── handbook-1p.docx
+│   ├── handbook-872p.docx
+│   ├── hebrew-text-base64-iso88598i.txt
+│   ├── hlink-meta.docx
+│   ├── ideas-page.html
+│   ├── img
+│   │   ├── bmp_24.bmp
+│   │   ├── chi_sim_image.jpeg
+│   │   ├── DA-1p.heic
+│   │   ├── DA-1p.jpg
+│   │   ├── DA-1p.png
+│   │   ├── double-column-A.jpg
+│   │   ├── double-column-B.jpg
+│   │   ├── embedded-images-tables.jpg
+│   │   ├── english-and-korean.png
+│   │   ├── example.jpg
+│   │   ├── jpn-vert.jpeg
+│   │   ├── layout-parser-paper-10p.jpg
+│   │   ├── layout-parser-paper-combined.tiff
+│   │   ├── layout-parser-paper-fast.jpg
+│   │   ├── layout-parser-paper-fast.tiff
+│   │   ├── layout-parser-paper-with-table.jpg
+│   │   └── table-multi-row-column-cells.png
+│   ├── language-docs
+│   │   ├── eng_afr_spa.txt
+│   │   ├── eng_spa_mult.doc
+│   │   ├── eng_spa_mult.docx
+│   │   ├── eng_spa_mult.eml
+│   │   ├── eng_spa_mult.epub
+│   │   ├── eng_spa_mult.html
+│   │   ├── eng_spa_mult.md
+│   │   ├── eng_spa_mult.odt
+│   │   ├── eng_spa_mult.org
+│   │   ├── eng_spa_mult.ppt
+│   │   ├── eng_spa_mult.pptx
+│   │   ├── eng_spa_mult.rst
+│   │   ├── eng_spa_mult.rtf
+│   │   ├── eng_spa_mult.txt
+│   │   ├── eng_spa_mult.xml
+│   │   ├── eng_spa.txt
+│   │   ├── eng_spa.xlsx
+│   │   ├── fr_olap.pdf
+│   │   └── UDHR_first_article_all.txt
+│   ├── logger.py
+│   ├── more-than-1k-cells.xlsx
+│   ├── norwich-city.txt
+│   ├── not-unstructured-payload.json
+│   ├── page-breaks.docx
+│   ├── password_protected.xlsx
+│   ├── pdf
+│   │   ├── a1977-backus-p21.pdf
+│   │   ├── all-number-table.pdf
+│   │   ├── chevron-page.pdf
+│   │   ├── copy-protected.pdf
+│   │   ├── DA-1p.pdf
+│   │   ├── DA-619p.pdf
+│   │   ├── embedded-images-tables.pdf
+│   │   ├── embedded-images.pdf
+│   │   ├── embedded-link.pdf
+│   │   ├── emphasis-text.pdf
+│   │   ├── failure-after-repair.pdf
+│   │   ├── fake-bold-sample.pdf
+│   │   ├── fake-memo-with-duplicate-page.pdf
+│   │   ├── fake-memo.pdf
+│   │   ├── header-test-doc.pdf
+│   │   ├── interface-config-guide-p93.pdf
+│   │   ├── invalid-pdf-structure-pdfminer-entire-doc.pdf
+│   │   ├── invalid-pdf-structure-pdfminer-one-page.pdf
+│   │   ├── korean-text-with-tables.pdf
+│   │   ├── layout-parser-paper-fast.pdf
+│   │   ├── layout-parser-paper-with-empty-pages.pdf
+│   │   ├── layout-parser-paper-with-table.pdf
+│   │   ├── layout-parser-paper.pdf
+│   │   ├── list-item-example.pdf
+│   │   ├── loremipsum-flat.pdf
+│   │   ├── multi-column-2p.pdf
+│   │   ├── multi-column.pdf
+│   │   ├── negative-coords.pdf
+│   │   ├── password.pdf
+│   │   ├── pdf-bad-color-space.pdf
+│   │   ├── pdf-with-ocr-text.pdf
+│   │   ├── pdf2image-memory-error-test-400p.pdf
+│   │   ├── reliance.pdf
+│   │   ├── single_table.pdf
+│   │   └── table-multi-row-column-cells.pdf
+│   ├── picture.pptx
+│   ├── README-w-include.org
+│   ├── README-w-include.rst
+│   ├── README.md
+│   ├── README.org
+│   ├── README.rst
+│   ├── sample-presentation.pptx
+│   ├── science-exploration-1p.pptx
+│   ├── science-exploration-369p.pptx
+│   ├── semicolon-delimited.csv
+│   ├── simple-table.md
+│   ├── simple.doc
+│   ├── simple.docx
+│   ├── simple.epub
+│   ├── simple.json
+│   ├── simple.ndjson
+│   ├── simple.odt
+│   ├── simple.pptx
+│   ├── simple.yaml
+│   ├── simple.zip
+│   ├── single-column.csv
+│   ├── spring-weather.html.json
+│   ├── spring-weather.html.ndjson
+│   ├── stanley-cups-utf-16.csv
+│   ├── stanley-cups-with-emoji.csv
+│   ├── stanley-cups-with-emoji.tsv
+│   ├── stanley-cups.csv
+│   ├── stanley-cups.tsv
+│   ├── stanley-cups.xlsx
+│   ├── table-multi-row-column-cells-actual.csv
+│   ├── table-semicolon-delimiter.csv
+│   ├── tables-with-incomplete-rows.docx
+│   ├── teams_chat.docx
+│   ├── test_evaluate_files
+│   │   ├── filter_list.txt
+│   │   ├── gold_standard_cct
+│   │   │   ├── Bank Good Credit Loan.pptx.txt
+│   │   │   ├── currency.csv.txt
+│   │   │   └── Performance-Audit-Discussion.pdf.txt
+│   │   ├── gold_standard_element_type
+│   │   │   └── IRS-form-1987.pdf.json
+│   │   ├── gold_standard_table_structure
+│   │   │   ├── 2022-financial-statements-p11.pdf.json
+│   │   │   └── IRS-2023-Form-1095-A.pdf.json
+│   │   ├── unstructured_output
+│   │   │   ├── Bank Good Credit Loan.pptx.json
+│   │   │   ├── currency.csv.json
+│   │   │   ├── form.json
+│   │   │   ├── IRS-form-1987.pdf.json
+│   │   │   └── Performance-Audit-Discussion.pdf.json
+│   │   ├── unstructured_output_cct
+│   │   │   ├── Bank Good Credit Loan.pptx.txt
+│   │   │   ├── currency.csv.txt
+│   │   │   ├── IRS-form-1987.pdf.txt
+│   │   │   └── Performance-Audit-Discussion.pdf.txt
+│   │   └── unstructured_output_table_structure
+│   │       ├── 2022-financial-statements-p11.pdf.json
+│   │       └── IRS-2023-Form-1095-A.pdf.json
+│   ├── test-image-jpg-mime.pptx
+│   ├── tests-example.xls
+│   ├── umlauts-non-utf8.md
+│   ├── umlauts-utf8.md
+│   ├── unsupported
+│   │   └── factbook.xsl
+│   ├── vodafone.xlsx
+│   ├── winter-sports.epub
+│   └── xlsx-subtable-cases.xlsx
+├── file_tree
+├── github
+│   ├── actions
+│   │   └── base-cache
+│   │       └── action.yml
+│   ├── ISSUE_TEMPLATE
+│   │   ├── bug_report.md
+│   │   ├── custom.md
+│   │   └── feature_request.md
+│   └── workflows
+│       ├── ci.yml
+│       ├── claude.yml
+│       ├── codeflash.yml
+│       ├── codeql-analysis.yml
+│       ├── docker-publish.yml
+│       ├── ingest-test-fixtures-update-pr.yml
+│       ├── release-version-alert.yml
+│       └── release.yml
+├── img
+│   └── unstructured_logo.png
+├── LICENSE.md
+├── Makefile
+├── pyproject.toml
+├── README.md
+├── renovate.json5
+├── scripts
+│   ├── airtable-test-helpers
+│   │   ├── component_ids.sh
+│   │   ├── create_scale_test_components.py
+│   │   ├── create_scale_test_components.sh
+│   │   └── print_num_rows_df.py
+│   ├── benchmark_partition.py
+│   ├── check-licenses.sh
+│   ├── check-new-release-version.sh
+│   ├── chroma-test-helpers
+│   │   └── create-and-check-chroma.sh
+│   ├── collect_env.py
+│   ├── compare_benchmark.py
+│   ├── convert
+│   │   ├── elements_json_to_format.py
+│   │   └── rendered_html_from_elements.py
+│   ├── docker-build-ubuntu.sh
+│   ├── docker-build.sh
+│   ├── docker-smoke-test.sh
+│   ├── elasticsearch-test-helpers
+│   │   ├── common
+│   │   │   ├── docker-compose.yaml
+│   │   │   └── es-dest-ingest-test-creds.env
+│   │   ├── destination_connector
+│   │   │   ├── create_index.py
+│   │   │   ├── create-elasticsearch-instance.sh
+│   │   │   ├── elasticsearch_elements_mappings.json
+│   │   │   ├── es_cluster_config.py
+│   │   │   └── test-ingest-elasticsearch-output.py
+│   │   └── source_connector
+│   │       ├── create_and_fill_es.py
+│   │       ├── create-fill-and-check-es.sh
+│   │       ├── es_cluster_config.py
+│   │       └── wiki_movie_plots_small.csv
+│   ├── image
+│   │   ├── test-all-outbound-connectivity-scenarios.sh
+│   │   └── test-outbound-connectivity.sh
+│   ├── ingest-test-fixtures-update.sh
+│   ├── initialize-libreoffice.sh
+│   ├── kafka-test-helpers
+│   │   ├── create-kafka-instance.sh
+│   │   └── docker-compose.yml
+│   ├── minio-test-helpers
+│   │   ├── create-and-check-minio.sh
+│   │   ├── docker-compose.yaml
+│   │   └── wiki_movie_plots_small.csv
+│   ├── opensearch-test-helpers
+│   │   ├── common
+│   │   │   └── docker-compose.yaml
+│   │   ├── destination_connector
+│   │   │   ├── create_index.py
+│   │   │   ├── create-opensearch-instance.sh
+│   │   │   ├── opensearch_cluster_config.py
+│   │   │   ├── opensearch_elements_mappings.json
+│   │   │   └── test-ingest-opensearch-output.py
+│   │   ├── source_connector
+│   │   │   ├── create_and_fill_opensearch.py
+│   │   │   └── create-and-check-opensearch.sh
+│   │   └── wiki_movie_plots_small.csv
+│   ├── performance
+│   │   ├── benchmark_partition.py
+│   │   ├── benchmark-local.sh
+│   │   ├── benchmark.sh
+│   │   ├── compare_benchmark.py
+│   │   ├── docs
+│   │   │   ├── book-war-and-peace-1225p.txt -> ../../../example-docs/book-war-and-peace-1225p.txt
+│   │   │   ├── book-war-and-peace-1p.txt -> ../../../example-docs/book-war-and-peace-1p.txt
+│   │   │   ├── DA-1p.pdf -> ../../../example-docs/DA-1p.pdf
+│   │   │   ├── DA-619p.pdf -> ../../../example-docs/DA-619p.pdf
+│   │   │   ├── example-10k-1p.html -> ../../../example-docs/example-10k-1p.html
+│   │   │   ├── example-10k-230p.html -> ../../../example-docs/example-10k-230p.html
+│   │   │   ├── handbook-1p.docx -> ../../../example-docs/handbook-1p.docx
+│   │   │   ├── handbook-872p.docx -> ../../../example-docs/handbook-872p.docx
+│   │   │   ├── layout-parser-paper-10p.jpg -> ../../../example-docs/layout-parser-paper-10p.jpg
+│   │   │   ├── layout-parser-paper-1p.jpg -> ../../../example-docs/layout-parser-paper-fast.jpg
+│   │   │   ├── layout-parser-paper-fast-16p.pdf -> ../../../example-docs/layout-parser-paper.pdf
+│   │   │   ├── layout-parser-paper-hi_res-16p.pdf -> ../../../example-docs/layout-parser-paper.pdf
+│   │   │   ├── science-exploration-1p.pptx -> ../../../example-docs/science-exploration-1p.pptx
+│   │   │   └── science-exploration-369p.pptx -> ../../../example-docs/science-exploration-369p.pptx
+│   │   ├── get-stats-name.sh
+│   │   ├── profile.sh
+│   │   ├── quick_partition_bench.py
+│   │   ├── README.md
+│   │   ├── requirements.txt
+│   │   ├── run_partition.py
+│   │   ├── time_partition.py
+│   │   └── warmup_docs
+│   │       ├── warmup.docx -> ../../../example-docs/handbook-1p.docx
+│   │       ├── warmup.html -> ../../../example-docs/example-10k-1p.html
+│   │       ├── warmup.jpg -> ../../../example-docs/layout-parser-paper-fast.jpg
+│   │       ├── warmup.pdf -> ../../../example-docs/layout-parser-paper-fast.pdf
+│   │       ├── warmup.pptx -> ../../../example-docs/science-exploration-1p.pptx
+│   │       └── warmup.txt -> ../../../example-docs/book-war-and-peace-1p.txt
+│   ├── renovate-security-bump.sh
+│   ├── setup_al2.sh
+│   ├── setup_ubuntu.sh
+│   ├── sftp-test-helpers
+│   │   ├── create-and-check-sftp.sh
+│   │   ├── docker-compose.yaml
+│   │   └── folder1
+│   │       ├── folder2
+│   │       │   └── wiki_movie_plots_small2.csv
+│   │       └── wiki_movie_plots_small.csv
+│   ├── shellcheck.sh
+│   ├── singlestore-test-helpers
+│   │   ├── docker-compose.yml
+│   │   ├── schema.sql
+│   │   └── test_outputs.py
+│   ├── sql-test-helpers
+│   │   ├── create-pgvector-schema.sql
+│   │   ├── create-sql-instance.sh
+│   │   ├── create-sqlite-schema.py
+│   │   ├── create-sqlite-schema.sql
+│   │   └── docker-compose-pgvector.yaml
+│   ├── sync_fork.sh
+│   ├── user
+│   │   ├── process-pdf-parallel-through-api.sh
+│   │   ├── split-pdf.sh
+│   │   ├── u-tables-inspect.sh
+│   │   └── unstructured-get-json.sh
+│   ├── version-sync.sh
+│   └── weaviate-test-helpers
+│       ├── create_schema.py
+│       ├── create-weaviate-instance.sh
+│       ├── docker-compose.yml
+│       └── elements.json
+├── test_unstructured
+│   ├── __init__.py
+│   ├── chunking
+│   │   ├── __init__.py
+│   │   ├── test_base.py
+│   │   ├── test_basic.py
+│   │   ├── test_dispatch.py
+│   │   ├── test_html_output.py
+│   │   └── test_title.py
+│   ├── cleaners
+│   │   ├── __init__.py
+│   │   ├── test_core.py
+│   │   ├── test_extract.py
+│   │   └── test_translate.py
+│   ├── common
+│   │   ├── __init__.py
+│   │   └── test_html_table.py
+│   ├── documents
+│   │   ├── __init__.py
+│   │   ├── html_files
+│   │   │   ├── example_full_doc.html
+│   │   │   ├── example_with_alternative_text.html
+│   │   │   ├── example_with_inline_fields.html
+│   │   │   ├── example.html
+│   │   │   └── three_tables.html
+│   │   ├── test_coordinates.py
+│   │   ├── test_elements.py
+│   │   ├── test_mappings.py
+│   │   ├── test_ontology_to_unstructured_parsing.py
+│   │   └── unstructured_json_output
+│   │       ├── example_full_doc.json
+│   │       ├── example_with_alternative_text.json
+│   │       ├── example_with_inline_fields.json
+│   │       ├── example.json
+│   │       └── three_tables.json
+│   ├── embed
+│   │   ├── __init__.py
+│   │   ├── test_mixedbreadai.py
+│   │   ├── test_octoai.py
+│   │   ├── test_openai.py
+│   │   ├── test_vertexai.py
+│   │   └── test_voyageai.py
+│   ├── file_utils
+│   │   ├── __init__.py
+│   │   ├── test_encoding.py
+│   │   ├── test_file_conversion.py
+│   │   ├── test_filetype.py
+│   │   ├── test_model.py
+│   │   └── test-file-contents.txt
+│   ├── metrics
+│   │   ├── __init__.py
+│   │   ├── test_element_type.py
+│   │   ├── test_evaluate.py
+│   │   ├── test_table_alignment.py
+│   │   ├── test_table_detection_metrics.py
+│   │   ├── test_table_formats.py
+│   │   ├── test_table_structure.py
+│   │   ├── test_text_extraction.py
+│   │   └── test_utils.py
+│   ├── nlp
+│   │   ├── __init__.py
+│   │   ├── mock_nltk.py
+│   │   ├── test_partition.py
+│   │   └── test_tokenize.py
+│   ├── partition
+│   │   ├── __init__.py
+│   │   ├── common
+│   │   │   ├── __init__.py
+│   │   │   ├── test_common.py
+│   │   │   ├── test_lang.py
+│   │   │   └── test_metadata.py
+│   │   ├── conftest.py
+│   │   ├── html
+│   │   │   ├── __init__.py
+│   │   │   ├── test_convert.py
+│   │   │   ├── test_html_to_ontology_parsing.py
+│   │   │   ├── test_html_to_unstructured_and_back_parsing.py
+│   │   │   ├── test_html_utils.py
+│   │   │   ├── test_parser.py
+│   │   │   ├── test_partition_v2.py
+│   │   │   ├── test_partition.py
+│   │   │   └── test_unstructured_elements_to_ontology_parsing.py
+│   │   ├── pdf_image
+│   │   │   ├── __init__.py
+│   │   │   ├── conftest.py
+│   │   │   ├── test_analysis.py
+│   │   │   ├── test_image.py
+│   │   │   ├── test_inference_utils.py
+│   │   │   ├── test_merge_elements.py
+│   │   │   ├── test_ocr.py
+│   │   │   ├── test_pdf_image_utils.py
+│   │   │   ├── test_pdf.py
+│   │   │   ├── test_pdfminer_processing.py
+│   │   │   └── test_pdfminer_utils.py
+│   │   ├── test_api.py
+│   │   ├── test_auto.py
+│   │   ├── test_constants.py
+│   │   ├── test_csv.py
+│   │   ├── test_doc.py
+│   │   ├── test_docx.py
+│   │   ├── test_email.py
+│   │   ├── test_epub.py
+│   │   ├── test_json.py
+│   │   ├── test_md.py
+│   │   ├── test_msg.py
+│   │   ├── test_ndjson.py
+│   │   ├── test_odt.py
+│   │   ├── test_org.py
+│   │   ├── test_ppt.py
+│   │   ├── test_pptx.py
+│   │   ├── test_rst.py
+│   │   ├── test_rtf.py
+│   │   ├── test_strategies.py
+│   │   ├── test_text_type.py
+│   │   ├── test_text.py
+│   │   ├── test_tsv.py
+│   │   ├── test_xlsx.py
+│   │   ├── test_xml.py
+│   │   └── utils
+│   │       ├── __init__.py
+│   │       ├── ocr_models
+│   │       │   └── test_ocr_interface.py
+│   │       ├── test_config.py
+│   │       ├── test_sorting.py
+│   │       └── test_xycut.py
+│   ├── staging
+│   │   ├── __init__.py
+│   │   ├── test_base.py
+│   │   ├── test_baseplate.py
+│   │   ├── test_datasaur.py
+│   │   ├── test_huggingface.py
+│   │   ├── test_label_box.py
+│   │   ├── test_label_studio.py
+│   │   ├── test_prodigy.py
+│   │   └── test_weaviate.py
+│   ├── test_utils.py
+│   ├── testfiles
+│   │   ├── chunking
+│   │   │   ├── full_table_long_text_250.json
+│   │   │   ├── long_text_table_200.json
+│   │   │   ├── table_2000.json
+│   │   │   ├── table_text_200.json
+│   │   │   └── title_table_200.json
+│   │   ├── file_type
+│   │   │   └── test_document_from_office365.docx
+│   │   └── staging
+│   │       ├── embedded-images.pdf.json
+│   │       ├── embedded-images.pdf.md
+│   │       ├── UDHR_first_article_all.txt.json
+│   │       └── UDHR_first_article_all.txt.md
+│   └── unit_utils.py
+├── test_unstructured_ingest
+│   ├── check-diff-evaluation-metrics.sh
+│   ├── check-diff-expected-output-html.sh
+│   ├── check-diff-expected-output-markdown.sh
+│   ├── check-diff-expected-output.sh
+│   ├── check-num-dirs-output.sh
+│   ├── check-num-files-expected-output.sh
+│   ├── check-num-files-output.sh
+│   ├── check-num-rows-and-columns-output.sh
+│   ├── clean-permissions-files.sh
+│   ├── cleanup.sh
+│   ├── evaluation-ingest-cp.sh
+│   ├── evaluation-metrics.sh
+│   ├── example-docs
+│   │   ├── layout-parser-paper-with-table.jpg
+│   │   └── layout-parser-paper.pdf
+│   ├── expected-structured-output
+│   │   ├── airtable-diff
+│   │   │   ├── app5YQxSfp220fWtm
+│   │   │   │   ├── tblBoUk54tWXGqYai.json
+│   │   │   │   └── tblxdPc7L2meGIZLE.json
+│   │   │   └── appJ43QmP8I17zu88
+│   │   │       ├── tblbj2vBlL2dN2xqq.json
+│   │   │       └── tblfu7DzEcCWNKwP4.json
+│   │   ├── astradb
+│   │   │   ├── 25b75f1d-a2ea-4c97-b75f-1da2eadc97f7.csv.json
+│   │   │   ├── 60297eea-73d7-4fca-a97e-ea73d7cfca62.csv.json
+│   │   │   ├── 641d99e3-9941-4c18-9d99-e399414c183d.csv.json
+│   │   │   ├── 762c0093-2277-4f3e-ac00-932277af3e0e.csv.json
+│   │   │   └── ae40df94-0b3a-4f89-80df-940b3a6f8966.csv.json
+│   │   ├── azure
+│   │   │   ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.json
+│   │   │   ├── IRS-form-1987.pdf.json
+│   │   │   ├── IRS-form-1987.png.json
+│   │   │   ├── rfc854.txt.json
+│   │   │   └── spring-weather.html.json
+│   │   ├── biomed-api
+│   │   │   ├── 65
+│   │   │   │   └── 11
+│   │   │   │       └── main.PMC6312790.pdf.json
+│   │   │   └── 75
+│   │   │       └── 29
+│   │   │           └── main.PMC6312793.pdf.json
+│   │   ├── biomed-path
+│   │   │   └── 07
+│   │   │       └── 07
+│   │   │           └── sbaa031.073.PMC7234218.pdf.json
+│   │   ├── box
+│   │   │   ├── handbook-1p.docx.json
+│   │   │   ├── nested-1
+│   │   │   │   ├── ideas-page.html.json
+│   │   │   │   └── nested-2
+│   │   │   │       └── ideas-page.html.json
+│   │   │   └── science-exploration-1p.pptx.json
+│   │   ├── confluence-diff
+│   │   │   ├── MFS
+│   │   │   │   ├── 1540126.json
+│   │   │   │   ├── 1605928.json
+│   │   │   │   ├── 1605942.json
+│   │   │   │   ├── 1605956.json
+│   │   │   │   └── 229477.json
+│   │   │   └── testteamsp
+│   │   │       ├── 1605859.json
+│   │   │       ├── 1605989.json
+│   │   │       ├── 1802252.json
+│   │   │       ├── 1867777.json
+│   │   │       ├── 2589690.json
+│   │   │       └── 2589704.json
+│   │   ├── delta-table
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-0.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-1.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-2.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-3.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-4.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-5.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-6.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-7.json
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-8.json
+│   │   │   └── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-9.json
+│   │   ├── discord
+│   │   │   ├── 1099442333440802930.json
+│   │   │   └── 1099601456321003600.json
+│   │   ├── dropbox
+│   │   │   ├── handbook-1p.docx.json
+│   │   │   ├── nested-1
+│   │   │   │   └── ideas-page.html.json
+│   │   │   ├── nested-2
+│   │   │   │   └── ideas-page.html.json
+│   │   │   └── science-exploration-1p.pptx.json
+│   │   ├── elasticsearch
+│   │   │   ├── movies-0-57554198.json
+│   │   │   ├── movies-1-57554198.json
+│   │   │   ├── movies-2-57554198.json
+│   │   │   ├── movies-3-57554198.json
+│   │   │   ├── movies-4-57554198.json
+│   │   │   ├── movies-5-57554198.json
+│   │   │   ├── movies-6-57554198.json
+│   │   │   ├── movies-7-57554198.json
+│   │   │   ├── movies-8-57554198.json
+│   │   │   └── movies-9-57554198.json
+│   │   ├── embed
+│   │   │   └── book-war-and-peace-1p.txt.json
+│   │   ├── embed-bedrock
+│   │   │   └── book-war-and-peace-1p.txt.json
+│   │   ├── embed-mixedbreadai
+│   │   │   └── book-war-and-peace-1p.txt.json
+│   │   ├── embed-vertexai
+│   │   │   └── book-war-and-peace-1p.txt.json
+│   │   ├── embed-voyageai
+│   │   │   └── book-war-and-peace-1p.txt.json
+│   │   ├── gcs
+│   │   │   ├── ideas-page.html.json
+│   │   │   ├── nested-1
+│   │   │   │   ├── fake-text.txt.json
+│   │   │   │   └── nested
+│   │   │   │       └── ideas-page.html.json
+│   │   │   └── nested-2
+│   │   │       ├── fake-text.txt.json
+│   │   │       ├── nested
+│   │   │       │   └── ideas-page.html.json
+│   │   │       └── stanley-cups.xlsx.json
+│   │   ├── github
+│   │   │   ├── LICENSE.txt.json
+│   │   │   └── test.html.json
+│   │   ├── google-drive
+│   │   │   ├── fake.docx.json
+│   │   │   ├── nested
+│   │   │   │   └── fake.docx.json
+│   │   │   ├── recalibrating-risk-report.pdf.json
+│   │   │   └── test-drive-doc.docx.json
+│   │   ├── hubspot
+│   │   │   ├── calls
+│   │   │   │   ├── 41286477879.json
+│   │   │   │   └── 41287834137.json
+│   │   │   ├── communications
+│   │   │   │   ├── 41286064390.json
+│   │   │   │   └── 41286467154.json
+│   │   │   ├── emails
+│   │   │   │   └── 41287832127.json
+│   │   │   ├── notes
+│   │   │   │   └── 41287833179.json
+│   │   │   ├── products
+│   │   │   │   ├── 2362691415.json
+│   │   │   │   ├── 2362691416.json
+│   │   │   │   └── 2362691417.json
+│   │   │   └── tickets
+│   │   │       ├── 1976928828.json
+│   │   │       ├── 2002294392.json
+│   │   │       └── 2002301007.json
+│   │   ├── jira-diff
+│   │   │   ├── 1
+│   │   │   │   ├── 10000.json
+│   │   │   │   ├── 10001.json
+│   │   │   │   ├── 10002.json
+│   │   │   │   └── 10013.json
+│   │   │   ├── JCTP2
+│   │   │   │   ├── 10006.json
+│   │   │   │   ├── 10009.json
+│   │   │   │   ├── 10010.json
+│   │   │   │   ├── 10012.json
+│   │   │   │   └── 10015.json
+│   │   │   └── JCTP3
+│   │   │       └── 10014.json
+│   │   ├── kafka
+│   │   │   └── fake-topic.json
+│   │   ├── local-single-file
+│   │   │   └── UDHR_first_article_all.txt.json
+│   │   ├── local-single-file-basic-chunking
+│   │   │   └── handbook-1p.docx.json
+│   │   ├── local-single-file-chunk-no-orig-elements
+│   │   │   └── multi-column-2p.pdf.json
+│   │   ├── local-single-file-with-encoding
+│   │   │   └── fake-html-cp1252.html.json
+│   │   ├── local-single-file-with-pdf-infer-table-structure
+│   │   │   ├── layout-parser-paper-with-table.jpg.json
+│   │   │   └── layout-parser-paper.pdf.json
+│   │   ├── mongodb
+│   │   │   ├── 659daefa21dd8c9054b084b6.json
+│   │   │   ├── 659daefa21dd8c9054b084b7.json
+│   │   │   ├── 659daefa21dd8c9054b084b8.json
+│   │   │   └── 659daefa21dd8c9054b084b9.json
+│   │   ├── notion
+│   │   │   ├── 122b2c22-996b-435b-9de2-ee0e9d2b04bc.json
+│   │   │   ├── 438dbc49-2e06-4f01-8031-bf283be58a60.json
+│   │   │   ├── 4695ea53-f2b3-45b4-8638-2212fd054d73.json
+│   │   │   ├── 5481f29c-799a-4d7b-93ce-b11bcaede531.json
+│   │   │   ├── 60377009-e6b2-47f3-a8ff-f159fd8b69f5.json
+│   │   │   ├── 898538f2-26e1-4de7-81e6-354045d4d007.json
+│   │   │   ├── 8d8bee42-2167-441c-af6c-7b2cff268809.json
+│   │   │   ├── 8db7ccc9-0a9c-4168-94c3-f997e60cb8cf.json
+│   │   │   ├── 9e20be3d-cbe0-4e28-ad46-2170d40a8d37.json
+│   │   │   ├── b2a12157-721e-4207-b3b7-527762b782c2.json
+│   │   │   ├── c47a4566-4c7a-488b-ac2a-1292ee507fcb.json
+│   │   │   ├── dfcbe584-30b1-4551-b533-e6a5759af842.json
+│   │   │   ├── feccfcd4-8ca0-4638-8212-1a5726461029.json
+│   │   │   └── fee2149e-6240-4431-8e98-a04a2e460a66.json
+│   │   ├── onedrive
+│   │   │   └── utic-test-ingest-fixtures
+│   │   │       ├── fake-text.txt.json
+│   │   │       ├── nested
+│   │   │       │   └── fake-text.txt.json
+│   │   │       └── tests-example.xls.json
+│   │   ├── opensearch
+│   │   │   ├── movies-0-57554198.json
+│   │   │   ├── movies-1-57554198.json
+│   │   │   ├── movies-2-57554198.json
+│   │   │   ├── movies-3-57554198.json
+│   │   │   ├── movies-4-57554198.json
+│   │   │   ├── movies-5-57554198.json
+│   │   │   ├── movies-6-57554198.json
+│   │   │   ├── movies-7-57554198.json
+│   │   │   ├── movies-8-57554198.json
+│   │   │   └── movies-9-57554198.json
+│   │   ├── outlook
+│   │   │   ├── 21be155fb0c95885.eml.json
+│   │   │   ├── 497eba8c81c801c6.eml.json
+│   │   │   └── 4a16a411f162ebbb.eml.json
+│   │   ├── pdf-fast-reprocess
+│   │   │   └── azure
+│   │   │       ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.json
+│   │   │       └── IRS-form-1987.pdf.json
+│   │   ├── s3
+│   │   │   ├── 2023-Jan-economic-outlook.pdf.json
+│   │   │   ├── page-with-formula.pdf.json
+│   │   │   ├── recalibrating-risk-report.pdf.json
+│   │   │   └── Silent-Giant-(1).pdf.json
+│   │   ├── s3-minio
+│   │   │   └── wiki_movie_plots_small.csv.json
+│   │   ├── salesforce
+│   │   │   ├── Campaign
+│   │   │   │   ├── 701Hu000001eX9EIAU.xml.json
+│   │   │   │   ├── 701Hu000001eX9FIAU.xml.json
+│   │   │   │   ├── 701Hu000001eX9GIAU.xml.json
+│   │   │   │   └── 701Hu000001eX9HIAU.xml.json
+│   │   │   └── EmailMessage
+│   │   │       ├── 02sHu00001efErPIAU.eml.json
+│   │   │       └── 02sHu00001efErQIAU.eml.json
+│   │   ├── sftp
+│   │   │   └── folder1
+│   │   │       ├── folder2
+│   │   │       │   └── wiki_movie_plots_small2.csv.json
+│   │   │       └── wiki_movie_plots_small.csv.json
+│   │   ├── Sharepoint
+│   │   │   ├── Document.docx.json
+│   │   │   ├── fake-text.txt.json
+│   │   │   ├── ideas-page.html.json
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.json
+│   │   │   │   └── page-with-formula.pdf.json
+│   │   │   ├── permissions-fake-text.docx.json
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.json
+│   │   │   │   └── This-is-a-title.aspx.json
+│   │   │   └── stanley-cups.xlsx.json
+│   │   ├── Sharepoint-with-permissions
+│   │   │   ├── Document.docx.json
+│   │   │   ├── fake-text.txt.json
+│   │   │   ├── ideas-page.html.json
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.json
+│   │   │   │   └── page-with-formula.pdf.json
+│   │   │   ├── permissions-fake-text.docx.json
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.json
+│   │   │   │   └── This-is-a-title.aspx.json
+│   │   │   └── stanley-cups.xlsx.json
+│   │   └── slack
+│   │       └── C07ABKJ83C6.json
+│   ├── expected-structured-output-html
+│   │   ├── airtable-diff
+│   │   │   ├── app5YQxSfp220fWtm
+│   │   │   │   ├── tblBoUk54tWXGqYai.html
+│   │   │   │   └── tblxdPc7L2meGIZLE.html
+│   │   │   └── appJ43QmP8I17zu88
+│   │   │       ├── tblbj2vBlL2dN2xqq.html
+│   │   │       └── tblfu7DzEcCWNKwP4.html
+│   │   ├── astradb
+│   │   │   ├── 25b75f1d-a2ea-4c97-b75f-1da2eadc97f7.csv.html
+│   │   │   ├── 60297eea-73d7-4fca-a97e-ea73d7cfca62.csv.html
+│   │   │   ├── 641d99e3-9941-4c18-9d99-e399414c183d.csv.html
+│   │   │   ├── 762c0093-2277-4f3e-ac00-932277af3e0e.csv.html
+│   │   │   └── ae40df94-0b3a-4f89-80df-940b3a6f8966.csv.html
+│   │   ├── azure
+│   │   │   ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.html
+│   │   │   ├── IRS-form-1987.pdf.html
+│   │   │   ├── IRS-form-1987.png.html
+│   │   │   ├── rfc854.txt.html
+│   │   │   └── spring-weather.html.html
+│   │   ├── biomed-api
+│   │   │   ├── 65
+│   │   │   │   └── 11
+│   │   │   │       └── main.PMC6312790.pdf.html
+│   │   │   └── 75
+│   │   │       └── 29
+│   │   │           └── main.PMC6312793.pdf.html
+│   │   ├── biomed-path
+│   │   │   └── 07
+│   │   │       └── 07
+│   │   │           └── sbaa031.073.PMC7234218.pdf.html
+│   │   ├── box
+│   │   │   ├── handbook-1p.docx.html
+│   │   │   ├── nested-1
+│   │   │   │   ├── ideas-page.html.html
+│   │   │   │   └── nested-2
+│   │   │   │       └── ideas-page.html.html
+│   │   │   └── science-exploration-1p.pptx.html
+│   │   ├── confluence-diff
+│   │   │   ├── MFS
+│   │   │   │   ├── 1540126.html
+│   │   │   │   ├── 1605928.html
+│   │   │   │   ├── 1605942.html
+│   │   │   │   ├── 1605956.html
+│   │   │   │   └── 229477.html
+│   │   │   └── testteamsp
+│   │   │       ├── 1605859.html
+│   │   │       ├── 1605989.html
+│   │   │       ├── 1802252.html
+│   │   │       ├── 1867777.html
+│   │   │       ├── 2589690.html
+│   │   │       └── 2589704.html
+│   │   ├── delta-table
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-0.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-1.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-2.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-3.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-4.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-5.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-6.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-7.html
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-8.html
+│   │   │   └── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-9.html
+│   │   ├── discord
+│   │   │   ├── 1099442333440802930.html
+│   │   │   └── 1099601456321003600.html
+│   │   ├── dropbox
+│   │   │   ├── handbook-1p.docx.html
+│   │   │   ├── nested-1
+│   │   │   │   └── ideas-page.html.html
+│   │   │   ├── nested-2
+│   │   │   │   └── ideas-page.html.html
+│   │   │   └── science-exploration-1p.pptx.html
+│   │   ├── elasticsearch
+│   │   │   ├── movies-0-57554198.html
+│   │   │   ├── movies-1-57554198.html
+│   │   │   ├── movies-2-57554198.html
+│   │   │   ├── movies-3-57554198.html
+│   │   │   ├── movies-4-57554198.html
+│   │   │   ├── movies-5-57554198.html
+│   │   │   ├── movies-6-57554198.html
+│   │   │   ├── movies-7-57554198.html
+│   │   │   ├── movies-8-57554198.html
+│   │   │   └── movies-9-57554198.html
+│   │   ├── embed
+│   │   │   └── book-war-and-peace-1p.txt.html
+│   │   ├── embed-bedrock
+│   │   │   └── book-war-and-peace-1p.txt.html
+│   │   ├── embed-mixedbreadai
+│   │   │   └── book-war-and-peace-1p.txt.html
+│   │   ├── embed-vertexai
+│   │   │   └── book-war-and-peace-1p.txt.html
+│   │   ├── embed-voyageai
+│   │   │   └── book-war-and-peace-1p.txt.html
+│   │   ├── gcs
+│   │   │   ├── ideas-page.html.html
+│   │   │   ├── nested-1
+│   │   │   │   ├── fake-text.txt.html
+│   │   │   │   └── nested
+│   │   │   │       └── ideas-page.html.html
+│   │   │   └── nested-2
+│   │   │       ├── fake-text.txt.html
+│   │   │       ├── nested
+│   │   │       │   └── ideas-page.html.html
+│   │   │       └── stanley-cups.xlsx.html
+│   │   ├── github
+│   │   │   ├── LICENSE.txt.html
+│   │   │   └── test.html.html
+│   │   ├── google-drive
+│   │   │   ├── fake.docx.html
+│   │   │   ├── nested
+│   │   │   │   └── fake.docx.html
+│   │   │   ├── recalibrating-risk-report.pdf.html
+│   │   │   └── test-drive-doc.docx.html
+│   │   ├── hubspot
+│   │   │   ├── calls
+│   │   │   │   ├── 41286477879.html
+│   │   │   │   └── 41287834137.html
+│   │   │   ├── communications
+│   │   │   │   ├── 41286064390.html
+│   │   │   │   └── 41286467154.html
+│   │   │   ├── emails
+│   │   │   │   └── 41287832127.html
+│   │   │   ├── notes
+│   │   │   │   └── 41287833179.html
+│   │   │   ├── products
+│   │   │   │   ├── 2362691415.html
+│   │   │   │   ├── 2362691416.html
+│   │   │   │   └── 2362691417.html
+│   │   │   └── tickets
+│   │   │       ├── 1976928828.html
+│   │   │       ├── 2002294392.html
+│   │   │       └── 2002301007.html
+│   │   ├── jira-diff
+│   │   │   ├── 1
+│   │   │   │   ├── 10000.html
+│   │   │   │   ├── 10001.html
+│   │   │   │   ├── 10002.html
+│   │   │   │   └── 10013.html
+│   │   │   ├── JCTP2
+│   │   │   │   ├── 10006.html
+│   │   │   │   ├── 10009.html
+│   │   │   │   ├── 10010.html
+│   │   │   │   ├── 10012.html
+│   │   │   │   └── 10015.html
+│   │   │   └── JCTP3
+│   │   │       └── 10014.html
+│   │   ├── kafka
+│   │   │   └── fake-topic.html
+│   │   ├── local-single-file
+│   │   │   └── UDHR_first_article_all.txt.html
+│   │   ├── local-single-file-basic-chunking
+│   │   │   └── handbook-1p.docx.html
+│   │   ├── local-single-file-chunk-no-orig-elements
+│   │   │   └── multi-column-2p.pdf.html
+│   │   ├── local-single-file-with-encoding
+│   │   │   └── fake-html-cp1252.html.html
+│   │   ├── local-single-file-with-pdf-infer-table-structure
+│   │   │   ├── layout-parser-paper-with-table.jpg.html
+│   │   │   └── layout-parser-paper.pdf.html
+│   │   ├── mongodb
+│   │   │   ├── 659daefa21dd8c9054b084b6.html
+│   │   │   ├── 659daefa21dd8c9054b084b7.html
+│   │   │   ├── 659daefa21dd8c9054b084b8.html
+│   │   │   └── 659daefa21dd8c9054b084b9.html
+│   │   ├── notion
+│   │   │   ├── 122b2c22-996b-435b-9de2-ee0e9d2b04bc.html
+│   │   │   ├── 438dbc49-2e06-4f01-8031-bf283be58a60.html
+│   │   │   ├── 4695ea53-f2b3-45b4-8638-2212fd054d73.html
+│   │   │   ├── 5481f29c-799a-4d7b-93ce-b11bcaede531.html
+│   │   │   ├── 60377009-e6b2-47f3-a8ff-f159fd8b69f5.html
+│   │   │   ├── 898538f2-26e1-4de7-81e6-354045d4d007.html
+│   │   │   ├── 8d8bee42-2167-441c-af6c-7b2cff268809.html
+│   │   │   ├── 8db7ccc9-0a9c-4168-94c3-f997e60cb8cf.html
+│   │   │   ├── 9e20be3d-cbe0-4e28-ad46-2170d40a8d37.html
+│   │   │   ├── b2a12157-721e-4207-b3b7-527762b782c2.html
+│   │   │   ├── c47a4566-4c7a-488b-ac2a-1292ee507fcb.html
+│   │   │   ├── dfcbe584-30b1-4551-b533-e6a5759af842.html
+│   │   │   ├── feccfcd4-8ca0-4638-8212-1a5726461029.html
+│   │   │   └── fee2149e-6240-4431-8e98-a04a2e460a66.html
+│   │   ├── onedrive
+│   │   │   └── utic-test-ingest-fixtures
+│   │   │       ├── fake-text.txt.html
+│   │   │       ├── nested
+│   │   │       │   └── fake-text.txt.html
+│   │   │       └── tests-example.xls.html
+│   │   ├── opensearch
+│   │   │   ├── movies-0-57554198.html
+│   │   │   ├── movies-1-57554198.html
+│   │   │   ├── movies-2-57554198.html
+│   │   │   ├── movies-3-57554198.html
+│   │   │   ├── movies-4-57554198.html
+│   │   │   ├── movies-5-57554198.html
+│   │   │   ├── movies-6-57554198.html
+│   │   │   ├── movies-7-57554198.html
+│   │   │   ├── movies-8-57554198.html
+│   │   │   └── movies-9-57554198.html
+│   │   ├── outlook
+│   │   │   ├── 21be155fb0c95885.eml.html
+│   │   │   ├── 497eba8c81c801c6.eml.html
+│   │   │   └── 4a16a411f162ebbb.eml.html
+│   │   ├── pdf-fast-reprocess
+│   │   │   └── azure
+│   │   │       ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.html
+│   │   │       └── IRS-form-1987.pdf.html
+│   │   ├── s3
+│   │   │   ├── 2023-Jan-economic-outlook.pdf.html
+│   │   │   ├── page-with-formula.pdf.html
+│   │   │   ├── recalibrating-risk-report.pdf.html
+│   │   │   └── Silent-Giant-(1).pdf.html
+│   │   ├── s3-minio
+│   │   │   └── wiki_movie_plots_small.csv.html
+│   │   ├── salesforce
+│   │   │   ├── Campaign
+│   │   │   │   ├── 701Hu000001eX9EIAU.xml.html
+│   │   │   │   ├── 701Hu000001eX9FIAU.xml.html
+│   │   │   │   ├── 701Hu000001eX9GIAU.xml.html
+│   │   │   │   └── 701Hu000001eX9HIAU.xml.html
+│   │   │   └── EmailMessage
+│   │   │       ├── 02sHu00001efErPIAU.eml.html
+│   │   │       └── 02sHu00001efErQIAU.eml.html
+│   │   ├── sftp
+│   │   │   └── folder1
+│   │   │       ├── folder2
+│   │   │       │   └── wiki_movie_plots_small2.csv.html
+│   │   │       └── wiki_movie_plots_small.csv.html
+│   │   ├── Sharepoint
+│   │   │   ├── Document.docx.html
+│   │   │   ├── fake-text.txt.html
+│   │   │   ├── ideas-page.html.html
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.html
+│   │   │   │   └── page-with-formula.pdf.html
+│   │   │   ├── permissions-fake-text.docx.html
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.html
+│   │   │   │   └── This-is-a-title.aspx.html
+│   │   │   └── stanley-cups.xlsx.html
+│   │   ├── Sharepoint-with-permissions
+│   │   │   ├── Document.docx.html
+│   │   │   ├── fake-text.txt.html
+│   │   │   ├── ideas-page.html.html
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.html
+│   │   │   │   └── page-with-formula.pdf.html
+│   │   │   ├── permissions-fake-text.docx.html
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.html
+│   │   │   │   └── This-is-a-title.aspx.html
+│   │   │   └── stanley-cups.xlsx.html
+│   │   └── slack
+│   │       └── C07ABKJ83C6.html
+│   ├── expected-structured-output-markdown
+│   │   ├── airtable-diff
+│   │   │   ├── app5YQxSfp220fWtm
+│   │   │   │   ├── tblBoUk54tWXGqYai.md
+│   │   │   │   └── tblxdPc7L2meGIZLE.md
+│   │   │   └── appJ43QmP8I17zu88
+│   │   │       ├── tblbj2vBlL2dN2xqq.md
+│   │   │       └── tblfu7DzEcCWNKwP4.md
+│   │   ├── astradb
+│   │   │   ├── 25b75f1d-a2ea-4c97-b75f-1da2eadc97f7.csv.md
+│   │   │   ├── 60297eea-73d7-4fca-a97e-ea73d7cfca62.csv.md
+│   │   │   ├── 641d99e3-9941-4c18-9d99-e399414c183d.csv.md
+│   │   │   ├── 762c0093-2277-4f3e-ac00-932277af3e0e.csv.md
+│   │   │   └── ae40df94-0b3a-4f89-80df-940b3a6f8966.csv.md
+│   │   ├── azure
+│   │   │   ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.md
+│   │   │   ├── IRS-form-1987.pdf.md
+│   │   │   ├── IRS-form-1987.png.md
+│   │   │   ├── rfc854.txt.md
+│   │   │   └── spring-weather.html.md
+│   │   ├── biomed-api
+│   │   │   ├── 65
+│   │   │   │   └── 11
+│   │   │   │       └── main.PMC6312790.pdf.md
+│   │   │   └── 75
+│   │   │       └── 29
+│   │   │           └── main.PMC6312793.pdf.md
+│   │   ├── biomed-path
+│   │   │   └── 07
+│   │   │       └── 07
+│   │   │           └── sbaa031.073.PMC7234218.pdf.md
+│   │   ├── box
+│   │   │   ├── handbook-1p.docx.md
+│   │   │   ├── nested-1
+│   │   │   │   ├── ideas-page.html.md
+│   │   │   │   └── nested-2
+│   │   │   │       └── ideas-page.html.md
+│   │   │   └── science-exploration-1p.pptx.md
+│   │   ├── confluence-diff
+│   │   │   ├── MFS
+│   │   │   │   ├── 1540126.md
+│   │   │   │   ├── 1605928.md
+│   │   │   │   ├── 1605942.md
+│   │   │   │   ├── 1605956.md
+│   │   │   │   └── 229477.md
+│   │   │   └── testteamsp
+│   │   │       ├── 1605859.md
+│   │   │       ├── 1605989.md
+│   │   │       ├── 1802252.md
+│   │   │       ├── 1867777.md
+│   │   │       ├── 2589690.md
+│   │   │       └── 2589704.md
+│   │   ├── delta-table
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-0.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-1.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-2.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-3.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-4.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-5.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-6.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-7.md
+│   │   │   ├── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-8.md
+│   │   │   └── 0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-9.md
+│   │   ├── discord
+│   │   │   ├── 1099442333440802930.md
+│   │   │   └── 1099601456321003600.md
+│   │   ├── dropbox
+│   │   │   ├── handbook-1p.docx.md
+│   │   │   ├── nested-1
+│   │   │   │   └── ideas-page.html.md
+│   │   │   ├── nested-2
+│   │   │   │   └── ideas-page.html.md
+│   │   │   └── science-exploration-1p.pptx.md
+│   │   ├── elasticsearch
+│   │   │   ├── movies-0-57554198.md
+│   │   │   ├── movies-1-57554198.md
+│   │   │   ├── movies-2-57554198.md
+│   │   │   ├── movies-3-57554198.md
+│   │   │   ├── movies-4-57554198.md
+│   │   │   ├── movies-5-57554198.md
+│   │   │   ├── movies-6-57554198.md
+│   │   │   ├── movies-7-57554198.md
+│   │   │   ├── movies-8-57554198.md
+│   │   │   └── movies-9-57554198.md
+│   │   ├── embed
+│   │   │   └── book-war-and-peace-1p.txt.md
+│   │   ├── embed-bedrock
+│   │   │   └── book-war-and-peace-1p.txt.md
+│   │   ├── embed-mixedbreadai
+│   │   │   └── book-war-and-peace-1p.txt.md
+│   │   ├── embed-vertexai
+│   │   │   └── book-war-and-peace-1p.txt.md
+│   │   ├── embed-voyageai
+│   │   │   └── book-war-and-peace-1p.txt.md
+│   │   ├── gcs
+│   │   │   ├── ideas-page.html.md
+│   │   │   ├── nested-1
+│   │   │   │   ├── fake-text.txt.md
+│   │   │   │   └── nested
+│   │   │   │       └── ideas-page.html.md
+│   │   │   └── nested-2
+│   │   │       ├── fake-text.txt.md
+│   │   │       ├── nested
+│   │   │       │   └── ideas-page.html.md
+│   │   │       └── stanley-cups.xlsx.md
+│   │   ├── github
+│   │   │   ├── LICENSE.txt.md
+│   │   │   └── test.html.md
+│   │   ├── google-drive
+│   │   │   ├── fake.docx.md
+│   │   │   ├── nested
+│   │   │   │   └── fake.docx.md
+│   │   │   ├── recalibrating-risk-report.pdf.md
+│   │   │   └── test-drive-doc.docx.md
+│   │   ├── hubspot
+│   │   │   ├── calls
+│   │   │   │   ├── 41286477879.md
+│   │   │   │   └── 41287834137.md
+│   │   │   ├── communications
+│   │   │   │   ├── 41286064390.md
+│   │   │   │   └── 41286467154.md
+│   │   │   ├── emails
+│   │   │   │   └── 41287832127.md
+│   │   │   ├── notes
+│   │   │   │   └── 41287833179.md
+│   │   │   ├── products
+│   │   │   │   ├── 2362691415.md
+│   │   │   │   ├── 2362691416.md
+│   │   │   │   └── 2362691417.md
+│   │   │   └── tickets
+│   │   │       ├── 1976928828.md
+│   │   │       ├── 2002294392.md
+│   │   │       └── 2002301007.md
+│   │   ├── jira-diff
+│   │   │   ├── 1
+│   │   │   │   ├── 10000.md
+│   │   │   │   ├── 10001.md
+│   │   │   │   ├── 10002.md
+│   │   │   │   └── 10013.md
+│   │   │   ├── JCTP2
+│   │   │   │   ├── 10006.md
+│   │   │   │   ├── 10009.md
+│   │   │   │   ├── 10010.md
+│   │   │   │   ├── 10012.md
+│   │   │   │   └── 10015.md
+│   │   │   └── JCTP3
+│   │   │       └── 10014.md
+│   │   ├── kafka
+│   │   │   └── fake-topic.md
+│   │   ├── local-single-file
+│   │   │   └── UDHR_first_article_all.txt.md
+│   │   ├── local-single-file-basic-chunking
+│   │   │   └── handbook-1p.docx.md
+│   │   ├── local-single-file-chunk-no-orig-elements
+│   │   │   └── multi-column-2p.pdf.md
+│   │   ├── local-single-file-with-encoding
+│   │   │   └── fake-html-cp1252.html.md
+│   │   ├── local-single-file-with-pdf-infer-table-structure
+│   │   │   ├── layout-parser-paper-with-table.jpg.md
+│   │   │   └── layout-parser-paper.pdf.md
+│   │   ├── mongodb
+│   │   │   ├── 659daefa21dd8c9054b084b6.md
+│   │   │   ├── 659daefa21dd8c9054b084b7.md
+│   │   │   ├── 659daefa21dd8c9054b084b8.md
+│   │   │   └── 659daefa21dd8c9054b084b9.md
+│   │   ├── notion
+│   │   │   ├── 122b2c22-996b-435b-9de2-ee0e9d2b04bc.md
+│   │   │   ├── 438dbc49-2e06-4f01-8031-bf283be58a60.md
+│   │   │   ├── 4695ea53-f2b3-45b4-8638-2212fd054d73.md
+│   │   │   ├── 5481f29c-799a-4d7b-93ce-b11bcaede531.md
+│   │   │   ├── 60377009-e6b2-47f3-a8ff-f159fd8b69f5.md
+│   │   │   ├── 898538f2-26e1-4de7-81e6-354045d4d007.md
+│   │   │   ├── 8d8bee42-2167-441c-af6c-7b2cff268809.md
+│   │   │   ├── 8db7ccc9-0a9c-4168-94c3-f997e60cb8cf.md
+│   │   │   ├── 9e20be3d-cbe0-4e28-ad46-2170d40a8d37.md
+│   │   │   ├── b2a12157-721e-4207-b3b7-527762b782c2.md
+│   │   │   ├── c47a4566-4c7a-488b-ac2a-1292ee507fcb.md
+│   │   │   ├── dfcbe584-30b1-4551-b533-e6a5759af842.md
+│   │   │   ├── feccfcd4-8ca0-4638-8212-1a5726461029.md
+│   │   │   └── fee2149e-6240-4431-8e98-a04a2e460a66.md
+│   │   ├── onedrive
+│   │   │   └── utic-test-ingest-fixtures
+│   │   │       ├── fake-text.txt.md
+│   │   │       ├── nested
+│   │   │       │   └── fake-text.txt.md
+│   │   │       └── tests-example.xls.md
+│   │   ├── opensearch
+│   │   │   ├── movies-0-57554198.md
+│   │   │   ├── movies-1-57554198.md
+│   │   │   ├── movies-2-57554198.md
+│   │   │   ├── movies-3-57554198.md
+│   │   │   ├── movies-4-57554198.md
+│   │   │   ├── movies-5-57554198.md
+│   │   │   ├── movies-6-57554198.md
+│   │   │   ├── movies-7-57554198.md
+│   │   │   ├── movies-8-57554198.md
+│   │   │   └── movies-9-57554198.md
+│   │   ├── outlook
+│   │   │   ├── 21be155fb0c95885.eml.md
+│   │   │   ├── 497eba8c81c801c6.eml.md
+│   │   │   └── 4a16a411f162ebbb.eml.md
+│   │   ├── pdf-fast-reprocess
+│   │   │   └── azure
+│   │   │       ├── Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf.md
+│   │   │       └── IRS-form-1987.pdf.md
+│   │   ├── s3
+│   │   │   ├── 2023-Jan-economic-outlook.pdf.md
+│   │   │   ├── page-with-formula.pdf.md
+│   │   │   ├── recalibrating-risk-report.pdf.md
+│   │   │   └── Silent-Giant-(1).pdf.md
+│   │   ├── s3-minio
+│   │   │   └── wiki_movie_plots_small.csv.md
+│   │   ├── salesforce
+│   │   │   ├── Campaign
+│   │   │   │   ├── 701Hu000001eX9EIAU.xml.md
+│   │   │   │   ├── 701Hu000001eX9FIAU.xml.md
+│   │   │   │   ├── 701Hu000001eX9GIAU.xml.md
+│   │   │   │   └── 701Hu000001eX9HIAU.xml.md
+│   │   │   └── EmailMessage
+│   │   │       ├── 02sHu00001efErPIAU.eml.md
+│   │   │       └── 02sHu00001efErQIAU.eml.md
+│   │   ├── sftp
+│   │   │   └── folder1
+│   │   │       ├── folder2
+│   │   │       │   └── wiki_movie_plots_small2.csv.md
+│   │   │       └── wiki_movie_plots_small.csv.md
+│   │   ├── Sharepoint
+│   │   │   ├── Document.docx.md
+│   │   │   ├── fake-text.txt.md
+│   │   │   ├── ideas-page.html.md
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.md
+│   │   │   │   └── page-with-formula.pdf.md
+│   │   │   ├── permissions-fake-text.docx.md
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.md
+│   │   │   │   └── This-is-a-title.aspx.md
+│   │   │   └── stanley-cups.xlsx.md
+│   │   ├── Sharepoint-with-permissions
+│   │   │   ├── Document.docx.md
+│   │   │   ├── fake-text.txt.md
+│   │   │   ├── ideas-page.html.md
+│   │   │   ├── nested
+│   │   │   │   ├── 2023-Jan-economic-outlook.pdf.md
+│   │   │   │   └── page-with-formula.pdf.md
+│   │   │   ├── permissions-fake-text.docx.md
+│   │   │   ├── SitePages
+│   │   │   │   ├── Home.aspx.md
+│   │   │   │   └── This-is-a-title.aspx.md
+│   │   │   └── stanley-cups.xlsx.md
+│   │   └── slack
+│   │       └── C07ABKJ83C6.md
+│   ├── failed-partition-docs
+│   │   ├── sample.gif
+│   │   └── small.txt
+│   ├── files
+│   │   └── azure_cognitive_index_schema.json
+│   ├── json-to-clean-text-folder.sh
+│   ├── json-to-text.sh
+│   ├── metrics
+│   │   ├── element-type
+│   │   │   ├── aggregate-scores-element-type.tsv
+│   │   │   └── all-docs-element-type-frequency.tsv
+│   │   └── metrics-json-manifest.txt
+│   ├── python
+│   │   ├── test-azure-output.py
+│   │   ├── test-databricks-volumes.py
+│   │   ├── test-gcs-output.py
+│   │   ├── test-ingest-astradb-output.py
+│   │   ├── test-ingest-chroma-output.py
+│   │   ├── test-ingest-delta-table-output.py
+│   │   ├── test-ingest-mongodb.py
+│   │   ├── test-ingest-sql-output.py
+│   │   ├── test-ingest-weaviate-output.py
+│   │   ├── test-kafka-output.py
+│   │   └── test-produce-kafka-message.py
+│   ├── src
+│   │   ├── against-api.sh
+│   │   ├── airtable-diff.sh
+│   │   ├── airtable-large.sh
+│   │   ├── astradb.sh
+│   │   ├── azure.sh
+│   │   ├── biomed-api.sh
+│   │   ├── biomed-path.sh
+│   │   ├── box.sh
+│   │   ├── confluence-diff.sh
+│   │   ├── confluence-large.sh
+│   │   ├── delta-table.sh
+│   │   ├── discord.sh
+│   │   ├── dropbox.sh
+│   │   ├── elasticsearch.sh
+│   │   ├── gcs.sh
+│   │   ├── github.sh
+│   │   ├── gitlab.sh
+│   │   ├── google-drive.sh
+│   │   ├── hubspot.sh
+│   │   ├── jira.sh
+│   │   ├── kafka-local.sh
+│   │   ├── local-embed-bedrock.sh
+│   │   ├── local-embed-mixedbreadai.sh
+│   │   ├── local-embed-octoai.sh
+│   │   ├── local-embed-vertexai.sh
+│   │   ├── local-embed-voyageai.sh
+│   │   ├── local-embed.sh
+│   │   ├── local-failed-partition.sh
+│   │   ├── local-single-file-basic-chunking.sh
+│   │   ├── local-single-file-chunk-no-orig-elements.sh
+│   │   ├── local-single-file-with-encoding.sh
+│   │   ├── local-single-file-with-pdf-infer-table-structure.sh
+│   │   ├── local-single-file.sh
+│   │   ├── local.sh
+│   │   ├── mongodb.sh
+│   │   ├── notion.sh
+│   │   ├── onedrive.sh
+│   │   ├── opensearch.sh
+│   │   ├── outlook.sh
+│   │   ├── pdf-fast-reprocess.sh
+│   │   ├── s3-compression.sh
+│   │   ├── s3-minio.sh
+│   │   ├── s3.sh
+│   │   ├── salesforce.sh
+│   │   ├── sftp.sh
+│   │   ├── sharepoint-with-permissions.sh
+│   │   ├── sharepoint.sh
+│   │   ├── slack.sh
+│   │   └── wikipedia.sh
+│   ├── structured-json-to-html.sh
+│   ├── structured-json-to-markdown.sh
+│   ├── test-ingest-dest.sh
+│   └── test-ingest-src.sh
+├── typings
+│   ├── filetype
+│   │   └── __init__.pyi
+│   ├── lxml
+│   │   ├── _types.pyi
+│   │   ├── etree
+│   │   │   ├── __init__.pyi
+│   │   │   ├── _classlookup.pyi
+│   │   │   ├── _cleanup.pyi
+│   │   │   ├── _element.pyi
+│   │   │   ├── _iterparse.pyi
+│   │   │   ├── _module_func.pyi
+│   │   │   ├── _module_misc.pyi
+│   │   │   ├── _nsclasses.pyi
+│   │   │   ├── _parser.pyi
+│   │   │   └── _xpath.pyi
+│   │   └── html
+│   │       ├── __init__.pyi
+│   │       ├── _element.pyi
+│   │       ├── _parse.pyi
+│   │       └── soupparser.pyi
+│   ├── magic
+│   │   └── __init__.pyi
+│   ├── nltk
+│   │   ├── __init__.pyi
+│   │   ├── data.pyi
+│   │   ├── downloader.pyi
+│   │   ├── internals.pyi
+│   │   ├── tag.pyi
+│   │   └── tokenize.pyi
+│   ├── pandas
+│   │   ├── __init__.pyi
+│   │   ├── _typing.pyi
+│   │   ├── core
+│   │   │   ├── api.pyi
+│   │   │   └── frame.pyi
+│   │   └── io
+│   │       ├── api.pyi
+│   │       ├── excel
+│   │       │   ├── __init__.pyi
+│   │       │   └── _base.pyi
+│   │       └── parsers
+│   │           ├── __init__.pyi
+│   │           └── readers.pyi
+│   ├── pptx
+│   │   ├── __init__.pyi
+│   │   ├── api.pyi
+│   │   ├── oxml
+│   │   │   ├── __init__.py
+│   │   │   ├── text.pyi
+│   │   │   └── xmlchemy.pyi
+│   │   ├── presentation.pyi
+│   │   ├── shapes
+│   │   │   ├── __init__.py
+│   │   │   ├── autoshape.pyi
+│   │   │   ├── base.pyi
+│   │   │   ├── graphfrm.pyi
+│   │   │   ├── group.pyi
+│   │   │   ├── picture.pyi
+│   │   │   └── shapetree.pyi
+│   │   ├── shared.pyi
+│   │   ├── slide.pyi
+│   │   ├── table.pyi
+│   │   ├── text
+│   │   │   └── text.pyi
+│   │   └── util.pyi
+│   └── pypandoc
+│       └── __init__.pyi
+├── unstructured
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── __version__.cpython-312.pyc
+│   │   ├── errors.cpython-312.pyc
+│   │   ├── logger.cpython-312.pyc
+│   │   └── utils.cpython-312.pyc
+│   ├── __version__.py
+│   ├── chunking
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── base.cpython-312.pyc
+│   │   │   ├── basic.cpython-312.pyc
+│   │   │   ├── dispatch.cpython-312.pyc
+│   │   │   └── title.cpython-312.pyc
+│   │   ├── base.py
+│   │   ├── basic.py
+│   │   ├── dispatch.py
+│   │   └── title.py
+│   ├── cleaners
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   └── core.cpython-312.pyc
+│   │   ├── core.py
+│   │   ├── extract.py
+│   │   └── translate.py
+│   ├── common
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   └── html_table.cpython-312.pyc
+│   │   └── html_table.py
+│   ├── documents
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── coordinates.cpython-312.pyc
+│   │   │   ├── elements.cpython-312.pyc
+│   │   │   ├── mappings.cpython-312.pyc
+│   │   │   └── ontology.cpython-312.pyc
+│   │   ├── coordinates.py
+│   │   ├── elements.py
+│   │   ├── mappings.py
+│   │   └── ontology.py
+│   ├── embed
+│   │   ├── __init__.py
+│   │   ├── bedrock.py
+│   │   ├── huggingface.py
+│   │   ├── interfaces.py
+│   │   ├── mixedbreadai.py
+│   │   ├── octoai.py
+│   │   ├── openai.py
+│   │   ├── README.md
+│   │   ├── vertexai.py
+│   │   └── voyageai.py
+│   ├── errors.py
+│   ├── file_utils
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── encoding.cpython-312.pyc
+│   │   │   ├── filetype.cpython-312.pyc
+│   │   │   └── model.cpython-312.pyc
+│   │   ├── encoding.py
+│   │   ├── file_conversion.py
+│   │   ├── filetype.py
+│   │   ├── google_filetype.py
+│   │   ├── model.py
+│   │   └── ndjson.py
+│   ├── logger.py
+│   ├── metrics
+│   │   ├── __init__.py
+│   │   ├── element_type.py
+│   │   ├── evaluate.py
+│   │   ├── object_detection.py
+│   │   ├── table
+│   │   │   ├── __init__.py
+│   │   │   ├── table_alignment.py
+│   │   │   ├── table_eval.py
+│   │   │   ├── table_extraction.py
+│   │   │   └── table_formats.py
+│   │   ├── table_structure.py
+│   │   ├── text_extraction.py
+│   │   └── utils.py
+│   ├── models
+│   │   └── __init__.py
+│   ├── nlp
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── english_words.cpython-312.pyc
+│   │   │   ├── patterns.cpython-312.pyc
+│   │   │   └── tokenize.cpython-312.pyc
+│   │   ├── english_words.py
+│   │   ├── english-words.txt
+│   │   ├── partition.py
+│   │   ├── patterns.py
+│   │   └── tokenize.py
+│   ├── partition
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── auto.cpython-312.pyc
+│   │   │   ├── docx.cpython-312.pyc
+│   │   │   ├── pptx.cpython-312.pyc
+│   │   │   └── text_type.cpython-312.pyc
+│   │   ├── api.py
+│   │   ├── auto.py
+│   │   ├── common
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   ├── common.cpython-312.pyc
+│   │   │   │   ├── lang.cpython-312.pyc
+│   │   │   │   └── metadata.cpython-312.pyc
+│   │   │   ├── common.py
+│   │   │   ├── lang.py
+│   │   │   └── metadata.py
+│   │   ├── csv.py
+│   │   ├── doc.py
+│   │   ├── docx.py
+│   │   ├── email.py
+│   │   ├── epub.py
+│   │   ├── html
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   ├── parser.cpython-312.pyc
+│   │   │   │   ├── partition.cpython-312.pyc
+│   │   │   │   └── transformations.cpython-312.pyc
+│   │   │   ├── convert.py
+│   │   │   ├── html_utils.py
+│   │   │   ├── parser.py
+│   │   │   ├── partition.py
+│   │   │   └── transformations.py
+│   │   ├── image.py
+│   │   ├── json.py
+│   │   ├── md.py
+│   │   ├── model_init.py
+│   │   ├── msg.py
+│   │   ├── ndjson.py
+│   │   ├── odt.py
+│   │   ├── org.py
+│   │   ├── pdf_image
+│   │   │   ├── __init__.py
+│   │   │   ├── analysis
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── bbox_visualisation.py
+│   │   │   │   ├── layout_dump.py
+│   │   │   │   ├── processor.py
+│   │   │   │   └── tools.py
+│   │   │   ├── form_extraction.py
+│   │   │   ├── inference_utils.py
+│   │   │   ├── ocr.py
+│   │   │   ├── pdf_image_utils.py
+│   │   │   ├── pdfminer_processing.py
+│   │   │   ├── pdfminer_utils.py
+│   │   │   └── pypdf_utils.py
+│   │   ├── pdf.py
+│   │   ├── ppt.py
+│   │   ├── pptx.py
+│   │   ├── rst.py
+│   │   ├── rtf.py
+│   │   ├── strategies.py
+│   │   ├── text_type.py
+│   │   ├── text.py
+│   │   ├── tsv.py
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   ├── config.cpython-312.pyc
+│   │   │   │   └── constants.cpython-312.pyc
+│   │   │   ├── config.py
+│   │   │   ├── constants.py
+│   │   │   ├── ocr_models
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── google_vision_ocr.py
+│   │   │   │   ├── ocr_interface.py
+│   │   │   │   ├── paddle_ocr.py
+│   │   │   │   └── tesseract_ocr.py
+│   │   │   ├── sorting.py
+│   │   │   └── xycut.py
+│   │   ├── xlsx.py
+│   │   └── xml.py
+│   ├── patches
+│   │   ├── __init__.py
+│   │   └── pdfminer.py
+│   ├── py.typed
+│   ├── staging
+│   │   ├── __init__.py
+│   │   ├── argilla.py
+│   │   ├── base.py
+│   │   ├── baseplate.py
+│   │   ├── datasaur.py
+│   │   ├── huggingface.py
+│   │   ├── label_box.py
+│   │   ├── label_studio.py
+│   │   ├── prodigy.py
+│   │   └── weaviate.py
+│   ├── test_workflow.sh
+│   └── utils.py
+└── uv.lock
+
+366 directories, 1333 files

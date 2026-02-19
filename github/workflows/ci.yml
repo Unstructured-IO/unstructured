@@ -1,0 +1,325 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  merge_group:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  NLTK_DATA: ${{ github.workspace }}/nltk_data
+
+jobs:
+  setup:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+
+  check-licenses:
+    strategy:
+      matrix:
+        python-version: [ "3.12" ]
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/base-cache
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Check licenses
+        run: make check-licenses
+
+  lint:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    needs: [setup, changelog]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Lint
+      run: make check
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
+
+  shfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup shfmt
+        uses: mfinelli/setup-shfmt@v3
+      - name: Run shfmt
+        run: shfmt -i 2 -d .
+
+
+  test_unit:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        TESSERACT_VERSION: "5.5.1"
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+        installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
+        if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
+          echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
+          exit 1
+        fi
+        make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+        make check-coverage
+
+  test_unit_no_extras:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    needs: [setup, lint]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install base dependencies only (no extras)
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+      run: |
+        uv sync --locked --group test
+        make install-nltk-models
+        make test-no-extras CI=true
+
+  test_unit_dependency_extras:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+        extra: ["csv", "docx", "odt", "markdown", "pypandoc", "pdf-image", "pptx", "xlsx"]
+        include:
+          - extra: csv
+            uv-extras: "--extra csv"
+          - extra: docx
+            uv-extras: "--extra docx"
+          - extra: odt
+            uv-extras: "--extra odt"
+          - extra: markdown
+            uv-extras: "--extra md"
+          - extra: pypandoc
+            uv-extras: "--extra epub --extra org --extra rtf --extra rst"
+          - extra: pdf-image
+            uv-extras: "--extra pdf --extra image --extra paddleocr"
+          - extra: pptx
+            uv-extras: "--extra pptx"
+          - extra: xlsx
+            uv-extras: "--extra xlsx"
+    runs-on: ubuntu-latest
+    needs: [setup, lint, test_unit_no_extras]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install extra dependencies
+      run: |
+        uv sync --locked ${{ matrix.uv-extras }} --group test
+        make install-nltk-models
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        tesseract --version
+    - name: Test
+      env:
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        make test-extra-${{ matrix.extra }} CI=true
+
+  test_ingest_src:
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    runs-on: opensource-linux-8core
+    needs: [setup, lint]
+    steps:
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v4'
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Set up Docker
+      uses: docker/setup-docker-action@v4
+    - name: Set up Docker Compose
+      uses: docker/setup-compose-action@v1
+    - name: Test (end-to-end)
+      env:
+        AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
+        BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
+        CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+        CONFLUENCE_USER_EMAIL: ${{ secrets.CONFLUENCE_USER_EMAIL }}
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+        DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
+        GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
+        JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
+        JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+        MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
+        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+        MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
+        MS_USER_EMAIL: ${{ secrets.MS_USER_EMAIL }}
+        MS_USER_PNAME: ${{ secrets.MS_USER_PNAME }}
+        SALESFORCE_USERNAME: ${{secrets.SALESFORCE_USERNAME}}
+        SALESFORCE_CONSUMER_KEY: ${{secrets.SALESFORCE_CONSUMER_KEY}}
+        SALESFORCE_PRIVATE_KEY: ${{secrets.SALESFORCE_PRIVATE_KEY}}
+        SHAREPOINT_CLIENT_ID: ${{secrets.SHAREPOINT_CLIENT_ID}}
+        SHAREPOINT_CRED: ${{secrets.SHAREPOINT_CRED}}
+        SHAREPOINT_SITE: ${{secrets.SHAREPOINT_SITE}}
+        SHAREPOINT_PERMISSIONS_APP_ID: ${{secrets.SHAREPOINT_PERMISSIONS_APP_ID}}
+        SHAREPOINT_PERMISSIONS_APP_CRED: ${{secrets.SHAREPOINT_PERMISSIONS_APP_CRED}}
+        SHAREPOINT_PERMISSIONS_TENANT: ${{secrets.SHAREPOINT_PERMISSIONS_TENANT}}
+        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+        AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
+        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
+        ASTRA_DB_APPLICATION_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+        ASTRA_DB_API_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
+        MXBAI_API_KEY: ${{secrets.MXBAI_API_KEY}}
+        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+        CI: "true"
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
+        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr-kor
+        sudo apt-get install diffstat
+        tesseract --version
+        uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
+
+  test_json_to_html:
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    runs-on: ubuntu-latest
+    needs: [setup, lint]
+    steps:
+    - uses: 'actions/checkout@v4'
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test HTML fixtures
+      env:
+        OVERWRITE_FIXTURES: "false"
+      run: |
+        sudo apt-get install diffstat
+        uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-html.sh
+
+  test_json_to_markdown:
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    runs-on: ubuntu-latest
+    needs: [setup, lint]
+    steps:
+    - uses: 'actions/checkout@v4'
+    - uses: ./.github/actions/base-cache
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test markdown fixtures
+      env:
+        OVERWRITE_FIXTURES: "false"
+      run: |
+        sudo apt-get install diffstat
+        uv run --no-sync ./test_unstructured_ingest/check-diff-expected-output-markdown.sh
+
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+    # need to checkout otherwise paths-filter will fail on merge-queue trigger
+    - uses: actions/checkout@v4
+    - if: github.ref != 'refs/heads/main'
+      uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'unstructured/**'
+
+    - if: steps.changes.outputs.src == 'true' && github.ref != 'refs/heads/main'
+      uses: dangoslen/changelog-enforcer@v3
+
+  # TODO - figure out best practice for caching docker images
+  # (Using the virtualenv to get pytest)
+  test_dockerfile:
+    runs-on: opensource-linux-8core
+    needs: [ setup, lint ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Dockerfile
+        run: |
+          echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+          make docker-build
+          make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
+      - name: Scan image
+        uses: anchore/scan-action@v3
+        with:
+          image: "unstructured:dev"
+          severity-cutoff: critical
+          only-fixed: true
+          output-format: table

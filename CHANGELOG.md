@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## 0.21.4
 - Add a git action to test regression in runtime performance
 
@@ -20,6 +21,9 @@
 ### Fixes
 - **Replace NLTK with spaCy to remediate CVE-2025-14009**: NLTK's downloader uses `zipfile.extractall()` without path validation, enabling RCE via malicious packages (CVSS 10.0, no patch available). spaCy models install as pip packages, eliminating the vulnerable downloader entirely.
 
+||||||| parent of f7a4a80e (fix: update depdencies (#4247))
+=======
+>>>>>>> f7a4a80e (fix: update depdencies (#4247))
 ## 0.20.8
 
 ### Fixes

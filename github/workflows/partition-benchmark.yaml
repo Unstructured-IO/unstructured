@@ -1,0 +1,142 @@
+name: Partition Benchmark
+
+# Run on PRs
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NLTK_DATA: ${{ github.workspace }}/nltk_data
+  PYTHON_VERSION: "3.12"
+  NUM_ITERATIONS: "1"
+  REGRESSION_THRESHOLD: "1.2"
+  CACHE_VERSION: "v2"
+  RESULTS_DIR: "scripts/performance/partition-speed-test"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/base-cache
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+  benchmark:
+    name: Measure and compare partition() runtime
+    runs-on: ubuntu-latest
+    needs: [setup]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/base-cache
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+          sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+
+      - name: Restore HuggingFace model cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
+          restore-keys: |
+            hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-
+            hf-models-${{ runner.os }}-
+
+      # Writes total seconds to $RESULTS_DIR/current-runtime.txt
+      - name: Run partition benchmark
+        id: partition
+        env:
+          NUM_ITERATIONS: ${{ env.NUM_ITERATIONS }}
+        run: |
+          uv run --no-sync python scripts/performance/benchmark_partition.py
+          # Read the duration written by the script and expose it as a step output
+          current_duration=$(cat "${{ env.RESULTS_DIR }}/current-runtime.txt")
+          echo "duration=${current_duration}" >> $GITHUB_OUTPUT
+
+      - name: Save HuggingFace model cache
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
+
+      - name: Try downloading previous best runtime
+        continue-on-error: true
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
+          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
+          restore-keys: |
+            partition-runtime-${{ env.CACHE_VERSION }}-
+
+      - name: Compare with previous runtime (if exists)
+        id: compare
+        run: |
+          current_duration=${{ steps.partition.outputs.duration }}
+          previous_file="${{ env.RESULTS_DIR }}/best-runtime.txt"
+
+          if [[ -f "$previous_file" ]]; then
+            previous_duration=$(cat "$previous_file")
+            echo "Previous best: ${previous_duration}s"
+            echo "Current:       ${current_duration}s"
+            threshold=$(printf "%.0f" $(echo "$previous_duration * ${{ env.REGRESSION_THRESHOLD }}" | bc -l))
+            echo "Threshold (${{ env.REGRESSION_THRESHOLD }}x): ${threshold}s"
+
+            if [ "$current_duration" -gt "$threshold" ]; then
+              echo "RUNTIME_REGRESSED=true" >> $GITHUB_ENV
+              echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
+            else
+              echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+              if [ "$current_duration" -lt "$previous_duration" ]; then
+                echo "New best time - updating stored runtime."
+                echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
+              else
+                echo "Within threshold but not faster - keeping existing best."
+                echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
+              fi
+            fi
+          else
+            echo "No previous runtime found. Saving current run as baseline."
+            echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+            echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
+          fi
+
+      # Only save when current is faster (or first run).
+      # Keeps the stored value as the true best, preventing upward drift.
+      - name: Save new best runtime
+        if: env.SAVE_RUNTIME == 'true'
+        run: |
+          cp ${{ env.RESULTS_DIR }}/current-runtime.txt ${{ env.RESULTS_DIR }}/best-runtime.txt
+
+      - name: Upload new best runtime to cache
+        if: env.SAVE_RUNTIME == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
+          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: ${{ env.RESULTS_DIR }}/
+          retention-days: 30
+
+      - name: Fail if runtime regressed
+        if: env.RUNTIME_REGRESSED == 'true'
+        run: |
+          echo "FAIL: partition runtime exceeded previous best by more than ${{ env.REGRESSION_THRESHOLD }}x"
+          exit 1

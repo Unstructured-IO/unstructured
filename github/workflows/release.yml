@@ -1,0 +1,81 @@
+name: Pypi Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+  id-token: write       # Required for PyPI trusted publishing / attestations
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --locked --only-group release --no-install-project
+
+      - name: Validate version matches release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          PKG_VERSION=$(uv run --no-sync python -c "from unstructured.__version__ import __version__; print(__version__)")
+          if [[ "$TAG" != "$PKG_VERSION" && "$TAG" != "v$PKG_VERSION" ]]; then
+            echo "Tag '$TAG' does not match package version '$PKG_VERSION'"
+            exit 1
+          fi
+
+      - name: Build artifact
+        id: build
+        run: uv build
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
+
+      # Best-effort: attempt Azure upload even if PyPI fails, but only if build succeeded.
+      - name: Create .pypirc for Azure Artifacts
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          cat <<EOF > ~/.pypirc
+          [distutils]
+          index-servers =
+              azure
+
+          [azure]
+          repository: https://pkgs.dev.azure.com/${{ secrets.AZURE_ARTIFACTS_FEED }}/_packaging/${{ secrets.AZURE_ARTIFACTS_FEED }}/pypi/upload/
+          username: ${{ secrets.AZURE_ARTIFACTS_USERNAME }}
+          password: ${{ secrets.AZURE_ARTIFACTS_PAT }}
+          EOF
+
+      - name: Publish package to Azure Artifacts
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          EXIT_CODE=0
+          uv run --no-sync twine upload -r azure dist/* || EXIT_CODE=$?
+          if [[ $EXIT_CODE -eq 0 ]]; then
+            echo "Successfully published to Azure Artifacts (or already existed)"
+          else
+            echo "Azure Artifacts upload failed (exit code: $EXIT_CODE)"
+            if [[ $EXIT_CODE -eq 1 ]]; then
+              echo "This may be due to version conflicts or connectivity issues"
+            fi
+            echo "Azure Artifacts upload is non-critical - skipping failure"
+          fi
