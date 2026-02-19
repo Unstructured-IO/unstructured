@@ -1,3 +1,9 @@
+## 0.20.8
+
+### Fixes
+- downgrade `wrapt` so it is compatible with `opentelemetry-instrumentation-httpx`
+- resolve lock issue with windows and python 3.13
+
 ## 0.20.7
 
 ### Fixes
