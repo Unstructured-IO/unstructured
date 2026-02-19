@@ -1074,16 +1074,21 @@ def test_auto_partition_respects_detect_language_per_element_arg():
 )
 def test_auto_partition_respects_language_arg(file_extension: str):
     elements = partition(
-        example_doc_path(f"language-docs/eng_spa_mult.{file_extension}"), languages=["deu"]
+        example_doc_path(f"language-docs/eng_spa_mult.{file_extension}"),
+        languages=["deu"],
     )
     assert all(element.metadata.languages == ["deu"] for element in elements)
 
 
 def test_auto_partition_language_fallback_flows_through_call_chain():
     """Integration test: language_fallback must flow partition() -> partitioner -> apply_metadata
-    -> apply_lang_metadata -> detect_languages(). A fallback returning None yields no language."""
+    -> apply_lang_metadata -> detect_languages(). A fallback returning None yields no language.
+    """
     with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".txt", delete=False, encoding="utf-8"
+        mode="w",
+        suffix=".txt",
+        delete=False,
+        encoding="utf-8",
     ) as f:
         f.write("Hi.")
         path = f.name
