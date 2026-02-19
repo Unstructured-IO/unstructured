@@ -210,3 +210,6 @@ pcaps
 python-output
 
 .vs/
+# Partition benchmark generated output
+benchmark_results.json
+scripts/performance/partition-speed-test/benchmark_results.json
