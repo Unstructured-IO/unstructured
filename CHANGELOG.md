@@ -1,3 +1,7 @@
+## 0.20.6
+
+- fix: remap parent id after hashing to preserve right reference
+
 ## 0.20.5
 
 ### Fixes

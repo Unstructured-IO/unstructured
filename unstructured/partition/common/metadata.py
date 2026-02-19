@@ -252,11 +252,18 @@ def _assign_hash_ids(elements: list[Element]) -> list[Element]:
     """
     # -- generate sequence number for each element on a page --
     page_seq_counts = {}
+    id_mapping = {}
     for element in elements:
         page_number = element.metadata.page_number
         seq_on_page_counter = page_seq_counts.get(page_number, 0)
+        original_id = element.id
         element.id_to_hash(seq_on_page_counter)
+        id_mapping[original_id] = element.id
         page_seq_counts[page_number] = seq_on_page_counter + 1
+
+    for element in elements:
+        if element.metadata.parent_id is not None:
+            element.metadata.parent_id = id_mapping[element.metadata.parent_id]
 
     return elements
 
