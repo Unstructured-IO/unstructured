@@ -1095,9 +1095,9 @@ def test_auto_partition_language_fallback_flows_through_call_chain():
     try:
         elements = partition(filename=path, language_fallback=lambda t: None)
         assert elements, "expected at least one element"
-        assert all(
-            e.metadata.languages is None for e in elements
-        ), "language_fallback=lambda t: None should leave metadata.languages unset"
+        assert all(e.metadata.languages is None for e in elements), (
+            "language_fallback=lambda t: None should leave metadata.languages unset"
+        )
     finally:
         os.unlink(path)
 
