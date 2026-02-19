@@ -1,3 +1,8 @@
+## 0.20.8
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
 ## 0.20.7
 
 ### Fixes
