@@ -18,6 +18,7 @@ Usage:
 Environment variables:
     NUM_ITERATIONS   number of timed iterations per file (default: 1)
 """
+
 from __future__ import annotations
 
 import logging
@@ -74,9 +75,7 @@ def _measure(filepath: str, strategy: str, iterations: int) -> float:
 
 
 def main() -> None:
-    repo_root = (
-        Path(__file__).resolve().parent.parent.parent
-    )  # scripts/performance/ -> repo root
+    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> repo root
 
     logger.info("=" * 60)
     logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
