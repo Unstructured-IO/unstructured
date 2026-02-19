@@ -206,9 +206,10 @@ def test_detect_languages_short_text_fallback_returns_none():
 
 
 def test_detect_languages_short_text_fallback_returns_custom():
-    """Short ASCII text with language_fallback returns custom language."""
+    """Short ASCII text triggers fallback; we assert the fallback's return is used as-is."""
+    # Any short (<5 word) ASCII text would hit the fallback; content is irrelevant.
     result = detect_languages(
-        text="Bonjour monde.",
+        text="Hi there.",
         language_fallback=lambda t: ["fra"],
     )
     assert result == ["fra"]

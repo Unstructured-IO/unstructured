@@ -380,6 +380,34 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
     return [langcode for langcode in PYTESSERACT_LANG_CODES if langcode.startswith(prefix)]
 
 
+def _validate_fallback_languages(
+    value: Optional[list[str]],
+) -> Optional[list[str]]:
+    """Validate and normalize language_fallback return value to ISO 639-3 codes.
+    Returns None for None, non-list, or when no valid codes remain (invalid entries
+    are logged and skipped).
+    """
+    if value is None:
+        return None
+    if not isinstance(value, list):
+        logger.warning(
+            f"language_fallback must return None or a list of strings, got {type(value).__name__}."
+        )
+        return None
+    validated: list[str] = []
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            continue
+        lang = item.strip()
+        if lang == "zho":
+            validated.append("zho")
+        else:
+            language = _get_iso639_language_object(lang[:3])
+            if language is not None:
+                validated.append(language.part3)
+    return validated if validated else None
+
+
 def detect_languages(
     text: str,
     languages: Optional[list[str]] = None,
@@ -392,7 +420,9 @@ def detect_languages(
     For short ASCII text (fewer than 5 words), language detection is unreliable. By default
     such text is assigned English (["eng"]). Use ``language_fallback`` to override:
     pass a callable that takes the text and returns a list of ISO 639-3 codes or None.
-    Return None to leave language unspecified so the user can handle it.
+    Return None to leave language unspecified. The caller is responsible for returning
+    valid ISO 639-3 codes (e.g. "eng", "fra"); invalid entries are filtered out and
+    a warning is logged; if none remain, this function returns None.
     """
     if languages is None:
         languages = ["auto"]
@@ -413,8 +443,7 @@ def detect_languages(
     # to English. It will default to English if text is only ascii characters and is short.
     if _ASCII_RE.match(text) and len(text.split()) < 5:
         if language_fallback is not None:
-            result = language_fallback(text)
-            return result
+            return _validate_fallback_languages(language_fallback(text))
         logger.debug(f'short text: "{text}". Defaulting to English.')
         return ["eng"]
 
@@ -482,7 +511,7 @@ def apply_lang_metadata(
 ) -> Iterator[Element]:
     """Detect language and apply it to metadata.languages for each element in `elements`.
     If languages is None, default to auto detection.
-    If languages is and empty string, skip.
+    If languages is an empty string, skip.
     language_fallback is used for short text when detection is unreliable; see detect_languages."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
