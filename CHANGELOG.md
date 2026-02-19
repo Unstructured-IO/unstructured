@@ -1,3 +1,9 @@
+## 0.20.8
+
+### Enhancements
+- **Custom fallback for language detection (fixes #4091)**: Add optional `language_fallback` callable for short ASCII text (e.g. when detection would default to English). Callable receives the text and may return a list of ISO 639-3 codes or `None` to leave language unspecified; return value is validated and invalid entries are filtered out. `language_fallback` is passed through `partition()`, PDF/image partitioners, and `partition_html`; `partition_md` now accepts `languages` (use `[""]` to disable detection). Language-related parameters (`languages`, `detect_language_per_element`, `language_fallback`) are documented as top-level options and exposed explicitly on `partition_html`.
+
+
 ## 0.20.7
 
 ### Fixes
