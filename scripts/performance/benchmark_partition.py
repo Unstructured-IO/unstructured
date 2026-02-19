@@ -2,46 +2,32 @@
 """Measure partition() runtime over a fixed set of representative example-docs files.
 
 Follows the same conventions as the existing scripts/performance tooling:
-    - PDFs and images are run with strategy="hi_res".
+    - PDFs are run with strategy="hi_res".
     - Everything else is run with strategy="fast".
     - Each file is timed over NUM_ITERATIONS runs (after a warmup) and the
       average is recorded, matching time_partition.py behaviour.
 
-Output is a JSON file mapping each file path to its average elapsed seconds,
-plus a ``"__total__"`` key that is the sum of all per-file averages.
+Writes the total elapsed seconds to:
+    scripts/performance/partition-speed-test/current-runtime.txt
 
-Results are saved to scripts/performance/partition-speed-test/ by default.
+The calling workflow step reads that file and sets $GITHUB_OUTPUT explicitly.
 
 Usage:
-    uv run --no-sync python scripts/performance/benchmark_partition.py [output.json]
-
-    output.json  where results are written
-                 (default: scripts/performance/partition-speed-test/benchmark_results.json)
+    uv run --no-sync python scripts/performance/benchmark_partition.py
 
 Environment variables:
     NUM_ITERATIONS   number of timed iterations per file (default: 1)
 """
-
 from __future__ import annotations
 
-import json
 import logging
 import os
-import sys
 import time
 from pathlib import Path
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# File list (relative to repo root).
-# Each entry is (path, strategy).
-# hi_res  - PDFs and images (exercises the full OCR / layout-detection stack)
-# fast    - all other document types (exercises text-extraction paths)
-# Mirrors the HI_RES_STRATEGY_FILES pattern in benchmark-local.sh.
-# ---------------------------------------------------------------------------
 BENCHMARK_FILES: list[tuple[str, str]] = [
     # PDFs - hi_res
     ("example-docs/pdf/a1977-backus-p21.pdf", "hi_res"),
@@ -55,21 +41,19 @@ BENCHMARK_FILES: list[tuple[str, str]] = [
 NUM_ITERATIONS: int = int(os.environ.get("NUM_ITERATIONS", "1"))
 
 RESULTS_DIR = Path(__file__).parent / "partition-speed-test"
+CURRENT_RUNTIME_FILE = RESULTS_DIR / "current-runtime.txt"
 
 
 def _warmup(filepath: str) -> None:
     """Run a single fast-strategy partition to warm the process up.
 
-    Mirrors the warm_up_process() call in time_partition.py: if a warmup
-    variant of the file exists under warmup-docs/ use that, otherwise fall
-    back to the file itself.
+    Mirrors warm_up_process() in time_partition.py: uses a warmup-docs/
+    variant if present, otherwise falls back to the file itself.
     """
     from unstructured.partition.auto import partition
 
     warmup_dir = Path(__file__).parent / "warmup-docs"
-    ext = Path(filepath).suffix
-    warmup_file = warmup_dir / f"warmup{ext}"
-
+    warmup_file = warmup_dir / f"warmup{Path(filepath).suffix}"
     target = str(warmup_file) if warmup_file.exists() else filepath
     partition(target, strategy="fast")
 
@@ -89,53 +73,34 @@ def _measure(filepath: str, strategy: str, iterations: int) -> float:
     return total / iterations
 
 
-def run_benchmark(repo_root: Path, output_path: Path | None = None) -> dict[str, float]:
-    """Benchmark each file and return ``{rel_path: avg_seconds, "__total__": total}``.
+def main() -> None:
+    repo_root = (
+        Path(__file__).resolve().parent.parent.parent
+    )  # scripts/performance/ -> repo root
 
-    Args:
-        repo_root:   Absolute path to the repository root.
-        output_path: If given, results are written as JSON to this path.
-    """
-    results: dict[str, float] = {}
-    missing: list[str] = []
+    logger.info("=" * 60)
+    logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
+    logger.info("=" * 60)
+
+    grand_start = time.time()
 
     for rel_path, strategy in BENCHMARK_FILES:
         filepath = repo_root / rel_path
         if not filepath.exists():
             logger.warning(f"  WARNING: {rel_path} not found - skipping.")
-            missing.append(rel_path)
             continue
 
         logger.info(f"  {rel_path}  (strategy={strategy}, iterations={NUM_ITERATIONS})")
-
         _warmup(str(filepath))
-        avg = round(_measure(str(filepath), strategy, NUM_ITERATIONS), 3)
-        results[rel_path] = avg
+        avg = _measure(str(filepath), strategy, NUM_ITERATIONS)
         logger.info(f"    avg {avg:.2f}s")
 
-    total = round(sum(v for v in results.values()), 3)
-    results["__total__"] = total
+    total_seconds = int(time.time() - grand_start)
+    logger.info(f"\nTotal wall-clock time: {total_seconds}s")
 
-    logger.info(f"\nTotal (sum of averages) across {len(results) - 1} file(s): {total:.2f}s")
-    if missing:
-        logger.warning(f"Skipped {len(missing)} missing file(s): {', '.join(missing)}")
-
-    if output_path is not None:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(json.dumps(results, indent=2))
-        logger.info(f"Results written to {output_path}")
-
-    return results
-
-
-def main() -> None:
-    output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else RESULTS_DIR / "benchmark_results.json"
-    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> repo root
-
-    logger.info("=" * 60)
-    logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
-    logger.info("=" * 60)
-    run_benchmark(repo_root, output_path)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    CURRENT_RUNTIME_FILE.write_text(str(total_seconds))
+    logger.info(f"Duration written to {CURRENT_RUNTIME_FILE}")
 
 
 if __name__ == "__main__":

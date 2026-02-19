@@ -16,7 +16,7 @@ env:
   NUM_ITERATIONS: "1"
   REGRESSION_THRESHOLD: "1.2"
   CACHE_VERSION: "v1"
-  RUNTIME_FILE: "scripts/performance/partition-speed-test/partition-runtime.txt"
+  RESULTS_DIR: "scripts/performance/partition-speed-test"
 
 jobs:
   setup:
@@ -56,12 +56,16 @@ jobs:
             hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-
             hf-models-${{ runner.os }}-
 
+      # Writes total seconds to $RESULTS_DIR/current-runtime.txt
       - name: Run partition benchmark
         id: partition
         env:
           NUM_ITERATIONS: ${{ env.NUM_ITERATIONS }}
         run: |
           uv run --no-sync python scripts/performance/benchmark_partition.py
+          # Read the duration written by the script and expose it as a step output
+          current_duration=$(cat "${{ env.RESULTS_DIR }}/current-runtime.txt")
+          echo "duration=${current_duration}" >> $GITHUB_OUTPUT
 
       - name: Save HuggingFace model cache
         uses: actions/cache/save@v4
@@ -69,11 +73,11 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
-      - name: Try downloading previous runtime
+      - name: Try downloading previous best runtime
         continue-on-error: true
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.RUNTIME_FILE }}
+          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
           key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
           restore-keys: |
             partition-runtime-${{ env.CACHE_VERSION }}-
@@ -82,33 +86,46 @@ jobs:
         id: compare
         run: |
           current_duration=${{ steps.partition.outputs.duration }}
-          previous_file="${{ env.RUNTIME_FILE }}"
+          previous_file="${{ env.RESULTS_DIR }}/best-runtime.txt"
 
           if [[ -f "$previous_file" ]]; then
             previous_duration=$(cat "$previous_file")
-            echo "Previous duration: ${previous_duration}s"
-            echo "Current duration:  ${current_duration}s"
+            echo "Previous best: ${previous_duration}s"
+            echo "Current:       ${current_duration}s"
             threshold=$(printf "%.0f" $(echo "$previous_duration * ${{ env.REGRESSION_THRESHOLD }}" | bc -l))
-            echo "Threshold (${REGRESSION_THRESHOLD}x): ${threshold}s"
+            echo "Threshold (${{ env.REGRESSION_THRESHOLD }}x): ${threshold}s"
+
             if [ "$current_duration" -gt "$threshold" ]; then
               echo "RUNTIME_REGRESSED=true" >> $GITHUB_ENV
+              echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
             else
               echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+              if [ "$current_duration" -lt "$previous_duration" ]; then
+                echo "New best time - updating stored runtime."
+                echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
+              else
+                echo "Within threshold but not faster - keeping existing best."
+                echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
+              fi
             fi
           else
             echo "No previous runtime found. Saving current run as baseline."
             echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+            echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
           fi
 
-      - name: Save current runtime
+      # Only save when current is faster (or first run).
+      # Keeps the stored value as the true best, preventing upward drift.
+      - name: Save new best runtime
+        if: env.SAVE_RUNTIME == 'true'
         run: |
-          mkdir -p "$(dirname "${{ env.RUNTIME_FILE }}")"
-          echo "${{ steps.partition.outputs.duration }}" > ${{ env.RUNTIME_FILE }}
+          cp ${{ env.RESULTS_DIR }}/current-runtime.txt ${{ env.RESULTS_DIR }}/best-runtime.txt
 
-      - name: Upload current runtime to cache
+      - name: Upload new best runtime to cache
+        if: env.SAVE_RUNTIME == 'true'
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.RUNTIME_FILE }}
+          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
           key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
       - name: Upload benchmark artifacts
@@ -116,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.sha }}
-          path: ${{ env.RUNTIME_FILE }}
+          path: ${{ env.RESULTS_DIR }}/
           retention-days: 30
 
       - name: Fail if runtime regressed
