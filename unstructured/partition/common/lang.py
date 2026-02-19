@@ -536,9 +536,7 @@ def apply_lang_metadata(
         elements = list(elements)
 
     def detect(text: str) -> Optional[list[str]]:
-        return detect_languages(
-            text=text, languages=languages, language_fallback=language_fallback
-        )
+        return detect_languages(text=text, languages=languages, language_fallback=language_fallback)
 
     full_text = " ".join(str(e.text) for e in elements if hasattr(e, "text") and e.text)
     detected_languages = detect(full_text)
