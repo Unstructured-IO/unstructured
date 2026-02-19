@@ -10,6 +10,7 @@
   `GzipFile`, `tarfile.ExFileObject`). The file cursor is reset via `seek(0)` where supported so
   callers can re-read the file after `convert_to_bytes()` returns.
 
+
 ## 0.20.5
 
 ### Fixes
