@@ -4,6 +4,8 @@ import os
 import pathlib
 import platform
 import tempfile
+import zlib
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -28,6 +30,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import DecompressedSizeExceededError
 from unstructured.partition.email import partition_email
 from unstructured.partition.text import partition_text
 from unstructured.staging import base
@@ -43,6 +46,31 @@ def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_fro
     elements = base.elements_from_base64_gzipped_json(base64_elements_str)
 
     assert elements == [Title("Lorem"), Text("Lorem Ipsum")]
+
+
+def test_elements_from_base64_gzipped_json_raises_error_if_decompression_is_incomplete():
+    base64_elements_str = (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cL="
+    )
+
+    with pytest.raises(zlib.error):
+        base.elements_from_base64_gzipped_json(base64_elements_str)
+
+
+def test_elements_from_base64_gzipped_json_raises_error_if_decompression_exceeds_max_size():
+    base64_elements_str = (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+    )
+
+    with (
+        patch("unstructured.staging.base.MAX_DECOMPRESSED_SIZE", 32),
+        pytest.raises(DecompressedSizeExceededError),
+    ):
+        base.elements_from_base64_gzipped_json(base64_elements_str)
 
 
 def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
