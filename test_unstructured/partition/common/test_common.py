@@ -1,4 +1,5 @@
 import pathlib
+from io import BytesIO
 from multiprocessing import Pool
 
 import numpy as np
@@ -466,3 +467,68 @@ def test_normalize_layout_element_layout_element_text_source_metadata():
     assert hasattr(element, "metadata")
     assert hasattr(element.metadata, "is_extracted")
     assert element.metadata.is_extracted == "true"
+
+
+def test_convert_to_bytes_handles_a_ZipExtFile():
+    """ZipExtFile from zipfile.ZipFile.open() is readable as bytes."""
+    import zipfile
+
+    zip_buffer = BytesIO()
+    test_content = b"Hello from inside a zip archive!"
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("test.txt", test_content)
+    zip_buffer.seek(0)
+
+    with zipfile.ZipFile(zip_buffer, "r") as zf:
+        with zf.open("test.txt") as zipext_file:
+            result = common.convert_to_bytes(zipext_file)
+
+    assert result == test_content
+
+
+def test_convert_to_bytes_resets_ZipExtFile_cursor_after_reading():
+    """The ZipExtFile should be seekable again after convert_to_bytes returns."""
+    import zipfile
+
+    zip_buffer = BytesIO()
+    test_content = b"Cursor should be reset after read."
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_STORED) as zf:
+        zf.writestr("test.txt", test_content)
+    zip_buffer.seek(0)
+
+    with zipfile.ZipFile(zip_buffer, "r") as zf:
+        with zf.open("test.txt") as zipext_file:
+            common.convert_to_bytes(zipext_file)
+            # -- cursor must be reset so caller can read the file again --
+            zipext_file.seek(0)
+            assert zipext_file.read() == test_content
+
+
+def test_convert_to_bytes_handles_a_generic_readable_IO_bytes_object():
+    """Any object with a .read() method is accepted, not just whitelisted types."""
+    import io
+
+    class _CustomStream(io.RawIOBase):
+        """Minimal non-standard IO[bytes] type not in the existing whitelist."""
+
+        def __init__(self, data: bytes):
+            self._data = BytesIO(data)
+
+        def read(self, n: int = -1) -> bytes:
+            return self._data.read(n)
+
+        def readinto(self, b: bytearray) -> int:
+            data = self._data.read(len(b))
+            n = len(data)
+            b[:n] = data
+            return n
+
+    test_content = b"Custom stream content."
+    stream = _CustomStream(test_content)
+    assert common.convert_to_bytes(stream) == test_content
+
+
+def test_convert_to_bytes_raises_on_a_non_readable_object():
+    """An object with no .read() method still raises ValueError."""
+    with pytest.raises(ValueError, match="Invalid file-like object type"):
+        common.convert_to_bytes(12345)  # type: ignore[arg-type]
