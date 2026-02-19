@@ -21,6 +21,7 @@ Usage:
 Environment variables:
     NUM_ITERATIONS   number of timed iterations per file (default: 1)
 """
+
 from __future__ import annotations
 
 import json
@@ -115,9 +116,7 @@ def run_benchmark(repo_root: Path, output_path: Path | None = None) -> dict[str,
     total = round(sum(v for v in results.values()), 3)
     results["__total__"] = total
 
-    logger.info(
-        f"\nTotal (sum of averages) across {len(results) - 1} file(s): {total:.2f}s"
-    )
+    logger.info(f"\nTotal (sum of averages) across {len(results) - 1} file(s): {total:.2f}s")
     if missing:
         logger.warning(f"Skipped {len(missing)} missing file(s): {', '.join(missing)}")
 
@@ -130,14 +129,8 @@ def run_benchmark(repo_root: Path, output_path: Path | None = None) -> dict[str,
 
 
 def main() -> None:
-    output_path = (
-        Path(sys.argv[1])
-        if len(sys.argv) > 1
-        else RESULTS_DIR / "benchmark_results.json"
-    )
-    repo_root = (
-        Path(__file__).resolve().parent.parent.parent
-    )  # scripts/performance/ -> repo root
+    output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else RESULTS_DIR / "benchmark_results.json"
+    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> repo root
 
     logger.info("=" * 60)
     logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
