@@ -1079,6 +1079,24 @@ def test_auto_partition_respects_language_arg(file_extension: str):
     assert all(element.metadata.languages == ["deu"] for element in elements)
 
 
+def test_auto_partition_language_fallback_flows_through_call_chain():
+    """Integration test: language_fallback must flow partition() -> partitioner -> apply_metadata
+    -> apply_lang_metadata -> detect_languages(). A fallback returning None yields no language."""
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".txt", delete=False, encoding="utf-8"
+    ) as f:
+        f.write("Hi.")
+        path = f.name
+    try:
+        elements = partition(filename=path, language_fallback=lambda t: None)
+        assert elements, "expected at least one element"
+        assert all(
+            e.metadata.languages is None for e in elements
+        ), "language_fallback=lambda t: None should leave metadata.languages unset"
+    finally:
+        os.unlink(path)
+
+
 # -- include_page_breaks --------------------------------------------------
 
 
