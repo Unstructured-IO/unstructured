@@ -1,10 +1,8 @@
 name: Partition Benchmark
 
-# Runs on every push to main and on every PR targeting main.
+# Runs on every PR targeting main.
 # Can also be triggered manually to establish or inspect a new baseline.
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -84,7 +82,6 @@ jobs:
           uv run --no-sync python scripts/performance/benchmark_partition.py
 
       - name: Save HuggingFace model cache
-        if: github.ref == 'refs/heads/main'
         uses: actions/cache/save@v4
         with:
           path: ~/.cache/huggingface
@@ -92,7 +89,7 @@ jobs:
 
       # ------------------------------------------------------------------ #
       # 4. Restore the stored best runtime                                  #
-      #    PRs inherit the latest best from main via restore-keys.          #
+      #    Each PR compares against the most recent cached best.            #
       # ------------------------------------------------------------------ #
       - name: Restore best benchmark result
         uses: actions/cache/restore@v4
@@ -113,11 +110,7 @@ jobs:
             ${{ env.RESULTS_DIR }}/benchmark_best.json \
             ${{ env.REGRESSION_THRESHOLD }}
 
-      # Only update the stored best from main so PR runs never move the
-      # baseline.  compare_benchmark.py overwrites benchmark_best.json only
-      # when the current run is faster, so the true minimum is preserved.
       - name: Save best benchmark result
-        if: github.ref == 'refs/heads/main'
         uses: actions/cache/save@v4
         with:
           path: ${{ env.RESULTS_DIR }}/benchmark_best.json
