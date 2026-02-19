@@ -13,16 +13,10 @@ permissions:
 env:
   NLTK_DATA: ${{ github.workspace }}/nltk_data
   PYTHON_VERSION: "3.12"
-  # Number of timed iterations per file, matching NUM_ITERATIONS in benchmark-local.sh.
-  # Kept at 1 in CI to minimise runner time; raise locally for more stable averages.
   NUM_ITERATIONS: "1"
-  # Fraction by which the current total may exceed the stored best before the
-  # job is marked failed.  0.20 = 20%.
-  REGRESSION_THRESHOLD: "0.20"
-  # Increment to bust all stored best-runtime caches (e.g. after a deliberate
-  # performance trade-off is accepted).
+  REGRESSION_THRESHOLD: "1.2"
   CACHE_VERSION: "v1"
-  RESULTS_DIR: "scripts/performance/partition-speed-test"
+  RUNTIME_FILE: "scripts/performance/partition-speed-test/partition-runtime.txt"
 
 jobs:
   setup:
@@ -39,9 +33,6 @@ jobs:
     needs: [setup]
 
     steps:
-      # ------------------------------------------------------------------ #
-      # 1. Source & Python environment                                       #
-      # ------------------------------------------------------------------ #
       - uses: actions/checkout@v4
 
       - uses: ./.github/actions/base-cache
@@ -56,11 +47,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
 
-      # ------------------------------------------------------------------ #
-      # 2. Cache HuggingFace models                                         #
-      #    hi_res downloads layout-detection models on first use.           #
-      #    Caching keeps benchmark timings stable across runs.              #
-      # ------------------------------------------------------------------ #
       - name: Restore HuggingFace model cache
         uses: actions/cache/restore@v4
         with:
@@ -70,12 +56,8 @@ jobs:
             hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-
             hf-models-${{ runner.os }}-
 
-      # ------------------------------------------------------------------ #
-      # 3. Run the benchmark                                                #
-      #    No output path argument needed - script defaults to             #
-      #    scripts/performance/partition-speed-test/benchmark_results.json  #
-      # ------------------------------------------------------------------ #
       - name: Run partition benchmark
+        id: partition
         env:
           NUM_ITERATIONS: ${{ env.NUM_ITERATIONS }}
         run: |
@@ -87,42 +69,58 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
-      # ------------------------------------------------------------------ #
-      # 4. Restore the stored best runtime                                  #
-      #    Each PR compares against the most recent cached best.            #
-      # ------------------------------------------------------------------ #
-      - name: Restore best benchmark result
+      - name: Try downloading previous runtime
+        continue-on-error: true
         uses: actions/cache/restore@v4
         with:
-          path: ${{ env.RESULTS_DIR }}/benchmark_best.json
-          key: benchmark-best-${{ env.CACHE_VERSION }}-${{ github.sha }}
+          path: ${{ env.RUNTIME_FILE }}
+          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
           restore-keys: |
-            benchmark-best-${{ env.CACHE_VERSION }}-
+            partition-runtime-${{ env.CACHE_VERSION }}-
 
-      # ------------------------------------------------------------------ #
-      # 5. Compare results; fail on regression                              #
-      # ------------------------------------------------------------------ #
-      - name: Compare results against stored best
+      - name: Compare with previous runtime (if exists)
         id: compare
         run: |
-          uv run --no-sync python scripts/performance/compare_benchmark.py \
-            ${{ env.RESULTS_DIR }}/benchmark_results.json \
-            ${{ env.RESULTS_DIR }}/benchmark_best.json \
-            ${{ env.REGRESSION_THRESHOLD }}
+          current_duration=${{ steps.partition.outputs.duration }}
+          previous_file="${{ env.RUNTIME_FILE }}"
 
-      - name: Save best benchmark result
+          if [[ -f "$previous_file" ]]; then
+            previous_duration=$(cat "$previous_file")
+            echo "Previous duration: ${previous_duration}s"
+            echo "Current duration:  ${current_duration}s"
+            threshold=$(printf "%.0f" $(echo "$previous_duration * ${{ env.REGRESSION_THRESHOLD }}" | bc -l))
+            echo "Threshold (${REGRESSION_THRESHOLD}x): ${threshold}s"
+            if [ "$current_duration" -gt "$threshold" ]; then
+              echo "RUNTIME_REGRESSED=true" >> $GITHUB_ENV
+            else
+              echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+            fi
+          else
+            echo "No previous runtime found. Saving current run as baseline."
+            echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
+          fi
+
+      - name: Save current runtime
+        run: |
+          mkdir -p "$(dirname "${{ env.RUNTIME_FILE }}")"
+          echo "${{ steps.partition.outputs.duration }}" > ${{ env.RUNTIME_FILE }}
+
+      - name: Upload current runtime to cache
         uses: actions/cache/save@v4
         with:
-          path: ${{ env.RESULTS_DIR }}/benchmark_best.json
-          key: benchmark-best-${{ env.CACHE_VERSION }}-${{ github.sha }}
+          path: ${{ env.RUNTIME_FILE }}
+          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
-      # ------------------------------------------------------------------ #
-      # 6. Upload artifacts - always, so regressions can be inspected      #
-      # ------------------------------------------------------------------ #
       - name: Upload benchmark artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.sha }}
-          path: ${{ env.RESULTS_DIR }}/
+          path: ${{ env.RUNTIME_FILE }}
           retention-days: 30
+
+      - name: Fail if runtime regressed
+        if: env.RUNTIME_REGRESSED == 'true'
+        run: |
+          echo "FAIL: partition runtime exceeded previous best by more than ${{ env.REGRESSION_THRESHOLD }}x"
+          exit 1
