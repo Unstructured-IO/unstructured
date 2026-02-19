@@ -19,6 +19,7 @@ from unstructured.documents.elements import (
     Table,
     Title,
 )
+from unstructured.errors import DecompressedSizeExceededError
 from unstructured.file_utils.ndjson import dumps as ndjson_dumps
 from unstructured.partition.common.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
@@ -49,6 +50,15 @@ def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element
     # -- undo gzip compression --
     dobj = zlib.decompressobj()
     elements_json_bytes = dobj.decompress(decoded_b64_bytes, max_length=MAX_DECOMPRESSED_SIZE)
+    # -- Check if decompression completed successfully --
+    if not dobj.eof:
+        # Check if we hit the size limit or if data is actually incomplete
+        if len(elements_json_bytes) >= MAX_DECOMPRESSED_SIZE:
+            raise DecompressedSizeExceededError(
+                max_size=MAX_DECOMPRESSED_SIZE,
+            )
+        else:
+            raise zlib.error("Incomplete or corrupted compressed data")
     # -- JSON (bytes) to JSON (str) --
     elements_json_str = elements_json_bytes.decode("utf-8")
     # -- JSON (str) -> dicts --
