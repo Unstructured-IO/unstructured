@@ -178,6 +178,8 @@ class ElementMetadata:
     image_mime_type: Optional[str]
     # -- specific to DOCX which has distinct primary, first-page, and even-page header/footers --
     header_footer_type: Optional[str]
+    # -- heading level (1-4) for hierarchical document structure (H1, H2, H3, H4) --
+    heading_level: Optional[int]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
     key_value_pairs: Optional[list[FormKeyValuePair]]
@@ -230,6 +232,7 @@ class ElementMetadata:
         filename: Optional[str | pathlib.Path] = None,
         filetype: Optional[str] = None,
         header_footer_type: Optional[str] = None,
+        heading_level: Optional[int] = None,
         image_base64: Optional[str] = None,
         image_mime_type: Optional[str] = None,
         image_url: Optional[str] = None,
@@ -275,6 +278,7 @@ class ElementMetadata:
 
         self.filetype = filetype
         self.header_footer_type = header_footer_type
+        self.heading_level = heading_level
         self.image_base64 = image_base64
         self.image_mime_type = image_mime_type
         self.image_url = image_url
@@ -494,6 +498,7 @@ class ConsolidationStrategy(enum.Enum):
             "filename": cls.FIRST,
             "filetype": cls.FIRST,
             "header_footer_type": cls.DROP,
+            "heading_level": cls.DROP,
             "image_url": cls.DROP,
             "image_path": cls.DROP,
             "image_base64": cls.DROP,
