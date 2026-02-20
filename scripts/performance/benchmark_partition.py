@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""Measure partition() runtime over a fixed set of representative example-docs files.
-
-Follows the same conventions as the existing scripts/performance tooling:
-    - PDFs and images are run with strategy="hi_res".
-    - Everything else is run with strategy="fast".
-    - Each file is timed over NUM_ITERATIONS runs (after a warmup) and the
-      average is recorded, matching time_partition.py behaviour.
-
-Writes a JSON file mapping each file to its average runtime, plus a ``__total__``
-key with the wall-clock total.  An optional positional argument sets the output
-path (default: scripts/performance/partition-speed-test/benchmark_results.json).
+"""Measure partition() runtime over a set of files from example-docs.
 
 Usage:
     uv run --no-sync python scripts/performance/benchmark_partition.py [output.json]
@@ -30,11 +20,6 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Benchmark file list
-#   - PDFs and images use strategy="hi_res"
-#   - All other document types use strategy="fast"
-# ---------------------------------------------------------------------------
 
 BENCHMARK_FILES: list[tuple[str, str]] = [
     # PDFs – hi_res
@@ -56,11 +41,6 @@ BENCHMARK_FILES: list[tuple[str, str]] = [
 NUM_ITERATIONS: int = int(os.environ.get("NUM_ITERATIONS", "1"))
 
 DEFAULT_OUTPUT = Path(__file__).parent / "partition-speed-test" / "benchmark_results.json"
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 
 def _warmup(filepath: str) -> None:
@@ -90,11 +70,6 @@ def _measure(filepath: str, strategy: str, iterations: int) -> float:
         partition(filepath, strategy=strategy)
         total += time.time() - t0
     return total / iterations
-
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 
 
 def main() -> None:
