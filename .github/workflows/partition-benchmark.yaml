@@ -1,6 +1,6 @@
 name: Partition Benchmark
 
-# Runs on every PR targeting main.
+# Runs on every PR targeting main to detect regressions.
 # Can also be triggered manually to establish or inspect a new baseline.
 on:
   pull_request:
@@ -13,10 +13,18 @@ permissions:
 env:
   NLTK_DATA: ${{ github.workspace }}/nltk_data
   PYTHON_VERSION: "3.12"
+  # Number of timed iterations per file.
+  # Kept at 1 in CI to minimise runner time; raise locally for more stable averages.
   NUM_ITERATIONS: "1"
-  REGRESSION_THRESHOLD: "1.2"
+  # Fraction by which the current total may exceed the stored best before the
+  # job is marked as failed. 0.20 = 20%.
+  REGRESSION_THRESHOLD: "0.20"
+  # Increment to bust all stored caches (e.g. after a deliberate performance
+  # trade-off is accepted).
   CACHE_VERSION: "v1"
-  RESULTS_DIR: "scripts/performance/partition-speed-test"
+  # S3 location for the stored best benchmark result.
+  S3_METRICS_BUCKET_KEY: ${{ secrets.S3_METRICS_BUCKET_KEY }}
+  S3_BENCHMARK_PATH: partition-benchmark/benchmark_best.json
 
 jobs:
   setup:
@@ -33,6 +41,9 @@ jobs:
     needs: [setup]
 
     steps:
+      # ------------------------------------------------------------------ #
+      # 1. Source & Python environment                                      #
+      # ------------------------------------------------------------------ #
       - uses: actions/checkout@v4
 
       - uses: ./.github/actions/base-cache
@@ -47,6 +58,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
 
+      # ------------------------------------------------------------------ #
+      # 2. Cache HuggingFace models                                        #
+      #    hi_res downloads layout-detection models on first use.          #
+      #    Caching keeps benchmark timings stable across runs.             #
+      # ------------------------------------------------------------------ #
       - name: Restore HuggingFace model cache
         uses: actions/cache/restore@v4
         with:
@@ -56,16 +72,16 @@ jobs:
             hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-
             hf-models-${{ runner.os }}-
 
-      # Writes total seconds to $RESULTS_DIR/current-runtime.txt
+      # ------------------------------------------------------------------ #
+      # 3. Run the benchmark                                               #
+      #    Writes per-file timings + __total__ to benchmark_results.json.  #
+      # ------------------------------------------------------------------ #
       - name: Run partition benchmark
-        id: partition
         env:
           NUM_ITERATIONS: ${{ env.NUM_ITERATIONS }}
         run: |
-          uv run --no-sync python scripts/performance/benchmark_partition.py
-          # Read the duration written by the script and expose it as a step output
-          current_duration=$(cat "${{ env.RESULTS_DIR }}/current-runtime.txt")
-          echo "duration=${current_duration}" >> $GITHUB_OUTPUT
+          uv run --no-sync python scripts/performance/benchmark_partition.py \
+            benchmark_results.json
 
       - name: Save HuggingFace model cache
         uses: actions/cache/save@v4
@@ -73,71 +89,60 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
-      - name: Try downloading previous best runtime
+      # ------------------------------------------------------------------ #
+      # 4. Download the stored best runtime from S3                        #
+      #    continue-on-error: first run will have nothing stored yet.      #
+      # ------------------------------------------------------------------ #
+      - name: Download previous best from S3
         continue-on-error: true
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
-          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
-          restore-keys: |
-            partition-runtime-${{ env.CACHE_VERSION }}-
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
+        run: |
+          aws s3 cp \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}" \
+            benchmark_best.json
 
-      - name: Compare with previous runtime (if exists)
+      # ------------------------------------------------------------------ #
+      # 5. Compare results; fail on regression                             #
+      #    compare_benchmark.py:                                           #
+      #      - Logs a per-file table with deltas.                          #
+      #      - Exits 1 if current > best * (1 + threshold).               #
+      #      - Overwrites benchmark_best.json when current is faster.      #
+      # ------------------------------------------------------------------ #
+      - name: Compare results against stored best
         id: compare
         run: |
-          current_duration=${{ steps.partition.outputs.duration }}
-          previous_file="${{ env.RESULTS_DIR }}/best-runtime.txt"
+          uv run --no-sync python scripts/performance/compare_benchmark.py \
+            benchmark_results.json \
+            benchmark_best.json \
+            ${{ env.REGRESSION_THRESHOLD }}
 
-          if [[ -f "$previous_file" ]]; then
-            previous_duration=$(cat "$previous_file")
-            echo "Previous best: ${previous_duration}s"
-            echo "Current:       ${current_duration}s"
-            threshold=$(printf "%.0f" $(echo "$previous_duration * ${{ env.REGRESSION_THRESHOLD }}" | bc -l))
-            echo "Threshold (${{ env.REGRESSION_THRESHOLD }}x): ${threshold}s"
-
-            if [ "$current_duration" -gt "$threshold" ]; then
-              echo "RUNTIME_REGRESSED=true" >> $GITHUB_ENV
-              echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
-            else
-              echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
-              if [ "$current_duration" -lt "$previous_duration" ]; then
-                echo "New best time - updating stored runtime."
-                echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
-              else
-                echo "Within threshold but not faster - keeping existing best."
-                echo "SAVE_RUNTIME=false" >> $GITHUB_ENV
-              fi
-            fi
-          else
-            echo "No previous runtime found. Saving current run as baseline."
-            echo "RUNTIME_REGRESSED=false" >> $GITHUB_ENV
-            echo "SAVE_RUNTIME=true" >> $GITHUB_ENV
-          fi
-
-      # Only save when current is faster (or first run).
-      # Keeps the stored value as the true best, preventing upward drift.
-      - name: Save new best runtime
-        if: env.SAVE_RUNTIME == 'true'
+      # ------------------------------------------------------------------ #
+      # 6. Upload the (possibly updated) best result back to S3            #
+      #    compare_benchmark.py only overwrites benchmark_best.json when   #
+      #    the current run is strictly faster, so the true minimum is      #
+      #    preserved.                                                      #
+      # ------------------------------------------------------------------ #
+      - name: Upload best result to S3
+        continue-on-error: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
         run: |
-          cp ${{ env.RESULTS_DIR }}/current-runtime.txt ${{ env.RESULTS_DIR }}/best-runtime.txt
+          aws s3 cp \
+            benchmark_best.json \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}"
 
-      - name: Upload new best runtime to cache
-        if: env.SAVE_RUNTIME == 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.RESULTS_DIR }}/best-runtime.txt
-          key: partition-runtime-${{ env.CACHE_VERSION }}-${{ github.sha }}
-
+      # ------------------------------------------------------------------ #
+      # 7. Upload artifacts – always, so regressions can be inspected      #
+      # ------------------------------------------------------------------ #
       - name: Upload benchmark artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.sha }}
-          path: ${{ env.RESULTS_DIR }}/
+          path: |
+            benchmark_results.json
+            benchmark_best.json
           retention-days: 30
-
-      - name: Fail if runtime regressed
-        if: env.RUNTIME_REGRESSED == 'true'
-        run: |
-          echo "FAIL: partition runtime exceeded previous best by more than ${{ env.REGRESSION_THRESHOLD }}x"
-          exit 1
