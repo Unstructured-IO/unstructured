@@ -1,3 +1,6 @@
+## 0.20.9
+- add an action to test the partition seepd in high_res and fast
+
 ## 0.20.8
 
 ### Fixes
