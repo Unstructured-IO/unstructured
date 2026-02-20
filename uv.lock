@@ -1489,6 +1489,14 @@ wheels = [
 ]
 
 [[package]]
+name = "en-core-web-sm"
+version = "3.8.0"
+source = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }
+wheels = [
+    { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl", hash = "sha256:1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85" },
+]
+
+[[package]]
 name = "et-xmlfile"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -7028,6 +7036,7 @@ dependencies = [
     { name = "beautifulsoup4" },
     { name = "charset-normalizer" },
     { name = "emoji" },
+    { name = "en-core-web-sm" },
     { name = "filetype" },
     { name = "html5lib" },
     { name = "langdetect" },
@@ -7206,6 +7215,7 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.14.3,<5.0.0" },
     { name = "charset-normalizer", specifier = ">=3.4.4,<4.0.0" },
     { name = "emoji", specifier = ">=2.15.0,<3.0.0" },
+    { name = "en-core-web-sm", url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" },
     { name = "filetype", specifier = ">=1.2.0,<2.0.0" },
     { name = "google-cloud-vision", marker = "extra == 'all-docs'", specifier = ">=3.12.1,<4.0.0" },
     { name = "google-cloud-vision", marker = "extra == 'image'", specifier = ">=3.12.1,<4.0.0" },

@@ -14,16 +14,11 @@ help: Makefile
 .PHONY: install
 install:
 	@uv sync --locked --all-extras --all-groups
-	@$(MAKE) install-spacy-model
 
 ## lock:                    update and lock all dependencies
 .PHONY: lock
 lock:
 	@uv lock --upgrade
-
-.PHONY: install-spacy-model
-install-spacy-model:
-	uv pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
 
 
 #################

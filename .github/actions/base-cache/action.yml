@@ -19,4 +19,3 @@ runs:
       shell: bash
       run: |
         uv sync --locked --all-extras --all-groups
-        make install-spacy-model
