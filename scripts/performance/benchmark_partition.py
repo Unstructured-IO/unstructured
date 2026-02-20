@@ -31,9 +31,10 @@ BENCHMARK_FILES: list[tuple[str, str]] = [
     ("example-docs/pdf/pdf-with-ocr-text.pdf", "hi_res"),
     ("example-docs/pdf/layout-parser-paper.pdf", "hi_res"),
     ("example-docs/pdf/layout-parser-paper-with-table.pdf", "hi_res"),
-    ("example-docs/pdf/failure-after-repair.pdf", "hi_res"),
     # Images – hi_res
     ("example-docs/embedded-images-tables.jpg", "hi_res"),
+    ("example-docs/double-column-B.jpg", "hi_res"),
+    ("example-docs/layout-parser-paper-fast.jpg", "hi_res"),
     # Other document types – fast
     ("example-docs/contains-pictures.docx", "fast"),
     ("example-docs/example-10k-1p.html", "fast"),
