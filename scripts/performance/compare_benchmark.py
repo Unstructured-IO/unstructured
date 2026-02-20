@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 """Compare current benchmark results against the stored best runtime.
 
-The script:
-    1. Loads the current benchmark results and the stored best (if any).
-    2. Logs a per-file and total summary table.
-    3. Exits 1 (fail) if the current total exceeds the best total by more than
-       the given threshold fraction.
-    4. Updates the best-results file in-place when the current run is faster
-       (establishes a new record).
-    5. Writes GitHub Actions step outputs ``new_best`` and ``regression`` when
-       the ``GITHUB_OUTPUT`` environment variable is set.
-
 Usage:
     uv run --no-sync python scripts/performance/compare_benchmark.py \
         benchmark_results.json \
@@ -36,11 +26,6 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-
 def _github_output(key: str, value: str) -> None:
     """Write a key=value pair to $GITHUB_OUTPUT when running in Actions."""
     gho = os.environ.get("GITHUB_OUTPUT")
@@ -64,11 +49,6 @@ def _pct_diff(current: float, best: float) -> str:
     return f"{sign}{diff:.1f}%"
 
 
-# ---------------------------------------------------------------------------
-# Main logic
-# ---------------------------------------------------------------------------
-
-
 def main() -> None:
     if len(sys.argv) < 3:
         print(__doc__, file=sys.stderr)
@@ -78,15 +58,9 @@ def main() -> None:
     best_path = Path(sys.argv[2])
     threshold = float(sys.argv[3]) if len(sys.argv) > 3 else 0.20
 
-    # ------------------------------------------------------------------
-    # Load current results
-    # ------------------------------------------------------------------
     current: dict[str, float] = json.loads(current_path.read_text())
     current_total: float = current["__total__"]
 
-    # ------------------------------------------------------------------
-    # First-ever run – no stored best yet
-    # ------------------------------------------------------------------
     if not best_path.exists():
         logger.info("No stored best found – saving current run as the baseline.")
         logger.info(f"  Total: {current_total:.2f}s")
@@ -96,9 +70,6 @@ def main() -> None:
         _github_output("regression", "false")
         sys.exit(0)
 
-    # ------------------------------------------------------------------
-    # Normal comparison
-    # ------------------------------------------------------------------
     best: dict[str, float] = json.loads(best_path.read_text())
     best_total: float = best["__total__"]
     limit: float = best_total * (1.0 + threshold)
@@ -128,9 +99,7 @@ def main() -> None:
     logger.info(f"Threshold : {threshold * 100:.0f}%  (fail if current > {limit:.2f}s)")
     logger.info("")
 
-    # ------------------------------------------------------------------
-    # Fail on regression
-    # ------------------------------------------------------------------
+    # fail on regression beyond threshold
     if current_total > limit:
         excess_pct = (current_total - best_total) / best_total * 100
         logger.error(
@@ -142,9 +111,7 @@ def main() -> None:
         _github_output("regression", "true")
         sys.exit(1)
 
-    # ------------------------------------------------------------------
-    # Pass – record new best if current is faster
-    # ------------------------------------------------------------------
+    # pass: current is within threshold of best; update best if current is faster
     if current_total < best_total:
         improvement_pct = (best_total - current_total) / best_total * 100
         logger.info(
