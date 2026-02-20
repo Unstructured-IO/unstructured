@@ -13,8 +13,8 @@ The script:
 
 Usage:
     uv run --no-sync python scripts/performance/compare_benchmark.py \
-        scripts/performance/partition-speed-test/benchmark_results.json \
-        scripts/performance/partition-speed-test/benchmark_best.json \
+        benchmark_results.json \
+        benchmark_best.json \
         [threshold]
 
     current.json  JSON produced by benchmark_partition.py for this run
@@ -32,7 +32,6 @@ import os
 import sys
 from pathlib import Path
 
-# Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -86,10 +85,10 @@ def main() -> None:
     current_total: float = current["__total__"]
 
     # ------------------------------------------------------------------
-    # First-ever run - no stored best yet
+    # First-ever run – no stored best yet
     # ------------------------------------------------------------------
     if not best_path.exists():
-        logger.info("No stored best found - saving current run as the baseline.")
+        logger.info("No stored best found – saving current run as the baseline.")
         logger.info(f"  Total: {current_total:.2f}s")
         best_path.parent.mkdir(parents=True, exist_ok=True)
         best_path.write_text(current_path.read_text())
@@ -144,13 +143,13 @@ def main() -> None:
         sys.exit(1)
 
     # ------------------------------------------------------------------
-    # Pass - record new best if current is faster
+    # Pass – record new best if current is faster
     # ------------------------------------------------------------------
     if current_total < best_total:
         improvement_pct = (best_total - current_total) / best_total * 100
         logger.info(
             f"PASS (new best): {current_total:.2f}s is {improvement_pct:.1f}% "
-            f"faster than the previous best {best_total:.2f}s - updating stored best."
+            f"faster than the previous best {best_total:.2f}s – updating stored best."
         )
         best_path.write_text(current_path.read_text())
         _github_output("new_best", "true")
