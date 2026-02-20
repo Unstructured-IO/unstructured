@@ -17,6 +17,8 @@ import sys
 import time
 from pathlib import Path
 
+from unstructured.partition.auto import partition
+
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
@@ -49,7 +51,6 @@ def _warmup(filepath: str) -> None:
     Mirrors warm_up_process() in time_partition.py: uses a warmup-docs/
     variant if present, otherwise falls back to the file itself.
     """
-    from unstructured.partition.auto import partition
 
     warmup_dir = Path(__file__).parent / "warmup-docs"
     warmup_file = warmup_dir / f"warmup{Path(filepath).suffix}"
@@ -62,7 +63,6 @@ def _measure(filepath: str, strategy: str, iterations: int) -> float:
 
     Identical logic to time_partition.measure_execution_time().
     """
-    from unstructured.partition.auto import partition
 
     total = 0.0
     for _ in range(iterations):
