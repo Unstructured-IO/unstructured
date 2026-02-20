@@ -21,7 +21,7 @@ env:
   REGRESSION_THRESHOLD: "0.20"
   # Increment to bust all stored caches (e.g. after a deliberate performance
   # trade-off is accepted).
-  CACHE_VERSION: "v1"
+  CACHE_VERSION: "v2"
   # S3 location for the stored best benchmark result.
   S3_METRICS_BUCKET_KEY: ${{ secrets.S3_METRICS_BUCKET_KEY }}
   S3_BENCHMARK_PATH: partition-benchmark/benchmark_best.json
