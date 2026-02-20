@@ -1,80 +1,52 @@
 from __future__ import annotations
 
-import os
 from functools import lru_cache
 from itertools import chain
 from typing import Final, List, Tuple
 
-import nltk
-from nltk import pos_tag as _pos_tag
-from nltk import sent_tokenize as _sent_tokenize
-from nltk import word_tokenize as _word_tokenize
+import spacy
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-
-def check_for_nltk_package(package_name: str, package_category: str) -> bool:
-    """Checks to see if the specified NLTK package exists on the image."""
-
-    def _nltk_paths():
-        for path in nltk.data.path:
-            yield path if path.endswith("nltk_data") else os.path.join(path, "nltk_data")
-
-    try:
-        nltk.find(f"{package_category}/{package_name}", paths=_nltk_paths())
-        return True
-    except (LookupError, OSError):
-        return False
+_nlp = spacy.load("en_core_web_sm")
 
 
-def download_nltk_packages():
-    """If required NLTK packages are not available, download them."""
-
-    tagger_available = check_for_nltk_package(
-        package_category="taggers",
-        package_name="averaged_perceptron_tagger_eng",
-    )
-    tokenizer_available = check_for_nltk_package(
-        package_category="tokenizers", package_name="punkt_tab"
-    )
-
-    if (not tokenizer_available) or (not tagger_available):
-        nltk.download("averaged_perceptron_tagger_eng", quiet=True)
-        nltk.download("punkt_tab", quiet=True)
+def _sent_tokenize(text: str) -> List[str]:
+    return [sent.text for sent in _nlp(text).sents]
 
 
-# auto download nltk packages if the environment variable is set
-if os.getenv("AUTO_DOWNLOAD_NLTK", "True").lower() == "true":
-    download_nltk_packages()
+def _word_tokenize(text: str) -> List[str]:
+    return [token.text for token in _nlp(text)]
+
+
+def _pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
+    doc = _nlp(" ".join(tokens))
+    return [(token.text, token.tag_) for token in doc]
 
 
 def sent_tokenize(text: str) -> List[str]:
-    """A wrapper so that we can cache the result of NLTKs _sent_tokenize as an
+    """A wrapper so that we can cache the result of sentence tokenization as an
     immutable, while returning the expected return type (list)."""
-    # Return as List[str] to preserve external interface and avoid unnecessary list copying
     return list(_tokenize_for_cache(text))
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
-    """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
+    """A wrapper around the spaCy word tokenizer with LRU caching enabled."""
     return _word_tokenize(text)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
-    """A wrapper around the NLTK POS tagger with LRU caching enabled."""
-    # Splitting into sentences before tokenizing.
+    """A wrapper around the spaCy POS tagger with LRU caching enabled."""
     sentences = _sent_tokenize(text)
     if not sentences:
         return []
-    # Single list comprehension for tokens per sentence
     tokenized_sentences = [_word_tokenize(sentence) for sentence in sentences]
-    # Use itertools.chain for efficient flattening of POS-tagged results
     return list(chain.from_iterable(_pos_tag(tokens) for tokens in tokenized_sentences))
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
-    """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
+    """A wrapper around the spaCy sentence tokenizer with LRU caching enabled."""
     return tuple(_sent_tokenize(text))

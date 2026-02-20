@@ -1,4 +1,3 @@
-
 name: 'Base Cache Build'
 description: 'Set up uv and install project dependencies'
 inputs:
@@ -20,4 +19,4 @@ runs:
       shell: bash
       run: |
         uv sync --locked --all-extras --all-groups
-        make install-nltk-models
+        make install-spacy-model

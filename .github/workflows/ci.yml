@@ -12,9 +12,6 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
-
 jobs:
   setup:
     strategy:
@@ -123,7 +120,7 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         uv sync --locked --group test
-        make install-nltk-models
+        make install-spacy-model
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -163,7 +160,7 @@ jobs:
     - name: Install extra dependencies
       run: |
         uv sync --locked ${{ matrix.uv-extras }} --group test
-        make install-nltk-models
+        make install-spacy-model
     - name: Install system dependencies
       run: |
         sudo apt-get update

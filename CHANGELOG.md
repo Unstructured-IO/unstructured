@@ -1,3 +1,8 @@
+## 0.20.9
+
+### Fixes
+- **Replace NLTK with spaCy to remediate CVE-2025-14009**: NLTK's downloader uses `zipfile.extractall()` without path validation, enabling RCE via malicious packages (CVSS 10.0, no patch available). spaCy models install as pip packages, eliminating the vulnerable downloader entirely.
+
 ## 0.20.8
 
 ### Fixes

@@ -16,8 +16,6 @@ jobs:
     name: Optimize new Python code
     if: ${{ github.actor != 'codeflash-ai[bot]' }}
     runs-on: ubuntu-latest
-    env:
-      NLTK_DATA: ${{ github.workspace }}/nltk_data
     steps:
       - uses: actions/checkout@v4
         with:

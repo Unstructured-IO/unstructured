@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from test_unstructured.nlp.mock_nltk import (
+from test_unstructured.nlp.mock_nlp import (
     mock_pos_tag,
     mock_sent_tokenize,
     mock_word_tokenize,

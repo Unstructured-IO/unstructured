@@ -68,14 +68,12 @@ RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
 WORKDIR /app
 
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
-ENV NLTK_DATA=/home/notebook-user/nltk_data
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_PYTHON_DOWNLOADS=never
 
-# Install Python dependencies via uv and download required NLTK packages
+# Install Python dependencies via uv and download required spaCy model
 RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
-    mkdir -p ${NLTK_DATA} && \
-    uv run --no-sync $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
+    uv pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl && \
     uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
