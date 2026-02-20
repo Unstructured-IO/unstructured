@@ -563,6 +563,7 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         languages=None,
         metadata_filename=None,
         detect_language_per_element=False,
+        language_fallback=None,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
