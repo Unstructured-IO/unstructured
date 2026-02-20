@@ -116,7 +116,7 @@ def main() -> None:
         improvement_pct = (best_total - current_total) / best_total * 100
         logger.info(
             f"PASS (new best): {current_total:.2f}s is {improvement_pct:.1f}% "
-            f"faster than the previous best {best_total:.2f}s – updating stored best."
+            f"faster than the previous best {best_total:.2f}s – updating in S3."
         )
         best_path.write_text(current_path.read_text())
         _github_output("new_best", "true")
