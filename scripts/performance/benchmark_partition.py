@@ -29,7 +29,6 @@ BENCHMARK_FILES: list[tuple[str, str]] = [
     ("example-docs/pdf/copy-protected.pdf", "hi_res"),
     ("example-docs/pdf/reliance.pdf", "hi_res"),
     ("example-docs/pdf/pdf-with-ocr-text.pdf", "hi_res"),
-    ("example-docs/pdf/multi-column.pdf", "hi_res"),
     ("example-docs/pdf/list-item-example.pdf", "hi_res"),
     # Images – hi_res
     ("example-docs/embedded-images-tables.jpg", "hi_res"),
