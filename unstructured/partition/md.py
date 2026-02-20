@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import IO, Any
+from typing import IO, Any, Optional
 
 import markdown
 import requests
@@ -29,6 +29,7 @@ def partition_md(
     url: str | None = None,
     metadata_filename: str | None = None,
     metadata_last_modified: str | None = None,
+    languages: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a markdown file into its constituent elements
@@ -45,6 +46,9 @@ def partition_md(
         The URL of a webpage to parse. Only for URLs that return a markdown document.
     metadata_last_modified
         The last modified date for the document.
+    languages
+        The languages present in the document. Use ``["auto"]`` to detect (default when None).
+        Use ``[""]`` to disable language detection.
     """
     if text is None:
         text = ""
@@ -75,11 +79,14 @@ def partition_md(
 
     html = markdown.markdown(text, extensions=["tables", "fenced_code"])
 
-    return partition_html(
-        text=html,
-        metadata_filename=metadata_filename or filename,
-        metadata_file_type=FileType.MD,
-        metadata_last_modified=metadata_last_modified or last_modified,
-        detection_origin=DETECTION_ORIGIN,
+    html_kwargs: dict[str, Any] = {
+        "text": html,
+        "metadata_filename": metadata_filename or filename,
+        "metadata_file_type": FileType.MD,
+        "metadata_last_modified": metadata_last_modified or last_modified,
+        "detection_origin": DETECTION_ORIGIN,
         **kwargs,
-    )
+    }
+    if languages is not None:
+        html_kwargs["languages"] = languages
+    return partition_html(**html_kwargs)

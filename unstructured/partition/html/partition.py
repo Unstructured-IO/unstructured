@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Any, Iterator, List, Literal, Optional, cast
+from typing import IO, Any, Callable, Iterator, List, Literal, Optional, cast
 
 import requests
 from lxml import etree
@@ -39,6 +39,9 @@ def partition_html(
     image_alt_mode: Optional[Literal["to_text"]] = "to_text",
     extract_image_block_to_payload: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
+    languages: Optional[list[str]] = None,
+    detect_language_per_element: bool = False,
+    language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -71,6 +74,13 @@ def partition_html(
 
     image_alt_mode (Literal['to_text']):
         When set 'to_text', the v2 parser will include the alternative text of images in the output.
+
+    languages
+        The languages present in the document. Use ``["auto"]`` to detect; use ``[""]`` to disable.
+    detect_language_per_element
+        Detect language per element instead of at the document level.
+    language_fallback
+        Optional callable for short text; called with the text, return ISO 639-3 codes or None.
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:

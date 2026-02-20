@@ -180,11 +180,13 @@ def apply_metadata(
             # -- `language` - auto-detect language (e.g. eng, spa) --
             languages = call_args.get("languages")
             detect_language_per_element = call_args.get("detect_language_per_element", False)
+            language_fallback = call_args.get("language_fallback")
             elements = list(
                 apply_lang_metadata(
                     elements=elements,
                     languages=languages,
                     detect_language_per_element=detect_language_per_element,
+                    language_fallback=language_fallback,
                 )
             )
 
