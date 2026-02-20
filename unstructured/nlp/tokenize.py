@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from itertools import chain
 from typing import Final, List, Tuple
 
 import spacy
@@ -17,18 +16,10 @@ except OSError:
     )
 
 
-def _sent_tokenize(text: str) -> List[str]:
-    # -- spacy requires native str, not numpy.str_ from OCR pipelines --
-    return [sent.text for sent in _nlp(str(text)).sents]
-
-
-def _word_tokenize(text: str) -> List[str]:
-    return [token.text for token in _nlp(str(text))]
-
-
-def _pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
-    doc = _nlp(str(" ".join(tokens)))
-    return [(token.text, token.tag_) for token in doc]
+def _process(text: str) -> spacy.tokens.Doc:
+    """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
+    # -- str() handles numpy.str_ from OCR pipelines --
+    return _nlp(str(text))
 
 
 def sent_tokenize(text: str) -> List[str]:
@@ -40,20 +31,17 @@ def sent_tokenize(text: str) -> List[str]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the spaCy word tokenizer with LRU caching enabled."""
-    return _word_tokenize(text)
+    return [token.text for token in _process(text)]
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the spaCy POS tagger with LRU caching enabled."""
-    sentences = _sent_tokenize(text)
-    if not sentences:
-        return []
-    tokenized_sentences = [_word_tokenize(sentence) for sentence in sentences]
-    return list(chain.from_iterable(_pos_tag(tokens) for tokens in tokenized_sentences))
+    doc = _process(text)
+    return [(token.text, token.tag_) for token in doc]
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def _tokenize_for_cache(text: str) -> Tuple[str, ...]:
     """A wrapper around the spaCy sentence tokenizer with LRU caching enabled."""
-    return tuple(_sent_tokenize(text))
+    return tuple(sent.text for sent in _process(text).sents)
