@@ -852,8 +852,8 @@ def test_html_grabs_bulleted_text_in_paras():
 
 
 def test_joins_tag_text_correctly():
-    elements = partition_html(text="<p>Hello again peet mag<i>ic</i>al</p>")
-    assert elements == [Text("Hello again peet magical")]
+    elements = partition_html(text="<p>A mag<i>ic</i>al day</p>")
+    assert elements == [Text("A magical day")]
 
 
 def test_sample_doc_with_emoji():

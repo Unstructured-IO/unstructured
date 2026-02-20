@@ -8,19 +8,26 @@ import spacy
 
 CACHE_MAX_SIZE: Final[int] = 128
 
-_nlp = spacy.load("en_core_web_sm")
+try:
+    _nlp = spacy.load("en_core_web_sm")
+except OSError:
+    raise OSError(
+        "The spacy model 'en_core_web_sm' is required but not installed. "
+        "Install it with: python -m spacy download en_core_web_sm"
+    )
 
 
 def _sent_tokenize(text: str) -> List[str]:
-    return [sent.text for sent in _nlp(text).sents]
+    # -- spacy requires native str, not numpy.str_ from OCR pipelines --
+    return [sent.text for sent in _nlp(str(text)).sents]
 
 
 def _word_tokenize(text: str) -> List[str]:
-    return [token.text for token in _nlp(text)]
+    return [token.text for token in _nlp(str(text))]
 
 
 def _pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
-    doc = _nlp(" ".join(tokens))
+    doc = _nlp(str(" ".join(tokens)))
     return [(token.text, token.tag_) for token in doc]
 
 

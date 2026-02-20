@@ -1228,9 +1228,9 @@ class Describe_DocxPartitioner:
             ),
             PageBreak(""),
             # -- page 3 --
-            NarrativeText("Continuous section break here>>"),
+            Text("Continuous section break here>>"),
             NarrativeText("<<followed by text on same page"),
-            NarrativeText("Odd-page section break here>>"),
+            Text("Odd-page section break here>>"),
             PageBreak(""),
             # -- page 4 --
             PageBreak(""),
