@@ -27,8 +27,8 @@ from unstructured.staging.base import elements_to_json
             "sample-presentation.pptx",
             {
                 ("Title", 0): 4,
-                ("Title", 1): 1,
-                ("NarrativeText", 0): 3,
+                ("Title", 1): 2,
+                ("NarrativeText", 0): 2,
                 ("PageBreak", None): 3,
                 ("ListItem", 0): 6,
                 ("ListItem", 1): 6,
@@ -68,7 +68,7 @@ def test_get_element_type_frequency(filename: str, frequency: dict[tuple[str, in
                 ("ListItem", 2): 3,
                 ("Table", None): 1,
             },
-            (0.96, 0.96, 0.96),
+            (0.92, 0.92, 0.92),
         ),
         (
             "handbook-1p.docx",

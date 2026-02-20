@@ -1,56 +1,39 @@
-from typing import List, Tuple
-
-from test_unstructured.nlp.mock_nlp import mock_sent_tokenize, mock_word_tokenize
 from unstructured.nlp import tokenize
-
-
-def mock_pos_tag(tokens: List[str]) -> List[Tuple[str, str]]:
-    pos_tags: List[Tuple[str, str]] = []
-    for token in tokens:
-        if token.lower() == "ask":
-            pos_tags.append((token, "VB"))
-        else:
-            pos_tags.append((token, ""))
-    return pos_tags
 
 
 def test_pos_tag():
     parts_of_speech = tokenize.pos_tag("ITEM 2A. PROPERTIES")
-    # spaCy uses Penn Treebank tags via token.tag_
-    # Verify we get reasonable POS tags (exact tags may differ slightly from NLTK)
     tags = dict(parts_of_speech)
     assert "ITEM" in tags
     assert "PROPERTIES" in tags
-    # Verify it returns a list of (word, tag) tuples
     assert all(isinstance(t, tuple) and len(t) == 2 for t in parts_of_speech)
 
 
-def test_word_tokenize_caches(monkeypatch):
-    monkeypatch.setattr(tokenize, "_word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(tokenize, "_pos_tag", mock_pos_tag)
+def test_word_tokenize_caches():
     tokenize.word_tokenize.cache_clear()
     assert tokenize.word_tokenize.cache_info().currsize == 0
     tokenize.word_tokenize("Greetings! I am from outer space.")
     assert tokenize.word_tokenize.cache_info().currsize == 1
+    tokenize.word_tokenize("Greetings! I am from outer space.")
+    assert tokenize.word_tokenize.cache_info().hits == 1
 
 
-def test_sent_tokenize_caches(monkeypatch):
-    monkeypatch.setattr(tokenize, "_sent_tokenize", mock_sent_tokenize)
-    monkeypatch.setattr(tokenize, "_word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(tokenize, "_pos_tag", mock_pos_tag)
+def test_sent_tokenize_caches():
     tokenize._tokenize_for_cache.cache_clear()
     assert tokenize._tokenize_for_cache.cache_info().currsize == 0
     tokenize._tokenize_for_cache("Greetings! I am from outer space.")
     assert tokenize._tokenize_for_cache.cache_info().currsize == 1
+    tokenize._tokenize_for_cache("Greetings! I am from outer space.")
+    assert tokenize._tokenize_for_cache.cache_info().hits == 1
 
 
-def test_pos_tag_caches(monkeypatch):
-    monkeypatch.setattr(tokenize, "_word_tokenize", mock_word_tokenize)
-    monkeypatch.setattr(tokenize, "_pos_tag", mock_pos_tag)
+def test_pos_tag_caches():
     tokenize.pos_tag.cache_clear()
     assert tokenize.pos_tag.cache_info().currsize == 0
     tokenize.pos_tag("Greetings! I am from outer space.")
     assert tokenize.pos_tag.cache_info().currsize == 1
+    tokenize.pos_tag("Greetings! I am from outer space.")
+    assert tokenize.pos_tag.cache_info().hits == 1
 
 
 def test_tokenizers_functions_run():
