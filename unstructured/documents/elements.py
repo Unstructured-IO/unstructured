@@ -854,6 +854,8 @@ class Text(Element):
         for cleaner in cleaners:
             cleaned_text = cleaner(cleaned_text)
 
+        if isinstance(cleaned_text, list):
+            cleaned_text = " ".join(cleaned_text)
         if not isinstance(cleaned_text, str):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("Cleaner produced a non-string output.")
 
