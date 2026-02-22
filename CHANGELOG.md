@@ -1,3 +1,7 @@
+## 0.21.1
+
+- Bump version to create a new release
+
 ## 0.21.0
 
 ### Fixes
