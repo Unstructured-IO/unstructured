@@ -24,9 +24,7 @@ _SPACY_MODEL_URL: Final[str] = (
     f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}/"
     f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl"
 )
-_SPACY_MODEL_SHA256: Final[str] = (
-    "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85"
-)
+_SPACY_MODEL_SHA256: Final[str] = "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85"
 
 
 def _install_spacy_model() -> None:
@@ -37,9 +35,7 @@ def _install_spacy_model() -> None:
     from installer.utils import get_launcher_kind
 
     with tempfile.TemporaryDirectory() as tmp:
-        whl_path = os.path.join(
-            tmp, f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl"
-        )
+        whl_path = os.path.join(tmp, f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl")
         logger.info("Downloading spaCy model %s %s …", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
         urllib.request.urlretrieve(_SPACY_MODEL_URL, whl_path)
 
@@ -57,7 +53,7 @@ def _install_spacy_model() -> None:
             script_kind=get_launcher_kind(),
         )
         with WheelFile.open(whl_path) as source:
-            install(source=source, destination=destination)
+            install(source=source, destination=destination, additional_metadata={})
 
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
 
