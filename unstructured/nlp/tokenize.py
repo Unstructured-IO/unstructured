@@ -8,6 +8,7 @@ import shutil
 import sys
 import sysconfig
 import tempfile
+import urllib.error
 import urllib.request
 from functools import lru_cache
 from typing import Final, List, Tuple
@@ -37,9 +38,15 @@ _INSTALL_LOCK_PATH: Final[str] = os.path.join(
 
 def _download_with_timeout(url: str, dest: str) -> None:
     """Download a URL to a local file with a socket-level timeout."""
-    with urllib.request.urlopen(url, timeout=_DOWNLOAD_TIMEOUT_SECONDS) as resp:
-        with open(dest, "wb") as out:
-            shutil.copyfileobj(resp, out)
+    try:
+        with urllib.request.urlopen(url, timeout=_DOWNLOAD_TIMEOUT_SECONDS) as resp:
+            with open(dest, "wb") as out:
+                shutil.copyfileobj(resp, out)
+    except urllib.error.URLError as exc:
+        raise RuntimeError(
+            f"Failed to download spaCy model from {url}: {exc}. "
+            "Check your network connection and try again."
+        ) from exc
 
 
 def _install_spacy_model() -> None:
@@ -79,11 +86,25 @@ def _install_spacy_model() -> None:
 
         # Move installed packages from staging into real site-packages.
         # The caller holds _INSTALL_LOCK_PATH so no other process races here.
+        # Any dst that already exists is a remnant of a previous failed install
+        # (spacy.load() just failed), so remove it before moving to avoid
+        # shutil.move placing src *inside* an existing directory.
         site_packages = paths["purelib"]
         for item in os.listdir(staging):
             src = os.path.join(staging, item)
             dst = os.path.join(site_packages, item)
-            shutil.move(src, dst)
+            try:
+                if os.path.isdir(dst):
+                    shutil.rmtree(dst)
+                elif os.path.exists(dst):
+                    os.remove(dst)
+                shutil.move(src, dst)
+            except OSError as exc:
+                raise RuntimeError(
+                    f"Failed to install {_SPACY_MODEL_NAME} to {site_packages}: {exc}. "
+                    "Ensure the site-packages directory is writable, or pre-install the model "
+                    f"with: python -m spacy download {_SPACY_MODEL_NAME}"
+                ) from exc
 
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
 
@@ -106,16 +127,25 @@ def _load_spacy_model() -> spacy.language.Language:
             pass
         _install_spacy_model()
         importlib.invalidate_caches()
-        return spacy.load(_SPACY_MODEL_NAME)
+        try:
+            return spacy.load(_SPACY_MODEL_NAME)
+        except OSError as exc:
+            raise RuntimeError(
+                f"Installed {_SPACY_MODEL_NAME} but spacy.load() still failed. "
+                "Check site-packages permissions and installation integrity."
+            ) from exc
 
 
-_nlp = _load_spacy_model()
+@lru_cache(maxsize=1)
+def _get_nlp() -> spacy.language.Language:
+    """Load the spaCy model on first use and cache it for the lifetime of the process."""
+    return _load_spacy_model()
 
 
 def _process(text: str) -> spacy.tokens.Doc:
     """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
     # -- str() handles numpy.str_ from OCR pipelines --
-    return _nlp(str(text))
+    return _get_nlp()(str(text))
 
 
 def sent_tokenize(text: str) -> List[str]:
