@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import logging
 import os
 import sys
@@ -33,6 +34,7 @@ def _install_spacy_model() -> None:
     from installer import install
     from installer.destinations import SchemeDictionaryDestination
     from installer.sources import WheelFile
+    from installer.utils import get_launcher_kind
 
     with tempfile.TemporaryDirectory() as tmp:
         whl_path = os.path.join(
@@ -41,7 +43,8 @@ def _install_spacy_model() -> None:
         logger.info("Downloading spaCy model %s %s …", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
         urllib.request.urlretrieve(_SPACY_MODEL_URL, whl_path)
 
-        sha256 = hashlib.sha256(open(whl_path, "rb").read()).hexdigest()
+        with open(whl_path, "rb") as f:
+            sha256 = hashlib.sha256(f.read()).hexdigest()
         if sha256 != _SPACY_MODEL_SHA256:
             raise RuntimeError(
                 f"Hash mismatch for {_SPACY_MODEL_NAME}: "
@@ -51,7 +54,7 @@ def _install_spacy_model() -> None:
         destination = SchemeDictionaryDestination(
             sysconfig.get_paths(),
             interpreter=sys.executable,
-            script_kind="win-ia32" if sys.platform == "win32" else "posix",
+            script_kind=get_launcher_kind(),
         )
         with WheelFile.open(whl_path) as source:
             install(source=source, destination=destination)
@@ -64,6 +67,7 @@ def _load_spacy_model() -> spacy.language.Language:
         return spacy.load(_SPACY_MODEL_NAME)
     except OSError:
         _install_spacy_model()
+        importlib.invalidate_caches()
         return spacy.load(_SPACY_MODEL_NAME)
 
 
