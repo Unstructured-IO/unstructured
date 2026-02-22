@@ -13,6 +13,7 @@ from functools import lru_cache
 from typing import Final, List, Tuple
 
 import spacy
+from filelock import FileLock
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,9 @@ _SPACY_MODEL_SHA256: Final[str] = "1932429db727d4bff3deed6b34cfc05df17794f4a52ee
 
 
 _DOWNLOAD_TIMEOUT_SECONDS: Final[int] = 120
+_INSTALL_LOCK_PATH: Final[str] = os.path.join(
+    tempfile.gettempdir(), f"{_SPACY_MODEL_NAME}.install.lock"
+)
 
 
 def _download_with_timeout(url: str, dest: str) -> None:
@@ -73,14 +77,12 @@ def _install_spacy_model() -> None:
         with WheelFile.open(whl_path) as source:
             install(source=source, destination=destination, additional_metadata={})
 
-        # Move installed packages from staging into real site-packages
+        # Move installed packages from staging into real site-packages.
+        # The caller holds _INSTALL_LOCK_PATH so no other process races here.
         site_packages = paths["purelib"]
         for item in os.listdir(staging):
             src = os.path.join(staging, item)
             dst = os.path.join(site_packages, item)
-            if os.path.exists(dst):
-                logger.info("Skipping %s, already exists (concurrent install)", item)
-                continue
             shutil.move(src, dst)
 
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
@@ -90,6 +92,18 @@ def _load_spacy_model() -> spacy.language.Language:
     try:
         return spacy.load(_SPACY_MODEL_NAME)
     except OSError:
+        pass
+
+    # Serialize model installation across processes with an exclusive file lock.
+    # A well-known path in the system temp dir is visible to all processes
+    # regardless of their working directory.
+    with FileLock(_INSTALL_LOCK_PATH, timeout=-1):
+        # Double-check: another process may have installed while we waited.
+        importlib.invalidate_caches()
+        try:
+            return spacy.load(_SPACY_MODEL_NAME)
+        except OSError:
+            pass
         _install_spacy_model()
         importlib.invalidate_caches()
         return spacy.load(_SPACY_MODEL_NAME)
