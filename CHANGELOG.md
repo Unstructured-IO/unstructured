@@ -1,3 +1,8 @@
+## 0.21.2
+
+### Fixes
+- **Self-install pinned spaCy model at runtime with SHA256 verification**: Replace the `en-core-web-sm` direct URL dependency in `pyproject.toml` with the `installer` library. The spaCy model is now downloaded and installed on first use with hash verification, removing the need for `[tool.uv.sources]` and making the install more portable.
+
 ## 0.21.1
 
 - Bump version to create a new release

@@ -1,19 +1,73 @@
 from __future__ import annotations
 
+import hashlib
+import logging
+import os
+import sys
+import sysconfig
+import tempfile
+import urllib.request
 from functools import lru_cache
 from typing import Final, List, Tuple
 
 import spacy
 
+logger = logging.getLogger(__name__)
+
 CACHE_MAX_SIZE: Final[int] = 128
 
-try:
-    _nlp = spacy.load("en_core_web_sm")
-except OSError:
-    raise OSError(
-        "The spacy model 'en_core_web_sm' is required but not installed. "
-        "Install it with: python -m spacy download en_core_web_sm"
-    )
+_SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
+_SPACY_MODEL_VERSION: Final[str] = "3.8.0"
+_SPACY_MODEL_URL: Final[str] = (
+    f"https://github.com/explosion/spacy-models/releases/download/"
+    f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}/"
+    f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl"
+)
+_SPACY_MODEL_SHA256: Final[str] = (
+    "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85"
+)
+
+
+def _install_spacy_model() -> None:
+    """Download and install the pinned spaCy model wheel using the `installer` library."""
+    from installer import install
+    from installer.destinations import SchemeDictionaryDestination
+    from installer.sources import WheelFile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        whl_path = os.path.join(
+            tmp, f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl"
+        )
+        logger.info("Downloading spaCy model %s %s …", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
+        urllib.request.urlretrieve(_SPACY_MODEL_URL, whl_path)
+
+        sha256 = hashlib.sha256(open(whl_path, "rb").read()).hexdigest()
+        if sha256 != _SPACY_MODEL_SHA256:
+            raise RuntimeError(
+                f"Hash mismatch for {_SPACY_MODEL_NAME}: "
+                f"expected {_SPACY_MODEL_SHA256}, got {sha256}"
+            )
+
+        destination = SchemeDictionaryDestination(
+            sysconfig.get_paths(),
+            interpreter=sys.executable,
+            script_kind="win-ia32" if sys.platform == "win32" else "posix",
+        )
+        with WheelFile.open(whl_path) as source:
+            install(source=source, destination=destination)
+
+    logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
+
+
+def _load_spacy_model() -> spacy.language.Language:
+    try:
+        return spacy.load(_SPACY_MODEL_NAME)
+    except OSError:
+        _install_spacy_model()
+        return spacy.load(_SPACY_MODEL_NAME)
+
+
+_nlp = _load_spacy_model()
 
 
 def _process(text: str) -> spacy.tokens.Doc:
