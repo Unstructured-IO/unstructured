@@ -58,18 +58,30 @@ def _install_spacy_model() -> None:
                 f"expected {_SPACY_MODEL_SHA256}, got {sha256}"
             )
 
+        # Install into a staging directory to avoid races with other processes
+        staging = os.path.join(tmp, "staging")
+        paths = sysconfig.get_paths()
+        staged_paths = paths.copy()
+        staged_paths["purelib"] = staging
+        staged_paths["platlib"] = staging
+
         destination = SchemeDictionaryDestination(
-            sysconfig.get_paths(),
+            staged_paths,
             interpreter=sys.executable,
             script_kind=get_launcher_kind(),
         )
-        try:
-            with WheelFile.open(whl_path) as source:
-                install(source=source, destination=destination, additional_metadata={})
-        except FileExistsError:
-            # Another process (e.g. pytest-xdist worker) installed concurrently
-            logger.info("Model files already exist, assuming concurrent install by another process")
-            return
+        with WheelFile.open(whl_path) as source:
+            install(source=source, destination=destination, additional_metadata={})
+
+        # Move installed packages from staging into real site-packages
+        site_packages = paths["purelib"]
+        for item in os.listdir(staging):
+            src = os.path.join(staging, item)
+            dst = os.path.join(site_packages, item)
+            if os.path.exists(dst):
+                logger.info("Skipping %s, already exists (concurrent install)", item)
+                continue
+            shutil.move(src, dst)
 
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
 
