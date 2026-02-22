@@ -4,6 +4,7 @@ import hashlib
 import importlib
 import logging
 import os
+import shutil
 import sys
 import sysconfig
 import tempfile
@@ -27,6 +28,16 @@ _SPACY_MODEL_URL: Final[str] = (
 _SPACY_MODEL_SHA256: Final[str] = "1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85"
 
 
+_DOWNLOAD_TIMEOUT_SECONDS: Final[int] = 120
+
+
+def _download_with_timeout(url: str, dest: str) -> None:
+    """Download a URL to a local file with a socket-level timeout."""
+    with urllib.request.urlopen(url, timeout=_DOWNLOAD_TIMEOUT_SECONDS) as resp:
+        with open(dest, "wb") as out:
+            shutil.copyfileobj(resp, out)
+
+
 def _install_spacy_model() -> None:
     """Download and install the pinned spaCy model wheel using the `installer` library."""
     from installer import install
@@ -37,7 +48,7 @@ def _install_spacy_model() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         whl_path = os.path.join(tmp, f"{_SPACY_MODEL_NAME}-{_SPACY_MODEL_VERSION}-py3-none-any.whl")
         logger.info("Downloading spaCy model %s %s …", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
-        urllib.request.urlretrieve(_SPACY_MODEL_URL, whl_path)
+        _download_with_timeout(_SPACY_MODEL_URL, whl_path)
 
         with open(whl_path, "rb") as f:
             sha256 = hashlib.sha256(f.read()).hexdigest()
@@ -52,8 +63,13 @@ def _install_spacy_model() -> None:
             interpreter=sys.executable,
             script_kind=get_launcher_kind(),
         )
-        with WheelFile.open(whl_path) as source:
-            install(source=source, destination=destination, additional_metadata={})
+        try:
+            with WheelFile.open(whl_path) as source:
+                install(source=source, destination=destination, additional_metadata={})
+        except FileExistsError:
+            # Another process (e.g. pytest-xdist worker) installed concurrently
+            logger.info("Model files already exist, assuming concurrent install by another process")
+            return
 
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
 
