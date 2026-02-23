@@ -1,3 +1,6 @@
+## 0.21.4
+- Add a github action for testing time regressions
+
 ## 0.21.3
 
 ### Enhancements
