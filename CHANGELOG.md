@@ -1,4 +1,11 @@
+## 0.21.5
+
+### Fixes
+- Lower the requirement for `pdfminer.six` to `>=20251230`
+
 ## 0.21.4
+
+### Enhancements
 - Add a github action for testing time regressions
 
 ## 0.21.3
