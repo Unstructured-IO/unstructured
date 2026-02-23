@@ -43,12 +43,6 @@ dependencies = [
     "typing-extensions>=4.15.0, <5.0.0",
     "unstructured-client>=0.25.9, <1.0.0",
     "wrapt>=1.0.0, <2.0.0",
-<<<<<<< HEAD
-    "filelock>=3.12.0,<4.0.0",
-||||||| parent of f7a4a80e (fix: update depdencies (#4247))
-    "wrapt>=2.1.1, <3.0.0",
-=======
->>>>>>> f7a4a80e (fix: update depdencies (#4247))
 ]
 
 [project.optional-dependencies]

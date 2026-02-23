@@ -43,7 +43,9 @@ BENCHMARK_FILES: list[tuple[str, str]] = [
 
 NUM_ITERATIONS: int = int(os.environ.get("NUM_ITERATIONS", "1"))
 
-DEFAULT_OUTPUT = Path(__file__).parent / "partition-speed-test" / "benchmark_results.json"
+DEFAULT_OUTPUT = (
+    Path(__file__).parent / "partition-speed-test" / "benchmark_results.json"
+)
 
 
 def _warmup(filepath: str) -> None:
@@ -75,7 +77,9 @@ def _measure(filepath: str, strategy: str, iterations: int) -> float:
 
 def main() -> None:
     output_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUTPUT
-    repo_root = Path(__file__).resolve().parent.parent.parent  # scripts/performance/ -> repo root
+    repo_root = (
+        Path(__file__).resolve().parent.parent.parent
+    )  # scripts/performance/ -> repo root
 
     logger.info("=" * 60)
     logger.info(f"Partition benchmark  (NUM_ITERATIONS={NUM_ITERATIONS})")
