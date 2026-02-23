@@ -73,7 +73,7 @@ ENV UV_PYTHON_DOWNLOADS=never
 
 # Install Python dependencies via uv, then trigger spaCy model self-install while network is available
 RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
-    uv run --no-sync $PYTHON -c "from unstructured.nlp.tokenize import _nlp; print('spaCy model loaded:', _nlp.meta['name'])" && \
+    uv run --no-sync $PYTHON -c "from unstructured.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
     uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
