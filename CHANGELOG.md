@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## 0.21.4
 - Add a git action to test regression in runtime performance
 
@@ -24,6 +23,12 @@
 ||||||| parent of f7a4a80e (fix: update depdencies (#4247))
 =======
 >>>>>>> f7a4a80e (fix: update depdencies (#4247))
+||||||| parent of 0758132c (bump version)
+=======
+## 0.20.9
+- add an action to test the partition seepd in high_res and fast
+
+>>>>>>> 0758132c (bump version)
 ## 0.20.8
 
 ### Fixes
