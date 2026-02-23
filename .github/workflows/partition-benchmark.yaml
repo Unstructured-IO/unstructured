@@ -3,6 +3,7 @@ name: Partition Benchmark
 # Runs on every PR targeting main to detect regressions.
 # Can also be triggered manually to establish or inspect a new baseline.
 on:
+  push:
   pull_request:
     branches: [main]
   workflow_dispatch:
