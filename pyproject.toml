@@ -261,4 +261,3 @@ tests-root = "test_unstructured"
 test-framework = "pytest"
 ignore-paths = []
 formatter-cmds = ["ruff check --exit-zero --fix-only $file", "ruff format $file"]
-
