@@ -692,7 +692,10 @@ def test_create_file_from_elements_text():
 def test_create_file_from_elements_html():
     """Test create_file_from_elements with format=html returns HTML."""
     elements = [Title("Page"), NarrativeText("Content")]
-    content = base.create_file_from_elements(elements, format="html")
+    # no_group_by_page=True so elements without page_number are included (default path skips them)
+    content = base.create_file_from_elements(
+        elements, format="html", no_group_by_page=True
+    )
     assert "<!DOCTYPE html" in content
     assert "<body>" in content
     assert "Page" in content
