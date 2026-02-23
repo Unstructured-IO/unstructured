@@ -664,6 +664,48 @@ def test_elements_to_md_file_output():
             os.unlink(tmp_filename)
 
 
+def test_create_file_from_elements_markdown():
+    """Test create_file_from_elements with format=markdown returns and optionally writes file."""
+    elements = [Title("Heading"), NarrativeText("Some body text.")]
+    content = base.create_file_from_elements(elements, format="markdown")
+    assert content == "# Heading\nSome body text."
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as tmp_file:
+        tmp_filename = tmp_file.name
+    try:
+        out = base.create_file_from_elements(elements, format="markdown", filename=tmp_filename)
+        assert out == content
+        with open(tmp_filename) as f:
+            assert f.read() == content
+    finally:
+        if os.path.exists(tmp_filename):
+            os.unlink(tmp_filename)
+
+
+def test_create_file_from_elements_text():
+    """Test create_file_from_elements with format=text."""
+    elements = [Title("A"), NarrativeText("B")]
+    content = base.create_file_from_elements(elements, format="text")
+    assert content == "A\nB"
+
+
+def test_create_file_from_elements_html():
+    """Test create_file_from_elements with format=html returns HTML."""
+    elements = [Title("Page"), NarrativeText("Content")]
+    content = base.create_file_from_elements(elements, format="html")
+    assert "<!DOCTYPE html" in content
+    assert "<body>" in content
+    assert "Page" in content
+    assert "Content" in content
+
+
+def test_create_file_from_elements_unsupported_format():
+    """Test create_file_from_elements raises for unsupported format."""
+    elements = [Title("X")]
+    with pytest.raises(ValueError, match="Unsupported format"):
+        base.create_file_from_elements(elements, format="pdf")
+
+
 def test_element_to_md_with_none_mime_type():
     """Test element_to_md handles None mime_type gracefully."""
     from unstructured.documents.elements import ElementMetadata, Image
