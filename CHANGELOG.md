@@ -1,3 +1,6 @@
+## 0.21.4
+- Add a git action to test regression in runtime performance
+
 ## 0.21.3
 
 ### Enhancements
