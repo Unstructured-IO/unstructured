@@ -84,6 +84,7 @@ TESSERACT_LANGUAGES_AND_CODES = {
     "dzongkha": "dzo",
     "greek, modern": "ell",
     "greek": "ell",
+    "gr": "ell",
     "english": "eng",
     "english, middle": "enm",
     "esperanto": "epo",
