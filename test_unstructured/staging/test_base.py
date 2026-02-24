@@ -720,7 +720,7 @@ def test_create_file_from_elements_html_group_by_page_drops_elements_without_pag
 
 
 @pytest.mark.parametrize(
-    "format_name,expected_in_content",
+    ("format_name", "expected_in_content"),
     [
         ("markdown", "# Heading\nSome body text."),
         ("text", "Heading\nSome body text."),
@@ -785,7 +785,7 @@ def test_create_file_from_elements_exclude_binary_image_data_html():
 
 
 @pytest.mark.parametrize(
-    "format_arg,expected_substring",
+    ("format_arg", "expected_substring"),
     [
         (" Markdown ", "# Heading"),
         ("HTML ", "<!DOCTYPE html"),
