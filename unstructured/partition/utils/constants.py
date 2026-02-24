@@ -41,6 +41,15 @@ OCR_AGENT_MODULES_WHITELIST = os.getenv(
     "unstructured.partition.utils.ocr_models.google_vision_ocr",
 ).split(",")
 
+# Speech-to-text agent (used by partition_audio)
+STT_AGENT_WHISPER = "unstructured.partition.utils.speech_to_text.whisper_stt.SpeechToTextAgentWhisper"
+STT_AGENT_MODULES_WHITELIST = (
+    os.getenv(
+        "STT_AGENT_MODULES_WHITELIST",
+        "unstructured.partition.utils.speech_to_text.whisper_stt",
+    ).split(",")
+)
+
 UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
 
 # this field is defined by unstructured_pytesseract

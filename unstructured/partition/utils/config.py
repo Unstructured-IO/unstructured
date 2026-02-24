@@ -117,6 +117,13 @@ class ENVConfig:
         return self._get_int("OCR_AGENT_CACHE_SIZE", 1)
 
     @property
+    def STT_AGENT(self) -> str:
+        """Speech-to-text agent module for partition_audio (e.g. Whisper)."""
+        from unstructured.partition.utils.constants import STT_AGENT_WHISPER
+
+        return self._get_string("STT_AGENT", STT_AGENT_WHISPER)
+
+    @property
     def EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD(self) -> int:
         """extra image block content to add around an identified element(`Image`, `Table`) region
         horizontally; measured in pixels

@@ -1,3 +1,8 @@
+## 0.21.11
+
+### Enhancements
+- **Add speech-to-text to multimodal pipeline**: Audio files (WAV) can now be partitioned into document elements via speech-to-text. Install the optional `audio` extra (`pip install "unstructured[audio]"`) to use the Whisper-based partitioner. Call `partition()` or `partition_audio()` with a WAV file to get a transcript as `NarrativeText` elements. The `STT_AGENT` environment variable selects the speech-to-text implementation (default: Whisper).
+
 ## 0.21.10
 - **Add Form Class**: Adds a new form class in elements.py to deal with forms
 

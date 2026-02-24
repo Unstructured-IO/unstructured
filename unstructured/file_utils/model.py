@@ -441,9 +441,9 @@ class FileType(enum.Enum):
     )
     WAV = (
         "wav",
-        None,
-        cast(list[str], []),
-        None,
+        "audio",
+        ["whisper"],
+        "audio",
         [".wav"],
         "audio/wav",
         [
