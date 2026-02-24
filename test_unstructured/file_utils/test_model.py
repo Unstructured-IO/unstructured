@@ -76,7 +76,7 @@ class DescribeFileType:
             (FileType.PDF, "pdf"),
             (FileType.XLS, "xlsx"),
             (FileType.UNK, None),
-            (FileType.WAV, None),
+            (FileType.WAV, "audio"),
             (FileType.ZIP, None),
         ],
     )
@@ -98,7 +98,7 @@ class DescribeFileType:
             (FileType.ODT, ("docx", "pypandoc")),
             (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
             (FileType.UNK, ()),
-            (FileType.WAV, ()),
+            (FileType.WAV, ("whisper",)),
             (FileType.ZIP, ()),
         ],
     )
@@ -119,7 +119,7 @@ class DescribeFileType:
             (FileType.JPG, True),
             (FileType.PDF, True),
             (FileType.PPTX, True),
-            (FileType.WAV, False),
+            (FileType.WAV, True),
             (FileType.ZIP, False),
             (FileType.EMPTY, False),
             (FileType.UNK, False),
@@ -163,14 +163,13 @@ class DescribeFileType:
             (FileType.JPG, "partition_image"),
             (FileType.PNG, "partition_image"),
             (FileType.TIFF, "partition_image"),
+            (FileType.WAV, "partition_audio"),
         ],
     )
     def it_knows_its_partitioner_function_name(self, file_type: FileType, expected_value: str):
         assert file_type.partitioner_function_name == expected_value
 
-    @pytest.mark.parametrize(
-        "file_type", [FileType.WAV, FileType.ZIP, FileType.EMPTY, FileType.UNK]
-    )
+    @pytest.mark.parametrize("file_type", [FileType.ZIP, FileType.EMPTY, FileType.UNK])
     def but_it_raises_on_partitioner_function_name_access_when_the_file_type_is_not_partitionable(
         self, file_type: FileType
     ):
@@ -189,6 +188,7 @@ class DescribeFileType:
             (FileType.JPG, "unstructured.partition.image"),
             (FileType.PNG, "unstructured.partition.image"),
             (FileType.TIFF, "unstructured.partition.image"),
+            (FileType.WAV, "unstructured.partition.audio"),
         ],
     )
     def it_knows_the_fully_qualified_name_of_its_partitioner_module(
@@ -196,9 +196,7 @@ class DescribeFileType:
     ):
         assert file_type.partitioner_module_qname == expected_value
 
-    @pytest.mark.parametrize(
-        "file_type", [FileType.WAV, FileType.ZIP, FileType.EMPTY, FileType.UNK]
-    )
+    @pytest.mark.parametrize("file_type", [FileType.ZIP, FileType.EMPTY, FileType.UNK])
     def but_it_raises_on_partitioner_module_qname_access_when_the_file_type_is_not_partitionable(
         self, file_type: FileType
     ):
@@ -217,6 +215,7 @@ class DescribeFileType:
             (FileType.JPG, "image"),
             (FileType.PNG, "image"),
             (FileType.TIFF, "image"),
+            (FileType.WAV, "audio"),
             (FileType.XLS, "xlsx"),
             (FileType.XLSX, "xlsx"),
         ],
