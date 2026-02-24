@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Enhancements
+- Upgrade issue-2939: dependency and package upgrades
+
 ## 0.21.5
 
 ### Fixes
