@@ -1,7 +1,7 @@
 ## 0.21.6
 
 ### Enhancements
-- **Add `create_file_from_elements()` to re-create document files from elements (fixes #3994)**: New staging helper `create_file_from_elements(elements, format=..., filename=...)` converts a list of elements back into a document in the given format (`"markdown"`, `"html"`, or `"text"`), optionally writing to a file. Supports the workflow: partition → modify elements (e.g. replace Image with NarrativeText using alt text) → write back to file.
+- **Add `create_file_from_elements()` to re-create document files from elements (fixes #3994)**: New staging helper `create_file_from_elements(elements, output_format=..., filename=...)` converts a list of elements back into a document in the given format (`"markdown"`, `"html"`, or `"text"`), optionally writing to a file. Supports the workflow: partition → modify elements (e.g. replace Image with NarrativeText using alt text) → write back to file.
 
 ## 0.21.5
 

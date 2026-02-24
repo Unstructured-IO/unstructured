@@ -667,13 +667,15 @@ def test_elements_to_md_file_output():
 def test_create_file_from_elements_markdown():
     """Test create_file_from_elements with format=markdown returns and optionally writes file."""
     elements = [Title("Heading"), NarrativeText("Some body text.")]
-    content = base.create_file_from_elements(elements, format="markdown")
+    content = base.create_file_from_elements(elements, output_format="markdown")
     assert content == "# Heading\nSome body text."
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as tmp_file:
         tmp_filename = tmp_file.name
     try:
-        out = base.create_file_from_elements(elements, format="markdown", filename=tmp_filename)
+        out = base.create_file_from_elements(
+            elements, output_format="markdown", filename=tmp_filename
+        )
         assert out == content
         with open(tmp_filename) as f:
             assert f.read() == content
@@ -685,15 +687,14 @@ def test_create_file_from_elements_markdown():
 def test_create_file_from_elements_text():
     """Test create_file_from_elements with format=text."""
     elements = [Title("A"), NarrativeText("B")]
-    content = base.create_file_from_elements(elements, format="text")
+    content = base.create_file_from_elements(elements, output_format="text")
     assert content == "A\nB"
 
 
 def test_create_file_from_elements_html():
     """Test create_file_from_elements with format=html returns HTML."""
     elements = [Title("Page"), NarrativeText("Content")]
-    # no_group_by_page=True so elements without page_number are included (default path skips them)
-    content = base.create_file_from_elements(elements, format="html", no_group_by_page=True)
+    content = base.create_file_from_elements(elements, output_format="html")
     assert "<!DOCTYPE html" in content
     assert "<body>" in content
     assert "Page" in content
@@ -704,7 +705,98 @@ def test_create_file_from_elements_unsupported_format():
     """Test create_file_from_elements raises for unsupported format."""
     elements = [Title("X")]
     with pytest.raises(ValueError, match="Unsupported format"):
-        base.create_file_from_elements(elements, format="pdf")
+        base.create_file_from_elements(elements, output_format="pdf")
+
+
+def test_create_file_from_elements_html_group_by_page_drops_elements_without_page_number():
+    """With no_group_by_page=False, elements without page_number are skipped (body empty)."""
+    elements = [Title("Page"), NarrativeText("Content")]
+    content = base.create_file_from_elements(elements, output_format="html", no_group_by_page=False)
+    assert "<!DOCTYPE html" in content
+    assert "<body>" in content
+    # Elements without metadata.page_number are not included when grouping by page
+    assert "Page" not in content
+    assert "Content" not in content
+
+
+@pytest.mark.parametrize(
+    "format_name,expected_in_content",
+    [
+        ("markdown", "# Heading\nSome body text."),
+        ("text", "Heading\nSome body text."),
+        ("html", "<!DOCTYPE html"),
+    ],
+)
+def test_create_file_from_elements_filename_write(format_name: str, expected_in_content: str):
+    """Test create_file_from_elements writes correct content to file for all formats."""
+    elements = [Title("Heading"), NarrativeText("Some body text.")]
+    ext = {"markdown": ".md", "text": ".txt", "html": ".html"}[format_name]
+    with tempfile.NamedTemporaryFile(mode="w", suffix=ext, delete=False) as tmp_file:
+        tmp_filename = tmp_file.name
+    try:
+        out = base.create_file_from_elements(
+            elements, output_format=format_name, filename=tmp_filename
+        )
+        assert expected_in_content in out
+        with open(tmp_filename) as f:
+            written = f.read()
+        assert expected_in_content in written
+        assert out == written
+    finally:
+        if os.path.exists(tmp_filename):
+            os.unlink(tmp_filename)
+
+
+def test_create_file_from_elements_exclude_binary_image_data_markdown():
+    """exclude_binary_image_data=True passthrough: markdown omits base64 image data."""
+    elements = [
+        Title("Doc"),
+        Image(
+            "Alt",
+            metadata=ElementMetadata(
+                image_base64="abc123",
+                image_mime_type="image/png",
+            ),
+        ),
+    ]
+    content = base.create_file_from_elements(
+        elements, output_format="markdown", exclude_binary_image_data=True
+    )
+    assert "base64," not in content
+    assert "Alt" in content
+
+
+def test_create_file_from_elements_exclude_binary_image_data_html():
+    """exclude_binary_image_data=True passthrough: HTML omits base64 image data."""
+    elements = [
+        Title("Doc"),
+        Image(
+            "Alt",
+            metadata=ElementMetadata(
+                image_base64="abc123",
+                image_mime_type="image/png",
+            ),
+        ),
+    ]
+    content = base.create_file_from_elements(
+        elements, output_format="html", exclude_binary_image_data=True
+    )
+    assert "abc123" not in content
+
+
+@pytest.mark.parametrize(
+    "format_arg,expected_substring",
+    [
+        (" Markdown ", "# Heading"),
+        ("HTML ", "<!DOCTYPE html"),
+        (" TEXT ", "Heading"),
+    ],
+)
+def test_create_file_from_elements_format_normalization(format_arg: str, expected_substring: str):
+    """Format string is stripped and lowercased (e.g. ' Markdown ' -> 'markdown')."""
+    elements = [Title("Heading"), NarrativeText("Body")]
+    content = base.create_file_from_elements(elements, output_format=format_arg)
+    assert expected_substring in content
 
 
 def test_element_to_md_with_none_mime_type():

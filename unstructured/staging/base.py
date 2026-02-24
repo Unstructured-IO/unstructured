@@ -197,11 +197,11 @@ def elements_to_md(
 
 def create_file_from_elements(
     elements: Iterable[Element],
-    format: str = "markdown",
+    output_format: str = "markdown",
     filename: Optional[str] = None,
     encoding: str = "utf-8",
     exclude_binary_image_data: bool = False,
-    no_group_by_page: bool = False,
+    no_group_by_page: bool = True,
 ) -> str:
     """Re-create a document file from a list of elements (reverse of partition).
 
@@ -212,11 +212,14 @@ def create_file_from_elements(
 
     Args:
         elements: Iterable of elements to convert (e.g. from partition_* or after editing).
-        format: Output format: "markdown", "html", or "text".
+        output_format: Output format: "markdown", "html", or "text".
         filename: Optional path to write the document to.
-        encoding: File encoding when writing to file.
-        exclude_binary_image_data: If True, omit base64 image data (markdown/html).
-        no_group_by_page: If True, do not group HTML output by page.
+        encoding: File encoding when writing to file (all formats).
+        exclude_binary_image_data: If True, omit base64 image data. Applies only to
+            **markdown** and **html**; ignored for text.
+        no_group_by_page: If True (default), include all elements in output. If False,
+            group **html** by page (elements without metadata.page_number are skipped).
+            Applies only to **html**; ignored for markdown and text.
 
     Returns:
         The document content as a string.
@@ -226,21 +229,22 @@ def create_file_from_elements(
         >>> from unstructured.staging.base import create_file_from_elements
         >>> elements = partition_md("README.md")
         >>> # ... modify elements (e.g. replace Image with NarrativeText) ...
-        >>> create_file_from_elements(elements, format="markdown", filename="out.md")
+        >>> create_file_from_elements(elements, output_format="markdown", filename="out.md")
     """
-    format_lower = format.strip().lower()
+    format_lower = output_format.strip().lower()
     if format_lower not in ("markdown", "html", "text"):
         raise ValueError(
-            f"Unsupported format: {format!r}. Supported formats: 'markdown', 'html', 'text'."
+            f"Unsupported format: {output_format!r}. Supported formats: 'markdown', 'html', 'text'."
         )
 
     if format_lower == "markdown":
         content = elements_to_md(
             elements,
-            filename=None,
+            filename=filename,
             exclude_binary_image_data=exclude_binary_image_data,
             encoding=encoding,
         )
+        return content
     elif format_lower == "html":
         from unstructured.partition.html.convert import elements_to_html
 
@@ -249,16 +253,16 @@ def create_file_from_elements(
             exclude_binary_image_data=exclude_binary_image_data,
             no_group_by_page=no_group_by_page,
         )
+        if filename is not None:
+            with open(filename, "w", encoding=encoding) as f:
+                f.write(content)
+        return content
     else:
-        # text
-        content = elements_to_text(elements, filename=None, encoding=encoding)
-        assert content is not None  # we passed filename=None
-
-    if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(content)
-
-    return content
+        # text: delegate write to elements_to_text when filename is set
+        content = convert_to_text(elements)
+        if filename is not None:
+            elements_to_text(elements, filename=filename, encoding=encoding)
+        return content
 
 
 def elements_to_json(
