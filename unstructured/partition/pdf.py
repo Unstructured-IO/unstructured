@@ -78,6 +78,7 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
+from unstructured.partition.pdf_hierarchy import infer_heading_levels
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
@@ -322,6 +323,34 @@ def partition_pdf_or_image(
         languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
 
+    def _maybe_infer_heading_levels(
+        elements: list[Element],
+    ) -> list[Element]:
+        """Infer heading levels for PDF documents when appropriate."""
+        if is_image:
+            return elements
+
+        try:
+            file_for_outline: Optional[bytes | IO[bytes]] = None
+            if file is not None:
+                if hasattr(file, "seek"):
+                    file.seek(0)
+                if hasattr(file, "read"):
+                    file_for_outline = file.read()
+                else:
+                    file_for_outline = file
+
+            return infer_heading_levels(
+                elements,
+                filename=filename,
+                file=file_for_outline,
+                use_outline=True,
+                use_font_analysis=True,
+            )
+        except Exception as e:
+            logger.debug(f"Failed to infer heading levels: {e}")
+            return elements
+
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
@@ -353,6 +382,8 @@ def partition_pdf_or_image(
             # NOTE(crag): do not call _process_uncategorized_text_elements here, because
             # extracted elements (which are text blocks outside of OD-determined blocks)
             # are likely not Titles and should not be identified as such.
+            # Infer heading levels for PDF documents
+            elements = _maybe_infer_heading_levels(elements)
             return elements
 
     elif strategy == PartitionStrategy.FAST:
@@ -362,6 +393,8 @@ def partition_pdf_or_image(
             **kwargs,
         )
 
+        # Infer heading levels for PDF documents
+        out_elements = _maybe_infer_heading_levels(out_elements)
         return out_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
@@ -381,6 +414,8 @@ def partition_pdf_or_image(
             )
             out_elements = _process_uncategorized_text_elements(elements)
 
+        # Infer heading levels for PDF documents
+        out_elements = _maybe_infer_heading_levels(out_elements)
     return out_elements
 
 
