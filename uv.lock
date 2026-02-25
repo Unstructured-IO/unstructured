@@ -25,7 +25,7 @@ constraints = [
     { name = "tokenizers", specifier = ">=0.21" },
     { name = "unstructured-client", specifier = ">=0.25.9" },
     { name = "urllib3", specifier = ">=2.0.0" },
-    { name = "weaviate-client", specifier = ">=3.26.7" },
+    { name = "weaviate-client", specifier = ">=4.20.1" },
 ]
 
 [[package]]
