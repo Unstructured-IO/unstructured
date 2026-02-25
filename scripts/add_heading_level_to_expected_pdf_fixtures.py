@@ -9,6 +9,7 @@ so the ingest diff test matches current output.
 Run from repo root:
   python scripts/add_heading_level_to_expected_pdf_fixtures.py
 """
+
 from __future__ import annotations
 
 import json
