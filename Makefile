@@ -14,16 +14,11 @@ help: Makefile
 .PHONY: install
 install:
 	@uv sync --locked --all-extras --all-groups
-	@$(MAKE) install-nltk-models
 
 ## lock:                    update and lock all dependencies
 .PHONY: lock
 lock:
 	@uv lock --upgrade
-
-.PHONY: install-nltk-models
-install-nltk-models:
-	uv run --no-sync python -c "from unstructured.nlp.tokenize import download_nltk_packages; download_nltk_packages()"
 
 
 #################

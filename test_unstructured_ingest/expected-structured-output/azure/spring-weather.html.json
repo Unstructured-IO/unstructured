@@ -378,7 +378,7 @@
     }
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "1a0aae68189c5b41a14a0bf787c2403d",
     "text": "<script type=\"text/javascript\"> var _gaq = _gaq || []; _gaq.push(['_setAccount', ' UA-40768555-2']); _gaq.push(['_anonymizeIp']); _gaq.push(['_trackPageview']);",
     "metadata": {
@@ -756,7 +756,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "59fbcb3f868911e2c1ebd83a61e92e27",
     "text": "<!-- area for the myforecast widget and wwamap data -->",
     "metadata": {
@@ -924,7 +924,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "0fc8ae01dfca85f1ff00d87a46bf2807",
     "text": "<p><a href=\"/images/wrn/Infographics/2023/outside",
     "metadata": {
@@ -1008,7 +1008,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "48c15092cb73e94e251c91509f81edbd",
     "text": "heatwaves.png\" style=\"width: 700px;\" /></a></p>",
     "metadata": {
@@ -1554,7 +1554,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "87503c16b4fe103ab69be8733b775307",
     "text": "<div style=\"clear:both;\"></div>",
     "metadata": {
@@ -1995,7 +1995,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "6a8eb99f44eff676ed1c0cb4ea926ec8",
     "text": "<div class=\"one-sixth-first\" id=\"footer_legal_gov\"> <a href=\"http://www.usa.gov\"><img src=\"/css/images/usa_gov.png\" alt=\"usa.gov\" width=\"110\" height=\"30\" /></a> </div>",
     "metadata": {
@@ -2079,7 +2079,7 @@
     }
   },
   {
-    "type": "Title",
+    "type": "NarrativeText",
     "element_id": "0dfd9b4b4a0bf6f0fe6f9986a53a1a15",
     "text": "last\" id=\"footer_required_links\">",
     "metadata": {
@@ -2142,7 +2142,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "67332029e0e66f28a68ea872a7ed0159",
     "text": "<a href=\"https://www.weather.gov/disclaimer\">Disclaimer</a><br />",
     "metadata": {
@@ -2163,7 +2163,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "7c32f18a3fe3c13e1deb9bba5c6bbeb7",
     "text": "<a href=\"http://www.cio.noaa.gov/services_programs/info_quality.html\">Information Quality</a><br />",
     "metadata": {
@@ -2184,7 +2184,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "b07ff82d18a73b9a23500dc69571d2df",
     "text": "<a href=\"https://www.weather.gov/help\">Help</a><br />",
     "metadata": {
@@ -2205,7 +2205,7 @@
     }
   },
   {
-    "type": "NarrativeText",
+    "type": "Title",
     "element_id": "129651a1e7fbec392cc6e8d30d453ff6",
     "text": "<a href=\"http://www.weather.gov/glossary\">Glossary</a>",
     "metadata": {

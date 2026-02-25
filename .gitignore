@@ -24,7 +24,6 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
-nltk_data/
 .installed.cfg
 *.egg
 MANIFEST
@@ -106,7 +105,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+.venv*
 env/
 venv/
 ENV/

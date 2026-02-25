@@ -1,5 +1,4 @@
-## 0.20.6
-
+## 0.21.8
 ### Fixes
 - **Fix `ValueError` when partitioning a text file loaded from a zip archive**: `convert_to_bytes()`
   rejected any file-like object not in its hardcoded type whitelist (`BytesIO`, `BufferedReader`,
@@ -10,6 +9,60 @@
   `GzipFile`, `tarfile.ExFileObject`). The file cursor is reset via `seek(0)` where supported so
   callers can re-read the file after `convert_to_bytes()` returns.
 
+## 0.21.7
+
+### Enhancements
+- **Bump dependencies**: Update pinned dependency versions in the lockfile.
+
+## 0.21.6
+
+### Enhancements
+- **Add `create_file_from_elements()` to re-create document files from elements (fixes #3994)**: New staging helper `create_file_from_elements(elements, output_format=..., filename=...)` converts a list of elements back into a document in the given format (`"markdown"`, `"html"`, or `"text"`), optionally writing to a file. Supports the workflow: partition → modify elements (e.g. replace Image with NarrativeText using alt text) → write back to file.
+
+## 0.21.5
+
+### Fixes
+- Lower the requirement for `pdfminer.six` to `>=20251230`
+
+## 0.21.4
+
+### Enhancements
+- Add a github action for testing time regressions
+
+## 0.21.3
+
+### Enhancements
+- **Custom fallback for language detection (fixes #4091)**: Add optional `language_fallback` callable for short ASCII text (e.g. when detection would default to English). Callable receives the text and may return a list of ISO 639-3 codes or `None` to leave language unspecified; return value is validated and invalid entries are filtered out. `language_fallback` is passed through `partition()`, PDF/image partitioners, and `partition_html`; `partition_md` now accepts `languages` (use `[""]` to disable detection). Language-related parameters (`languages`, `detect_language_per_element`, `language_fallback`) are documented as top-level options and exposed explicitly on `partition_html`.
+
+## 0.21.2
+
+### Fixes
+- **Self-install pinned spaCy model at runtime with SHA256 verification**: Replace the `en-core-web-sm` direct URL dependency in `pyproject.toml` with the `installer` library. The spaCy model is now downloaded and installed on first use with hash verification, removing the need for `[tool.uv.sources]` and making the install more portable.
+
+## 0.21.1
+
+- Bump version to create a new release
+
+## 0.21.0
+
+### Fixes
+- **Replace NLTK with spaCy to remediate CVE-2025-14009**: NLTK's downloader uses `zipfile.extractall()` without path validation, enabling RCE via malicious packages (CVSS 10.0, no patch available). spaCy models install as pip packages, eliminating the vulnerable downloader entirely.
+
+## 0.20.8
+
+### Fixes
+- downgrade `wrapt` so it is compatible with `opentelemetry-instrumentation-httpx`
+- resolve lock issue with windows and python 3.13
+
+## 0.20.7
+
+### Fixes
+- **Cap size when decompressing elements JSON file**: Prevents situations where decompression can consume an arbitrarily large portion in memory and on the filesystem.
+
+## 0.20.6
+
+### Fixes
+- fix: remap parent id after hashing to preserve right reference
 
 ## 0.20.5
 

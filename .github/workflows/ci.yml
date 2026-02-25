@@ -12,9 +12,6 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
-
 jobs:
   setup:
     strategy:
@@ -76,7 +73,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-    runs-on: ubuntu-latest
+    runs-on: opensource-linux-8core
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
@@ -123,7 +120,6 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
       run: |
         uv sync --locked --group test
-        make install-nltk-models
         make test-no-extras CI=true
 
   test_unit_dependency_extras:
@@ -148,7 +144,7 @@ jobs:
             uv-extras: "--extra pptx"
           - extra: xlsx
             uv-extras: "--extra xlsx"
-    runs-on: ubuntu-latest
+    runs-on: opensource-linux-8core
     needs: [setup, lint, test_unit_no_extras]
     steps:
     - uses: actions/checkout@v4
@@ -163,7 +159,6 @@ jobs:
     - name: Install extra dependencies
       run: |
         uv sync --locked ${{ matrix.uv-extras }} --group test
-        make install-nltk-models
     - name: Install system dependencies
       run: |
         sudo apt-get update
