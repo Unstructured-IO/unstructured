@@ -198,7 +198,7 @@ constraint-dependencies = [
     "tokenizers>=0.21",
     "unstructured-client>=0.25.9",
     "urllib3>=2.0.0",
-    "weaviate-client>=3.26.7",
+    "weaviate-client>=4.20.1",
 ]
 
 [tool.pyright]
