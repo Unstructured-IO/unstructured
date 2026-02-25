@@ -54,6 +54,7 @@ from unstructured.partition.common.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.pdf_hierarchy import infer_heading_levels
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
     get_uris,
@@ -78,7 +79,6 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.partition.pdf_hierarchy import infer_heading_levels
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
@@ -335,10 +335,7 @@ def partition_pdf_or_image(
             if file is not None:
                 if hasattr(file, "seek"):
                     file.seek(0)
-                if hasattr(file, "read"):
-                    file_for_outline = file.read()
-                else:
-                    file_for_outline = file
+                file_for_outline = file.read() if hasattr(file, "read") else file
 
             return infer_heading_levels(
                 elements,

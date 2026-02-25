@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-import io
-import tempfile
-from pathlib import Path
-
 import pytest
 
 from unstructured.documents.elements import Title
@@ -175,4 +171,3 @@ def test_fuzzy_matching_in_outline():
     # Should match "Introduction to the Project" with "Introduction"
     if elements[0].metadata.heading_level is not None:
         assert 1 <= elements[0].metadata.heading_level <= 6
-
