@@ -12,7 +12,6 @@ from collections import defaultdict
 from typing import Any, Dict, List, Optional
 
 from pypdf import PdfReader
-
 from unstructured.documents.elements import Element, Title
 from unstructured.logger import logger
 
@@ -42,22 +41,34 @@ def extract_pdf_outline(
             return outline_entries
 
         if reader.outline:
-
             def _extract_outline_recursive(outline_item, level: int = 0):
-                """Recursively extract outline items."""
+                """Recursively extract outline items.
+
+                pypdf outline can be [item, children_list, item, children_list, ...].
+                When level == -1 (root), we treat even indices as items at 0 and odd
+                indices as their children at level 1. Otherwise a list is siblings
+                at the same level.
+                """
                 if isinstance(outline_item, list):
-                    for item in outline_item:
-                        # Nested lists represent nested outline levels in pypdf.
-                        _extract_outline_recursive(item, level + 1)
+                    if level == -1:
+                        # Top-level: alternate item (level 0) and its children list (level 1)
+                        for i in range(len(outline_item)):
+                            if i % 2 == 0:
+                                _extract_outline_recursive(outline_item[i], 0)
+                            else:
+                                _extract_outline_recursive(outline_item[i], 1)
+                    else:
+                        for item in outline_item:
+                            _extract_outline_recursive(item, level)
                 else:
                     # Get page number
                     page_num = None
-                    if hasattr(outline_item, "page") and outline_item.page is not None:
+                    if hasattr(outline_item, 'page') and outline_item.page is not None:
                         if isinstance(outline_item.page, int):
                             page_num = outline_item.page
-                        elif hasattr(outline_item.page, "get_object"):
+                        elif hasattr(outline_item.page, 'get_object'):
                             page_obj = outline_item.page.get_object()
-                            if isinstance(page_obj, dict) and "/Type" in page_obj:
+                            if isinstance(page_obj, dict) and '/Type' in page_obj:
                                 # Find page number
                                 for i, page in enumerate(reader.pages):
                                     if page.get_object() == page_obj:
@@ -65,12 +76,18 @@ def extract_pdf_outline(
                                         break
 
                     title = (
-                        outline_item.title if hasattr(outline_item, "title") else str(outline_item)
+                        outline_item.title
+                        if hasattr(outline_item, "title")
+                        else str(outline_item)
                     )
-                    outline_entries.append({"title": title, "level": level, "page": page_num})
+                    outline_entries.append({
+                        'title': title,
+                        'level': level,
+                        'page': page_num
+                    })
 
                     # Process children
-                    if hasattr(outline_item, "children") and outline_item.children:
+                    if hasattr(outline_item, 'children') and outline_item.children:
                         _extract_outline_recursive(outline_item.children, level + 1)
 
             # Start at level -1 so that top-level items end up at level 0.
@@ -178,8 +195,8 @@ def infer_heading_levels_from_outline(
     # Create a mapping of outline titles to levels
     outline_map = {}
     for entry in outline_entries:
-        title = entry.get("title", "").strip()
-        level = entry.get("level", 0)
+        title = entry.get('title', '').strip()
+        level = entry.get('level', 0)
         # Normalize level to 1-6 range (H1-H6)
         normalized_level = min(max(level + 1, 1), 6)
         outline_map[title.lower()] = normalized_level
@@ -247,6 +264,10 @@ def infer_heading_levels_from_font_sizes(
     # For each page, analyze relative sizes
     for page_num, page_titles in titles_by_page.items():
         if len(page_titles) < 2:
+            # Single title on page gets level 1
+            for element in page_titles:
+                if element.metadata.heading_level is None:
+                    element.metadata.heading_level = 1
             continue
 
         title_scores = []
@@ -260,10 +281,10 @@ def infer_heading_levels_from_font_sizes(
             else:
                 # Fallback to heuristic based on text characteristics
                 word_count = len(text.split())
-                is_mostly_uppercase = text.isupper() or (
-                    len(text) > 0
-                    and text[0].isupper()
-                    and sum(1 for c in text if c.isupper()) / max(len(text), 1) > 0.5
+                is_mostly_uppercase = (
+                    text.isupper() or
+                    (len(text) > 0 and text[0].isupper() and
+                     sum(1 for c in text if c.isupper()) / max(len(text), 1) > 0.5)
                 )
 
                 # Score: higher for shorter, more capitalized titles
@@ -286,15 +307,15 @@ def infer_heading_levels_from_font_sizes(
                 level = idx + 1
             else:
                 percentile = (idx + 1) / num_titles
-                if percentile <= 1 / 6:
+                if percentile <= 1/6:
                     level = 1
-                elif percentile <= 2 / 6:
+                elif percentile <= 2/6:
                     level = 2
-                elif percentile <= 3 / 6:
+                elif percentile <= 3/6:
                     level = 3
-                elif percentile <= 4 / 6:
+                elif percentile <= 4/6:
                     level = 4
-                elif percentile <= 5 / 6:
+                elif percentile <= 5/6:
                     level = 5
                 else:
                     level = 6
@@ -340,11 +361,11 @@ def infer_heading_levels(
     # For elements without heading_level, use font size analysis
     if use_font_analysis:
         elements_without_level = [
-            e
-            for e in elements
+            e for e in elements
             if isinstance(e, Title) and (e.metadata is None or e.metadata.heading_level is None)
         ]
         if elements_without_level:
             infer_heading_levels_from_font_sizes(elements_without_level)
 
     return elements
+
