@@ -5,25 +5,39 @@ from __future__ import annotations
 import functools
 import importlib
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TypedDict
 
 from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import STT_AGENT_MODULES_WHITELIST
 
-if TYPE_CHECKING:
-    pass
+
+class TranscriptionSegment(TypedDict):
+    """A single segment of a transcription with text and timestamps in seconds."""
+
+    text: str
+    start: float
+    end: float
 
 
 class SpeechToTextAgent(ABC):
     """Defines the interface for a speech-to-text transcription service."""
 
-    @staticmethod
-    @functools.lru_cache(maxsize=1)
-    def get_instance(agent_module: str) -> "SpeechToTextAgent":
-        """Load and return the configured SpeechToTextAgent implementation.
+    @classmethod
+    def get_agent(cls, agent_module: str | None = None) -> "SpeechToTextAgent":
+        """Return the configured SpeechToTextAgent instance.
 
-        The implementation is determined by the `STT_AGENT` environment variable
-        or the passed `agent_module` (e.g. whisper implementation).
+        The agent module is resolved from `agent_module` when provided, otherwise from
+        the `STT_AGENT` environment variable (default: Whisper).
+        """
+        return cls.get_instance(agent_module or env_config.STT_AGENT)
+
+    @staticmethod
+    @functools.lru_cache(maxsize=env_config.STT_AGENT_CACHE_SIZE)
+    def get_instance(agent_module: str) -> "SpeechToTextAgent":
+        """Load and return a SpeechToTextAgent for the given fully-qualified class name.
+
+        Results are cached up to STT_AGENT_CACHE_SIZE entries.
         """
         module_name, class_name = agent_module.rsplit(".", 1)
         if module_name not in STT_AGENT_MODULES_WHITELIST:
@@ -59,3 +73,27 @@ class SpeechToTextAgent(ABC):
         Transcribed text.
         """
         pass
+
+    def transcribe_segments(
+        self, audio_path: str, *, language: str | None = None
+    ) -> list[TranscriptionSegment]:
+        """Transcribe audio and return segment-level results with timestamps.
+
+        Default implementation returns a single segment from transcribe() with start=0, end=0.
+        Override in agents that support segment-level output (e.g. Whisper).
+
+        Parameters
+        ----------
+        audio_path
+            Path to an audio file (e.g. WAV, MP3).
+        language
+            Optional ISO 639-1 language code for the spoken language (e.g. "en").
+
+        Returns
+        -------
+        List of segments, each with "text" and optionally "start" and "end" (seconds).
+        """
+        text = self.transcribe(audio_path, language=language)
+        if not text.strip():
+            return []
+        return [TranscriptionSegment(text=text.strip(), start=0.0, end=0.0)]

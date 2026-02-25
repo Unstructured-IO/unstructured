@@ -45,7 +45,7 @@ def _create_file_type_enum(
 class FileType(enum.Enum):
     """The collection of file-types recognized by `unstructured`.
 
-    Note not all of these can be partitioned, e.g. WAV and ZIP have no partitioner.
+    Note not all of these can be partitioned, e.g. ZIP has no partitioner.
     """
 
     _partitioner_shortname: str | None

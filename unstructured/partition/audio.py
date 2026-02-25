@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
+import shutil
 import tempfile
 from pathlib import Path
 from typing import IO, Any
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, NarrativeText
+from unstructured.documents.elements import Element, ElementMetadata, NarrativeText
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
     SpeechToTextAgent,
 )
@@ -31,8 +31,9 @@ def partition_audio(
 ) -> list[Element]:
     """Partition an audio file (e.g. WAV) into elements using speech-to-text.
 
-    Transcribes the audio and returns a single NarrativeText element containing
-    the full transcript. Requires the optional `audio` extra with Whisper:
+    Transcribes the audio and returns one NarrativeText element per Whisper segment,
+    preserving segment-level structure and timestamps in metadata (segment_start_seconds,
+    segment_end_seconds). Requires the optional `audio` extra with Whisper:
     ``pip install "unstructured[audio]"``.
 
     Parameters
@@ -58,38 +59,56 @@ def partition_audio(
     if filename is not None:
         audio_path = filename
     else:
-        if file is None:
-            raise ValueError("Either filename or file must be provided.")
+        assert file is not None  # guaranteed by exactly_one()
         file.seek(0)
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-            tmp.write(file.read())
+        suffix = _audio_suffix(file, metadata_filename)
+        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+            shutil.copyfileobj(file, tmp)
             audio_path = tmp.name
 
     try:
-        agent_module = stt_agent or env_config.STT_AGENT
-        agent = SpeechToTextAgent.get_instance(agent_module)
-        text = agent.transcribe(audio_path, language=language)
+        agent = SpeechToTextAgent.get_agent(stt_agent)
+        segments = agent.transcribe_segments(audio_path, language=language)
     finally:
         if filename is None and audio_path.startswith(tempfile.gettempdir()):
             Path(audio_path).unlink(missing_ok=True)
 
-    if not text.strip():
+    if not segments:
         return []
 
-    metadata_kwargs: dict[str, Any] = {}
-    if metadata_filename:
-        metadata_kwargs["filename"] = metadata_filename
-    elif filename:
-        metadata_kwargs["filename"] = filename
-    if metadata_last_modified:
-        metadata_kwargs["last_modified"] = metadata_last_modified
-    elif filename:
-        last_modified = get_last_modified_date(filename)
-        if last_modified:
-            metadata_kwargs["last_modified"] = last_modified
+    base_metadata = ElementMetadata(
+        last_modified=get_last_modified_date(filename) if filename else None,
+    )
+    base_metadata.detection_origin = "speech_to_text"
 
-    element = NarrativeText(text=text)
-    element.metadata.detection_origin = "speech_to_text"
-    element.metadata.update(element.metadata.__class__(**metadata_kwargs))
+    elements: list[Element] = []
+    for seg in segments:
+        text = seg["text"].strip()
+        if not text:
+            continue
+        element = NarrativeText(text=text)
+        element.metadata = ElementMetadata(
+            last_modified=base_metadata.last_modified,
+            segment_start_seconds=seg["start"],
+            segment_end_seconds=seg["end"],
+        )
+        element.metadata.detection_origin = "speech_to_text"
+        elements.append(element)
 
-    return [element]
+    return elements
+
+
+def _audio_suffix(file: IO[bytes], metadata_filename: str | None) -> str:
+    """Return the file-extension suffix for a temp file that wraps `file`.
+
+    Preference order:
+    1. Extension of `metadata_filename` when provided (e.g. ".mp3" from "recording.mp3").
+    2. Extension of `file.name` when the file object exposes a name (e.g. a real opened file).
+    3. ".wav" as a safe fallback recognised by all STT backends.
+    """
+    for name in (metadata_filename, getattr(file, "name", None)):
+        if name:
+            suffix = Path(name).suffix
+            if suffix:
+                return suffix
+    return ".wav"
