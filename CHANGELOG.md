@@ -1,3 +1,8 @@
+## 0.21.7
+
+### Enhancements
+- **Infer hierarchical heading levels for PDFs (fixes #4204)**: Add `heading_level` metadata (H1–H6) for `Title` elements produced by PDF partitioners. Heading levels are inferred primarily from the PDF outline/bookmarks when available, with a font-size/heuristic fallback. Integrated into all PDF strategies (`hi_res`, `fast`, and `ocr_only`) so downstream consumers (e.g., RAG pipelines) can reconstruct document structure more accurately.
+
 ## 0.21.6
 
 ### Enhancements
