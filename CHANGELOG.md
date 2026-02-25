@@ -1,3 +1,8 @@
+## 0.21.7
+
+### Enhancements
+- **Bump dependencies**: Update pinned dependency versions in the lockfile.
+
 ## 0.21.6
 
 ### Enhancements
