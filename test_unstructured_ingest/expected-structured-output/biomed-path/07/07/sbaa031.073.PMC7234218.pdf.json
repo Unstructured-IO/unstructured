@@ -72,7 +72,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "S6. SLEEP ENDOPHENOTYPES OF",
     "type": "Title"
@@ -85,7 +86,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "SCHIZOPHRENIA: A HIGH-DENSITY EEG STUDY IN DRUG-NAÏVE, FIRST EPISODE PSYCHOSIS PATIENTS",
     "type": "Title"
@@ -163,7 +165,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "SIRS 2020 Abstracts",
     "type": "Title"

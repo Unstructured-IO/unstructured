@@ -75,7 +75,7 @@
   {
     "type": "NarrativeText",
     "element_id": "703f1d4e9204c8b7ea94191f87138425",
-    "text": "Where the projections are parameter matrices W Q and W O \u2208 Rhdv\u00d7dmodel. i \u2208 Rdmodel\u00d7dk , W K i \u2208 Rdmodel\u00d7dk , W V i \u2208 Rdmodel\u00d7dv",
+    "text": "Where the projections are parameter matrices W Q and W O ∈ Rhdv×dmodel. i ∈ Rdmodel×dk , W K i ∈ Rdmodel×dk , W V i ∈ Rdmodel×dv",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -135,7 +135,8 @@
         },
         "date_created": "1697584841.0",
         "date_modified": "1697584841.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -163,7 +164,7 @@
   {
     "type": "ListItem",
     "element_id": "fd24bf7bf21b4aab2a36021f9ebb253b",
-    "text": "\u2022 In \"encoder-decoder attention\" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9].",
+    "text": "• In \"encoder-decoder attention\" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9].",
     "metadata": {
       "links": [
         {
@@ -202,7 +203,7 @@
   {
     "type": "ListItem",
     "element_id": "77762865993fd26c55c87cb45d75cad8",
-    "text": "\u2022 The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder.",
+    "text": "• The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -224,7 +225,7 @@
   {
     "type": "ListItem",
     "element_id": "41b9b9d2a4329a8f6075f4776403c2de",
-    "text": "\u2022 Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to \u2212\u221e) all values in the input of the softmax which correspond to illegal connections. See Figure 2.",
+    "text": "• Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to −∞) all values in the input of the softmax which correspond to illegal connections. See Figure 2.",
     "metadata": {
       "links": [
         {
@@ -269,7 +270,8 @@
         },
         "date_created": "1697584841.0",
         "date_modified": "1697584841.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -357,13 +359,14 @@
         },
         "date_created": "1697584841.0",
         "date_modified": "1697584841.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
     "type": "NarrativeText",
     "element_id": "ebdf8de46645084127f7ff7b24ed87e9",
-    "text": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel. We also use the usual learned linear transfor- mation and softmax function to convert the decoder output to predicted next-token probabilities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30]. In the embedding layers, we multiply those weights by \u221a dmodel.",
+    "text": "Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension dmodel. We also use the usual learned linear transfor- mation and softmax function to convert the decoder output to predicted next-token probabilities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30]. In the embedding layers, we multiply those weights by √ dmodel.",
     "metadata": {
       "links": [
         {

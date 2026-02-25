@@ -106,7 +106,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "Data Article",
     "type": "Title"
@@ -119,7 +120,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "A benchmark dataset for the multiple depot vehicle scheduling problem",
     "type": "Title"
@@ -459,7 +461,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "heading_level": 1
     },
     "text": "Speciﬁcations table",
     "type": "Title"
@@ -492,7 +495,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "heading_level": 1
     },
     "text": "Value of the data",
     "type": "Title"
@@ -570,7 +574,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "heading_level": 1
     },
     "text": "1. Data",
     "type": "Title"
@@ -850,7 +855,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 3
+      "page_number": 3,
+      "heading_level": 1
     },
     "text": "Table 1",
     "type": "Title"
@@ -915,7 +921,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "heading_level": 1
     },
     "text": "Table 2",
     "type": "Title"
@@ -954,7 +961,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "heading_level": 1
     },
     "text": "2. Experimental design, materials, and methods",
     "type": "Title"
@@ -993,7 +1001,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "heading_level": 1
     },
     "text": "Transparency document. Supporting information",
     "type": "Title"
@@ -1031,7 +1040,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "heading_level": 1
     },
     "text": "References",
     "type": "Title"

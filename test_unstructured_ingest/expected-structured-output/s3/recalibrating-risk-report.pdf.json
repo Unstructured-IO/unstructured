@@ -18,7 +18,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -90,7 +91,7 @@
   {
     "type": "NarrativeText",
     "element_id": "f71e85ddcaf37c2df39af496a16c23ab",
-    "text": "\u00a9 2021 World Nuclear Association",
+    "text": "© 2021 World Nuclear Association",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -112,7 +113,7 @@
   {
     "type": "NarrativeText",
     "element_id": "24a8636658e8d7b70af1f0536d494159",
-    "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association\u2019s individual member organizations.",
+    "text": "Registered in England and Wales, company number 01215741. This report represents the views of individual experts, but does not necessarily represent those of any of the World Nuclear Association’s individual member organizations.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -150,13 +151,14 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
     "type": "NarrativeText",
     "element_id": "5b2ec7692e73027141163ac9031623f5",
-    "text": "Nuclear energy is crucial to meeting the world\u2019s ever-increasing demand for energy, thanks to its ability to supply affordable, reliable, and sustainable electricity and heat. Despite the many benefits of nuclear energy, its deployment is hindered in some parts of the world due to long-standing misconceptions about its risks. Even with its safety record \u2013 unmatched by any other energy source \u2013 the perception of nuclear power as uniquely dangerous endures.",
+    "text": "Nuclear energy is crucial to meeting the world’s ever-increasing demand for energy, thanks to its ability to supply affordable, reliable, and sustainable electricity and heat. Despite the many benefits of nuclear energy, its deployment is hindered in some parts of the world due to long-standing misconceptions about its risks. Even with its safety record – unmatched by any other energy source – the perception of nuclear power as uniquely dangerous endures.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -178,7 +180,7 @@
   {
     "type": "NarrativeText",
     "element_id": "cb2f79944be60fd4447f31653abc1c33",
-    "text": "This is reflected in the regulatory burden placed on the nuclear industry, which is geared towards an \u201cas low as possible\u201d approach, demanding radiation levels to be far below the levels where health effects have been observed (and in many cases below natural background radiation). This has resulted in higher costs, without delivering any additional health benefits, and has resulted in policymakers choosing other, more risky energy sources. More often than not, those alternative energy sources have been fossil fuels, greatly exacerbating the well-known risks posed by air pollution and climate change.",
+    "text": "This is reflected in the regulatory burden placed on the nuclear industry, which is geared towards an “as low as possible” approach, demanding radiation levels to be far below the levels where health effects have been observed (and in many cases below natural background radiation). This has resulted in higher costs, without delivering any additional health benefits, and has resulted in policymakers choosing other, more risky energy sources. More often than not, those alternative energy sources have been fossil fuels, greatly exacerbating the well-known risks posed by air pollution and climate change.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -222,7 +224,7 @@
   {
     "type": "NarrativeText",
     "element_id": "0176a09ce730c661b03e05b873f406e0",
-    "text": "In order to fully unlock the potential of the atom, it is crucial that the gap between perceived and actual risks is addressed. The window of opportunity to act on climate change and other global challenges is closing fast \u2013 we must not delay increasing the contribution of nuclear energy on the grounds of myths and misconceptions.",
+    "text": "In order to fully unlock the potential of the atom, it is crucial that the gap between perceived and actual risks is addressed. The window of opportunity to act on climate change and other global challenges is closing fast – we must not delay increasing the contribution of nuclear energy on the grounds of myths and misconceptions.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -348,7 +350,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -376,7 +379,7 @@
   {
     "type": "NarrativeText",
     "element_id": "75f32a291a5cbb11d3183eac5fb426c3",
-    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture\u2019s depiction of radiation has played a role in ensuring that this discrepancy has remained,",
+    "text": "Nuclear energy and the risk of radiation is one of the most extreme cases in which perceived and actual risks have diverged. The fear of radiation, whilst pre- dating the Second World War, was firmly established by the debate on the potential impacts of low-dose radiation from the fallout from nuclear weapons testing in the early years of the Cold War. Radiation in many ways became linked with the mental imagery of nuclear war, playing an important role in increasing public concern about radiation and its health effects. There is a well-established discrepancy between fact-based risk assessments and public perception of different risks. This is very much the case with nuclear power, and this is clearly highlighted in Figure 1, with laypersons ranking nuclear power as the highest risk out of 30 activities and technologies, with experts ranking nuclear as 20th. In many ways, popular culture’s depiction of radiation has played a role in ensuring that this discrepancy has remained,",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -414,7 +417,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -596,7 +600,7 @@
   {
     "type": "NarrativeText",
     "element_id": "e9a9edcbe70d12be56e6947010012f76",
-    "text": "Fossil fuels \u2013 currently accounting for around 81% of total energy supplyiv \u2013 cause significant levels of emissions in terms of both greenhouse gases and air pollutants. Despite the serious and ongoing health and environmental harms caused by air pollution, it is often considered to be an inevitable consequence of economic development. Air pollution\u2019s contribution to the burden of disease is profound, with an estimated 8.7 million people dying worldwide prematurely in 2018 alonev,vi. Despite this, it fails to induce the same fears and anxieties in people as nuclear energy does.",
+    "text": "Fossil fuels – currently accounting for around 81% of total energy supplyiv – cause significant levels of emissions in terms of both greenhouse gases and air pollutants. Despite the serious and ongoing health and environmental harms caused by air pollution, it is often considered to be an inevitable consequence of economic development. Air pollution’s contribution to the burden of disease is profound, with an estimated 8.7 million people dying worldwide prematurely in 2018 alonev,vi. Despite this, it fails to induce the same fears and anxieties in people as nuclear energy does.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -678,7 +682,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -700,7 +705,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -722,7 +728,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -744,7 +751,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -766,7 +774,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -788,7 +797,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -810,7 +820,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -832,7 +843,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -854,7 +866,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -876,7 +889,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -920,7 +934,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -942,7 +957,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -964,7 +980,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -986,7 +1003,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1008,7 +1026,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1030,7 +1049,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1052,7 +1072,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1074,7 +1095,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1096,7 +1118,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1118,7 +1141,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1146,7 +1170,7 @@
   {
     "type": "NarrativeText",
     "element_id": "76619db169f10599a1fb73a13fdebafb",
-    "text": "Contrary to perceptions, nuclear is an incredibly safe source of energy (see Figure 3 for a comparison). What is also clear is that the continued use of alternative energy sources in preference to nuclear energy \u2013 in particular fossil fuels \u2013 poses a far greater risk to public health by significantly contributing to climate change and air pollution.",
+    "text": "Contrary to perceptions, nuclear is an incredibly safe source of energy (see Figure 3 for a comparison). What is also clear is that the continued use of alternative energy sources in preference to nuclear energy – in particular fossil fuels – poses a far greater risk to public health by significantly contributing to climate change and air pollution.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1250,7 +1274,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1278,7 +1303,7 @@
   {
     "type": "NarrativeText",
     "element_id": "31d07d8c2dce96dc1c6daa38f8597ab5",
-    "text": "Since the 1980s, there has been considerable scientific debate as to whether the LNT theory is valid, following scientific breakthroughs within, for example, radiobiology and medicine. Indeed, the Chernobyl accident helped illuminate some of the issues associated with LNT. Multiplication of the low doses after the accident (many far too low to be of any health concern) with large populations \u2013 using the assumptions made by LNT \u2013 led to a large number of predicted cancer deaths, which have not, and likely will not materialize. This practice has been heavily criticized for being inappropriate in making risk assessments by UNSCEAR, the International Commission on Radiation Protection and a large number of independent scientists.",
+    "text": "Since the 1980s, there has been considerable scientific debate as to whether the LNT theory is valid, following scientific breakthroughs within, for example, radiobiology and medicine. Indeed, the Chernobyl accident helped illuminate some of the issues associated with LNT. Multiplication of the low doses after the accident (many far too low to be of any health concern) with large populations – using the assumptions made by LNT – led to a large number of predicted cancer deaths, which have not, and likely will not materialize. This practice has been heavily criticized for being inappropriate in making risk assessments by UNSCEAR, the International Commission on Radiation Protection and a large number of independent scientists.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1382,13 +1407,14 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
     "type": "NarrativeText",
     "element_id": "4ab8051907907017f78ae83e1b95dc07",
-    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A \u2018strong\u2019 interpretation of the precautionary principle, or a \u2018as low as possible\u2019 approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation.",
+    "text": "Contemporary debates around nuclear energy often reflect the precautionary principle, a problematic concept applied across a range of regulatory and policy issues. A ‘strong’ interpretation of the precautionary principle, or a ‘as low as possible’ approach to risk, dictates that regulation is required whenever there is a potential adverse health risk, even if the evidence is not certain and regardless of the cost of regulation.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1432,7 +1458,7 @@
   {
     "type": "NarrativeText",
     "element_id": "4ea8f70af2d39cae9f63fce0ea7165f1",
-    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an \u2018as low as possible\u2019 mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels.",
+    "text": "However, the regulatory process and the policy debate around nuclear more broadly has long departed from the ALARA principle, no longer weighing cost versus benefits, or considering the overall advantages of nuclear energy, but rather looking at radiation in isolation. This has resulted in a subtle shift towards an ‘as low as possible’ mentality. Attempting to reduce radiation far below de facto safe levels has resulted in an escalation of costs and loss of public confidence, and in some cases has deprived communities of the many benefits nuclear energy provides. In practical terms, this has led to the continued use of more harmful energy sources, such as fossil fuels.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1454,7 +1480,7 @@
   {
     "type": "NarrativeText",
     "element_id": "17f00667e4e913d53d1deec4900e13f2",
-    "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an \u201call-hazards\u201d approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs \u2013 be they economic, environmental, or public health \u2013 associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power.",
+    "text": "If the potential of nuclear energy is to be fully realized, public health and safety approaches must be recalibrated to consider a wider range of factors when considering radiation, adopting an “all-hazards” approach. Such an approach must ensure that risks are placed within a proper perspective and context, rather than looking at them in isolation. We therefore must not look at the costs – be they economic, environmental, or public health – associated with an individual power plant in isolation, but rather the costs associated with it (and its alternatives) at a societal level (Figure 4). This would entail looking at the potential risks arising from the use of nuclear power and comparing these with the risks associated with not adopting nuclear power.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1624,13 +1650,14 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
     "type": "NarrativeText",
     "element_id": "d4b3fedebdff5b1fbae81fce93b964b2",
-    "text": "By looking at radiation risks in isolation, we have created something akin to a \u201cradiation phobia\u201d, that both directly and indirectly harms people around the world. For instance, it is well established that the vast majority of health impacts from Chernobyl and Fukushima Daiichi were not radiological, but rather psychosocial. There has been an observable and dramatic increase in depression, PTSD, substance abuse, and suicides following these events, which can be significantly attributed to the dissonance between the actual and perceived risks of radiation, and the stigmatization they caused.",
+    "text": "By looking at radiation risks in isolation, we have created something akin to a “radiation phobia”, that both directly and indirectly harms people around the world. For instance, it is well established that the vast majority of health impacts from Chernobyl and Fukushima Daiichi were not radiological, but rather psychosocial. There has been an observable and dramatic increase in depression, PTSD, substance abuse, and suicides following these events, which can be significantly attributed to the dissonance between the actual and perceived risks of radiation, and the stigmatization they caused.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1652,7 +1679,7 @@
   {
     "type": "NarrativeText",
     "element_id": "f71d9a617fd81ca5b4e4fd8070b56548",
-    "text": "Similarly, many of the tremendous challenges the global community faces are significantly driven by this \u201cradiation phobia\u201d. Indeed, several of these issues have been considerably exacerbated by the fact that certain risks are given a disproportionate amount of focus, whereas others are de facto ignored. The global conversation around climate change is a prime example of this. The historical use of fossil fuels has contributed significantly to climate change through greenhouse gas emissions, causing unprecedented changes in the liveability of the Earth. By 2025, half of the world\u2019s population will be living in water-stressed areas, as extreme heat and droughts are exacerbating water resources. Between 2030 and 2050, climate change is expected to be the cause of an additional 250,000 deaths per year, arising from malnutrition, malaria, diarrhoea and heat stressx. Yet, despite the huge risks associated with climate change, our addiction to coal, oil, and fossil gas remains, with fossil fuels providing 84% of global primary energy in 2019xii. The continued prioritization of fossil fuels at the expense of nuclear energy results in a considerable increase in the risks posed by climate change.",
+    "text": "Similarly, many of the tremendous challenges the global community faces are significantly driven by this “radiation phobia”. Indeed, several of these issues have been considerably exacerbated by the fact that certain risks are given a disproportionate amount of focus, whereas others are de facto ignored. The global conversation around climate change is a prime example of this. The historical use of fossil fuels has contributed significantly to climate change through greenhouse gas emissions, causing unprecedented changes in the liveability of the Earth. By 2025, half of the world’s population will be living in water-stressed areas, as extreme heat and droughts are exacerbating water resources. Between 2030 and 2050, climate change is expected to be the cause of an additional 250,000 deaths per year, arising from malnutrition, malaria, diarrhoea and heat stressx. Yet, despite the huge risks associated with climate change, our addiction to coal, oil, and fossil gas remains, with fossil fuels providing 84% of global primary energy in 2019xii. The continued prioritization of fossil fuels at the expense of nuclear energy results in a considerable increase in the risks posed by climate change.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -1888,7 +1915,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1932,7 +1960,8 @@
         },
         "date_created": "1676196572.0",
         "date_modified": "1676196572.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -1960,7 +1989,7 @@
   {
     "type": "ListItem",
     "element_id": "1eed7cbdb8d1de7a460e08217dd4c5c4",
-    "text": "Slovic, P., 2010. The Psychology of risk. Sa\u00fade e Sociedade, 19(4), pp. 731-747.",
+    "text": "Slovic, P., 2010. The Psychology of risk. Saúde e Sociedade, 19(4), pp. 731-747.",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2048,7 +2077,7 @@
   {
     "type": "ListItem",
     "element_id": "0754024aff3f7b1e2850b689e180fc7f",
-    "text": "vii World Health Organization. (2016). Updated tables 2016 for \u2018Preventing disease through health environments: a global assessment of the burden of disease from environmental risks\u2019. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]",
+    "text": "vii World Health Organization. (2016). Updated tables 2016 for ‘Preventing disease through health environments: a global assessment of the burden of disease from environmental risks’. Available at: https://www.who.int/data/gho/ data/themes/public-health-and-environment [Accessed on 8 April 2021]",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [
@@ -2290,7 +2319,7 @@
   {
     "type": "NarrativeText",
     "element_id": "dfaec74062af8b1e913079272ee13f49",
-    "text": "Recalibrating risk \u00a9 2021 World Nuclear Association. Registered in England and Wales, company number 01215741",
+    "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741",
     "metadata": {
       "filetype": "application/pdf",
       "languages": [

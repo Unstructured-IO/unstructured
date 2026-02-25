@@ -119,7 +119,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "Data on environmental sustainable corrosion inhibitor for stainless steel in aggressive environment",
     "type": "Title"
@@ -158,7 +159,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "Omotayo Sanni n, Abimbola Patricia I. Popoola",
     "type": "Title"
@@ -210,7 +212,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "ABSTRACT",
     "type": "Title"
@@ -288,7 +291,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
+      "page_number": 1,
+      "heading_level": 1
     },
     "text": "Speciﬁcation table",
     "type": "Title"
@@ -416,7 +420,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "heading_level": 1
     },
     "text": "Value of the data",
     "type": "Title"
@@ -507,7 +512,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 2
+      "page_number": 2,
+      "heading_level": 1
     },
     "text": "1. Data",
     "type": "Title"
@@ -702,7 +708,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 4
+      "page_number": 4,
+      "heading_level": 1
     },
     "text": "Table 1",
     "type": "Title"
@@ -936,7 +943,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 6
+      "page_number": 6,
+      "heading_level": 1
     },
     "text": "2. Experimental design, materials and methods",
     "type": "Title"
@@ -1183,7 +1191,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 7
+      "page_number": 7,
+      "heading_level": 1
     },
     "text": "Acknowledgements",
     "type": "Title"
@@ -1209,7 +1218,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 7
+      "page_number": 7,
+      "heading_level": 1
     },
     "text": "Transparency document. Supporting information",
     "type": "Title"
@@ -1247,7 +1257,8 @@
       "languages": [
         "eng"
       ],
-      "page_number": 7
+      "page_number": 7,
+      "heading_level": 1
     },
     "text": "References",
     "type": "Title"

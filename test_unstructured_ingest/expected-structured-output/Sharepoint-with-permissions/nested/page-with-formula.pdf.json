@@ -140,7 +140,7 @@
   {
     "type": "NarrativeText",
     "element_id": "703f1d4e9204c8b7ea94191f87138425",
-    "text": "Where the projections are parameter matrices W Q and W O \u2208 Rhdv\u00d7dmodel. i \u2208 Rdmodel\u00d7dk , W K i \u2208 Rdmodel\u00d7dk , W V i \u2208 Rdmodel\u00d7dv",
+    "text": "Where the projections are parameter matrices W Q and W O ∈ Rhdv×dmodel. i ∈ Rdmodel×dk , W K i ∈ Rdmodel×dk , W V i ∈ Rdmodel×dv",
     "metadata": {
       "coordinates": {
         "points": [
@@ -272,7 +272,8 @@
         },
         "date_created": "1719424780.0",
         "date_modified": "1719424780.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -324,7 +325,7 @@
   {
     "type": "ListItem",
     "element_id": "fd24bf7bf21b4aab2a36021f9ebb253b",
-    "text": "\u2022 In \"encoder-decoder attention\" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9].",
+    "text": "• In \"encoder-decoder attention\" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38, 2, 9].",
     "metadata": {
       "coordinates": {
         "points": [
@@ -370,7 +371,7 @@
   {
     "type": "ListItem",
     "element_id": "77762865993fd26c55c87cb45d75cad8",
-    "text": "\u2022 The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder.",
+    "text": "• The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder.",
     "metadata": {
       "coordinates": {
         "points": [
@@ -416,7 +417,7 @@
   {
     "type": "ListItem",
     "element_id": "41b9b9d2a4329a8f6075f4776403c2de",
-    "text": "\u2022 Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to \u2212\u221e) all values in the input of the softmax which correspond to illegal connections. See Figure 2.",
+    "text": "• Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to prevent leftward information flow in the decoder to preserve the auto-regressive property. We implement this inside of scaled dot-product attention by masking out (setting to −∞) all values in the input of the softmax which correspond to illegal connections. See Figure 2.",
     "metadata": {
       "coordinates": {
         "points": [
@@ -502,7 +503,8 @@
         },
         "date_created": "1719424780.0",
         "date_modified": "1719424780.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
@@ -686,7 +688,8 @@
         },
         "date_created": "1719424780.0",
         "date_modified": "1719424780.0"
-      }
+      },
+      "heading_level": 1
     }
   },
   {
