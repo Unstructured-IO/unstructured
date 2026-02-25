@@ -73,7 +73,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
-    runs-on: ubuntu-latest
+    runs-on: opensource-linux-8core
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v4
@@ -144,7 +144,7 @@ jobs:
             uv-extras: "--extra pptx"
           - extra: xlsx
             uv-extras: "--extra xlsx"
-    runs-on: ubuntu-latest
+    runs-on: opensource-linux-8core
     needs: [setup, lint, test_unit_no_extras]
     steps:
     - uses: actions/checkout@v4
