@@ -14,7 +14,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-EXPECTED_ROOT = Path(__file__).resolve().parent.parent / "test_unstructured_ingest" / "expected-structured-output"
+EXPECTED_ROOT = (
+    Path(__file__).resolve().parent.parent
+    / "test_unstructured_ingest"
+    / "expected-structured-output"
+)
 
 
 def add_heading_level_to_file(path: Path) -> bool:

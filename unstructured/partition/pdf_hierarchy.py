@@ -12,6 +12,7 @@ from collections import defaultdict
 from typing import Any, Dict, List, Optional
 
 from pypdf import PdfReader
+
 from unstructured.documents.elements import Element, Title
 from unstructured.logger import logger
 
