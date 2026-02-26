@@ -15,6 +15,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
     SpeechToTextAgent,
 )
+from unstructured.utils import is_temp_file_path
 
 
 @apply_metadata(FileType.WAV)
@@ -70,16 +71,13 @@ def partition_audio(
         agent = SpeechToTextAgent.get_agent(stt_agent)
         segments = agent.transcribe_segments(audio_path, language=language)
     finally:
-        if filename is None and audio_path.startswith(tempfile.gettempdir()):
+        if filename is None and is_temp_file_path(audio_path):
             Path(audio_path).unlink(missing_ok=True)
 
     if not segments:
         return []
 
-    base_metadata = ElementMetadata(
-        last_modified=get_last_modified_date(filename) if filename else None,
-    )
-    base_metadata.detection_origin = "speech_to_text"
+    last_modified = get_last_modified_date(filename) if filename else None
 
     elements: list[Element] = []
     for seg in segments:
@@ -88,7 +86,7 @@ def partition_audio(
             continue
         element = NarrativeText(text=text)
         element.metadata = ElementMetadata(
-            last_modified=base_metadata.last_modified,
+            last_modified=last_modified,
             segment_start_seconds=seg["start"],
             segment_end_seconds=seg["end"],
         )

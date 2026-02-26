@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import threading
+
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
     SpeechToTextAgent,
@@ -10,7 +12,13 @@ from unstructured.partition.utils.speech_to_text.speech_to_text_interface import
 
 
 class SpeechToTextAgentWhisper(SpeechToTextAgent):
-    """Speech-to-text implementation using OpenAI Whisper."""
+    """Speech-to-text implementation using OpenAI Whisper.
+
+    A single instance is shared across all callers via the lru_cache in get_instance().
+    Because model.transcribe() is not documented as thread-safe, a per-instance lock
+    serializes concurrent transcription calls. For CPU-bound workloads that require true
+    parallelism, use process-based concurrency (e.g. multiprocessing) instead of threads.
+    """
 
     def __init__(self, model_size: str | None = None) -> None:
         """Initialize the Whisper model.
@@ -37,14 +45,13 @@ class SpeechToTextAgentWhisper(SpeechToTextAgent):
                 f"Original error: {exc}"
             ) from exc
         self._fp16 = env_config.WHISPER_FP16
+        self._lock = threading.Lock()
 
     def transcribe(self, audio_path: str, *, language: str | None = None) -> str:
         """Transcribe audio file to text using Whisper."""
-        options: dict = {"fp16": self._fp16}
-        if language is not None:
-            options["language"] = language
-        result = self._model.transcribe(audio_path, **options)
-        return result.get("text", "").strip()
+        return " ".join(
+            seg["text"] for seg in self.transcribe_segments(audio_path, language=language)
+        )
 
     def transcribe_segments(
         self, audio_path: str, *, language: str | None = None
@@ -53,7 +60,8 @@ class SpeechToTextAgentWhisper(SpeechToTextAgent):
         options: dict = {"fp16": self._fp16}
         if language is not None:
             options["language"] = language
-        result = self._model.transcribe(audio_path, **options)
+        with self._lock:
+            result = self._model.transcribe(audio_path, **options)
         segments: list[TranscriptionSegment] = []
         for seg in result.get("segments", []):
             text = (seg.get("text") or "").strip()

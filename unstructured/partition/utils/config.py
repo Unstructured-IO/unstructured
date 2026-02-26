@@ -13,7 +13,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, STT_AGENT_WHISPER
 
 
 @lru_cache(maxsize=1)
@@ -124,8 +124,6 @@ class ENVConfig:
     @property
     def STT_AGENT(self) -> str:
         """Speech-to-text agent module for partition_audio (e.g. Whisper)."""
-        from unstructured.partition.utils.constants import STT_AGENT_WHISPER
-
         return self._get_string("STT_AGENT", STT_AGENT_WHISPER)
 
     @property
@@ -149,12 +147,22 @@ class ENVConfig:
 
     @property
     def WHISPER_FP16(self) -> bool:
-        """Use FP16 for Whisper transcription when True (default).
+        """Use FP16 for Whisper transcription.
 
-        FP16 gives roughly 2x GPU speedup on CUDA with minimal quality impact.
-        Set WHISPER_FP16=false to disable (e.g. for CPU or compatibility).
+        FP16 gives roughly 2x GPU speedup on CUDA with minimal quality impact, but is
+        unsupported on CPU and will raise a RuntimeError there. The default is auto-detected:
+        True when a CUDA GPU is available, False otherwise.
+        Set WHISPER_FP16=true/false explicitly to override.
         """
-        return self._get_bool("WHISPER_FP16", True)
+        env_val = self._get_string("WHISPER_FP16")
+        if env_val:
+            return env_val.lower() in ("true", "1", "t")
+        try:
+            import torch
+
+            return bool(torch.cuda.is_available())
+        except ImportError:
+            return False
 
     @property
     def EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD(self) -> int:

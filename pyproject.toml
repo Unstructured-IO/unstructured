@@ -113,7 +113,7 @@ xlsx = [
 ]
 # Speech-to-text for partition_audio (multimodal: audio -> elements)
 audio = [
-    "openai-whisper>=20231117, <20260000",
+    "openai-whisper>=20231117, <20270000",
 ]
 all-docs = [
     "unstructured[audio,csv,doc,docx,epub,image,md,odt,org,pdf,ppt,pptx,rtf,rst,tsv,xlsx]",

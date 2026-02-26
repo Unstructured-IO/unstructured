@@ -527,6 +527,10 @@ class ConsolidationStrategy(enum.Enum):
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
+            # TODO: ideally a chunk spanning multiple audio segments would keep min(start) and
+            # max(end) across its constituent elements. ConsolidationStrategy currently has no
+            # MIN/MAX variants, so DROP is the safe fallback for now. Add MIN/MAX strategies
+            # and switch these to cls.MIN / cls.MAX when that work is done.
             "segment_start_seconds": cls.DROP,
             "segment_end_seconds": cls.DROP,
             "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --

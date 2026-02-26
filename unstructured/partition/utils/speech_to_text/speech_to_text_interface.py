@@ -47,13 +47,22 @@ class SpeechToTextAgent(ABC):
             )
         try:
             mod = importlib.import_module(module_name)
-            cls = getattr(mod, class_name)
-            return cls()
+            loaded_class = getattr(mod, class_name)
         except (ImportError, AttributeError) as e:
-            logger.error(f"Failed to get SpeechToTextAgent instance: {e}")
+            logger.error(f"Failed to load SpeechToTextAgent class '{agent_module}': {e}")
             raise RuntimeError(
-                "Could not load the SpeechToText agent. Install the audio extra: "
+                f"Could not load the SpeechToText agent class '{agent_module}'. "
+                "Install the audio extra: "
                 'pip install "unstructured[audio]"'
+            ) from e
+        try:
+            return loaded_class()
+        except Exception as e:
+            logger.error(f"SpeechToTextAgent '{class_name}' loaded but failed to initialize: {e}")
+            raise RuntimeError(
+                f"SpeechToText agent '{class_name}' was imported successfully but its "
+                f"constructor raised an error. "
+                f"Original error: {e}"
             ) from e
 
     @abstractmethod
