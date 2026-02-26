@@ -1,17 +1,128 @@
 from importlib import reload
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
-from pdfminer.layout import LTChar, LTContainer, LTTextLine
+from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.pdf_image.pdfminer_utils import (
+    CustomPDFPageInterpreter,
     _is_duplicate_char,
     deduplicate_chars_in_text_line,
     extract_text_objects,
     get_text_with_deduplication,
 )
 from unstructured.partition.utils import config as partition_config
+
+
+def _make_char():
+    return LTChar(
+        matrix=(1, 0, 0, 1, 0, 0),
+        font=MagicMock(),
+        fontsize=12,
+        scaling=1,
+        rise=0,
+        text="x",
+        textwidth=10,
+        textdisp=(0, 1),
+        ncs=MagicMock(),
+        graphicstate=MagicMock(),
+    )
+
+
+def _make_interpreter(cur_item):
+    interp = object.__new__(CustomPDFPageInterpreter)
+    interp.device = MagicMock()
+    interp.device.cur_item = cur_item
+    interp.textstate = MagicMock()
+    interp.graphicstate = MagicMock()
+    return interp
+
+
+def test_patch_render_mode_only_new_chars():
+    """Only chars added after the snapshot index should be patched."""
+    page = LTLayoutContainer(bbox=(0, 0, 100, 100))
+    interp = _make_interpreter(page)
+
+    old_char = _make_char()
+    page.add(old_char)
+
+    interp.textstate.render = 3
+    interp._patch_current_chars_with_render_mode(start=1)
+
+    assert not hasattr(old_char, "rendermode")
+
+
+def test_patch_render_mode_correct_value():
+    """Chars in the patched range should get the current render mode."""
+    page = LTLayoutContainer(bbox=(0, 0, 100, 100))
+    interp = _make_interpreter(page)
+
+    char = _make_char()
+    page.add(char)
+
+    interp.textstate.render = 3
+    interp._patch_current_chars_with_render_mode(start=0)
+
+    assert char.rendermode == 3
+
+
+def test_patch_render_mode_preserved_after_figure_with_text():
+    """When cur_item reverts to the page after a figure that contained text ops,
+    previously patched chars must keep their original render mode."""
+    page = LTLayoutContainer(bbox=(0, 0, 100, 100))
+    interp = _make_interpreter(page)
+
+    # Text op on page with render_mode=0
+    char_a = _make_char()
+    page.add(char_a)
+    interp.textstate.render = 0
+    interp._patch_current_chars_with_render_mode(start=0)
+
+    # begin_figure — cur_item switches to figure
+    figure = LTFigure("test", (0, 0, 50, 50), (1, 0, 0, 1, 0, 0))
+    interp.device.cur_item = figure
+
+    # Text op inside figure
+    fig_char = _make_char()
+    figure.add(fig_char)
+    interp._patch_current_chars_with_render_mode(start=0)
+
+    # end_figure — cur_item reverts to page
+    interp.device.cur_item = page
+
+    # Render mode changes, new text op on page
+    interp.textstate.render = 3
+    char_b = _make_char()
+    page.add(char_b)
+    interp._patch_current_chars_with_render_mode(start=1)
+
+    assert char_a.rendermode == 0
+    assert char_b.rendermode == 3
+
+
+def test_do_TJ_snapshots_before_super():
+    """do_TJ should snapshot len(objs) before super() adds chars,
+    so only the newly added chars are patched."""
+    page = LTLayoutContainer(bbox=(0, 0, 100, 100))
+    interp = _make_interpreter(page)
+
+    old_char = _make_char()
+    page.add(old_char)
+    old_char.rendermode = 0
+
+    new_char = _make_char()
+
+    def fake_super_do_TJ(self, seq):
+        page.add(new_char)
+
+    interp.textstate.render = 3
+    interp.textstate.font = MagicMock()
+    with patch.object(CustomPDFPageInterpreter.__bases__[0], "do_TJ", fake_super_do_TJ):
+        interp.do_TJ([b"test"])
+
+    assert old_char.rendermode == 0
+    assert new_char.rendermode == 3
 
 
 def test_extract_text_objects_nested_containers():
