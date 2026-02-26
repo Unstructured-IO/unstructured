@@ -33,10 +33,6 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
         super().do_TJ(seq)
         self._patch_current_chars_with_render_mode(start)
 
-    def do_Tj(self, s):
-        start = len(getattr(getattr(self.device, "cur_item", None), "_objs", ()))
-        super().do_Tj(s)
-        self._patch_current_chars_with_render_mode(start)
 
 
 class PDFMinerConfig(BaseModel):
