@@ -34,7 +34,6 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
         self._patch_current_chars_with_render_mode(start)
 
 
-
 class PDFMinerConfig(BaseModel):
     line_overlap: Optional[float] = None
     word_margin: Optional[float] = None
