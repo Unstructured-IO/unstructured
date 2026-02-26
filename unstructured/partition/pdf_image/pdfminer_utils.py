@@ -23,19 +23,16 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
         cur_item = getattr(self.device, "cur_item", None)
         if not cur_item:
             return
-        objs = getattr(cur_item, "_objs", [])
+        objs = getattr(cur_item, "_objs", ())
         render_mode = self.textstate.render
         # Reset index when cur_item changes (new page or figure)
         if getattr(self, "_patched_cur_item", None) is not cur_item:
             self._last_patched_idx = 0
             self._patched_cur_item = cur_item
-        start = self._last_patched_idx
-        if start < len(objs):
-            for obj in objs[start:]:
-                if isinstance(obj, LTChar):
-                    obj.rendermode = render_mode
-            self._last_patched_idx = len(objs)
-        return
+        for obj in objs[self._last_patched_idx:]:
+            if isinstance(obj, LTChar):
+                obj.rendermode = render_mode
+        self._last_patched_idx = len(objs)
 
     def do_TJ(self, seq):
         super().do_TJ(seq)
