@@ -21,13 +21,18 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
     def _patch_current_chars_with_render_mode(self):
         """Add render_mode to recently created LTChar objects"""
         if hasattr(self.device, "cur_item") and self.device.cur_item:
+            cur_item = self.device.cur_item
+            objs = cur_item._objs if hasattr(cur_item, "_objs") else []
             render_mode = self.textstate.render
-            for item in (
-                self.device.cur_item._objs if hasattr(self.device.cur_item, "_objs") else []
-            ):
-                if isinstance(item, LTChar) and not hasattr(item, "rendermode"):
-                    item.rendermode = render_mode
-        return
+            # Reset index when cur_item changes (new page or figure)
+            if getattr(self, "_patched_cur_item", None) is not cur_item:
+                self._last_patched_idx = 0
+                self._patched_cur_item = cur_item
+            start = self._last_patched_idx
+            for i in range(start, len(objs)):
+                if isinstance(objs[i], LTChar):
+                    objs[i].rendermode = render_mode
+            self._last_patched_idx = len(objs)
 
     def do_TJ(self, seq):
         super().do_TJ(seq)
