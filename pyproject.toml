@@ -173,7 +173,6 @@ test = [
     "weaviate-client>=4.20.1, <5.0.0",
 ]
 dev = [
-    "codeflash",
     "pre-commit>=4.5.1, <5.0.0",
 ]
 lint = [
@@ -201,9 +200,6 @@ constraint-dependencies = [
     "urllib3>=2.0.0",
     "weaviate-client>=4.20.1",
 ]
-
-[tool.uv.sources]
-codeflash = { path = "../../cf_org/codeflash", editable = true }
 
 [tool.pyright]
 pythonPlatform = "Linux"
