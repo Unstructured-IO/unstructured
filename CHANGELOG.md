@@ -1,3 +1,9 @@
+## 0.21.8
+
+### Enhancements
+- **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
+
+
 ## 0.21.7
 
 ### Enhancements
