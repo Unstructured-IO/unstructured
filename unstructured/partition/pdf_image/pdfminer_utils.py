@@ -25,10 +25,9 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
             for item in (
                 self.device.cur_item._objs if hasattr(self.device.cur_item, "_objs") else []
             ):
-                if hasattr(item, "rendermode"):
-                    continue  # Already patched
-                if isinstance(item, LTChar):
+                if isinstance(item, LTChar) and not hasattr(item, "rendermode"):
                     item.rendermode = render_mode
+        return
 
     def do_TJ(self, seq):
         super().do_TJ(seq)
