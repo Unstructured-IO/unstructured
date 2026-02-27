@@ -18,29 +18,20 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
     """a custom pdfminer page interpreter that adds character render mode information to LTChar
     object as `rendermode` attribute. This is intended to be used to detect invisible text."""
 
-    def _patch_current_chars_with_render_mode(self):
-        """Add render_mode to recently created LTChar objects"""
+    def _patch_current_chars_with_render_mode(self, start: int):
+        """Add render_mode to LTChar objects added since index `start`."""
         cur_item = getattr(self.device, "cur_item", None)
         if not cur_item:
             return
-        objs = getattr(cur_item, "_objs", ())
         render_mode = self.textstate.render
-        # Reset index when cur_item changes (new page or figure)
-        if getattr(self, "_patched_cur_item", None) is not cur_item:
-            self._last_patched_idx = 0
-            self._patched_cur_item = cur_item
-        for obj in objs[self._last_patched_idx:]:
+        for obj in getattr(cur_item, "_objs", ())[start:]:
             if isinstance(obj, LTChar):
                 obj.rendermode = render_mode
-        self._last_patched_idx = len(objs)
 
     def do_TJ(self, seq):
+        start = len(getattr(getattr(self.device, "cur_item", None), "_objs", ()))
         super().do_TJ(seq)
-        self._patch_current_chars_with_render_mode()
-
-    def do_Tj(self, s):
-        super().do_Tj(s)
-        self._patch_current_chars_with_render_mode()
+        self._patch_current_chars_with_render_mode(start)
 
 
 class PDFMinerConfig(BaseModel):
