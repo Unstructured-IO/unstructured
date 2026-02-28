@@ -60,25 +60,27 @@ DUMMY_DF_ELEMENT_TYPE = pd.DataFrame(
 
 @pytest.fixture
 def mock_dependencies():
-    with patch(
-        "unstructured.metrics.evaluate.calculate_accuracy"
-    ) as mock_calculate_accuracy, patch(
-        "unstructured.metrics.evaluate.calculate_percent_missing_text"
-    ) as mock_calculate_percent_missing_text, patch.object(
-        TextExtractionMetricsCalculator, "_get_ccts"
-    ) as mock_get_ccts, patch(
-        "unstructured.metrics.evaluate.get_element_type_frequency"
-    ) as mock_get_element_type_frequency, patch(
-        "unstructured.metrics.evaluate.calculate_element_type_percent_match"
-    ) as mock_calculate_element_type_percent_match, patch(
-        "unstructured.metrics.evaluate._read_text_file"
-    ) as mock_read_text_file, patch.object(
-        Path, "exists"
-    ) as mock_path_exists, patch(
-        "unstructured.metrics.evaluate.TableEvalProcessor.from_json_files"
-    ) as mock_table_eval_processor_from_json_files, patch.object(
-        TableStructureMetricsCalculator, "supported_metric_names"
-    ) as mock_supported_metric_names:
+    with (
+        patch("unstructured.metrics.evaluate.calculate_accuracy") as mock_calculate_accuracy,
+        patch(
+            "unstructured.metrics.evaluate.calculate_percent_missing_text"
+        ) as mock_calculate_percent_missing_text,
+        patch.object(TextExtractionMetricsCalculator, "_get_ccts") as mock_get_ccts,
+        patch(
+            "unstructured.metrics.evaluate.get_element_type_frequency"
+        ) as mock_get_element_type_frequency,
+        patch(
+            "unstructured.metrics.evaluate.calculate_element_type_percent_match"
+        ) as mock_calculate_element_type_percent_match,
+        patch("unstructured.metrics.evaluate._read_text_file") as mock_read_text_file,
+        patch.object(Path, "exists") as mock_path_exists,
+        patch(
+            "unstructured.metrics.evaluate.TableEvalProcessor.from_json_files"
+        ) as mock_table_eval_processor_from_json_files,
+        patch.object(
+            TableStructureMetricsCalculator, "supported_metric_names"
+        ) as mock_supported_metric_names,
+    ):
         mocks = {
             "mock_calculate_accuracy": mock_calculate_accuracy,
             "mock_calculate_percent_missing_text": mock_calculate_percent_missing_text,

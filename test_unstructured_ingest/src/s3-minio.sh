@@ -22,7 +22,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
   echo "Stopping Minio Docker container"
-  docker-compose -f scripts/minio-test-helpers/docker-compose.yaml down --remove-orphans -v
+  docker compose -f scripts/minio-test-helpers/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"

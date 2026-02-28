@@ -10,7 +10,7 @@ class_name = os.getenv("WEAVIATE_CLASS_NAME", "Elements")
 N_ELEMENTS = 5
 
 if __name__ == "__main__":
-    print(f"Checking contents of class collection " f"{class_name} at {weaviate_host_url}")
+    print(f"Checking contents of class collection {class_name} at {weaviate_host_url}")
 
     client = weaviate.Client(
         url=weaviate_host_url,

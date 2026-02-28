@@ -337,7 +337,8 @@ def test_table_eval_processor_non_str_values_in_table():
     prediction = [
         {
             "type": "Table",
-            "metadata": {"text_as_html": """
+            "metadata": {
+                "text_as_html": """
 <table>
     <thead>
         <tr>
@@ -351,7 +352,8 @@ def test_table_eval_processor_non_str_values_in_table():
             <td>22</td>
         </tr>
     </tbody>
-</table>"""},
+</table>"""
+            },
         }
     ]
 
@@ -409,7 +411,8 @@ def test_table_eval_processor_merged_cells():
     prediction = [
         {
             "type": "Table",
-            "metadata": {"text_as_html": """
+            "metadata": {
+                "text_as_html": """
 <table>
     <thead>
         <tr>
@@ -435,7 +438,8 @@ def test_table_eval_processor_merged_cells():
         </tr>
     </tbody>
 </table>
-"""},
+"""
+            },
         }
     ]
 

@@ -1,7 +1,142 @@
-## 0.18.35-dev0
+## 0.21.8
 
 ### Enhancements
-- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accomodate higher dpi values
+- **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
+
+
+## 0.21.7
+
+### Enhancements
+- **Bump dependencies**: Update pinned dependency versions in the lockfile.
+
+## 0.21.6
+
+### Enhancements
+- **Add `create_file_from_elements()` to re-create document files from elements (fixes #3994)**: New staging helper `create_file_from_elements(elements, output_format=..., filename=...)` converts a list of elements back into a document in the given format (`"markdown"`, `"html"`, or `"text"`), optionally writing to a file. Supports the workflow: partition → modify elements (e.g. replace Image with NarrativeText using alt text) → write back to file.
+
+## 0.21.5
+
+### Fixes
+- Lower the requirement for `pdfminer.six` to `>=20251230`
+
+## 0.21.4
+
+### Enhancements
+- Add a github action for testing time regressions
+
+## 0.21.3
+
+### Enhancements
+- **Custom fallback for language detection (fixes #4091)**: Add optional `language_fallback` callable for short ASCII text (e.g. when detection would default to English). Callable receives the text and may return a list of ISO 639-3 codes or `None` to leave language unspecified; return value is validated and invalid entries are filtered out. `language_fallback` is passed through `partition()`, PDF/image partitioners, and `partition_html`; `partition_md` now accepts `languages` (use `[""]` to disable detection). Language-related parameters (`languages`, `detect_language_per_element`, `language_fallback`) are documented as top-level options and exposed explicitly on `partition_html`.
+
+## 0.21.2
+
+### Fixes
+- **Self-install pinned spaCy model at runtime with SHA256 verification**: Replace the `en-core-web-sm` direct URL dependency in `pyproject.toml` with the `installer` library. The spaCy model is now downloaded and installed on first use with hash verification, removing the need for `[tool.uv.sources]` and making the install more portable.
+
+## 0.21.1
+
+- Bump version to create a new release
+
+## 0.21.0
+
+### Fixes
+- **Replace NLTK with spaCy to remediate CVE-2025-14009**: NLTK's downloader uses `zipfile.extractall()` without path validation, enabling RCE via malicious packages (CVSS 10.0, no patch available). spaCy models install as pip packages, eliminating the vulnerable downloader entirely.
+
+## 0.20.8
+
+### Fixes
+- downgrade `wrapt` so it is compatible with `opentelemetry-instrumentation-httpx`
+- resolve lock issue with windows and python 3.13
+
+## 0.20.7
+
+### Fixes
+- **Cap size when decompressing elements JSON file**: Prevents situations where decompression can consume an arbitrarily large portion in memory and on the filesystem.
+
+## 0.20.6
+
+### Fixes
+- fix: remap parent id after hashing to preserve right reference
+
+## 0.20.5
+
+### Fixes
+- **Gracefully handle invalid `text_as_html` during chunking**: `_TableChunker` now catches parse errors (e.g. `lxml.etree.ParserError` when `text_as_html` contains a markdown code-fence like `` ```html\n ``) and returns `None` instead of raising, allowing chunking to continue using plain-text fallback. A `WARNING` log is emitted with a truncated preview of the offending value.
+
+## 0.20.4
+
+### Enhancements
+- Improve PDF `fast` strategy cold-start performance by lazy-loading hi-res-only imports in `partition/pdf.py`, reducing first-call startup overhead while keeping warm runtime behavior effectively unchanged.
+
+
+## 0.20.3
+
+### Fixes
+- **Fix duplicate characters in PDF bold text extraction**: Some PDFs render bold text by drawing each character twice at slightly offset positions, causing text like "BOLD" to be extracted as "BBOOLLDD". Added character-level deduplication based on position proximity and bounding box overlap analysis to distinguish fake-bold duplicates (high overlap) from legitimate double letters (adjacent positioning). Configurable via `PDF_CHAR_DUPLICATE_THRESHOLD` environment variable (default: 2.0 pixels, set to 0 to disable)(fixes #3864).
+
+## 0.20.2
+
+### Enhancements
+- Add automated PyPI publishing: new `release.yml` GitHub Actions workflow triggers on GitHub release, builds the package with `uv build`, publishes to PyPI via `pypa/gh-action-pypi-publish`, and uploads to Azure Artifacts via `twine`
+- Replace `uv sync --frozen` with `uv sync --locked` across all CI workflows, Dockerfile, and Makefile to fail fast on stale lockfiles
+- Add `--no-sync` to all `uv run` and `uv build` commands that follow a prior `uv sync` step to prevent implicit re-syncing
+
+## 0.20.1
+
+### Fixes
+- Switch CD `publish-images` job runner from `ubuntu-latest` to `ubuntu-latest-m` to fix "no space left on device" error when pulling multi-arch Docker images
+
+## 0.20.0
+
+### Enhancements
+- Add Python 3.11 and 3.13 support (`requires-python = ">=3.11, <3.14"`)
+- Expand CI matrix to test against Python 3.11, 3.12, and 3.13 for lint, unit tests, no-extras tests, and per-extra tests
+- Move lightweight CI jobs (`test_json_to_html`, `test_json_to_markdown`) from `opensource-linux-8core` to `ubuntu-latest` runners
+- Bump `unstructured-ingest` lower bound to `>=1.4.0` (first release with Python 3.11 and 3.13 support)
+- Remove dead `sys.version_info < (3, 8)` conditional import in `unstructured/nlp/patterns.py`
+- Update ruff `target-version` to `py311` and pyright `pythonVersion` to `3.11` to match new minimum
+
+## 0.19.3
+
+### Enhancements
+- Use native ARM64 runner (`ubuntu-24.04-arm`) for Docker ARM64 builds in CD, replacing QEMU emulation for faster and more reliable builds
+- Use `opensource-linux-8core` runner for Docker AMD64 builds in CD
+- Add `workflow_dispatch` trigger to CD workflow for manual testing
+- Update CI runners from `ubuntu-latest-m` to `opensource-linux-8core`
+- Enable parallel test execution (`pytest -n auto`) in Docker test target
+- Reduce CD test step to smoke tests only (full suite already runs in CI)
+
+### Fixes
+- Add retry logic (up to 3 attempts) for `apk add` in Dockerfile to handle transient Chainguard APK mirror failures
+- Add `fail-fast: false` to CD build matrix so a flaky failure on one architecture doesn't cancel the other
+- Remove `.python-version` from `.gitignore`
+
+## 0.19.1
+
+### Fixes
+- Fix Docker ARM64 (`linux/aarch64`) image build failure by adding `platform_machine != 'aarch64'` marker to `paddlepaddle` (no Linux ARM64 wheels available) and adding `required-environments` to `[tool.uv]` for cross-platform lockfile resolution
+
+## 0.19.0
+
+### Enhancements
+- increase the `PIL.Image.MAX_IMAGE_PIXELS` for pdf partition to accommodate higher dpi values
+- Migrate project to native uv: replace setup.py/setuptools with pyproject.toml/hatchling, use uv sync/lock for dependency management, consolidate linting to ruff (drop black, flake8, autoflake)
+- Migrate CI workflows and GitHub Actions to use uv instead of pip/virtualenv
+- Migrate Dockerfile from pip to uv for dependency installation
+- Add `unstructured-ingest` as a native optional dependency extra (`unstructured[ingest]`)
+- Replace `pypandoc` with `pypandoc-binary` to bundle pandoc in the Python wheel (no system install needed)
+- Replace `liccheck` with `pip-licenses` for license checking (no pip dependency needed)
+- Add `sentencepiece` to `huggingface` extra; add `xlrd` to `xlsx` extra
+- Remove obsolete scripts (`consistent-deps.sh`, `check-extras.sh`, `pip-compile.sh`, `install-pandoc.sh`) superseded by uv and bundled deps
+- Update `check-licenses.sh` and `renovate-security-bump.sh` for uv-based workflow
+- Drop Python 3.10 and 3.11 support; minimum required version is now Python 3.12
+
+### Fixes
+- Fix corrupted `FigureCaption`/`Image` color-map key in `bbox_visualisation.py` caused by implicit string concatenation
+- Fix missing space in HTML radio-button test expectation (`test_html_to_unstructured_and_back_parsing.py`)
+- Fix missing space in elasticsearch test output message
+- Fix `unstructured-client` constraint version mismatch (was `>=0.23.0`, now `>=0.25.9` matching the actual dependency)
 
 ## 0.18.34
 

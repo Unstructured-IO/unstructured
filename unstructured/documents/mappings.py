@@ -30,9 +30,9 @@ def get_all_subclasses(cls: type) -> list[type]:
     return all_subclasses
 
 
-def get_ontology_to_unstructured_type_mapping() -> (
-    dict[Type[ontology.OntologyElement], Type[Element]]
-):
+def get_ontology_to_unstructured_type_mapping() -> dict[
+    Type[ontology.OntologyElement], Type[Element]
+]:
     """
     Get a mapping of ontology element to unstructured type.
 

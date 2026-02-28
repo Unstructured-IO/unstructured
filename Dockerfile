@@ -1,24 +1,25 @@
 FROM cgr.dev/chainguard/wolfi-base:latest AS base
 
 ARG PYTHON=python3.12
-ARG PIP="${PYTHON} -m pip"
 
 USER root
 
 WORKDIR /app
 
-COPY ./requirements requirements/
+COPY pyproject.toml uv.lock README.md ./
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
-COPY ./docker/packages/*.apk /tmp/packages/
 
-RUN apk update && \
-    apk add libxml2 python-3.12 python-3.12-base py3.12-pip glib \
-      mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
-      poppler poppler-utils poppler-glib libreoffice tesseract && \
-    apk add --allow-untrusted /tmp/packages/pandoc-3.1.8-r0.apk && \
-    rm -rf /tmp/packages && \
+RUN apk_ok=false; \
+    for attempt in 1 2 3; do \
+      apk update && \
+      apk add libxml2 python-3.12 python-3.12-base glib \
+        mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
+        poppler poppler-utils poppler-glib libreoffice tesseract && \
+      apk_ok=true && break; \
+      echo "apk install failed (attempt $attempt/3), retrying in 5s..."; sleep 5; \
+    done; $apk_ok && \
     git clone --depth 1 https://github.com/tesseract-ocr/tessdata.git /tmp/tessdata && \
     mkdir -p /usr/local/share/tessdata && \
     cp /tmp/tessdata/*.traineddata /usr/local/share/tessdata && \
@@ -32,7 +33,6 @@ RUN apk update && \
     ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
     chmod +x /usr/lib/libreoffice/program/soffice.bin && \
     apk add --no-cache font-ubuntu fontconfig && \
-    apk upgrade --no-cache py3.12-pip && \
     fc-cache -fv && \
     ln -sf /usr/bin/$PYTHON /usr/bin/python3
 
@@ -49,7 +49,14 @@ COPY --chown=${NB_USER} scripts/initialize-libreoffice.sh ${HOME}/initialize-lib
 RUN rm -rf /usr/lib/python3.10 && \
     rm -rf /usr/lib/python3.11 && \
     rm -rf /usr/lib/python3.13 && \
-    rm /usr/bin/python3.13
+    rm -f /usr/bin/python3.13
+
+# Install uv (as root, into a system-wide location)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# Hand /app to notebook-user before switching to that user.
+# This must happen before uv sync so it can create .venv inside /app.
+RUN chown -R ${NB_USER}:${NB_USER} /app
 
 USER notebook-user
 WORKDIR ${HOME}
@@ -60,29 +67,17 @@ RUN ./initialize-libreoffice.sh && rm initialize-libreoffice.sh
 
 WORKDIR /app
 
-# append PATH before pip install to avoid warning logs; it also avoids issues with packages that needs compilation during installation
-ENV PATH="${PATH}:/home/notebook-user/.local/bin"
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
-ENV NLTK_DATA=/home/notebook-user/nltk_data
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_PYTHON_DOWNLOADS=never
 
-# Upgrade pip to fix CVE-2025-8869
-RUN $PIP install --no-cache-dir --user --upgrade "pip>=25.3"
+# Install Python dependencies via uv, then trigger spaCy model self-install while network is available
+RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test --no-group release && \
+    uv run --no-sync $PYTHON -c "from unstructured.nlp.tokenize import _get_nlp; print('spaCy model loaded:', _get_nlp().meta['name'])" && \
+    uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
+    uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
-# Install Python dependencies and download required NLTK packages
-RUN find requirements/ -type f -name "*.txt" ! -name "test.txt" ! -name "dev.txt" ! -name "constraints.txt" -exec $PIP install --no-cache-dir --user -r '{}' ';' && \
-    mkdir -p ${NLTK_DATA} && \
-    $PYTHON -m nltk.downloader -d ${NLTK_DATA} punkt_tab averaged_perceptron_tagger_eng && \
-    $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
-    $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
-
+ENV PATH="/app/.venv/bin:${PATH}"
 ENV HF_HUB_OFFLINE=1
-
-USER root
-
-# Remove setuptools to remove jaraco.context to fix GHSA-58pv-8j8x-9vj2
-RUN $PIP uninstall -y setuptools && \
-    chown -R notebook-user:notebook-user /app
-
-USER notebook-user
 
 CMD ["/bin/bash"]

@@ -20,6 +20,7 @@ from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import (
     CompositeElement,
     Element,
+    NarrativeText,
     Table,
     TableChunk,
     Text,
@@ -43,12 +44,9 @@ def test_partition_odt_from_filename():
     elements = partition_odt(example_doc_path("fake.odt"))
 
     assert elements == [
-        Text("Lorem ipsum dolor sit amet."),
+        NarrativeText("Lorem ipsum dolor sit amet."),
         Table(
-            "Header row Mon Wed Fri"
-            " Color Blue Red Green"
-            " Time 1pm 2pm 3pm"
-            " Leader Sarah Mark Ryan"
+            "Header row Mon Wed Fri Color Blue Red Green Time 1pm 2pm 3pm Leader Sarah Mark Ryan"
         ),
     ]
     assert all(e.metadata.filename == "fake.odt" for e in elements)
@@ -62,12 +60,9 @@ def test_partition_odt_from_file():
         elements = partition_odt(file=f)
 
     assert elements == [
-        Text("Lorem ipsum dolor sit amet."),
+        NarrativeText("Lorem ipsum dolor sit amet."),
         Table(
-            "Header row Mon Wed Fri"
-            " Color Blue Red Green"
-            " Time 1pm 2pm 3pm"
-            " Leader Sarah Mark Ryan"
+            "Header row Mon Wed Fri Color Blue Red Green Time 1pm 2pm 3pm Leader Sarah Mark Ryan"
         ),
     ]
 

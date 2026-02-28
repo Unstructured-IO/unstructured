@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from unstructured.partition.pdf import convert_pdf_to_images
 from unstructured.partition.pdf_image.ocr import get_table_tokens
+from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_images
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 

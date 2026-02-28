@@ -22,9 +22,9 @@ def validate(table_name: str, conn: Connection, num_elements: int):
     with conn.cursor() as cur:
         stmt = f"select * from {table_name}"
         count = cur.execute(stmt)
-        assert (
-            count == num_elements
-        ), f"found count ({count}) doesn't match expected value: {num_elements}"
+        assert count == num_elements, (
+            f"found count ({count}) doesn't match expected value: {num_elements}"
+        )
     print("validation successful")
 
 

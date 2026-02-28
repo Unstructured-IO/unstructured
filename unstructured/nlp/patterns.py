@@ -1,12 +1,5 @@
-import sys
-from typing import List
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
-
 import re
+from typing import Final, List
 
 # NOTE(robinson) - Modified from answers found on this stackoverflow post
 # ref: https://stackoverflow.com/questions/16699007/
@@ -39,19 +32,19 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\u2023",
     "\u2043",
     "\u3164",
-    "\u204C",
-    "\u204D",
+    "\u204c",
+    "\u204d",
     "\u2219",
-    "\u25CB",
-    "\u25CF",
-    "\u25D8",
-    "\u25E6",
+    "\u25cb",
+    "\u25cf",
+    "\u25d8",
+    "\u25e6",
     "\u2619",
     "\u2765",
     "\u2767",
-    "\u29BE",
-    "\u29BF",
-    "\u002D",
+    "\u29be",
+    "\u29bf",
+    "\u002d",
     "\u2013",
     "",
     r"\*",

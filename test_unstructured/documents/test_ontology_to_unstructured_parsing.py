@@ -44,7 +44,9 @@ def test_remove_ids_and_class_from_table():
     </table>
     """
     soup = BeautifulSoup(html_text, "html.parser")
-    assert str(remove_ids_and_class_from_table(soup)) == """
+    assert (
+        str(remove_ids_and_class_from_table(soup))
+        == """
 <table>
 <tr>
 <td><img alt="cell 1" class="Signature"/></td>
@@ -60,6 +62,7 @@ def test_remove_ids_and_class_from_table():
 </tr>
 </table>
 """
+    )
 
 
 def test_page_number_is_passed_correctly():

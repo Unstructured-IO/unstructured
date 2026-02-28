@@ -147,12 +147,12 @@ class Describe_set_element_hierarchy:
         ]
         elements = set_element_hierarchy(elements_to_set)
 
-        assert (
-            elements[1].metadata.parent_id == elements[0].id
-        ), "NarrativeText should be child of Title"
-        assert (
-            elements[2].metadata.parent_id == elements[0].id
-        ), "FigureCaption should be child of Title"
+        assert elements[1].metadata.parent_id == elements[0].id, (
+            "NarrativeText should be child of Title"
+        )
+        assert elements[2].metadata.parent_id == elements[0].id, (
+            "FigureCaption should be child of Title"
+        )
         assert elements[3].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
         assert elements[4].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
         assert elements[5].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
@@ -163,12 +163,12 @@ class Describe_set_element_hierarchy:
         #         elements[7].metadata.parent_id is None
         # ), "CheckBox should be None, as it's not a Text based element"
         assert elements[8].metadata.parent_id is None, "Title 2 should be child of None"
-        assert (
-            elements[9].metadata.parent_id == elements[8].id
-        ), "ListItem should be child of Title 2"
-        assert (
-            elements[10].metadata.parent_id == elements[8].id
-        ), "ListItem should be child of Title 2"
+        assert elements[9].metadata.parent_id == elements[8].id, (
+            "ListItem should be child of Title 2"
+        )
+        assert elements[10].metadata.parent_id == elements[8].id, (
+            "ListItem should be child of Title 2"
+        )
         assert elements[11].metadata.parent_id == elements[8].id, "Text should be child of Title 2"
 
     def it_applies_custom_rule_set(self):
@@ -192,14 +192,14 @@ class Describe_set_element_hierarchy:
         )
 
         assert elements[1].metadata.parent_id == elements[0].id, "Title should be child of Header"
-        assert (
-            elements[2].metadata.parent_id == elements[1].id
-        ), "NarrativeText should be child of Title"
+        assert elements[2].metadata.parent_id == elements[1].id, (
+            "NarrativeText should be child of Title"
+        )
         assert elements[3].metadata.parent_id == elements[1].id, "Text should be child of Title"
         assert elements[4].metadata.parent_id == elements[0].id, "Title 2 should be child of Header"
-        assert (
-            elements[5].metadata.parent_id == elements[4].id
-        ), "FigureCaption should be child of Title 2"
+        assert elements[5].metadata.parent_id == elements[4].id, (
+            "FigureCaption should be child of Title 2"
+        )
 
 
 # ================================================================================================
@@ -482,3 +482,59 @@ def test_assign_hash_ids_produces_unique_and_deterministic_SHA1_ids_even_for_dup
     assert len(ids) == len(set(ids))
     # -- ids are deterministic, same value is computed each time --
     assert all(e.id == e2.id for e, e2 in zip(elements, elements_2))
+
+
+def test_assign_hash_ids_remaps_parent_id_to_new_hash_id():
+    """parent_id values (originally UUIDs) are updated to the corresponding hash IDs."""
+    title = Title(text="Title", metadata=ElementMetadata(filename="foo.bar", page_number=1))
+    child = Text(
+        text="Child",
+        metadata=ElementMetadata(filename="foo.bar", page_number=1, parent_id=title.id),
+    )
+    # -- sanity-check: ids are UUIDs before hashing --
+    assert len(title.id) == 36
+    assert child.metadata.parent_id == title.id
+
+    _assign_hash_ids([title, child])
+
+    # -- ids are now SHA1 hashes --
+    assert len(title.id) == 32
+    # -- parent_id has been updated to the new hash id, not the old UUID --
+    assert child.metadata.parent_id == title.id
+
+
+def test_assign_hash_ids_leaves_unknown_parent_id_unchanged():
+    """A parent_id that has no matching element (e.g. filtered out) is left as-is, not KeyError."""
+    external_parent_id = "some-external-or-filtered-id"
+    orphan = Text(
+        text="Orphan",
+        metadata=ElementMetadata(filename="foo.bar", page_number=1, parent_id=external_parent_id),
+    )
+
+    # -- should not raise KeyError even though external_parent_id is not in id_mapping --
+    _assign_hash_ids([orphan])
+
+    # -- parent_id is left unchanged because it wasn't in the mapping --
+    assert orphan.metadata.parent_id == external_parent_id
+
+
+def test_partition_html_parent_child_relationships_preserved_with_hash_ids():
+    """Integration: partition_html with unique_element_ids=False preserves parent-child links."""
+    from unstructured.partition.html import partition_html
+
+    html = "<html><body><h1>My Title</h1><p>My paragraph</p></body></html>"
+    elements = partition_html(text=html, unique_element_ids=False)
+
+    # -- all element ids should be SHA1 hashes (32 hex chars), not UUIDs (36 chars) --
+    assert all(len(e.id) == 32 for e in elements), "Expected SHA1 hash IDs"
+
+    # -- find the title and its child paragraph --
+    title = next((e for e in elements if isinstance(e, Title)), None)
+    child = next(
+        (e for e in elements if e.metadata.parent_id is not None),
+        None,
+    )
+    assert title is not None, "Expected a Title element"
+    assert child is not None, "Expected at least one element with a parent_id"
+    # -- parent_id must point to the hashed title id, not an old UUID --
+    assert child.metadata.parent_id == title.id

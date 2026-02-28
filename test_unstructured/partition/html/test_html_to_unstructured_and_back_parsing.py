@@ -19,13 +19,7 @@ from unstructured.partition.html.transformations import (
 
 
 def _wrap_in_body_and_page(html_code):
-    return (
-        f'<body class="Document">'
-        f'<div class="Page" data-page-number="1">'
-        f"{html_code}"
-        f"</div>"
-        f"</body>"
-    )
+    return f'<body class="Document"><div class="Page" data-page-number="1">{html_code}</div></body>'
 
 
 _page_elements = [
@@ -101,7 +95,7 @@ def test_input_with_radio_button_checked():
             text="",
             metadata=ElementMetadata(
                 text_as_html=(
-                    '<input class="RadioButton" name="health-comparison"' 'type="radio" checked />'
+                    '<input class="RadioButton" name="health-comparison" type="radio" checked />'
                 ),
             ),
         )

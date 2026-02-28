@@ -200,11 +200,14 @@ def test_partition_image_with_language_passed():
 
 def test_partition_image_from_file_with_language_passed():
     filename = example_doc_path("img/example.jpg")
-    with mock.patch.object(
-        ocr,
-        "process_data_with_ocr",
-        mock.MagicMock(),
-    ) as mock_partition, open(filename, "rb") as f:
+    with (
+        mock.patch.object(
+            ocr,
+            "process_data_with_ocr",
+            mock.MagicMock(),
+        ) as mock_partition,
+        open(filename, "rb") as f,
+    ):
         image.partition_image(file=f, strategy=PartitionStrategy.HI_RES, ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"

@@ -92,10 +92,7 @@ class DescribeHtmlTable:
 
     def it_changes_any_th_elements_to_td_elements_for_cell_element_uniformity(self):
         html_table = HtmlTable.from_html_text(
-            "<table>"
-            "  <tr><th>a</th><th/><th>b</th></tr>"
-            "  <tr><td/><td>c</td><td/></tr>"
-            "</table>"
+            "<table>  <tr><th>a</th><th/><th>b</th></tr>  <tr><td/><td>c</td><td/></tr></table>"
         )
         assert html_table.html == (
             "<table><tr><td>a</td><td/><td>b</td></tr><tr><td/><td>c</td><td/></tr></table>"

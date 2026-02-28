@@ -209,9 +209,12 @@ is walking down the lane.
 At the end of the lane
 the fox met a friendly bear."""
 
-    assert core.group_broken_paragraphs(text) == """The big red fox is walking down the lane.
+    assert (
+        core.group_broken_paragraphs(text)
+        == """The big red fox is walking down the lane.
 
 At the end of the lane the fox met a friendly bear."""
+    )
 
 
 def test_group_broken_paragraphs_non_default_settings():
@@ -227,9 +230,12 @@ the fox met a friendly bear."""
     para_split_re = re.compile(r"(\s*\n\s*){3}")
 
     clean_text = core.group_broken_paragraphs(text, paragraph_split=para_split_re)
-    assert clean_text == """The big red fox is walking down the lane.
+    assert (
+        clean_text
+        == """The big red fox is walking down the lane.
 
 At the end of the lane the fox met a friendly bear."""
+    )
 
 
 def test_group_broken_paragraphs_with_bullets():

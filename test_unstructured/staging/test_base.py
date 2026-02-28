@@ -4,6 +4,8 @@ import os
 import pathlib
 import platform
 import tempfile
+import zlib
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -28,6 +30,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.errors import DecompressedSizeExceededError
 from unstructured.partition.email import partition_email
 from unstructured.partition.text import partition_text
 from unstructured.staging import base
@@ -45,15 +48,42 @@ def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_fro
     assert elements == [Title("Lorem"), Text("Lorem Ipsum")]
 
 
+def test_elements_from_base64_gzipped_json_raises_error_if_decompression_is_incomplete():
+    base64_elements_str = (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cL="
+    )
+
+    with pytest.raises(zlib.error):
+        base.elements_from_base64_gzipped_json(base64_elements_str)
+
+
+def test_elements_from_base64_gzipped_json_raises_error_if_decompression_exceeds_max_size():
+    base64_elements_str = (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+    )
+
+    with (
+        patch("unstructured.staging.base.MAX_DECOMPRESSED_SIZE", 32),
+        pytest.raises(DecompressedSizeExceededError),
+    ):
+        base.elements_from_base64_gzipped_json(base64_elements_str)
+
+
 def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
     elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
 
-    assert base.elements_to_base64_gzipped_json(elements) == (
-        "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
-        "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
-        "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp1"
-        "LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
-    )
+    b64_str = base.elements_to_base64_gzipped_json(elements)
+
+    # Verify round-trip: decompress and check the JSON content rather than the
+    # exact compressed bytes, which vary across zlib implementations (e.g. zlib-ng).
+    round_tripped = base.elements_from_base64_gzipped_json(b64_str)
+    assert len(round_tripped) == 2
+    assert round_tripped[0].text == "Lorem"
+    assert round_tripped[1].text == "Lorem Ipsum"
 
 
 def test_elements_to_dicts():
@@ -632,6 +662,141 @@ def test_elements_to_md_file_output():
         # Clean up
         if os.path.exists(tmp_filename):
             os.unlink(tmp_filename)
+
+
+def test_create_file_from_elements_markdown():
+    """Test create_file_from_elements with format=markdown returns and optionally writes file."""
+    elements = [Title("Heading"), NarrativeText("Some body text.")]
+    content = base.create_file_from_elements(elements, output_format="markdown")
+    assert content == "# Heading\nSome body text."
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as tmp_file:
+        tmp_filename = tmp_file.name
+    try:
+        out = base.create_file_from_elements(
+            elements, output_format="markdown", filename=tmp_filename
+        )
+        assert out == content
+        with open(tmp_filename) as f:
+            assert f.read() == content
+    finally:
+        if os.path.exists(tmp_filename):
+            os.unlink(tmp_filename)
+
+
+def test_create_file_from_elements_text():
+    """Test create_file_from_elements with format=text."""
+    elements = [Title("A"), NarrativeText("B")]
+    content = base.create_file_from_elements(elements, output_format="text")
+    assert content == "A\nB"
+
+
+def test_create_file_from_elements_html():
+    """Test create_file_from_elements with format=html returns HTML."""
+    elements = [Title("Page"), NarrativeText("Content")]
+    content = base.create_file_from_elements(elements, output_format="html")
+    assert "<!DOCTYPE html" in content
+    assert "<body>" in content
+    assert "Page" in content
+    assert "Content" in content
+
+
+def test_create_file_from_elements_unsupported_format():
+    """Test create_file_from_elements raises for unsupported format."""
+    elements = [Title("X")]
+    with pytest.raises(ValueError, match="Unsupported format"):
+        base.create_file_from_elements(elements, output_format="pdf")
+
+
+def test_create_file_from_elements_html_group_by_page_drops_elements_without_page_number():
+    """With no_group_by_page=False, elements without page_number are skipped (body empty)."""
+    elements = [Title("Page"), NarrativeText("Content")]
+    content = base.create_file_from_elements(elements, output_format="html", no_group_by_page=False)
+    assert "<!DOCTYPE html" in content
+    assert "<body>" in content
+    # Elements without metadata.page_number are not included when grouping by page
+    assert "Page" not in content
+    assert "Content" not in content
+
+
+@pytest.mark.parametrize(
+    ("format_name", "expected_in_content"),
+    [
+        ("markdown", "# Heading\nSome body text."),
+        ("text", "Heading\nSome body text."),
+        ("html", "<!DOCTYPE html"),
+    ],
+)
+def test_create_file_from_elements_filename_write(format_name: str, expected_in_content: str):
+    """Test create_file_from_elements writes correct content to file for all formats."""
+    elements = [Title("Heading"), NarrativeText("Some body text.")]
+    ext = {"markdown": ".md", "text": ".txt", "html": ".html"}[format_name]
+    with tempfile.NamedTemporaryFile(mode="w", suffix=ext, delete=False) as tmp_file:
+        tmp_filename = tmp_file.name
+    try:
+        out = base.create_file_from_elements(
+            elements, output_format=format_name, filename=tmp_filename
+        )
+        assert expected_in_content in out
+        with open(tmp_filename) as f:
+            written = f.read()
+        assert expected_in_content in written
+        assert out == written
+    finally:
+        if os.path.exists(tmp_filename):
+            os.unlink(tmp_filename)
+
+
+def test_create_file_from_elements_exclude_binary_image_data_markdown():
+    """exclude_binary_image_data=True passthrough: markdown omits base64 image data."""
+    elements = [
+        Title("Doc"),
+        Image(
+            "Alt",
+            metadata=ElementMetadata(
+                image_base64="abc123",
+                image_mime_type="image/png",
+            ),
+        ),
+    ]
+    content = base.create_file_from_elements(
+        elements, output_format="markdown", exclude_binary_image_data=True
+    )
+    assert "base64," not in content
+    assert "Alt" in content
+
+
+def test_create_file_from_elements_exclude_binary_image_data_html():
+    """exclude_binary_image_data=True passthrough: HTML omits base64 image data."""
+    elements = [
+        Title("Doc"),
+        Image(
+            "Alt",
+            metadata=ElementMetadata(
+                image_base64="abc123",
+                image_mime_type="image/png",
+            ),
+        ),
+    ]
+    content = base.create_file_from_elements(
+        elements, output_format="html", exclude_binary_image_data=True
+    )
+    assert "abc123" not in content
+
+
+@pytest.mark.parametrize(
+    ("format_arg", "expected_substring"),
+    [
+        (" Markdown ", "# Heading"),
+        ("HTML ", "<!DOCTYPE html"),
+        (" TEXT ", "Heading"),
+    ],
+)
+def test_create_file_from_elements_format_normalization(format_arg: str, expected_substring: str):
+    """Format string is stripped and lowercased (e.g. ' Markdown ' -> 'markdown')."""
+    elements = [Title("Heading"), NarrativeText("Body")]
+    content = base.create_file_from_elements(elements, output_format=format_arg)
+    assert expected_substring in content
 
 
 def test_element_to_md_with_none_mime_type():

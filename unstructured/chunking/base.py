@@ -7,6 +7,7 @@ import copy
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
+from lxml.etree import ParserError
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
@@ -20,6 +21,7 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
+from unstructured.logger import logger
 from unstructured.utils import lazyproperty
 
 # ================================================================================================
@@ -881,7 +883,15 @@ class _TableChunker:
         if not text_as_html:  # pragma: no cover
             return None
 
-        return HtmlTable.from_html_text(text_as_html)
+        try:
+            return HtmlTable.from_html_text(text_as_html)
+        except (ParserError, ValueError):
+            logger.warning(
+                "Could not parse text_as_html for table element; skipping HTML-based chunking."
+                " text_as_html: %s",
+                text_as_html[:100] + "..." if len(text_as_html) > 100 else text_as_html,
+            )
+            return None
 
     def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
         """Split table into chunks where HTML corresponds exactly to text.

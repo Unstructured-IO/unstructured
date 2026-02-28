@@ -106,9 +106,9 @@ class ObjectDetectionEvalProcessor:
         assert sorted(predictions_data["object_detection_classes"]) == sorted(
             ground_truth_data["object_detection_classes"]
         ), "Classes in predictions and ground truth do not match."
-        assert len(predictions_data["pages"]) == len(
-            ground_truth_data["pages"]
-        ), "Pages number in predictions and ground truth do not match."
+        assert len(predictions_data["pages"]) == len(ground_truth_data["pages"]), (
+            "Pages number in predictions and ground truth do not match."
+        )
         for pred_page, gt_page in zip(
             sorted(predictions_data["pages"], key=lambda p: p["number"]),
             sorted(ground_truth_data["pages"], key=lambda p: p["number"]),
@@ -530,8 +530,9 @@ class ObjectDetectionEvalProcessor:
             unique_classes:             Vector with all unique target classes
         """
 
-        preds_matched, preds_to_ignore = preds_matched.to(self.device), preds_to_ignore.to(
-            self.device
+        preds_matched, preds_to_ignore = (
+            preds_matched.to(self.device),
+            preds_to_ignore.to(self.device),
         )
         preds_scores, preds_cls, targets_cls = (
             preds_scores.to(self.device),
@@ -551,8 +552,9 @@ class ObjectDetectionEvalProcessor:
         recall = torch.zeros((n_class, nb_iou_thrs), device=self.device)
 
         for cls_i, class_value in enumerate(unique_classes):
-            cls_preds_idx, cls_targets_idx = (preds_cls == class_value), (
-                targets_cls == class_value
+            cls_preds_idx, cls_targets_idx = (
+                (preds_cls == class_value),
+                (targets_cls == class_value),
             )
             (
                 cls_ap,

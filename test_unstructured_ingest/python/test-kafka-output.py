@@ -64,9 +64,9 @@ def check(bootstrap_server: str, topic: str, api_key: str, secret: str, confluen
         f"Checking that the number of messages found ({topic_size}) "
         f"matches what's expected: {expected}"
     )
-    assert (
-        topic_size == expected
-    ), f"number of messages found ({topic_size}) doesn't match what's expected: {expected}"
+    assert topic_size == expected, (
+        f"number of messages found ({topic_size}) doesn't match what's expected: {expected}"
+    )
     print("successfully checked the number of messages!")
 
 
