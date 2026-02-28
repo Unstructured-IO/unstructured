@@ -1,4 +1,5 @@
-## 0.21.8
+## 0.21.9
+
 ### Fixes
 - **Fix `ValueError` when partitioning a text file loaded from a zip archive**: `convert_to_bytes()`
   rejected any file-like object not in its hardcoded type whitelist (`BytesIO`, `BufferedReader`,
@@ -8,6 +9,11 @@
   `ZipExtFile` as well as other standard `IO[bytes]` types not previously handled (e.g.
   `GzipFile`, `tarfile.ExFileObject`). The file cursor is reset via `seek(0)` where supported so
   callers can re-read the file after `convert_to_bytes()` returns.
+
+## 0.21.8
+
+### Enhancements
+- **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
 
 
 ## 0.21.7
