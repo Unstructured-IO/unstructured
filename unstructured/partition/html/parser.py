@@ -77,6 +77,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict, deque
+from functools import cached_property
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
 
@@ -104,7 +105,6 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_us_city_state_zip,
 )
-from unstructured.utils import lazyproperty
 
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
@@ -362,7 +362,7 @@ class Flow(etree.ElementBase):
             yield from block_item.iter_elements()
             yield from self._element_from_text_or_tail(block_item.tail or "", q)
 
-    @lazyproperty
+    @cached_property
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _ElementAccumulator(self)
@@ -477,7 +477,7 @@ class Pre(BlockItem):
 
     _ElementCls = CodeSnippet
 
-    @lazyproperty
+    @cached_property
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _PreElementAccumulator(self)

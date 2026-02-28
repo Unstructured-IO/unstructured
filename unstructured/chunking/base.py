@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections
 import copy
 import uuid
+from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
@@ -23,7 +24,6 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.logger import logger
-from unstructured.utils import lazyproperty
 
 # ================================================================================================
 # MODEL
@@ -59,7 +59,7 @@ class TokenCounter:
     def __init__(self, tokenizer: str):
         self._tokenizer_name = tokenizer
 
-    @lazyproperty
+    @cached_property
     def _encoder(self):
         """Lazily initialize the tiktoken encoder."""
         import tiktoken
@@ -144,7 +144,7 @@ class ChunkingOptions:
         self._validate()
         return self
 
-    @lazyproperty
+    @cached_property
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
@@ -152,7 +152,7 @@ class ChunkingOptions:
         """
         return ()
 
-    @lazyproperty
+    @cached_property
     def combine_text_under_n_chars(self) -> int:
         """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
@@ -162,7 +162,7 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return arg_value if arg_value is not None else 0
 
-    @lazyproperty
+    @cached_property
     def hard_max(self) -> int:
         """The maximum size for a chunk (in characters or tokens depending on mode).
 
@@ -177,7 +177,7 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("max_characters")
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
-    @lazyproperty
+    @cached_property
     def include_orig_elements(self) -> bool:
         """When True, add original elements from pre-chunk to `.metadata.orig_elements` of chunk.
 
@@ -186,7 +186,7 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("include_orig_elements")
         return True if arg_value is None else bool(arg_value)
 
-    @lazyproperty
+    @cached_property
     def inter_chunk_overlap(self) -> int:
         """Characters of overlap to add between chunks.
 
@@ -196,7 +196,7 @@ class ChunkingOptions:
         overlap_all_arg = self._kwargs.get("overlap_all")
         return self.overlap if overlap_all_arg else 0
 
-    @lazyproperty
+    @cached_property
     def overlap(self) -> int:
         """The number of characters to overlap text when splitting chunks mid-text.
 
@@ -206,7 +206,7 @@ class ChunkingOptions:
         overlap_arg = self._kwargs.get("overlap")
         return overlap_arg or 0
 
-    @lazyproperty
+    @cached_property
     def soft_max(self) -> int:
         """A pre-chunk of this size or greater is considered full.
 
@@ -238,7 +238,7 @@ class ChunkingOptions:
         # -- otherwise, give them what they asked for --
         return new_after_n_chars_arg
 
-    @lazyproperty
+    @cached_property
     def split(self) -> Callable[[str], tuple[str, str]]:
         """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
 
@@ -247,7 +247,7 @@ class ChunkingOptions:
         """
         return _TextSplitter(self)
 
-    @lazyproperty
+    @cached_property
     def text_separator(self) -> str:
         """The string to insert between elements when concatenating their text for a chunk.
 
@@ -257,7 +257,7 @@ class ChunkingOptions:
         """
         return "\n\n"
 
-    @lazyproperty
+    @cached_property
     def text_splitting_separators(self) -> tuple[str, ...]:
         """Sequence of text-splitting target strings to be used in order of preference."""
         text_splitting_separators_arg = self._kwargs.get("text_splitting_separators")
@@ -267,13 +267,13 @@ class ChunkingOptions:
             else tuple(text_splitting_separators_arg)
         )
 
-    @lazyproperty
+    @cached_property
     def token_counter(self) -> TokenCounter | None:
         """The token counter for token-based chunking, or None for character-based chunking."""
         tokenizer = self._kwargs.get("tokenizer")
         return TokenCounter(tokenizer) if tokenizer else None
 
-    @lazyproperty
+    @cached_property
     def use_token_counting(self) -> bool:
         """True when token-based chunking is configured, False for character-based."""
         return self._kwargs.get("max_tokens") is not None
@@ -401,7 +401,7 @@ class PreChunker:
         # -- processed
         yield from pre_chunk_builder.flush()
 
-    @lazyproperty
+    @cached_property
     def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
         return self._opts.boundary_predicates
@@ -600,7 +600,7 @@ class PreChunk:
         else:
             yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
 
-    @lazyproperty
+    @cached_property
     def overlap_tail(self) -> str:
         """The portion of this chunk's text to be repeated as a prefix in the next chunk.
 
@@ -629,7 +629,7 @@ class PreChunk:
                     if text:
                         yield text
 
-    @lazyproperty
+    @cached_property
     def _text(self) -> str:
         """The concatenated text of all elements in this pre-chunk, including any overlap.
 
@@ -686,7 +686,7 @@ class _Chunker:
             s, remainder = split(remainder)
             yield CompositeElement(text=s, metadata=self._continuation_metadata)
 
-    @lazyproperty
+    @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
         """Collection of all populated metadata values across elements.
 
@@ -721,7 +721,7 @@ class _Chunker:
 
         return dict(field_values)
 
-    @lazyproperty
+    @cached_property
     def _consolidated_metadata(self) -> ElementMetadata:
         """Metadata applicable to this pre-chunk as a single chunk.
 
@@ -737,7 +737,7 @@ class _Chunker:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
-    @lazyproperty
+    @cached_property
     def _continuation_metadata(self) -> ElementMetadata:
         """Metadata applicable to the second and later text-split chunks of the pre-chunk.
 
@@ -751,7 +751,7 @@ class _Chunker:
         continuation_metadata.is_continuation = True
         return continuation_metadata
 
-    @lazyproperty
+    @cached_property
     def _meta_kwargs(self) -> dict[str, Any]:
         """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
 
@@ -788,7 +788,7 @@ class _Chunker:
 
         return dict(iter_kwarg_pairs())
 
-    @lazyproperty
+    @cached_property
     def _orig_elements(self) -> list[Element]:
         """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
 
@@ -859,7 +859,7 @@ class _TableChunker:
         # -- otherwise, form splits with "synchronized" text and html --
         yield from self._iter_text_and_html_table_chunks()
 
-    @lazyproperty
+    @cached_property
     def _html(self) -> str:
         """The compactified HTML for this table when it has text-as-HTML.
 
@@ -871,7 +871,7 @@ class _TableChunker:
 
         return html_table.html
 
-    @lazyproperty
+    @cached_property
     def _html_table(self) -> HtmlTable | None:
         """The `lxml` HTML element object for this table.
 
@@ -975,7 +975,7 @@ class _TableChunker:
             metadata.orig_elements = self._orig_elements
         return metadata
 
-    @lazyproperty
+    @cached_property
     def _orig_elements(self) -> list[Element]:
         """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
 
@@ -990,14 +990,14 @@ class _TableChunker:
         orig_table.metadata.orig_elements = None
         return [orig_table]
 
-    @lazyproperty
+    @cached_property
     def _table_text(self) -> str:
         """The text in this table, not including any overlap-prefix or extra whitespace."""
         if not self._table.text:
             return ""
         return " ".join(self._table.text.split())
 
-    @lazyproperty
+    @cached_property
     def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
@@ -1271,7 +1271,7 @@ class _TextSplitter:
 
         return text[pos:]
 
-    @lazyproperty
+    @cached_property
     def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
         """Sequence of (pattern, len) pairs to match against.
 

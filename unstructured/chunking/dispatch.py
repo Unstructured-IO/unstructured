@@ -10,6 +10,7 @@ import copy
 import dataclasses as dc
 import functools
 import inspect
+from functools import cached_property
 from typing import Any, Callable, Iterable, Optional, Protocol
 
 from lxml.etree import tostring
@@ -19,7 +20,7 @@ from typing_extensions import ParamSpec
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element, Table, TableChunk
-from unstructured.utils import get_call_args_applying_defaults, lazyproperty
+from unstructured.utils import get_call_args_applying_defaults
 
 _P = ParamSpec("_P")
 
@@ -116,7 +117,7 @@ class _ChunkerSpec:
     chunker: Chunker
     """The "chunk_by_{x}() function that implements this chunking strategy."""
 
-    @lazyproperty
+    @cached_property
     def kw_arg_names(self) -> tuple[str, ...]:
         """Keyword arguments supported by this chunker.
 
