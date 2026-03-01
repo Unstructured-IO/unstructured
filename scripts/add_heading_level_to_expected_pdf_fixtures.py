@@ -2,9 +2,10 @@
 """Add heading_level to Title elements in expected PDF JSON fixtures.
 
 Our PDF partitioner now sets metadata.heading_level (1-6) on Title elements.
-Expected fixtures were generated before that change. This script adds
-heading_level: 1 to every Title's metadata in expected *.pdf.json files
-so the ingest diff test matches current output.
+Expected fixtures were generated before that change. This script assigns
+heading_level by document order: first Title = 1, second = 2, etc. (capped at 6)
+for any Title missing it in expected *.pdf.json files so the ingest diff test
+matches current output.
 
 Run from repo root:
   python scripts/add_heading_level_to_expected_pdf_fixtures.py
@@ -23,18 +24,22 @@ EXPECTED_ROOT = (
 
 
 def add_heading_level_to_file(path: Path) -> bool:
-    """Add heading_level to each Title's metadata. Returns True if file was modified."""
+    """Set heading_level on each Title's metadata by document order. Returns True if modified."""
     text = path.read_text(encoding="utf-8")
     data = json.loads(text)
     if not isinstance(data, list):
         return False
     modified = False
+    title_idx = 0
     for item in data:
         if isinstance(item, dict) and item.get("type") == "Title":
             meta = item.get("metadata")
-            if isinstance(meta, dict) and "heading_level" not in meta:
-                meta["heading_level"] = 1
-                modified = True
+            if isinstance(meta, dict):
+                new_level = min(title_idx + 1, 6)
+                if meta.get("heading_level") != new_level:
+                    meta["heading_level"] = new_level
+                    modified = True
+            title_idx += 1
     if modified:
         path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return modified

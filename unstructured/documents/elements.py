@@ -178,7 +178,7 @@ class ElementMetadata:
     image_mime_type: Optional[str]
     # -- specific to DOCX which has distinct primary, first-page, and even-page header/footers --
     header_footer_type: Optional[str]
-    # -- heading level (1-4) for hierarchical document structure (H1, H2, H3, H4) --
+    # -- heading level (1-6) for hierarchical document structure (H1-H6) --
     heading_level: Optional[int]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]

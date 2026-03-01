@@ -331,21 +331,25 @@ def partition_pdf_or_image(
             return elements
 
         try:
+            outline_filename = filename
             file_for_outline: Optional[bytes | IO[bytes]] = None
-            if file is not None:
+            if filename is None and file is not None:
                 if hasattr(file, "seek"):
                     file.seek(0)
-                file_for_outline = file.read() if hasattr(file, "read") else file
+                file_for_outline = file
 
-            return infer_heading_levels(
+            result = infer_heading_levels(
                 elements,
-                filename=filename,
+                filename=outline_filename,
                 file=file_for_outline,
                 use_outline=True,
                 use_font_analysis=True,
             )
+            if file is not None and hasattr(file, "seek"):
+                file.seek(0)
+            return result
         except Exception as e:
-            logger.debug(f"Failed to infer heading levels: {e}")
+            logger.warning(f"Failed to infer heading levels: {e}")
             return elements
 
     if strategy == PartitionStrategy.HI_RES:

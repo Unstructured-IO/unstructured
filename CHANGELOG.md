@@ -1,7 +1,12 @@
+## 0.21.9
+
+### Enhancements
+- **Infer hierarchical heading levels for PDFs (fixes #4204)**: Add `heading_level` metadata (H1–H6) for `Title` elements produced by PDF partitioners. Heading levels are inferred primarily from the PDF outline/bookmarks when available, with document-order fallback. Integrated into all PDF strategies (`hi_res`, `fast`, and `ocr_only`).
+
 ## 0.21.8
 
 ### Enhancements
-- **Infer hierarchical heading levels for PDFs (fixes #4204)**: Add `heading_level` metadata (H1–H6) for `Title` elements produced by PDF partitioners. Heading levels are inferred primarily from the PDF outline/bookmarks when available, with a font-size/heuristic fallback. Integrated into all PDF strategies (`hi_res`, `fast`, and `ocr_only`) so downstream consumers (e.g., RAG pipelines) can reconstruct document structure more accurately.
+- **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
 
 ## 0.21.7
 
