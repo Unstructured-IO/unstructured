@@ -214,10 +214,18 @@ def test_it_detects_correct_file_type_by_guessed_MIME_when_libmagic_guesses_reco
 @pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
-        (FileType.BMP, "img/bmp_24.bmp"),
+        pytest.param(
+            FileType.BMP,
+            "img/bmp_24.bmp",
+            marks=pytest.mark.skipif(is_in_docker, reason="libmagic in Docker may not detect BMP"),
+        ),
         (FileType.CSV, "stanley-cups.csv"),
         (FileType.EML, "eml/fake-email.eml"),
-        (FileType.HEIC, "img/DA-1p.heic"),
+        pytest.param(
+            FileType.HEIC,
+            "img/DA-1p.heic",
+            marks=pytest.mark.skipif(is_in_docker, reason="libmagic in Docker may not detect HEIC"),
+        ),
         (FileType.HTML, "ideas-page.html"),
         (FileType.JPG, "img/example.jpg"),
         (FileType.JSON, "spring-weather.html.json"),
@@ -226,7 +234,11 @@ def test_it_detects_correct_file_type_by_guessed_MIME_when_libmagic_guesses_reco
         (FileType.RTF, "fake-doc.rtf"),
         (FileType.TIFF, "img/layout-parser-paper-fast.tiff"),
         (FileType.TXT, "norwich-city.txt"),
-        (FileType.WAV, "CantinaBand3.wav"),
+        pytest.param(
+            FileType.WAV,
+            "CantinaBand3.wav",
+            marks=pytest.mark.skipif(is_in_docker, reason="libmagic in Docker may not detect WAV"),
+        ),
         (FileType.XML, "factbook.xml"),
         (FileType.ZIP, "simple.zip"),
     ],

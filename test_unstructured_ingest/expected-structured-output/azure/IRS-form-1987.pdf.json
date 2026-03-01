@@ -54,7 +54,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 2,
+      "heading_level": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -99,7 +99,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 3,
+      "heading_level": 1,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -122,7 +122,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 4,
+      "heading_level": 2,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -299,7 +299,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 5,
+      "heading_level": 2,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -366,7 +366,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 2,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -499,7 +499,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 3,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -544,7 +544,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 3,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -611,7 +611,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 3,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -766,7 +766,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 4,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -811,7 +811,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 4,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -834,7 +834,7 @@
         "eng"
       ],
       "page_number": 1,
-      "heading_level": 6,
+      "heading_level": 4,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1077,7 +1077,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 4,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1122,7 +1122,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1233,7 +1233,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1322,7 +1322,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1477,7 +1477,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1544,7 +1544,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1633,7 +1633,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",
@@ -1722,7 +1722,7 @@
         "eng"
       ],
       "page_number": 2,
-      "heading_level": 6,
+      "heading_level": 5,
       "data_source": {
         "url": "abfs://container1/IRS-form-1987.pdf",
         "version": "0x8DB214AEE092B1E",

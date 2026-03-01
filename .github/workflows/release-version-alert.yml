@@ -75,6 +75,7 @@ jobs:
           key: message-cache-${{ env.MESSAGE_HASH }}
       - name: Slack Notification
         if: env.SKIP_STEPS != 'true'
+        continue-on-error: true  # Don't fail when SLACK_BOT_TOKEN is not configured
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: 'C05S1QMKL5D'
