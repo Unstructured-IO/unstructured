@@ -96,7 +96,7 @@ Once in the running container, you can try things directly in Python interpreter
 python3
 
 >>> from unstructured.partition.pdf import partition_pdf
->>> elements = partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf")
+>>> elements = partition_pdf(filename="example-docs/pdf/layout-parser-paper-fast.pdf")
 
 >>> from unstructured.partition.text import partition_text
 >>> elements = partition_text(filename="example-docs/fake-text.txt")
@@ -209,7 +209,7 @@ See our  [installation guide](https://docs.unstructured.io/open-source/installat
 ```python
 from unstructured.partition.auto import partition
 
-elements = partition("example-docs/layout-parser-paper.pdf")
+elements = partition("example-docs/pdf/layout-parser-paper.pdf")
 ```
 
 Run `print("\n\n".join([str(el) for el in elements]))` to get a string representation of the
