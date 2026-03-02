@@ -56,7 +56,7 @@ class DescribeFileType:
     ):
         assert FileType.from_mime_type(mime_type) is file_type
 
-    @pytest.mark.parametrize("mime_type", ["text/css", "image/gif", "audio/mpeg", "foo/bar", None])
+    @pytest.mark.parametrize("mime_type", ["text/css", "image/gif", "foo/bar", None])
     def but_not_when_that_mime_type_is_not_registered_by_a_file_type_or_None(
         self, mime_type: str | None
     ):

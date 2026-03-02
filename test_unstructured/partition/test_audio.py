@@ -329,6 +329,7 @@ class TestSpeechToTextAgentInterface:
     """Unit tests for the SpeechToTextAgent base class."""
 
     def test_get_agent_uses_env_config_when_no_module_given(self):
+        import os
         from unittest.mock import patch as _patch
 
         from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
@@ -337,11 +338,7 @@ class TestSpeechToTextAgentInterface:
 
         sentinel = "unstructured.partition.utils.speech_to_text.whisper_stt.SentinelAgent"
         with (
-            _patch(
-                "unstructured.partition.utils.speech_to_text.speech_to_text_interface"
-                ".env_config.STT_AGENT",
-                sentinel,
-            ),
+            _patch.dict(os.environ, {"STT_AGENT": sentinel}),
             _patch.object(SpeechToTextAgent, "get_instance") as mock_get_instance,
         ):
             SpeechToTextAgent.get_agent(None)

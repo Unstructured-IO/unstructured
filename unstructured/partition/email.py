@@ -18,7 +18,6 @@ from dateutil import parser
 
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -401,11 +400,13 @@ class _AttachmentPartitioner:
                 metadata_last_modified=self._ctx.metadata_last_modified,
                 **self._ctx.partitioning_kwargs,
             )
-        except (UnsupportedFileFormatError, ImportError):
-            # -- UnsupportedFileFormatError: no partitioner exists for this file-format.
-            # -- ImportError: a partitioner exists but its optional dependencies (e.g. the
-            # --   `audio` extra for WAV/MP3) are not installed in this environment.
-            # -- In both cases, silently skip the attachment.
+        except Exception:
+            # -- Silently skip attachments that cannot be partitioned for any reason:
+            # --   UnsupportedFileFormatError – no partitioner registered for this file-type.
+            # --   ImportError – partitioner exists but optional dependencies aren't installed
+            # --     (e.g. `audio` extra for WAV/MP3 attachments).
+            # --   Any other runtime error – e.g. ffmpeg not found, corrupt file, etc.
+            # -- A failing attachment must never crash the enclosing email partition.
             return
 
         for e in elements:
