@@ -50,14 +50,8 @@ from unstructured.partition.common.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.common.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
-from unstructured.partition.common.metadata import (
-    apply_metadata,
-    get_last_modified_date,
-)
+from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
     get_uris,
@@ -70,10 +64,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
-from unstructured.partition.strategies import (
-    determine_pdf_or_image_strategy,
-    validate_strategy,
-)
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -84,10 +75,7 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.sorting import (
-    coord_has_valid_points,
-    sort_page_elements,
-)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
@@ -115,7 +103,6 @@ TEXT_OPS_PATTERN = re.compile(
     rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
     re.MULTILINE,
 )
-
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -590,12 +577,26 @@ def _get_pdf_page_number(
     return number_of_pages
 
 
+def check_pdf_hi_res_max_pages_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    pdf_hi_res_max_pages: int = None,
+) -> None:
+    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
+    if pdf_hi_res_max_pages:
+        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        if document_pages > pdf_hi_res_max_pages:
+            raise PageCountExceededError(
+                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            )
+
+
 def is_pdf_too_complex(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     max_graphics_ops: int = 10_000,
     min_graphics_to_text_ratio: float = 20.0,
-    min_file_size_bytes: int = 1 * 1024 * 1024,  # 1 MB
+    min_file_size_bytes: int = int(1 * 1024 * 1024),  # 1 MB
     min_raw_stream_bytes: int = 100_000,
 ) -> bool:
     """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
@@ -729,20 +730,6 @@ def is_pdf_too_complex(
     return False
 
 
-def check_pdf_hi_res_max_pages_exceeded(
-    filename: str = "",
-    file: Optional[bytes | IO[bytes]] = None,
-    pdf_hi_res_max_pages: int = None,
-) -> None:
-    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
-    if pdf_hi_res_max_pages:
-        document_pages = _get_pdf_page_number(filename=filename, file=file)
-        if document_pages > pdf_hi_res_max_pages:
-            raise PageCountExceededError(
-                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
-            )
-
-
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -789,10 +776,7 @@ def _partition_pdf_or_image_local(
     )
     from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
     from unstructured.partition.pdf_image.form_extraction import run_form_extraction
-    from unstructured.partition.pdf_image.ocr import (
-        process_data_with_ocr,
-        process_file_with_ocr,
-    )
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdf_image_utils import (
         check_element_types_to_extract,
         save_elements,
@@ -893,10 +877,7 @@ def _partition_pdf_or_image_local(
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(
-                file=file,
-                dpi=pdf_image_dpi,
-                password=password,
-                pdfminer_config=pdfminer_config,
+                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
             )
             if pdf_text_extractable
             else ([], [])
@@ -1117,8 +1098,7 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file, password=password),
-            start=starting_page_number,
+            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
@@ -1365,9 +1345,7 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    from unstructured.partition.pdf_image.pdfminer_processing import (
-        get_links_in_element,
-    )
+    from unstructured.partition.pdf_image.pdfminer_processing import get_links_in_element
 
     elements: list[Element] = []
 
