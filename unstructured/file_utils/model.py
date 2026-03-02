@@ -170,7 +170,7 @@ class FileType(enum.Enum):
 
         Note this does not check whether the dependencies for this file-type are installed so
         attempting to partition a file of this type may still fail. This is meant for
-        distinguishing file-types like WAV, ZIP, EMPTY, and UNK which are legitimate file-types
+        distinguishing file-types like ZIP, EMPTY, and UNK which are legitimate file-types
         but have no associated partitioner.
         """
         return bool(self._partitioner_shortname) or bool(self._partitioner_full_module_path)
@@ -245,10 +245,7 @@ class FileType(enum.Enum):
         "image",  # -- extra_name - like `pip install "unstructured[image]"` in this case --
         [".bmp"],  # -- extensions - filename extensions that map to this file-type --
         "image/bmp",  # -- canonical_mime_type -  MIME-type written to `.metadata.filetype` --
-        [
-            "image/x-bmp",
-            "image/x-ms-bmp",  # returned by older libmagic versions
-        ],
+        cast(list[str], []),  # -- alias_mime-types - other MIME-types that map to this file-type --
     )
     CSV = (
         "csv",
@@ -293,6 +290,15 @@ class FileType(enum.Enum):
         "application/epub",
         ["application/epub+zip"],
     )
+    FLAC = (
+        "flac",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".flac"],
+        "audio/flac",
+        ["audio/x-flac"],
+    )
     HEIC = (
         "heic",
         "image",
@@ -300,7 +306,7 @@ class FileType(enum.Enum):
         "image",
         [".heic"],
         "image/heic",
-        ["image/x-heic"],
+        cast(list[str], []),
     )
     HTML = (
         "html",
@@ -329,7 +335,25 @@ class FileType(enum.Enum):
         "application/json",
         cast(list[str], []),
     )
+    M4A = (
+        "m4a",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".m4a"],
+        "audio/mp4",
+        ["audio/x-m4a"],
+    )
     MD = ("md", "md", ["markdown"], "md", [".md"], "text/markdown", ["text/x-markdown"])
+    MP3 = (
+        "mp3",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".mp3"],
+        "audio/mpeg",
+        ["audio/mp3", "audio/x-mp3", "audio/x-mpeg"],
+    )
     MSG = (
         "msg",
         "msg",
@@ -355,6 +379,24 @@ class FileType(enum.Enum):
         "odt",
         [".odt"],
         "application/vnd.oasis.opendocument.text",
+        cast(list[str], []),
+    )
+    OGG = (
+        "ogg",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".ogg", ".oga"],
+        "audio/ogg",
+        ["audio/x-ogg"],
+    )
+    OPUS = (
+        "opus",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".opus"],
+        "audio/opus",
         cast(list[str], []),
     )
     ORG = ("org", "org", ["pypandoc"], "org", [".org"], "text/org", cast(list[str], []))
@@ -456,6 +498,15 @@ class FileType(enum.Enum):
             "audio/x-pn-wav",
             "audio/x-wav",
         ],
+    )
+    WEBM = (
+        "webm",
+        "audio",
+        ["whisper"],
+        "audio",
+        [".webm"],
+        "audio/webm",
+        ["video/webm"],
     )
     XLS = (
         "xls",

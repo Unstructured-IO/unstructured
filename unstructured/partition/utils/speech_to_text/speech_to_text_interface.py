@@ -37,7 +37,11 @@ class SpeechToTextAgent(ABC):
     def get_instance(agent_module: str) -> "SpeechToTextAgent":
         """Load and return a SpeechToTextAgent for the given fully-qualified class name.
 
-        Results are cached up to STT_AGENT_CACHE_SIZE entries.
+        Results are cached (keyed on ``agent_module``) up to ``STT_AGENT_CACHE_SIZE``
+        entries. Because the cache key is the class name only, model-configuration
+        environment variables (``WHISPER_MODEL_SIZE``, ``WHISPER_DEVICE``,
+        ``WHISPER_FP16``) are read once at first instantiation and ignored on subsequent
+        calls. A process restart is required to pick up configuration changes.
         """
         module_name, class_name = agent_module.rsplit(".", 1)
         if module_name not in STT_AGENT_MODULES_WHITELIST:
@@ -66,43 +70,50 @@ class SpeechToTextAgent(ABC):
             ) from e
 
     @abstractmethod
-    def transcribe(self, audio_path: str, *, language: str | None = None) -> str:
-        """Transcribe audio from a file path to text.
-
-        Parameters
-        ----------
-        audio_path
-            Path to an audio file (e.g. WAV, MP3).
-        language
-            Optional ISO 639-1 language code for the spoken language (e.g. "en").
-            When None, the agent may auto-detect.
-
-        Returns
-        -------
-        Transcribed text.
-        """
-        pass
-
     def transcribe_segments(
         self, audio_path: str, *, language: str | None = None
     ) -> list[TranscriptionSegment]:
         """Transcribe audio and return segment-level results with timestamps.
 
-        Default implementation returns a single segment from transcribe() with start=0, end=0.
-        Override in agents that support segment-level output (e.g. Whisper).
+        This is the **primary method** to implement. All partitioning calls go through
+        here. Subclasses that support segment-level output (e.g. Whisper) should return
+        one entry per segment; subclasses without native segment support should return a
+        single segment with ``start=0.0`` and ``end=0.0``.
 
         Parameters
         ----------
         audio_path
             Path to an audio file (e.g. WAV, MP3).
         language
-            Optional ISO 639-1 language code for the spoken language (e.g. "en").
+            Optional ISO 639-1 language code for the spoken language (e.g. ``"en"``).
+            When ``None``, the agent may auto-detect.
 
         Returns
         -------
-        List of segments, each with "text" and optionally "start" and "end" (seconds).
+        List of :class:`TranscriptionSegment` dicts, each with ``"text"``, ``"start"``,
+        and ``"end"`` keys. Return an empty list when the audio contains no speech.
         """
-        text = self.transcribe(audio_path, language=language)
-        if not text.strip():
-            return []
-        return [TranscriptionSegment(text=text.strip(), start=0.0, end=0.0)]
+
+    def transcribe(self, audio_path: str, *, language: str | None = None) -> str:
+        """Transcribe audio from a file path to a single text string.
+
+        Default implementation joins the texts from :meth:`transcribe_segments`. Override
+        only when a more efficient single-string path exists; if you do override this
+        method, **do not** delegate back to ``transcribe_segments`` — that would create
+        infinite recursion.
+
+        Parameters
+        ----------
+        audio_path
+            Path to an audio file (e.g. WAV, MP3).
+        language
+            Optional ISO 639-1 language code for the spoken language (e.g. ``"en"``).
+            When ``None``, the agent may auto-detect.
+
+        Returns
+        -------
+        Transcribed text as a single string.
+        """
+        return " ".join(
+            seg["text"] for seg in self.transcribe_segments(audio_path, language=language)
+        )

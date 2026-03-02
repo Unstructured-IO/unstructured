@@ -5,15 +5,55 @@
 from __future__ import annotations
 
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
-from typing import IO
-from unittest.mock import patch
+from typing import IO, Generator
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from unstructured.documents.elements import NarrativeText
 from unstructured.file_utils.model import FileType
 from unstructured.partition.audio import partition_audio
+
+# ================================================================================================
+# Shared fixtures
+# ================================================================================================
+
+_ONE_SEGMENT = [{"text": "Hello, world.", "start": 0.0, "end": 1.0}]
+
+
+@contextmanager
+def _tmp_audio(suffix: str = ".wav", content: bytes = b"\x00" * 44) -> Generator[str, None, None]:
+    """Yield the path to a temporary audio file, deleting it on exit."""
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        tmp.write(content)
+        tmp.flush()
+        path = tmp.name
+    try:
+        yield path
+    finally:
+        Path(path).unlink(missing_ok=True)
+
+
+@pytest.fixture
+def mock_stt_agent() -> Generator[MagicMock, None, None]:
+    """Patch SpeechToTextAgent.get_agent and yield the mock agent instance.
+
+    Tests that only need a working agent (and don't care about call details) can use
+    this fixture directly. Tests that need to inspect mock calls should use
+    ``@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")`` directly so
+    the mock is visible in the function signature.
+    """
+    with patch("unstructured.partition.audio.SpeechToTextAgent.get_agent") as mock_get_agent:
+        agent = mock_get_agent.return_value
+        agent.transcribe_segments.return_value = _ONE_SEGMENT
+        yield agent
+
+
+# ================================================================================================
+# Input validation
+# ================================================================================================
 
 
 def test_partition_audio_raises_with_neither_filename_nor_file():
@@ -32,24 +72,20 @@ def test_partition_audio_raises_with_both_filename_and_file():
         Path(path).unlink(missing_ok=True)
 
 
-@patch(
-    "unstructured.partition.audio.SpeechToTextAgent.get_agent",
-)
+# ================================================================================================
+# Core element output
+# ================================================================================================
+
+
+@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
 def test_partition_audio_from_filename_returns_transcript_elements(mock_get_agent):
     mock_agent = mock_get_agent.return_value
     mock_agent.transcribe_segments.return_value = [
         {"text": "Hello, this is a test transcript.", "start": 0.0, "end": 2.5},
     ]
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)  # minimal WAV-like header
-        tmp.flush()
-
-    try:
+    with _tmp_audio() as path:
         elements = partition_audio(filename=path)
-    finally:
-        Path(path).unlink(missing_ok=True)
 
     assert len(elements) == 1
     assert isinstance(elements[0], NarrativeText)
@@ -61,9 +97,54 @@ def test_partition_audio_from_filename_returns_transcript_elements(mock_get_agen
     mock_agent.transcribe_segments.assert_called_once_with(path, language=None)
 
 
-@patch(
-    "unstructured.partition.audio.SpeechToTextAgent.get_agent",
-)
+def test_partition_audio_empty_transcript_returns_empty_list(mock_stt_agent):
+    mock_stt_agent.transcribe_segments.return_value = []
+    with _tmp_audio() as path:
+        assert partition_audio(filename=path) == []
+
+
+def test_partition_audio_returns_one_element_per_segment(mock_stt_agent):
+    mock_stt_agent.transcribe_segments.return_value = [
+        {"text": "First segment.", "start": 0.0, "end": 1.0},
+        {"text": "Second segment.", "start": 1.0, "end": 2.5},
+        {"text": "Third segment.", "start": 2.5, "end": 4.0},
+    ]
+
+    with _tmp_audio() as path:
+        elements = partition_audio(filename=path)
+
+    assert len(elements) == 3
+    assert elements[0].text == "First segment."
+    assert elements[0].metadata.segment_start_seconds == 0.0
+    assert elements[0].metadata.segment_end_seconds == 1.0
+    assert elements[1].text == "Second segment."
+    assert elements[1].metadata.segment_start_seconds == 1.0
+    assert elements[1].metadata.segment_end_seconds == 2.5
+    assert elements[2].text == "Third segment."
+    assert elements[2].metadata.segment_start_seconds == 2.5
+    assert elements[2].metadata.segment_end_seconds == 4.0
+
+
+def test_partition_audio_filters_whitespace_only_segments(mock_stt_agent):
+    mock_stt_agent.transcribe_segments.return_value = [
+        {"text": "  ", "start": 0.0, "end": 0.5},
+        {"text": "Real content.", "start": 0.5, "end": 2.0},
+        {"text": "\t\n", "start": 2.0, "end": 2.5},
+    ]
+
+    with _tmp_audio() as path:
+        elements = partition_audio(filename=path)
+
+    assert len(elements) == 1
+    assert elements[0].text == "Real content."
+
+
+# ================================================================================================
+# Temp-file lifecycle (file-object input)
+# ================================================================================================
+
+
+@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
 def test_partition_audio_from_file_uses_temp_path_and_cleans_up(mock_get_agent):
     mock_agent = mock_get_agent.return_value
     mock_agent.transcribe_segments.return_value = [
@@ -92,9 +173,7 @@ def test_partition_audio_from_file_uses_temp_path_and_cleans_up(mock_get_agent):
     assert not Path(captured_temp_path[0]).exists(), "temp file was not deleted after partitioning"
 
 
-@patch(
-    "unstructured.partition.audio.SpeechToTextAgent.get_agent",
-)
+@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
 def test_partition_audio_cleans_up_temp_file_when_transcription_raises(mock_get_agent):
     mock_agent = mock_get_agent.return_value
     mock_agent.transcribe_segments.side_effect = RuntimeError("transcription failed")
@@ -119,57 +198,73 @@ def test_partition_audio_cleans_up_temp_file_when_transcription_raises(mock_get_
     assert not Path(captured_temp_path[0]).exists(), "temp file was not deleted after exception"
 
 
-@patch(
-    "unstructured.partition.audio.SpeechToTextAgent.get_agent",
-)
-def test_partition_audio_empty_transcript_returns_empty_list(mock_get_agent):
-    mock_agent = mock_get_agent.return_value
-    mock_agent.transcribe_segments.return_value = []
-
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)
-        tmp.flush()
-
-    try:
-        elements = partition_audio(filename=path)
-    finally:
-        Path(path).unlink(missing_ok=True)
-
-    assert elements == []
+# ================================================================================================
+# MIME type / filetype metadata
+# ================================================================================================
 
 
-@patch(
-    "unstructured.partition.audio.SpeechToTextAgent.get_agent",
-)
-def test_partition_audio_returns_one_element_per_segment(mock_get_agent):
-    mock_agent = mock_get_agent.return_value
-    mock_agent.transcribe_segments.return_value = [
-        {"text": "First segment.", "start": 0.0, "end": 1.0},
-        {"text": "Second segment.", "start": 1.0, "end": 2.5},
-        {"text": "Third segment.", "start": 2.5, "end": 4.0},
+@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
+@patch("unstructured.partition.audio.detect_filetype")
+def test_partition_audio_stamps_correct_mime_type_for_detected_format(mock_detect, mock_get_agent):
+    """metadata.filetype reflects the actual detected audio format, not a hardcoded WAV."""
+    mock_detect.return_value = FileType.MP3
+    mock_get_agent.return_value.transcribe_segments.return_value = [
+        {"text": "MP3 content.", "start": 0.0, "end": 1.0},
     ]
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)
-        tmp.flush()
-
-    try:
+    with _tmp_audio(suffix=".mp3", content=b"\xff\xfb" + b"\x00" * 42) as path:
         elements = partition_audio(filename=path)
-    finally:
-        Path(path).unlink(missing_ok=True)
 
-    assert len(elements) == 3
-    assert elements[0].text == "First segment."
-    assert elements[0].metadata.segment_start_seconds == 0.0
-    assert elements[0].metadata.segment_end_seconds == 1.0
-    assert elements[1].text == "Second segment."
-    assert elements[1].metadata.segment_start_seconds == 1.0
-    assert elements[1].metadata.segment_end_seconds == 2.5
-    assert elements[2].text == "Third segment."
-    assert elements[2].metadata.segment_start_seconds == 2.5
-    assert elements[2].metadata.segment_end_seconds == 4.0
+    assert len(elements) == 1
+    assert elements[0].metadata.filetype == FileType.MP3.mime_type  # "audio/mpeg"
+
+
+@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
+@patch("unstructured.partition.audio.detect_filetype")
+def test_partition_audio_falls_back_to_wav_mime_type_when_format_undetectable(
+    mock_detect, mock_get_agent
+):
+    """When filetype detection returns UNK, metadata.filetype falls back to audio/wav."""
+    mock_detect.return_value = FileType.UNK
+    mock_get_agent.return_value.transcribe_segments.return_value = [
+        {"text": "Unknown format.", "start": 0.0, "end": 1.0},
+    ]
+
+    with _tmp_audio() as path:
+        elements = partition_audio(filename=path)
+
+    assert len(elements) == 1
+    assert elements[0].metadata.filetype == FileType.WAV.mime_type  # "audio/wav"
+
+
+# ================================================================================================
+# FileType model
+# ================================================================================================
+
+
+@pytest.mark.parametrize(
+    "file_type",
+    [
+        FileType.FLAC,
+        FileType.M4A,
+        FileType.MP3,
+        FileType.OGG,
+        FileType.OPUS,
+        FileType.WAV,
+        FileType.WEBM,
+    ],
+)
+def test_audio_file_types_are_partitionable(file_type: FileType):
+    assert file_type.is_partitionable
+    assert file_type.partitioner_shortname == "audio"
+    assert file_type.partitioner_function_name == "partition_audio"
+    assert file_type.extra_name == "audio"
+    assert file_type.importable_package_dependencies == ("whisper",)
+
+
+# ================================================================================================
+# _audio_suffix helper
+# ================================================================================================
 
 
 @pytest.mark.parametrize(
@@ -193,12 +288,6 @@ def test_audio_suffix(metadata_filename, file_name, expected):
     assert _audio_suffix(f, metadata_filename) == expected
 
 
-def test_wav_file_type_is_partitionable():
-    assert FileType.WAV.is_partitionable
-    assert FileType.WAV.partitioner_shortname == "audio"
-    assert FileType.WAV.partitioner_function_name == "partition_audio"
-
-
 # ================================================================================================
 # partition_audio parameter forwarding
 # ================================================================================================
@@ -206,23 +295,13 @@ def test_wav_file_type_is_partitionable():
 
 @patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
 def test_partition_audio_forwards_custom_stt_agent_to_get_agent(mock_get_agent):
-    mock_agent = mock_get_agent.return_value
-    mock_agent.transcribe_segments.return_value = [
-        {"text": "Custom agent output.", "start": 0.0, "end": 1.0},
-    ]
+    mock_get_agent.return_value.transcribe_segments.return_value = _ONE_SEGMENT
     custom_module = (
         "unstructured.partition.utils.speech_to_text.whisper_stt.SpeechToTextAgentWhisper"
     )
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)
-        tmp.flush()
-
-    try:
+    with _tmp_audio() as path:
         partition_audio(filename=path, stt_agent=custom_module)
-    finally:
-        Path(path).unlink(missing_ok=True)
 
     mock_get_agent.assert_called_once_with(custom_module)
 
@@ -234,46 +313,11 @@ def test_partition_audio_forwards_language_to_transcribe_segments(mock_get_agent
         {"text": "Hola mundo.", "start": 0.0, "end": 1.5},
     ]
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)
-        tmp.flush()
-
-    try:
+    with _tmp_audio() as path:
         elements = partition_audio(filename=path, language="es")
-    finally:
-        Path(path).unlink(missing_ok=True)
 
     mock_agent.transcribe_segments.assert_called_once_with(path, language="es")
     assert elements[0].text == "Hola mundo."
-
-
-# ================================================================================================
-# Whitespace-only segment filtering
-# ================================================================================================
-
-
-@patch("unstructured.partition.audio.SpeechToTextAgent.get_agent")
-def test_partition_audio_filters_whitespace_only_segments(mock_get_agent):
-    mock_agent = mock_get_agent.return_value
-    mock_agent.transcribe_segments.return_value = [
-        {"text": "  ", "start": 0.0, "end": 0.5},
-        {"text": "Real content.", "start": 0.5, "end": 2.0},
-        {"text": "\t\n", "start": 2.0, "end": 2.5},
-    ]
-
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        path = tmp.name
-        tmp.write(b"\x00" * 44)
-        tmp.flush()
-
-    try:
-        elements = partition_audio(filename=path)
-    finally:
-        Path(path).unlink(missing_ok=True)
-
-    assert len(elements) == 1
-    assert elements[0].text == "Real content."
 
 
 # ================================================================================================
@@ -291,10 +335,17 @@ class TestSpeechToTextAgentInterface:
             SpeechToTextAgent,
         )
 
-        with _patch.object(SpeechToTextAgent, "get_instance") as mock_get_instance:
+        sentinel = "unstructured.partition.utils.speech_to_text.whisper_stt.SentinelAgent"
+        with (
+            _patch(
+                "unstructured.partition.utils.speech_to_text.speech_to_text_interface"
+                ".env_config.STT_AGENT",
+                sentinel,
+            ),
+            _patch.object(SpeechToTextAgent, "get_instance") as mock_get_instance,
+        ):
             SpeechToTextAgent.get_agent(None)
-            called_with = mock_get_instance.call_args[0][0]
-            assert "SpeechToTextAgent" in called_with or "Whisper" in called_with
+            mock_get_instance.assert_called_once_with(sentinel)
 
     def test_get_agent_passes_explicit_module_to_get_instance(self):
         from unittest.mock import patch as _patch
@@ -316,33 +367,32 @@ class TestSpeechToTextAgentInterface:
         with pytest.raises(ValueError, match="must be in the whitelist"):
             SpeechToTextAgent.get_instance("evil.module.EvilAgent")
 
-    def test_transcribe_segments_default_delegates_to_transcribe(self):
-        """Base transcribe_segments() wraps transcribe() in a single segment."""
-
+    def test_transcribe_default_joins_segments(self):
+        """Base transcribe() joins segment texts from transcribe_segments()."""
         from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
             SpeechToTextAgent,
+            TranscriptionSegment,
         )
 
-        # Create a minimal concrete subclass
         class _StubAgent(SpeechToTextAgent):
-            def transcribe(self, audio_path: str, *, language=None) -> str:
-                return "stub text"
+            def transcribe_segments(self, audio_path: str, *, language=None):
+                return [
+                    TranscriptionSegment(text="Hello", start=0.0, end=1.0),
+                    TranscriptionSegment(text="world.", start=1.0, end=2.0),
+                ]
 
         agent = _StubAgent()
-        segments = agent.transcribe_segments("fake.wav")
-        assert len(segments) == 1
-        assert segments[0]["text"] == "stub text"
-        assert segments[0]["start"] == 0.0
-        assert segments[0]["end"] == 0.0
+        assert agent.transcribe("fake.wav") == "Hello world."
 
-    def test_transcribe_segments_default_returns_empty_for_blank_text(self):
+    def test_transcribe_default_returns_empty_string_for_no_segments(self):
+        """Base transcribe() returns empty string when transcribe_segments() returns []."""
         from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
             SpeechToTextAgent,
         )
 
-        class _BlankAgent(SpeechToTextAgent):
-            def transcribe(self, audio_path: str, *, language=None) -> str:
-                return "   "
+        class _SilentAgent(SpeechToTextAgent):
+            def transcribe_segments(self, audio_path: str, *, language=None):
+                return []
 
-        agent = _BlankAgent()
-        assert agent.transcribe_segments("fake.wav") == []
+        agent = _SilentAgent()
+        assert agent.transcribe("fake.wav") == ""

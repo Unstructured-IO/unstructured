@@ -14,10 +14,19 @@ from unstructured.partition.utils.speech_to_text.speech_to_text_interface import
 class SpeechToTextAgentWhisper(SpeechToTextAgent):
     """Speech-to-text implementation using OpenAI Whisper.
 
-    A single instance is shared across all callers via the lru_cache in get_instance().
-    Because model.transcribe() is not documented as thread-safe, a per-instance lock
-    serializes concurrent transcription calls. For CPU-bound workloads that require true
-    parallelism, use process-based concurrency (e.g. multiprocessing) instead of threads.
+    **Concurrency model** — a single instance is shared across all callers via the
+    ``lru_cache`` in :meth:`~SpeechToTextAgent.get_instance`. Because
+    ``whisper.model.transcribe()`` is not documented as thread-safe, a per-instance
+    ``threading.Lock`` serializes all transcription calls. This prevents data races but
+    means the process can only run one transcription at a time for the default agent —
+    a hidden throughput ceiling under concurrent workloads. For true parallelism, use
+    process-based concurrency (e.g. ``multiprocessing`` or separate worker processes)
+    rather than threads.
+
+    **Configuration snapshot** — model size, device, and FP16 flag are read from
+    environment variables (``WHISPER_MODEL_SIZE``, ``WHISPER_DEVICE``, ``WHISPER_FP16``)
+    at construction time and frozen for the lifetime of the cached instance. Changing
+    those variables after the first call has no effect without a process restart.
     """
 
     def __init__(self, model_size: str | None = None) -> None:
@@ -46,12 +55,6 @@ class SpeechToTextAgentWhisper(SpeechToTextAgent):
             ) from exc
         self._fp16 = env_config.WHISPER_FP16
         self._lock = threading.Lock()
-
-    def transcribe(self, audio_path: str, *, language: str | None = None) -> str:
-        """Transcribe audio file to text using Whisper."""
-        return " ".join(
-            seg["text"] for seg in self.transcribe_segments(audio_path, language=language)
-        )
 
     def transcribe_segments(
         self, audio_path: str, *, language: str | None = None
