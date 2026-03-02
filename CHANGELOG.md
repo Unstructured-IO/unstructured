@@ -1,3 +1,8 @@
+## 0.21.9
+
+### Enhancements
+- **Replace deprecated `process_metadata` + `add_metadata` decorators in `partition_image` with unified `apply_metadata`**: Aligns image partitioner with the modern decorator pattern already used by `partition_pdf` and `partition_docx`, consolidating metadata post-processing into a single decorator.
+
 ## 0.21.8
 
 ### Enhancements

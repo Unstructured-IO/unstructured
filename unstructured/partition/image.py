@@ -3,16 +3,16 @@ from __future__ import annotations
 from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import add_metadata
+from unstructured.documents.elements import Element
+from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
+from unstructured.partition.common.metadata import apply_metadata
 from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
-@process_metadata()  # TODO(shreya): update to use `apply_metadata` decorator
-@add_metadata
+@apply_metadata(FileType.IMAGE)
 @add_chunking_strategy
 def partition_image(
     filename: Optional[str] = None,
