@@ -47,7 +47,6 @@ tests_to_ignore=(
   'notion.sh'
   'local-embed-mixedbreadai.sh'
   'hubspot.sh'
-  'azure.sh'  # Azure fixture output varies with PDF heading-level inference; skip diff check
 )
 
 for test in "${all_tests[@]}"; do

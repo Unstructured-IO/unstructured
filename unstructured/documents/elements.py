@@ -498,7 +498,7 @@ class ConsolidationStrategy(enum.Enum):
             "filename": cls.FIRST,
             "filetype": cls.FIRST,
             "header_footer_type": cls.DROP,
-            "heading_level": cls.DROP,
+            "heading_level": cls.FIRST,
             "image_url": cls.DROP,
             "image_path": cls.DROP,
             "image_base64": cls.DROP,

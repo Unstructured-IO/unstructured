@@ -101,37 +101,66 @@ def infer_heading_levels_from_outline(
     """
     from difflib import SequenceMatcher
 
-    # Create a mapping of outline titles to levels (keep first occurrence for duplicates)
-    outline_map: Dict[str, int] = {}
+    # Bucket outline entries by page number, keeping first occurrence per (page, title).
+    outline_by_page: Dict[Optional[int], Dict[str, int]] = {}
     for entry in outline_entries:
         title = entry.get("title", "").strip()
         level = entry.get("level", 0)
+        page = entry.get("page")
         # Normalize level to 1-6 range (H1-H6)
         normalized_level = min(max(level + 1, 1), 6)
         key = title.lower()
-        if key not in outline_map:
-            outline_map[key] = normalized_level
+        page_bucket = outline_by_page.setdefault(page, {})
+        if key not in page_bucket:
+            page_bucket[key] = normalized_level
 
-    # Match Title elements to outline entries
+    # Precompute a global fallback map in case page-number matching fails.
+    global_outline_map: Dict[str, int] = {}
+    for page_bucket in outline_by_page.values():
+        for k, v in page_bucket.items():
+            if k not in global_outline_map:
+                global_outline_map[k] = v
+
+    # Match Title elements to outline entries, preferring same-page matches when possible.
     for element in elements:
         if isinstance(element, Title) and element.metadata:
             element_text = element.text.strip().lower()
+            page_number = element.metadata.page_number
+
             best_match_level = None
             best_match_score = 0.0
 
-            # Try exact match first
-            if element_text in outline_map:
-                best_match_level = outline_map[element_text]
-                best_match_score = 1.0
-            else:
-                # Try fuzzy matching
-                for outline_title, level in outline_map.items():
-                    similarity = SequenceMatcher(None, element_text, outline_title).ratio()
-                    if similarity > best_match_score and similarity >= fuzzy_match_threshold:
-                        best_match_score = similarity
-                        best_match_level = level
-                        if similarity >= 1.0:
-                            break
+            def candidates_for_page(page: Optional[int]) -> Dict[str, int]:
+                return outline_by_page.get(page, {})
+
+            # 1) Exact match on same page, then on any page.
+            for candidate_map in (
+                candidates_for_page(page_number),
+                candidates_for_page(None),
+                global_outline_map,
+            ):
+                if element_text in candidate_map:
+                    best_match_level = candidate_map[element_text]
+                    best_match_score = 1.0
+                    break
+
+            # 2) Fuzzy match if no exact match found.
+            if best_match_level is None:
+                for candidate_map in (
+                    candidates_for_page(page_number),
+                    candidates_for_page(None),
+                    global_outline_map,
+                ):
+                    for outline_title, level in candidate_map.items():
+                        similarity = SequenceMatcher(None, element_text, outline_title).ratio()
+                        if similarity > best_match_score and similarity >= fuzzy_match_threshold:
+                            best_match_score = similarity
+                            best_match_level = level
+                            # Perfect match; no need to keep searching this map.
+                            if similarity >= 1.0:
+                                break
+                    if best_match_level is not None and best_match_score >= fuzzy_match_threshold:
+                        break
 
             if best_match_level is not None:
                 element.metadata.heading_level = best_match_level
@@ -139,7 +168,6 @@ def infer_heading_levels_from_outline(
 
 def infer_heading_levels_from_font_sizes(
     elements: list[Element],
-    layout_elements_map: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Assign heading levels to Title elements using document-wide ordering.
 
@@ -150,10 +178,7 @@ def infer_heading_levels_from_font_sizes(
 
     Args:
         elements: List of elements to update
-        layout_elements_map: Unused; accepted for API compatibility
     """
-    del layout_elements_map  # Unused; font extraction not wired in partition flow
-
     title_elements = [e for e in elements if isinstance(e, Title) and e.metadata is not None]
 
     if not title_elements:
@@ -165,9 +190,11 @@ def infer_heading_levels_from_font_sizes(
         return
 
     # Document-wide: sort by (page_number, element order in input list)
+    index_by_id = {id(e): i for i, e in enumerate(elements)}
+
     def doc_order_key(el: Element) -> tuple[int, int]:
         page = el.metadata.page_number or 1
-        idx = next(i for i, e in enumerate(elements) if e is el)
+        idx = index_by_id.get(id(el), 0)
         return (page, idx)
 
     sorted_titles = sorted(title_elements, key=doc_order_key)

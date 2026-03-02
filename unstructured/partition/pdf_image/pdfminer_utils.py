@@ -33,6 +33,16 @@ class CustomPDFPageInterpreter(PDFPageInterpreter):
         super().do_TJ(seq)
         self._patch_current_chars_with_render_mode(start)
 
+    def do_Tj(self, seq):
+        """Handle single-string text-showing operator with render mode patching.
+
+        pdfminer.six currently implements ``Tj`` in terms of ``TJ``, but we override both
+        for robustness in case that internal delegation changes in future versions.
+        """
+        start = len(getattr(getattr(self.device, "cur_item", None), "_objs", ()))
+        super().do_Tj(seq)
+        self._patch_current_chars_with_render_mode(start)
+
 
 class PDFMinerConfig(BaseModel):
     line_overlap: Optional[float] = None

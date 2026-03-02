@@ -331,9 +331,12 @@ def partition_pdf_or_image(
             return elements
 
         try:
-            outline_filename = filename
+            outline_filename: Optional[str] = filename or None
             file_for_outline: Optional[bytes | IO[bytes]] = None
-            if filename is None and file is not None:
+
+            # When no usable filename is available but we have a file-like object,
+            # use the file for outline extraction.
+            if (outline_filename is None) and file is not None:
                 if hasattr(file, "seek"):
                     file.seek(0)
                 file_for_outline = file
