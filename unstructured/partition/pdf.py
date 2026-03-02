@@ -7,7 +7,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -103,6 +103,8 @@ TEXT_OPS_PATTERN = re.compile(
     rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
     re.MULTILINE,
 )
+DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -593,11 +595,11 @@ def check_pdf_hi_res_max_pages_exceeded(
 
 def is_pdf_too_complex(
     filename: str = "",
-    file: Optional[bytes | IO[bytes]] = None,
+    file: Optional[Union[bytes, IO[bytes]]] = None,
     max_graphics_ops: int = 10_000,
     min_graphics_to_text_ratio: float = 20.0,
-    min_file_size_bytes: int = int(1 * 1024 * 1024),  # 1 MB
-    min_raw_stream_bytes: int = 100_000,
+    min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
+    min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
 ) -> bool:
     """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
     that would be extremely slow or produce garbage results with PDFMiner text extraction.
@@ -624,7 +626,7 @@ def is_pdf_too_complex(
         Minimum ratio of graphics ops to text ops required (in conjunction with
         `max_graphics_ops`) to flag a page as too complex.
     min_file_size_bytes
-        Skip the complexity check entirely for files smaller than this (default 2 MB).
+        Skip the complexity check entirely for files smaller than this (default 1 MB).
     min_raw_stream_bytes
         Skip operator counting for pages whose decoded content stream is smaller than
         this (default 100 KB). Small streams can't have enough operators to trigger
