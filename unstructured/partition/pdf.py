@@ -103,7 +103,6 @@ patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
-
 # Regex patterns for counting graphics and text operators in PDF content streams.
 GRAPHICS_OPS_PATTERN = re.compile(
     rb"(?:^|(?<=\s))"
@@ -591,20 +590,6 @@ def _get_pdf_page_number(
     return number_of_pages
 
 
-def check_pdf_hi_res_max_pages_exceeded(
-    filename: str = "",
-    file: Optional[bytes | IO[bytes]] = None,
-    pdf_hi_res_max_pages: int = None,
-) -> None:
-    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
-    if pdf_hi_res_max_pages:
-        document_pages = _get_pdf_page_number(filename=filename, file=file)
-        if document_pages > pdf_hi_res_max_pages:
-            raise PageCountExceededError(
-                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
-            )
-
-
 def is_pdf_too_complex(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -742,6 +727,20 @@ def is_pdf_too_complex(
             file.seek(original_pos)
 
     return False
+
+
+def check_pdf_hi_res_max_pages_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    pdf_hi_res_max_pages: int = None,
+) -> None:
+    """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
+    if pdf_hi_res_max_pages:
+        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        if document_pages > pdf_hi_res_max_pages:
+            raise PageCountExceededError(
+                document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            )
 
 
 @requires_dependencies("unstructured_inference")
