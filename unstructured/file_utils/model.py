@@ -245,7 +245,10 @@ class FileType(enum.Enum):
         "image",  # -- extra_name - like `pip install "unstructured[image]"` in this case --
         [".bmp"],  # -- extensions - filename extensions that map to this file-type --
         "image/bmp",  # -- canonical_mime_type -  MIME-type written to `.metadata.filetype` --
-        cast(list[str], []),  # -- alias_mime-types - other MIME-types that map to this file-type --
+        [
+            "image/x-bmp",
+            "image/x-ms-bmp",  # returned by older libmagic versions
+        ],
     )
     CSV = (
         "csv",
@@ -306,7 +309,7 @@ class FileType(enum.Enum):
         "image",
         [".heic"],
         "image/heic",
-        cast(list[str], []),
+        ["image/x-heic"],
     )
     HTML = (
         "html",
