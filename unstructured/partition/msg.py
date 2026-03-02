@@ -267,7 +267,11 @@ class _AttachmentPartitioner:
                     metadata_last_modified=self._attachment_last_modified,
                     **self._opts.partitioning_kwargs,
                 )
-            except UnsupportedFileFormatError:
+            except (UnsupportedFileFormatError, ImportError):
+                # -- UnsupportedFileFormatError: no partitioner exists for this file-format.
+                # -- ImportError: a partitioner exists but its optional dependencies are not
+                # --   installed (e.g. the `audio` extra for WAV/MP3 attachments).
+                # -- In both cases, silently skip the attachment.
                 return
 
             for e in elements:

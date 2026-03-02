@@ -401,9 +401,11 @@ class _AttachmentPartitioner:
                 metadata_last_modified=self._ctx.metadata_last_modified,
                 **self._ctx.partitioning_kwargs,
             )
-        except UnsupportedFileFormatError:
-            # -- indicates `auto.partition()` has no partitioner for this file-format;
-            # -- silently skip the attachment
+        except (UnsupportedFileFormatError, ImportError):
+            # -- UnsupportedFileFormatError: no partitioner exists for this file-format.
+            # -- ImportError: a partitioner exists but its optional dependencies (e.g. the
+            # --   `audio` extra for WAV/MP3) are not installed in this environment.
+            # -- In both cases, silently skip the attachment.
             return
 
         for e in elements:
