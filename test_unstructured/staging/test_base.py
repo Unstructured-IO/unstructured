@@ -21,6 +21,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ElementType,
     FigureCaption,
+    Form,
     Image,
     Link,
     ListItem,
@@ -113,6 +114,16 @@ def test_elements_from_dicts():
         ListItem(text="Blurb3"),
         ListItem(text="Blurb4"),
     ]
+
+
+def test_elements_from_dicts_form():
+    element_dicts = [
+        {"text": "Applicant Name: Jane Doe", "type": "Form"},
+    ]
+
+    elements = base.elements_from_dicts(element_dicts)
+
+    assert elements == [Form(text="Applicant Name: Jane Doe")]
 
 
 def test_convert_to_csv(tmp_path: str):

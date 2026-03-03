@@ -900,6 +900,12 @@ class NarrativeText(Text):
     category = "NarrativeText"
 
 
+class Form(Text):
+    """An element for capturing form text."""
+
+    category = "Form"
+
+
 class ListItem(Text):
     """ListItem is a NarrativeText element that is part of a list."""
 
@@ -1000,7 +1006,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
-    ElementType.FORM: NarrativeText,
+    ElementType.FORM: Form,
     ElementType.VALUE: NarrativeText,
     ElementType.LINK: NarrativeText,
     ElementType.LIST_ITEM: ListItem,
