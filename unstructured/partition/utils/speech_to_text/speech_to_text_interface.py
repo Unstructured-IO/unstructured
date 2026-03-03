@@ -13,7 +13,13 @@ from unstructured.partition.utils.constants import STT_AGENT_MODULES_WHITELIST
 
 
 class TranscriptionSegment(TypedDict):
-    """A single segment of a transcription with text and timestamps in seconds."""
+    """A single segment of a transcription with text and timestamps in seconds.
+
+    The audio partitioner (caller of :meth:`SpeechToTextAgent.transcribe_segments`) treats
+    empty or whitespace-only ``text`` as absent: it strips each segment's text and skips
+    segments that are empty after stripping. Agents may therefore return such segments
+    without filtering; the partitioner is the single place that drops them.
+    """
 
     text: str
     start: float
@@ -52,6 +58,16 @@ class SpeechToTextAgent(ABC):
         try:
             mod = importlib.import_module(module_name)
             loaded_class = getattr(mod, class_name)
+            if not isinstance(loaded_class, type):
+                raise TypeError(
+                    f"'{agent_module}' does not refer to a class (got {type(loaded_class).__name__}). "
+                    "Speech-to-text agent must be a subclass of SpeechToTextAgent."
+                )
+            if not issubclass(loaded_class, SpeechToTextAgent):
+                raise TypeError(
+                    f"'{agent_module}' must be a subclass of SpeechToTextAgent, "
+                    f"got {loaded_class.__qualname__}."
+                )
         except (ImportError, AttributeError) as e:
             logger.error(f"Failed to load SpeechToTextAgent class '{agent_module}': {e}")
             raise RuntimeError(
@@ -92,28 +108,6 @@ class SpeechToTextAgent(ABC):
         -------
         List of :class:`TranscriptionSegment` dicts, each with ``"text"``, ``"start"``,
         and ``"end"`` keys. Return an empty list when the audio contains no speech.
+        Segments with empty or whitespace-only ``text`` may be included; the partitioner
+        will strip and drop them.
         """
-
-    def transcribe(self, audio_path: str, *, language: str | None = None) -> str:
-        """Transcribe audio from a file path to a single text string.
-
-        Default implementation joins the texts from :meth:`transcribe_segments`. Override
-        only when a more efficient single-string path exists; if you do override this
-        method, **do not** delegate back to ``transcribe_segments`` — that would create
-        infinite recursion.
-
-        Parameters
-        ----------
-        audio_path
-            Path to an audio file (e.g. WAV, MP3).
-        language
-            Optional ISO 639-1 language code for the spoken language (e.g. ``"en"``).
-            When ``None``, the agent may auto-detect.
-
-        Returns
-        -------
-        Transcribed text as a single string.
-        """
-        return " ".join(
-            seg["text"] for seg in self.transcribe_segments(audio_path, language=language)
-        )

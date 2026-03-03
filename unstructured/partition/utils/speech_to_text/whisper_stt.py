@@ -67,12 +67,9 @@ class SpeechToTextAgentWhisper(SpeechToTextAgent):
             result = self._model.transcribe(audio_path, **options)
         segments: list[TranscriptionSegment] = []
         for seg in result.get("segments", []):
-            text = (seg.get("text") or "").strip()
-            if not text:
-                continue
             segments.append(
                 TranscriptionSegment(
-                    text=text,
+                    text=(seg.get("text") or ""),
                     start=float(seg.get("start", 0)),
                     end=float(seg.get("end", 0)),
                 )

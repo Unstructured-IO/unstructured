@@ -296,7 +296,7 @@ class FileType(enum.Enum):
     FLAC = (
         "flac",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".flac"],
         "audio/flac",
@@ -341,7 +341,7 @@ class FileType(enum.Enum):
     M4A = (
         "m4a",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".m4a"],
         "audio/mp4",
@@ -351,7 +351,7 @@ class FileType(enum.Enum):
     MP3 = (
         "mp3",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".mp3"],
         "audio/mpeg",
@@ -387,7 +387,7 @@ class FileType(enum.Enum):
     OGG = (
         "ogg",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".ogg", ".oga"],
         "audio/ogg",
@@ -396,7 +396,7 @@ class FileType(enum.Enum):
     OPUS = (
         "opus",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".opus"],
         "audio/opus",
@@ -490,7 +490,7 @@ class FileType(enum.Enum):
     WAV = (
         "wav",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".wav"],
         "audio/wav",
@@ -505,11 +505,11 @@ class FileType(enum.Enum):
     WEBM = (
         "webm",
         "audio",
-        ["whisper"],
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
         "audio",
         [".webm"],
         "audio/webm",
-        ["video/webm"],
+        [],  # Do not alias video/webm: WebM is a container; this type is for audio-only.
     )
     XLS = (
         "xls",

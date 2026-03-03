@@ -98,7 +98,7 @@ class DescribeFileType:
             (FileType.ODT, ("docx", "pypandoc")),
             (FileType.PDF, ("pdf2image", "pdfminer", "PIL")),
             (FileType.UNK, ()),
-            (FileType.WAV, ("whisper",)),
+            (FileType.WAV, ()),  # STT agent deps validated at runtime
             (FileType.ZIP, ()),
         ],
     )

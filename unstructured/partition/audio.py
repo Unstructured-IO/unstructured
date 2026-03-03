@@ -67,6 +67,10 @@ def partition_audio(
     """
     exactly_one(filename=filename, file=file)
 
+    # Metadata from original input only (not the temp path); compute before any temp file lifecycle.
+    last_modified = get_last_modified_date(filename) if filename else None
+    mime_type = _audio_mime_type(filename, file, metadata_filename)
+
     audio_path: str
     if filename is not None:
         audio_path = filename
@@ -87,9 +91,6 @@ def partition_audio(
 
     if not segments:
         return []
-
-    last_modified = get_last_modified_date(filename) if filename else None
-    mime_type = _audio_mime_type(filename, file, metadata_filename)
 
     elements: list[Element] = []
     for seg in segments:

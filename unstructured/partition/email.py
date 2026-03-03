@@ -18,12 +18,22 @@ from dateutil import parser
 
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
+from unstructured.logger import logger
+from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 from unstructured.utils import lazyproperty
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
+
+# Exceptions we treat as "unsupported attachment" and skip with a warning (no data loss).
+EXPECTED_ATTACHMENT_ERRORS: Final[tuple[type[BaseException], ...]] = (
+    UnsupportedFileFormatError,
+    ImportError,
+    FileNotFoundError,
+    RuntimeError,
+)
 
 
 def partition_email(
@@ -400,13 +410,14 @@ class _AttachmentPartitioner:
                 metadata_last_modified=self._ctx.metadata_last_modified,
                 **self._ctx.partitioning_kwargs,
             )
-        except Exception:
-            # -- Silently skip attachments that cannot be partitioned for any reason:
-            # --   UnsupportedFileFormatError – no partitioner registered for this file-type.
-            # --   ImportError – partitioner exists but optional dependencies aren't installed
-            # --     (e.g. `audio` extra for WAV/MP3 attachments).
-            # --   Any other runtime error – e.g. ffmpeg not found, corrupt file, etc.
-            # -- A failing attachment must never crash the enclosing email partition.
+        except BaseException as e:
+            if not isinstance(e, EXPECTED_ATTACHMENT_ERRORS):
+                raise
+            logger.warning(
+                "Skipping attachment %s: %s",
+                self._attachment_file_name,
+                f"{type(e).__name__}: {e}",
+            )
             return
 
         for e in elements:

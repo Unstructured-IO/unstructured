@@ -152,17 +152,16 @@ class ENVConfig:
         FP16 gives roughly 2x GPU speedup on CUDA with minimal quality impact, but is
         unsupported on CPU and will raise a RuntimeError there. The default is auto-detected:
         True when a CUDA GPU is available, False otherwise.
-        Set WHISPER_FP16=true/false explicitly to override.
+        Set WHISPER_FP16=true/false explicitly to override. When set to empty, treated as false.
         """
-        env_val = self._get_string("WHISPER_FP16")
-        if env_val:
-            return env_val.lower() in ("true", "1", "t")
-        try:
-            import torch
+        if "WHISPER_FP16" not in os.environ:
+            try:
+                import torch
 
-            return bool(torch.cuda.is_available())
-        except ImportError:
-            return False
+                return bool(torch.cuda.is_available())
+            except ImportError:
+                return False
+        return self._get_bool("WHISPER_FP16", False)
 
     @property
     def EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD(self) -> int:

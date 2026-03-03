@@ -445,14 +445,16 @@ class _FileTypeDetectionContext:
             )
             magic_mime = magic_mime.lower() if magic_mime else None
 
-            # When libmagic returns None or the generic "application/octet-stream", fall back to
-            # the `filetype` package which uses magic-byte signatures and is more reliable for
-            # certain binary formats (BMP, HEIC, WAV, etc.) that some libmagic versions mis-detect.
+            # When libmagic returns None or "application/octet-stream", try the filetype package
+            # (magic-byte signatures) for formats libmagic often mis-detects (e.g. BMP, HEIC, WAV).
             if magic_mime and magic_mime != "application/octet-stream":
                 return magic_mime
 
             ft_mime = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
-            return ft_mime.lower() if ft_mime else magic_mime
+            if ft_mime:
+                return ft_mime.lower()
+            # filetype could not identify; same outcome as if we had not tried it.
+            return magic_mime
 
         mime_type = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
 
