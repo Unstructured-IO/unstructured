@@ -268,9 +268,9 @@ class _FileTypeDetector:
         if file_type != FileType.UNK:
             return file_type
 
-        # -- on some environments libmagic can return a generic/unhelpful MIME-type (for example,
-        # -- "application/octet-stream") for files that the `filetype` package can still identify.
-        # -- when that happens we retry using `filetype` to avoid unnecessary `FileType.UNK` results.
+        # -- on some environments libmagic can return a generic/unhelpful MIME-type
+        # -- like octet-stream") for files that the `filetype` package identify.
+        # -- when that happens we retry using `filetype`  `FileType.UNK` results.
         if LIBMAGIC_AVAILABLE:
             fallback_mime_type = (
                 ft.guess_mime(self._ctx.file_path)
