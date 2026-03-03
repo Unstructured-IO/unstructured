@@ -57,6 +57,9 @@ def _clear_stt_cache() -> Generator[None, None, None]:
 
     Use in any test that touches get_instance or get_agent directly so cached state
     does not leak between tests (mirrors OCRAgent _clear_cache in test_ocr_interface).
+    Tests that patch get_instance (e.g. get_agent tests using mock_get_instance) never
+    call the real get_instance, so the cache is unchanged by them and this fixture is
+    a no-op for those; it matters for tests that call get_instance directly.
     """
     from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
         SpeechToTextAgent,
@@ -373,3 +376,41 @@ class TestSpeechToTextAgentInterface:
 
         with pytest.raises(ValueError, match="must be in the whitelist"):
             SpeechToTextAgent.get_instance("evil.module.EvilAgent")
+
+    def test_get_instance_rejects_whitelisted_module_attribute_that_is_not_a_class(self):
+        """Whitelisted module exposes a non-class (e.g. function or constant) -> TypeError."""
+        from unittest.mock import MagicMock, patch
+
+        from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
+            SpeechToTextAgent,
+        )
+
+        agent_module = "unstructured.partition.utils.speech_to_text.whisper_stt.some_function"
+        mock_mod = MagicMock()
+        mock_mod.some_function = lambda x: x  # not a class
+
+        with patch(
+            "unstructured.partition.utils.speech_to_text.speech_to_text_interface.importlib.import_module",
+            return_value=mock_mod,
+        ):
+            with pytest.raises(TypeError, match="does not refer to a class"):
+                SpeechToTextAgent.get_instance(agent_module)
+
+    def test_get_instance_rejects_class_that_does_not_subclass_speech_to_text_agent(self):
+        """Whitelisted module exposes a class not subclassing SpeechToTextAgent -> TypeError."""
+        from unittest.mock import MagicMock, patch
+
+        from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
+            SpeechToTextAgent,
+        )
+
+        agent_module = "unstructured.partition.utils.speech_to_text.whisper_stt.WrongClass"
+        mock_mod = MagicMock()
+        mock_mod.WrongClass = object  # a class, but not a subclass of SpeechToTextAgent
+
+        with patch(
+            "unstructured.partition.utils.speech_to_text.speech_to_text_interface.importlib.import_module",
+            return_value=mock_mod,
+        ):
+            with pytest.raises(TypeError, match="must be a subclass of SpeechToTextAgent"):
+                SpeechToTextAgent.get_instance(agent_module)

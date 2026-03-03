@@ -58,17 +58,6 @@ class SpeechToTextAgent(ABC):
         try:
             mod = importlib.import_module(module_name)
             loaded_class = getattr(mod, class_name)
-            if not isinstance(loaded_class, type):
-                raise TypeError(
-                    f"'{agent_module}' does not refer to a class "
-                    f"(got {type(loaded_class).__name__}). "
-                    "Speech-to-text agent must be a subclass of SpeechToTextAgent."
-                )
-            if not issubclass(loaded_class, SpeechToTextAgent):
-                raise TypeError(
-                    f"'{agent_module}' must be a subclass of SpeechToTextAgent, "
-                    f"got {loaded_class.__qualname__}."
-                )
         except (ImportError, AttributeError) as e:
             logger.error(f"Failed to load SpeechToTextAgent class '{agent_module}': {e}")
             raise RuntimeError(
@@ -76,6 +65,18 @@ class SpeechToTextAgent(ABC):
                 "Install the audio extra: "
                 'pip install "unstructured[audio]"'
             ) from e
+
+        if not isinstance(loaded_class, type):
+            raise TypeError(
+                f"'{agent_module}' does not refer to a class "
+                f"(got {type(loaded_class).__name__}). "
+                "Speech-to-text agent must be a subclass of SpeechToTextAgent."
+            )
+        if not issubclass(loaded_class, SpeechToTextAgent):
+            raise TypeError(
+                f"'{agent_module}' must be a subclass of SpeechToTextAgent, "
+                f"got {loaded_class.__qualname__}."
+            )
         try:
             return loaded_class()
         except Exception as e:

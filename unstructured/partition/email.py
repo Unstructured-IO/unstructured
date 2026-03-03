@@ -19,21 +19,13 @@ from dateutil import parser
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 from unstructured.utils import lazyproperty
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
-
-# Exceptions we treat as "unsupported attachment" and skip with a warning (no data loss).
-EXPECTED_ATTACHMENT_ERRORS: Final[tuple[type[BaseException], ...]] = (
-    UnsupportedFileFormatError,
-    ImportError,
-    FileNotFoundError,
-    RuntimeError,
-)
 
 
 def partition_email(
