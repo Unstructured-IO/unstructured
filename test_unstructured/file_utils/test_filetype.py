@@ -253,6 +253,29 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
 
 
 @pytest.mark.parametrize(
+    ("file_name", "fallback_mime_type", "expected_value"),
+    [
+        ("img/bmp_24.bmp", "image/bmp", FileType.BMP),
+        ("img/DA-1p.heic", "image/heic", FileType.HEIC),
+        ("CantinaBand3.wav", "audio/wav", FileType.WAV),
+    ],
+)
+def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecognized_mime_type(
+    file_name: str, fallback_mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- simulate libmagic returning an unhelpful MIME-type --
+    ctx_mime_type_.return_value = "application/octet-stream"
+    with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", True):
+        with patch(
+            "unstructured.file_utils.filetype.ft.guess_mime", return_value=fallback_mime_type
+        ):
+            with open(example_doc_path(file_name), "rb") as f:
+                file = io.BytesIO(f.read())
+
+            assert detect_filetype(file=file) is expected_value
+
+
+@pytest.mark.parametrize(
     ("expected_value", "file_name"),
     [
         # -- `filetype` lib recognizes all these binary file-types --
