@@ -143,6 +143,16 @@ def test_get_token_limit(mocker):
     config_v2 = VoyageAIEmbeddingConfig(api_key="api_key", model_name="voyage-2")
     assert config_v2.get_token_limit() == 320_000
 
+    # Test voyage-4 family
+    config_v4 = VoyageAIEmbeddingConfig(api_key="api_key", model_name="voyage-4")
+    assert config_v4.get_token_limit() == 320_000
+
+    config_v4_lite = VoyageAIEmbeddingConfig(api_key="api_key", model_name="voyage-4-lite")
+    assert config_v4_lite.get_token_limit() == 1_000_000
+
+    config_v4_large = VoyageAIEmbeddingConfig(api_key="api_key", model_name="voyage-4-large")
+    assert config_v4_large.get_token_limit() == 120_000
+
     # Test unknown model (should use default)
     config_unknown = VoyageAIEmbeddingConfig(api_key="api_key", model_name="unknown-model")
     assert config_unknown.get_token_limit() == 120_000
@@ -158,11 +168,12 @@ def test_is_context_model(mocker):
     )
     assert encoder_context._is_context_model() is True
 
-    # Test with regular model
-    encoder_regular = VoyageAIEmbeddingEncoder(
-        config=VoyageAIEmbeddingConfig(api_key="api_key", model_name="voyage-3.5")
-    )
-    assert encoder_regular._is_context_model() is False
+    # Test with regular models
+    for model_name in ["voyage-3.5", "voyage-4", "voyage-4-lite", "voyage-4-large"]:
+        encoder_regular = VoyageAIEmbeddingEncoder(
+            config=VoyageAIEmbeddingConfig(api_key="api_key", model_name=model_name)
+        )
+        assert encoder_regular._is_context_model() is False
 
 
 def test_build_batches_with_token_limits(mocker):
