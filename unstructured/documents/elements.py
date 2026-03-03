@@ -818,7 +818,7 @@ class Text(Element):
         embeddings: Optional[list[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
-        self.text: str = text
+        self.text: str = text if text is not None else ""
         self.embeddings: Optional[list[float]] = embeddings
 
         super().__init__(
