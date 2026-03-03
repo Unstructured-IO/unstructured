@@ -1,3 +1,6 @@
+## 0.21.10
+- **Add Form Class**: Adds a new form class in elements.py to deal with forms
+
 ## 0.21.9
 - Add a fallback to use the filetype library to recover from incorrect results form libmagic
 
