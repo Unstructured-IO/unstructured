@@ -1,3 +1,6 @@
+## 0.21.9
+- Add a fallback to use the filetype library to recover from incorrect results form libmagic
+
 ## 0.21.8
 
 ### Enhancements

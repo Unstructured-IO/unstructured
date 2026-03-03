@@ -265,7 +265,23 @@ class _FileTypeDetector:
 
         # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
         file_type = FileType.from_mime_type(mime_type)
-        return file_type if file_type != FileType.UNK else None
+        if file_type != FileType.UNK:
+            return file_type
+
+        # -- on some environments libmagic can return a generic/unhelpful MIME-type
+        # -- like octet-stream") for files that the `filetype` package identify.
+        # -- when that happens we retry using `filetype`  `FileType.UNK` results.
+        if LIBMAGIC_AVAILABLE:
+            fallback_mime_type = (
+                ft.guess_mime(self._ctx.file_path)
+                if self._ctx.file_path
+                else ft.guess_mime(self._ctx.file_head)
+            )
+            fallback_file_type = FileType.from_mime_type(fallback_mime_type)
+            if fallback_file_type and fallback_file_type != FileType.UNK:
+                return fallback_file_type
+
+        return None
 
     @lazyproperty
     def _file_type_from_file_extension(self) -> FileType | None:
