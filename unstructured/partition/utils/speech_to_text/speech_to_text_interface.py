@@ -60,7 +60,8 @@ class SpeechToTextAgent(ABC):
             loaded_class = getattr(mod, class_name)
             if not isinstance(loaded_class, type):
                 raise TypeError(
-                    f"'{agent_module}' does not refer to a class (got {type(loaded_class).__name__}). "
+                    f"'{agent_module}' does not refer to a class "
+                    f"(got {type(loaded_class).__name__}). "
                     "Speech-to-text agent must be a subclass of SpeechToTextAgent."
                 )
             if not issubclass(loaded_class, SpeechToTextAgent):

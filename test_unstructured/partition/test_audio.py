@@ -334,10 +334,11 @@ def test_partition_audio_forwards_language_to_transcribe_segments(mock_get_agent
 # ================================================================================================
 
 
+@pytest.mark.usefixtures("_clear_stt_cache")
 class TestSpeechToTextAgentInterface:
     """Unit tests for the SpeechToTextAgent base class."""
 
-    def test_get_agent_uses_env_config_when_no_module_given(self, _clear_stt_cache):
+    def test_get_agent_uses_env_config_when_no_module_given(self):
         import os
         from unittest.mock import patch as _patch
 
@@ -353,7 +354,7 @@ class TestSpeechToTextAgentInterface:
             SpeechToTextAgent.get_agent(None)
             mock_get_instance.assert_called_once_with(sentinel)
 
-    def test_get_agent_passes_explicit_module_to_get_instance(self, _clear_stt_cache):
+    def test_get_agent_passes_explicit_module_to_get_instance(self):
         from unittest.mock import patch as _patch
 
         from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
@@ -365,7 +366,7 @@ class TestSpeechToTextAgentInterface:
             SpeechToTextAgent.get_agent(custom)
             mock_get_instance.assert_called_once_with(custom)
 
-    def test_get_instance_rejects_non_whitelisted_module(self, _clear_stt_cache):
+    def test_get_instance_rejects_non_whitelisted_module(self):
         from unstructured.partition.utils.speech_to_text.speech_to_text_interface import (
             SpeechToTextAgent,
         )
