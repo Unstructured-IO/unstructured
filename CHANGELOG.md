@@ -1,7 +1,7 @@
 ## 0.21.11
 
 ### Enhancements
-- **Add speech-to-text to multimodal pipeline**: Audio files (WAV, MP3, FLAC, M4A, OGG, OPUS, WEBM, and any format supported by ffmpeg) can now be partitioned into document elements via speech-to-text. Install the optional `audio` extra (`pip install "unstructured[audio]"`) to use the Whisper-based partitioner. Call `partition()` or `partition_audio()` with an audio file to get a transcript as `NarrativeText` elements, each carrying `segment_start_seconds` / `segment_end_seconds` metadata. **Known limitation**: segment timestamps are dropped when elements are merged by a chunking strategy; consume un-chunked elements directly if audio timeline alignment is required. See `partition_audio()` for details.
+- **Add speech-to-text to multimodal pipeline**: Audio files (WAV, MP3, FLAC, M4A, OGG, OPUS, WEBM, and any format supported by ffmpeg) can now be partitioned into document elements via speech-to-text. Install the optional `audio` extra (`pip install "unstructured[audio]"`) to use the Whisper-based partitioner. Call `partition()` or `partition_audio()` with an audio file to get a transcript as `NarrativeText` elements, each carrying `segment_start_seconds` / `segment_end_seconds` metadata. **Known limitation**: segment timestamps are dropped when elements are merged by a chunking strategy; consume un-chunked elements directly if audio timeline alignment is required.
 
 ## 0.21.10
 - **Add Form Class**: Adds a new form class in elements.py to deal with forms
