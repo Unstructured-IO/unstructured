@@ -17,18 +17,6 @@
 ### Enhancements
 - **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
 
-## 0.21.10
-- **Add Form Class**: Adds a new form class in elements.py to deal with forms
-
-## 0.21.9
-- Add a fallback to use the filetype library to recover from incorrect results form libmagic
-
-## 0.21.8
-
-### Enhancements
-- **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
-
-g
 ## 0.21.7
 
 ### Enhancements
