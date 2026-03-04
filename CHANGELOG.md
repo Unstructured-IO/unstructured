@@ -12,13 +12,19 @@
 ## 0.21.8
 
 ### Enhancements
-- **Check Complex Documents**: Check for a high ratio of vector graphics to avoid pdfminer
+- **Add speech-to-text to multimodal pipeline**: Audio files (WAV, MP3, FLAC, M4A, OGG, OPUS, WEBM, and any format supported by ffmpeg) can now be partitioned into document elements via speech-to-text. Install the optional `audio` extra (`pip install "unstructured[audio]"`) to use the Whisper-based partitioner. Call `partition()` or `partition_audio()` with an audio file to get a transcript as `NarrativeText` elements, each carrying `segment_start_seconds` / `segment_end_seconds` metadata. **Known limitation**: segment timestamps are dropped when elements are merged by a chunking strategy; consume un-chunked elements directly if audio timeline alignment is required.
 
+## 0.21.10
+- **Add Form Class**: Adds a new form class in elements.py to deal with forms
+
+## 0.21.9
+- Add a fallback to use the filetype library to recover from incorrect results form libmagic
 
 ## 0.21.8
 
 ### Enhancements
 - **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
+
 
 ## 0.21.7
 
