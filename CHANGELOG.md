@@ -1,3 +1,6 @@
+## 0.21.12
+- **Add Check for complex documents**: Adds a check for complex documents to avoid pdfminer with a high ratio of vector objects
+
 ## 0.21.11
 
 ### Enhancements
@@ -25,7 +28,7 @@
 ### Enhancements
 - **Optimize PDF render mode patching performance**: Optimized `_patch_current_chars_with_render_mode` in `CustomPDFPageInterpreter` to avoid O(N²) re-scanning by tracking the last-patched index, so each `do_TJ`/`do_Tj` call only processes newly-added characters.
 
-
+g
 ## 0.21.7
 
 ### Enhancements

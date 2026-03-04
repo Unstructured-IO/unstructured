@@ -1612,6 +1612,10 @@ def test_is_pdf_too_complex_restores_file_cursor_position():
     assert file.tell() == 7
 
 
+def test_is_pdf_too_complex_returns_false_for_normal_pdf():
+    assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
+
+
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # TODO (yao): investigate why we need this test. The LayoutElement definition suggests bbox
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
