@@ -1,7 +1,18 @@
-## 0.21.9
+## 0.21.12
 
 ### Enhancements
 - **Infer hierarchical heading levels for PDFs (fixes #4204)**: Add `heading_level` metadata (H1–H6) for `Title` elements produced by PDF partitioners. Heading levels are inferred primarily from the PDF outline/bookmarks when available, with document-order fallback. Integrated into all PDF strategies (`hi_res`, `fast`, and `ocr_only`).
+
+## 0.21.11
+
+### Enhancements
+- **Add speech-to-text to multimodal pipeline**: Audio files (WAV, MP3, FLAC, M4A, OGG, OPUS, WEBM, and any format supported by ffmpeg) can now be partitioned into document elements via speech-to-text. Install the optional `audio` extra (`pip install "unstructured[audio]"`) to use the Whisper-based partitioner. Call `partition()` or `partition_audio()` with an audio file to get a transcript as `NarrativeText` elements, each carrying `segment_start_seconds` / `segment_end_seconds` metadata. **Known limitation**: segment timestamps are dropped when elements are merged by a chunking strategy; consume un-chunked elements directly if audio timeline alignment is required.
+
+## 0.21.10
+- **Add Form Class**: Adds a new form class in elements.py to deal with forms
+
+## 0.21.9
+- Add a fallback to use the filetype library to recover from incorrect results form libmagic
 
 ## 0.21.8
 
