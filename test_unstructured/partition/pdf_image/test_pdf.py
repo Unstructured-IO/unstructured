@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import io
 import logging
 import math
 import os
@@ -1540,6 +1541,79 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
                 pdf_hi_res_max_pages=pdf_hi_res_max_pages,
                 is_image=is_image,
             )
+
+
+def test_is_pdf_too_complex_skips_small_file_size():
+    assert not pdf.is_pdf_too_complex(file=b"tiny", min_file_size_bytes=10)
+
+
+def test_is_pdf_too_complex_detects_vector_heavy_page():
+    class MockStream:
+        def get_data(self):
+            return b" ".join([b"m"] * 120 + [b"Tj"] * 2)
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": MockStream()}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            max_graphics_ops=100,
+            min_graphics_to_text_ratio=20.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_skips_pages_without_contents():
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": None}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_skips_small_content_streams():
+    class MockStream:
+        def get_data(self):
+            return b"m Tj"
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": MockStream()}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            max_graphics_ops=1,
+            min_graphics_to_text_ratio=1.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=20,
+        )
+
+
+def test_is_pdf_too_complex_restores_file_cursor_position():
+    file = io.BytesIO(b"x" * 20)
+    file.seek(7)
+
+    reader = mock.Mock()
+    reader.pages = []
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=file,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+    assert file.tell() == 7
+
+
+def test_is_pdf_too_complex_returns_false_for_normal_pdf():
+    assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
