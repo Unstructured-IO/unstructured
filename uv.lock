@@ -3781,6 +3781,21 @@ wheels = [
 ]
 
 [[package]]
+name = "openai-whisper"
+version = "20250625"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "more-itertools" },
+    { name = "numba" },
+    { name = "numpy" },
+    { name = "tiktoken" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "triton", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or sys_platform == 'linux2'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/35/8e/d36f8880bcf18ec026a55807d02fe4c7357da9f25aebd92f85178000c0dc/openai_whisper-20250625.tar.gz", hash = "sha256:37a91a3921809d9f44748ffc73c0a55c9f366c85a3ef5c2ae0cc09540432eb96", size = 803191, upload-time = "2025-06-26T01:06:13.34Z" }
+
+[[package]]
 name = "opencv-contrib-python"
 version = "4.13.0.92"
 source = { registry = "https://pypi.org/simple" }
@@ -6581,7 +6596,7 @@ name = "sympy"
 version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mpmath", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "mpmath" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/83/d3/803453b36afefb7c2bb238361cd4ae6125a569b4db67cd9e79846ba2d68c/sympy-1.14.0.tar.gz", hash = "sha256:d3d3fe8df1e5a0b42f0e7bdf50541697dbe7d23746e894990c030e2b05e72517", size = 7793921, upload-time = "2025-04-27T18:05:01.611Z" }
 wheels = [
@@ -6807,10 +6822,10 @@ version = "2.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cuda-bindings", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
-    { name = "filelock", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "fsspec", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "jinja2", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "networkx", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "jinja2" },
+    { name = "networkx" },
     { name = "nvidia-cublas-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-cuda-cupti-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-cuda-nvrtc-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
@@ -6826,10 +6841,10 @@ dependencies = [
     { name = "nvidia-nvjitlink-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-nvshmem-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "nvidia-nvtx-cu12", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
-    { name = "setuptools", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
-    { name = "sympy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "setuptools", marker = "python_full_version >= '3.12'" },
+    { name = "sympy" },
     { name = "triton", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0f/8b/4b61d6e13f7108f36910df9ab4b58fd389cc2520d54d81b88660804aad99/torch-2.10.0-2-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:418997cb02d0a0f1497cf6a09f63166f9f5df9f3e16c8a716ab76a72127c714f", size = 79423467, upload-time = "2026-02-10T21:44:48.711Z" },
@@ -7077,6 +7092,7 @@ all-docs = [
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
     { name = "networkx" },
+    { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
@@ -7092,6 +7108,9 @@ all-docs = [
     { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
     { name = "unstructured-pytesseract" },
     { name = "xlrd" },
+]
+audio = [
+    { name = "openai-whisper" },
 ]
 chunking-tokens = [
     { name = "tiktoken" },
@@ -7133,6 +7152,7 @@ local-inference = [
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
     { name = "networkx" },
+    { name = "openai-whisper" },
     { name = "openpyxl" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
@@ -7254,6 +7274,9 @@ requires-dist = [
     { name = "networkx", marker = "extra == 'xlsx'", specifier = ">=3.2.0,<4.0.0" },
     { name = "numba", specifier = ">=0.60.0,<1.0.0" },
     { name = "numpy", specifier = ">=1.26.0,<3.0.0" },
+    { name = "openai-whisper", marker = "extra == 'all-docs'", specifier = ">=20231117,<20270000" },
+    { name = "openai-whisper", marker = "extra == 'audio'", specifier = ">=20231117,<20270000" },
+    { name = "openai-whisper", marker = "extra == 'local-inference'", specifier = ">=20231117,<20270000" },
     { name = "openpyxl", marker = "extra == 'all-docs'", specifier = ">=3.1.5,<4.0.0" },
     { name = "openpyxl", marker = "extra == 'local-inference'", specifier = ">=3.1.5,<4.0.0" },
     { name = "openpyxl", marker = "extra == 'xlsx'", specifier = ">=3.1.5,<4.0.0" },
@@ -7343,7 +7366,7 @@ requires-dist = [
     { name = "xlrd", marker = "extra == 'local-inference'", specifier = ">=2.0.1,<3.0.0" },
     { name = "xlrd", marker = "extra == 'xlsx'", specifier = ">=2.0.1,<3.0.0" },
 ]
-provides-extras = ["all-docs", "chunking-tokens", "csv", "doc", "docx", "epub", "huggingface", "image", "ingest", "local-inference", "md", "odt", "org", "paddleocr", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"]
+provides-extras = ["all-docs", "audio", "chunking-tokens", "csv", "doc", "docx", "epub", "huggingface", "image", "ingest", "local-inference", "md", "odt", "org", "paddleocr", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pre-commit", specifier = ">=4.5.1,<5.0.0" }]
