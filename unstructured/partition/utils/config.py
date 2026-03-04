@@ -13,7 +13,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
-from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, STT_AGENT_WHISPER
 
 
 @lru_cache(maxsize=1)
@@ -115,6 +115,53 @@ class ENVConfig:
     def OCR_AGENT_CACHE_SIZE(self) -> int:
         """Maximum number of OCR agents to cache per process"""
         return self._get_int("OCR_AGENT_CACHE_SIZE", 1)
+
+    @property
+    def STT_AGENT_CACHE_SIZE(self) -> int:
+        """Maximum number of speech-to-text agents to cache per process."""
+        return self._get_int("STT_AGENT_CACHE_SIZE", 1)
+
+    @property
+    def STT_AGENT(self) -> str:
+        """Speech-to-text agent module for partition_audio (e.g. Whisper)."""
+        return self._get_string("STT_AGENT", STT_AGENT_WHISPER)
+
+    @property
+    def WHISPER_MODEL_SIZE(self) -> str:
+        """Whisper model size for SpeechToTextAgentWhisper.
+
+        One of: tiny, base, small, medium, large, large-v3.
+        Larger models are more accurate but slower and use more memory (~1GB VRAM for tiny
+        to ~10GB for large-v3). Default is \"base\".
+        """
+        return self._get_string("WHISPER_MODEL_SIZE", "base")
+
+    @property
+    def WHISPER_DEVICE(self) -> str:
+        """Device for Whisper model (e.g. \"cuda\", \"cpu\", \"cuda:0\").
+
+        When empty or not set, Whisper auto-selects (CUDA if available, else CPU).
+        Set to \"cpu\" to force CPU; set to \"cuda\" or \"cuda:0\" for GPU.
+        """
+        return self._get_string("WHISPER_DEVICE", "")
+
+    @property
+    def WHISPER_FP16(self) -> bool:
+        """Use FP16 for Whisper transcription.
+
+        FP16 gives roughly 2x GPU speedup on CUDA with minimal quality impact, but is
+        unsupported on CPU and will raise a RuntimeError there. The default is auto-detected:
+        True when a CUDA GPU is available, False otherwise.
+        Set WHISPER_FP16=true/false explicitly to override. When set to empty, treated as false.
+        """
+        if "WHISPER_FP16" not in os.environ:
+            try:
+                import torch
+
+                return bool(torch.cuda.is_available())
+            except ImportError:
+                return False
+        return self._get_bool("WHISPER_FP16", False)
 
     @property
     def EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD(self) -> int:

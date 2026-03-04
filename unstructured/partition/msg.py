@@ -11,7 +11,7 @@ from oxmsg.attachment import Attachment
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
-from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
@@ -267,7 +267,14 @@ class _AttachmentPartitioner:
                     metadata_last_modified=self._attachment_last_modified,
                     **self._opts.partitioning_kwargs,
                 )
-            except UnsupportedFileFormatError:
+            except BaseException as e:
+                if not isinstance(e, EXPECTED_ATTACHMENT_ERRORS):
+                    raise
+                logger.warning(
+                    "Skipping attachment %s: %s",
+                    self._attachment_file_name,
+                    f"{type(e).__name__}: {e}",
+                )
                 return
 
             for e in elements:

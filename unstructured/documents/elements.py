@@ -212,6 +212,10 @@ class ElementMetadata:
     table_as_cells: Optional[dict[str, str | int]]
     url: Optional[str]
 
+    # -- speech-to-text segment timestamps (seconds) when element is from partition_audio --
+    segment_end_seconds: Optional[float]
+    segment_start_seconds: Optional[float]
+
     # -- debug fields can be assigned and referenced using dotted-notation but are not serialized
     # -- to dict/JSON, do not participate in equality comparison, and are not included in the
     # -- `.fields` dict used by other parts of the library like chunking and weaviate.
@@ -256,6 +260,8 @@ class ElementMetadata:
         table_as_cells: Optional[dict[str, str | int]] = None,
         text_as_html: Optional[str] = None,
         url: Optional[str] = None,
+        segment_end_seconds: Optional[float] = None,
+        segment_start_seconds: Optional[float] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
         self.bcc_recipient = bcc_recipient
@@ -302,6 +308,8 @@ class ElementMetadata:
         self.text_as_html = text_as_html
         self.table_as_cells = table_as_cells
         self.url = url
+        self.segment_end_seconds = segment_end_seconds
+        self.segment_start_seconds = segment_start_seconds
 
     def __eq__(self, other: object) -> bool:
         """Implments equivalence, like meta == other_meta.
@@ -524,6 +532,12 @@ class ConsolidationStrategy(enum.Enum):
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
+            # TODO: ideally a chunk spanning multiple audio segments would keep min(start) and
+            # max(end) across its constituent elements. ConsolidationStrategy currently has no
+            # MIN/MAX variants, so DROP is the safe fallback for now. Add MIN/MAX strategies
+            # and switch these to cls.MIN / cls.MAX when that work is done.
+            "segment_start_seconds": cls.DROP,
+            "segment_end_seconds": cls.DROP,
             "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --
         }
 
@@ -905,6 +919,12 @@ class NarrativeText(Text):
     category = "NarrativeText"
 
 
+class Form(Text):
+    """An element for capturing form text."""
+
+    category = "Form"
+
+
 class ListItem(Text):
     """ListItem is a NarrativeText element that is part of a list."""
 
@@ -1005,7 +1025,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
-    ElementType.FORM: NarrativeText,
+    ElementType.FORM: Form,
     ElementType.VALUE: NarrativeText,
     ElementType.LINK: NarrativeText,
     ElementType.LIST_ITEM: ListItem,

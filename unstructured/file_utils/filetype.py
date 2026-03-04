@@ -265,7 +265,23 @@ class _FileTypeDetector:
 
         # -- if no more-specific rules apply, use the MIME-type -> FileType mapping when present --
         file_type = FileType.from_mime_type(mime_type)
-        return file_type if file_type != FileType.UNK else None
+        if file_type != FileType.UNK:
+            return file_type
+
+        # -- on some environments libmagic can return a generic/unhelpful MIME-type
+        # -- like octet-stream") for files that the `filetype` package identify.
+        # -- when that happens we retry using `filetype`  `FileType.UNK` results.
+        if LIBMAGIC_AVAILABLE:
+            fallback_mime_type = (
+                ft.guess_mime(self._ctx.file_path)
+                if self._ctx.file_path
+                else ft.guess_mime(self._ctx.file_head)
+            )
+            fallback_file_type = FileType.from_mime_type(fallback_mime_type)
+            if fallback_file_type and fallback_file_type != FileType.UNK:
+                return fallback_file_type
+
+        return None
 
     @lazyproperty
     def _file_type_from_file_extension(self) -> FileType | None:
@@ -422,12 +438,23 @@ class _FileTypeDetectionContext:
         if LIBMAGIC_AVAILABLE:
             import magic
 
-            mime_type = (
+            magic_mime = (
                 magic.from_file(file_path, mime=True)
                 if file_path
                 else magic.from_buffer(self.file_head, mime=True)
             )
-            return mime_type.lower() if mime_type else None
+            magic_mime = magic_mime.lower() if magic_mime else None
+
+            # When libmagic returns None or "application/octet-stream", try the filetype package
+            # (magic-byte signatures) for formats libmagic often mis-detects (e.g. BMP, HEIC, WAV).
+            if magic_mime and magic_mime != "application/octet-stream":
+                return magic_mime
+
+            ft_mime = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
+            if ft_mime:
+                return ft_mime.lower()
+            # filetype could not identify; same outcome as if we had not tried it.
+            return magic_mime
 
         mime_type = ft.guess_mime(file_path) if file_path else ft.guess_mime(self.file_head)
 
