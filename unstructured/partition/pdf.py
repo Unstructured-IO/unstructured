@@ -104,6 +104,20 @@ patch_psparser()
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
+# Regex patterns for counting graphics and text operators in PDF content streams.
+GRAPHICS_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))"
+    rb"(?:m|l|c|v|y|h|re|S|s|f|F|f\*|B|B\*|b|b\*|n|W|W\*|cm|q|Q|Do|"
+    rb"g|G|rg|RG|k|K|cs|CS|w|J|j|M|d|i|gs)"
+    rb"(?=\s|$)",
+    re.MULTILINE,
+)
+TEXT_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
+    re.MULTILINE,
+)
+
+
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
 
@@ -630,19 +644,6 @@ def is_pdf_too_complex(
         this (default 100 KB). Small streams can't have enough operators to trigger
         the threshold.
     """
-
-    # Regex patterns for counting graphics and text operators in PDF content streams.
-    GRAPHICS_OPS_PATTERN = re.compile(
-        rb"(?:^|(?<=\s))"
-        rb"(?:m|l|c|v|y|h|re|S|s|f|F|f\*|B|B\*|b|b\*|n|W|W\*|cm|q|Q|Do|"
-        rb"g|G|rg|RG|k|K|cs|CS|w|J|j|M|d|i|gs)"
-        rb"(?=\s|$)",
-        re.MULTILINE,
-    )
-    TEXT_OPS_PATTERN = re.compile(
-        rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
-        re.MULTILINE,
-    )
 
     original_pos: Optional[int] = None
 
