@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import numbers
 import subprocess
 from enum import Enum
@@ -388,6 +389,15 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, (TextIOWrapper, BufferedReader)):
         with open(file.name, "rb") as f:
             return f.read()
+
+    # -- duck-typing fallback: accept any file-like object that supports read(),
+    # such as zipfile.ZipExtFile, gzip.GzipFile, or tarfile.ExFileObject --
+    if hasattr(file, "read"):
+        f_bytes = file.read()
+        if hasattr(file, "seek"):
+            with contextlib.suppress(OSError):
+                file.seek(0)
+        return f_bytes
 
     raise ValueError("Invalid file-like object type")
 

@@ -1,3 +1,13 @@
+## 0.21.13
+
+### Fixes
+- **Fix `ValueError` when partitioning a file loaded from a zip archive (#4097)**: `convert_to_bytes()`
+  rejected any file-like object not in its hardcoded type whitelist, causing a
+  `ValueError: Invalid file-like object type` when callers passed a `zipfile.ZipExtFile`
+  (returned by `zipfile.ZipFile.open()`). Added a duck-typing fallback that accepts any object
+  with a `.read()` method, covering `ZipExtFile` and other standard `IO[bytes]` types
+  (e.g. `GzipFile`, `tarfile.ExFileObject`).
+
 ## 0.21.12
 - **Add Check for complex documents**: Adds a check for complex documents to avoid pdfminer with a high ratio of vector objects
 
