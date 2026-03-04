@@ -7,7 +7,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -16,6 +16,7 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
+from pypdf.generic import ArrayObject, IndirectObject
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -49,10 +50,7 @@ from unstructured.partition.common.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.common.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
+from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
 from unstructured.partition.pdf_hierarchy import infer_heading_levels
 from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -94,6 +92,20 @@ patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
+# Regex patterns for counting graphics and text operators in PDF content streams.
+GRAPHICS_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))"
+    rb"(?:m|l|c|v|y|h|re|S|s|f|F|f\*|B|B\*|b|b\*|n|W|W\*|cm|q|Q|Do|"
+    rb"g|G|rg|RG|k|K|cs|CS|w|J|j|M|d|i|gs)"
+    rb"(?=\s|$)",
+    re.MULTILINE,
+)
+TEXT_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
+    re.MULTILINE,
+)
+DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -283,25 +295,34 @@ def partition_pdf_or_image(
         line_overlap=pdfminer_line_overlap,
         word_margin=pdfminer_word_margin,
     )
-    extracted_elements = []
+
+    extracted_elements: list[list[Element]] = []
     pdf_text_extractable = False
+
     if not is_image:
         try:
-            extracted_elements = extractable_elements(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modified,
-                starting_page_number=starting_page_number,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                **kwargs,
-            )
-            pdf_text_extractable = any(
-                isinstance(el, Text) and el.text.strip()
-                for page_elements in extracted_elements
-                for el in page_elements
-            )
+            if is_pdf_too_complex(filename=filename, file=file):
+                logger.info(
+                    "PDF is too complex for text extraction based on heuristic checks. "
+                    "Falling back to hi_res strategy without text extraction."
+                )
+
+            else:
+                extracted_elements = extractable_elements(
+                    filename=filename,
+                    file=spooled_to_bytes_io_if_needed(file),
+                    languages=languages,
+                    metadata_last_modified=metadata_last_modified or last_modified,
+                    starting_page_number=starting_page_number,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                    **kwargs,
+                )
+                pdf_text_extractable = any(
+                    isinstance(el, Text) and el.text.strip()
+                    for page_elements in extracted_elements
+                    for el in page_elements
+                )
         except Exception as e:
             logger.debug(e)
             logger.info("PDF text extraction failed, skip text extraction...")
@@ -319,7 +340,7 @@ def partition_pdf_or_image(
         file.seek(0)
 
     if languages is None:
-        print("Warning: No languages specified, defaulting to English.")
+        logger.warning("No languages specified, defaulting to English.")
         languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -386,9 +407,10 @@ def partition_pdf_or_image(
             # NOTE(crag): do not call _process_uncategorized_text_elements here, because
             # extracted elements (which are text blocks outside of OD-determined blocks)
             # are likely not Titles and should not be identified as such.
-            # Infer heading levels for PDF documents
-            elements = _maybe_infer_heading_levels(elements)
-            return elements
+
+        # Infer heading levels for PDF documents
+        elements = _maybe_infer_heading_levels(elements)
+        return elements
 
     elif strategy == PartitionStrategy.FAST:
         out_elements = _partition_pdf_with_pdfparser(
@@ -396,7 +418,6 @@ def partition_pdf_or_image(
             include_page_breaks=include_page_breaks,
             **kwargs,
         )
-
         # Infer heading levels for PDF documents
         out_elements = _maybe_infer_heading_levels(out_elements)
         return out_elements
@@ -420,7 +441,9 @@ def partition_pdf_or_image(
 
         # Infer heading levels for PDF documents
         out_elements = _maybe_infer_heading_levels(out_elements)
-    return out_elements
+        return out_elements
+
+    raise ValueError(f"Unsupported partitioning strategy: {strategy}")
 
 
 def extractable_elements(
@@ -612,6 +635,145 @@ def check_pdf_hi_res_max_pages_exceeded(
             raise PageCountExceededError(
                 document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
             )
+
+
+def is_pdf_too_complex(
+    filename: str = "",
+    file: Optional[Union[bytes, IO[bytes]]] = None,
+    max_graphics_ops: int = 10_000,
+    min_graphics_to_text_ratio: float = 20.0,
+    min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
+    min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
+) -> bool:
+    """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
+    that would be extremely slow or produce garbage results with PDFMiner text extraction.
+
+    Try to minimize overhead with early exits:
+    1. Avoid overhead by skipping files smaller than min_file_size_bytes.
+    2. For each page, decode the raw content stream bytes. Skip pages where the
+       decoded stream is smaller than min_raw_stream_bytes.
+    3. For large streams, regex to count graphics without parsing the stream.
+
+    A page is flagged as too complex when it has a high number of graphics operators
+    AND a high ratio of graphics-to-text operators.
+
+    Parameters
+    ----------
+    filename
+        Path to a PDF file.
+    file
+        A file-like object or bytes.
+    max_graphics_ops
+        If any page exceeds this many graphics operators AND the graphics-to-text ratio
+        exceeds `min_graphics_to_text_ratio`, the PDF is considered too complex.
+    min_graphics_to_text_ratio
+        Minimum ratio of graphics ops to text ops required (in conjunction with
+        `max_graphics_ops`) to flag a page as too complex.
+    min_file_size_bytes
+        Skip the complexity check entirely for files smaller than this (default 1 MB).
+    min_raw_stream_bytes
+        Skip operator counting for pages whose decoded content stream is smaller than
+        this (default 100 KB). Small streams can't have enough operators to trigger
+        the threshold.
+    """
+
+    original_pos: Optional[int] = None
+
+    try:
+        # Preserve file cursor position for file-like inputs
+        if file is not None and not isinstance(file, bytes) and hasattr(file, "tell"):
+            original_pos = file.tell()
+
+        # Skip for small files
+        if file is not None:
+            if isinstance(file, bytes):
+                file_size = len(file)
+            else:
+                file.seek(0, 2)
+                file_size = file.tell()
+                file.seek(original_pos or 0)
+        elif filename:
+            file_size = os.path.getsize(filename)
+        else:
+            return False
+
+        if file_size < min_file_size_bytes:
+            return False
+
+        # Build reader
+        if file is not None:
+            if isinstance(file, bytes):
+                reader = PdfReader(io.BytesIO(file))
+            else:
+                file.seek(0)
+                reader = PdfReader(file)
+        else:
+            reader = PdfReader(filename)
+
+        if not reader.pages:
+            return False
+
+        for page_index, page in enumerate(reader.pages):
+            contents = page.get("/Contents")
+            if contents is None:
+                continue
+
+            # Decode raw stream bytes (cheap relative to full ContentStream parsing)
+            raw_data = b""
+            try:
+                if isinstance(contents, ArrayObject):
+                    for item in contents:
+                        obj = item.get_object() if isinstance(item, IndirectObject) else item
+                        if hasattr(obj, "get_data"):
+                            raw_data += obj.get_data()
+                else:
+                    obj = (
+                        contents.get_object() if isinstance(contents, IndirectObject) else contents
+                    )
+                    if hasattr(obj, "get_data"):
+                        raw_data = obj.get_data()
+            except Exception:
+                continue
+
+            # Skip pages with small content streams
+            if len(raw_data) < min_raw_stream_bytes:
+                continue
+
+            # Regex count graphics and text operators without fully parsing the stream
+            num_graphics_ops = len(GRAPHICS_OPS_PATTERN.findall(raw_data))
+
+            # Early exit: if graphics ops don't even reach threshold, skip text counting
+            if num_graphics_ops <= max_graphics_ops:
+                continue
+
+            num_text_ops = len(TEXT_OPS_PATTERN.findall(raw_data))
+            ratio = num_graphics_ops / max(num_text_ops, 1)
+
+            if ratio > min_graphics_to_text_ratio:
+                logger.info(
+                    f"Page {page_index + 1} has {num_graphics_ops} graphics ops, "
+                    f"{num_text_ops} text ops (ratio: {ratio:.1f}). "
+                    f"Exceeds thresholds (ops: {max_graphics_ops}, "
+                    f"ratio: {min_graphics_to_text_ratio}). "
+                    "Flagging PDF as too complex for text extraction."
+                )
+                return True
+
+    except Exception as e:
+        logger.debug(f"is_pdf_too_complex check failed: {e}")
+        return False
+
+    finally:
+        # Restore original cursor position for file-like inputs
+        if (
+            file is not None
+            and not isinstance(file, bytes)
+            and hasattr(file, "seek")
+            and original_pos is not None
+        ):
+            file.seek(original_pos)
+
+    return False
 
 
 @requires_dependencies("unstructured_inference")
