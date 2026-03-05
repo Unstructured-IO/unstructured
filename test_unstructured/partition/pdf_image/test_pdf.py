@@ -1616,6 +1616,17 @@ def test_is_pdf_too_complex_returns_false_for_normal_pdf():
     assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
 
 
+def test_partition_pdf_fast_strategy_bypasses_complexity_check():
+    """When strategy="fast" is explicit, the complexity check should not skip extraction."""
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with mock.patch.object(pdf, "is_pdf_too_complex", return_value=True) as mock_complex:
+        elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    # is_pdf_too_complex should not have been called when strategy is "fast"
+    mock_complex.assert_not_called()
+    # elements should not be empty — text extraction should proceed regardless
+    assert len(elements) > 0
+
+
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # TODO (yao): investigate why we need this test. The LayoutElement definition suggests bbox
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
