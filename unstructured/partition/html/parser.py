@@ -1002,7 +1002,7 @@ element_class_lookup.get_namespace(None).update(
         "button": RemovedPhrasing,
         "label": RemovedPhrasing,
         # -- removed block --
-        "details": RemovedBlock,  # -- likely boilerplate --
+        "details": Flow,  # -- collapsible section container (accordion) --
         "dl": RemovedBlock,
         "dd": RemovedBlock,
         "dt": RemovedBlock,
@@ -1013,6 +1013,6 @@ element_class_lookup.get_namespace(None).update(
         # -- removed form-related --
         "form": RemovedBlock,
         "input": RemovedBlock,
-        "summary": RemovedBlock,  # -- child of `details`
+        "summary": Flow,  # -- visible heading of a `<details>` accordion --
     }
 )
