@@ -50,21 +50,22 @@ EXPECTED_TABLE_WITH_LINE_DELIMITER = (
 EXPECTED_TITLE = "Stanley Cups"
 
 EXPECTED_TEXT = (
-    "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+    "Stanley Cups\nTeam Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\nMaple Leafs TOR 13"
 )
 
-EXPECTED_TEXT_XLSX = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+EXPECTED_TEXT_XLSX = "Team Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\nMaple Leafs TOR 13"
 
 EXPECTED_TEXT_WITH_EMOJI = (
-    "Stanley Cups "
-    "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13 👨\\U+1F3FB🔧 TOR 15"
+    "Stanley Cups\n"
+    "Team Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\nMaple Leafs TOR 13\n"
+    "👨\\U+1F3FB🔧 TOR 15"
 )
 
 EXPECTED_TEXT_SEMICOLON_DELIMITER = (
-    "Year Month Revenue Costs 2022 1 123 -123 2023 2 143,1 -814,38 2024 3 215,32 -11,08"
+    "Year Month Revenue Costs\n2022 1 123 -123\n2023 2 143,1 -814,38\n2024 3 215,32 -11,08"
 )
 
-EXPECTED_TEXT_WITH_LINE_DELIMITER = "col1 col2 col3 a b c d e f g h i"
+EXPECTED_TEXT_WITH_LINE_DELIMITER = "col1 col2 col3\na b c\nd e f\ng h i"
 
 EXPECTED_XLS_TABLE = (
     "<table><tr>"

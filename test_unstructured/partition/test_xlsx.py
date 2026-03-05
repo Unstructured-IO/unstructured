@@ -55,8 +55,8 @@ def test_partition_xlsx_from_filename():
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[0].text == EXPECTED_TITLE
+    assert elements[1].text == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
@@ -88,8 +88,8 @@ def test_partition_xlsx_from_filename_with_metadata_filename():
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert sum(isinstance(element, Title) for element in elements) == 2
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[0].text == EXPECTED_TITLE
+    assert elements[1].text == EXPECTED_TEXT_XLSX
     assert elements[0].metadata.filename == "test"
 
 
@@ -113,7 +113,7 @@ def test_partition_xlsx_from_filename_with_header():
     assert len(elements) == 2
     assert all(isinstance(e, Table) for e in elements)
     e = elements[0]
-    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2\n" + EXPECTED_TEXT_XLSX
     assert e.metadata.text_as_html is not None
 
 
@@ -123,8 +123,8 @@ def test_partition_xlsx_from_file():
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[0].text == EXPECTED_TITLE
+    assert elements[1].text == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
@@ -141,8 +141,8 @@ def test_partition_xlsx_from_file_like_object_with_name():
 
     assert sum(isinstance(element, Table) for element in elements) == 2
     assert len(elements) == 4
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[0].text == EXPECTED_TITLE
+    assert elements[1].text == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
@@ -154,7 +154,7 @@ def test_partition_xlsx_from_file_with_metadata_filename():
         elements = partition_xlsx(file=f, metadata_filename="test", include_header=False)
 
     assert sum(isinstance(element, Table) for element in elements) == 2
-    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].text == EXPECTED_TEXT_XLSX
     assert elements[1].metadata.filename == "test"
 
 
@@ -165,7 +165,7 @@ def test_partition_xlsx_from_file_with_header():
     assert len(elements) == 2
     assert all(isinstance(e, Table) for e in elements)
     e = elements[0]
-    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert e.text == "Stanley Cups Unnamed: 1 Unnamed: 2\n" + EXPECTED_TEXT_XLSX
     assert e.metadata.text_as_html is not None
 
 
@@ -236,32 +236,32 @@ def test_partition_xlsx_metadata_language_from_filename():
 
 def test_partition_xlsx_subtables():
     assert partition_xlsx("example-docs/xlsx-subtable-cases.xlsx") == [
-        Table("a b c d e"),
+        Table("a b\nc d e"),
         ListItem("f"),
         Title("a"),
-        Table("b c d e"),
+        Table("b c\nd e"),
         Title("a"),
         Title("b"),
-        Table("c d e f"),
-        Table("a b c d"),
+        Table("c d\ne f"),
+        Table("a b\nc d"),
         ListItem("2. e"),
-        Table("a b c d"),
+        Table("a b\nc d"),
         Title("e"),
         Title("f"),
         Title("a"),
-        Table("b c d e"),
+        Table("b c\nd e"),
         Title("f"),
         Title("a"),
         Title("b"),
-        Table("c d e f"),
+        Table("c d\ne f"),
         Title("g"),
         Title("a"),
-        Table("b c d e"),
+        Table("b c\nd e"),
         Title("f"),
         Title("g"),
         Title("a"),
         Title("b"),
-        Table("c d e f"),
+        Table("c d\ne f"),
         Title("g"),
         Title("h"),
         Table("a b c"),
@@ -309,11 +309,12 @@ def test_partition_xlsx_with_find_subtables_False_emits_one_Table_element_per_wo
     elements = partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False)
     assert elements == [
         Table(
-            "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+            "Stanley Cups\nTeam Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\n"
+            "Maple Leafs TOR 13"
         ),
         Table(
-            "Stanley Cups Since 67 Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple"
-            " Leafs TOR 0"
+            "Stanley Cups Since 67\nTeam Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\n"
+            "Maple Leafs TOR 0"
         ),
     ]
 
@@ -324,11 +325,12 @@ def test_partition_xlsx_with_find_subtables_False_and_infer_table_structure_Fals
     )
     assert elements == [
         Table(
-            "Stanley Cups Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
+            "Stanley Cups\nTeam Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\n"
+            "Maple Leafs TOR 13"
         ),
         Table(
-            "Stanley Cups Since 67 Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple"
-            " Leafs TOR 0"
+            "Stanley Cups Since 67\nTeam Location Stanley Cups\nBlues STL 1\nFlyers PHI 2\n"
+            "Maple Leafs TOR 0"
         ),
     ]
     assert all(e.metadata.text_as_html is None for e in elements)

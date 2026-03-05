@@ -26,7 +26,6 @@ from test_unstructured.unit_utils import (
     function_mock,
 )
 from unstructured.chunking.title import chunk_by_title
-from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.csv import _CsvPartitioningContext, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
@@ -55,7 +54,7 @@ def test_partition_csv_from_filename(filename: str, expected_text: str, expected
     f_path = f"example-docs/{filename}"
     elements = partition_csv(filename=f_path)
 
-    assert clean_extra_whitespace(elements[0].text) == expected_text
+    assert elements[0].text == expected_text
     assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
     assert elements[0].metadata.filename == filename
@@ -76,14 +75,14 @@ def test_partition_csv_from_filename_infer_table_structure(infer_table_structure
 def test_partition_csv_from_filename_with_metadata_filename():
     elements = partition_csv(example_doc_path("stanley-cups.csv"), metadata_filename="test")
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].text == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
 
 
 def test_partition_csv_with_encoding():
     elements = partition_csv(example_doc_path("stanley-cups-utf-16.csv"), encoding="utf-16")
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].text == EXPECTED_TEXT
 
 
 @pytest.mark.parametrize(
@@ -97,7 +96,7 @@ def test_partition_csv_from_file(filename: str, expected_text: str, expected_tab
     f_path = f"example-docs/{filename}"
     with open(f_path, "rb") as f:
         elements = partition_csv(file=f)
-    assert clean_extra_whitespace(elements[0].text) == expected_text
+    assert elements[0].text == expected_text
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.text_as_html == expected_table
     assert elements[0].metadata.filetype == EXPECTED_FILETYPE
@@ -110,7 +109,7 @@ def test_partition_csv_from_file_with_metadata_filename():
     with open(example_doc_path("stanley-cups.csv"), "rb") as f:
         elements = partition_csv(file=f, metadata_filename="test")
 
-    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].text == EXPECTED_TEXT
     assert elements[0].metadata.filename == "test"
 
 
@@ -207,7 +206,7 @@ def test_partition_csv_header():
     )
 
     table = elements[0]
-    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2\n" + EXPECTED_TEXT_XLSX
     assert table.metadata.text_as_html is not None
 
 

@@ -140,7 +140,7 @@ def test_partition_tsv_header():
     )
 
     table = elements[0]
-    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2\n" + EXPECTED_TEXT_XLSX
     assert table.metadata.text_as_html is not None
     assert "<table>" in table.metadata.text_as_html
 
