@@ -1,0 +1,38 @@
+MIME-Version: 1.0
+From: sender@example.com
+To: recipient@example.com
+Subject: PGP Signed Email With Attachment
+Date: Mon, 10 Feb 2025 12:00:00 +0000
+Message-ID: <signed-attach-test@example.com>
+Content-Type: multipart/mixed; boundary="outer-boundary"
+
+--outer-boundary
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="signed-boundary"
+
+--signed-boundary
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+This is a PGP signed email with an attachment.
+
+--signed-boundary
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Disposition: attachment; filename="signature.asc"
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+iQEzBAABCAAdFiEEfakeSignatureDataHere
+-----END PGP SIGNATURE-----
+
+--signed-boundary--
+
+--outer-boundary
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: attachment; filename="note.txt"
+Content-Transfer-Encoding: 7bit
+
+This is a text attachment.
+
+--outer-boundary--

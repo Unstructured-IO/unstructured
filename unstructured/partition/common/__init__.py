@@ -16,4 +16,5 @@ EXPECTED_ATTACHMENT_ERRORS: Final[tuple[type[BaseException], ...]] = (
     UnsupportedFileFormatError,
     ImportError,
     FileNotFoundError,
+    KeyError,
 )
