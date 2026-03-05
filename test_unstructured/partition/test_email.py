@@ -389,6 +389,66 @@ def test_partition_email_silently_skips_attachments_it_cannot_partition():
     ]
 
 
+def test_partition_email_handles_multipart_signed_attachment():
+    """A PGP-signed email wrapped in multipart/mixed does not crash (issue #3922).
+
+    When a multipart/signed part appears as an "attachment" inside a multipart/mixed
+    envelope, ``get_content()`` raises ``KeyError`` because Python's content-manager
+    has no handler for multipart types. The partitioner should handle this gracefully
+    by falling back to ``as_bytes()`` in ``_file_bytes``.
+    """
+    import email
+    import email.policy
+
+    from unstructured.partition.email import _AttachmentPartitioner
+
+    with open(example_doc_path("eml/mime-signed-with-attachment.eml"), "rb") as f:
+        msg = email.message_from_binary_file(f, policy=email.policy.default)
+
+    ctx = EmailPartitioningContext(
+        example_doc_path("eml/mime-signed-with-attachment.eml"),
+        process_attachments=True,
+    )
+
+    for att in msg.iter_attachments():
+        if att.is_multipart():
+            partitioner = _AttachmentPartitioner(att, ctx)
+            # -- this used to raise KeyError: 'multipart/signed' --
+            file_bytes = partitioner._file_bytes
+            assert isinstance(file_bytes, bytes)
+            assert len(file_bytes) > 0
+            assert b"PGP signed email" in file_bytes
+            break
+    else:
+        pytest.fail("No multipart attachment found in test email")
+
+
+def test_partition_email_file_bytes_works_for_non_multipart():
+    """_file_bytes still works normally for regular (non-multipart) attachments."""
+    import email
+    import email.policy
+
+    from unstructured.partition.email import _AttachmentPartitioner
+
+    with open(example_doc_path("eml/mime-signed-with-attachment.eml"), "rb") as f:
+        msg = email.message_from_binary_file(f, policy=email.policy.default)
+
+    ctx = EmailPartitioningContext(
+        example_doc_path("eml/mime-signed-with-attachment.eml"),
+        process_attachments=True,
+    )
+
+    for att in msg.iter_attachments():
+        if not att.is_multipart():
+            partitioner = _AttachmentPartitioner(att, ctx)
+            file_bytes = partitioner._file_bytes
+            assert isinstance(file_bytes, bytes)
+            assert b"text attachment" in file_bytes
+            break
+    else:
+        pytest.fail("No non-multipart attachment found in test email")
+
+
 # ================================================================================================
 # ISOLATED UNIT TESTS
 # ================================================================================================

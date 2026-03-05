@@ -392,10 +392,9 @@ class _AttachmentPartitioner:
         # -- avoid a circular import.
         from unstructured.partition.auto import partition
 
-        file = io.BytesIO(self._file_bytes)
-
         # -- partition the attachment --
         try:
+            file = io.BytesIO(self._file_bytes)
             elements = partition(
                 file=file,
                 metadata_filename=self._attachment_file_name,
@@ -431,7 +430,16 @@ class _AttachmentPartitioner:
 
     @lazyproperty
     def _file_bytes(self) -> bytes:
-        """The bytes of the attached file."""
+        """The bytes of the attached file.
+
+        For multipart MIME parts (e.g. multipart/signed in PGP-signed emails),
+        ``get_content()`` raises ``KeyError`` because Python's content-manager has
+        no handler for multipart types. In that case we fall back to the raw MIME
+        bytes of the part so downstream partitioners can still attempt to process it.
+        """
+        if self._attachment.is_multipart():
+            return self._attachment.as_bytes()
+
         content = self._attachment.get_content()
 
         if isinstance(content, str):
