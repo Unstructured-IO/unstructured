@@ -1517,3 +1517,101 @@ def test_partition_html_with_empty_content_raises_error(test_case, content):
             assert len(elements) == 0
         finally:
             os.unlink(temp_filename)
+
+
+# ================================================================================================
+# DETAILS/SUMMARY (ACCORDION) ELEMENTS
+# ================================================================================================
+
+
+def test_partition_html_extracts_details_element_content():
+    """<details> content should not be silently discarded."""
+    html_text = "<details><p>This is inside a details block.</p></details>"
+
+    elements = partition_html(text=html_text)
+
+    assert len(elements) == 1
+    assert elements[0].text == "This is inside a details block."
+
+
+def test_partition_html_extracts_summary_element_text():
+    """<summary> text (the accordion heading) should appear as an element."""
+    html_text = "<details><summary>Click to expand</summary><p>Hidden content here.</p></details>"
+
+    elements = partition_html(text=html_text)
+
+    texts = [e.text for e in elements]
+    assert "Click to expand" in texts
+    assert "Hidden content here." in texts
+
+
+def test_partition_html_extracts_accordion_faq():
+    """A typical FAQ accordion should produce elements for every question and answer."""
+    html_text = """
+    <div>
+      <details>
+        <summary>What is unstructured?</summary>
+        <p>A library for document processing.</p>
+      </details>
+      <details>
+        <summary>How do I install it?</summary>
+        <p>Use pip install unstructured.</p>
+      </details>
+    </div>
+    """
+
+    elements = partition_html(text=html_text)
+
+    texts = [e.text for e in elements]
+    assert "What is unstructured?" in texts
+    assert "A library for document processing." in texts
+    assert "How do I install it?" in texts
+    assert "Use pip install unstructured." in texts
+
+
+def test_partition_html_extracts_nested_details():
+    """Nested <details> elements should all be extracted."""
+    html_text = """
+    <details>
+      <summary>Outer</summary>
+      <p>Outer content</p>
+      <details>
+        <summary>Inner</summary>
+        <p>Inner content</p>
+      </details>
+    </details>
+    """
+
+    elements = partition_html(text=html_text)
+
+    texts = [e.text for e in elements]
+    assert "Outer" in texts
+    assert "Outer content" in texts
+    assert "Inner" in texts
+    assert "Inner content" in texts
+
+
+def test_partition_html_details_without_summary():
+    """<details> without a <summary> should still extract body content."""
+    html_text = "<details><p>No summary here, just content.</p></details>"
+
+    elements = partition_html(text=html_text)
+
+    assert len(elements) == 1
+    assert elements[0].text == "No summary here, just content."
+
+
+def test_partition_html_summary_with_inline_markup():
+    """<summary> containing inline markup should preserve the text."""
+    html_text = (
+        "<details>"
+        "<summary>This has <b>bold</b> and <em>italic</em> text</summary>"
+        "<p>Body text.</p>"
+        "</details>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    texts = [e.text for e in elements]
+    assert any("bold" in t and "italic" in t for t in texts)
+    assert "Body text." in texts
