@@ -300,7 +300,9 @@ def partition_pdf_or_image(
 
     if not is_image:
         try:
-            if is_pdf_too_complex(filename=filename, file=file):
+            if strategy != PartitionStrategy.FAST and is_pdf_too_complex(
+                filename=filename, file=file
+            ):
                 logger.info(
                     "PDF is too complex for text extraction based on heuristic checks. "
                     "Falling back to hi_res strategy without text extraction."
