@@ -562,6 +562,7 @@ class AnalysisDrawer(AnalysisProcessor):
         draw_grid: bool = False,
         resize: Optional[float] = None,
         format: str = "png",
+        pdf_image_dpi: Optional[int] = None,
     ):
         self.draw_caption = draw_caption
         self.draw_grid = draw_grid
@@ -570,6 +571,7 @@ class AnalysisDrawer(AnalysisProcessor):
         self.format = format
         self.drawers = []
         self.file = file
+        self.pdf_image_dpi = pdf_image_dpi
 
         super().__init__(filename, save_dir)
 
@@ -698,6 +700,7 @@ class AnalysisDrawer(AnalysisProcessor):
                     image_paths = convert_pdf_to_image(
                         filename=str_filename,
                         file=self.file,
+                        dpi=self.pdf_image_dpi,
                         output_folder=temp_dir,
                         path_only=True,
                     )

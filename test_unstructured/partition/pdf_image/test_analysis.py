@@ -1,3 +1,5 @@
+from unittest import mock
+
 import numpy as np
 import pytest
 from PIL import Image
@@ -6,6 +8,7 @@ from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
+    AnalysisDrawer,
     TextAlignment,
     get_bbox_text_size,
     get_bbox_thickness,
@@ -152,3 +155,100 @@ def test_od_document_layout_dump():
     # check OD model classes are attached but do not depend on a specific model instance
     assert "object_detection_classes" in od_layout_dump
     assert len(od_layout_dump["object_detection_classes"]) > 0
+
+
+class TestAnalysisDrawerDpi:
+    """Tests for pdf_image_dpi passthrough in AnalysisDrawer (issue #3985)."""
+
+    def test_analysis_drawer_stores_pdf_image_dpi(self):
+        drawer = AnalysisDrawer(
+            filename="test.pdf",
+            is_image=False,
+            save_dir="/tmp",
+            pdf_image_dpi=72,
+        )
+        assert drawer.pdf_image_dpi == 72
+
+    def test_analysis_drawer_defaults_pdf_image_dpi_to_none(self):
+        drawer = AnalysisDrawer(
+            filename="test.pdf",
+            is_image=False,
+            save_dir="/tmp",
+        )
+        assert drawer.pdf_image_dpi is None
+
+    @pytest.mark.parametrize("dpi", [72, 150, 300])
+    def test_analysis_drawer_passes_dpi_to_convert_pdf_to_image(self, dpi):
+        drawer = AnalysisDrawer(
+            filename="test.pdf",
+            is_image=False,
+            save_dir="/tmp",
+            pdf_image_dpi=dpi,
+        )
+        with mock.patch(
+            "unstructured.partition.pdf_image.analysis.bbox_visualisation.convert_pdf_to_image",
+            return_value=[],
+        ) as mock_convert:
+            list(drawer.load_source_image())
+            mock_convert.assert_called_once()
+            assert mock_convert.call_args[1]["dpi"] == dpi
+
+    def test_analysis_drawer_passes_none_dpi_when_not_set(self):
+        drawer = AnalysisDrawer(
+            filename="test.pdf",
+            is_image=False,
+            save_dir="/tmp",
+        )
+        with mock.patch(
+            "unstructured.partition.pdf_image.analysis.bbox_visualisation.convert_pdf_to_image",
+            return_value=[],
+        ) as mock_convert:
+            list(drawer.load_source_image())
+            mock_convert.assert_called_once()
+            assert mock_convert.call_args[1]["dpi"] is None
+
+
+class TestSaveAnalysisArtifactsDpi:
+    """Tests for pdf_image_dpi passthrough in save_analysis_artifiacts."""
+
+    @pytest.mark.parametrize("dpi", [72, 150, None])
+    def test_save_analysis_artifiacts_passes_dpi_to_drawer(self, dpi):
+        from unstructured.partition.pdf_image.analysis import tools
+
+        with mock.patch.object(tools, "AnalysisDrawer") as mock_drawer_cls:
+            mock_drawer_cls.return_value.process = mock.MagicMock()
+            tools.save_analysis_artifiacts(
+                is_image=False,
+                analyzed_image_output_dir_path="/tmp/test_analysis",
+                filename="test.pdf",
+                pdf_image_dpi=dpi,
+            )
+            mock_drawer_cls.assert_called_once()
+            assert mock_drawer_cls.call_args[1]["pdf_image_dpi"] == dpi
+
+
+class TestRenderBboxesForFileDpi:
+    """Tests for pdf_image_dpi passthrough in render_bboxes_for_file."""
+
+    @pytest.mark.parametrize("dpi", [72, 300, None])
+    def test_render_bboxes_passes_dpi_to_drawer(self, tmp_path, dpi):
+        import json
+
+        from unstructured.partition.pdf_image.analysis import tools
+
+        # Create the directory structure expected by render_bboxes_for_file
+        filename = "test.pdf"
+        dump_dir = tmp_path / "analysis" / "test" / "layout_dump"
+        dump_dir.mkdir(parents=True)
+        dump_file = dump_dir / "final.json"
+        dump_file.write_text(json.dumps({"pages": []}))
+
+        with mock.patch.object(tools, "AnalysisDrawer") as mock_drawer_cls:
+            mock_drawer_cls.return_value.process = mock.MagicMock()
+            tools.render_bboxes_for_file(
+                filename=filename,
+                analyzed_image_output_dir_path=str(tmp_path),
+                pdf_image_dpi=dpi,
+            )
+            mock_drawer_cls.assert_called_once()
+            assert mock_drawer_cls.call_args[1]["pdf_image_dpi"] == dpi

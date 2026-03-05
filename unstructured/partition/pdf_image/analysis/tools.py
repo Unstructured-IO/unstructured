@@ -66,6 +66,7 @@ def save_analysis_artifiacts(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    pdf_image_dpi: Optional[int] = None,
 ):
     """Save the analysis artifacts for a given file. Loads some settings from
     the environment configuration.
@@ -82,6 +83,8 @@ def save_analysis_artifiacts(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        pdf_image_dpi: The DPI to use when rendering PDF pages to images. If not provided,
+            the default value from the environment configuration will be used.
     """
     if not filename:
         filename = _generate_filename(is_image)
@@ -109,6 +112,7 @@ def save_analysis_artifiacts(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            pdf_image_dpi=pdf_image_dpi,
         )
 
         for layout_dumper in layout_dumpers:
@@ -125,6 +129,7 @@ def render_bboxes_for_file(
     draw_caption: bool = True,
     resize: Optional[float] = None,
     format: str = "png",
+    pdf_image_dpi: Optional[int] = None,
 ):
     """Render the bounding boxes for a given layout dimp file.
     To be used for analysis after the partition is performed for
@@ -144,6 +149,8 @@ def render_bboxes_for_file(
         draw_caption: Flag for drawing the caption above the analyzed page (for e.g. layout source)
         resize: Output image resize value. If not provided, the image will not be resized.
         format: The format for analyzed pages with bboxes drawn on them. Default is 'png'.
+        pdf_image_dpi: The DPI to use when rendering PDF pages to images. If not provided,
+          the default value from the environment configuration will be used.
     """
     filename_stem = Path(filename).stem
     is_image = not Path(filename).suffix.endswith("pdf")
@@ -183,6 +190,7 @@ def render_bboxes_for_file(
             draw_caption=draw_caption,
             resize=resize,
             format=format,
+            pdf_image_dpi=pdf_image_dpi,
         )
 
         for drawer in layout_drawers:
