@@ -144,7 +144,7 @@ class DescribeHtmlTable:
             "  <tr><td/><td> m n op\n</td><td/></tr>"
             "</table>"
         )
-        assert html_table.text == "a b c def gh i jk l m n op"
+        assert html_table.text == "a b c def\ngh i jk l\nm n op"
 
 
 class DescribeHtmlRow:
