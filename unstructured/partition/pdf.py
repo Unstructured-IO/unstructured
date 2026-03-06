@@ -148,9 +148,13 @@ def partition_pdf(
     pdfminer_char_margin: Optional[float] = None,
     pdfminer_line_overlap: Optional[float] = None,
     pdfminer_word_margin: Optional[float] = 0.185,
+    infer_heading_levels: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
+
+    infer_heading_levels
+        If True (default), infer hierarchical heading levels (H1-H6) for Title elements from PDF outline and document order. Set to False to disable and avoid adding heading_level metadata.
     Parameters
     ----------
     filename
@@ -246,6 +250,7 @@ def partition_pdf(
         pdfminer_char_margin=pdfminer_char_margin,
         pdfminer_line_overlap=pdfminer_line_overlap,
         pdfminer_word_margin=pdfminer_word_margin,
+        infer_heading_levels=infer_heading_levels,
         **kwargs,
     )
 
@@ -275,9 +280,13 @@ def partition_pdf_or_image(
     pdfminer_word_margin: Optional[float] = 0.185,
     ocr_agent: str = OCR_AGENT_TESSERACT,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
+    infer_heading_levels: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
-    """Parses a pdf or image document into a list of interpreted elements."""
+    """Parses a pdf or image document into a list of interpreted elements.
+
+    infer_heading_levels: If True, infer H1-H6 heading levels for Title elements; if False, do not add heading_level metadata.
+    """
     # TODO(alan): Extract information about the filetype to be processed from the template
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
@@ -347,20 +356,23 @@ def partition_pdf_or_image(
     def _maybe_infer_heading_levels(
         elements: list[Element],
     ) -> list[Element]:
-        """Infer heading levels for PDF documents when appropriate."""
-        if is_image:
+        """Infer heading levels for PDF documents when infer_heading_levels is True."""
+        if not infer_heading_levels or is_image:
             return elements
 
         try:
+            # partition_pdf_or_image uses filename="" by default; treat as no path so we use file when present
             outline_filename: Optional[str] = filename or None
-            file_for_outline: Optional[bytes | IO[bytes]] = None
+            file_for_outline: Optional[bytes | io.BytesIO] = None
 
-            # When no usable filename is available but we have a file-like object,
-            # use the file for outline extraction.
             if (outline_filename is None) and file is not None:
                 if hasattr(file, "seek"):
                     file.seek(0)
-                file_for_outline = file
+                if hasattr(file, "read"):
+                    raw = file.read()
+                    file_for_outline = io.BytesIO(raw) if isinstance(raw, bytes) else raw
+                if file is not None and hasattr(file, "seek"):
+                    file.seek(0)
 
             result = infer_heading_levels(
                 elements,
@@ -372,8 +384,10 @@ def partition_pdf_or_image(
             if file is not None and hasattr(file, "seek"):
                 file.seek(0)
             return result
+        except (MemoryError, RecursionError):
+            raise
         except Exception as e:
-            logger.warning(f"Failed to infer heading levels: {e}")
+            logger.debug(f"Failed to infer heading levels: {e}")
             return elements
 
     if strategy == PartitionStrategy.HI_RES:

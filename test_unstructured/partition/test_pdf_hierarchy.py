@@ -4,11 +4,16 @@ from __future__ import annotations
 
 import pytest
 
-from unstructured.documents.elements import Title
+from unstructured.documents.elements import (
+    ElementMetadata,
+    NarrativeText,
+    Table,
+    Title,
+)
 from unstructured.partition.pdf_hierarchy import (
     extract_pdf_outline,
     infer_heading_levels,
-    infer_heading_levels_from_font_sizes,
+    infer_heading_levels_by_document_order,
     infer_heading_levels_from_outline,
 )
 
@@ -25,13 +30,11 @@ class FakeOutlineItem:
 def test_extract_pdf_outline_nested_lists(monkeypatch: pytest.MonkeyPatch):
     """Outline extraction should respect nested list hierarchy levels."""
 
-    # Construct a nested outline structure similar to what pypdf produces:
-    # [ Root, [ Child, [ Grandchild ] ] ]
+    # pypdf uses nested lists for children: [ Root, [ Child, [ Grandchild ] ] ]
     root = FakeOutlineItem("Root", page=0)
     child = FakeOutlineItem("Child", page=1)
     grandchild = FakeOutlineItem("Grandchild", page=2)
-    child.children = [grandchild]
-    outline_structure = [root, [child]]
+    outline_structure = [root, [child, [grandchild]]]
 
     class FakeReader:
         def __init__(self, *_args, **_kwargs):
@@ -59,16 +62,10 @@ def test_extract_pdf_outline_nested_lists(monkeypatch: pytest.MonkeyPatch):
 def test_infer_heading_levels_from_outline():
     """Test inferring heading levels from PDF outline."""
     elements = [
-        Title("Introduction", metadata=None),
-        Title("Chapter 1", metadata=None),
-        Title("Section 1.1", metadata=None),
+        Title("Introduction", metadata=ElementMetadata()),
+        Title("Chapter 1", metadata=ElementMetadata()),
+        Title("Section 1.1", metadata=ElementMetadata()),
     ]
-
-    # Add metadata to elements
-    from unstructured.documents.elements import ElementMetadata
-
-    for element in elements:
-        element.metadata = ElementMetadata()
 
     outline_entries = [
         {"title": "Introduction", "level": 0, "page": 1},
@@ -78,20 +75,13 @@ def test_infer_heading_levels_from_outline():
 
     infer_heading_levels_from_outline(elements, outline_entries)
 
-    # Check that heading levels were assigned
-    assert elements[0].metadata.heading_level == 1  # level 0 + 1
-    assert elements[1].metadata.heading_level == 2  # level 1 + 1
-    assert elements[2].metadata.heading_level == 3  # level 2 + 1
-    # Levels are normalized to 1-6 range
-    assert 1 <= elements[0].metadata.heading_level <= 6
-    assert 1 <= elements[1].metadata.heading_level <= 6
-    assert 1 <= elements[2].metadata.heading_level <= 6
+    assert elements[0].metadata.heading_level == 1
+    assert elements[1].metadata.heading_level == 2
+    assert elements[2].metadata.heading_level == 3
 
 
-def test_infer_heading_levels_from_font_sizes():
+def test_infer_heading_levels_by_document_order():
     """Test inferring heading levels from document-wide ordering."""
-    from unstructured.documents.elements import ElementMetadata
-
     elements = [
         Title("MAIN TITLE", metadata=ElementMetadata(page_number=1)),
         Title("Subtitle", metadata=ElementMetadata(page_number=1)),
@@ -99,7 +89,7 @@ def test_infer_heading_levels_from_font_sizes():
         Title("Minor heading", metadata=ElementMetadata(page_number=2)),
     ]
 
-    infer_heading_levels_from_font_sizes(elements)
+    infer_heading_levels_by_document_order(elements)
 
     levels = [e.metadata.heading_level for e in elements if e.metadata.heading_level is not None]
     assert len(levels) == 4
@@ -108,8 +98,6 @@ def test_infer_heading_levels_from_font_sizes():
 
 def test_infer_heading_levels_integration():
     """Test the integrated heading level inference function."""
-    from unstructured.documents.elements import ElementMetadata
-
     elements = [
         Title("Introduction", metadata=ElementMetadata(page_number=1)),
         Title("Chapter 1", metadata=ElementMetadata(page_number=2)),
@@ -130,8 +118,6 @@ def test_infer_heading_levels_integration():
 
 def test_infer_heading_levels_integration_with_outline(monkeypatch: pytest.MonkeyPatch):
     """Test integration when outline is available (use_outline path)."""
-    from unstructured.documents.elements import ElementMetadata
-
     elements = [
         Title("Introduction", metadata=ElementMetadata(page_number=1)),
         Title("Chapter 1", metadata=ElementMetadata(page_number=2)),
@@ -162,8 +148,6 @@ def test_infer_heading_levels_integration_with_outline(monkeypatch: pytest.Monke
 
 def test_fuzzy_matching_in_outline():
     """Test that fuzzy matching works for outline entries."""
-    from unstructured.documents.elements import ElementMetadata
-
     elements = [
         Title("Introduction to the Project", metadata=ElementMetadata()),
     ]
@@ -178,3 +162,120 @@ def test_fuzzy_matching_in_outline():
     assert elements[0].metadata is not None
     assert elements[0].metadata.heading_level is not None
     assert elements[0].metadata.heading_level == 1
+
+
+# ---- Missing Test Coverage (PastelStorm review) ----
+
+
+def test_page_number_matching_1based_same_title_different_pages():
+    """Page-specific matching uses 1-based page numbers; same title on different pages gets correct level."""
+    # Outline: "Summary" as H1 on page 1, H2 on page 2
+    outline_entries = [
+        {"title": "Summary", "level": 0, "page": 1},
+        {"title": "Summary", "level": 1, "page": 2},
+    ]
+    elements = [
+        Title("Summary", metadata=ElementMetadata(page_number=1)),
+        Title("Summary", metadata=ElementMetadata(page_number=2)),
+    ]
+    infer_heading_levels_from_outline(elements, outline_entries)
+    assert elements[0].metadata.heading_level == 1
+    assert elements[1].metadata.heading_level == 2
+
+
+def test_extract_pdf_outline_invalid_file_returns_empty():
+    """Error path: invalid or missing file returns empty list, no exception."""
+    result = extract_pdf_outline(filename="/nonexistent/path.pdf")
+    assert result == []
+    result = extract_pdf_outline(filename=None, file=None)
+    assert result == []
+
+
+def test_infer_heading_levels_when_outline_extraction_fails_returns_elements(monkeypatch):
+    """Error path: when outline extraction fails, elements are still returned (fallback or unchanged)."""
+    def raise_err(*, filename=None, file=None):
+        raise ValueError("corrupt PDF")
+
+    monkeypatch.setattr(
+        "unstructured.partition.pdf_hierarchy.extract_pdf_outline",
+        raise_err,
+    )
+    elements = [
+        Title("Only Title", metadata=ElementMetadata(page_number=1)),
+    ]
+    result = infer_heading_levels(
+        elements,
+        filename="dummy.pdf",
+        file=None,
+        use_outline=True,
+        use_font_analysis=True,
+    )
+    assert result is elements
+    assert elements[0].metadata.heading_level == 1  # fallback by document order
+
+
+def test_more_than_six_titles_percentile_path():
+    """>6 titles: document-order fallback uses percentile formula; levels clamped to 1-6."""
+    elements = [
+        Title(f"Title {i}", metadata=ElementMetadata(page_number=1 + (i // 4)))
+        for i in range(8)
+    ]
+    infer_heading_levels_by_document_order(elements)
+    levels = [e.metadata.heading_level for e in elements]
+    assert all(1 <= lev <= 6 for lev in levels)
+    assert 6 in levels
+
+
+def test_mixed_element_types_only_title_gets_heading_level():
+    """Only Title elements receive heading_level; NarrativeText and Table are unchanged."""
+    elements = [
+        Title("Heading", metadata=ElementMetadata(page_number=1)),
+        NarrativeText("Some paragraph.", metadata=ElementMetadata(page_number=1)),
+        Table("cell\tcell", metadata=ElementMetadata(page_number=1)),
+    ]
+    infer_heading_levels_by_document_order(elements)
+    assert elements[0].metadata.heading_level == 1
+    assert getattr(elements[1].metadata, "heading_level", None) is None
+    assert getattr(elements[2].metadata, "heading_level", None) is None
+
+
+def test_pre_existing_heading_level_preserved():
+    """Pre-existing heading_level is not overwritten by document-order fallback."""
+    elements = [
+        Title("First", metadata=ElementMetadata(page_number=1)),
+        Title("Second", metadata=ElementMetadata(page_number=1, heading_level=2)),
+    ]
+    infer_heading_levels_by_document_order(elements)
+    assert elements[0].metadata.heading_level == 1
+    assert elements[1].metadata.heading_level == 2
+
+
+def test_infer_heading_levels_empty_list():
+    """Empty element list returns empty list."""
+    result = infer_heading_levels([], filename=None, file=None)
+    assert result == []
+
+
+def test_infer_heading_levels_single_title():
+    """Single title gets heading_level 1."""
+    elements = [Title("Sole", metadata=ElementMetadata(page_number=1))]
+    result = infer_heading_levels(
+        elements, filename=None, file=None, use_outline=False, use_font_analysis=True
+    )
+    assert len(result) == 1
+    assert result[0].metadata.heading_level == 1
+
+
+def test_outline_level_above_5_clamped_to_h6():
+    """Outline level > 5 is clamped to heading_level 6 (H6)."""
+    outline_entries = [
+        {"title": "Deep", "level": 5, "page": 1},
+        {"title": "Deeper", "level": 10, "page": 1},
+    ]
+    elements = [
+        Title("Deep", metadata=ElementMetadata(page_number=1)),
+        Title("Deeper", metadata=ElementMetadata(page_number=1)),
+    ]
+    infer_heading_levels_from_outline(elements, outline_entries)
+    assert elements[0].metadata.heading_level == 6  # level 5 + 1 = 6
+    assert elements[1].metadata.heading_level == 6  # level 10 + 1 clamped to 6

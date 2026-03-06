@@ -739,6 +739,33 @@ def test_partition_pdf_fails_if_pdf_not_processable(monkeypatch):
         pdf.partition_pdf(filename=filename)
 
 
+def test_partition_pdf_infer_heading_levels_false_no_heading_metadata():
+    """When infer_heading_levels=False, Title elements do not get heading_level set."""
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy=PartitionStrategy.FAST,
+        infer_heading_levels=False,
+    )
+    titles = [e for e in elements if isinstance(e, Title)]
+    for t in titles:
+        assert getattr(t.metadata, "heading_level", None) is None
+
+
+def test_partition_pdf_infer_heading_levels_true_may_set_heading_level():
+    """When infer_heading_levels=True, partition runs and may set heading_level on Titles."""
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy=PartitionStrategy.FAST,
+        infer_heading_levels=True,
+    )
+    # Should complete; at least one Title may have heading_level (outline or fallback)
+    titles = [e for e in elements if isinstance(e, Title)]
+    levels = [getattr(t.metadata, "heading_level", None) for t in titles if t.metadata]
+    assert all(v is None or 1 <= v <= 6 for v in levels)
+
+
 def test_partition_pdf_fast_groups_text_in_text_box():
     filename = example_doc_path("pdf/chevron-page.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)

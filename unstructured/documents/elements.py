@@ -284,7 +284,10 @@ class ElementMetadata:
 
         self.filetype = filetype
         self.header_footer_type = header_footer_type
-        self.heading_level = heading_level
+        # heading_level must be 1-6 (H1-H6) when set
+        self.heading_level = (
+            min(max(heading_level, 1), 6) if heading_level is not None else None
+        )
         self.image_base64 = image_base64
         self.image_mime_type = image_mime_type
         self.image_url = image_url
