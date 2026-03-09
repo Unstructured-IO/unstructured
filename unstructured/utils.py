@@ -270,6 +270,10 @@ def only(it: Iterable[Any]) -> Any:
 
 
 def scarf_analytics():
+    """Send a lightweight analytics ping. Off by default; set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
+
+    Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS) are always respected and take precedence.
+    """
     try:
         subprocess.check_output("nvidia-smi")
         gpu_present = True
@@ -278,38 +282,44 @@ def scarf_analytics():
 
     python_version = ".".join(platform.python_version().split(".")[:2])
 
+    # Telemetry is off by default. Only send when user explicitly opts in via UNSTRUCTURED_TELEMETRY_ENABLED.
+    # Opt-out env vars always take precedence.
+    opt_out = os.getenv("SCARF_NO_ANALYTICS") == "true" or os.getenv("DO_NOT_TRACK") == "true"
+    opt_in = os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED", "").lower() in ("true", "1")
+    if opt_out or not opt_in:
+        return
+
     try:
-        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
-            if "dev" in __version__:
-                requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=true",
-                    timeout=10,
-                )
-            else:
-                requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=false",
-                    timeout=10,
-                )
+        if "dev" in __version__:
+            requests.get(
+                "https://packages.unstructured.io/python-telemetry?version="
+                + __version__
+                + "&platform="
+                + platform.system()
+                + "&python"
+                + python_version
+                + "&arch="
+                + platform.machine()
+                + "&gpu="
+                + str(gpu_present)
+                + "&dev=true",
+                timeout=10,
+            )
+        else:
+            requests.get(
+                "https://packages.unstructured.io/python-telemetry?version="
+                + __version__
+                + "&platform="
+                + platform.system()
+                + "&python"
+                + python_version
+                + "&arch="
+                + platform.machine()
+                + "&gpu="
+                + str(gpu_present)
+                + "&dev=false",
+                timeout=10,
+            )
     except Exception:
         pass
 

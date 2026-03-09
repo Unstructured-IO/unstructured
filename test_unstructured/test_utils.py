@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from unittest.mock import patch
 
 import pytest
 
@@ -383,3 +384,47 @@ class DescribeGroupElementsByParentId:
         assert list(result.keys()) == [None, "parent_A"]
         assert [e.text for e in result[None]] == ["First orphan"]
         assert [e.text for e in result["parent_A"]] == ["Title 1", "Orphan 2"]
+
+
+class DescribeScarfAnalytics:
+    """Tests for scarf_analytics (telemetry off by default, opt-in only)."""
+
+    def it_does_not_send_telemetry_by_default(self, monkeypatch):
+        monkeypatch.delenv("UNSTRUCTURED_TELEMETRY_ENABLED", raising=False)
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        with patch("unstructured.utils.requests.get") as mock_get:
+            utils.scarf_analytics()
+        mock_get.assert_not_called()
+
+    def it_sends_telemetry_when_opt_in_is_set(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        with patch("unstructured.utils.requests.get") as mock_get:
+            utils.scarf_analytics()
+        mock_get.assert_called_once()
+        call_url = mock_get.call_args[0][0]
+        assert "python-telemetry" in call_url and "version=" in call_url
+
+    def it_accepts_opt_in_value_1(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "1")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        with patch("unstructured.utils.requests.get") as mock_get:
+            utils.scarf_analytics()
+        mock_get.assert_called_once()
+
+    def it_does_not_send_when_do_not_track_is_set_even_if_opt_in(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.setenv("DO_NOT_TRACK", "true")
+        with patch("unstructured.utils.requests.get") as mock_get:
+            utils.scarf_analytics()
+        mock_get.assert_not_called()
+
+    def it_does_not_send_when_scarf_no_analytics_is_set_even_if_opt_in(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.setenv("SCARF_NO_ANALYTICS", "true")
+        with patch("unstructured.utils.requests.get") as mock_get:
+            utils.scarf_analytics()
+        mock_get.assert_not_called()

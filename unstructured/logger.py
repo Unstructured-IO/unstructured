@@ -16,8 +16,8 @@ def detail(self, message, *args, **kws):
         self._log(DETAIL, message, args, **kws)
 
 
-# Note(Trevor,Crag): to opt out of scarf analytics, set the environment variable:
-# SCARF_NO_ANALYTICS=true. See the README for more info.
+# Telemetry is off by default. To opt in, set UNSTRUCTURED_TELEMETRY_ENABLED=true.
+# To opt out when enabled elsewhere, set SCARF_NO_ANALYTICS=true or DO_NOT_TRACK=true. See the README.
 scarf_analytics()
 
 # Add the custom log method to the logging.Logger class

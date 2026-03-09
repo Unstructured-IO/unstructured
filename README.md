@@ -268,4 +268,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-This library includes a very lightweight analytics "ping" when the library is loaded, however you can opt out of this data collection by setting the environment variable `DO_NOT_TRACK=true` before executing any `unstructured` code. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
+Telemetry is **off by default**. To opt in to the lightweight analytics ping when the library is loaded, set the environment variable `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing `unstructured`. You can also opt out explicitly by setting `DO_NOT_TRACK=true` or `SCARF_NO_ANALYTICS=true`. To learn more about how we collect and use this data, please read our [Privacy Policy](https://unstructured.io/privacy-policy).
