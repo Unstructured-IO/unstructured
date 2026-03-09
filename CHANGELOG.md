@@ -1,7 +1,7 @@
 ## 0.21.13
 
 ### Enhancements
-- **Telemetry off by default (fixes #3940)**: Analytics/telemetry is now disabled by default. Set `UNSTRUCTURED_TELEMETRY_ENABLED=true` to opt in. Opt-out via `DO_NOT_TRACK=true` or `SCARF_NO_ANALYTICS=true` is still supported and takes precedence.
+- **Telemetry off by default**: Analytics/telemetry is now disabled by default. Set `UNSTRUCTURED_TELEMETRY_ENABLED=true` to opt in. Opt-out via `DO_NOT_TRACK=true` or `SCARF_NO_ANALYTICS=true` is still supported and takes precedence.
 
 ## 0.21.12
 - **Add Check for complex documents**: Adds a check for complex documents to avoid pdfminer with a high ratio of vector objects
