@@ -405,7 +405,8 @@ class DescribeScarfAnalytics:
             utils.scarf_analytics()
         mock_get.assert_called_once()
         call_url = mock_get.call_args[0][0]
-        assert "python-telemetry" in call_url and "version=" in call_url
+        assert "python-telemetry" in call_url
+        assert "version=" in call_url
 
     def it_accepts_opt_in_value_1(self, monkeypatch):
         monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "1")

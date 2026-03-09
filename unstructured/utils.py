@@ -270,8 +270,9 @@ def only(it: Iterable[Any]) -> Any:
 
 
 def scarf_analytics():
-    """Send a lightweight analytics ping. Off by default; set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
+    """Send a lightweight analytics ping. Off by default.
 
+    Set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
     Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS) are always respected and take precedence.
     """
     try:
@@ -282,8 +283,8 @@ def scarf_analytics():
 
     python_version = ".".join(platform.python_version().split(".")[:2])
 
-    # Telemetry is off by default. Only send when user explicitly opts in via UNSTRUCTURED_TELEMETRY_ENABLED.
-    # Opt-out env vars always take precedence.
+    # Telemetry is off by default. Only send when user explicitly opts in via
+    # UNSTRUCTURED_TELEMETRY_ENABLED. Opt-out env vars always take precedence.
     opt_out = os.getenv("SCARF_NO_ANALYTICS") == "true" or os.getenv("DO_NOT_TRACK") == "true"
     opt_in = os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED", "").lower() in ("true", "1")
     if opt_out or not opt_in:
