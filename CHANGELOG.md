@@ -1,9 +1,8 @@
 ## 0.22.0
 
-### Breaking changes / migration
-- **Telemetry off by default (fixes #3940)**: Analytics/telemetry is now **disabled by default**. Upgrading will stop sending the library-load ping unless you opt in. To restore the previous behavior, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing `unstructured`. Opt-out via `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` (any non-empty value) is unchanged and takes precedence.
 
 ### Enhancements
+- **Telemetry off by default**: Analytics/telemetry is now **disabled by default**. Upgrading will stop sending the library-load ping unless you opt in. To restore the previous behavior, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing `unstructured`. Opt-out via `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` (any non-empty value) is unchanged and takes precedence.
 - Telemetry ping now uses `requests.get(..., params=...)` for correct URL encoding and a single code path for dev/non-dev.
 
 ## 0.21.12
