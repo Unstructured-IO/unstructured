@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 import os
-from unittest.mock import patch
+import platform
+from unittest.mock import Mock
 
 import pytest
+import requests
 
 from unstructured import utils
 from unstructured.documents.coordinates import PixelSpace
@@ -393,39 +395,121 @@ class DescribeScarfAnalytics:
         monkeypatch.delenv("UNSTRUCTURED_TELEMETRY_ENABLED", raising=False)
         monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
         monkeypatch.delenv("DO_NOT_TRACK", raising=False)
-        with patch("unstructured.utils.requests.get") as mock_get:
-            utils.scarf_analytics()
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
         mock_get.assert_not_called()
 
-    def it_sends_telemetry_when_opt_in_is_set(self, monkeypatch):
-        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+    @pytest.mark.parametrize("opt_in_value", ["true", "True", "TRUE", "1"])
+    def it_sends_telemetry_when_opt_in_is_set(self, monkeypatch, opt_in_value):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", opt_in_value)
         monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
         monkeypatch.delenv("DO_NOT_TRACK", raising=False)
-        with patch("unstructured.utils.requests.get") as mock_get:
-            utils.scarf_analytics()
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
         mock_get.assert_called_once()
-        call_url = mock_get.call_args[0][0]
-        assert "python-telemetry" in call_url
-        assert "version=" in call_url
-
-    def it_accepts_opt_in_value_1(self, monkeypatch):
-        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "1")
-        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
-        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
-        with patch("unstructured.utils.requests.get") as mock_get:
-            utils.scarf_analytics()
-        mock_get.assert_called_once()
+        call_args = mock_get.call_args
+        assert call_args[0][0] == "https://packages.unstructured.io/python-telemetry"
+        params = call_args[1]["params"]
+        assert set(params.keys()) == {"version", "platform", "python", "arch", "gpu", "dev"}
+        assert call_args[1]["timeout"] == 10
 
     def it_does_not_send_when_do_not_track_is_set_even_if_opt_in(self, monkeypatch):
         monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
         monkeypatch.setenv("DO_NOT_TRACK", "true")
-        with patch("unstructured.utils.requests.get") as mock_get:
-            utils.scarf_analytics()
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
         mock_get.assert_not_called()
 
     def it_does_not_send_when_scarf_no_analytics_is_set_even_if_opt_in(self, monkeypatch):
         monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
         monkeypatch.setenv("SCARF_NO_ANALYTICS", "true")
-        with patch("unstructured.utils.requests.get") as mock_get:
-            utils.scarf_analytics()
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
+        mock_get.assert_not_called()
+
+    def it_does_not_send_when_do_not_track_uppercase(self, monkeypatch):
+        """Opt-out honors any non-empty value (DNT standard); DO_NOT_TRACK=TRUE opts out."""
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.setenv("DO_NOT_TRACK", "TRUE")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
+        mock_get.assert_not_called()
+
+    def it_does_not_send_when_do_not_track_is_1(self, monkeypatch):
+        """Opt-out: DO_NOT_TRACK=1 (non-empty) opts out per DNT standard."""
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.setenv("DO_NOT_TRACK", "1")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
+        mock_get.assert_not_called()
+
+    def it_sends_with_dev_true_when_version_contains_dev(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        monkeypatch.setattr("unstructured.utils.__version__", "1.2.3.dev0")
+        utils.scarf_analytics()
+        mock_get.assert_called_once()
+        params = mock_get.call_args[1]["params"]
+        assert params["dev"] == "true"
+        assert params["version"] == "1.2.3.dev0"
+        assert params["platform"] == platform.system()
+        assert params["arch"] == platform.machine()
+        assert mock_get.call_args[1]["timeout"] == 10
+
+    def it_sends_with_dev_false_when_version_does_not_contain_dev(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        monkeypatch.setattr("unstructured.utils.__version__", "1.2.3")
+        utils.scarf_analytics()
+        mock_get.assert_called_once()
+        params = mock_get.call_args[1]["params"]
+        assert params["dev"] == "false"
+        assert params["version"] == "1.2.3"
+        assert mock_get.call_args[1]["timeout"] == 10
+
+    def it_handles_requests_exception_gracefully(self, monkeypatch):
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", "true")
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        monkeypatch.setattr(
+            "unstructured.utils.requests.get",
+            Mock(side_effect=requests.RequestException("network error")),
+        )
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()  # does not raise
+
+    @pytest.mark.parametrize("value", ["false", "0", "yes", "on", "FALSE", "NO"])
+    def it_does_not_send_when_opt_in_is_explicit_false_or_other(self, monkeypatch, value):
+        """Only 'true' and '1' opt in; false/0/yes/on etc. must not enable telemetry."""
+        monkeypatch.setenv("UNSTRUCTURED_TELEMETRY_ENABLED", value)
+        monkeypatch.delenv("SCARF_NO_ANALYTICS", raising=False)
+        monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+        mock_get = Mock()
+        monkeypatch.setattr("unstructured.utils.requests.get", mock_get)
+        monkeypatch.setattr("unstructured.utils.subprocess.check_output", Mock())
+        utils.scarf_analytics()
         mock_get.assert_not_called()
