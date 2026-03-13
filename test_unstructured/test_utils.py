@@ -505,7 +505,7 @@ class DescribeScarfAnalytics:
         assert call_args[1]["timeout"] == 10
 
     @pytest.mark.parametrize(
-        "version_val,expected_dev",
+        ("version_val", "expected_dev"),
         [("1.2.3.dev0", "true"), ("1.2.3", "false")],
         ids=["dev_version", "release_version"],
     )
