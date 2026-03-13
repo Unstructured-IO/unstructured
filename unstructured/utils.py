@@ -270,26 +270,38 @@ def only(it: Iterable[Any]) -> Any:
     return out
 
 
+def _telemetry_opt_out() -> bool:
+    """True if telemetry should be disabled via env.
+
+    DO_NOT_TRACK and SCARF_NO_ANALYTICS both follow the same rule: any non-empty
+    value (after strip) opts out. See README/CHANGELOG for the public contract.
+    """
+    return bool((os.getenv("DO_NOT_TRACK") or "").strip()) or bool(
+        (os.getenv("SCARF_NO_ANALYTICS") or "").strip()
+    )
+
+
+def _telemetry_opt_in() -> bool:
+    """True if telemetry is explicitly enabled via env. Only 'true' and '1' opt in."""
+    return (os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED") or "").strip().lower() in (
+        "true",
+        "1",
+    )
+
+
 def scarf_analytics():
     """Send a lightweight analytics ping. Off by default.
 
     Set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
-    Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS) are always respected and take precedence.
+    Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS): any non-empty value opts out.
     """
-    opt_out = os.getenv("SCARF_NO_ANALYTICS", "").strip().lower() in ("true", "1") or bool(
-        (os.getenv("DO_NOT_TRACK") or "").strip()
-    )
-    opt_in = (os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED") or "").strip().lower() in (
-        "true",
-        "1",
-    )
-    if opt_out or not opt_in:
+    if _telemetry_opt_out() or not _telemetry_opt_in():
         return
 
     try:
         subprocess.check_output(["nvidia-smi"], stderr=subprocess.DEVNULL)
         gpu_present = True
-    except (FileNotFoundError, subprocess.CalledProcessError):
+    except (OSError, subprocess.CalledProcessError):
         gpu_present = False
 
     python_version = ".".join(platform.python_version().split(".")[:2])
