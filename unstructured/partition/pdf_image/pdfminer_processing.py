@@ -8,9 +8,6 @@ import numpy as np
 from pdfminer.layout import LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
-from unstructured_inference.config import inference_config
-from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
-from unstructured_inference.inference.elements import Rectangle
 
 from unstructured.documents.coordinates import PixelSpace, PointSpace
 from unstructured.documents.elements import CoordinatesMetadata, ElementType
@@ -30,7 +27,8 @@ from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.elements import TextRegion, TextRegions
+    from unstructured_inference.constants import IsExtracted
+    from unstructured_inference.inference.elements import Rectangle, TextRegion, TextRegions
     from unstructured_inference.inference.layout import DocumentLayout
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -224,13 +222,19 @@ def array_merge_inferred_layout_with_extracted_layout(
     inferred_layout: LayoutElements,
     extracted_layout: LayoutElements,
     page_image_size: tuple,
-    same_region_threshold: float = inference_config.LAYOUT_SAME_REGION_THRESHOLD,
-    subregion_threshold: float = inference_config.LAYOUT_SUBREGION_THRESHOLD,
+    same_region_threshold: float | None = None,
+    subregion_threshold: float | None = None,
     max_rounds: int = 5,
 ) -> LayoutElements:
     """merge elements using array data structures; it also returns LayoutElements instead of
     collection of LayoutElement"""
+    from unstructured_inference.config import inference_config
+    from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD
+    from unstructured_inference.inference.elements import Rectangle
     from unstructured_inference.inference.layoutelement import LayoutElements
+
+    same_region_threshold = same_region_threshold or inference_config.LAYOUT_SAME_REGION_THRESHOLD
+    subregion_threshold = subregion_threshold or inference_config.LAYOUT_SUBREGION_THRESHOLD
 
     if len(extracted_layout) == 0:
         return inferred_layout
@@ -444,6 +448,7 @@ def process_page_layout_from_pdfminer(
     page_number: int,
     coord_coef: float,
 ) -> tuple[LayoutElements, list]:
+    from unstructured_inference.constants import IsExtracted
     from unstructured_inference.inference.layoutelement import LayoutElements
 
     urls_metadata: list[dict[str, Any]] = []
@@ -804,6 +809,7 @@ def _aggregated_iou(box1s, box2):
     return intersection / union
 
 
+@requires_dependencies("unstructured_inference")
 def aggregate_embedded_text_by_block(
     target_region: TextRegions,
     source_regions: TextRegions,
@@ -812,6 +818,7 @@ def aggregate_embedded_text_by_block(
 ) -> tuple[str, IsExtracted | None]:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
+    from unstructured_inference.constants import IsExtracted
 
     if len(source_regions) == 0 or len(target_region) == 0:
         return "", None
@@ -845,7 +852,10 @@ def aggregate_embedded_text_by_block(
     return text, is_extracted
 
 
+@requires_dependencies("unstructured_inference")
 def get_links_in_element(page_links: list, region: Rectangle) -> list:
+    from unstructured_inference.inference.elements import Rectangle
+
     links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
     results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
     links = [

@@ -61,16 +61,20 @@ epub = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system != 'Windows'",
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
-image = [
-    "google-cloud-vision>=3.12.1, <4.0.0",
+pdf-no-ocr = [
+    "opencv-python>=4.13.0.90",
     "pdf2image>=1.17.0, <2.0.0",
     "pdfminer.six>=20251230, <20270000",
     "pi-heif>=1.2.0, <2.0.0",
     "pikepdf>=10.3.0, <11.0.0",
     "pypdf>=6.6.2, <7.0.0",
+]
+image = [
+    "google-cloud-vision>=3.12.1, <4.0.0",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system != 'Windows'",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
     "unstructured-pytesseract>=0.3.15, <1.0.0",
+    "unstructured[pdf-no-ocr]",
 ]
 md = [
     "markdown>=3.10.1, <4.0.0",
@@ -85,7 +89,7 @@ org = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 pdf = [
-    "unstructured[image]",
+    "unstructured[image,pdf-no-ocr]",
 ]
 ppt = [
     "unstructured[pptx]",

@@ -69,6 +69,10 @@ test-extra-markdown:
 test-extra-odt:
 	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/test_odt.py
 
+.PHONY: test-extra-pdf-no-ocr
+test-extra-pdf-no-ocr:
+	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/pdf
+
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
 	CI=$(CI) uv run --no-sync pytest -n auto test_unstructured/partition/pdf_image
