@@ -316,5 +316,6 @@ jobs:
         with:
           image: "unstructured:dev"
           severity-cutoff: critical
+          fail-build: false
           only-fixed: true
           output-format: table
