@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import functools
 import importlib
 import inspect
@@ -269,49 +270,55 @@ def only(it: Iterable[Any]) -> Any:
     return out
 
 
+def _telemetry_opt_out() -> bool:
+    """True if telemetry should be disabled via env.
+
+    DO_NOT_TRACK and SCARF_NO_ANALYTICS both follow the same rule: any non-empty
+    value (after strip) opts out. See README/CHANGELOG for the public contract.
+    """
+    return bool((os.getenv("DO_NOT_TRACK") or "").strip()) or bool(
+        (os.getenv("SCARF_NO_ANALYTICS") or "").strip()
+    )
+
+
+def _telemetry_opt_in() -> bool:
+    """True if telemetry is explicitly enabled via env. Only 'true' and '1' opt in."""
+    return (os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED") or "").strip().lower() in (
+        "true",
+        "1",
+    )
+
+
 def scarf_analytics():
+    """Send a lightweight analytics ping. Off by default.
+
+    Set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
+    Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS): any non-empty value opts out.
+    """
+    if _telemetry_opt_out() or not _telemetry_opt_in():
+        return
+
     try:
-        subprocess.check_output("nvidia-smi")
+        subprocess.check_output(["nvidia-smi"], stderr=subprocess.DEVNULL)
         gpu_present = True
-    except Exception:
+    except (OSError, subprocess.CalledProcessError):
         gpu_present = False
 
     python_version = ".".join(platform.python_version().split(".")[:2])
 
-    try:
-        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
-            if "dev" in __version__:
-                requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=true",
-                    timeout=10,
-                )
-            else:
-                requests.get(
-                    "https://packages.unstructured.io/python-telemetry?version="
-                    + __version__
-                    + "&platform="
-                    + platform.system()
-                    + "&python"
-                    + python_version
-                    + "&arch="
-                    + platform.machine()
-                    + "&gpu="
-                    + str(gpu_present)
-                    + "&dev=false",
-                    timeout=10,
-                )
-    except Exception:
-        pass
+    with contextlib.suppress(Exception):
+        requests.get(
+            "https://packages.unstructured.io/python-telemetry",
+            params={
+                "version": __version__,
+                "platform": platform.system(),
+                "python": python_version,
+                "arch": platform.machine(),
+                "gpu": str(gpu_present),
+                "dev": str("dev" in __version__).lower(),
+            },
+            timeout=10,
+        )
 
 
 def ngrams(s: list[str], n: int) -> list[tuple[str, ...]]:
