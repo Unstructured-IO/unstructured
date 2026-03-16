@@ -1,11 +1,11 @@
 ## 0.22.0
 
 ### Breaking changes
-- **Opt-out env semantics**: `DO_NOT_TRACK` and `SCARF_NO_ANALYTICS` now treat **any non-empty value** (after strip) as opt-out. Previously only the exact string `"true"` opted out. So `DO_NOT_TRACK=false`, `DO_NOT_TRACK=0`, `SCARF_NO_ANALYTICS=0`, etc. will now disable telemetry. If you rely on `=false`/`=0` to mean “do not opt out”, remove the variable or set it only when you intend to opt out.
+- **Opt-out env semantics**: `DO_NOT_TRACK` and `SCARF_NO_ANALYTICS` now treat any non-empty value (after strip) as opt-out. Previously only the exact string `"true"` opted out. Values like `false`, `0`, or `no` now also disable telemetry. To avoid opting out, unset the variable or leave it empty.
 
 ### Enhancements
-- **Telemetry off by default**: Analytics/telemetry is now **disabled by default**. Upgrading will stop sending the library-load ping unless you opt in. To restore the previous behavior, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing `unstructured`. Opt-out via `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` (any non-empty value) takes precedence.
-- Telemetry ping now uses `requests.get(..., params=...)` for correct URL encoding and a single code path for dev/non-dev.
+- **Telemetry off by default**: The library-load analytics ping is disabled by default. Set `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing to restore the previous behavior. Opt-out via `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` (any non-empty value) takes precedence.
+- Telemetry ping uses `requests.get(..., params=...)` for correct URL encoding and a single dev/non-dev code path.
 
 ## 0.21.12
 - **Add Check for complex documents**: Adds a check for complex documents to avoid pdfminer with a high ratio of vector objects
