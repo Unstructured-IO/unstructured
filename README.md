@@ -268,4 +268,4 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 
 ## :chart_with_upwards_trend: Analytics
 
-Telemetry is **off by default**. To opt in, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` (or `=1`) before importing `unstructured`. To opt out, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`, `1`, `yes`); opt-out takes precedence. See our [Privacy Policy](https://unstructured.io/privacy-policy).
+Telemetry is **off by default**. To opt in, set `UNSTRUCTURED_TELEMETRY_ENABLED=true` (or `=1`) before importing `unstructured`. To opt out, set `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (e.g. `true`, `1`, `yes`, `false`, `0`—any non-empty string opts out); opt-out takes precedence. Unset the variable or leave it empty if you do not want to opt out. See our [Privacy Policy](https://unstructured.io/privacy-policy).
