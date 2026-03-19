@@ -109,9 +109,21 @@ def _install_spacy_model() -> None:
     logger.info("Installed %s %s", _SPACY_MODEL_NAME, _SPACY_MODEL_VERSION)
 
 
+# Only tok2vec, tagger, and sentence splitting are used (pos_tag and sent_tokenize).
+# Excluding the remaining components saves ~12 MiB of model weights per process.
+_SPACY_EXCLUDE = ["ner", "parser", "lemmatizer", "attribute_ruler"]
+
+
+def _load_and_configure() -> spacy.language.Language:
+    """Load the model excluding unused components, add a lightweight sentencizer."""
+    nlp = spacy.load(_SPACY_MODEL_NAME, exclude=_SPACY_EXCLUDE)
+    nlp.add_pipe("sentencizer")
+    return nlp
+
+
 def _load_spacy_model() -> spacy.language.Language:
     try:
-        return spacy.load(_SPACY_MODEL_NAME)
+        return _load_and_configure()
     except OSError:
         pass
 
@@ -122,13 +134,13 @@ def _load_spacy_model() -> spacy.language.Language:
         # Double-check: another process may have installed while we waited.
         importlib.invalidate_caches()
         try:
-            return spacy.load(_SPACY_MODEL_NAME)
+            return _load_and_configure()
         except OSError:
             pass
         _install_spacy_model()
         importlib.invalidate_caches()
         try:
-            return spacy.load(_SPACY_MODEL_NAME)
+            return _load_and_configure()
         except OSError as exc:
             raise RuntimeError(
                 f"Installed {_SPACY_MODEL_NAME} but spacy.load() still failed. "

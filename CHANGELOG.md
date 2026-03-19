@@ -1,3 +1,8 @@
+## 0.22.9
+
+### Enhancements
+- **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
+
 ## 0.22.7
 
 ### Fixes
