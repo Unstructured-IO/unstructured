@@ -1,3 +1,8 @@
+## 0.22.8
+
+### Enhancements
+- **Reduce PaddleOCR memory usage**: Set `rec_batch_num=1` when creating PaddleOCR instances to reduce Paddle inference engine arena allocation from 4x500 MiB to 1x500 MiB during text recognition
+
 ## 0.22.7
 
 ### Fixes
