@@ -148,8 +148,11 @@ def reconstruct_table_from_chunks(elements: Iterable[Element]) -> list[Table]:
     chunk_by_id: dict[str, TableChunk] = {c.id: c for c in table_chunks}
 
     # -- identify head chunks: parent_id is None or points outside this set --
-    heads = [c for c in table_chunks if c.metadata.parent_id is None
-             or c.metadata.parent_id not in chunk_by_id]
+    heads = [
+        c
+        for c in table_chunks
+        if c.metadata.parent_id is None or c.metadata.parent_id not in chunk_by_id
+    ]
 
     # -- build a child lookup: parent_id -> chunk --
     child_of: dict[str, TableChunk] = {

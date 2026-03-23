@@ -1412,20 +1412,36 @@ class Describe_TableChunker:
         opts = ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " "))
 
         # -- chunk two HTML tables, each with distinct metadata --
-        chunks_1 = list(_TableChunker.iter_chunks(
-            Table(self.TEXT_TABLE_1, metadata=ElementMetadata(
-                text_as_html=self.HTML_TABLE_1, filename="doc1.pdf", page_number=1,
-            )),
-            overlap_prefix="", opts=opts,
-        ))
+        chunks_1 = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_1,
+                    metadata=ElementMetadata(
+                        text_as_html=self.HTML_TABLE_1,
+                        filename="doc1.pdf",
+                        page_number=1,
+                    ),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
         assert len(chunks_1) >= 2
 
-        chunks_2 = list(_TableChunker.iter_chunks(
-            Table(self.TEXT_TABLE_2, metadata=ElementMetadata(
-                text_as_html=self.HTML_TABLE_2, filename="doc1.pdf", page_number=3,
-            )),
-            overlap_prefix="", opts=opts,
-        ))
+        chunks_2 = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_2,
+                    metadata=ElementMetadata(
+                        text_as_html=self.HTML_TABLE_2,
+                        filename="doc1.pdf",
+                        page_number=3,
+                    ),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
         assert len(chunks_2) >= 2
 
         elements: list[Element] = [
@@ -1459,9 +1475,7 @@ class Describe_TableChunker:
             reconstructed_cells = [
                 td.text_content().strip() for td in reconstructed.iter("td", "th")
             ]
-            original_cells = [
-                td.text_content().strip() for td in original.iter("td", "th")
-            ]
+            original_cells = [td.text_content().strip() for td in original.iter("td", "th")]
             assert reconstructed_cells == original_cells
 
         # -- metadata is preserved from original table --
