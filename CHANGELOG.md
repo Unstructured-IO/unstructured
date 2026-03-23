@@ -1,3 +1,8 @@
+## 0.22.2
+
+### Enhancements
+- **Add ability for `Table` element to be reconstructed from `TableChunk`s**: Previously when a `Table` element was separated into chunks, there was no way to reconstruct it. Each `TableChunk` now carries a `parent_id` linking to the previous chunk, and a new `reconstruct_table_from_chunks()` function in `unstructured.chunking.dispatch` accepts a mixed list of chunked elements and returns reconstructed `Table` objects with merged text and HTML.
+
 ## 0.22.1
 
 ### Fixes
