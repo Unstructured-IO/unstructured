@@ -901,16 +901,9 @@ class _TableChunker:
         if (html_table := self._html_table) is None:  # pragma: no cover
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
-        is_continuation = False
-
-        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
-            metadata = self._metadata
-            metadata.text_as_html = html
-            # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
-
-            yield TableChunk(text=text, metadata=metadata)
+        yield from self._make_table_chunks(
+            _HtmlTableSplitter.iter_subtables(html_table, self._opts)
+        )
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
         """Split oversized text-only table (no text-as-html) into chunks.
@@ -918,19 +911,41 @@ class _TableChunker:
         `.metadata.text_as_html` is optional, not included when `infer_table_structure` is
         `False`.
         """
-        text_remainder = self._text_with_overlap
-        split = self._opts.split
-        is_continuation = False
 
-        while text_remainder:
-            # -- split off the next chunk-worth of characters into a TableChunk --
-            chunk_text, text_remainder = split(text_remainder)
+        def _iter_text_splits() -> Iterator[tuple[str, None]]:
+            text_remainder = self._text_with_overlap
+            split = self._opts.split
+            while text_remainder:
+                # -- split off the next chunk-worth of characters into a TableChunk --
+                chunk_text, text_remainder = split(text_remainder)
+                yield chunk_text, None
+
+        yield from self._make_table_chunks(_iter_text_splits())
+
+    def _make_table_chunks(
+        self, text_html_pairs: Iterator[tuple[str, str | None]]
+    ) -> Iterator[TableChunk]:
+        """Form `TableChunk` objects from (text, html) pairs.
+
+        Handles `is_continuation` and `parent_id` linking so each chunk points to the previous
+        one, allowing reconstruction of the original table.
+        """
+        is_continuation = False
+        prev_id = None
+
+        for text, html in text_html_pairs:
             metadata = self._metadata
+            if html is not None:
+                metadata.text_as_html = html
             # -- second and later chunks get `.metadata.is_continuation = True` --
             metadata.is_continuation = is_continuation or None
             is_continuation = True
 
-            yield TableChunk(text=chunk_text, metadata=metadata)
+            chunk = TableChunk(text=text, metadata=metadata)
+            if prev_id is not None:
+                chunk.metadata.parent_id = prev_id
+            prev_id = chunk.id
+            yield chunk
 
     @property
     def _metadata(self) -> ElementMetadata:
