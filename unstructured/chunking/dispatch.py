@@ -188,7 +188,7 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
         combined = fragment_fromstring("<table></table>")
         for c in chunks:
             parsed = fragment_fromstring(c.metadata.text_as_html)
-            for row in parsed.iter("tr"):
+            for row in list(parsed.iter("tr")):
                 combined.append(row)
         metadata.text_as_html = tostring(combined, encoding=str)
     else:
