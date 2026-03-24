@@ -359,8 +359,7 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
     assert len(elements_fenced) == 1
     assert elements_fenced[0].category == ElementType.NARRATIVE_TEXT
     assert (
-        elements_fenced[0].text
-        == "# create the container\n"
+        elements_fenced[0].text == "# create the container\n"
         "docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest"
     )
 

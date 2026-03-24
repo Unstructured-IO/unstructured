@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import logging
 from typing import IO, Any, Optional
 
-import logging
 import markdown
 import requests
 
