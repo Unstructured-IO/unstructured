@@ -5324,20 +5324,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytesseract"
-version = "0.3.13"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "packaging", version = "26.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform == 'win32'" },
-    { name = "pillow" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/a6/7d679b83c285974a7cb94d739b461fa7e7a9b17a3abfd7bf6cbc5c2394b0/pytesseract-0.3.13.tar.gz", hash = "sha256:4bf5f880c99406f52a3cfc2633e42d9dc67615e69d8a509d74867d3baddb5db9", size = 17689, upload-time = "2024-08-16T02:33:56.762Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/33/8312d7ce74670c9d39a532b2c246a853861120486be9443eebf048043637/pytesseract-0.3.13-py3-none-any.whl", hash = "sha256:7a99c6c2ac598360693d83a416e36e0b33a67638bb9d77fdcac094a3589d4b34", size = 14705, upload-time = "2024-08-16T02:36:10.09Z" },
-]
-
-[[package]]
 name = "pytest"
 version = "9.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -7148,7 +7134,6 @@ all-docs = [
     { name = "pikepdf" },
     { name = "pypandoc-binary", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "pypdf" },
-    { name = "pytesseract" },
     { name = "python-docx" },
     { name = "python-pptx" },
     { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
@@ -7186,7 +7171,6 @@ image = [
     { name = "pi-heif" },
     { name = "pikepdf" },
     { name = "pypdf" },
-    { name = "pytesseract" },
     { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
 ]
@@ -7208,7 +7192,6 @@ local-inference = [
     { name = "pikepdf" },
     { name = "pypandoc-binary", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "pypdf" },
-    { name = "pytesseract" },
     { name = "python-docx" },
     { name = "python-pptx" },
     { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
@@ -7236,7 +7219,6 @@ pdf = [
     { name = "pi-heif" },
     { name = "pikepdf" },
     { name = "pypdf" },
-    { name = "pytesseract" },
     { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
 ]
@@ -7368,10 +7350,6 @@ requires-dist = [
     { name = "pypdf", marker = "extra == 'image'", specifier = ">=6.6.2,<7.0.0" },
     { name = "pypdf", marker = "extra == 'local-inference'", specifier = ">=6.6.2,<7.0.0" },
     { name = "pypdf", marker = "extra == 'pdf'", specifier = ">=6.6.2,<7.0.0" },
-    { name = "pytesseract", marker = "extra == 'all-docs'", specifier = ">=0.3.13" },
-    { name = "pytesseract", marker = "extra == 'image'", specifier = ">=0.3.13" },
-    { name = "pytesseract", marker = "extra == 'local-inference'", specifier = ">=0.3.13" },
-    { name = "pytesseract", marker = "extra == 'pdf'", specifier = ">=0.3.13" },
     { name = "python-docx", marker = "extra == 'all-docs'", specifier = ">=1.2.0,<2.0.0" },
     { name = "python-docx", marker = "extra == 'doc'", specifier = ">=1.2.0,<2.0.0" },
     { name = "python-docx", marker = "extra == 'docx'", specifier = ">=1.2.0,<2.0.0" },

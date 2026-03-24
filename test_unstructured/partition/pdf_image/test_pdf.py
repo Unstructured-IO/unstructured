@@ -487,7 +487,7 @@ def test_partition_pdf_falls_back_to_fast(monkeypatch, caplog):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "aiopytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -507,7 +507,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(monkeypatch, caplog):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["aiopytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
@@ -527,14 +527,14 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(monkeypatch, caplog):
 
     mock_partition.assert_called_once()
     mock_partition_ocr.assert_not_called()
-    assert "pytesseract is not installed" in caplog.text
+    assert "aiopytesseract is not installed" in caplog.text
 
 
 def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(monkeypatch, caplog):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["pytesseract"]
+        return dep not in ["aiopytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -548,7 +548,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(monkeypatch, caplog):
         pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.OCR_ONLY)
 
     mock_partition.assert_called_once()
-    assert "pytesseract is not installed" in caplog.text
+    assert "aiopytesseract is not installed" in caplog.text
 
 
 def test_partition_pdf_falls_back_to_ocr_only(monkeypatch, caplog):
@@ -730,7 +730,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
 
     def mock_exists(dep):
-        return dep not in ["unstructured_inference", "pytesseract"]
+        return dep not in ["unstructured_inference", "aiopytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -1078,39 +1078,25 @@ def test_partition_hi_res_model_name_default_to_None():
 
 
 @pytest.mark.parametrize(
-    ("strategy", "ocr_func"),
-    [
-        (
-            PartitionStrategy.HI_RES,
-            "pytesseract.image_to_pdf_or_hocr",
-        ),
-        (
-            PartitionStrategy.OCR_ONLY,
-            "pytesseract.image_to_pdf_or_hocr",
-        ),
-        (
-            PartitionStrategy.OCR_ONLY,
-            "pytesseract.image_to_string",
-        ),
-    ],
+    "strategy",
+    [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY],
 )
-def test_ocr_language_passes_through(strategy, ocr_func):
-    # Create an exception that will be raised directly after OCR is called to stop execution
+def test_ocr_language_passes_through(strategy):
+    # Mock aiopytesseract.execute to verify lang is passed through
     class CallException(Exception):
         pass
 
-    mock_ocr_func = mock.Mock(side_effect=CallException("Function called!"))
-    # Patch the ocr function with the mock that will record the call and then terminate
-    with mock.patch(ocr_func, mock_ocr_func), pytest.raises(CallException):
-        pdf.partition_pdf(
-            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
-            strategy=strategy,
-            ocr_languages="kor",
-        )
-    # Check that the language parameter was passed down as expected
-    kwargs = mock_ocr_func.call_args.kwargs
-    assert "lang" in kwargs
-    assert kwargs["lang"] == "kor"
+    async def mock_execute(*args, **kwargs):
+        raise CallException(kwargs)
+
+    with mock.patch("aiopytesseract.base_command.execute", side_effect=mock_execute):
+        with pytest.raises(CallException) as exc_info:
+            pdf.partition_pdf(
+                example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+                strategy=strategy,
+                ocr_languages="kor",
+            )
+    assert exc_info.value.args[0]["lang"] == "kor"
 
 
 @pytest.mark.parametrize(

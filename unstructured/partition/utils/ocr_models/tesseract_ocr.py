@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Optional
 import cv2
 import numpy as np
 import pandas as pd
-import pytesseract
 from lxml import etree
 from PIL import Image as PILImage
 
@@ -47,7 +46,7 @@ class OCRAgentTesseract(OCRAgent):
         return True
 
     def get_text_from_image(self, image: PILImage.Image) -> str:
-        return pytesseract.image_to_string(np.array(image), lang=self.language)
+        return asyncio.run(self.get_text_from_image_async(image))
 
     async def get_text_from_image_async(
         self,
@@ -109,22 +108,7 @@ class OCRAgentTesseract(OCRAgent):
 
     def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         """Get the OCR regions from image as a list of text regions with tesseract."""
-        trace_logger.detail("Processing entire page OCR with tesseract...")
-        ocr_df = self.image_to_data_with_character_confidence_filter(
-            np.array(image),
-            lang=self.language,
-            character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
-        ).dropna()
-
-        zoom = self.compute_zoom(ocr_df, image.size)
-        if zoom != 1.0:
-            ocr_df = self.image_to_data_with_character_confidence_filter(
-                np.array(zoom_image(image, zoom)),
-                lang=self.language,
-                character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
-            ).dropna()
-
-        return self.parse_data(ocr_df, zoom=zoom)
+        return asyncio.run(self.get_layout_from_image_async(image))
 
     async def get_layout_from_image_async(
         self,
@@ -168,22 +152,6 @@ class OCRAgentTesseract(OCRAgent):
             ).dropna()
 
         return self.parse_data(ocr_df, zoom=zoom)
-
-    def image_to_data_with_character_confidence_filter(
-        self,
-        image: np.ndarray,
-        lang: str = "eng",
-        config: str = "",
-        character_confidence_threshold: float = 0.0,
-    ) -> pd.DataFrame:
-        hocr: str = pytesseract.image_to_pdf_or_hocr(
-            image,
-            lang=lang,
-            config="-c hocr_char_boxes=1 " + config,
-            extension="hocr",
-        )
-        ocr_df = self.hocr_to_dataframe(hocr, character_confidence_threshold)
-        return ocr_df
 
     def hocr_to_dataframe(
         self, hocr: str, character_confidence_threshold: float = 0.0
@@ -251,26 +219,7 @@ class OCRAgentTesseract(OCRAgent):
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(self, image: PILImage.Image) -> LayoutElements:
-        from unstructured.partition.pdf_image.inference_utils import (
-            build_layout_elements_from_ocr_regions,
-        )
-
-        ocr_regions = self.get_layout_from_image(image)
-
-        # NOTE(christine): For tesseract, the ocr_text returned by
-        # `pytesseract.image_to_string()` doesn't contain bounding box data but is
-        # well grouped. Conversely, the ocr_layout returned by parsing
-        # `pytesseract.image_to_data()` contains bounding box data but is not well
-        # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
-        # the text regions in each group to create a list of layout elements.
-
-        ocr_text = self.get_text_from_image(image)
-
-        return build_layout_elements_from_ocr_regions(
-            ocr_regions=ocr_regions,
-            ocr_text=ocr_text,
-            group_by_ocr_text=True,
-        )
+        return asyncio.run(self.get_layout_elements_from_image_async(image))
 
     @requires_dependencies("unstructured_inference")
     async def get_layout_elements_from_image_async(
@@ -333,7 +282,7 @@ class OCRAgentTesseract(OCRAgent):
             lambda text: str(text) if not isinstance(text, str) else text.strip()
         ).values
         mask = texts != ""
-        element_coords = ocr_data[["left", "top", "width", "height"]].values
+        element_coords = ocr_data[["left", "top", "width", "height"]].values.copy()
         element_coords[:, 2] += element_coords[:, 0]
         element_coords[:, 3] += element_coords[:, 1]
         element_coords = element_coords.astype(float) / zoom

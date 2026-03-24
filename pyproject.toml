@@ -69,7 +69,6 @@ image = [
     "pi-heif>=1.2.0, <2.0.0",
     "pikepdf>=10.3.0, <11.0.0",
     "pypdf>=6.6.2, <7.0.0",
-    "pytesseract>=0.3.13",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system != 'Windows'",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]

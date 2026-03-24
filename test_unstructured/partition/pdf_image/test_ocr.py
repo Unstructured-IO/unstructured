@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-import pytesseract
 from lxml import etree
 from PIL import Image, UnidentifiedImageError
 from pypdfium2 import PdfiumError
@@ -75,25 +74,18 @@ def test_supplement_page_layout_with_ocr_invalid_ocr():
         )
 
 
-def test_get_ocr_layout_from_image_tesseract(monkeypatch):
-    monkeypatch.setattr(
-        OCRAgentTesseract,
-        "image_to_data_with_character_confidence_filter",
-        lambda *args, **kwargs: pd.DataFrame(
-            {
-                "left": [10, 20, 30, 0],
-                "top": [5, 15, 25, 0],
-                "width": [15, 25, 35, 0],
-                "height": [10, 20, 30, 0],
-                "text": ["Hello", "World", "!", ""],
-            },
-        ),
-    )
-
-    image = Image.new("RGB", (100, 100))
-
+def test_get_ocr_layout_from_image_tesseract():
     ocr_agent = OCRAgentTesseract()
-    ocr_layout = ocr_agent.get_layout_from_image(image)
+    ocr_data = pd.DataFrame(
+        {
+            "left": [10, 20, 30, 0],
+            "top": [5, 15, 25, 0],
+            "width": [15, 25, 35, 0],
+            "height": [10, 20, 30, 0],
+            "text": ["Hello", "World", "!", ""],
+        },
+    )
+    ocr_layout = ocr_agent.parse_data(ocr_data)
 
     expected_layout = TextRegions(
         element_coords=np.array([[10.0, 5, 25, 15], [20, 15, 45, 35], [30, 25, 65, 55]]),
@@ -166,10 +158,14 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
+
+    async def mock_get_text(*args, **kwargs):
+        return "Hello World"
+
     monkeypatch.setattr(
-        pytesseract,
-        "image_to_string",
-        lambda *args, **kwargs: "Hello World",
+        OCRAgentTesseract,
+        "get_text_from_image_async",
+        mock_get_text,
     )
     image = Image.new("RGB", (100, 100))
 
@@ -489,18 +485,29 @@ def test_get_table_tokens(mock_ocr_layout):
 def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
     monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")
+
+    mock_df = pd.DataFrame(
+        {
+            "left": [10, 20, 30, 0],
+            "top": [5, 15, 25, 0],
+            "width": [15, 25, 35, 0],
+            "height": [10, 20, 30, 0],
+            "text": ["Hello", "World", "!", ""],
+        },
+    )
+
     monkeypatch.setattr(
         OCRAgentTesseract,
-        "image_to_data_with_character_confidence_filter",
-        lambda *args, **kwargs: pd.DataFrame(
-            {
-                "left": [10, 20, 30, 0],
-                "top": [5, 15, 25, 0],
-                "width": [15, 25, 35, 0],
-                "height": [10, 20, 30, 0],
-                "text": ["Hello", "World", "!", ""],
-            },
-        ),
+        "hocr_to_dataframe",
+        lambda *args, **kwargs: mock_df,
+    )
+
+    async def mock_execute(*args, **kwargs):
+        return b""
+
+    monkeypatch.setattr(
+        "aiopytesseract.base_command.execute",
+        mock_execute,
     )
 
     image = Image.new("RGB", (1000, 1000))

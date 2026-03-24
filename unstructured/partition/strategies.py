@@ -31,7 +31,7 @@ def determine_pdf_or_image_strategy(
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
-    pytesseract_installed = dependency_exists("pytesseract")
+    pytesseract_installed = dependency_exists("aiopytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if strategy == PartitionStrategy.AUTO:
@@ -49,9 +49,9 @@ def determine_pdf_or_image_strategy(
         [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
     ):
         raise ValueError(
-            "unstructured_inference is not installed, pytesseract is not installed "
+            "unstructured_inference is not installed, aiopytesseract is not installed "
             "and the text of the PDF is not extractable. "
-            "To process this file, install unstructured_inference, install pytesseract, "
+            "To process this file, install unstructured_inference, install aiopytesseract, "
             "or remove copy protection from the PDF.",
         )
 
@@ -71,7 +71,7 @@ def determine_pdf_or_image_strategy(
 
     elif strategy == PartitionStrategy.OCR_ONLY and not pytesseract_installed:
         logger.warning(
-            "pytesseract is not installed. Cannot use the ocr_only partitioning "
+            "aiopytesseract is not installed. Cannot use the ocr_only partitioning "
             "strategy. Falling back to partitioning with another strategy.",
         )
         if pdf_text_extractable:

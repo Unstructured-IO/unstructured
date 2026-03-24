@@ -190,13 +190,13 @@ def main():
     else:
         print("unstructured-inference is not installed")
 
-    if dependency_exists("pytesseract"):
+    if dependency_exists("aiopytesseract"):
         print(
-            "pytesseract version: ",
-            get_python_package_version("pytesseract"),
+            "aiopytesseract version: ",
+            get_python_package_version("aiopytesseract"),
         )
     else:
-        print("pytesseract is not installed")
+        print("aiopytesseract is not installed")
 
     if dependency_exists("torch"):
         print("Torch version: ", get_python_package_version("torch"))
