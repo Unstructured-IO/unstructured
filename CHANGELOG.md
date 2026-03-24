@@ -1,3 +1,7 @@
+## 0.22.2
+
+- Store routing in ElementMetadata
+
 ## 0.22.1
 
 ### Fixes
