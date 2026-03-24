@@ -528,6 +528,8 @@ class ConsolidationStrategy(enum.Enum):
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
+            "routing": cls.DROP,
+            "routing_score": cls.DROP,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
