@@ -1,3 +1,8 @@
+## Unreleased
+
+### Enhancements
+- **Concurrent OCR with aiopytesseract**: Replace `pytesseract` with `aiopytesseract` for async subprocess-based Tesseract OCR. Pages are now OCR'd concurrently via `asyncio.gather`, controlled by the `OCR_CONCURRENCY` env var (defaults to `cpu_count`). Isolated OCR benchmark shows 2.17x speedup on a 10-page PDF.
+
 ## 0.22.1
 
 ### Fixes
