@@ -4,6 +4,9 @@
 
 ## 0.22.1
 
+### Enhancements
+- **Custom Markdown extensions for `partition_md` **: `partition_md` accepts an optional `extensions` argument (via kwargs). It defaults to `["tables"]` for backward compatibility and is passed to `markdown.markdown()`. Invalid values (not a list of strings) log a warning and fall back to the default. Use e.g. `extensions=["fenced_code"]` so lines starting with `#` inside fenced code blocks are not parsed as headings.
+
 ### Fixes
 - **Security update**: Bumped dependencies to address security vulnerabilities
 
