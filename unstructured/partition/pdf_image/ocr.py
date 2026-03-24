@@ -315,9 +315,7 @@ async def async_ocr_page(
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
-        empty_indices = [
-            i for i, text in enumerate(page_layout.elements_array.texts) if not text
-        ]
+        empty_indices = [i for i, text in enumerate(page_layout.elements_array.texts) if not text]
         if empty_indices:
             padding = env_config.IMAGE_CROP_PAD
             cropped_images = [
@@ -368,15 +366,13 @@ async def async_table_extraction(
     if tables.tables_agent is None:
         return
 
-    table_id = {
-        v: k for k, v in page_layout.elements_array.element_class_id_map.items()
-    }.get(ElementType.TABLE)
+    table_id = {v: k for k, v in page_layout.elements_array.element_class_id_map.items()}.get(
+        ElementType.TABLE
+    )
     if table_id is None:
         return
 
-    table_ele_indices = np.where(
-        page_layout.elements_array.element_class_ids == table_id
-    )[0]
+    table_ele_indices = np.where(page_layout.elements_array.element_class_ids == table_id)[0]
     table_elements = page_layout.elements_array.slice(table_ele_indices)
     padding = env_config.TABLE_IMAGE_CROP_PAD
 
@@ -399,9 +395,7 @@ async def async_table_extraction(
     )
 
     # Build tokens and run predict sequentially (CPU-bound model inference)
-    for i, (cropped_image, ocr_layout) in enumerate(
-        zip(cropped_images, all_ocr_layouts)
-    ):
+    for i, (cropped_image, ocr_layout) in enumerate(zip(cropped_images, all_ocr_layouts)):
         table_tokens = []
         for j, text in enumerate(ocr_layout.texts):
             table_tokens.append(
@@ -426,12 +420,9 @@ async def async_table_extraction(
 
         if env_config.EXTRACT_TABLE_AS_CELLS:
             simple_table_cells = [
-                SimpleTableCell.from_table_transformer_cell(cell).to_dict()
-                for cell in tatr_cells
+                SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
             ]
-            page_layout.elements_array.table_as_cells[table_ele_indices[i]] = (
-                simple_table_cells
-            )
+            page_layout.elements_array.table_as_cells[table_ele_indices[i]] = simple_table_cells
 
 
 @requires_dependencies("unstructured_inference")
@@ -531,9 +522,7 @@ def supplement_element_with_table_extraction(
     """
     from unstructured_inference.models.tables import cells_to_html
 
-    table_id = {v: k for k, v in elements.element_class_id_map.items()}.get(
-        ElementType.TABLE
-    )
+    table_id = {v: k for k, v in elements.element_class_id_map.items()}.get(ElementType.TABLE)
     if table_id is None:
         # no table found in this page
         return elements
@@ -564,8 +553,7 @@ def supplement_element_with_table_extraction(
 
         if env_config.EXTRACT_TABLE_AS_CELLS:
             simple_table_cells = [
-                SimpleTableCell.from_table_transformer_cell(cell).to_dict()
-                for cell in tatr_cells
+                SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
             ]
             elements.table_as_cells[table_ele_indices[i]] = simple_table_cells
 
@@ -623,9 +611,7 @@ def merge_out_layout_with_ocr_layout(
         # information)
         return out_layout
 
-    invalid_text_indices = [
-        i for i, text in enumerate(out_layout.texts) if not valid_text(text)
-    ]
+    invalid_text_indices = [i for i, text in enumerate(out_layout.texts) if not valid_text(text)]
     out_layout.texts = out_layout.texts.astype(object)
 
     for idx in invalid_text_indices:
@@ -655,11 +641,9 @@ def aggregate_ocr_text_by_block(
     extracted_texts = []
 
     for ocr_region in ocr_layout:
-        ocr_region_is_subregion_of_given_region = (
-            ocr_region.bbox.is_almost_subregion_of(
-                region.bbox,
-                subregion_threshold,
-            )
+        ocr_region_is_subregion_of_given_region = ocr_region.bbox.is_almost_subregion_of(
+            region.bbox,
+            subregion_threshold,
         )
         if ocr_region_is_subregion_of_given_region and ocr_region.text:
             extracted_texts.append(ocr_region.text)
