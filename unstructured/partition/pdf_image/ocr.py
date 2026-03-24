@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import io
 import os
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
@@ -154,22 +156,26 @@ def process_file_with_ocr(
         if is_image:
             with PILImage.open(filename) as images:
                 image_format = images.format
+                page_args = []
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
                     image.format = image_format
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    merged_page_layout = supplement_page_layout_with_ocr(
-                        page_layout=out_layout.pages[i],
-                        image=image,
-                        infer_table_structure=infer_table_structure,
-                        ocr_agent=ocr_agent,
-                        ocr_languages=ocr_languages,
-                        ocr_mode=ocr_mode,
-                        extracted_regions=extracted_regions,
-                        ocr_layout_dumper=ocr_layout_dumper,
-                        table_ocr_agent=table_ocr_agent,
+                    page_args.append(
+                        (
+                            out_layout.pages[i],
+                            image,
+                            extracted_layout[i] if i < len(extracted_layout) else None,
+                        )
                     )
-                    merged_page_layouts.append(merged_page_layout)
+                merged_page_layouts = _run_ocr_concurrent(
+                    page_args=page_args,
+                    infer_table_structure=infer_table_structure,
+                    ocr_agent=ocr_agent,
+                    ocr_languages=ocr_languages,
+                    ocr_mode=ocr_mode,
+                    ocr_layout_dumper=ocr_layout_dumper,
+                    table_ocr_agent=table_ocr_agent,
+                )
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -181,27 +187,224 @@ def process_file_with_ocr(
                     password=password,
                 )
                 image_paths = cast(List[str], _image_paths)
+                page_args = []
                 for i, image_path in enumerate(image_paths):
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    with PILImage.open(image_path) as image:
-                        merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout=out_layout.pages[i],
-                            image=image,
-                            infer_table_structure=infer_table_structure,
-                            ocr_agent=ocr_agent,
-                            ocr_languages=ocr_languages,
-                            ocr_mode=ocr_mode,
-                            extracted_regions=extracted_regions,
-                            ocr_layout_dumper=ocr_layout_dumper,
-                            table_ocr_agent=table_ocr_agent,
+                    image = PILImage.open(image_path)
+                    page_args.append(
+                        (
+                            out_layout.pages[i],
+                            image,
+                            extracted_layout[i] if i < len(extracted_layout) else None,
                         )
-                        merged_page_layouts.append(merged_page_layout)
+                    )
+                merged_page_layouts = _run_ocr_concurrent(
+                    page_args=page_args,
+                    infer_table_structure=infer_table_structure,
+                    ocr_agent=ocr_agent,
+                    ocr_languages=ocr_languages,
+                    ocr_mode=ocr_mode,
+                    ocr_layout_dumper=ocr_layout_dumper,
+                    table_ocr_agent=table_ocr_agent,
+                )
+                for _, image, _ in page_args:
+                    image.close()
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):
             raise e
         else:
             raise FileNotFoundError(f'File "{filename}" not found!') from e
+
+
+_OCR_CONCURRENCY = int(os.environ.get("OCR_CONCURRENCY", max(1, (os.cpu_count() or 2))))
+
+
+def _run_ocr_concurrent(
+    page_args: list[tuple],
+    infer_table_structure: bool,
+    ocr_agent: str,
+    ocr_languages: str,
+    ocr_mode: str,
+    ocr_layout_dumper: Optional[OCRLayoutDumper],
+    table_ocr_agent: str,
+) -> list:
+    """Run OCR on all pages concurrently using aiopytesseract.
+
+    Falls back to sequential processing if aiopytesseract is not available
+    or if the OCR agent is not tesseract.
+    """
+    use_async = ocr_agent == OCR_AGENT_TESSERACT and ocr_mode == OCRMode.FULL_PAGE.value
+
+    if not use_async:
+        # Fall back to sequential for non-tesseract agents or individual_blocks mode
+        return [
+            supplement_page_layout_with_ocr(
+                page_layout=page_layout,
+                image=image,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                extracted_regions=extracted_regions,
+                ocr_layout_dumper=ocr_layout_dumper,
+                table_ocr_agent=table_ocr_agent,
+            )
+            for page_layout, image, extracted_regions in page_args
+        ]
+
+    try:
+        import aiopytesseract  # noqa: F401
+    except ImportError:
+        # aiopytesseract not installed — fall back to sequential
+        return [
+            supplement_page_layout_with_ocr(
+                page_layout=page_layout,
+                image=image,
+                infer_table_structure=infer_table_structure,
+                ocr_agent=ocr_agent,
+                ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
+                extracted_regions=extracted_regions,
+                ocr_layout_dumper=ocr_layout_dumper,
+                table_ocr_agent=table_ocr_agent,
+            )
+            for page_layout, image, extracted_regions in page_args
+        ]
+
+    async def _gather_pages():
+        sem = asyncio.Semaphore(_OCR_CONCURRENCY)
+        tasks = [
+            _async_ocr_page(
+                sem=sem,
+                page_layout=page_layout,
+                image=image,
+                infer_table_structure=infer_table_structure,
+                ocr_languages=ocr_languages,
+                extracted_regions=extracted_regions,
+                ocr_layout_dumper=ocr_layout_dumper,
+                table_ocr_agent=table_ocr_agent,
+            )
+            for page_layout, image, extracted_regions in page_args
+        ]
+        return await asyncio.gather(*tasks)
+
+    return list(asyncio.run(_gather_pages()))
+
+
+async def _async_ocr_page(
+    sem: asyncio.Semaphore,
+    page_layout: "PageLayout",
+    image: PILImage.Image,
+    infer_table_structure: bool,
+    ocr_languages: str,
+    extracted_regions: Optional["TextRegions"],
+    ocr_layout_dumper: Optional[OCRLayoutDumper],
+    table_ocr_agent: str,
+) -> "PageLayout":
+    """OCR a single page using aiopytesseract, respecting the concurrency semaphore."""
+    from unstructured.partition.utils.ocr_models.tesseract_ocr import (
+        OCRAgentTesseract,
+        zoom_image,
+    )
+
+    agent = OCRAgentTesseract(language=ocr_languages)
+
+    async def _get_hocr(img: PILImage.Image) -> str:
+        """Convert PIL image to PNG bytes and run aiopytesseract."""
+        from aiopytesseract.base_command import execute
+        from aiopytesseract.file_format import FileFormat
+
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        png_bytes = buf.getvalue()
+        async with sem:
+            hocr_bytes: bytes = await execute(
+                png_bytes,
+                output_format=FileFormat.HOCR,
+                dpi=300,
+                lang=ocr_languages,
+                psm=3,
+                oem=3,
+                timeout=120.0,
+                config=[("hocr_char_boxes", "1")],
+            )
+        # Return as bytes — lxml.etree.fromstring needs bytes when
+        # the HOCR contains an XML encoding declaration
+        return hocr_bytes
+
+    # First pass: get initial OCR data
+    hocr = await _get_hocr(image)
+    ocr_df = agent.hocr_to_dataframe(
+        hocr,
+        env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
+    )
+    ocr_df = ocr_df.dropna()
+
+    # Check if zoom is needed (same logic as OCRAgentTesseract.get_layout_from_image)
+    from unstructured.partition.utils.constants import (
+        IMAGE_COLOR_DEPTH,
+        TESSERACT_MAX_SIZE,
+        TESSERACT_TEXT_HEIGHT,
+    )
+
+    zoom = 1
+    if len(ocr_df) > 0:
+        text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
+            env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
+        )
+        if (
+            text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
+            or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
+        ):
+            max_zoom = max(
+                0,
+                np.round(
+                    np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH),
+                    1,
+                ),
+            )
+            zoom = min(
+                np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
+                max_zoom,
+            )
+            zoomed = zoom_image(image, zoom)
+            hocr = await _get_hocr(zoomed)
+            ocr_df = agent.hocr_to_dataframe(
+                hocr,
+                env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
+            )
+            ocr_df = ocr_df.dropna()
+
+    ocr_layout = agent.parse_data(ocr_df, zoom=zoom)
+    if ocr_layout_dumper:
+        ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
+    page_layout.elements_array = merge_out_layout_with_ocr_layout(
+        out_layout=page_layout.elements_array,
+        ocr_layout=ocr_layout,
+    )
+
+    # Table extraction (sync — fast, no need to async)
+    if infer_table_structure:
+        language = ocr_languages
+        if table_ocr_agent == OCR_AGENT_PADDLE:
+            language = tesseract_to_paddle_language(ocr_languages)
+        _table_ocr_agent = OCRAgent.get_instance(
+            ocr_agent_module=table_ocr_agent,
+            language=language,
+        )
+        from unstructured_inference.models import tables
+
+        tables.load_agent()
+        if tables.tables_agent is not None:
+            page_layout.elements_array = supplement_element_with_table_extraction(
+                elements=page_layout.elements_array,
+                image=image,
+                tables_agent=tables.tables_agent,
+                ocr_agent=_table_ocr_agent,
+                extracted_regions=extracted_regions,
+            )
+
+    return page_layout
 
 
 @requires_dependencies("unstructured_inference")
