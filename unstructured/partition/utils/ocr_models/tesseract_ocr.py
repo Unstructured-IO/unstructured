@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import asyncio
+import io
 import os
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import cv2
 import numpy as np
@@ -90,6 +92,67 @@ class OCRAgentTesseract(OCRAgent):
         ocr_regions = self.parse_data(ocr_df, zoom=zoom)
 
         return ocr_regions
+
+    async def get_layout_from_image_async(
+        self,
+        image: PILImage.Image,
+        sem: Optional[asyncio.Semaphore] = None,
+    ) -> TextRegions:
+        """Async version of get_layout_from_image using aiopytesseract."""
+        from aiopytesseract.base_command import execute
+        from aiopytesseract.file_format import FileFormat
+
+        async def _get_hocr(img: PILImage.Image) -> bytes:
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            png_bytes = buf.getvalue()
+            coro = execute(
+                png_bytes,
+                output_format=FileFormat.HOCR,
+                dpi=300,
+                lang=self.language,
+                psm=3,
+                oem=3,
+                timeout=120.0,
+                config=[("hocr_char_boxes", "1")],
+            )
+            if sem is not None:
+                async with sem:
+                    return await coro
+            return await coro
+
+        trace_logger.detail("Processing entire page OCR with tesseract (async)...")
+        zoom = 1
+        hocr = await _get_hocr(image)
+        ocr_df = self.hocr_to_dataframe(hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD)
+        ocr_df = ocr_df.dropna()
+
+        if len(ocr_df) > 0:
+            text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
+                env_config.TESSERACT_TEXT_HEIGHT_QUANTILE
+            )
+            if (
+                text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
+                or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
+            ):
+                max_zoom = max(
+                    0,
+                    np.round(
+                        np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH),
+                        1,
+                    ),
+                )
+                zoom = min(
+                    np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
+                    max_zoom,
+                )
+                hocr = await _get_hocr(zoom_image(image, zoom))
+                ocr_df = self.hocr_to_dataframe(
+                    hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD
+                )
+                ocr_df = ocr_df.dropna()
+
+        return self.parse_data(ocr_df, zoom=zoom)
 
     def image_to_data_with_character_confidence_filter(
         self,
