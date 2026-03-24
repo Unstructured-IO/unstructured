@@ -227,22 +227,11 @@ def run_ocr_concurrent(
     ocr_layout_dumper: Optional[OCRLayoutDumper],
     table_ocr_agent: str,
 ) -> list:
-    """Run OCR on all pages, concurrently when possible.
+    """Run OCR on all pages concurrently using aiopytesseract for tesseract.
 
-    Uses async aiopytesseract for tesseract full-page OCR.
-    Falls back to sequential processing for other agents or modes.
+    Falls back to sequential processing for non-tesseract agents.
     """
-    use_async = ocr_agent == OCR_AGENT_TESSERACT
-
-    if use_async:
-        try:
-            import aiopytesseract  # noqa: F401
-
-            use_async = True
-        except ImportError:
-            use_async = False
-
-    if not use_async:
+    if ocr_agent != OCR_AGENT_TESSERACT:
         return [
             supplement_page_layout_with_ocr(
                 page_layout=page_layout,

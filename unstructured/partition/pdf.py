@@ -1100,16 +1100,7 @@ def _partition_pdf_or_image_with_ocr(
         ):
             pages.append((page_number, image))
 
-    # Try async path for tesseract
-    use_async = isinstance(ocr_agent, OCRAgentTesseract)
-    if use_async:
-        try:
-            import aiopytesseract  # noqa: F401
-        except ImportError:
-            use_async = False
-
-    if use_async and len(pages) > 0:
-        assert isinstance(ocr_agent, OCRAgentTesseract)
+    if isinstance(ocr_agent, OCRAgentTesseract) and len(pages) > 0:
 
         async def gather_pages():
             sem = asyncio.Semaphore(OCR_CONCURRENCY)
