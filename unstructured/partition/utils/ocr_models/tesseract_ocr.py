@@ -63,7 +63,7 @@ class OCRAgentTesseract(OCRAgent):
         coro = execute(
             png_bytes,
             output_format=FileFormat.TXT,
-            dpi=300,
+            dpi=70,
             lang=self.language,
             psm=3,
             oem=3,
@@ -126,7 +126,7 @@ class OCRAgentTesseract(OCRAgent):
             coro = execute(
                 png_bytes,
                 output_format=FileFormat.HOCR,
-                dpi=300,
+                dpi=70,
                 lang=self.language,
                 psm=3,
                 oem=3,

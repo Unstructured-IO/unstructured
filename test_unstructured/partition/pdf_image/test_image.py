@@ -518,16 +518,19 @@ def test_partition_image_uses_hi_res_model_name():
 
 
 @pytest.mark.parametrize(
-    "ocr_mode",
-    ["entire_page", "individual_blocks"],
+    ("ocr_mode", "idx_title_element"),
+    [
+        ("entire_page", 2),
+        ("individual_blocks", 1),
+    ],
 )
-def test_partition_image_hi_res_ocr_mode(ocr_mode):
+def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element):
     filename = example_doc_path("img/layout-parser-paper-fast.jpg")
     elements = image.partition_image(
         filename=filename, ocr_mode=ocr_mode, strategy=PartitionStrategy.HI_RES
     )
-    # Verify a Title element exists in the first few elements (exact index varies by OCR mode)
-    assert any(el.category == ElementType.TITLE for el in elements[:5])
+    # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
+    assert elements[idx_title_element].category == ElementType.TITLE
 
 
 def test_partition_image_hi_res_invalid_ocr_mode():
