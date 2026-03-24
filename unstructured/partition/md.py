@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import IO, Any, Optional
 
+import logging
 import markdown
 import requests
 
@@ -77,7 +78,15 @@ def partition_md(
 
         text = response.text
 
-    html = markdown.markdown(text, extensions=["tables", "fenced_code"])
+    # -- allow caller to override markdown extensions; default is tables-only for backwards compat --
+    extensions = kwargs.pop("extensions", ["tables"])
+    if not (isinstance(extensions, list) and all(isinstance(ext, str) for ext in extensions)):
+        logging.warning(
+            "Ignoring invalid 'extensions' argument (expected list of strings): %r", extensions
+        )
+        extensions = ["tables"]
+
+    html = markdown.markdown(text, extensions=extensions)
 
     html_kwargs: dict[str, Any] = {
         "text": html,

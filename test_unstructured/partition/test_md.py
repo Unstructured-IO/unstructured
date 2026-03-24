@@ -309,7 +309,7 @@ def test_partition_md_non_xml_processing_instruction():
 
 def test_partition_fenced_code():
     filename = example_doc_path("codeblock.md")
-    elements = partition_md(filename=filename)
+    elements = partition_md(filename=filename, extensions=["tables", "fenced_code"])
 
     # Should have 5 elements: 2 titles and 3 code blocks
     assert len(elements) == 5
@@ -341,3 +341,38 @@ def test_partition_fenced_code():
     assert elements[3].text == expected_xml
 
     assert elements[4].text == expected_xml
+
+
+def test_partition_md_custom_extensions_parameter():
+    """User can override markdown extensions via `extensions` kwarg."""
+    text = """```bash
+# create the container
+docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
+```"""
+
+    # By default (tables-only), markdown will treat the heading as a Title element.
+    elements_default = partition_md(text=text)
+    assert any(isinstance(el, Title) for el in elements_default)
+
+    # With fenced_code enabled, the whole block should be a single NarrativeText element.
+    elements_fenced = partition_md(text=text, extensions=["fenced_code"])
+    assert len(elements_fenced) == 1
+    assert elements_fenced[0].category == ElementType.NARRATIVE_TEXT
+    assert (
+        elements_fenced[0].text
+        == "# create the container\n"
+        "docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest"
+    )
+
+
+def test_partition_md_invalid_extensions_logs_and_falls_back(mocker: MockFixture):
+    """Invalid `extensions` value is ignored with a warning and defaults to ['tables']."""
+    text = "# Heading"
+    logger = mocker.patch("unstructured.partition.md.logging.warning")
+
+    elements = partition_md(text=text, extensions="not-a-list")  # type: ignore[arg-type]
+
+    # Still parses something
+    assert len(elements) > 0
+    # Warning was logged
+    logger.assert_called_once()
