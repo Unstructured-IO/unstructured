@@ -62,6 +62,7 @@ epub = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 image = [
+    "aiopytesseract>=1.1.0",
     "google-cloud-vision>=3.12.1, <4.0.0",
     "pdf2image>=1.17.0, <2.0.0",
     "pdfminer.six>=20251230, <20270000",
@@ -70,7 +71,6 @@ image = [
     "pypdf>=6.6.2, <7.0.0",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system != 'Windows'",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
-    "aiopytesseract>=1.1.0",
 ]
 md = [
     "markdown>=3.10.1, <4.0.0",
