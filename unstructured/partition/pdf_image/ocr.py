@@ -232,7 +232,7 @@ def run_ocr_concurrent(
     Uses async aiopytesseract for tesseract full-page OCR.
     Falls back to sequential processing for other agents or modes.
     """
-    use_async = ocr_agent == OCR_AGENT_TESSERACT and ocr_mode == OCRMode.FULL_PAGE.value
+    use_async = ocr_agent == OCR_AGENT_TESSERACT
 
     if use_async:
         try:
@@ -267,6 +267,7 @@ def run_ocr_concurrent(
                 image=image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
+                ocr_mode=ocr_mode,
                 extracted_regions=extracted_regions,
                 ocr_layout_dumper=ocr_layout_dumper,
                 table_ocr_agent=table_ocr_agent,
@@ -284,6 +285,7 @@ async def async_ocr_page(
     image: PILImage.Image,
     infer_table_structure: bool,
     ocr_languages: str,
+    ocr_mode: str,
     extracted_regions: Optional["TextRegions"],
     ocr_layout_dumper: Optional[OCRLayoutDumper],
     table_ocr_agent: str,
@@ -292,36 +294,124 @@ async def async_ocr_page(
     from unstructured.partition.utils.ocr_models.tesseract_ocr import OCRAgentTesseract
 
     agent = OCRAgentTesseract(language=ocr_languages)
-    ocr_layout = await agent.get_layout_from_image_async(image, sem)
 
-    if ocr_layout_dumper:
-        ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
-    page_layout.elements_array = merge_out_layout_with_ocr_layout(
-        out_layout=page_layout.elements_array,
-        ocr_layout=ocr_layout,
-    )
+    if ocr_mode == OCRMode.FULL_PAGE.value:
+        ocr_layout = await agent.get_layout_from_image_async(image, sem)
+        if ocr_layout_dumper:
+            ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
+        page_layout.elements_array = merge_out_layout_with_ocr_layout(
+            out_layout=page_layout.elements_array,
+            ocr_layout=ocr_layout,
+        )
+    elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
+        empty_indices = [i for i, text in enumerate(page_layout.elements_array.texts) if not text]
+        if empty_indices:
+            padding = env_config.IMAGE_CROP_PAD
+            cropped_images = [
+                image.crop(
+                    (
+                        page_layout.elements_array.x1[i] - padding,
+                        page_layout.elements_array.y1[i] - padding,
+                        page_layout.elements_array.x2[i] + padding,
+                        page_layout.elements_array.y2[i] + padding,
+                    ),
+                )
+                for i in empty_indices
+            ]
+            texts = await asyncio.gather(
+                *[agent.get_text_from_image_async(img, sem) for img in cropped_images]
+            )
+            for i, text_from_ocr in zip(empty_indices, texts):
+                page_layout.elements_array.texts[i] = text_from_ocr
 
     if infer_table_structure:
-        language = ocr_languages
-        if table_ocr_agent == OCR_AGENT_PADDLE:
-            language = tesseract_to_paddle_language(ocr_languages)
-        table_agent = OCRAgent.get_instance(
-            ocr_agent_module=table_ocr_agent,
-            language=language,
+        await async_table_extraction(
+            page_layout=page_layout,
+            image=image,
+            ocr_languages=ocr_languages,
+            table_ocr_agent=table_ocr_agent,
+            extracted_regions=extracted_regions,
+            sem=sem,
         )
-        from unstructured_inference.models import tables
-
-        tables.load_agent()
-        if tables.tables_agent is not None:
-            page_layout.elements_array = supplement_element_with_table_extraction(
-                elements=page_layout.elements_array,
-                image=image,
-                tables_agent=tables.tables_agent,
-                ocr_agent=table_agent,
-                extracted_regions=extracted_regions,
-            )
 
     return page_layout
+
+
+async def async_table_extraction(
+    page_layout: "PageLayout",
+    image: PILImage.Image,
+    ocr_languages: str,
+    table_ocr_agent: str,
+    extracted_regions: Optional["TextRegions"],
+    sem: asyncio.Semaphore,
+) -> None:
+    """Async table extraction: pre-fetch all table OCR concurrently, then predict."""
+    from unstructured_inference.models import tables
+    from unstructured_inference.models.tables import cells_to_html
+
+    from unstructured.partition.utils.ocr_models.tesseract_ocr import OCRAgentTesseract
+
+    tables.load_agent()
+    if tables.tables_agent is None:
+        return
+
+    table_id = {v: k for k, v in page_layout.elements_array.element_class_id_map.items()}.get(
+        ElementType.TABLE
+    )
+    if table_id is None:
+        return
+
+    table_ele_indices = np.where(page_layout.elements_array.element_class_ids == table_id)[0]
+    table_elements = page_layout.elements_array.slice(table_ele_indices)
+    padding = env_config.TABLE_IMAGE_CROP_PAD
+
+    cropped_images = [
+        image.crop(
+            (
+                coords[0] - padding,
+                coords[1] - padding,
+                coords[2] + padding,
+                coords[3] + padding,
+            ),
+        )
+        for coords in table_elements.element_coords
+    ]
+
+    # Pre-fetch all table OCR tokens concurrently
+    agent = OCRAgentTesseract(language=ocr_languages)
+    all_ocr_layouts = await asyncio.gather(
+        *[agent.get_layout_from_image_async(img, sem) for img in cropped_images]
+    )
+
+    # Build tokens and run predict sequentially (CPU-bound model inference)
+    for i, (cropped_image, ocr_layout) in enumerate(zip(cropped_images, all_ocr_layouts)):
+        table_tokens = []
+        for j, text in enumerate(ocr_layout.texts):
+            table_tokens.append(
+                {
+                    "bbox": [
+                        ocr_layout.x1[j],
+                        ocr_layout.y1[j],
+                        ocr_layout.x2[j],
+                        ocr_layout.y2[j],
+                    ],
+                    "text": text,
+                    "span_num": j,
+                    "line_num": 0,
+                    "block_num": 0,
+                }
+            )
+        tatr_cells = tables.tables_agent.predict(
+            cropped_image, ocr_tokens=table_tokens, result_format="cells"
+        )
+        text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
+        page_layout.elements_array.text_as_html[table_ele_indices[i]] = text_as_html
+
+        if env_config.EXTRACT_TABLE_AS_CELLS:
+            simple_table_cells = [
+                SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
+            ]
+            page_layout.elements_array.table_as_cells[table_ele_indices[i]] = simple_table_cells
 
 
 @requires_dependencies("unstructured_inference")
