@@ -937,6 +937,8 @@ class _TableChunker:
             metadata = self._metadata
             if html is not None:
                 metadata.text_as_html = html
+            else:
+                metadata.text_as_html = None
             # -- second and later chunks get `.metadata.is_continuation = True` --
             metadata.is_continuation = is_continuation or None
             is_continuation = True
