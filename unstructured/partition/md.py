@@ -78,7 +78,7 @@ def partition_md(
 
         text = response.text
 
-    # -- allow caller to override markdown extensions; default is tables-only for backwards compat --
+    # -- caller may override markdown extensions; default is tables-only (backwards compat) --
     extensions = kwargs.pop("extensions", ["tables"])
     if not (isinstance(extensions, list) and all(isinstance(ext, str) for ext in extensions)):
         logging.warning(
