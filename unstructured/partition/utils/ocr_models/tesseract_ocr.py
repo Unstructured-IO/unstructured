@@ -49,6 +49,34 @@ class OCRAgentTesseract(OCRAgent):
     def get_text_from_image(self, image: PILImage.Image) -> str:
         return pytesseract.image_to_string(np.array(image), lang=self.language)
 
+    async def get_text_from_image_async(
+        self,
+        image: PILImage.Image,
+        sem: Optional[asyncio.Semaphore] = None,
+    ) -> str:
+        """Async version of get_text_from_image using aiopytesseract."""
+        from aiopytesseract.base_command import execute
+        from aiopytesseract.file_format import FileFormat
+
+        buf = io.BytesIO()
+        image.save(buf, format="PNG")
+        png_bytes = buf.getvalue()
+        coro = execute(
+            png_bytes,
+            output_format=FileFormat.TXT,
+            dpi=300,
+            lang=self.language,
+            psm=3,
+            oem=3,
+            timeout=120.0,
+        )
+        if sem is not None:
+            async with sem:
+                result = await coro
+        else:
+            result = await coro
+        return result.decode("utf-8") if isinstance(result, bytes) else result
+
     def compute_zoom(self, ocr_df: pd.DataFrame, image_size: tuple) -> float:
         """Compute optimal zoom factor based on text height distribution.
 
@@ -237,6 +265,31 @@ class OCRAgentTesseract(OCRAgent):
         # the text regions in each group to create a list of layout elements.
 
         ocr_text = self.get_text_from_image(image)
+
+        return build_layout_elements_from_ocr_regions(
+            ocr_regions=ocr_regions,
+            ocr_text=ocr_text,
+            group_by_ocr_text=True,
+        )
+
+    @requires_dependencies("unstructured_inference")
+    async def get_layout_elements_from_image_async(
+        self,
+        image: PILImage.Image,
+        sem: Optional[asyncio.Semaphore] = None,
+    ) -> LayoutElements:
+        """Async version of get_layout_elements_from_image.
+
+        Runs layout detection (hocr) and text extraction in parallel per page.
+        """
+        from unstructured.partition.pdf_image.inference_utils import (
+            build_layout_elements_from_ocr_regions,
+        )
+
+        ocr_regions, ocr_text = await asyncio.gather(
+            self.get_layout_from_image_async(image, sem),
+            self.get_text_from_image_async(image, sem),
+        )
 
         return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,

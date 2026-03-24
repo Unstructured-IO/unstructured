@@ -1079,88 +1079,72 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    import asyncio
+
+    from unstructured.partition.pdf_image.ocr import OCR_CONCURRENCY
     from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_images
-
-    elements = []
-    if is_image:
-        images = []
-        image = PILImage.open(file) if file is not None else PILImage.open(filename)
-        images.append(image)
-
-        for page_number, image in enumerate(images, start=starting_page_number):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
-            elements.extend(page_elements)
-    else:
-        for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file, password=password), start=starting_page_number
-        ):
-            page_elements = _partition_pdf_or_image_with_ocr_from_image(
-                image=image,
-                languages=languages,
-                ocr_languages=ocr_languages,
-                page_number=page_number,
-                include_page_breaks=include_page_breaks,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
-            elements.extend(page_elements)
-
-    return elements
-
-
-def _partition_pdf_or_image_with_ocr_from_image(
-    image: PILImage.Image,
-    languages: Optional[list[str]] = None,
-    ocr_languages: Optional[str] = None,
-    page_number: int = 1,
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    sort_mode: str = SORT_MODE_XY_CUT,
-    **kwargs: Any,
-) -> list[Element]:
-    """Extract `unstructured` elements from an image using OCR and perform partitioning."""
-
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+    from unstructured.partition.utils.ocr_models.tesseract_ocr import OCRAgentTesseract
 
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
-    # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
+    # Collect all (page_number, image) pairs
+    pages: list[tuple[int, PILImage.Image]] = []
+    if is_image:
+        image = PILImage.open(file) if file is not None else PILImage.open(filename)
+        pages.append((starting_page_number, image))
+    else:
+        for page_number, image in enumerate(
+            convert_pdf_to_images(filename, file, password=password),
+            start=starting_page_number,
+        ):
+            pages.append((page_number, image))
+
+    # Try async path for tesseract
+    use_async = isinstance(ocr_agent, OCRAgentTesseract)
+    if use_async:
+        try:
+            import aiopytesseract  # noqa: F401
+        except ImportError:
+            use_async = False
+
+    if use_async and len(pages) > 0:
+        assert isinstance(ocr_agent, OCRAgentTesseract)
+
+        async def gather_pages():
+            sem = asyncio.Semaphore(OCR_CONCURRENCY)
+            return await asyncio.gather(
+                *[ocr_agent.get_layout_elements_from_image_async(img, sem) for _, img in pages]
+            )
+
+        all_ocr_data = list(asyncio.run(gather_pages()))
+    else:
+        all_ocr_data = [ocr_agent.get_layout_elements_from_image(image=img) for _, img in pages]
+
+    sort_mode = kwargs.pop("sort_mode", SORT_MODE_XY_CUT)
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
-    ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
+    elements: list[Element] = []
+    for (page_number, image), ocr_data in zip(pages, all_ocr_data):
+        metadata = ElementMetadata(
+            last_modified=metadata_last_modified,
+            filetype=image.format,
+            page_number=page_number,
+            languages=languages,
+        )
+        page_elements = ocr_data_to_elements(
+            ocr_data.as_list(),
+            image_size=image.size,
+            common_metadata=metadata,
+        )
+        if sort_mode != SORT_MODE_DONT:
+            page_elements = sort_page_elements(page_elements, sort_mode)
+        if include_page_breaks:
+            page_elements.append(PageBreak(text=""))
+        elements.extend(page_elements)
 
-    metadata = ElementMetadata(
-        last_modified=metadata_last_modified,
-        filetype=image.format,
-        page_number=page_number,
-        languages=languages,
-    )
-
-    # NOTE (yao): elements for a document is still stored as a list therefore at this step we have
-    # to convert the vector data structured ocr_data into a list
-    page_elements = ocr_data_to_elements(
-        ocr_data.as_list(),
-        image_size=image.size,
-        common_metadata=metadata,
-    )
-
-    sorted_page_elements = page_elements
-    if sort_mode != SORT_MODE_DONT:
-        sorted_page_elements = sort_page_elements(page_elements, sort_mode)
-
-    if include_page_breaks:
-        sorted_page_elements.append(PageBreak(text=""))
-
-    return page_elements
+    return elements
 
 
 def _process_uncategorized_text_elements(elements: list[Element]):
