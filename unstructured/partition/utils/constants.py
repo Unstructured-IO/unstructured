@@ -52,7 +52,7 @@ STT_AGENT_MODULES_WHITELIST = os.getenv(
 
 UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
 
-# this field is defined by unstructured_pytesseract
+# this field is defined by pytesseract
 TESSERACT_TEXT_HEIGHT = "height"
 
 TESSERACT_LANGUAGES_SPLITTER = "+"

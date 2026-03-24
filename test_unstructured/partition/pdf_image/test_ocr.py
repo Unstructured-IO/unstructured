@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-import unstructured_pytesseract
+import pytesseract
 from lxml import etree
 from PIL import Image, UnidentifiedImageError
 from pypdfium2 import PdfiumError
@@ -167,7 +167,7 @@ def test_get_ocr_layout_from_image_paddle(monkeypatch):
 
 def test_get_ocr_text_from_image_tesseract(monkeypatch):
     monkeypatch.setattr(
-        unstructured_pytesseract,
+        pytesseract,
         "image_to_string",
         lambda *args, **kwargs: "Hello World",
     )

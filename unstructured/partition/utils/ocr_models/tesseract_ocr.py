@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import cv2
 import numpy as np
 import pandas as pd
-import unstructured_pytesseract
+import pytesseract
 from lxml import etree
 from PIL import Image as PILImage
 
@@ -45,7 +45,7 @@ class OCRAgentTesseract(OCRAgent):
         return True
 
     def get_text_from_image(self, image: PILImage.Image) -> str:
-        return unstructured_pytesseract.image_to_string(np.array(image), lang=self.language)
+        return pytesseract.image_to_string(np.array(image), lang=self.language)
 
     def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
         """Get the OCR regions from image as a list of text regions with tesseract."""
@@ -98,7 +98,7 @@ class OCRAgentTesseract(OCRAgent):
         config: str = "",
         character_confidence_threshold: float = 0.0,
     ) -> pd.DataFrame:
-        hocr: str = unstructured_pytesseract.image_to_pdf_or_hocr(
+        hocr: str = pytesseract.image_to_pdf_or_hocr(
             image,
             lang=lang,
             config="-c hocr_char_boxes=1 " + config,
@@ -180,9 +180,9 @@ class OCRAgentTesseract(OCRAgent):
         ocr_regions = self.get_layout_from_image(image)
 
         # NOTE(christine): For tesseract, the ocr_text returned by
-        # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
+        # `pytesseract.image_to_string()` doesn't contain bounding box data but is
         # well grouped. Conversely, the ocr_layout returned by parsing
-        # `unstructured_pytesseract.image_to_data()` contains bounding box data but is not well
+        # `pytesseract.image_to_data()` contains bounding box data but is not well
         # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
         # the text regions in each group to create a list of layout elements.
 
