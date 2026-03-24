@@ -49,23 +49,14 @@ class OCRAgentTesseract(OCRAgent):
     def get_text_from_image(self, image: PILImage.Image) -> str:
         return pytesseract.image_to_string(np.array(image), lang=self.language)
 
-    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
-        """Get the OCR regions from image as a list of text regions with tesseract."""
+    def compute_zoom(self, ocr_df: pd.DataFrame, image_size: tuple) -> float:
+        """Compute optimal zoom factor based on text height distribution.
 
-        trace_logger.detail("Processing entire page OCR with tesseract...")
-        zoom = 1
-        ocr_df: pd.DataFrame = self.image_to_data_with_character_confidence_filter(
-            np.array(image),
-            lang=self.language,
-            character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
-        )
-        ocr_df = ocr_df.dropna()
-
-        # tesseract performance degrades when the text height is out of the preferred zone so we
-        # zoom the image (in or out depending on estimated text height) for optimum OCR results
-        # but this needs to be evaluated based on actual use case as the optimum scaling also
-        # depend on type of characters (font, language, etc); be careful about this
-        # functionality
+        Tesseract performance degrades when text height is outside the preferred zone,
+        so we zoom the image for better OCR results.
+        """
+        if len(ocr_df) == 0:
+            return 1.0
         text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
             env_config.TESSERACT_TEXT_HEIGHT_QUANTILE
         )
@@ -75,23 +66,37 @@ class OCRAgentTesseract(OCRAgent):
         ):
             max_zoom = max(
                 0,
-                np.round(np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH), 1),
+                np.round(
+                    np.sqrt(TESSERACT_MAX_SIZE / np.prod(image_size) / IMAGE_COLOR_DEPTH),
+                    1,
+                ),
             )
-            # rounding avoids unnecessary precision and potential numerical issues associated
-            # with numbers very close to 1 inside cv2 image processing
-            zoom = min(
-                np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
-                max_zoom,
+            return float(
+                min(
+                    np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
+                    max_zoom,
+                )
             )
+        return 1.0
+
+    def get_layout_from_image(self, image: PILImage.Image) -> TextRegions:
+        """Get the OCR regions from image as a list of text regions with tesseract."""
+        trace_logger.detail("Processing entire page OCR with tesseract...")
+        ocr_df = self.image_to_data_with_character_confidence_filter(
+            np.array(image),
+            lang=self.language,
+            character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
+        ).dropna()
+
+        zoom = self.compute_zoom(ocr_df, image.size)
+        if zoom != 1.0:
             ocr_df = self.image_to_data_with_character_confidence_filter(
                 np.array(zoom_image(image, zoom)),
                 lang=self.language,
                 character_confidence_threshold=env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD,
-            )
-            ocr_df = ocr_df.dropna()
-        ocr_regions = self.parse_data(ocr_df, zoom=zoom)
+            ).dropna()
 
-        return ocr_regions
+        return self.parse_data(ocr_df, zoom=zoom)
 
     async def get_layout_from_image_async(
         self,
@@ -102,7 +107,7 @@ class OCRAgentTesseract(OCRAgent):
         from aiopytesseract.base_command import execute
         from aiopytesseract.file_format import FileFormat
 
-        async def _get_hocr(img: PILImage.Image) -> bytes:
+        async def get_hocr(img: PILImage.Image) -> bytes:
             buf = io.BytesIO()
             img.save(buf, format="PNG")
             png_bytes = buf.getvalue()
@@ -122,35 +127,17 @@ class OCRAgentTesseract(OCRAgent):
             return await coro
 
         trace_logger.detail("Processing entire page OCR with tesseract (async)...")
-        zoom = 1
-        hocr = await _get_hocr(image)
-        ocr_df = self.hocr_to_dataframe(hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD)
-        ocr_df = ocr_df.dropna()
+        hocr = await get_hocr(image)
+        ocr_df = self.hocr_to_dataframe(
+            hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD
+        ).dropna()
 
-        if len(ocr_df) > 0:
-            text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
-                env_config.TESSERACT_TEXT_HEIGHT_QUANTILE
-            )
-            if (
-                text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
-                or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
-            ):
-                max_zoom = max(
-                    0,
-                    np.round(
-                        np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH),
-                        1,
-                    ),
-                )
-                zoom = min(
-                    np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
-                    max_zoom,
-                )
-                hocr = await _get_hocr(zoom_image(image, zoom))
-                ocr_df = self.hocr_to_dataframe(
-                    hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD
-                )
-                ocr_df = ocr_df.dropna()
+        zoom = self.compute_zoom(ocr_df, image.size)
+        if zoom != 1.0:
+            hocr = await get_hocr(zoom_image(image, zoom))
+            ocr_df = self.hocr_to_dataframe(
+                hocr, env_config.TESSERACT_CHARACTER_CONFIDENCE_THRESHOLD
+            ).dropna()
 
         return self.parse_data(ocr_df, zoom=zoom)
 
