@@ -50,6 +50,11 @@ def partition_md(
     languages
         The languages present in the document. Use ``["auto"]`` to detect (default when None).
         Use ``[""]`` to disable language detection.
+
+    Other keyword arguments are forwarded to ``partition_html``. In addition, ``extensions`` may be
+    passed to select Python-Markdown extensions. The default is ``["tables", "fenced_code"]``.
+    Pass e.g. ``extensions=["tables"]`` if you need the legacy behavior where ``#`` inside unfenced
+    content is parsed as a heading (see #4006).
     """
     if text is None:
         text = ""
@@ -78,13 +83,14 @@ def partition_md(
 
         text = response.text
 
-    # -- caller may override markdown extensions; default is tables-only (backwards compat) --
-    extensions = kwargs.pop("extensions", ["tables"])
+    # -- optional markdown extensions; default matches historical partition_md behavior --
+    _default_extensions = ["tables", "fenced_code"]
+    extensions = kwargs.pop("extensions", _default_extensions)
     if not (isinstance(extensions, list) and all(isinstance(ext, str) for ext in extensions)):
         logging.warning(
             "Ignoring invalid 'extensions' argument (expected list of strings): %r", extensions
         )
-        extensions = ["tables"]
+        extensions = _default_extensions
 
     html = markdown.markdown(text, extensions=extensions)
 

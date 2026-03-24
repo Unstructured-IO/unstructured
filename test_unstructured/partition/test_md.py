@@ -309,7 +309,7 @@ def test_partition_md_non_xml_processing_instruction():
 
 def test_partition_fenced_code():
     filename = example_doc_path("codeblock.md")
-    elements = partition_md(filename=filename, extensions=["tables", "fenced_code"])
+    elements = partition_md(filename=filename)
 
     # Should have 5 elements: 2 titles and 3 code blocks
     assert len(elements) == 5
@@ -344,29 +344,32 @@ def test_partition_fenced_code():
 
 
 def test_partition_md_custom_extensions_parameter():
-    """User can override markdown extensions via `extensions` kwarg."""
+    """User can override markdown extensions via `extensions` kwarg (fixes #4006)."""
     text = """```bash
 # create the container
 docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/unstructured:latest
 ```"""
 
-    # By default (tables-only), markdown will treat the heading as a Title element.
-    elements_default = partition_md(text=text)
-    assert any(isinstance(el, Title) for el in elements_default)
-
-    # With fenced_code enabled, the whole block should be a single NarrativeText element.
-    elements_fenced = partition_md(text=text, extensions=["fenced_code"])
-    assert len(elements_fenced) == 1
-    assert elements_fenced[0].category == ElementType.NARRATIVE_TEXT
-    assert elements_fenced[0].text == (
+    expected_body = (
         "# create the container\n"
         "docker run -dt --name unstructured "
         "downloads.unstructured.io/unstructured-io/unstructured:latest"
     )
 
+    # Without fenced_code, ``#`` inside the fence is parsed as a heading (undesired).
+    elements_tables_only = partition_md(text=text, extensions=["tables"])
+    assert any(isinstance(el, Title) for el in elements_tables_only)
+
+    # Default and explicit fenced_code keep the block as one element (CodeSnippet from HTML).
+    assert len(partition_md(text=text)) == 1
+    elements_fenced = partition_md(text=text, extensions=["fenced_code"])
+    assert len(elements_fenced) == 1
+    assert elements_fenced[0].category == ElementType.CODE_SNIPPET
+    assert elements_fenced[0].text == expected_body
+
 
 def test_partition_md_invalid_extensions_logs_and_falls_back(mocker: MockFixture):
-    """Invalid `extensions` value is ignored with a warning and defaults to ['tables']."""
+    """Invalid `extensions` value is ignored with a warning and falls back to the default list."""
     text = "# Heading"
     logger = mocker.patch("unstructured.partition.md.logging.warning")
 

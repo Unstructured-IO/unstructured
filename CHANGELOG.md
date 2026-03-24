@@ -1,7 +1,7 @@
 ## 0.22.3
 
 ### Enhancements
-- **`partition_md` Markdown `extensions` (fixes #4006)**: Optional kwarg passed to `markdown.markdown()`; defaults to `["tables"]`.
+- **`partition_md` Markdown `extensions` (fixes #4006)**: Optional kwarg passed to `markdown.markdown()`; defaults to `["tables", "fenced_code"]`. Override with e.g. `extensions=["tables"]` when needed.
 
 ## 0.22.2
 
