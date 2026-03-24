@@ -1734,6 +1734,17 @@ def test_partition_pdf_with_password(file_mode, strategy):
 
 
 def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
+    # Mock direct OCRAgentTesseract used in the async OCR path
+    mock_tesseract_cls = mocker.patch(
+        "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract",
+    )
+    mock_agent = mock_tesseract_cls.return_value
+    mock_layout = mocker.MagicMock()
+    mock_layout.texts = []
+    mock_layout.as_list.return_value = []
+    mock_agent.get_layout_from_image_async = mocker.AsyncMock(return_value=mock_layout)
+    mock_agent.get_text_from_image_async = mocker.AsyncMock(return_value="")
+
     pdf.partition_pdf(
         filename=example_doc_path("pdf/layout-parser-paper-with-table.pdf"),
         strategy=PartitionStrategy.HI_RES,
@@ -1742,12 +1753,11 @@ def test_partition_pdf_with_specified_ocr_agents(mock_ocr_get_instance, mocker):
         table_ocr_agent=OCR_AGENT_PADDLE,
     )
 
-    # Verify get_instance was called with correct parameters
+    # Verify OCRAgentTesseract was directly instantiated for main OCR (async path)
+    mock_tesseract_cls.assert_called_with(language="eng")
+
+    # Verify get_instance was called for paddle table OCR (sync fallback)
     assert mock_ocr_get_instance.call_args_list[0][1] == {
-        "language": "eng",
-        "ocr_agent_module": OCR_AGENT_TESSERACT,
-    }
-    assert mock_ocr_get_instance.call_args_list[1][1] == {
         "language": "en",
         "ocr_agent_module": OCR_AGENT_PADDLE,
     }

@@ -334,6 +334,11 @@ async def async_ocr_page(
             )
             for i, text_from_ocr in zip(empty_indices, texts):
                 page_layout.elements_array.texts[i] = text_from_ocr
+    else:
+        raise ValueError(
+            "Invalid OCR mode. Parameter `ocr_mode` "
+            "must be set to `entire_page` or `individual_blocks`.",
+        )
 
     if infer_table_structure:
         await async_table_extraction(
@@ -364,6 +369,23 @@ async def async_table_extraction(
 
     tables.load_agent()
     if tables.tables_agent is None:
+        return
+
+    # Fall back to sync path for non-tesseract table OCR agents (e.g. PaddleOCR)
+    if table_ocr_agent != OCR_AGENT_TESSERACT:
+        language = ocr_languages
+        if table_ocr_agent == OCR_AGENT_PADDLE:
+            language = tesseract_to_paddle_language(ocr_languages)
+        _table_ocr_agent = OCRAgent.get_instance(
+            ocr_agent_module=table_ocr_agent, language=language
+        )
+        page_layout.elements_array = supplement_element_with_table_extraction(
+            elements=page_layout.elements_array,
+            image=image,
+            tables_agent=tables.tables_agent,
+            ocr_agent=_table_ocr_agent,
+            extracted_regions=extracted_regions,
+        )
         return
 
     table_id = {v: k for k, v in page_layout.elements_array.element_class_id_map.items()}.get(
