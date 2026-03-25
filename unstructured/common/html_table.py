@@ -107,10 +107,18 @@ class HtmlTable:
 
     @lazyproperty
     def text(self) -> str:
-        """The clean, concatenated, text for this table."""
-        table_text = " ".join(self._table.itertext())
-        # -- blank cells will introduce extra whitespace, so normalize after accumulating --
-        return " ".join(table_text.split())
+        """The text for this table with rows separated by double newlines.
+
+        Each row's cell texts are joined with a single space. Rows are separated by double
+        newlines so callers can reconstruct row boundaries with ``str(table).split("\\n\\n")``.
+        Empty rows (all cells blank) are suppressed.
+        """
+        row_strings = []
+        for row in self.iter_rows():
+            cell_texts = [t for t in row.iter_cell_texts() if t.strip()]
+            if cell_texts:
+                row_strings.append(" ".join(cell_texts))
+        return "\n\n".join(row_strings)
 
 
 class HtmlRow:
