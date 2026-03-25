@@ -1,7 +1,9 @@
-## 0.22.1
+## 0.22.2-dev0
 
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
+
+## 0.22.1
 
 ### Fixes
 - **Security update**: Bumped dependencies to address security vulnerabilities
