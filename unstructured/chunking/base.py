@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
+import uuid
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
@@ -927,26 +928,27 @@ class _TableChunker:
     ) -> Iterator[TableChunk]:
         """Form `TableChunk` objects from (text, html) pairs.
 
-        Handles `is_continuation` and `parent_id` linking so each chunk points to the previous
-        one, allowing reconstruction of the original table.
+        Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`,
+        `total_chunks`) so the original table can be reconstructed from its chunks.
         """
-        is_continuation = False
-        prev_id = None
+        # -- collect all pairs first so we know total_chunks --
+        pairs = list(text_html_pairs)
+        table_id = str(uuid.uuid4())
+        total_chunks = len(pairs)
 
-        for text, html in text_html_pairs:
+        for chunk_index, (text, html) in enumerate(pairs):
             metadata = self._metadata
             if html is not None:
                 metadata.text_as_html = html
             else:
                 metadata.text_as_html = None
             # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
+            metadata.is_continuation = (chunk_index > 0) or None
 
             chunk = TableChunk(text=text, metadata=metadata)
-            if prev_id is not None:
-                chunk.metadata.parent_id = prev_id
-            prev_id = chunk.id
+            chunk.metadata.table_id = table_id
+            chunk.metadata.chunk_index = chunk_index
+            chunk.metadata.total_chunks = total_chunks
             yield chunk
 
     @property

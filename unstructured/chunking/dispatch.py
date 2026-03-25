@@ -135,39 +135,30 @@ _chunker_registry: dict[str, _ChunkerSpec] = {
 def reconstruct_table_from_chunks(elements: Iterable[Element]) -> list[Table]:
     """Reconstruct original tables from a mixed list of chunked elements.
 
-    Filters `TableChunk` elements, groups them by their `parent_id` linked lists, and merges
-    each group into a single `Table` with combined text and HTML. Non-`TableChunk` elements
-    are ignored. Returns reconstructed tables in reading order (order of first chunk appearance).
+    Filters `TableChunk` elements, groups them by `table_id`, orders by `chunk_index`, and
+    merges each group into a single `Table` with combined text and HTML. Non-`TableChunk`
+    elements are ignored. Returns reconstructed tables in reading order (order of first chunk
+    appearance).
     """
     # -- filter to only TableChunk instances, preserving input order --
     table_chunks = [e for e in elements if isinstance(e, TableChunk)]
     if not table_chunks:
         return []
 
-    # -- index chunks by id so we can follow parent_id links --
-    chunk_by_id: dict[str, TableChunk] = {c.id: c for c in table_chunks}
+    # -- group by table_id, preserving first-seen order --
+    groups: dict[str, list[TableChunk]] = {}
+    for chunk in table_chunks:
+        tid = chunk.metadata.table_id
+        if tid is None:
+            continue
+        if tid not in groups:
+            groups[tid] = []
+        groups[tid].append(chunk)
 
-    # -- identify head chunks: parent_id is None or points outside this set --
-    heads = [
-        c
-        for c in table_chunks
-        if c.metadata.parent_id is None or c.metadata.parent_id not in chunk_by_id
-    ]
-
-    # -- build a child lookup: parent_id -> chunk --
-    child_of: dict[str, TableChunk] = {
-        c.metadata.parent_id: c for c in table_chunks if c.metadata.parent_id is not None
-    }
-
-    # -- for each head, walk the chain and merge into a Table --
+    # -- sort each group by chunk_index and merge --
     tables: list[Table] = []
-    for head in heads:
-        group = [head]
-        current = head
-        while current.id in child_of:
-            current = child_of[current.id]
-            group.append(current)
-
+    for group in groups.values():
+        group.sort(key=lambda c: c.metadata.chunk_index or 0)
         tables.append(_merge_table_chunks(group))
 
     return tables
@@ -181,7 +172,9 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     # -- build metadata from first chunk --
     metadata = copy.deepcopy(chunks[0].metadata)
     metadata.is_continuation = None
-    metadata.parent_id = None
+    metadata.table_id = None
+    metadata.chunk_index = None
+    metadata.total_chunks = None
 
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
