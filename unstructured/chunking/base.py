@@ -120,6 +120,9 @@ class ChunkingOptions:
         Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
         elements and not subject to text-splitting. Use this with caution as it entails a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
+    repeat_table_headers
+        Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
+        continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -183,6 +186,15 @@ class ChunkingOptions:
         Default value is `True`.
         """
         arg_value = self._kwargs.get("include_orig_elements")
+        return True if arg_value is None else bool(arg_value)
+
+    @lazyproperty
+    def repeat_table_headers(self) -> bool:
+        """When True, repeat detected table headers in continuation table chunks.
+
+        Default value is `True`.
+        """
+        arg_value = self._kwargs.get("repeat_table_headers")
         return True if arg_value is None else bool(arg_value)
 
     @lazyproperty

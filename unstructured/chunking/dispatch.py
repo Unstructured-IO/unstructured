@@ -64,6 +64,9 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\tmax_characters"
             + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
             + "\n\t\t\tof length n characters, a hard max."
+            + "\n\t\trepeat_table_headers"
+            + "\n\t\t\tDefault: True. Repeat detected table headers on continuation"
+            + "\n\t\t\ttable chunks. Set to False to opt out."
         )
 
     @functools.wraps(func)

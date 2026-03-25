@@ -161,6 +161,25 @@ class Describe_chunk_elements:
         _, opts = _chunk_elements_.call_args.args
         assert opts.include_orig_elements is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"repeat_table_headers": True}, True),
+            ({"repeat_table_headers": False}, False),
+            ({"repeat_table_headers": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_repeat_table_headers_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+    ):
+        # -- this line would raise if "repeat_table_headers" was not an available parameter on
+        # -- `chunk_elements()`.
+        chunk_elements([], **kwargs)
+
+        _, opts = _chunk_elements_.call_args.args
+        assert opts.repeat_table_headers is expected_value
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()

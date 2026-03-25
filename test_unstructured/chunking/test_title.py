@@ -291,6 +291,20 @@ def test_add_chunking_strategy_respects_max_characters():
     assert chunk_elements == chunks
 
 
+def test_add_chunking_strategy_forwards_repeat_table_headers():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        repeat_table_headers=False,
+    )
+    elements = partition_html(filename)
+    chunks = chunk_by_title(elements, repeat_table_headers=False)
+
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
 def test_chunk_by_title_drops_detection_class_prob():
     elements: list[Element] = [
         Title(
@@ -464,6 +478,25 @@ class Describe_chunk_by_title:
 
         _, opts = _chunk_by_title_.call_args.args
         assert opts.include_orig_elements is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"repeat_table_headers": True}, True),
+            ({"repeat_table_headers": False}, False),
+            ({"repeat_table_headers": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_repeat_table_headers_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+    ):
+        # -- this line would raise if "repeat_table_headers" was not an available parameter on
+        # -- `chunk_by_title()`.
+        chunk_by_title([], **kwargs)
+
+        _, opts = _chunk_by_title_.call_args.args
+        assert opts.repeat_table_headers is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 

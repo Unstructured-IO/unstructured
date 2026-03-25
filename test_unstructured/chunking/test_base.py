@@ -100,6 +100,20 @@ class DescribeChunkingOptions:
     ):
         assert ChunkingOptions(**kwargs).include_orig_elements is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"repeat_table_headers": True}, True),
+            ({"repeat_table_headers": False}, False),
+            ({"repeat_table_headers": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_knows_whether_to_repeat_table_headers_by_default(
+        self, kwargs: dict[str, Any], expected_value: bool
+    ):
+        assert ChunkingOptions(**kwargs).repeat_table_headers is expected_value
+
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
         with pytest.raises(
