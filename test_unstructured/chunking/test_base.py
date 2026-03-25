@@ -1133,6 +1133,11 @@ class Describe_TableChunker:
         table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
         return list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
 
+    @staticmethod
+    def _row_texts(table_html: str) -> list[str]:
+        html_table = HtmlTable.from_html_text(table_html)
+        return [" ".join(row.iter_cell_texts()) for row in html_table.iter_rows()]
+
     @pytest.mark.parametrize(
         ("table_html", "expected_header_row_count"),
         [
@@ -1335,6 +1340,99 @@ class Describe_TableChunker:
 
         assert len(chunks) == 4
         assert continuation_body_texts == ["Body 2 Bravo", "Body 3 Charlie", "Body 4 Delta"]
+
+    def and_it_preserves_body_rows_without_drop_duplication_or_reordering(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        expected_header_rows = ["Header A Header B", "Subhead A Subhead B"]
+        expected_body_rows = ["Body 1 Alpha", "Body 2 Bravo", "Body 3 Charlie", "Body 4 Delta"]
+        observed_body_rows: list[str] = []
+
+        assert len(chunks) == 4
+        for chunk in chunks:
+            row_texts = self._row_texts(chunk.metadata.text_as_html or "")
+            assert row_texts[:2] == expected_header_rows
+            observed_body_rows.extend(row_texts[2:])
+
+        assert observed_body_rows == expected_body_rows
+
+    def and_it_matches_legacy_non_repeating_behavior_when_header_repetition_is_opted_out(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=False,
+        )
+
+        assert [(chunk.text, chunk.metadata.text_as_html) for chunk in chunks] == [
+            (
+                "Header A Header B Subhead A Subhead B Body 1 Alpha",
+                "<table>"
+                "<tr><td>Header A</td><td>Header B</td></tr>"
+                "<tr><td>Subhead A</td><td>Subhead B</td></tr>"
+                "<tr><td>Body 1</td><td>Alpha</td></tr>"
+                "</table>",
+            ),
+            (
+                "Body 2 Bravo Body 3 Charlie Body 4 Delta",
+                "<table>"
+                "<tr><td>Body 2</td><td>Bravo</td></tr>"
+                "<tr><td>Body 3</td><td>Charlie</td></tr>"
+                "<tr><td>Body 4</td><td>Delta</td></tr>"
+                "</table>",
+            ),
+        ]
 
     def and_it_handles_exact_fit_and_near_boundary_continuation_windows(self):
         header_text = "H" * 30

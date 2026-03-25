@@ -63,6 +63,55 @@ def test_it_splits_oversized_table():
     assert all(isinstance(chunk, TableChunk) for chunk in chunks)
 
 
+def test_it_repeats_table_headers_by_default_but_can_opt_out():
+    table_html = (
+        "<table>"
+        "<thead>"
+        "<tr><th>Header A</th><th>Header B</th></tr>"
+        "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+        "</thead>"
+        "<tbody>"
+        "<tr><td>Body 1</td><td>Alpha</td></tr>"
+        "<tr><td>Body 2</td><td>Bravo</td></tr>"
+        "<tr><td>Body 3</td><td>Charlie</td></tr>"
+        "<tr><td>Body 4</td><td>Delta</td></tr>"
+        "</tbody>"
+        "</table>"
+    )
+    table_text = (
+        "Header A Header B\n"
+        "Subhead A Subhead B\n"
+        "Body 1 Alpha\n"
+        "Body 2 Bravo\n"
+        "Body 3 Charlie\n"
+        "Body 4 Delta"
+    )
+    table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+
+    repeated_header_chunks = chunk_by_title(
+        [table], combine_text_under_n_chars=0, max_characters=55
+    )
+    opt_out_chunks = chunk_by_title(
+        [table],
+        combine_text_under_n_chars=0,
+        max_characters=55,
+        repeat_table_headers=False,
+    )
+
+    assert len(repeated_header_chunks) == 4
+    assert all(isinstance(chunk, TableChunk) for chunk in repeated_header_chunks)
+    assert [chunk.text for chunk in repeated_header_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Header A Header B Subhead A Subhead B Body 2 Bravo",
+        "Header A Header B Subhead A Subhead B Body 3 Charlie",
+        "Header A Header B Subhead A Subhead B Body 4 Delta",
+    ]
+    assert [chunk.text for chunk in opt_out_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Body 2 Bravo Body 3 Charlie Body 4 Delta",
+    ]
+
+
 def test_it_starts_new_chunk_for_table_after_full_text_chunk():
     elements = elements_from_json(input_path("chunking/long_text_table_200.json"))
 
