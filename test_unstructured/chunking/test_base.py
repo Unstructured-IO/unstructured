@@ -1501,7 +1501,11 @@ class Describe_TableChunker:
         chunk_iter = _TableChunker.iter_chunks(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="",
-            opts=ChunkingOptions(max_characters=100, text_splitting_separators=("\n", " ")),
+            opts=ChunkingOptions(
+                max_characters=100,
+                text_splitting_separators=("\n", " "),
+                repeat_table_headers=False,
+            ),
         )
 
         chunk = next(chunk_iter)

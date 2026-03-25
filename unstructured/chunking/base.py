@@ -928,8 +928,13 @@ class _TableChunker:
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
         is_continuation = False
+        header_row_count = self._leading_header_row_count if self._opts.repeat_table_headers else 0
 
-        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
+        for text, html in _HtmlTableSplitter.iter_subtables(
+            html_table,
+            self._opts,
+            header_row_count=header_row_count,
+        ):
             metadata = self._metadata
             metadata.text_as_html = html
             # -- second and later chunks get `.metadata.is_continuation = True` --
@@ -1032,20 +1037,21 @@ class _HtmlTableSplitter:
     The returned `html` value is always a parseable HTML `<table>` subtree.
     """
 
-    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):
+    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions, header_row_count: int = 0):
         self._table_element = table_element
         self._opts = opts
+        self._header_row_count = max(0, header_row_count)
 
     @classmethod
     def iter_subtables(
-        cls, table_element: HtmlTable, opts: ChunkingOptions
+        cls, table_element: HtmlTable, opts: ChunkingOptions, header_row_count: int = 0
     ) -> Iterator[TextAndHtml]:
         """Generate (text, html) pair for each split of this table pre-chunk.
 
         Each split is on an even row boundary whenever possible, falling back to even cell and even
         word boundaries when a row or cell is by itself oversized, respectively.
         """
-        return cls(table_element, opts)._iter_subtables()
+        return cls(table_element, opts, header_row_count=header_row_count)._iter_subtables()
 
     def _iter_subtables(self) -> Iterator[TextAndHtml]:
         """Generate (text, html) pairs containing as many whole rows as will fit in window.
@@ -1053,23 +1059,32 @@ class _HtmlTableSplitter:
         Falls back to splitting rows into whole cells when a single row is by itself too big to
         fit in the chunking window.
         """
-        accum = _RowAccumulator(maxlen=self._opts.hard_max)
+        is_first_chunk = True
+        accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
 
         for row in self._table_element.iter_rows():
             # -- if row won't fit, any WIP chunk is done, send it on its way --
             if not accum.will_fit(row):
-                yield from accum.flush()
+                for text, html in accum.flush():
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
             # -- if row fits, add it to accumulator --
             if accum.will_fit(row):
                 accum.add_row(row)
             else:  # -- otherwise, single row is bigger than chunking window --
-                yield from self._iter_row_splits(row)
+                for text, html in self._iter_row_splits(row, maxlen=self._maxlen(is_first_chunk)):
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
 
-        yield from accum.flush()
+        for text, html in accum.flush():
+            yield self._prepend_repeated_headers(text, html, is_first_chunk)
+            is_first_chunk = False
 
-    def _iter_row_splits(self, row: HtmlRow) -> Iterator[TextAndHtml]:
+    def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
-        accum = _CellAccumulator(maxlen=self._opts.hard_max)
+        accum = _CellAccumulator(maxlen=maxlen)
 
         for cell in row.iter_cells():
             # -- if cell won't fit, flush and check again --
@@ -1079,11 +1094,11 @@ class _HtmlTableSplitter:
             if accum.will_fit(cell):
                 accum.add_cell(cell)
             else:  # -- otherwise, single cell is bigger than chunking window --
-                yield from self._iter_cell_splits(cell)
+                yield from self._iter_cell_splits(cell, maxlen=maxlen)
 
         yield from accum.flush()
 
-    def _iter_cell_splits(self, cell: HtmlCell) -> Iterator[TextAndHtml]:
+    def _iter_cell_splits(self, cell: HtmlCell, maxlen: int) -> Iterator[TextAndHtml]:
         """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
         # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
         # -- For token-based chunking, we subtract 33 chars worth of overhead but still use tokens
@@ -1092,11 +1107,11 @@ class _HtmlTableSplitter:
             # -- In token mode, keep token limit but account for HTML overhead in char terms --
             # -- The HTML tags themselves are usually ~10-15 tokens, so we reduce by a small amount
             opts = ChunkingOptions(
-                max_tokens=max(1, self._opts.hard_max - 10),
+                max_tokens=max(1, maxlen - 10),
                 tokenizer=self._opts._kwargs.get("tokenizer"),
             )
         else:
-            opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
+            opts = ChunkingOptions(max_characters=max(1, maxlen - 33))
         split = _TextSplitter(opts)
 
         text, remainder = split(cell.text)
@@ -1106,6 +1121,71 @@ class _HtmlTableSplitter:
         while remainder:
             text, remainder = split(remainder)
             yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+    @lazyproperty
+    def _header_text(self) -> str:
+        """Concatenated text for leading header rows identified by caller."""
+        return " ".join(text for row in self._header_rows for text in row.iter_cell_texts())
+
+    @lazyproperty
+    def _header_rows(self) -> tuple[HtmlRow, ...]:
+        """Leading rows that should be repeated on continuation chunks, if any."""
+        if self._header_row_count <= 0:
+            return ()
+
+        rows: list[HtmlRow] = []
+        for idx, row in enumerate(self._table_element.iter_rows()):
+            if idx >= self._header_row_count:
+                break
+            rows.append(row)
+        return tuple(rows)
+
+    @lazyproperty
+    def _header_rows_html(self) -> str:
+        """HTML for repeated header rows."""
+        return "".join(row.html for row in self._header_rows)
+
+    @lazyproperty
+    def _should_repeat_headers(self) -> bool:
+        """True when header repetition is enabled and not pathologically expensive."""
+        if not self._header_rows:
+            return False
+
+        # -- guard against pathological headers where a single repeated header row would consume
+        # -- more than half the chunking window.
+        return self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+
+    @lazyproperty
+    def _max_header_row_len(self) -> int:
+        """Largest leading-header row text length."""
+        if not self._header_rows:
+            return 0
+        return max(row.text_len for row in self._header_rows)
+
+    @lazyproperty
+    def _header_text_len(self) -> int:
+        """Size of repeated header text in chunking units."""
+        return self._opts.measure(self._header_text)
+
+    def _maxlen(self, is_first_chunk: bool) -> int:
+        """Available size for non-header row content of the next chunk."""
+        if is_first_chunk or not self._should_repeat_headers:
+            return self._opts.hard_max
+
+        # -- reserve one separator between repeated header text and chunk body text --
+        return max(1, self._opts.hard_max - self._header_text_len - 1)
+
+    def _prepend_repeated_headers(self, text: str, html: str, is_first_chunk: bool) -> TextAndHtml:
+        """Prepend repeated header rows to continuation chunk when enabled."""
+        if is_first_chunk or not self._should_repeat_headers:
+            return text, html
+
+        header_text = self._header_text
+        chunk_text = f"{header_text} {text}" if header_text and text else (header_text or text)
+
+        html_inner = html.removeprefix("<table>").removesuffix("</table>")
+        chunk_html = f"<table>{self._header_rows_html}{html_inner}</table>"
+        return chunk_text, chunk_html
 
 
 class _TextSplitter:
