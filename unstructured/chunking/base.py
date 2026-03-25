@@ -905,6 +905,20 @@ class _TableChunker:
             )
             return None
 
+    @lazyproperty
+    def _leading_header_row_count(self) -> int:
+        """Number of contiguous leading rows that should be treated as table headers."""
+        html_table = self._html_table
+        if html_table is None:
+            return 0
+
+        count = 0
+        for row in html_table.iter_rows():
+            if not row.is_header:
+                break
+            count += 1
+        return count
+
     def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
         """Split table into chunks where HTML corresponds exactly to text.
 

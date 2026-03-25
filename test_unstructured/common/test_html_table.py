@@ -136,6 +136,19 @@ class DescribeHtmlTable:
         with pytest.raises(StopIteration):
             next(row_iter)
 
+    def it_preserves_row_header_semantics_when_iterating_rows(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <thead><tr><td>head-from-thead</td></tr></thead>"
+            "  <tbody>"
+            "    <tr><th>head-from-th</th></tr>"
+            "    <tr><td>body</td></tr>"
+            "  </tbody>"
+            "</table>"
+        )
+
+        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
+
     def it_provides_access_to_the_clear_concatenated_text_of_the_table(self):
         html_table = HtmlTable.from_html_text(
             "<table>"
@@ -184,6 +197,10 @@ class DescribeHtmlRow:
         assert next(text_iter) == "b"
         with pytest.raises(StopIteration):
             next(text_iter)
+
+    def it_knows_when_it_represents_a_header_row(self):
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>")).is_header is False
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>"), is_header=True).is_header is True
 
 
 class DescribeHtmlCell:
