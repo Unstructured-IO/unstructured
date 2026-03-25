@@ -1118,6 +1118,79 @@ class Describe_Chunker:
 class Describe_TableChunker:
     """Unit-test suite for `unstructured.chunking.base._TableChunker` objects."""
 
+    @pytest.mark.parametrize(
+        ("table_html", "expected_header_row_count"),
+        [
+            pytest.param(
+                (
+                    "<table>"
+                    "<tr><td>Body A</td><td>Body B</td></tr>"
+                    "<tr><td>Body C</td><td>Body D</td></tr>"
+                    "</table>"
+                ),
+                0,
+                id="no-headers",
+            ),
+            pytest.param(
+                (
+                    "<table>"
+                    "<tr><th>Header A</th><th>Header B</th></tr>"
+                    "<tr><td>Body A</td><td>Body B</td></tr>"
+                    "</table>"
+                ),
+                1,
+                id="single-leading-header-row",
+            ),
+            pytest.param(
+                (
+                    "<table>"
+                    "<tr><th>Header A</th><th>Header B</th></tr>"
+                    "<tr><th>Subheader A</th><th>Subheader B</th></tr>"
+                    "<tr><td>Body A</td><td>Body B</td></tr>"
+                    "</table>"
+                ),
+                2,
+                id="multiple-leading-header-rows",
+            ),
+            pytest.param(
+                (
+                    "<table>"
+                    "<thead>"
+                    "<tr><td>Header A</td><td>Header B</td></tr>"
+                    "<tr><td>Header C</td><td>Header D</td></tr>"
+                    "</thead>"
+                    "<tbody>"
+                    "<tr><td>Body A</td><td>Body B</td></tr>"
+                    "</tbody>"
+                    "</table>"
+                ),
+                2,
+                id="thead-rows-are-headers",
+            ),
+            pytest.param(
+                (
+                    "<table>"
+                    "<tr><th>Header A</th><th>Header B</th></tr>"
+                    "<tr><td>Body A</td><td>Body B</td></tr>"
+                    "<tr><th>Later Th A</th><th>Later Th B</th></tr>"
+                    "</table>"
+                ),
+                1,
+                id="later-th-row-is-not-promoted",
+            ),
+        ],
+    )
+    def it_detects_contiguous_leading_header_rows(
+        self, table_html: str, expected_header_row_count: int
+    ):
+        table_chunker = _TableChunker(
+            Table("header detection fixture", metadata=ElementMetadata(text_as_html=table_html)),
+            overlap_prefix="",
+            opts=ChunkingOptions(max_characters=500),
+        )
+
+        assert table_chunker._leading_header_row_count == expected_header_row_count
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"
