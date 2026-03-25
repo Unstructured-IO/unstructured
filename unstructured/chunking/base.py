@@ -928,15 +928,12 @@ class _TableChunker:
     ) -> Iterator[TableChunk]:
         """Form `TableChunk` objects from (text, html) pairs.
 
-        Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`,
-        `total_chunks`) so the original table can be reconstructed from its chunks.
+        Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`)
+        so the original table can be reconstructed from its chunks.
         """
-        # -- collect all pairs first so we know total_chunks --
-        pairs = list(text_html_pairs)
         table_id = str(uuid.uuid4())
-        total_chunks = len(pairs)
 
-        for chunk_index, (text, html) in enumerate(pairs):
+        for chunk_index, (text, html) in enumerate(text_html_pairs):
             metadata = self._metadata
             if html is not None:
                 metadata.text_as_html = html
@@ -948,7 +945,6 @@ class _TableChunker:
             chunk = TableChunk(text=text, metadata=metadata)
             chunk.metadata.table_id = table_id
             chunk.metadata.chunk_index = chunk_index
-            chunk.metadata.total_chunks = total_chunks
             yield chunk
 
     @property

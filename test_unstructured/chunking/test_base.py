@@ -1484,6 +1484,44 @@ class Describe_TableChunker:
         assert tables[1].metadata.filename == "doc1.pdf"
         assert tables[1].metadata.page_number == 3
 
+    def it_sets_chunk_sequencing_metadata_on_table_chunks(self):
+        """Split table chunks carry table_id and chunk_index for reconstruction."""
+        opts = ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " "))
+
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_1,
+                    metadata=ElementMetadata(text_as_html=self.HTML_TABLE_1),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+
+        assert len(chunks) >= 2
+        # -- all chunks share the same table_id --
+        table_ids = {c.metadata.table_id for c in chunks}
+        assert len(table_ids) == 1
+        assert None not in table_ids
+        # -- chunk_index is sequential starting from 0 --
+        assert [c.metadata.chunk_index for c in chunks] == list(range(len(chunks)))
+
+    def it_does_not_set_chunk_sequencing_metadata_on_unsplit_table(self):
+        """A table that fits in one chunk has no table_id or chunk_index."""
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table("short", metadata=ElementMetadata(text_as_html="<table>short</table>")),
+                overlap_prefix="",
+                opts=ChunkingOptions(max_characters=500),
+            )
+        )
+
+        assert len(chunks) == 1
+        assert isinstance(chunks[0], Table)
+        assert chunks[0].metadata.table_id is None
+        assert chunks[0].metadata.chunk_index is None
+
 
 # ================================================================================================
 # HTML SPLITTERS

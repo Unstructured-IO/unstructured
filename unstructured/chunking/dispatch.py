@@ -174,7 +174,6 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     metadata.is_continuation = None
     metadata.table_id = None
     metadata.chunk_index = None
-    metadata.total_chunks = None
 
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
