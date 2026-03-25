@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
@@ -367,15 +368,27 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
     assert elements_fenced[0].category == ElementType.CODE_SNIPPET
     assert elements_fenced[0].text == expected_body
 
+    # Extension instances (normal Python-Markdown API) match string extension names.
+    elements_instance = partition_md(text=text, extensions=[FencedCodeExtension()])
+    assert elements_instance == elements_fenced
 
-def test_partition_md_invalid_extensions_logs_and_falls_back(mocker: MockFixture):
-    """Invalid `extensions` value is ignored with a warning and falls back to the default list."""
-    text = "# Heading"
-    logger = mocker.patch("unstructured.partition.md.logging.warning")
 
-    elements = partition_md(text=text, extensions="not-a-list")  # type: ignore[arg-type]
+def test_partition_md_extensions_not_list_raises():
+    with pytest.raises(ValueError, match="'extensions' must be a list"):
+        partition_md(text="# Hi", extensions=("tables",))  # type: ignore[arg-type]
 
-    # Still parses something
-    assert len(elements) > 0
-    # Warning was logged
-    logger.assert_called_once()
+
+def test_partition_md_extensions_invalid_item_raises():
+    with pytest.raises(ValueError, match="Each entry in 'extensions'"):
+        partition_md(text="# Hi", extensions=[42])  # type: ignore[list-item]
+
+
+def test_partition_md_tables_only_differs_from_default_for_code_fence():
+    """Without ``fenced_code``, ``#`` inside a fence can become a Title (see #4006)."""
+    text = """```bash
+# line
+```"""
+    default_el = partition_md(text=text)[0]
+    tables_only_els = partition_md(text=text, extensions=["tables"])
+    assert default_el.category == ElementType.CODE_SNIPPET
+    assert any(e.category == ElementType.TITLE for e in tables_only_els)
