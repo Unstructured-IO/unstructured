@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import tempfile
+import time
 import warnings
 from importlib import import_module
 from typing import Iterator
@@ -1337,11 +1338,31 @@ def test_auto_partition_passes_user_provided_languages_arg_to_PDF():
 )
 def test_auto_partition_detects_pdf_language_per_element(strategy):
     filename = example_doc_path("language-docs/fr_olap.pdf")
-    elements = partition(
-        filename=filename,
-        strategy=strategy,
-        detect_language_per_element=True,
-    )
+
+    def _partition() -> list[Element]:
+        return partition(
+            filename=filename,
+            strategy=strategy,
+            detect_language_per_element=True,
+        )
+
+    # OCR_ONLY shells out to Tesseract with a temp PNG; under CI load the file can disappear
+    # before Tesseract reads it ("cannot read input file"). Retry a few times on that flake.
+    if strategy == PartitionStrategy.OCR_ONLY:
+        from unstructured_pytesseract import TesseractError
+
+        elements: list[Element] | None = None
+        for attempt in range(3):
+            try:
+                elements = _partition()
+                break
+            except TesseractError as e:
+                if attempt == 2 or "cannot read input file" not in str(e).lower():
+                    raise
+                time.sleep(0.25 * (attempt + 1))
+        assert elements is not None
+    else:
+        elements = _partition()
 
     assert len(elements) > 0
     assert elements[0].metadata.languages == ["fra"]
