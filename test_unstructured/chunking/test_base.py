@@ -1118,6 +1118,21 @@ class Describe_Chunker:
 class Describe_TableChunker:
     """Unit-test suite for `unstructured.chunking.base._TableChunker` objects."""
 
+    @staticmethod
+    def _table_chunks(
+        table_text: str,
+        table_html: str,
+        max_characters: int,
+        *,
+        repeat_table_headers: bool | None = None,
+    ) -> list[Table | TableChunk]:
+        kwargs: dict[str, Any] = {"max_characters": max_characters}
+        if repeat_table_headers is not None:
+            kwargs["repeat_table_headers"] = repeat_table_headers
+        opts = ChunkingOptions(**kwargs)
+        table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+        return list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
+
     @pytest.mark.parametrize(
         ("table_html", "expected_header_row_count"),
         [
@@ -1190,6 +1205,208 @@ class Describe_TableChunker:
         )
 
         assert table_chunker._leading_header_row_count == expected_header_row_count
+
+    def and_it_keeps_the_first_chunk_unchanged_when_header_repetition_is_enabled(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=False,
+        )
+
+        assert len(repeated_header_chunks) >= 2
+        assert len(baseline_chunks) >= 2
+        assert repeated_header_chunks[0].text == baseline_chunks[0].text
+        assert (
+            repeated_header_chunks[0].metadata.text_as_html
+            == baseline_chunks[0].metadata.text_as_html
+        )
+        # -- second and later chunks should differ because only continuation chunks get repeated
+        # -- headers.
+        assert repeated_header_chunks[1].text != baseline_chunks[1].text
+        assert (
+            repeated_header_chunks[1].metadata.text_as_html
+            != baseline_chunks[1].metadata.text_as_html
+        )
+
+    def and_it_prepends_detected_header_rows_to_each_non_initial_chunk(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        header_text_prefix = "Header A Header B Subhead A Subhead B "
+        header_html_prefix = (
+            "<table>"
+            "<tr><td>Header A</td><td>Header B</td></tr>"
+            "<tr><td>Subhead A</td><td>Subhead B</td></tr>"
+        )
+        assert len(chunks) >= 2
+        for chunk in chunks[1:]:
+            assert chunk.text.startswith(header_text_prefix)
+            assert chunk.metadata.text_as_html.startswith(header_html_prefix)
+
+    def and_it_cascades_header_carry_forward_across_three_or_more_continuation_chunks(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        header_text_prefix = "Header A Header B Subhead A Subhead B "
+        continuation_body_texts = [
+            chunk.text.removeprefix(header_text_prefix) for chunk in chunks[1:]
+        ]
+
+        assert len(chunks) == 4
+        assert continuation_body_texts == ["Body 2 Bravo", "Body 3 Charlie", "Body 4 Delta"]
+
+    def and_it_handles_exact_fit_and_near_boundary_continuation_windows(self):
+        header_text = "H" * 30
+        row_1 = "A" * 29
+        row_2 = "B" * 29
+        row_3 = "C" * 29
+        table_html = (
+            "<table>"
+            f"<tr><th>{header_text}</th></tr>"
+            f"<tr><td>{row_1}</td></tr>"
+            f"<tr><td>{row_2}</td></tr>"
+            f"<tr><td>{row_3}</td></tr>"
+            "</table>"
+        )
+        table_text = "\n".join((header_text, row_1, row_2, row_3))
+
+        exact_fit_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=60,
+            repeat_table_headers=True,
+        )
+        near_boundary_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=59,
+            repeat_table_headers=True,
+        )
+
+        header_text_prefix = f"{header_text} "
+        assert len(exact_fit_chunks) == 3
+        assert exact_fit_chunks[1].text == f"{header_text_prefix}{row_2}"
+        assert exact_fit_chunks[2].text == f"{header_text_prefix}{row_3}"
+        assert len(near_boundary_chunks) > len(exact_fit_chunks)
+        assert all(len(chunk.text) <= 59 for chunk in near_boundary_chunks)
+        for chunk in near_boundary_chunks[1:]:
+            assert chunk.text.startswith(header_text_prefix)
+
+    def but_it_falls_back_to_non_repeating_behavior_when_header_rows_are_pathologically_large(self):
+        pathological_header = "H" * 31
+        table_html = (
+            "<table>"
+            f"<tr><th>{pathological_header}</th></tr>"
+            "<tr><td>Body chunk one text</td></tr>"
+            "<tr><td>Body chunk two text</td></tr>"
+            "<tr><td>Body chunk three text</td></tr>"
+            "</table>"
+        )
+        table_text = (
+            f"{pathological_header}\n"
+            "Body chunk one text\n"
+            "Body chunk two text\n"
+            "Body chunk three text"
+        )
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=60,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=60,
+            repeat_table_headers=False,
+        )
+
+        assert len(repeated_header_chunks) >= 2
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
