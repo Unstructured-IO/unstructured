@@ -195,6 +195,10 @@ class ElementMetadata:
     page_number: Optional[int]
     parent_id: Optional[str]
 
+    # -- routing decision (page-level) --
+    routing: Optional[str]
+    routing_score: Optional[float]
+
     # -- e-mail specific metadata fields --
     bcc_recipient: Optional[list[str]]
     cc_recipient: Optional[list[str]]
@@ -250,6 +254,8 @@ class ElementMetadata:
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
         parent_id: Optional[str] = None,
+        routing: Optional[str] = None,
+        routing_score: Optional[float] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
@@ -297,6 +303,8 @@ class ElementMetadata:
         self.page_name = page_name
         self.page_number = page_number
         self.parent_id = parent_id
+        self.routing = routing
+        self.routing_score = routing_score
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
@@ -520,6 +528,8 @@ class ConsolidationStrategy(enum.Enum):
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
+            "routing": cls.DROP,
+            "routing_score": cls.DROP,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
