@@ -1,3 +1,8 @@
+## 0.22.3
+
+### Enhancements
+- **`partition_md` Markdown `extensions`**: Optional `extensions` list is passed to `markdown.markdown()`; entries may be registered names (`str`) or `markdown.extensions.Extension` instances. Defaults to `["tables", "fenced_code"]`. Invalid values raise `ValueError`.
+
 ## 0.22.2
 
 - Store routing in ElementMetadata
