@@ -1585,6 +1585,7 @@ class Describe_TableChunker:
         assert len(reconstructed.xpath("./tr/td/table/tr")) == 1
         assert reconstructed.xpath("string(./tr/td/table/tr/td)").strip() == "Nested"
 
+
 # ================================================================================================
 # HTML SPLITTERS
 # ================================================================================================
