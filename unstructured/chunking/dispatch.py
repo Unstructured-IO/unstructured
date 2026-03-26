@@ -157,8 +157,13 @@ def reconstruct_table_from_chunks(elements: Iterable[Element]) -> list[Table]:
 
     # -- sort each group by chunk_index and merge --
     tables: list[Table] = []
+
+    def _chunk_sort_key(chunk: TableChunk) -> tuple[bool, int]:
+        chunk_index = chunk.metadata.chunk_index
+        return (chunk_index is None, 0 if chunk_index is None else chunk_index)
+
     for group in groups.values():
-        group.sort(key=lambda c: c.metadata.chunk_index or 0)
+        group.sort(key=_chunk_sort_key)
         tables.append(_merge_table_chunks(group))
 
     return tables

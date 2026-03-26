@@ -1484,6 +1484,46 @@ class Describe_TableChunker:
         assert tables[1].metadata.filename == "doc1.pdf"
         assert tables[1].metadata.page_number == 3
 
+    def it_orders_chunks_with_missing_chunk_index_after_numbered_chunks(self):
+        """Chunks missing `chunk_index` are merged after indexed chunks for stable ordering."""
+        table_id = "table-with-missing-index"
+        elements: list[Element] = [
+            TableChunk(
+                text="third",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=None,
+                    text_as_html="<table><tr><td>third</td></tr></table>",
+                ),
+            ),
+            TableChunk(
+                text="second",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=1,
+                    text_as_html="<table><tr><td>second</td></tr></table>",
+                ),
+            ),
+            TableChunk(
+                text="first",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=0,
+                    text_as_html="<table><tr><td>first</td></tr></table>",
+                ),
+            ),
+        ]
+
+        table = reconstruct_table_from_chunks(elements)[0]
+        assert table.text == "first second third"
+
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+        assert [cell.text_content().strip() for cell in reconstructed.iter("td")] == [
+            "first",
+            "second",
+            "third",
+        ]
+
     def it_sets_chunk_sequencing_metadata_on_table_chunks(self):
         """Split table chunks carry table_id and chunk_index for reconstruction."""
         opts = ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " "))
