@@ -1,7 +1,16 @@
-## 0.22.2-dev0
+## 0.22.4-dev0
 
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
+
+## 0.22.3
+
+### Enhancements
+- **`partition_md` Markdown `extensions`**: Optional `extensions` list is passed to `markdown.markdown()`; entries may be registered names (`str`) or `markdown.extensions.Extension` instances. Defaults to `["tables", "fenced_code"]`. Invalid values raise `ValueError`.
+
+## 0.22.2
+
+- Store routing in ElementMetadata
 
 ## 0.22.1
 
