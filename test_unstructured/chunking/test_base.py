@@ -1562,6 +1562,28 @@ class Describe_TableChunker:
         assert chunks[0].metadata.table_id is None
         assert chunks[0].metadata.chunk_index is None
 
+    def it_preserves_nested_table_structure_when_reconstructing_html(self):
+        """Only top-level rows should be merged; nested table rows must stay nested."""
+        nested_html = "<table><tr><td><table><tr><td>Nested</td></tr></table></td></tr></table>"
+
+        chunks: list[Element] = [
+            TableChunk(
+                "Nested",
+                metadata=ElementMetadata(
+                    text_as_html=nested_html,
+                    table_id="nested-table",
+                    chunk_index=0,
+                ),
+            )
+        ]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+        assert len(reconstructed.xpath("./tr")) == 1
+        assert len(reconstructed.xpath("./tr/td/table/tr")) == 1
+        assert reconstructed.xpath("string(./tr/td/table/tr/td)").strip() == "Nested"
 
 # ================================================================================================
 # HTML SPLITTERS
