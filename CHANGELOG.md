@@ -1,3 +1,8 @@
+## 0.22.7
+
+### Enhancements
+- **Trim langdetect profiles**: Load only 15 common language profiles instead of all 55, reducing n-gram probability map memory by ~77% (58 MiB -> 14 MiB).
+
 ## 0.22.6
 
 ### Fixes

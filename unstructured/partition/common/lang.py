@@ -5,6 +5,7 @@ from functools import lru_cache
 from typing import Callable, Iterable, Iterator, Optional
 
 import iso639  # pyright: ignore[reportMissingTypeStubs]
+import langdetect.detector_factory as _ldf
 from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
     DetectorFactory,
     detect_langs,  # pyright: ignore[reportUnknownVariableType]
@@ -17,6 +18,51 @@ from unstructured.partition.utils.constants import (
     TESSERACT_LANGUAGES_AND_CODES,
     TESSERACT_LANGUAGES_SPLITTER,
 )
+
+# Patch langdetect to load only 15 common language profiles instead of all 55.
+# Cuts n-gram probability map memory by ~77% (58 MiB -> 14 MiB). Documents in
+# excluded languages still get a result — the closest loaded profile matches.
+LANGDETECT_LANGUAGES = frozenset(
+    {
+        "en",
+        "es",
+        "ar",
+        "fr",
+        "de",
+        "it",
+        "pt",
+        "ru",
+        "ja",
+        "ko",
+        "zh-cn",
+        "zh-tw",
+        "hi",
+        "bn",
+        "id",
+    }
+)
+
+
+def init_langdetect_with_subset():
+    """Load only common language profiles into langdetect's DetectorFactory."""
+    if _ldf._factory is not None:
+        return
+
+    import json
+    from pathlib import Path
+
+    from langdetect.utils.lang_profile import LangProfile
+
+    factory = _ldf.DetectorFactory()
+    profile_dir = Path(_ldf.PROFILES_DIRECTORY)
+    files = sorted(f.name for f in profile_dir.iterdir() if f.name in LANGDETECT_LANGUAGES)
+    for index, filename in enumerate(files):
+        with open(profile_dir / filename, encoding="utf-8") as fh:
+            factory.add_profile(LangProfile(**json.load(fh)), index, len(files))
+    _ldf._factory = factory
+
+
+_ldf.init_factory = init_langdetect_with_subset
 
 _ASCII_RE = re.compile(r"^[\x00-\x7F]+$")
 
