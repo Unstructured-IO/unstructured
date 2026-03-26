@@ -7,6 +7,7 @@
 
 ### Fixes
 - **Security update**: Bumped dependencies to address security vulnerabilities
+- **Preserve nested rows when reconstructing chunked tables**: `reconstruct_table_from_chunks()` now merges only top-level table rows (`tr`, `thead/tr`, `tbody/tr`, `tfoot/tr`) from each chunk so nested table structure is retained.
 
 ## 0.22.4
 
