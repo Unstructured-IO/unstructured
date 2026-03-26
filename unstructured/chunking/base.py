@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
+import uuid
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
@@ -901,16 +902,9 @@ class _TableChunker:
         if (html_table := self._html_table) is None:  # pragma: no cover
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
-        is_continuation = False
-
-        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
-            metadata = self._metadata
-            metadata.text_as_html = html
-            # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
-
-            yield TableChunk(text=text, metadata=metadata)
+        yield from self._make_table_chunks(
+            _HtmlTableSplitter.iter_subtables(html_table, self._opts)
+        )
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
         """Split oversized text-only table (no text-as-html) into chunks.
@@ -918,19 +912,40 @@ class _TableChunker:
         `.metadata.text_as_html` is optional, not included when `infer_table_structure` is
         `False`.
         """
-        text_remainder = self._text_with_overlap
-        split = self._opts.split
-        is_continuation = False
 
-        while text_remainder:
-            # -- split off the next chunk-worth of characters into a TableChunk --
-            chunk_text, text_remainder = split(text_remainder)
+        def _iter_text_splits() -> Iterator[tuple[str, None]]:
+            text_remainder = self._text_with_overlap
+            split = self._opts.split
+            while text_remainder:
+                # -- split off the next chunk-worth of characters into a TableChunk --
+                chunk_text, text_remainder = split(text_remainder)
+                yield chunk_text, None
+
+        yield from self._make_table_chunks(_iter_text_splits())
+
+    def _make_table_chunks(
+        self, text_html_pairs: Iterator[tuple[str, str | None]]
+    ) -> Iterator[TableChunk]:
+        """Form `TableChunk` objects from (text, html) pairs.
+
+        Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`)
+        so the original table can be reconstructed from its chunks.
+        """
+        table_id = str(uuid.uuid4())
+
+        for chunk_index, (text, html) in enumerate(text_html_pairs):
             metadata = self._metadata
+            if html is not None:
+                metadata.text_as_html = html
+            else:
+                metadata.text_as_html = None
             # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
+            metadata.is_continuation = (chunk_index > 0) or None
 
-            yield TableChunk(text=chunk_text, metadata=metadata)
+            chunk = TableChunk(text=text, metadata=metadata)
+            chunk.metadata.table_id = table_id
+            chunk.metadata.chunk_index = chunk_index
+            yield chunk
 
     @property
     def _metadata(self) -> ElementMetadata:

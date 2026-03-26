@@ -1,3 +1,8 @@
+## 0.22.4
+
+### Enhancements
+- **Add ability for `Table` element to be reconstructed from `TableChunk`s**: Previously when a `Table` element was separated into chunks, there was no way to reconstruct it. Each `TableChunk` now carries `table_id` (shared across all chunks from the same table) and `chunk_index` (0-based position) metadata, and a new `reconstruct_table_from_chunks()` function in `unstructured.chunking.dispatch` accepts a mixed list of chunked elements and returns reconstructed `Table` objects with merged text and HTML.
+
 ## 0.22.3
 
 ### Enhancements
@@ -5,6 +10,7 @@
 
 ## 0.22.2
 
+### Enhancements
 - Store routing in ElementMetadata
 
 ## 0.22.1

@@ -27,6 +27,7 @@ from unstructured.chunking.base import (
     is_on_next_page,
     is_title,
 )
+from unstructured.chunking.dispatch import reconstruct_table_from_chunks
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
@@ -1104,6 +1105,35 @@ class Describe_Chunker:
 class Describe_TableChunker:
     """Unit-test suite for `unstructured.chunking.base._TableChunker` objects."""
 
+    HTML_TABLE_1 = (
+        "<table>\n"
+        "<tr><td>Header Col 1   </td><td>Header Col 2  </td></tr>\n"
+        "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
+        "<tr><td>Consectetur    </td><td>adipiscing elit</td></tr>\n"
+        "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
+        "</table>"
+    )
+    TEXT_TABLE_1 = (
+        "Header Col 1   Header Col 2\n"
+        "Lorem ipsum    A Link example\n"
+        "Consectetur    adipiscing elit\n"
+        "Nunc aliquam   id enim nec molestie"
+    )
+    HTML_TABLE_2 = (
+        "<table>\n"
+        "<tr><td>Name          </td><td>Occupation              </td></tr>\n"
+        "<tr><td>Alice Johnson </td><td>Software Engineer       </td></tr>\n"
+        "<tr><td>Bob Williams  </td><td>Data Scientist          </td></tr>\n"
+        "<tr><td>Charlie Brown </td><td>Product Manager         </td></tr>\n"
+        "</table>"
+    )
+    TEXT_TABLE_2 = (
+        "Name           Occupation\n"
+        "Alice Johnson  Software Engineer\n"
+        "Bob Williams   Data Scientist\n"
+        "Charlie Brown  Product Manager"
+    )
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"
@@ -1372,6 +1402,165 @@ class Describe_TableChunker:
         assert len(caplog.records) == 1
         assert caplog.records[0].message.startswith("Could not parse text_as_html")
         assert "<div>no table here</div>" in caplog.records[0].message
+
+    def it_can_reconstruct_tables_from_a_mixed_element_list(self):
+        """reconstruct_table_from_chunks recovers original tables from mixed chunked output.
+
+        Verifies both text and HTML reconstruction, with two tables and non-table elements
+        interspersed.
+        """
+        opts = ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " "))
+
+        # -- chunk two HTML tables, each with distinct metadata --
+        chunks_1 = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_1,
+                    metadata=ElementMetadata(
+                        text_as_html=self.HTML_TABLE_1,
+                        filename="doc1.pdf",
+                        page_number=1,
+                    ),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+        assert len(chunks_1) >= 2
+
+        chunks_2 = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_2,
+                    metadata=ElementMetadata(
+                        text_as_html=self.HTML_TABLE_2,
+                        filename="doc1.pdf",
+                        page_number=3,
+                    ),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+        assert len(chunks_2) >= 2
+
+        elements: list[Element] = [
+            CompositeElement(text="Preamble."),
+            *chunks_1,
+            CompositeElement(text="Interlude."),
+            *chunks_2,
+            CompositeElement(text="Epilogue."),
+        ]
+
+        # -- reconstruct tables from the mixed element list --
+        tables = reconstruct_table_from_chunks(elements)
+
+        assert len(tables) == 2
+        for table in tables:
+            assert isinstance(table, Table)
+            assert not isinstance(table, TableChunk)
+
+        # -- reconstructed text has same words in same order as original --
+        assert tables[0].text.split() == self.TEXT_TABLE_1.split()
+        assert tables[1].text.split() == self.TEXT_TABLE_2.split()
+
+        # -- reconstructed HTML has same rows and cells in same order as original --
+        for table, orig_html in zip(tables, [self.HTML_TABLE_1, self.HTML_TABLE_2]):
+            assert table.metadata.text_as_html is not None
+            reconstructed = fragment_fromstring(table.metadata.text_as_html)
+            original = fragment_fromstring(orig_html)
+            # -- same number of rows --
+            assert len(reconstructed.findall(".//tr")) == len(original.findall(".//tr"))
+            # -- same cells in same order --
+            reconstructed_cells = [
+                td.text_content().strip() for td in reconstructed.iter("td", "th")
+            ]
+            original_cells = [td.text_content().strip() for td in original.iter("td", "th")]
+            assert reconstructed_cells == original_cells
+
+        # -- metadata is preserved from original table --
+        assert tables[0].metadata.filename == "doc1.pdf"
+        assert tables[0].metadata.page_number == 1
+        assert tables[1].metadata.filename == "doc1.pdf"
+        assert tables[1].metadata.page_number == 3
+
+    def it_orders_chunks_with_missing_chunk_index_after_numbered_chunks(self):
+        """Chunks missing `chunk_index` are merged after indexed chunks for stable ordering."""
+        table_id = "table-with-missing-index"
+        elements: list[Element] = [
+            TableChunk(
+                text="third",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=None,
+                    text_as_html="<table><tr><td>third</td></tr></table>",
+                ),
+            ),
+            TableChunk(
+                text="second",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=1,
+                    text_as_html="<table><tr><td>second</td></tr></table>",
+                ),
+            ),
+            TableChunk(
+                text="first",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=0,
+                    text_as_html="<table><tr><td>first</td></tr></table>",
+                ),
+            ),
+        ]
+
+        table = reconstruct_table_from_chunks(elements)[0]
+        assert table.text == "first second third"
+
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+        assert [cell.text_content().strip() for cell in reconstructed.iter("td")] == [
+            "first",
+            "second",
+            "third",
+        ]
+
+    def it_sets_chunk_sequencing_metadata_on_table_chunks(self):
+        """Split table chunks carry table_id and chunk_index for reconstruction."""
+        opts = ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " "))
+
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_1,
+                    metadata=ElementMetadata(text_as_html=self.HTML_TABLE_1),
+                ),
+                overlap_prefix="",
+                opts=opts,
+            )
+        )
+
+        assert len(chunks) >= 2
+        # -- all chunks share the same table_id --
+        table_ids = {c.metadata.table_id for c in chunks}
+        assert len(table_ids) == 1
+        assert None not in table_ids
+        # -- chunk_index is sequential starting from 0 --
+        assert [c.metadata.chunk_index for c in chunks] == list(range(len(chunks)))
+
+    def it_does_not_set_chunk_sequencing_metadata_on_unsplit_table(self):
+        """A table that fits in one chunk has no table_id or chunk_index."""
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table("short", metadata=ElementMetadata(text_as_html="<table>short</table>")),
+                overlap_prefix="",
+                opts=ChunkingOptions(max_characters=500),
+            )
+        )
+
+        assert len(chunks) == 1
+        assert isinstance(chunks[0], Table)
+        assert chunks[0].metadata.table_id is None
+        assert chunks[0].metadata.chunk_index is None
 
 
 # ================================================================================================
