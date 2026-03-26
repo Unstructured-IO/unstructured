@@ -1,3 +1,8 @@
+## 0.22.6
+
+### Fixes
+* Self-contained script for version extraction in release CI
+
 ## 0.22.5
 
 ### Fixes
