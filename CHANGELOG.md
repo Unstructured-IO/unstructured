@@ -1,4 +1,4 @@
-## 0.22.7-dev0
+## 0.22.7
 
 ### Fixes
 - **Replace `lazyproperty` with `functools.cached_property`**: Fix a bug where 26 properties returning `None` were re-evaluated on every access instead of caching. Also improves performance on cached reads.
