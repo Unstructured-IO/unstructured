@@ -29,7 +29,6 @@
 ### Enhancements
 - **`partition_md` Markdown `extensions`**: Optional `extensions` list is passed to `markdown.markdown()`; entries may be registered names (`str`) or `markdown.extensions.Extension` instances. Defaults to `["tables", "fenced_code"]`. Invalid values raise `ValueError`.
 
-<<<<<<< HEAD
 ## 0.22.2
 
 ### Enhancements
@@ -37,8 +36,6 @@
 
 ## 0.22.1
 
-=======
->>>>>>> a91d36a6 (Bump version to 0.22.3 for changelog CI check)
 ### Fixes
 - **Security update**: Bumped dependencies to address security vulnerabilities
 
