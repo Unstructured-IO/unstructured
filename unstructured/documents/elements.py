@@ -217,6 +217,7 @@ class ElementMetadata:
     # -- used for TableChunk elements to enable table reconstruction --
     table_id: Optional[str]
     chunk_index: Optional[int]
+    num_carried_over_header_rows: Optional[int]
     url: Optional[str]
 
     # -- speech-to-text segment timestamps (seconds) when element is from partition_audio --
@@ -268,6 +269,7 @@ class ElementMetadata:
         table_as_cells: Optional[dict[str, str | int]] = None,
         table_id: Optional[str] = None,
         chunk_index: Optional[int] = None,
+        num_carried_over_header_rows: Optional[int] = None,
         text_as_html: Optional[str] = None,
         url: Optional[str] = None,
         segment_end_seconds: Optional[float] = None,
@@ -320,6 +322,7 @@ class ElementMetadata:
         self.table_as_cells = table_as_cells
         self.table_id = table_id
         self.chunk_index = chunk_index
+        self.num_carried_over_header_rows = num_carried_over_header_rows
         self.url = url
         self.segment_end_seconds = segment_end_seconds
         self.segment_start_seconds = segment_start_seconds
@@ -547,6 +550,7 @@ class ConsolidationStrategy(enum.Enum):
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "table_id": cls.DROP,  # -- added by chunking, not before --
             "chunk_index": cls.DROP,  # -- added by chunking, not before --
+            "num_carried_over_header_rows": cls.DROP,  # -- added by chunking, not before --
             "url": cls.FIRST,
             # TODO: ideally a chunk spanning multiple audio segments would keep min(start) and
             # max(end) across its constituent elements. ConsolidationStrategy currently has no

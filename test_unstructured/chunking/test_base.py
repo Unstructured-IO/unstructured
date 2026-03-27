@@ -1333,6 +1333,50 @@ class Describe_TableChunker:
             assert chunk.text.startswith(header_text_prefix)
             assert chunk.metadata.text_as_html.startswith(header_html_prefix)
 
+    def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+        opt_out_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=False,
+        )
+
+        assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+            0,
+            2,
+            2,
+            2,
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in opt_out_chunks] == [0, 0]
+
     def and_it_cascades_header_carry_forward_across_three_or_more_continuation_chunks(self):
         table_html = (
             "<table>"
@@ -1890,6 +1934,51 @@ class Describe_TableChunker:
         assert tables[1].metadata.filename == "doc1.pdf"
         assert tables[1].metadata.page_number == 3
 
+    def it_reconstructs_repeated_header_tables_without_duplication_using_chunk_metadata(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 2, 2, 2]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == [
+            "Header A Header B",
+            "Subhead A Subhead B",
+            "Body 1 Alpha",
+            "Body 2 Bravo",
+            "Body 3 Charlie",
+            "Body 4 Delta",
+        ]
+
     def it_orders_chunks_with_missing_chunk_index_after_numbered_chunks(self):
         """Chunks missing `chunk_index` are merged after indexed chunks for stable ordering."""
         table_id = "table-with-missing-index"
@@ -1952,6 +2041,7 @@ class Describe_TableChunker:
         assert None not in table_ids
         # -- chunk_index is sequential starting from 0 --
         assert [c.metadata.chunk_index for c in chunks] == list(range(len(chunks)))
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0] * len(chunks)
 
     def it_does_not_set_chunk_sequencing_metadata_on_unsplit_table(self):
         """A table that fits in one chunk has no table_id or chunk_index."""

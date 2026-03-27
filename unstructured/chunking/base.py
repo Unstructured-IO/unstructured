@@ -929,12 +929,14 @@ class _TableChunker:
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
         header_row_count = self._leading_header_row_count if self._opts.repeat_table_headers else 0
+        splitter = _HtmlTableSplitter(
+            html_table,
+            self._opts,
+            header_row_count=header_row_count,
+        )
         yield from self._make_table_chunks(
-            _HtmlTableSplitter.iter_subtables(
-                html_table,
-                self._opts,
-                header_row_count=header_row_count,
-            )
+            splitter._iter_subtables(),
+            num_carried_over_header_rows=splitter.carried_over_header_row_count,
         )
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
@@ -955,14 +957,18 @@ class _TableChunker:
         yield from self._make_table_chunks(_iter_text_splits())
 
     def _make_table_chunks(
-        self, text_html_pairs: Iterator[tuple[str, str | None]]
+        self,
+        text_html_pairs: Iterator[tuple[str, str | None]],
+        num_carried_over_header_rows: int = 0,
     ) -> Iterator[TableChunk]:
         """Form `TableChunk` objects from (text, html) pairs.
 
         Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`)
-        so the original table can be reconstructed from its chunks.
+        so the original table can be reconstructed from its chunks. Carries
+        `num_carried_over_header_rows` so synthetic repeated header rows can be removed.
         """
         table_id = str(uuid.uuid4())
+        carried_header_row_count = max(0, num_carried_over_header_rows)
 
         for chunk_index, (text, html) in enumerate(text_html_pairs):
             metadata = self._metadata
@@ -972,6 +978,9 @@ class _TableChunker:
                 metadata.text_as_html = None
             # -- second and later chunks get `.metadata.is_continuation = True` --
             metadata.is_continuation = (chunk_index > 0) or None
+            metadata.num_carried_over_header_rows = (
+                carried_header_row_count if chunk_index > 0 else 0
+            )
 
             chunk = TableChunk(text=text, metadata=metadata)
             chunk.metadata.table_id = table_id
@@ -1163,6 +1172,11 @@ class _HtmlTableSplitter:
     def _header_rows_html(self) -> str:
         """HTML for repeated header rows."""
         return "".join(row.html for row in self._header_rows)
+
+    @cached_property
+    def carried_over_header_row_count(self) -> int:
+        """Header-row count prepended to each continuation chunk, or 0 when disabled."""
+        return len(self._header_rows) if self._should_repeat_headers else 0
 
     @cached_property
     def _should_repeat_headers(self) -> bool:
