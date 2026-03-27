@@ -1,7 +1,7 @@
 ## 0.22.7
 
 ### Enhancements
-- **Trim langdetect profiles**: Load only 15 common language profiles instead of all 55, reducing n-gram probability map memory by ~77% (58 MiB -> 14 MiB).
+- **Scoped langdetect factory**: Use a private `DetectorFactory` for language detection instead of mutating langdetect's global state at import time.
 
 ## 0.22.6
 
