@@ -2264,8 +2264,7 @@ class Describe_HtmlTableSplitter:
 
         assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
             (
-                "supercalifragilisticexpialidocious"
-                " pneumonoultramicroscopicsilicovolcanoconiosis",
+                "supercalifragilisticexpialidocious pneumonoultramicroscopicsilicovolcanoconiosis",
                 "<table>"
                 "<tr><td>supercalifragilisticexpialidocious</td></tr>"
                 "<tr><td>pneumonoultramicroscopicsilicovolcanoconiosis</td></tr>"

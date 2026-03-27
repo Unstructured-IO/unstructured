@@ -177,9 +177,7 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     """Merge an ordered list of TableChunks from the same table into a single Table."""
     # -- combine text --
     text = " ".join(
-        chunk_text
-        for chunk in chunks
-        if (chunk_text := _strip_carried_over_header_text(chunk))
+        chunk_text for chunk in chunks if (chunk_text := _strip_carried_over_header_text(chunk))
     )
 
     # -- build metadata from first chunk --
