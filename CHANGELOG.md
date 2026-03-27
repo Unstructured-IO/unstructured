@@ -1,6 +1,7 @@
-## 0.22.7-dev0
+## 0.22.7
 
 ### Fixes
+- **Replace `lazyproperty` with `functools.cached_property`**: Fix a bug where 26 properties returning `None` were re-evaluated on every access instead of caching. Also improves performance on cached reads.
 - **Preserve nested rows when reconstructing chunked tables**: `reconstruct_table_from_chunks()` now merges only top-level table rows (`tr`, `thead/tr`, `tbody/tr`, `tfoot/tr`) from each chunk so nested table structure is retained.
 
 ## 0.22.6

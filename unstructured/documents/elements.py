@@ -9,6 +9,7 @@ import hashlib
 import os
 import pathlib
 import uuid
+from functools import cached_property
 from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
@@ -21,7 +22,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.utils import get_call_args_applying_defaults, lazyproperty
+from unstructured.utils import get_call_args_applying_defaults
 
 Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
@@ -460,7 +461,7 @@ class ElementMetadata:
         for field_name, field_value in other.fields.items():
             setattr(self, field_name, field_value)
 
-    @lazyproperty
+    @cached_property
     def _known_field_names(self) -> FrozenSet[str]:
         """field-names for non-user-defined fields, available on all ElementMetadata instances.
 

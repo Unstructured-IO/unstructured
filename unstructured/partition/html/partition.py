@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import IO, Any, Callable, Iterator, List, Literal, Optional, cast
 
 import requests
@@ -19,7 +20,7 @@ from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
-from unstructured.utils import is_temp_file_path, lazyproperty
+from unstructured.utils import is_temp_file_path
 
 
 @apply_metadata(FileType.HTML)
@@ -139,12 +140,12 @@ class HtmlPartitionerOptions:
         self._extract_image_block_types = extract_image_block_types
         self._extract_image_block_to_payload = extract_image_block_to_payload
 
-    @lazyproperty
+    @cached_property
     def detection_origin(self) -> str | None:
         """Trace of initial partitioner to be included in metadata for debugging purposes."""
         return self._detection_origin
 
-    @lazyproperty
+    @cached_property
     def html_text(self) -> str:
         """The HTML document as a string, loaded from wherever the caller specified."""
         if self._file_path:
@@ -170,7 +171,7 @@ class HtmlPartitionerOptions:
 
         raise ValueError("Exactly one of filename, file, text, or url must be specified.")
 
-    @lazyproperty
+    @cached_property
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
         return (
@@ -179,17 +180,17 @@ class HtmlPartitionerOptions:
             else get_last_modified_date(self._file_path)
         )
 
-    @lazyproperty
+    @cached_property
     def skip_headers_and_footers(self) -> bool:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
 
-    @lazyproperty
+    @cached_property
     def html_parser_version(self) -> Literal["v1", "v2"]:
         """When html_parser_version=='v2', HTML elements follow ontology schema."""
         return self._html_parser_version
 
-    @lazyproperty
+    @cached_property
     def add_img_alt_text(self) -> bool:
         """When True, the alternative text of images is included in the output."""
         return self._image_alt_mode == "to_text"
@@ -241,7 +242,7 @@ class _HtmlPartitioner:
                 e.metadata.image_mime_type = None
             yield e
 
-    @lazyproperty
+    @cached_property
     def _main(self) -> Flow:
         """The root HTML element."""
         # NOTE(scanny) - get `html_text` first so any encoding error raised is not confused with a
@@ -275,7 +276,7 @@ class _HtmlPartitioner:
             return cast(Flow, body)
         return cast(Flow, root)
 
-    @lazyproperty
+    @cached_property
     def _from_ontology(self) -> List[Element]:
         """Convert an ontology elements represented in HTML to an ontology element."""
         html_text = self._opts.html_text

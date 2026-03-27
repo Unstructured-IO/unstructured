@@ -8,6 +8,7 @@ import logging
 import os
 import tempfile
 import zipfile
+from functools import cached_property
 from typing import IO, Any, Iterator, Protocol, Type
 
 import docx
@@ -52,7 +53,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.utils import is_temp_file_path, lazyproperty
+from unstructured.utils import is_temp_file_path
 
 STYLE_TO_ELEMENT_MAPPING = {
     "Caption": Text,  # TODO(robinson) - add caption element type
@@ -223,12 +224,12 @@ class DocxPartitionerOptions:
         """Specify a pluggable sub-partitioner to extract images from DOCX paragraphs."""
         cls._PicturePartitionerCls = picture_partitioner
 
-    @lazyproperty
+    @cached_property
     def document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
         return docx.Document(self._docx_file)
 
-    @lazyproperty
+    @cached_property
     def include_page_breaks(self) -> bool:
         """When True, include `PageBreak` elements in element-stream.
 
@@ -245,12 +246,12 @@ class DocxPartitionerOptions:
         if self._include_page_breaks:
             yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
-    @lazyproperty
+    @cached_property
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata for tables."""
         return self._infer_table_structure
 
-    @lazyproperty
+    @cached_property
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
         if not self._file_path:
@@ -260,7 +261,7 @@ class DocxPartitionerOptions:
             None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
         )
 
-    @lazyproperty
+    @cached_property
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
         return self._file_path
@@ -290,7 +291,7 @@ class DocxPartitionerOptions:
         """
         return self._page_counter
 
-    @lazyproperty
+    @cached_property
     def picture_partitioner(self) -> PicturePartitionerT:
         """The sub-partitioner to use for DOCX image extraction."""
         # -- Note this value has partitioning-run scope. An instance of this options class is
@@ -300,7 +301,7 @@ class DocxPartitionerOptions:
         # -- ensures image extraction is processed consistently within a single document.
         return self._PicturePartitionerCls or _NullPicturePartitioner
 
-    @lazyproperty
+    @cached_property
     def strategy(self) -> str:
         """The partitioning strategy for this document.
 
@@ -309,7 +310,7 @@ class DocxPartitionerOptions:
         """
         return PartitionStrategy.HI_RES if self._strategy is None else self._strategy
 
-    @lazyproperty
+    @cached_property
     def _document_contains_pagebreaks(self) -> bool:
         """True when there is at least one page-break detected in the document.
 
@@ -330,7 +331,7 @@ class DocxPartitionerOptions:
 
         return bool(self.document.element.xpath(xpath))
 
-    @lazyproperty
+    @cached_property
     def _docx_file(self) -> str | IO[bytes]:
         """The Word 2007+ document file to be partitioned.
 
@@ -540,12 +541,12 @@ class _DocxPartitioner:
 
         return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
 
-    @lazyproperty
+    @cached_property
     def _document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
         return self._opts.document
 
-    @lazyproperty
+    @cached_property
     def _document_contains_sections(self) -> bool:
         """True when there is at least one section in the document.
 
