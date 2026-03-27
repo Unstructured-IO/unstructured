@@ -319,12 +319,3 @@ def test_check_language_args_raises_error_when_ocr_languages_contains_auto(
             languages=languages,
             ocr_languages=ocr_languages,
         )
-
-
-def test_import_does_not_mutate_langdetect_global_factory():
-    """Importing lang.py must not modify langdetect's global DetectorFactory."""
-    import langdetect.detector_factory as ldf
-
-    # detect_languages triggers our scoped factory, but the global must stay untouched
-    detect_languages("This is a test sentence for language detection.")
-    assert ldf._factory is None

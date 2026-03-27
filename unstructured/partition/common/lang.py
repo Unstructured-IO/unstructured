@@ -7,6 +7,8 @@ from typing import Callable, Iterable, Iterator, Optional
 import iso639  # pyright: ignore[reportMissingTypeStubs]
 import langdetect.detector_factory as _ldf
 from langdetect import (  # pyright: ignore[reportMissingTypeStubs]
+    DetectorFactory,
+    detect_langs,  # pyright: ignore[reportUnknownVariableType]
     lang_detect_exception,
 )
 
@@ -17,18 +19,34 @@ from unstructured.partition.utils.constants import (
     TESSERACT_LANGUAGES_SPLITTER,
 )
 
-_langdetect_factory: _ldf.DetectorFactory | None = None
+# Patch langdetect to load only 15 common language profiles instead of all 55.
+# Cuts n-gram probability map memory by ~77% (58 MiB -> 14 MiB). Documents in
+# excluded languages still get a result — the closest loaded profile matches.
+LANGDETECT_LANGUAGES = frozenset(
+    {
+        "en",
+        "es",
+        "ar",
+        "fr",
+        "de",
+        "it",
+        "pt",
+        "ru",
+        "ja",
+        "ko",
+        "zh-cn",
+        "zh-tw",
+        "hi",
+        "bn",
+        "id",
+    }
+)
 
 
-def _get_langdetect_factory() -> _ldf.DetectorFactory:
-    """Get or create a DetectorFactory with all language profiles.
-
-    Caches the factory at module level so profiles are loaded once per process.
-    Does **not** modify langdetect's global ``_factory``.
-    """
-    global _langdetect_factory
-    if _langdetect_factory is not None:
-        return _langdetect_factory
+def init_langdetect_with_subset():
+    """Load only common language profiles into langdetect's DetectorFactory."""
+    if _ldf._factory is not None:
+        return
 
     import json
     from pathlib import Path
@@ -37,26 +55,14 @@ def _get_langdetect_factory() -> _ldf.DetectorFactory:
 
     factory = _ldf.DetectorFactory()
     profile_dir = Path(_ldf.PROFILES_DIRECTORY)
-    files = sorted(f.name for f in profile_dir.iterdir() if not f.name.startswith("."))
+    files = sorted(f.name for f in profile_dir.iterdir() if f.name in LANGDETECT_LANGUAGES)
     for index, filename in enumerate(files):
         with open(profile_dir / filename, encoding="utf-8") as fh:
             factory.add_profile(LangProfile(**json.load(fh)), index, len(files))
-    factory.seed = 0
-    _langdetect_factory = factory
-    return factory
+    _ldf._factory = factory
 
 
-def _detect_langs(text: str) -> list:
-    """Detect languages using a scoped factory instead of langdetect's global state.
-
-    Drop-in replacement for ``langdetect.detect_langs`` that avoids mutating
-    the library's global ``DetectorFactory``.
-    """
-    factory = _get_langdetect_factory()
-    detector = factory.create()
-    detector.append(text)
-    return detector.get_probabilities()
-
+_ldf.init_factory = init_langdetect_with_subset
 
 _ASCII_RE = re.compile(r"^[\x00-\x7F]+$")
 
@@ -489,6 +495,9 @@ def detect_languages(
         logger.debug(f'short text: "{text}". Defaulting to English.')
         return ["eng"]
 
+    # set seed for deterministic langdetect outputs
+    DetectorFactory.seed = 0
+
     doc_languages: list[str] = []
 
     # user inputted languages:
@@ -512,7 +521,7 @@ def detect_languages(
             )
 
         try:
-            langdetect_result = _detect_langs(text)
+            langdetect_result = detect_langs(text)
         except lang_detect_exception.LangDetectException as e:
             logger.warning(e)
             return None  # None as default
