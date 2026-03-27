@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import re
 import tempfile
+from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
 from oxmsg import Message
@@ -15,7 +16,7 @@ from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
-from unstructured.utils import is_temp_file_path, lazyproperty
+from unstructured.utils import is_temp_file_path
 
 
 def partition_msg(
@@ -75,7 +76,7 @@ class MsgPartitionerOptions:
         self._partition_attachments = partition_attachments
         self._kwargs = kwargs
 
-    @lazyproperty
+    @cached_property
     def extra_msg_metadata(self) -> ElementMetadata:
         """ElementMetadata suitable for use on an element formed from message content.
 
@@ -109,7 +110,7 @@ class MsgPartitionerOptions:
 
         return element_metadata
 
-    @lazyproperty
+    @cached_property
     def is_encrypted(self) -> bool:
         """True when message is encrypted."""
         # NOTE(robinson) - Per RFC 2015, the content type for emails with PGP encrypted content
@@ -121,7 +122,7 @@ class MsgPartitionerOptions:
         #     encryption.
         return "encrypted" in self.msg.message_headers.get("Content-Type", "")
 
-    @lazyproperty
+    @cached_property
     def metadata_file_path(self) -> str | None:
         """Best available path for MSG file.
 
@@ -130,23 +131,23 @@ class MsgPartitionerOptions:
         """
         return self._metadata_file_path or self._file_path
 
-    @lazyproperty
+    @cached_property
     def metadata_last_modified(self) -> str | None:
         """Caller override for `.metadata.last_modified` to be applied to all elements."""
         email_date = sent_date.isoformat() if (sent_date := self.msg.sent_date) else None
         return self._metadata_last_modified or email_date or self._last_modified
 
-    @lazyproperty
+    @cached_property
     def msg(self) -> Message:
         """The `oxmsg.Message` object loaded from file or filename."""
         return Message.load(self._msg_file)
 
-    @lazyproperty
+    @cached_property
     def partition_attachments(self) -> bool:
         """True when message attachments should also be partitioned."""
         return self._partition_attachments
 
-    @lazyproperty
+    @cached_property
     def partitioning_kwargs(self) -> dict[str, Any]:
         """The "extra" keyword arguments received by `partition_msg()`.
 
@@ -155,7 +156,7 @@ class MsgPartitionerOptions:
         """
         return self._kwargs
 
-    @lazyproperty
+    @cached_property
     def _last_modified(self) -> str | None:
         """The best last-modified date available from source-file, None if not available."""
         if not self._file_path or is_temp_file_path(self._file_path):
@@ -163,7 +164,7 @@ class MsgPartitionerOptions:
 
         return get_last_modified_date(self._file_path)
 
-    @lazyproperty
+    @cached_property
     def _msg_file(self) -> str | IO[bytes]:
         """The source for the bytes of the message, either a file-path or a file-like object."""
         if file_path := self._file_path:
@@ -200,7 +201,7 @@ class _MsgPartitioner:
         for attachment in self._attachments:
             yield from _AttachmentPartitioner.iter_elements(attachment, self._opts)
 
-    @lazyproperty
+    @cached_property
     def _attachments(self) -> tuple[Attachment, ...]:
         """The `oxmsg.attachment.Attachment` objects for this message."""
         return tuple(self._opts.msg.attachments)
@@ -281,7 +282,7 @@ class _AttachmentPartitioner:
                 e.metadata.attached_to_filename = self._opts.metadata_file_path
                 yield e
 
-    @lazyproperty
+    @cached_property
     def _attachment_file_name(self) -> str:
         """The original name of the attached file, no path.
 
@@ -304,7 +305,7 @@ class _AttachmentPartitioner:
 
         return safe_filename
 
-    @lazyproperty
+    @cached_property
     def _attachment_last_modified(self) -> str | None:
         """ISO8601 string timestamp of attachment last-modified date.
 
@@ -316,7 +317,7 @@ class _AttachmentPartitioner:
             return last_modified.isoformat()
         return self._opts.metadata_last_modified
 
-    @lazyproperty
+    @cached_property
     def _file_bytes(self) -> bytes:
         """The bytes of the attached file."""
         return self._attachment.file_bytes or b""

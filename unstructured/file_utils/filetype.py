@@ -37,6 +37,7 @@ import os
 import re
 import tempfile
 import zipfile
+from functools import cached_property
 from typing import IO, Callable, Iterator, Optional
 
 import filetype as ft
@@ -51,7 +52,7 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
-from unstructured.utils import get_call_args_applying_defaults, lazyproperty
+from unstructured.utils import get_call_args_applying_defaults
 
 try:
     importlib.import_module("magic")
@@ -283,7 +284,7 @@ class _FileTypeDetector:
 
         return None
 
-    @lazyproperty
+    @cached_property
     def _file_type_from_file_extension(self) -> FileType | None:
         """Determine file-type from filename extension.
 
@@ -348,10 +349,10 @@ class _FileTypeDetectionContext:
         further verification. All lower-case when not `None`.
         """
         # -- Note `._content_type` is mutable via `.invalidate_content_type()` so this cannot be a
-        # -- `@lazyproperty`.
+        # -- `@cached_property`.
         return self._content_type.lower() if self._content_type else None
 
-    @lazyproperty
+    @cached_property
     def encoding(self) -> str:
         """Character-set used to encode text of this file.
 
@@ -359,7 +360,7 @@ class _FileTypeDetectionContext:
         """
         return format_encoding_str(self._encoding_arg or "utf-8")
 
-    @lazyproperty
+    @cached_property
     def extension(self) -> str:
         """Best filename-extension we can muster, "" when there is no available source."""
         # -- get from file_path, or file when it has a name (path) --
@@ -374,13 +375,13 @@ class _FileTypeDetectionContext:
         # -- otherwise empty str means no extension, same as a path like "a/b/name-no-ext" --
         return ""
 
-    @lazyproperty
+    @cached_property
     def file_head(self) -> bytes:
         """The initial bytes of the file to be recognized, for use with libmagic detection."""
         with self.open() as file:
             return file.read(8192)
 
-    @lazyproperty
+    @cached_property
     def file_path(self) -> str | None:
         """Filesystem path to file to be inspected, when provided on call.
 
@@ -392,7 +393,7 @@ class _FileTypeDetectionContext:
 
         return os.path.realpath(file_path) if os.path.islink(file_path) else file_path
 
-    @lazyproperty
+    @cached_property
     def has_code_mime_type(self) -> bool:
         """True when `mime_type` plausibly indicates a programming language source-code file."""
         mime_type = self.mime_type
@@ -421,13 +422,13 @@ class _FileTypeDetectionContext:
             ]
         )
 
-    @lazyproperty
+    @cached_property
     def is_zipfile(self) -> bool:
         """True when file is a Zip archive."""
         with self.open() as file:
             return zipfile.is_zipfile(file)
 
-    @lazyproperty
+    @cached_property
     def mime_type(self) -> str | None:
         """The best MIME-type we can get from `magic` (or `filetype` package).
 
@@ -521,7 +522,7 @@ class _FileTypeDetectionContext:
         ):
             self._content_type = None
 
-    @lazyproperty
+    @cached_property
     def text_head(self) -> str:
         """The initial characters of the text file for use with text-format differentiation.
 
@@ -596,13 +597,13 @@ class _OleFileDetector:
 
         return None
 
-    @lazyproperty
+    @cached_property
     def _is_ole_file(self) -> bool:
         """True when file has CFB magic first 8 bytes."""
         with self._ctx.open() as file:
             return file.read(8) == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
-    @lazyproperty
+    @cached_property
     def _ole_file_type(self) -> FileType | None:
         with self._ctx.open() as f:
             ole = OleFileIO(f)  # pyright: ignore[reportUnknownVariableType]
@@ -637,7 +638,7 @@ class _TextFileDifferentiator:
             else None
         )
 
-    @lazyproperty
+    @cached_property
     def file_type(self) -> FileType:
         """Differentiated file-type for textual content.
 
@@ -683,7 +684,7 @@ class _TextFileDifferentiator:
 
         return FileType.TXT
 
-    @lazyproperty
+    @cached_property
     def _is_csv(self) -> bool:
         """True when file is plausibly in Comma Separated Values (CSV) format."""
 
@@ -704,7 +705,7 @@ class _TextFileDifferentiator:
         header_count = count_commas(lines[0])
         return all(count_commas(line) == header_count for line in lines[1:])
 
-    @lazyproperty
+    @cached_property
     def _is_eml(self) -> bool:
         """Checks if a text/plain file is actually a .eml file.
 
@@ -713,7 +714,7 @@ class _TextFileDifferentiator:
         """
         return EMAIL_HEAD_RE.match(self._ctx.text_head) is not None
 
-    @lazyproperty
+    @cached_property
     def _is_json(self) -> bool:
         """True when file is JSON collection.
 
@@ -754,7 +755,7 @@ class _ZipFileDetector:
         """
         return cls(ctx)._file_type
 
-    @lazyproperty
+    @cached_property
     def _file_type(self) -> FileType | None:
         """Differentiated file-type for a Zip archive.
 

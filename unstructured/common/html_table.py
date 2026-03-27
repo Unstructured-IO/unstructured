@@ -6,12 +6,11 @@ Used during partitioning as well as chunking.
 from __future__ import annotations
 
 import html
+from functools import cached_property
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 from lxml import etree
 from lxml.html import fragment_fromstring
-
-from unstructured.utils import lazyproperty
 
 if TYPE_CHECKING:
     from lxml.html import HtmlElement
@@ -99,7 +98,7 @@ class HtmlTable:
 
         return cls(table, header_row_idxs=header_row_idxs)
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """The HTML-fragment for this `<table>` element, all on one line.
 
@@ -116,7 +115,7 @@ class HtmlTable:
         for idx, tr in enumerate(rows):
             yield HtmlRow(tr, is_header=(idx in self._header_row_idxs))
 
-    @lazyproperty
+    @cached_property
     def text(self) -> str:
         """The clean, concatenated, text for this table."""
         table_text = " ".join(self._table.itertext())
@@ -131,7 +130,7 @@ class HtmlRow:
         self._tr = tr
         self._is_header = is_header
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """Like  "<tr><td>foo</td><td>bar</td></tr>"."""
         return etree.tostring(self._tr, encoding=str)
@@ -157,7 +156,7 @@ class HtmlRow:
                 continue
             yield text
 
-    @lazyproperty
+    @cached_property
     def text_len(self) -> int:
         """Length of the normalized text, as it would appear in `element.text`."""
         return len(" ".join(self.iter_cell_texts()))
@@ -169,12 +168,12 @@ class HtmlCell:
     def __init__(self, td: HtmlElement):
         self._td = td
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """Like  "<td>foo bar baz</td>"."""
         return etree.tostring(self._td, encoding=str) if self.text else "<td/>"
 
-    @lazyproperty
+    @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
         if (text := self._td.text) is None:

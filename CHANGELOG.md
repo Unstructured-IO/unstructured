@@ -1,7 +1,28 @@
-## 0.22.4-dev0
+## 0.22.8-dev0
 
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
+
+## 0.22.7
+
+### Fixes
+- **Replace `lazyproperty` with `functools.cached_property`**: Fix a bug where 26 properties returning `None` were re-evaluated on every access instead of caching. Also improves performance on cached reads.
+- **Preserve nested rows when reconstructing chunked tables**: `reconstruct_table_from_chunks()` now merges only top-level table rows (`tr`, `thead/tr`, `tbody/tr`, `tfoot/tr`) from each chunk so nested table structure is retained.
+
+## 0.22.6
+
+### Fixes
+* Self-contained script for version extraction in release CI
+
+## 0.22.5
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
+## 0.22.4
+
+### Enhancements
+- **Add ability for `Table` element to be reconstructed from `TableChunk`s**: Previously when a `Table` element was separated into chunks, there was no way to reconstruct it. Each `TableChunk` now carries `table_id` (shared across all chunks from the same table) and `chunk_index` (0-based position) metadata, and a new `reconstruct_table_from_chunks()` function in `unstructured.chunking.dispatch` accepts a mixed list of chunked elements and returns reconstructed `Table` objects with merged text and HTML.
 
 ## 0.22.3
 
@@ -10,6 +31,7 @@
 
 ## 0.22.2
 
+### Enhancements
 - Store routing in ElementMetadata
 
 ## 0.22.1

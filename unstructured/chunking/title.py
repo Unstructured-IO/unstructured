@@ -5,6 +5,7 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
@@ -17,7 +18,6 @@ from unstructured.chunking.base import (
     is_title,
 )
 from unstructured.documents.elements import Element
-from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
@@ -129,7 +129,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         appearing on two different pages can appear in the same chunk.
     """
 
-    @lazyproperty
+    @cached_property
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
@@ -145,7 +145,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         return tuple(iter_boundary_predicates())
 
-    @lazyproperty
+    @cached_property
     def combine_text_under_n_chars(self) -> int:
         """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
 
@@ -157,7 +157,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return self.hard_max if arg_value is None else arg_value
 
-    @lazyproperty
+    @cached_property
     def multipage_sections(self) -> bool:
         """When False, break pre-chunks on page-boundaries."""
         arg_value = self._kwargs.get("multipage_sections")
