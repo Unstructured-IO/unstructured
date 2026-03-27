@@ -1535,6 +1535,7 @@ class Describe_TableChunker:
         assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
             (c.text, c.metadata.text_as_html) for c in baseline_chunks
         ]
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"

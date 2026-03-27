@@ -1175,7 +1175,7 @@ class _HtmlTableSplitter:
         """Largest leading-header row text length."""
         if not self._header_rows:
             return 0
-        return max(row.text_len for row in self._header_rows)
+        return max(self._opts.measure(" ".join(row.iter_cell_texts())) for row in self._header_rows)
 
     @cached_property
     def _header_text_len(self) -> int:
