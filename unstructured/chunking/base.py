@@ -1075,7 +1075,7 @@ class _HtmlTableSplitter:
         fit in the chunking window.
         """
         is_first_chunk = True
-        accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
+        accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
         for row in self._table_element.iter_rows():
             # -- if row won't fit, any WIP chunk is done, send it on its way --
@@ -1083,7 +1083,9 @@ class _HtmlTableSplitter:
                 for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
-                accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
             # -- if row fits, add it to accumulator --
             if accum.will_fit(row):
                 accum.add_row(row)
@@ -1091,7 +1093,9 @@ class _HtmlTableSplitter:
                 for text, html in self._iter_row_splits(row, maxlen=self._maxlen(is_first_chunk)):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
-                accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk))
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
 
         for text, html in accum.flush():
             yield self._prepend_repeated_headers(text, html, is_first_chunk)
@@ -1489,8 +1493,9 @@ class _RowAccumulator:
     subtable composed of all those rows that fit in the window.
     """
 
-    def __init__(self, maxlen: int):
+    def __init__(self, maxlen: int, measure: Callable[[str], int] = len):
         self._maxlen = maxlen
+        self._measure = measure
         self._rows: list[HtmlRow] = []
 
     def add_row(self, row: HtmlRow) -> None:
@@ -1509,7 +1514,7 @@ class _RowAccumulator:
 
     def will_fit(self, row: HtmlRow) -> bool:
         """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= row.text_len
+        return self._remaining_space >= self._row_text_len(row)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1521,11 +1526,15 @@ class _RowAccumulator:
 
     @property
     def _remaining_space(self) -> int:
-        """Number of characters remaining when accumulated rows are formed into HTML."""
+        """Number of chunk-size units remaining for accumulated row text."""
         # -- separators are one space (" ") at the end of each row's text, including last one to
         # -- account for space before prospective next row.
         separators_len = len(self._rows)
-        return self._maxlen - separators_len - sum(r.text_len for r in self._rows)
+        return self._maxlen - separators_len - sum(self._row_text_len(r) for r in self._rows)
+
+    def _row_text_len(self, row: HtmlRow) -> int:
+        """Length of `row` text in configured chunk-size units."""
+        return self._measure(" ".join(row.iter_cell_texts()))
 
 
 # ================================================================================================

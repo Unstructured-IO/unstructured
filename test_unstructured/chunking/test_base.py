@@ -2158,6 +2158,31 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_uses_the_configured_measurement_units_for_row_fitting(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        opts = ChunkingOptions(max_characters=3)
+        monkeypatch.setattr(opts, "measure", lambda text: len(text.split()))
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td>supercalifragilisticexpialidocious</td></tr>
+              <tr><td>pneumonoultramicroscopicsilicovolcanoconiosis</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "supercalifragilisticexpialidocious"
+                " pneumonoultramicroscopicsilicovolcanoconiosis",
+                "<table>"
+                "<tr><td>supercalifragilisticexpialidocious</td></tr>"
+                "<tr><td>pneumonoultramicroscopicsilicovolcanoconiosis</td></tr>"
+                "</table>",
+            ),
+        ]
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
@@ -2358,6 +2383,16 @@ class Describe_RowAccumulator:
         accum.add_row(row)
 
         assert accum._rows == [row]
+
+    def and_it_uses_the_configured_measurement_units_for_remaining_space(self):
+        accum = _RowAccumulator(maxlen=3, measure=lambda text: len(text.split()))
+        row = HtmlRow(fragment_fromstring("<tr><td>supercalifragilisticexpialidocious</td></tr>"))
+
+        assert accum.will_fit(row) is True
+        accum.add_row(row)
+
+        # -- one token of text plus one separator leaves one token of space --
+        assert accum._remaining_space == 1
 
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
