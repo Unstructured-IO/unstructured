@@ -336,6 +336,41 @@ class ChunkingOptions:
 
 
 # ================================================================================================
+# TABLE ISOLATION (SHARED PRECHECKS)
+# ================================================================================================
+# Tables are always staged alone in a pre-chunk so downstream splitting can emit `Table` /
+# `TableChunk` elements instead of folding them into `CompositeElement` with surrounding text.
+# See GitHub issue #3921 and the chunking strategy docs for rationale.
+
+
+def _element_is_table_family(element: Element) -> bool:
+    """True when ``element`` is a `Table` or a concrete subtype such as `TableChunk`.
+
+    Subclasses share the same isolation contract: they must not share a pre-chunk with arbitrary
+    text elements, and two table-bearing sequences must not be merged by `PreChunkCombiner`.
+    """
+    return isinstance(element, Table)
+
+
+def _elements_contain_table_family(elements: Iterable[Element]) -> bool:
+    """True when ``elements`` already includes at least one table-family element."""
+    return any(_element_is_table_family(e) for e in elements)
+
+
+def _table_isolation_forbids_side_by_side_merge(
+    left: Iterable[Element],
+    right: Iterable[Element],
+) -> bool:
+    """True when a proposed merge of two element streams must be rejected for table isolation.
+
+    If either side already contains a table, the combiner must flush before accepting the other
+    side. This keeps `combine_text_under_n_chars` from concatenating a table pre-chunk with
+    neighboring narrative pre-chunks.
+    """
+    return _elements_contain_table_family(left) or _elements_contain_table_family(right)
+
+
+# ================================================================================================
 # PRE-CHUNKER
 # ================================================================================================
 
@@ -481,6 +516,14 @@ class PreChunkBuilder:
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
         """
+        # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty pre-chunk --
+        if _element_is_table_family(element):
+            return len(self._elements) == 0
+
+        # -- no non-table element may share a pre-chunk with a `Table` --
+        if _elements_contain_table_family(self._elements):
+            return False
+
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
@@ -562,6 +605,8 @@ class PreChunk:
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
+        if _table_isolation_forbids_side_by_side_merge(self._elements, pre_chunk._elements):
+            return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
