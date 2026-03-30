@@ -206,11 +206,11 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
 def _num_carried_over_header_rows(chunk: TableChunk) -> int:
     """Header rows prepended synthetically to this chunk.
 
-    Reconstruction can be called on user-provided/deserialized chunks, so treat missing and
-    non-positive values as "no carried header rows" to avoid negative-index slicing effects.
+    Reconstruction can be called on user-provided/deserialized chunks, so treat missing values as
+    "no carried header rows."
     """
     value = chunk.metadata.num_carried_over_header_rows
-    return value if value and value > 0 else 0
+    return value or 0
 
 
 def _strip_carried_over_header_text(chunk: TableChunk) -> str:

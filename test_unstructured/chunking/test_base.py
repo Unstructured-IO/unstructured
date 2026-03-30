@@ -1979,9 +1979,9 @@ class Describe_TableChunker:
             "Body 4 Delta",
         ]
 
-    def it_treats_negative_carried_header_row_counts_as_zero_during_reconstruction(self):
-        """Malformed negative metadata should never be interpreted as a Python negative slice."""
-        table_id = "table-with-negative-header-count"
+    def it_treats_missing_carried_header_row_counts_as_zero_during_reconstruction(self):
+        """Missing carried-header metadata defaults to no carried rows during reconstruction."""
+        table_id = "table-with-missing-header-count"
         chunks: list[Element] = [
             TableChunk(
                 text="Header Body 1",
@@ -1997,7 +1997,7 @@ class Describe_TableChunker:
                 metadata=ElementMetadata(
                     table_id=table_id,
                     chunk_index=1,
-                    num_carried_over_header_rows=-1,
+                    num_carried_over_header_rows=None,
                     text_as_html="<table><tr><td>Header</td></tr><tr><td>Body 2</td></tr></table>",
                 ),
             ),
