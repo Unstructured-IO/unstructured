@@ -224,7 +224,7 @@ class DescribeHtmlCell:
 
     def and_it_preserves_nested_markup_when_serializing_nonempty_cells(self):
         assert HtmlCell(fragment_fromstring("<td><a href='#'>Category Link</a></td>")).html == (
-            "<td><a href=\"#\">Category Link</a></td>"
+            '<td><a href="#">Category Link</a></td>'
         )
 
     @pytest.mark.parametrize(
