@@ -150,8 +150,7 @@ class HtmlRow:
         A cell that is empty or contains only whitespace does not generate a string.
         """
         for td in self._tr:
-            if (text := td.text) is None:
-                continue
+            text = " ".join(td.text_content().split())
             if not text:
                 continue
             yield text
@@ -176,6 +175,4 @@ class HtmlCell:
     @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
-        if (text := self._td.text) is None:
-            return ""
-        return " ".join(text.strip().split())
+        return " ".join(self._td.text_content().split())

@@ -1979,6 +1979,51 @@ class Describe_TableChunker:
             "Body 4 Delta",
         ]
 
+    def and_it_handles_nested_markup_in_carried_header_rows_during_reconstruction(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>ID</th><th><a href='#'>Category Link</a></th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>1</td><td>Alpha data value here</td></tr>"
+            "<tr><td>2</td><td>Bravo data value here</td></tr>"
+            "<tr><td>3</td><td>Charlie data value here</td></tr>"
+            "<tr><td>4</td><td>Delta data value here</td></tr>"
+            "<tr><td>5</td><td>Echo data value here</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_row_texts = [
+            "ID Category Link",
+            "1 Alpha data value here",
+            "2 Bravo data value here",
+            "3 Charlie data value here",
+            "4 Delta data value here",
+            "5 Echo data value here",
+        ]
+        expected_text = " ".join(expected_row_texts)
+
+        chunks = self._table_chunks(
+            table_text="placeholder",
+            table_html=table_html,
+            max_characters=80,
+            repeat_table_headers=True,
+        )
+        assert len(chunks) >= 2
+        assert chunks[0].metadata.num_carried_over_header_rows == 0
+        assert [c.metadata.num_carried_over_header_rows for c in chunks[1:]] == [1] * (
+            len(chunks) - 1
+        )
+        for chunk in chunks[1:]:
+            assert chunk.text.startswith("ID Category Link ")
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == expected_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_row_texts
+
     def it_treats_missing_carried_header_row_counts_as_zero_during_reconstruction(self):
         """Missing carried-header metadata defaults to no carried rows during reconstruction."""
         table_id = "table-with-missing-header-count"
