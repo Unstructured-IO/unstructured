@@ -1,3 +1,53 @@
+## 0.22.8
+
+### Enhancements
+- **Reduce PaddleOCR memory usage**: Set `rec_batch_num=1` when creating PaddleOCR instances to reduce Paddle inference engine arena allocation from 4x500 MiB to 1x500 MiB during text recognition
+
+## 0.22.7
+
+### Fixes
+- **Replace `lazyproperty` with `functools.cached_property`**: Fix a bug where 26 properties returning `None` were re-evaluated on every access instead of caching. Also improves performance on cached reads.
+- **Preserve nested rows when reconstructing chunked tables**: `reconstruct_table_from_chunks()` now merges only top-level table rows (`tr`, `thead/tr`, `tbody/tr`, `tfoot/tr`) from each chunk so nested table structure is retained.
+
+## 0.22.6
+
+### Fixes
+* Self-contained script for version extraction in release CI
+
+## 0.22.5
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
+## 0.22.4
+
+### Enhancements
+- **Add ability for `Table` element to be reconstructed from `TableChunk`s**: Previously when a `Table` element was separated into chunks, there was no way to reconstruct it. Each `TableChunk` now carries `table_id` (shared across all chunks from the same table) and `chunk_index` (0-based position) metadata, and a new `reconstruct_table_from_chunks()` function in `unstructured.chunking.dispatch` accepts a mixed list of chunked elements and returns reconstructed `Table` objects with merged text and HTML.
+
+## 0.22.3
+
+### Enhancements
+- **`partition_md` Markdown `extensions`**: Optional `extensions` list is passed to `markdown.markdown()`; entries may be registered names (`str`) or `markdown.extensions.Extension` instances. Defaults to `["tables", "fenced_code"]`. Invalid values raise `ValueError`.
+
+## 0.22.2
+
+### Enhancements
+- Store routing in ElementMetadata
+
+## 0.22.1
+
+### Fixes
+- **Security update**: Bumped dependencies to address security vulnerabilities
+
+## 0.22.0
+
+### Breaking changes
+- **Opt-out env semantics**: `DO_NOT_TRACK` and `SCARF_NO_ANALYTICS` now treat any non-empty value (after strip) as opt-out. Previously only the exact string `"true"` opted out. Values like `false`, `0`, or `no` now also disable telemetry. To avoid opting out, unset the variable or leave it empty.
+
+### Enhancements
+- **Telemetry off by default**: The library-load analytics ping is disabled by default. Set `UNSTRUCTURED_TELEMETRY_ENABLED=true` before importing to restore the previous behavior. Opt-out via `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` (any non-empty value) takes precedence.
+- Telemetry ping uses `requests.get(..., params=...)` for correct URL encoding and a single dev/non-dev code path.
+
 ## 0.21.12
 - **Add Check for complex documents**: Adds a check for complex documents to avoid pdfminer with a high ratio of vector objects
 

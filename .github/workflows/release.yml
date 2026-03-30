@@ -37,7 +37,15 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          PKG_VERSION=$(uv run --no-sync python -c "from unstructured.__version__ import __version__; print(__version__)")
+          PKG_VERSION=$(uv run --script - <<'PYEOF'
+          # /// script
+          # requires-python = ">=3.11"
+          # dependencies = ["typing-extensions", "requests"]
+          # ///
+          from unstructured.__version__ import __version__
+          print(__version__)
+          PYEOF
+          )
           if [[ "$TAG" != "$PKG_VERSION" && "$TAG" != "v$PKG_VERSION" ]]; then
             echo "Tag '$TAG' does not match package version '$PKG_VERSION'"
             exit 1
