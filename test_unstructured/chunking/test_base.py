@@ -1979,6 +1979,41 @@ class Describe_TableChunker:
             "Body 4 Delta",
         ]
 
+    def it_treats_negative_carried_header_row_counts_as_zero_during_reconstruction(self):
+        """Malformed negative metadata should never be interpreted as a Python negative slice."""
+        table_id = "table-with-negative-header-count"
+        chunks: list[Element] = [
+            TableChunk(
+                text="Header Body 1",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=0,
+                    num_carried_over_header_rows=0,
+                    text_as_html="<table><tr><td>Header</td></tr><tr><td>Body 1</td></tr></table>",
+                ),
+            ),
+            TableChunk(
+                text="Header Body 2",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=1,
+                    num_carried_over_header_rows=-1,
+                    text_as_html="<table><tr><td>Header</td></tr><tr><td>Body 2</td></tr></table>",
+                ),
+            ),
+        ]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text == "Header Body 1 Header Body 2"
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == [
+            "Header",
+            "Body 1",
+            "Header",
+            "Body 2",
+        ]
+
     def it_orders_chunks_with_missing_chunk_index_after_numbered_chunks(self):
         """Chunks missing `chunk_index` are merged after indexed chunks for stable ordering."""
         table_id = "table-with-missing-index"
