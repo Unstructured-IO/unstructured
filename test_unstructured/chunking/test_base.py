@@ -2544,6 +2544,7 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=100)
 
         assert accum._rows == []
+        assert accum._row_text_len == 0
 
     def it_accumulates_rows_added_to_it(self):
         accum = _RowAccumulator(maxlen=100)
@@ -2552,6 +2553,7 @@ class Describe_RowAccumulator:
         accum.add_row(row)
 
         assert accum._rows == [row]
+        assert accum._row_text_len == len("foo bar")
 
     def and_it_uses_the_configured_measurement_units_for_remaining_space(self):
         accum = _RowAccumulator(maxlen=3, measure=lambda text: len(text.split()))
@@ -2562,6 +2564,7 @@ class Describe_RowAccumulator:
 
         # -- one token of text plus one separator leaves one token of space --
         assert accum._remaining_space == 1
+        assert accum._row_text_len == 1
 
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
@@ -2615,6 +2618,7 @@ class Describe_RowAccumulator:
         assert text == "abcde fghij klmno"
         assert html == "<table><tr><td>abcde fghij klmno</td></tr></table>"
         assert accum._rows == []
+        assert accum._row_text_len == 0
 
     def and_the_HTML_contains_as_many_rows_as_were_accumulated(self):
         accum = _RowAccumulator(maxlen=100)
@@ -2628,6 +2632,7 @@ class Describe_RowAccumulator:
             "<table><tr><td>abcde fghij klmno</td></tr><tr><td>pqrst uvwxy z</td></tr></table>"
         )
         assert accum._rows == []
+        assert accum._row_text_len == 0
 
     def but_it_does_not_generate_a_TextAndHtml_pair_when_empty(self):
         accum = _RowAccumulator(maxlen=100)

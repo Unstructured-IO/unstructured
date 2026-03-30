@@ -1511,10 +1511,12 @@ class _RowAccumulator:
         self._maxlen = maxlen
         self._measure = measure
         self._rows: list[HtmlRow] = []
+        self._row_text_len = 0
 
     def add_row(self, row: HtmlRow) -> None:
         """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._rows.append(row)
+        self._row_text_len += self._measured_row_text_len(row)
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
@@ -1524,11 +1526,12 @@ class _RowAccumulator:
         trs_str = "".join(r.html for r in self._rows)
         html = f"<table>{trs_str}</table>"
         self._rows.clear()
+        self._row_text_len = 0
         yield text, html
 
     def will_fit(self, row: HtmlRow) -> bool:
         """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= self._row_text_len(row)
+        return self._remaining_space >= self._measured_row_text_len(row)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1544,9 +1547,9 @@ class _RowAccumulator:
         # -- separators are one space (" ") at the end of each row's text, including last one to
         # -- account for space before prospective next row.
         separators_len = len(self._rows)
-        return self._maxlen - separators_len - sum(self._row_text_len(r) for r in self._rows)
+        return self._maxlen - separators_len - self._row_text_len
 
-    def _row_text_len(self, row: HtmlRow) -> int:
+    def _measured_row_text_len(self, row: HtmlRow) -> int:
         """Length of `row` text in configured chunk-size units."""
         return self._measure(" ".join(row.iter_cell_texts()))
 
