@@ -1,7 +1,7 @@
 ## 0.22.9
 
 ### Enhancements
-- **Isolate `Table` elements during chunking** (fixes #3921): `Table` and `TableChunk` elements are always placed in their own pre-chunk and are never merged with adjacent text into a `CompositeElement`, nor combined with neighboring pre-chunks when `combine_text_under_n_chars` is enabled. Shared helpers in `unstructured.chunking.base` centralize the table-isolation checks.
+- **Isolate `Table` elements during chunking**: `Table` and `TableChunk` elements are always placed in their own pre-chunk and are never merged with adjacent text into a `CompositeElement`, nor combined with neighboring pre-chunks when `combine_text_under_n_chars` is enabled. Shared helpers in `unstructured.chunking.base` centralize the table-isolation checks.
 
 ## 0.22.8
 
