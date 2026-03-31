@@ -17,7 +17,6 @@ from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
 
-
 _RE_CIDRANGE_BLOCK = re.compile(rb"begincidrange\s+(.*?)\s+endcidrange", re.DOTALL)
 _RE_CIDRANGE_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s+(\d+)")
 _RE_CIDCHAR_BLOCK = re.compile(rb"begincidchar\s+(.*?)\s+endcidchar", re.DOTALL)
