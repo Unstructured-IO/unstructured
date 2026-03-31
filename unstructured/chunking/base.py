@@ -1060,8 +1060,7 @@ class _TableChunker:
         CS = ConsolidationStrategy
         metadata = copy.deepcopy(self._table.metadata)
 
-        # -- drop metadata fields not appropriate for chunks, in particular
-        # -- parent_id's will not reliably point to an existing element
+        # -- drop metadata fields not appropriate for chunks --
         drop_field_names = [
             field_name
             for field_name, strategy in CS.field_consolidation_strategies().items()
@@ -1069,6 +1068,9 @@ class _TableChunker:
         ]
         for field_name in drop_field_names:
             setattr(metadata, field_name, None)
+
+        # -- table-derived chunks preserve source hierarchy lineage --
+        metadata.parent_id = self._table.metadata.parent_id
 
         if self._opts.include_orig_elements:
             metadata.orig_elements = self._orig_elements

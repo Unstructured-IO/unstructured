@@ -1762,7 +1762,7 @@ class Describe_TableChunker:
         assert chunk.metadata.orig_elements == [table]
         assert chunk.metadata.is_continuation
 
-    def it_records_parent_id_loss_for_each_TableChunk_when_splitting_a_table(self):
+    def it_preserves_parent_id_for_each_TableChunk_when_splitting_a_table(self):
         table = Table(
             "Header Col 1   Header Col 2\n"
             "Lorem ipsum    dolor sit amet\n"
@@ -1791,8 +1791,8 @@ class Describe_TableChunker:
 
         assert len(chunks) == 2
         assert all(isinstance(chunk, TableChunk) for chunk in chunks)
-        # -- chunk-level parent_id is dropped for all split table chunks --
-        assert [chunk.metadata.parent_id for chunk in chunks] == [None, None]
+        # -- chunk-level parent_id is preserved for all split table chunks --
+        assert [chunk.metadata.parent_id for chunk in chunks] == ["parent-1234", "parent-1234"]
         # -- each chunk still carries the original table in orig_elements, including parent_id --
         assert [chunk.metadata.orig_elements[0].metadata.parent_id for chunk in chunks] == [
             "parent-1234",
@@ -1837,12 +1837,16 @@ class Describe_TableChunker:
 
     def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
         table_chunker = _TableChunker(
-            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
+            Table(
+                "Lorem ipsum",
+                metadata=ElementMetadata(text_as_html="<table/>", parent_id="table-parent-1"),
+            ),
             overlap_prefix="",
             opts=ChunkingOptions(include_orig_elements=False),
         )
 
         assert table_chunker._metadata.orig_elements is None
+        assert table_chunker._metadata.parent_id == "table-parent-1"
 
     def it_computes_the_original_elements_list_to_help(self):
         table = Table(
@@ -2006,7 +2010,7 @@ class Describe_TableChunker:
         assert tables[1].metadata.filename == "doc1.pdf"
         assert tables[1].metadata.page_number == 3
 
-    def and_it_preserves_parent_id_loss_on_reconstructed_table_metadata(self):
+    def and_it_preserves_parent_id_on_reconstructed_table_metadata(self):
         parent_id = "table-parent-123"
         chunks = list(
             _TableChunker.iter_chunks(
@@ -2025,7 +2029,7 @@ class Describe_TableChunker:
 
         [table] = reconstruct_table_from_chunks(chunks)
 
-        assert table.metadata.parent_id is None
+        assert table.metadata.parent_id == parent_id
         assert table.metadata.orig_elements is not None
         assert [element.metadata.parent_id for element in table.metadata.orig_elements] == [parent_id]
 
