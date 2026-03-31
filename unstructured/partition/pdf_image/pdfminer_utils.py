@@ -40,6 +40,7 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
     stream and builds the code2cid dict that CMap.decode() uses.
     """
     code2cid: dict[int, object] = {}
+    total_mappings = 0
 
     for match in _RE_CIDRANGE_BLOCK.finditer(data):
         entries = _RE_CIDRANGE_ENTRY.findall(match.group(1))
@@ -52,7 +53,7 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
             end_val = int.from_bytes(end_bytes, "big")
 
             range_size = end_val - start_val + 1
-            if len(code2cid) + range_size > _MAX_CODE2CID_MAPPINGS:
+            if total_mappings + range_size > _MAX_CODE2CID_MAPPINGS:
                 logger.warning(
                     "Embedded CMap range too large (%d entries), skipping to avoid DoS",
                     range_size,
@@ -71,10 +72,17 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
                             d[b] = {}
                         d = d[b]  # type: ignore[assignment]
                     d[code_bytes[-1]] = cid
+            total_mappings += range_size
 
     for match in _RE_CIDCHAR_BLOCK.finditer(data):
         entries = _RE_CIDCHAR_ENTRY.findall(match.group(1))
         for code_hex, cid_str in entries:
+            if total_mappings >= _MAX_CODE2CID_MAPPINGS:
+                logger.warning(
+                    "Embedded CMap exceeded %d mappings, skipping remaining cidchar entries",
+                    _MAX_CODE2CID_MAPPINGS,
+                )
+                break
             code_bytes = bytes.fromhex(code_hex.decode("ascii"))
             cid = int(cid_str)
             if len(code_bytes) == 1:
@@ -86,6 +94,7 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
                         d[b] = {}
                     d = d[b]  # type: ignore[assignment]
                 d[code_bytes[-1]] = cid
+            total_mappings += 1
 
     cmap = CMap()
     cmap.code2cid = code2cid
