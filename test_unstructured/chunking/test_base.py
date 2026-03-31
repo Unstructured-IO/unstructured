@@ -2075,7 +2075,9 @@ class Describe_TableChunker:
 
         assert table.metadata.parent_id == parent_id
         assert table.metadata.orig_elements is not None
-        assert [element.metadata.parent_id for element in table.metadata.orig_elements] == [parent_id]
+        assert [element.metadata.parent_id for element in table.metadata.orig_elements] == [
+            parent_id
+        ]
 
     def it_reconstructs_repeated_header_tables_without_duplication_using_chunk_metadata(self):
         table_html = (
