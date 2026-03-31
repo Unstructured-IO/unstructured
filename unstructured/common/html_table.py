@@ -51,8 +51,9 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
 class HtmlTable:
     """A `<table>` element."""
 
-    def __init__(self, table: HtmlElement):
+    def __init__(self, table: HtmlElement, header_row_idxs: set[int] | None = None):
         self._table = table
+        self._header_row_idxs = header_row_idxs or set()
 
     @classmethod
     def from_html_text(cls, html_text: str) -> HtmlTable:
@@ -62,6 +63,14 @@ class HtmlTable:
         if not tables:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
+
+        # -- capture header semantics before compactification strips `<thead>`/`<th>` details --
+        rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
+        header_row_idxs = {
+            idx
+            for idx, tr in enumerate(rows)
+            if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
+        }
 
         # -- remove `<thead>`, `<tbody>`, and `<tfoot>` noise elements when present --
         noise_elements = table.xpath(".//thead | .//tbody | .//tfoot")
@@ -87,7 +96,7 @@ class HtmlTable:
             if e.tail:
                 e.tail = None
 
-        return cls(table)
+        return cls(table, header_row_idxs=header_row_idxs)
 
     @cached_property
     def html(self) -> str:
@@ -102,7 +111,9 @@ class HtmlTable:
         return etree.tostring(self._table, encoding=str)
 
     def iter_rows(self) -> Iterator[HtmlRow]:
-        yield from (HtmlRow(tr) for tr in cast("list[HtmlElement]", self._table.xpath("./tr")))
+        rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
+        for idx, tr in enumerate(rows):
+            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs))
 
     @cached_property
     def text(self) -> str:
@@ -115,8 +126,9 @@ class HtmlTable:
 class HtmlRow:
     """A `<tr>` element."""
 
-    def __init__(self, tr: HtmlElement):
+    def __init__(self, tr: HtmlElement, is_header: bool = False):
         self._tr = tr
+        self._is_header = is_header
 
     @cached_property
     def html(self) -> str:
@@ -127,14 +139,18 @@ class HtmlRow:
         for td in self._tr:
             yield HtmlCell(td)
 
+    @property
+    def is_header(self) -> bool:
+        """True when this row originated from `<thead>` or contains `<th>` cells."""
+        return self._is_header
+
     def iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each cell of this row as a separate string.
 
         A cell that is empty or contains only whitespace does not generate a string.
         """
         for td in self._tr:
-            if (text := td.text) is None:
-                continue
+            text = " ".join(td.text_content().split())
             if not text:
                 continue
             yield text
@@ -159,6 +175,4 @@ class HtmlCell:
     @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
-        if (text := self._td.text) is None:
-            return ""
-        return " ".join(text.strip().split())
+        return " ".join(self._td.text_content().split())

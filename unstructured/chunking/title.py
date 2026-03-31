@@ -33,6 +33,7 @@ def chunk_by_title(
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
     tokenizer: Optional[str] = None,
+    repeat_table_headers: Optional[bool] = None,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
@@ -83,6 +84,9 @@ def chunk_by_title(
     tokenizer
         The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
         "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
+    repeat_table_headers
+        Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
+        continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
@@ -95,6 +99,7 @@ def chunk_by_title(
         overlap=overlap,
         overlap_all=overlap_all,
         tokenizer=tokenizer,
+        repeat_table_headers=repeat_table_headers,
     )
     return _chunk_by_title(elements, opts)
 

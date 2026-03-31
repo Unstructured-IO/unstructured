@@ -136,6 +136,19 @@ class DescribeHtmlTable:
         with pytest.raises(StopIteration):
             next(row_iter)
 
+    def it_preserves_row_header_semantics_when_iterating_rows(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <thead><tr><td>head-from-thead</td></tr></thead>"
+            "  <tbody>"
+            "    <tr><th>head-from-th</th></tr>"
+            "    <tr><td>body</td></tr>"
+            "  </tbody>"
+            "</table>"
+        )
+
+        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
+
     def it_provides_access_to_the_clear_concatenated_text_of_the_table(self):
         html_table = HtmlTable.from_html_text(
             "<table>"
@@ -185,6 +198,23 @@ class DescribeHtmlRow:
         with pytest.raises(StopIteration):
             next(text_iter)
 
+    def and_it_includes_descendant_inline_text_in_cell_texts(self):
+        row = HtmlRow(
+            fragment_fromstring(
+                "<tr>"
+                "<td>ID</td>"
+                "<td><a href='#'>Category Link</a></td>"
+                "<td><span>  Extra  spacing </span></td>"
+                "</tr>"
+            )
+        )
+
+        assert list(row.iter_cell_texts()) == ["ID", "Category Link", "Extra spacing"]
+
+    def it_knows_when_it_represents_a_header_row(self):
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>")).is_header is False
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>"), is_header=True).is_header is True
+
 
 class DescribeHtmlCell:
     """Unit-test suite for `unstructured.common.html_table.HtmlCell`."""
@@ -192,9 +222,18 @@ class DescribeHtmlCell:
     def it_can_serialize_the_cell_to_html(self):
         assert HtmlCell(fragment_fromstring("<td>a b c</td>")).html == "<td>a b c</td>"
 
+    def and_it_preserves_nested_markup_when_serializing_nonempty_cells(self):
+        assert HtmlCell(fragment_fromstring("<td><a href='#'>Category Link</a></td>")).html == (
+            '<td><a href="#">Category Link</a></td>'
+        )
+
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
-        [("<td>  Lorem ipsum  </td>", "Lorem ipsum"), ("<td/>", "")],
+        [
+            ("<td>  Lorem ipsum  </td>", "Lorem ipsum"),
+            ("<td><a href='#'>Category Link</a></td>", "Category Link"),
+            ("<td/>", ""),
+        ],
     )
     def it_knows_the_text_in_the_cell(self, cell_html: str, expected_value: str):
         assert HtmlCell(fragment_fromstring(cell_html)).text == expected_value
