@@ -3,6 +3,9 @@
 ### Enhancements
 - **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
 
+### Fixes
+- **Preserve `parent_id` on split table chunks**: When a `Table` is split into `TableChunk` elements, each chunk now retains the source table `metadata.parent_id` lineage; non-table text split chunks continue to clear chunk-level `parent_id`.
+
 ## 0.22.10
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
