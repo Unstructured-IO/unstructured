@@ -477,6 +477,33 @@ def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
     )
 
 
+def test_partition_pdf_with_fast_strategy_extracts_embedded_cmap_text():
+    """Test that fast strategy extracts text from CIDFonts with embedded CMap streams.
+
+    Some PDF generators (e.g. Prince XML) embed custom Encoding CMaps as PDF streams
+    rather than using predefined CMap names. Without handling this, pdfminer.six silently
+    falls back to an empty CMap and all text using those fonts is lost.
+
+    The test fixture has two fonts: a simple Type1 font (Helvetica) that pdfminer handles
+    fine, and a Type0/CIDFont with an embedded CMap named "Test-Identity-H" that triggers
+    the bug.
+    """
+    filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
+
+    all_text = " ".join(e.text for e in elements)
+
+    # The Helvetica heading should always be extracted
+    assert "Heading in Helvetica" in all_text
+
+    # These strings are rendered with the CIDFont using the embedded CMap.
+    # Without the fix, they would be silently dropped.
+    assert "This text uses an embedded CMap" in all_text
+    assert "and should be extractable" in all_text
+
+    assert len(elements) == 3
+
+
 def test_partition_pdf_raises_with_bad_strategy():
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     with pytest.raises(ValueError):
