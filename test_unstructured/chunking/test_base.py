@@ -1189,13 +1189,17 @@ class Describe_TableChunker:
         table_html: str,
         max_characters: int,
         *,
+        parent_id: str | None = None,
         repeat_table_headers: bool | None = None,
     ) -> list[Table | TableChunk]:
         kwargs: dict[str, Any] = {"max_characters": max_characters}
         if repeat_table_headers is not None:
             kwargs["repeat_table_headers"] = repeat_table_headers
         opts = ChunkingOptions(**kwargs)
-        table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+        table = Table(
+            table_text,
+            metadata=ElementMetadata(text_as_html=table_html, parent_id=parent_id),
+        )
         return list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
 
     @staticmethod
@@ -1791,6 +1795,7 @@ class Describe_TableChunker:
 
         assert len(chunks) == 2
         assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+        assert [chunk.metadata.is_continuation for chunk in chunks] == [None, True]
         # -- chunk-level parent_id is preserved for all split table chunks --
         assert [chunk.metadata.parent_id for chunk in chunks] == ["parent-1234", "parent-1234"]
         # -- each chunk still carries the original table in orig_elements, including parent_id --
@@ -1798,6 +1803,45 @@ class Describe_TableChunker:
             "parent-1234",
             "parent-1234",
         ]
+
+    def and_it_preserves_parent_id_on_each_continuation_chunk_when_headers_repeat(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+        parent_id = "table-parent-continue-123"
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            parent_id=parent_id,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 4
+        assert [chunk.metadata.is_continuation for chunk in chunks] == [None, True, True, True]
+        assert [chunk.metadata.parent_id for chunk in chunks] == [parent_id] * len(chunks)
+        assert [chunk.metadata.orig_elements[0].metadata.parent_id for chunk in chunks] == [
+            parent_id
+        ] * len(chunks)
 
     @pytest.mark.parametrize(
         ("text", "overlap_prefix", "expected_value"),
