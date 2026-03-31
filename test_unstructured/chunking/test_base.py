@@ -954,6 +954,27 @@ class Describe_Chunker:
 
         assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
 
+    def and_it_drops_parent_id_for_all_non_table_text_split_chunks(self):
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        parent_id = "text-parent-123"
+        metadata = ElementMetadata(parent_id=parent_id)
+        element = Text(text, metadata=metadata)
+
+        chunks = list(
+            _Chunker.iter_chunks(
+                [element],
+                text,
+                opts=ChunkingOptions(max_characters=20, include_orig_elements=True),
+            )
+        )
+
+        assert len(chunks) >= 2
+        assert [chunk.metadata.parent_id for chunk in chunks] == [None] * len(chunks)
+        assert [chunk.metadata.orig_elements[0].metadata.parent_id for chunk in chunks] == [
+            parent_id
+        ] * len(chunks)
+
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
 
@@ -1984,6 +2005,29 @@ class Describe_TableChunker:
         assert tables[0].metadata.page_number == 1
         assert tables[1].metadata.filename == "doc1.pdf"
         assert tables[1].metadata.page_number == 3
+
+    def and_it_preserves_parent_id_loss_on_reconstructed_table_metadata(self):
+        parent_id = "table-parent-123"
+        chunks = list(
+            _TableChunker.iter_chunks(
+                Table(
+                    self.TEXT_TABLE_1,
+                    metadata=ElementMetadata(
+                        text_as_html=self.HTML_TABLE_1,
+                        parent_id=parent_id,
+                    ),
+                ),
+                overlap_prefix="",
+                opts=ChunkingOptions(max_characters=75, text_splitting_separators=("\n", " ")),
+            )
+        )
+        assert len(chunks) >= 2
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.parent_id is None
+        assert table.metadata.orig_elements is not None
+        assert [element.metadata.parent_id for element in table.metadata.orig_elements] == [parent_id]
 
     def it_reconstructs_repeated_header_tables_without_duplication_using_chunk_metadata(self):
         table_html = (
