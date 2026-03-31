@@ -9,7 +9,7 @@ from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTe
 from pdfminer.pdffont import PDFCIDFont
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from pdfminer.pdftypes import PDFStream
+from pdfminer.pdftypes import PDFStream, resolve1
 from pdfminer.psexceptions import PSSyntaxError
 from pydantic import BaseModel
 
@@ -52,6 +52,8 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
             start_val = int.from_bytes(start_bytes, "big")
             end_val = int.from_bytes(end_bytes, "big")
 
+            if end_val < start_val:
+                continue
             range_size = end_val - start_val + 1
             if total_mappings + range_size > _MAX_CODE2CID_MAPPINGS:
                 logger.warning(
@@ -115,7 +117,7 @@ def _patched_get_cmap_from_spec(self: PDFCIDFont, spec: dict, strict: bool) -> C
     try:
         return CMapDB.get_cmap(cmap_name)
     except CMapDB.CMapNotFound as e:
-        encoding = spec.get("Encoding")
+        encoding = resolve1(spec.get("Encoding"))
         if isinstance(encoding, PDFStream):
             try:
                 cmap = _parse_embedded_cmap_stream(encoding.get_data())
