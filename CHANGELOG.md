@@ -1,7 +1,12 @@
-## 0.22.11
+## 0.22.12
 
 ### Fixes
 - **Fix fast strategy silently skipping text in some PDFs**: Certain PDF generators (e.g. Prince XML) embed font encoding data in a non-standard way that pdfminer.six does not handle, causing body text to be silently dropped while headings still extract correctly. Added a workaround that reads the embedded encoding data directly.
+
+## 0.22.11
+
+### Enhancements
+- **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
 
 ## 0.22.10
 ### Enhancements
