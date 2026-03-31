@@ -1,3 +1,8 @@
+## 0.22.11
+
+### Enhancements
+- **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
+
 ## 0.22.10
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
