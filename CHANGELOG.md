@@ -1,7 +1,11 @@
-## 0.22.9-dev0
-
+## 0.22.10
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
+
+## 0.22.9
+
+### Enhancements
+- **Isolate `Table` elements during chunking**: `Table` and `TableChunk` elements are always placed in their own pre-chunk and are never merged with adjacent text into a `CompositeElement`, nor combined with neighboring pre-chunks when `combine_text_under_n_chars` is enabled. Shared helpers in `unstructured.chunking.base` centralize the table-isolation checks. Inter-chunk overlap (`overlap` + `overlap_all`) no longer carries narrative text into table pre-chunks or table tails into following text chunks.
 
 ## 0.22.8
 
