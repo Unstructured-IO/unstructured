@@ -22,6 +22,7 @@ from unstructured.documents.elements import (
     ElementType,
     FigureCaption,
     Form,
+    Formula,
     Image,
     Link,
     ListItem,
@@ -592,6 +593,7 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
     [
         (Title("Test Title"), "# Test Title", False),
         (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
+        (Formula(r"\int_a^b x^2 dx"), "$$\n\\int_a^b x^2 dx\n$$", False),
         (
             Image(
                 "Test Image",
@@ -647,6 +649,34 @@ def test_element_to_md_conversion(element: "Element", expected_markdown: str, ex
     assert (
         base.element_to_md(element, exclude_binary_image_data=exclude_binary) == expected_markdown
     )
+
+
+def test_element_to_md_formula_normalizes_common_math_symbols():
+    element = Formula("x ∈ A and y ≤ z and a × b = c")
+    assert base.element_to_md(element) == "$$\nx \\in A and y \\leq z and a \\times b = c\n$$"
+
+
+def test_element_to_md_formula_can_disable_normalization():
+    element = Formula("x ∈ A and y ≤ z and a × b = c")
+    assert (
+        base.element_to_md(element, normalize_formula=False)
+        == "$$\nx ∈ A and y ≤ z and a × b = c\n$$"
+    )
+
+
+def test_elements_to_md_formula_can_disable_normalization():
+    elements = [Formula("x ∈ A")]
+    assert base.elements_to_md(elements, normalize_formula=False) == "$$\nx ∈ A\n$$"
+
+
+def test_create_file_from_elements_markdown_passes_formula_normalization_flag():
+    elements = [Formula("x ∈ A")]
+    content = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        normalize_formula=False,
+    )
+    assert content == "$$\nx ∈ A\n$$"
 
 
 def test_elements_to_md_file_output():

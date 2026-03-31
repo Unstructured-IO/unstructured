@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     CheckBox,
     Element,
     ElementMetadata,
+    Formula,
     Image,
     Table,
     Title,
@@ -37,6 +38,31 @@ if dependency_exists("pandas"):
 # == DESERIALIZERS ===============================
 
 MAX_DECOMPRESSED_SIZE = 200 * 1024 * 1024  # 200MB
+
+
+def _normalize_formula_for_markdown(text: str) -> str:
+    """Normalize common Unicode math glyphs to LaTeX-friendly tokens.
+
+    This is intentionally conservative and only handles symbols that are very likely to be
+    interpreted as math operators/relations.
+    """
+    substitutions = {
+        "−": "-",  # Unicode minus -> ASCII hyphen-minus
+        "×": r"\times",
+        "÷": r"\div",
+        "∞": r"\infty",
+        "∈": r"\in",
+        "∉": r"\notin",
+        "≤": r"\leq",
+        "≥": r"\geq",
+        "≈": r"\approx",
+        "≠": r"\neq",
+        "√": r"\sqrt{}",
+    }
+    normalized = text
+    for source, target in substitutions.items():
+        normalized = normalized.replace(source, target)
+    return normalized
 
 
 def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element]:
@@ -145,10 +171,19 @@ convert_to_isd = elements_to_dicts
 convert_to_dict = elements_to_dicts
 
 
-def element_to_md(element: Element, exclude_binary_image_data: bool = False) -> str:
+def element_to_md(
+    element: Element,
+    exclude_binary_image_data: bool = False,
+    normalize_formula: bool = True,
+) -> str:
     match element:
         case Title(text=text):
             return f"# {text}"
+        case Formula(text=text):
+            formula_text = text.strip()
+            if normalize_formula:
+                formula_text = _normalize_formula_for_markdown(formula_text)
+            return f"$$\n{formula_text}\n$$"
         case Table(metadata=metadata, text=text) if metadata.text_as_html is not None:
             return metadata.text_as_html
         case Image(metadata=metadata, text=text) if (
@@ -171,6 +206,7 @@ def elements_to_md(
     elements: Iterable[Element],
     filename: Optional[str] = None,
     exclude_binary_image_data: bool = False,
+    normalize_formula: bool = True,
     encoding: str = "utf-8",
 ) -> str:
     """Convert elements to markdown format.
@@ -179,13 +215,22 @@ def elements_to_md(
         elements: Iterable of elements to convert
         filename: Optional file path to write the markdown to
         exclude_binary_image_data: If True, exclude base64 image data from output
+        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
+            for `Formula` elements before wrapping with `$$ ... $$`.
         encoding: File encoding when writing to file
 
     Returns:
         The markdown content as a string
     """
     markdown_content = "\n".join(
-        [element_to_md(el, exclude_binary_image_data=exclude_binary_image_data) for el in elements]
+        [
+            element_to_md(
+                el,
+                exclude_binary_image_data=exclude_binary_image_data,
+                normalize_formula=normalize_formula,
+            )
+            for el in elements
+        ]
     )
 
     if filename is not None:
@@ -201,6 +246,7 @@ def create_file_from_elements(
     filename: Optional[str] = None,
     encoding: str = "utf-8",
     exclude_binary_image_data: bool = False,
+    normalize_formula: bool = True,
     no_group_by_page: bool = True,
 ) -> str:
     """Re-create a document file from a list of elements (reverse of partition).
@@ -217,6 +263,8 @@ def create_file_from_elements(
         encoding: File encoding when writing to file (all formats).
         exclude_binary_image_data: If True, omit base64 image data. Applies only to
             **markdown** and **html**; ignored for text.
+        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
+            for `Formula` elements in **markdown** output. Ignored for html/text.
         no_group_by_page: If True (default), include all elements in output. If False,
             group **html** by page (elements without metadata.page_number are skipped).
             Applies only to **html**; ignored for markdown and text.
@@ -242,6 +290,7 @@ def create_file_from_elements(
             elements,
             filename=filename,
             exclude_binary_image_data=exclude_binary_image_data,
+            normalize_formula=normalize_formula,
             encoding=encoding,
         )
         return content
