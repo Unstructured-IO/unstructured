@@ -479,6 +479,12 @@ class PreChunkBuilder:
 
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
+        # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
+        if len(self._elements) == 0 and _element_is_table_family(element):
+            self._overlap_prefix = ""
+            self._text_segments = []
+            self._text_len = 0
+
         self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
@@ -501,7 +507,11 @@ class PreChunkBuilder:
         pre_chunk = PreChunk(elements, self._overlap_prefix, self._opts)
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state(pre_chunk.overlap_tail)
+        overlap_for_next = pre_chunk.overlap_tail
+        # -- table tails must not prefix the following narrative pre-chunk (overlap_all) --
+        if len(elements) == 1 and _element_is_table_family(elements[0]):
+            overlap_for_next = ""
+        self._reset_state(overlap_for_next)
         yield pre_chunk
 
     def will_fit(self, element: Element) -> bool:

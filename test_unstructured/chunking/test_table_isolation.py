@@ -21,6 +21,7 @@ from unstructured.chunking.base import (
     PreChunker,
 )
 from unstructured.chunking.basic import chunk_elements
+from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     CompositeElement,
     ElementMetadata,
@@ -235,3 +236,66 @@ class DescribeTableIsolationChunkElements:
         for comp in composites:
             orig = comp.metadata.orig_elements or []
             assert not any(isinstance(e, Table) for e in orig)
+
+
+class DescribeTableIsolationOverlapAll:
+    """With overlap_all=True, overlap must not cross table / narrative boundaries."""
+
+    def it_does_not_prefix_table_chunk_with_prior_text_overlap(self):
+        """Regression: pre-chunk overlap_tail must not become table's overlap_prefix."""
+        elements = [Text("Alpha beta gamma delta."), Table("H\nC")]
+        chunks = chunk_elements(
+            elements,
+            max_characters=500,
+            new_after_n_chars=0,
+            overlap=5,
+            overlap_all=True,
+        )
+
+        table_chunks = [c for c in chunks if isinstance(c, Table)]
+        assert len(table_chunks) == 1
+        t = table_chunks[0].text or ""
+        assert "Alpha" not in t
+        assert "elta" not in t  # tail of "delta" leaked in buggy overlap
+
+    def it_does_not_prefix_text_after_table_with_table_overlap(self):
+        elements = [Table("H\nC"), Text("Omega sigma tau upsilon.")]
+        chunks = chunk_elements(
+            elements,
+            max_characters=500,
+            new_after_n_chars=0,
+            overlap=5,
+            overlap_all=True,
+        )
+
+        composites = [c for c in chunks if isinstance(c, CompositeElement)]
+        assert len(composites) == 1
+        assert composites[0].text.startswith("Omega")
+        assert "H" not in composites[0].text[:20]
+
+    def it_chunk_by_title_respects_same_overlap_boundaries(self):
+        elements = [
+            Title("Section"),
+            Text("Alpha beta gamma delta."),
+            Table("H\nC"),
+            Text("Omega sigma tau upsilon."),
+        ]
+        chunks = chunk_by_title(
+            elements,
+            max_characters=500,
+            new_after_n_chars=0,
+            overlap=5,
+            overlap_all=True,
+            combine_text_under_n_chars=0,
+        )
+
+        table_chunks = [c for c in chunks if isinstance(c, Table)]
+        assert len(table_chunks) == 1
+        assert "Alpha" not in (table_chunks[0].text or "")
+        assert "elta" not in (table_chunks[0].text or "")
+
+        omega_composites = [
+            c for c in chunks if isinstance(c, CompositeElement) and "Omega" in (c.text or "")
+        ]
+        assert len(omega_composites) == 1
+        assert omega_composites[0].text.startswith("Omega")

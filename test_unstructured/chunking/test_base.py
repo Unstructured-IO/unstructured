@@ -593,13 +593,15 @@ class DescribePreChunkBuilder:
         pre_chunk = list(builder.flush())[0]
 
         assert isinstance(pre_chunk, PreChunk)
-        assert pre_chunk._text == "dipiscing elit.\n\nIn rhoncus ipsum sed lectus porta volutpat."
+        # -- table pre-chunks do not inherit overlap from prior narrative text --
+        assert pre_chunk._text == "In rhoncus ipsum sed lectus porta volutpat."
 
         builder.add_element(Text("Donec semper facilisis metus finibus."))
         pre_chunk = list(builder.flush())[0]
 
         assert isinstance(pre_chunk, PreChunk)
-        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
+        # -- narrative after a table does not inherit the table's overlap tail --
+        assert pre_chunk._text == "Donec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
