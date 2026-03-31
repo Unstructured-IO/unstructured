@@ -1741,6 +1741,43 @@ class Describe_TableChunker:
         assert chunk.metadata.orig_elements == [table]
         assert chunk.metadata.is_continuation
 
+    def it_records_parent_id_loss_for_each_TableChunk_when_splitting_a_table(self):
+        table = Table(
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliquam   id enim nec molestie\n"
+            "Vivamus quis   nunc ipsum donec ac fermentum",
+            metadata=ElementMetadata(
+                parent_id="parent-1234",
+                text_as_html=(
+                    "<table><thead><tr><th>Header Col 1</th><th>Header Col 2</th></tr></thead>"
+                    "<tbody><tr><td>Lorem ipsum</td><td>A Link example</td></tr>"
+                    "<tr><td>Consectetur</td><td>adipiscing elit</td></tr>"
+                    "<tr><td>Nunc aliquam</td><td>id enim nec molestie</td></tr>"
+                    "<tr><td>Vivamus quis</td><td>nunc ipsum donec ac fermentum</td></tr>"
+                    "</tbody></table>"
+                ),
+            ),
+        )
+        opts = ChunkingOptions(
+            max_characters=100,
+            text_splitting_separators=("\n", " "),
+            repeat_table_headers=False,
+        )
+
+        chunks = list(_TableChunker.iter_chunks(table, overlap_prefix="", opts=opts))
+
+        assert len(chunks) == 2
+        assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+        # -- chunk-level parent_id is dropped for all split table chunks --
+        assert [chunk.metadata.parent_id for chunk in chunks] == [None, None]
+        # -- each chunk still carries the original table in orig_elements, including parent_id --
+        assert [chunk.metadata.orig_elements[0].metadata.parent_id for chunk in chunks] == [
+            "parent-1234",
+            "parent-1234",
+        ]
+
     @pytest.mark.parametrize(
         ("text", "overlap_prefix", "expected_value"),
         [
