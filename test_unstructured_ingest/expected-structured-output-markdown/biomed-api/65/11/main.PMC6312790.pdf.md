@@ -74,10 +74,16 @@ Fig. 9. Chemical structure of egg shell powder.
 2.2. Weight loss method
 This physical measurement was carried out in order to provide direct result on how the corrosive environment affects the test sample. The cleaned and weighed specimen was suspended in beakers with the aid of glass hooks and rods with the test solution of ES at different concentration (2, 4, 6, 8 and 10 g). The pre-weighed specimen was retrieved from the test solution after every 24 h, cleaned, dried and reweighed. The difference between the weight at a given time and the initial weight of the specimen was taken as the weight loss which was used to calculate corrosion rate and inhibition efﬁciency.
 The corrosion rate (CR) was calculated using Eq. (1) [1–5]
+$$
 Corrosion rate CRð Þ ¼ 87:6W DAT ð1Þ
+$$
 where: W is weight loss in mg, A is specimen surface area, T is immersion period in hours and D is the specimen density. From the corrosion rate, the surface coverage (θ) and inhibition efﬁciencies (IE %) were determined using Eqs. (2) and (3) respectively
+$$
 _ CRo—CR O= OR
+$$
+$$
 CRo=CR , 100 IE (0) = CR
+$$
 where: CRo and CR are the corrosion rate in absence and presence of inhibitor respectively.
 2.3. Potentiodynamic polarization method
 The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the
