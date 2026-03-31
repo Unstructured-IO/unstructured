@@ -1,7 +1,7 @@
 [project]
 name = "unstructured"
 description = "A library that prepares raw documents for downstream ML tasks."
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.11, <3.15"
 authors = [{name = "Unstructured Technologies", email = "devops@unstructuredai.io"}]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -14,6 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 readme = "README.md"
@@ -207,7 +208,7 @@ constraint-dependencies = [
 
 [tool.pyright]
 pythonPlatform = "Linux"
-pythonVersion = "3.11"
+pythonVersion = "3.12"
 reportUnnecessaryCast = true
 reportUnnecessaryTypeIgnoreComment = true
 stubPath = "./typings"
@@ -216,7 +217,7 @@ verboseOutput = true
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 ignore = [
