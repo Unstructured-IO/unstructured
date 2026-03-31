@@ -1,3 +1,8 @@
+## 0.22.11
+
+### Fixes
+- **Fix fast strategy silently skipping text in some PDFs**: Certain PDF generators (e.g. Prince XML) embed font encoding data in a non-standard way that pdfminer.six does not handle, causing body text to be silently dropped while headings still extract correctly. Added a workaround that reads the embedded encoding data directly.
+
 ## 0.22.10
 ### Enhancements
 - **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
