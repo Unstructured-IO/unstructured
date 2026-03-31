@@ -503,13 +503,17 @@ class DescribePreChunkBuilder:
         assert not builder.will_fit(next_element)
 
     @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
-    def it_will_accept_another_element_that_fits_when_it_already_contains_a_table(
-        self, element: Element
-    ):
+    def it_will_not_fit_another_element_when_it_already_contains_a_table(self, element: Element):
         builder = PreChunkBuilder(opts=ChunkingOptions())
         builder.add_element(Table("Heading\nCell text"))
 
-        assert builder.will_fit(element)
+        assert not builder.will_fit(element)
+
+    def it_will_not_fit_a_table_when_the_pre_chunk_already_has_other_elements(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=500))
+        builder.add_element(Text("Preamble."))
+
+        assert not builder.will_fit(Table("Heading\nCell text"))
 
     def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
         builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100, new_after_n_chars=50))
@@ -589,13 +593,15 @@ class DescribePreChunkBuilder:
         pre_chunk = list(builder.flush())[0]
 
         assert isinstance(pre_chunk, PreChunk)
-        assert pre_chunk._text == "dipiscing elit.\n\nIn rhoncus ipsum sed lectus porta volutpat."
+        # -- table pre-chunks do not inherit overlap from prior narrative text --
+        assert pre_chunk._text == "In rhoncus ipsum sed lectus porta volutpat."
 
         builder.add_element(Text("Donec semper facilisis metus finibus."))
         pre_chunk = list(builder.flush())[0]
 
         assert isinstance(pre_chunk, PreChunk)
-        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
+        # -- narrative after a table does not inherit the table's overlap tail --
+        assert pre_chunk._text == "Donec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
@@ -709,6 +715,14 @@ class DescribePreChunk:
         )
 
         assert pre_chunk.can_combine(next_pre_chunk) is expected_value
+
+    def it_does_not_combine_when_either_pre_chunk_contains_a_table(self):
+        opts = ChunkingOptions(max_characters=500, combine_text_under_n_chars=500)
+        text_pre_chunk = PreChunk([Text("hello")], overlap_prefix="", opts=opts)
+        table_pre_chunk = PreChunk([Table("Heading\nCell text")], overlap_prefix="", opts=opts)
+
+        assert text_pre_chunk.can_combine(table_pre_chunk) is False
+        assert table_pre_chunk.can_combine(text_pre_chunk) is False
 
     def it_can_combine_itself_with_another_PreChunk_instance(self):
         """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.
@@ -2071,7 +2085,11 @@ class DescribePreChunkCombiner:
         assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-            Table("Heading\nCell text"),
+        ]
+        pre_chunk = next(pre_chunk_iter)
+        assert pre_chunk._elements == [Table("Heading\nCell text")]
+        pre_chunk = next(pre_chunk_iter)
+        assert pre_chunk._elements == [
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
             Title("Sed Orci"),
