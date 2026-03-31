@@ -1,3 +1,7 @@
+## 0.22.16
+### Enhancements
+- **Render `Formula` elements as Markdown math blocks**: `element_to_md()` and `elements_to_md()` now emit `Formula` elements as `$$ ... $$` blocks rather than plain text. Added optional `normalize_formula` (default `True`) to `element_to_md()`, `elements_to_md()`, and `create_file_from_elements(..., output_format="markdown")` to control conservative Unicode-math to LaTeX-like normalization during markdown export.
+
 ## 0.22.15
 
 ### Security
@@ -22,7 +26,6 @@
 ## 0.22.11
 ### Enhancements
 - **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
-- **Render `Formula` elements as Markdown math blocks**: `element_to_md()` and `elements_to_md()` now emit `Formula` elements as `$$ ... $$` blocks rather than plain text. Added optional `normalize_formula` (default `True`) to `element_to_md()`, `elements_to_md()`, and `create_file_from_elements(..., output_format="markdown")` to control conservative Unicode-math to LaTeX-like normalization during markdown export.
 
 ## 0.22.10
 ### Enhancements
