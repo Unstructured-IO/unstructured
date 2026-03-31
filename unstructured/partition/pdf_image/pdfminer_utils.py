@@ -22,6 +22,11 @@ _RE_CIDRANGE_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s+(\d+)")
 _RE_CIDCHAR_BLOCK = re.compile(rb"begincidchar\s+(.*?)\s+endcidchar", re.DOTALL)
 _RE_CIDCHAR_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s+(\d+)")
 
+# Cap on total code-to-CID mappings to prevent malicious PDFs from causing excessive
+# memory/CPU usage via huge begincidrange spans. 131072 covers all real-world fonts
+# (single-byte: max 256, double-byte CJK: typically ~20-30K glyphs).
+_MAX_CODE2CID_MAPPINGS = 131072
+
 
 def _parse_embedded_cmap_stream(data: bytes) -> CMap:
     """Parse an embedded CMap stream into a CMap with a populated code2cid mapping.
@@ -46,7 +51,14 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
             start_val = int.from_bytes(start_bytes, "big")
             end_val = int.from_bytes(end_bytes, "big")
 
-            for i in range(end_val - start_val + 1):
+            range_size = end_val - start_val + 1
+            if len(code2cid) + range_size > _MAX_CODE2CID_MAPPINGS:
+                logger.warning(
+                    "Embedded CMap range too large (%d entries), skipping to avoid DoS",
+                    range_size,
+                )
+                continue
+            for i in range(range_size):
                 code_val = start_val + i
                 cid = start_cid + i
                 if code_len == 1:
