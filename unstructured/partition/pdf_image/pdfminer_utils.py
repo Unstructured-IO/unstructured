@@ -1,17 +1,125 @@
 import os
+import re
 import tempfile
 from typing import BinaryIO, List, Optional, Tuple, Union
 
+from pdfminer.cmapdb import CMap, CMapBase, CMapDB
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
+from pdfminer.pdffont import PDFCIDFont
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
+from pdfminer.pdftypes import PDFStream
 from pdfminer.psexceptions import PSSyntaxError
 from pydantic import BaseModel
 
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.utils import requires_dependencies
+
+
+_RE_CIDRANGE_BLOCK = re.compile(rb"begincidrange\s+(.*?)\s+endcidrange", re.DOTALL)
+_RE_CIDRANGE_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s+(\d+)")
+_RE_CIDCHAR_BLOCK = re.compile(rb"begincidchar\s+(.*?)\s+endcidchar", re.DOTALL)
+_RE_CIDCHAR_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s+(\d+)")
+
+
+def _parse_embedded_cmap_stream(data: bytes) -> CMap:
+    """Parse an embedded CMap stream into a CMap with a populated code2cid mapping.
+
+    pdfminer.six does not parse embedded Encoding CMap streams for CIDFonts — it only
+    looks up the CMap name in its predefined database. When a PDF (e.g. produced by
+    Prince XML) embeds a custom CMap as a stream, pdfminer silently falls back to an
+    empty CMap and all text using that font is lost.
+
+    This function parses the begincidrange/begincidchar sections from the raw CMap
+    stream and builds the code2cid dict that CMap.decode() uses.
+    """
+    code2cid: dict[int, object] = {}
+
+    for match in _RE_CIDRANGE_BLOCK.finditer(data):
+        entries = _RE_CIDRANGE_ENTRY.findall(match.group(1))
+        for start_hex, end_hex, cid_str in entries:
+            start_bytes = bytes.fromhex(start_hex.decode("ascii"))
+            end_bytes = bytes.fromhex(end_hex.decode("ascii"))
+            start_cid = int(cid_str)
+            code_len = len(start_bytes)
+            start_val = int.from_bytes(start_bytes, "big")
+            end_val = int.from_bytes(end_bytes, "big")
+
+            for i in range(end_val - start_val + 1):
+                code_val = start_val + i
+                cid = start_cid + i
+                if code_len == 1:
+                    code2cid[code_val] = cid
+                else:
+                    code_bytes = code_val.to_bytes(code_len, "big")
+                    d = code2cid
+                    for b in code_bytes[:-1]:
+                        if b not in d:
+                            d[b] = {}
+                        d = d[b]  # type: ignore[assignment]
+                    d[code_bytes[-1]] = cid
+
+    for match in _RE_CIDCHAR_BLOCK.finditer(data):
+        entries = _RE_CIDCHAR_ENTRY.findall(match.group(1))
+        for code_hex, cid_str in entries:
+            code_bytes = bytes.fromhex(code_hex.decode("ascii"))
+            cid = int(cid_str)
+            if len(code_bytes) == 1:
+                code2cid[code_bytes[0]] = cid
+            else:
+                d = code2cid
+                for b in code_bytes[:-1]:
+                    if b not in d:
+                        d[b] = {}
+                    d = d[b]  # type: ignore[assignment]
+                d[code_bytes[-1]] = cid
+
+    cmap = CMap()
+    cmap.code2cid = code2cid
+    return cmap
+
+
+def _patched_get_cmap_from_spec(self: PDFCIDFont, spec: dict, strict: bool) -> CMapBase:
+    """Patched version of PDFCIDFont.get_cmap_from_spec that handles embedded CMap streams.
+
+    When the Encoding is an embedded PDF stream with a custom CMap name not found in
+    pdfminer's predefined CMap database, this falls back to parsing the stream directly
+    instead of returning an empty CMap.
+
+    This patch is applied globally to PDFCIDFont and benefits all strategies that use
+    pdfminer for text extraction (fast and hi_res).
+    """
+    cmap_name = self._get_cmap_name(spec, strict)
+    try:
+        return CMapDB.get_cmap(cmap_name)
+    except CMapDB.CMapNotFound as e:
+        encoding = spec.get("Encoding")
+        if isinstance(encoding, PDFStream):
+            try:
+                cmap = _parse_embedded_cmap_stream(encoding.get_data())
+            except Exception:
+                logger.debug(
+                    "Failed to parse embedded CMap stream %r, falling back to empty CMap",
+                    cmap_name,
+                )
+            else:
+                if cmap.code2cid:
+                    logger.debug(
+                        "Parsed embedded CMap stream %r (%d code mappings)",
+                        cmap_name,
+                        len(cmap.code2cid),
+                    )
+                    return cmap
+        if strict:
+            from pdfminer.pdffont import PDFFontError
+
+            raise PDFFontError(e) from e
+        return CMap()
+
+
+PDFCIDFont.get_cmap_from_spec = _patched_get_cmap_from_spec
 
 
 class CustomPDFPageInterpreter(PDFPageInterpreter):
