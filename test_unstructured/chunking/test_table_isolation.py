@@ -66,6 +66,31 @@ class DescribeTableIsolationPreChunkBuilder:
         builder = PreChunkBuilder(opts=ChunkingOptions())
         assert builder.will_fit(Table("Heading\nCell text"))
 
+    @pytest.mark.parametrize(
+        ("existing", "incoming", "expected"),
+        [
+            ([], Text("narrative"), True),
+            ([], Table("H\nC"), True),
+            ([Text("preamble")], Text("tail"), True),
+            ([Text("preamble")], Table("H\nC"), False),
+            ([Table("H\nC")], Text("tail"), False),
+            ([Table("H\nC")], Table("H2\nC2"), False),
+            ([TableChunk(text="x", metadata=ElementMetadata())], Text("tail"), False),
+            ([Text("preamble")], TableChunk(text="x", metadata=ElementMetadata()), False),
+        ],
+    )
+    def it_enforces_the_post_4307_append_matrix_exactly(
+        self,
+        existing: list[Text | Table],
+        incoming: Text | Table,
+        expected: bool,
+    ):
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=500))
+        for element in existing:
+            builder.add_element(element)
+
+        assert builder.will_fit(incoming) is expected
+
     def it_allows_text_after_flush_even_if_previous_pre_chunk_was_a_table(self):
         opts = ChunkingOptions(max_characters=200)
         builder = PreChunkBuilder(opts=opts)
@@ -129,6 +154,29 @@ class DescribeTableIsolationPreChunkCombiner:
         assert combined[0]._elements == [Text("Hello world.")]
         assert combined[1]._elements == [Table("H\nC")]
         assert combined[2]._elements == [Text("Goodbye world.")]
+
+    @pytest.mark.parametrize(
+        ("left", "right", "expected"),
+        [
+            ([Text("left")], [Text("right")], True),
+            ([Text("left")], [Table("H\nC")], False),
+            ([Table("H\nC")], [Text("right")], False),
+            ([Table("H\nC")], [Table("H2\nC2")], False),
+            # Legacy mixed pre-chunk: still considered table-bearing for combine guard.
+            ([Text("left"), Table("H\nC")], [Text("right")], False),
+        ],
+    )
+    def it_enforces_the_post_4307_side_by_side_merge_matrix_exactly(
+        self,
+        left: list[Text | Table],
+        right: list[Text | Table],
+        expected: bool,
+    ):
+        opts = ChunkingOptions(max_characters=500, combine_text_under_n_chars=500)
+        left_pre_chunk = PreChunk(left, overlap_prefix="", opts=opts)
+        right_pre_chunk = PreChunk(right, overlap_prefix="", opts=opts)
+
+        assert left_pre_chunk.can_combine(right_pre_chunk) is expected
 
 
 class DescribeTableIsolationOrderingGuarantees:

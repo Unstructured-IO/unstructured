@@ -55,5 +55,42 @@ flowchart TD
 | pre-#4307 base (`47f4728`) | `["CompositeElement"]` | `["CompositeElement"]` |
 | post-#4307 fix (`547d3c8`) | `["CompositeElement", "Table", "CompositeElement"]` | `["CompositeElement", "Table", "CompositeElement"]` |
 
+## Exact table/non-table combinations blocked by #4307
+
+### `PreChunkBuilder.will_fit()` append matrix
+
+`will_fit()` now enforces table-family isolation before any size checks:
+
+| Current pre-chunk contents | Candidate element | pre-#4307 | post-#4307 |
+| --- | --- | --- | --- |
+| empty | non-table | allowed | allowed |
+| empty | table-family (`Table`/`TableChunk`) | allowed | allowed |
+| non-table only | non-table | allowed when size limits allow | allowed when size limits allow |
+| non-table only | table-family (`Table`/`TableChunk`) | allowed when size limits allow | **forbidden** (must flush, then start table-only pre-chunk) |
+| table-family only | non-table | allowed when size limits allow | **forbidden** (must flush table pre-chunk first) |
+| table-family only | table-family | allowed when size limits allow | **forbidden** (one table-family element per pre-chunk) |
+
+### `PreChunk.can_combine()` side-by-side merge matrix
+
+`can_combine()` now rejects any merge where either side already contains table-family elements:
+
+| Left pre-chunk | Right pre-chunk | pre-#4307 | post-#4307 |
+| --- | --- | --- | --- |
+| text-only | text-only | allowed when combination limits allow | allowed when combination limits allow |
+| text-only | table-bearing | allowed when combination limits allow | **forbidden** |
+| table-bearing | text-only | allowed when combination limits allow | **forbidden** |
+| table-bearing | table-bearing | allowed when combination limits allow | **forbidden** |
+
+`table-bearing` above includes both single-table pre-chunks and legacy mixed pre-chunks that contain
+at least one table-family element.
+
+## Concrete upside/downside tradeoff
+
+| Dimension | Upside | Downside |
+| --- | --- | --- |
+| Structural fidelity | Tables stay as `Table`/`TableChunk`, preserving table boundaries and `text_as_html` handling path. | Table-adjacent narrative can no longer be fused into one `CompositeElement`, so cross-boundary context is split. |
+| Determinism of chunk typing | Inputs like `[Text, Table, Text]` now deterministically produce text/table/text chunk categories. | Same input yields more chunks (typically `1` pre-#4307 vs `3` post-#4307 in the example above), which increases chunk count and downstream retrieval/indexing units. |
+| `combine_text_under_n_chars` behavior | No accidental "table leakage" from combiner merges. | Small neighboring text chunks cannot be stitched across a table boundary even when there is window capacity left. |
+
 Code touchpoints for this behavior are in `unstructured/chunking/base.py`:
 `PreChunkBuilder.will_fit()` and `PreChunk.can_combine()`.
