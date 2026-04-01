@@ -409,3 +409,89 @@ class TestFakeBoldPdfIntegration:
             f"Deduplicated text ({len(text_with_dedup)} chars) should be shorter "
             f"than non-deduplicated text ({len(text_no_dedup)} chars)"
         )
+
+
+# -- Tests for embedded CMap stream parsing --
+
+
+class TestParseEmbeddedCmapStream:
+    """Unit tests for _parse_embedded_cmap_stream.
+
+    pdfminer.six does not parse embedded Encoding CMap streams for CIDFonts.
+    _parse_embedded_cmap_stream is our workaround that extracts code-to-CID
+    mappings and writing mode from the raw CMap stream bytes.
+    """
+
+    @staticmethod
+    def _parse(data: bytes):
+        from unstructured.partition.pdf_image.pdfminer_utils import _parse_embedded_cmap_stream
+
+        return _parse_embedded_cmap_stream(data)
+
+    def test_vertical_wmode_is_preserved(self):
+        """Embedded CMaps with WMode=1 (vertical) should produce a vertical CMap."""
+        data = b"""
+/WMode 1
+1 begincodespacerange
+<00> <0A>
+endcodespacerange
+1 begincidrange
+<00> <0A> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert cmap.is_vertical() is True
+        assert len(cmap.code2cid) == 11
+
+    def test_horizontal_wmode_is_default(self):
+        """CMaps without WMode or with WMode=0 should produce a horizontal CMap."""
+        data = b"""
+1 begincodespacerange
+<00> <05>
+endcodespacerange
+1 begincidrange
+<00> <05> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert cmap.is_vertical() is False
+
+    def test_oversized_stream_returns_empty_cmap(self):
+        """Streams exceeding the size cap should be rejected before any parsing."""
+        from unstructured.partition.pdf_image.pdfminer_utils import _MAX_CMAP_STREAM_BYTES
+
+        data = b"x" * (_MAX_CMAP_STREAM_BYTES + 1)
+        cmap = self._parse(data)
+        assert not cmap.code2cid
+
+    def test_reversed_range_is_skipped(self):
+        """A begincidrange where end < start should be silently skipped."""
+        data = b"""
+1 begincodespacerange
+<00> <FF>
+endcodespacerange
+1 begincidrange
+<80> <10> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert not cmap.code2cid
+
+    def test_mapping_cap_bounds_total_entries(self):
+        """The total mapping count should be bounded across both cidrange and cidchar."""
+        from unittest.mock import patch
+
+        data = b"""
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+1 begincidrange
+<0000> <FFFF> 0
+endcidrange
+"""
+        # Use a small cap to verify bounding without allocating huge dicts
+        with patch(
+            "unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100
+        ):
+            cmap = self._parse(data)
+            assert not cmap.code2cid  # 65536 > 100, so the range is skipped entirely
