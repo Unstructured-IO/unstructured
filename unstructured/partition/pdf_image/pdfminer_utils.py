@@ -1,16 +1,25 @@
 import os
 import re
 import tempfile
-from typing import BinaryIO, List, Optional, Tuple, Union
+import zlib
+from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 
-from pdfminer.cmapdb import CMap
+from pdfminer import settings as pdfminer_settings
+from pdfminer.cmapdb import CMap, CMapDB
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
-from pdfminer.pdffont import PDFCIDFont
-from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+from pdfminer.pdffont import PDFCIDFont, PDFFontError
+from pdfminer.pdfinterp import LITERAL_FONT, PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
-from pdfminer.pdftypes import PDFStream, resolve1
+from pdfminer.pdftypes import (
+    LITERALS_ASCII85_DECODE,
+    LITERALS_ASCIIHEX_DECODE,
+    LITERALS_FLATE_DECODE,
+    PDFStream,
+    resolve1,
+)
 from pdfminer.psexceptions import PSSyntaxError
+from pdfminer.psparser import literal_name
 from pydantic import BaseModel
 
 from unstructured.logger import logger
@@ -123,39 +132,143 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
     return cmap
 
 
-class CustomPDFResourceManager(PDFResourceManager):
-    """A custom resource manager that fixes up CIDFonts with embedded CMap streams.
+def _flate_decode_with_limit(data: bytes, limit: int) -> Optional[bytes]:
+    """Decompress Flate data with a hard output size limit.
 
-    pdfminer.six does not parse embedded Encoding CMap streams for CIDFonts — it only
-    looks up the CMap name in its predefined database. When a PDF (e.g. produced by
-    Prince XML) embeds a custom CMap as a stream, pdfminer silently falls back to an
-    empty CMap and all text using that font is lost.
+    Returns None if the decompressed output would exceed `limit` bytes,
+    without fully materializing the result.
+    """
+    decomp = zlib.decompressobj()
+    out = bytearray()
+    try:
+        out.extend(decomp.decompress(data, limit + 1))
+        if len(out) > limit or decomp.unconsumed_tail:
+            return None
+        out.extend(decomp.flush(limit + 1 - len(out)))
+        if len(out) > limit:
+            return None
+    except zlib.error:
+        return None
+    return bytes(out)
 
-    This subclass intercepts font creation and, when a CIDFont has an empty code-to-CID
-    mapping, attempts to parse the embedded Encoding stream directly.
+
+def _decode_pdfstream_with_limit(stream: PDFStream, max_decoded_bytes: int) -> Optional[bytes]:
+    """Decode a PDFStream with a hard output size limit, without mutating the stream.
+
+    Unlike PDFStream.get_data(), this never assigns to stream.data or stream.rawdata.
+    Returns None if the decoded output exceeds the limit or uses an unsupported filter.
+    """
+    raw = stream.get_rawdata()
+    if raw is None:
+        # Stream was already decoded elsewhere; check the cached result.
+        data = stream.data
+        if data is None or len(data) > max_decoded_bytes:
+            return None
+        return data
+
+    data = raw
+
+    if stream.decipher:
+        if stream.objid is None or stream.genno is None:
+            logger.debug("Encrypted CMap stream missing objid/genno; skipping")
+            return None
+        data = stream.decipher(stream.objid, stream.genno, data, stream.attrs)
+
+    for filt, params in stream.get_filters():
+        if filt in LITERALS_FLATE_DECODE:
+            result = _flate_decode_with_limit(data, max_decoded_bytes)
+            if result is None:
+                logger.warning(
+                    "Embedded CMap stream exceeded %d bytes during decompression; skipping",
+                    max_decoded_bytes,
+                )
+                return None
+            data = result
+        elif filt in LITERALS_ASCII85_DECODE:
+            from pdfminer.ascii85 import ascii85decode
+
+            data = ascii85decode(data)
+        elif filt in LITERALS_ASCIIHEX_DECODE:
+            from pdfminer.ascii85 import asciihexdecode
+
+            data = asciihexdecode(data)
+        else:
+            logger.debug("Unsupported embedded CMap filter %r; skipping", filt)
+            return None
+
+        if len(data) > max_decoded_bytes:
+            logger.warning(
+                "Embedded CMap stream exceeded %d bytes after filter; skipping",
+                max_decoded_bytes,
+            )
+            return None
+
+    return data
+
+
+class CustomPDFCIDFont(PDFCIDFont):
+    """A CIDFont subclass that handles embedded Encoding CMap streams at construction time.
+
+    pdfminer.six's PDFCIDFont.get_cmap_from_spec only looks up CMap names in its
+    predefined database. When a PDF embeds a custom CMap as a stream, pdfminer falls
+    back to an empty CMap and all text is lost.
+
+    This subclass overrides get_cmap_from_spec to parse the embedded stream when the
+    name lookup fails. Because this runs during __init__, all constructor-time state
+    (vertical mode, widths, displacements) is derived from the correct CMap.
     """
 
-    def get_font(self, objid, spec):
-        font = super().get_font(objid, spec)
-        if isinstance(font, PDFCIDFont) and isinstance(font.cmap, CMap) and not font.cmap.code2cid:
+    def get_cmap_from_spec(self, spec: Mapping, strict: bool):
+        cmap_name = self._get_cmap_name(spec, strict)
+        try:
+            return CMapDB.get_cmap(cmap_name)
+        except CMapDB.CMapNotFound as e:
             encoding = resolve1(spec.get("Encoding"))
             if isinstance(encoding, PDFStream):
                 try:
-                    cmap = _parse_embedded_cmap_stream(encoding.get_data())
+                    data = _decode_pdfstream_with_limit(encoding, _MAX_CMAP_STREAM_BYTES)
+                    if data is not None:
+                        cmap = _parse_embedded_cmap_stream(data)
+                        if cmap.code2cid:
+                            logger.debug(
+                                "Parsed embedded CMap stream %r (%d code mappings)",
+                                cmap_name,
+                                len(cmap.code2cid),
+                            )
+                            return cmap
                 except Exception:
                     logger.debug(
-                        "Failed to parse embedded CMap stream for %s",
-                        font.fontname,
+                        "Failed to parse embedded CMap stream %r",
+                        cmap_name,
                     )
-                else:
-                    if cmap.code2cid:
-                        logger.debug(
-                            "Parsed embedded CMap stream for %s (%d code mappings)",
-                            font.fontname,
-                            len(cmap.code2cid),
-                        )
-                        font.cmap = cmap
-        return font
+            if strict:
+                raise PDFFontError(e) from e
+            return CMap()
+
+
+class CustomPDFResourceManager(PDFResourceManager):
+    """A resource manager that uses CustomPDFCIDFont for CID font construction.
+
+    This ensures embedded CMap streams are resolved during font construction,
+    not after, so all constructor-time state (WMode, widths) is correct.
+    """
+
+    def get_font(self, objid, spec):
+        if objid and objid in self._cached_fonts:
+            return self._cached_fonts[objid]
+
+        if pdfminer_settings.STRICT and spec["Type"] is not LITERAL_FONT:
+            raise PDFFontError("Type is not /Font")
+
+        subtype = literal_name(spec["Subtype"]) if "Subtype" in spec else "Type1"
+
+        if subtype in ("CIDFontType0", "CIDFontType2"):
+            font = CustomPDFCIDFont(self, spec)
+            if objid and self.caching:
+                self._cached_fonts[objid] = font
+            return font
+
+        return super().get_font(objid, spec)
 
 
 class CustomPDFPageInterpreter(PDFPageInterpreter):
