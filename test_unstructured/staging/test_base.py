@@ -5,7 +5,7 @@ import pathlib
 import platform
 import tempfile
 import zlib
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
 import pandas as pd
 import pytest
@@ -662,6 +662,33 @@ def test_element_to_md_formula_can_disable_normalization():
         base.element_to_md(element, normalize_formula=False)
         == "$$\nx ∈ A and y ≤ z and a × b = c\n$$"
     )
+
+
+def test_element_to_md_formula_preserves_unicode_square_root():
+    """√ must not become \\sqrt{} (would break √2, √(x+1), etc.)."""
+    assert base.element_to_md(Formula("√2")) == "$$\n√2\n$$"
+    assert base.element_to_md(Formula("√(x+1)")) == "$$\n√(x+1)\n$$"
+    assert base.element_to_md(Formula("√2 ≤ x")) == "$$\n√2 \\leq x\n$$"
+
+
+def test_elements_to_md_positional_encoding_backward_compat():
+    """Legacy positional (... filename, exclude_binary_image_data, encoding) must still work."""
+    m = mock_open()
+    with patch("builtins.open", m):
+        base.elements_to_md([Title("x")], "out.md", False, "latin-1")
+    assert m.call_count == 1
+    _args, kwargs = m.call_args
+    assert kwargs.get("encoding") == "latin-1"
+
+
+def test_create_file_from_elements_positional_no_group_by_page_backward_compat():
+    """Legacy HTML positional args: encoding, exclude_binary, no_group_by_page still bind correctly."""
+    with patch("unstructured.partition.html.convert.elements_to_html") as mock_html:
+        mock_html.return_value = "<html></html>"
+        base.create_file_from_elements([Title("P")], "html", None, "utf-8", False, False)
+    mock_html.assert_called_once()
+    assert mock_html.call_args.kwargs["exclude_binary_image_data"] is False
+    assert mock_html.call_args.kwargs["no_group_by_page"] is False
 
 
 def test_elements_to_md_formula_can_disable_normalization():

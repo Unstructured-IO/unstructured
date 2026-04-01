@@ -1,6 +1,6 @@
 ## 0.22.16
 ### Enhancements
-- **Render `Formula` elements as Markdown math blocks**: `element_to_md()` and `elements_to_md()` now emit `Formula` elements as `$$ ... $$` blocks rather than plain text. Added optional `normalize_formula` (default `True`) to `element_to_md()`, `elements_to_md()`, and `create_file_from_elements(..., output_format="markdown")` to control conservative Unicode-math to LaTeX-like normalization during markdown export.
+- **Render `Formula` elements as Markdown math blocks**: `element_to_md()` and `elements_to_md()` now emit `Formula` elements as `$$ ... $$` blocks rather than plain text. Added optional `normalize_formula` (default `True`) to `element_to_md()`, `elements_to_md()`, and `create_file_from_elements(..., output_format="markdown")` to control conservative Unicode-math to LaTeX-like normalization during markdown export. For backward compatibility, `normalize_formula` is placed after `encoding` in `elements_to_md()` and after `no_group_by_page` in `create_file_from_elements()` so existing positional callers are unchanged. Unicode `√` is left as-is (not mapped to `\\sqrt{}`) to avoid corrupting radicands.
 
 ## 0.22.15
 

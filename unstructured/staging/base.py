@@ -44,7 +44,9 @@ def _normalize_formula_for_markdown(text: str) -> str:
     """Normalize common Unicode math glyphs to LaTeX-friendly tokens.
 
     This is intentionally conservative and only handles symbols that are very likely to be
-    interpreted as math operators/relations.
+    interpreted as math operators/relations. The Unicode square root sign (``√``) is not
+    rewritten: mapping it to ``\\sqrt{}`` would require reparsing the radicand and could
+    corrupt expressions like ``√2`` or ``√(x+1)``.
     """
     substitutions = {
         "−": "-",  # Unicode minus -> ASCII hyphen-minus
@@ -57,7 +59,6 @@ def _normalize_formula_for_markdown(text: str) -> str:
         "≥": r"\geq",
         "≈": r"\approx",
         "≠": r"\neq",
-        "√": r"\sqrt{}",
     }
     normalized = text
     for source, target in substitutions.items():
@@ -206,8 +207,8 @@ def elements_to_md(
     elements: Iterable[Element],
     filename: Optional[str] = None,
     exclude_binary_image_data: bool = False,
-    normalize_formula: bool = True,
     encoding: str = "utf-8",
+    normalize_formula: bool = True,
 ) -> str:
     """Convert elements to markdown format.
 
@@ -215,9 +216,10 @@ def elements_to_md(
         elements: Iterable of elements to convert
         filename: Optional file path to write the markdown to
         exclude_binary_image_data: If True, exclude base64 image data from output
-        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
-            for `Formula` elements before wrapping with `$$ ... $$`.
         encoding: File encoding when writing to file
+        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
+            for `Formula` elements before wrapping with `$$ ... $$`. Placed after ``encoding``
+            so legacy positional calls ``(..., filename, exclude_binary, encoding)`` remain valid.
 
     Returns:
         The markdown content as a string
@@ -246,8 +248,8 @@ def create_file_from_elements(
     filename: Optional[str] = None,
     encoding: str = "utf-8",
     exclude_binary_image_data: bool = False,
-    normalize_formula: bool = True,
     no_group_by_page: bool = True,
+    normalize_formula: bool = True,
 ) -> str:
     """Re-create a document file from a list of elements (reverse of partition).
 
@@ -263,11 +265,13 @@ def create_file_from_elements(
         encoding: File encoding when writing to file (all formats).
         exclude_binary_image_data: If True, omit base64 image data. Applies only to
             **markdown** and **html**; ignored for text.
-        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
-            for `Formula` elements in **markdown** output. Ignored for html/text.
         no_group_by_page: If True (default), include all elements in output. If False,
             group **html** by page (elements without metadata.page_number are skipped).
-            Applies only to **html**; ignored for markdown and text.
+            Applies only to **html**; ignored for markdown and text. Placed before
+            ``normalize_formula`` so legacy positional calls through ``exclude_binary_image_data``
+            and ``no_group_by_page`` remain valid.
+        normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
+            for `Formula` elements in **markdown** output. Ignored for html/text.
 
     Returns:
         The document content as a string.
