@@ -4,6 +4,7 @@ import base64
 import csv
 import io
 import json
+import re
 import zlib
 from copy import deepcopy
 from datetime import datetime
@@ -39,6 +40,19 @@ if dependency_exists("pandas"):
 
 MAX_DECOMPRESSED_SIZE = 200 * 1024 * 1024  # 200MB
 
+FORMULA_MARKDOWN_AUTO = "auto"
+FORMULA_MARKDOWN_DISPLAY_MATH = "display_math"
+FORMULA_MARKDOWN_PLAIN = "plain"
+_FORMULA_MARKDOWN_STYLES = frozenset(
+    {FORMULA_MARKDOWN_AUTO, FORMULA_MARKDOWN_DISPLAY_MATH, FORMULA_MARKDOWN_PLAIN},
+)
+
+# Long OCR-heavy captions often masquerade as Formula; require strong LaTeX-like signals to wrap.
+_FORMULA_PROSE_HINT = re.compile(
+    r"\b(was|were|using|calculated|where|respectively|determined|following)\b",
+    re.IGNORECASE,
+)
+
 
 def _normalize_formula_for_markdown(text: str) -> str:
     """Normalize common Unicode math glyphs to LaTeX-friendly tokens.
@@ -64,6 +78,74 @@ def _normalize_formula_for_markdown(text: str) -> str:
     for source, target in substitutions.items():
         normalized = normalized.replace(source, target)
     return normalized
+
+
+def _formula_has_unsafe_markdown_delimiters(text: str) -> bool:
+    """True if wrapping in ``$$`` could break Markdown structure or confuse math renderers."""
+    return "$" in text
+
+
+def _formula_math_signal_score(text: str) -> int:
+    """Rough score of how much the string looks like notation (not prose OCR)."""
+    score = 0
+    if re.search(r"\\[a-zA-Z]+", text):
+        score += 3
+    if "^" in text:
+        score += 1
+    if re.search(r"_(\{|[0-9A-Za-z])", text):
+        score += 1
+    rel_sym_count = len(re.findall(r"[∈∉≤≥≠≈×÷∞∑∫√∂∇]", text))
+    score += min(rel_sym_count * 2, 6)
+    if re.search(r"[¼½¾]", text):
+        score += 1
+    equals_like = len(
+        re.findall(
+            r"(?<=[A-Za-z0-9\)\]])\s*=\s*(?=[A-Za-z0-9\(\\])",
+            text,
+        ),
+    )
+    score += min(equals_like, 2)
+    # e.g. FFN(x) = max(...); require "(" to be function-like, not "(0) =" from OCR tables
+    if re.search(r"(?<=[A-Za-z])\([^)]*\)\s*=\s*", text):
+        score += 2
+    return score
+
+
+def _formula_looks_like_prose_sentence(text: str) -> bool:
+    return len(text) >= 80 and _FORMULA_PROSE_HINT.search(text) is not None
+
+
+def _formula_auto_use_display_math(text: str) -> bool:
+    if _formula_looks_like_prose_sentence(text):
+        return _formula_math_signal_score(text) >= 3
+    return _formula_math_signal_score(text) >= 2
+
+
+def _emit_formula_markdown(
+    raw_text: str,
+    *,
+    normalize_formula: bool,
+    formula_markdown_style: str,
+) -> str:
+    text = raw_text.strip()
+    if not text:
+        return text
+    if normalize_formula:
+        text = _normalize_formula_for_markdown(text)
+
+    style = formula_markdown_style.strip().lower()
+    if style not in _FORMULA_MARKDOWN_STYLES:
+        raise ValueError(
+            "formula_markdown_style must be one of "
+            f"{sorted(_FORMULA_MARKDOWN_STYLES)!r}, got {formula_markdown_style!r}",
+        )
+    if style == FORMULA_MARKDOWN_PLAIN:
+        return text
+    if _formula_has_unsafe_markdown_delimiters(text):
+        return text
+    if style == FORMULA_MARKDOWN_AUTO and not _formula_auto_use_display_math(text):
+        return text
+    return f"$$\n{text}\n$$"
 
 
 def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element]:
@@ -176,15 +258,18 @@ def element_to_md(
     element: Element,
     exclude_binary_image_data: bool = False,
     normalize_formula: bool = True,
+    *,
+    formula_markdown_style: str = FORMULA_MARKDOWN_AUTO,
 ) -> str:
     match element:
         case Title(text=text):
             return f"# {text}"
         case Formula(text=text):
-            formula_text = text.strip()
-            if normalize_formula:
-                formula_text = _normalize_formula_for_markdown(formula_text)
-            return f"$$\n{formula_text}\n$$"
+            return _emit_formula_markdown(
+                text,
+                normalize_formula=normalize_formula,
+                formula_markdown_style=formula_markdown_style,
+            )
         case Table(metadata=metadata, text=text) if metadata.text_as_html is not None:
             return metadata.text_as_html
         case Image(metadata=metadata, text=text) if (
@@ -209,6 +294,8 @@ def elements_to_md(
     exclude_binary_image_data: bool = False,
     encoding: str = "utf-8",
     normalize_formula: bool = True,
+    *,
+    formula_markdown_style: str = FORMULA_MARKDOWN_AUTO,
 ) -> str:
     """Convert elements to markdown format.
 
@@ -220,6 +307,10 @@ def elements_to_md(
         normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
             for `Formula` elements before wrapping with `$$ ... $$`. Placed after ``encoding``
             so legacy positional calls ``(..., filename, exclude_binary, encoding)`` remain valid.
+        formula_markdown_style: How to serialize ``Formula`` elements: ``"auto"`` (default)
+            uses display math only when content looks like notation and has no ``$`` delimiters;
+            ``"display_math"`` always uses ``$$`` when safe; ``"plain"`` emits text only.
+            Keyword-only so positional encoding arguments stay backward compatible.
 
     Returns:
         The markdown content as a string
@@ -230,6 +321,7 @@ def elements_to_md(
                 el,
                 exclude_binary_image_data=exclude_binary_image_data,
                 normalize_formula=normalize_formula,
+                formula_markdown_style=formula_markdown_style,
             )
             for el in elements
         ]
@@ -250,6 +342,8 @@ def create_file_from_elements(
     exclude_binary_image_data: bool = False,
     no_group_by_page: bool = True,
     normalize_formula: bool = True,
+    *,
+    formula_markdown_style: str = FORMULA_MARKDOWN_AUTO,
 ) -> str:
     """Re-create a document file from a list of elements (reverse of partition).
 
@@ -272,6 +366,8 @@ def create_file_from_elements(
             and ``no_group_by_page`` remain valid.
         normalize_formula: If True, map common Unicode math symbols to LaTeX-like tokens
             for `Formula` elements in **markdown** output. Ignored for html/text.
+        formula_markdown_style: Passed to ``elements_to_md`` for **markdown** only.
+            Keyword-only; see ``elements_to_md``.
 
     Returns:
         The document content as a string.
@@ -296,6 +392,7 @@ def create_file_from_elements(
             exclude_binary_image_data=exclude_binary_image_data,
             normalize_formula=normalize_formula,
             encoding=encoding,
+            formula_markdown_style=formula_markdown_style,
         )
         return content
     elif format_lower == "html":

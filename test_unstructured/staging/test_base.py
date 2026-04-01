@@ -706,6 +706,63 @@ def test_create_file_from_elements_markdown_passes_formula_normalization_flag():
     assert content == "$$\nx ∈ A\n$$"
 
 
+def test_element_to_md_formula_auto_plain_for_noisy_ocr():
+    text = "_ CRo—CR O= OR"
+    assert base.element_to_md(Formula(text)) == text
+
+
+def test_element_to_md_formula_auto_plain_when_embedded_dollar_delimiters():
+    assert base.element_to_md(Formula("a $$ b")) == "a $$ b"
+    assert base.element_to_md(Formula("inline $x$ math")) == "inline $x$ math"
+
+
+def test_element_to_md_formula_display_math_fallback_when_unsafe_delimiters():
+    raw = "a $$ b"
+    assert (
+        base.element_to_md(
+            Formula(raw),
+            formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+        )
+        == raw
+    )
+
+
+def test_element_to_md_formula_display_math_wraps_when_auto_would_plain():
+    assert base.element_to_md(Formula("x = 1")) == "x = 1"
+    assert (
+        base.element_to_md(
+            Formula("x = 1"),
+            formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+        )
+        == "$$\nx = 1\n$$"
+    )
+
+
+def test_element_to_md_formula_auto_plain_for_prose_style_caption():
+    text = (
+        "The corrosion rate (CR) was calculated using Eq. (1) "
+        "and we reference [1–5] for detail in this manuscript."
+    )
+    assert base.element_to_md(Formula(text)) == text
+
+
+def test_element_to_md_formula_invalid_style_raises():
+    with pytest.raises(ValueError, match="formula_markdown_style"):
+        base.element_to_md(Formula("x=1"), formula_markdown_style="nope")
+
+
+def test_elements_to_md_formula_markdown_style_keyword_only():
+    els = [Formula("x ∈ A")]
+    out = base.elements_to_md(els, formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN)
+    assert out == "x \\in A"
+    out_plain_unicode = base.elements_to_md(
+        els,
+        normalize_formula=False,
+        formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+    )
+    assert out_plain_unicode == "x ∈ A"
+
+
 def test_elements_to_md_file_output():
     """Test elements_to_md function with file output."""
 
