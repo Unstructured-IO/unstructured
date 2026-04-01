@@ -682,7 +682,7 @@ def test_elements_to_md_positional_encoding_backward_compat():
 
 
 def test_create_file_from_elements_positional_no_group_by_page_backward_compat():
-    """Legacy HTML positional args: encoding, exclude_binary, no_group_by_page still bind correctly."""
+    """Legacy HTML positional args through no_group_by_page still bind correctly."""
     with patch("unstructured.partition.html.convert.elements_to_html") as mock_html:
         mock_html.return_value = "<html></html>"
         base.create_file_from_elements([Title("P")], "html", None, "utf-8", False, False)
