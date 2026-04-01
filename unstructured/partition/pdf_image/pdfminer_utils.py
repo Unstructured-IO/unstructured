@@ -21,6 +21,12 @@ _RE_CIDRANGE_BLOCK = re.compile(rb"begincidrange\s+(.*?)\s+endcidrange", re.DOTA
 _RE_CIDRANGE_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s+(\d+)")
 _RE_CIDCHAR_BLOCK = re.compile(rb"begincidchar\s+(.*?)\s+endcidchar", re.DOTALL)
 _RE_CIDCHAR_ENTRY = re.compile(rb"<([0-9A-Fa-f]+)>\s+(\d+)")
+_RE_WMODE = re.compile(rb"/WMode\s+(\d+)")
+
+# Cap on decompressed CMap stream size to bound regex/parse cost before any mapping
+# cap kicks in. Real-world embedded CMaps are typically a few hundred bytes; even
+# large CJK CMaps are well under 100 KB.
+_MAX_CMAP_STREAM_BYTES = 1_000_000
 
 # Cap on total code-to-CID mappings to prevent malicious PDFs from causing excessive
 # memory/CPU usage via huge begincidrange spans. 131072 covers all real-world fonts
@@ -37,8 +43,17 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
     empty CMap and all text using that font is lost.
 
     This function parses the begincidrange/begincidchar sections from the raw CMap
-    stream and builds the code2cid dict that CMap.decode() uses.
+    stream and builds the code2cid dict that CMap.decode() uses. It also extracts
+    WMode (writing mode: 0=horizontal, 1=vertical) when present.
     """
+    if len(data) > _MAX_CMAP_STREAM_BYTES:
+        logger.warning(
+            "Embedded CMap stream too large (%d bytes, limit %d), skipping",
+            len(data),
+            _MAX_CMAP_STREAM_BYTES,
+        )
+        return CMap()
+
     code2cid: dict[int, object] = {}
     total_mappings = 0
 
@@ -100,6 +115,11 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
 
     cmap = CMap()
     cmap.code2cid = code2cid
+
+    wmode_match = _RE_WMODE.search(data)
+    if wmode_match and int(wmode_match.group(1)) != 0:
+        cmap.attrs["WMode"] = int(wmode_match.group(1))
+
     return cmap
 
 
