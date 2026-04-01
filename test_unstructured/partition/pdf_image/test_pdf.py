@@ -504,6 +504,17 @@ def test_partition_pdf_with_fast_strategy_extracts_embedded_cmap_text():
     assert len(elements) == 3
 
 
+def test_partition_pdf_with_hi_res_strategy_extracts_embedded_cmap_text():
+    """Same as the fast strategy test but through hi_res, since both strategies use pdfminer."""
+    filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
+
+    all_text = " ".join(e.text for e in elements)
+
+    assert "This text uses an embedded CMap" in all_text
+    assert "and should be extractable" in all_text
+
+
 def test_partition_pdf_raises_with_bad_strategy():
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     with pytest.raises(ValueError):
