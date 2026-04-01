@@ -490,8 +490,6 @@ endcodespacerange
 endcidrange
 """
         # Use a small cap to verify bounding without allocating huge dicts
-        with patch(
-            "unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100
-        ):
+        with patch("unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100):
             cmap = self._parse(data)
             assert not cmap.code2cid  # 65536 > 100, so the range is skipped entirely
