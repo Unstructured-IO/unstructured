@@ -117,11 +117,7 @@ class CustomPDFResourceManager(PDFResourceManager):
 
     def get_font(self, objid, spec):
         font = super().get_font(objid, spec)
-        if (
-            isinstance(font, PDFCIDFont)
-            and isinstance(font.cmap, CMap)
-            and not font.cmap.code2cid
-        ):
+        if isinstance(font, PDFCIDFont) and isinstance(font.cmap, CMap) and not font.cmap.code2cid:
             encoding = resolve1(spec.get("Encoding"))
             if isinstance(encoding, PDFStream):
                 try:
