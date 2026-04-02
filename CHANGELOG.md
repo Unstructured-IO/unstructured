@@ -1,3 +1,8 @@
+## 0.22.13
+
+### Fixes
+- **Preserve semantic table headers across carried chunks**: Carried rows in split table chunks now keep original header semantics (`th` stays `th`, including section header rows and wrapped header text), preventing header cells from degrading to data cells in continuation chunks.
+
 ## 0.22.12
 
 ### Fixes
