@@ -2139,9 +2139,10 @@ class Describe_TableChunker:
         assert single_chunk_table.metadata.chunk_index is None
         assert single_chunk_table.metadata.num_carried_over_header_rows is None
 
-        assert reconstruct_table_from_chunks(
-            [Text("Preamble"), single_chunk_table, Text("Epilogue")]
-        ) == []
+        assert (
+            reconstruct_table_from_chunks([Text("Preamble"), single_chunk_table, Text("Epilogue")])
+            == []
+        )
 
     def and_it_reconstructs_three_header_row_tables_without_duplication(self):
         table_html = (

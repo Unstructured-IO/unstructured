@@ -1286,7 +1286,9 @@ class _HtmlTableSplitter:
     @staticmethod
     def _as_header_row_html(row: HtmlRow) -> str:
         """Serialize `row` with direct cell tags emitted as semantic header cells."""
-        cells_html = "".join(_HtmlTableSplitter._as_header_cell_html(cell.html) for cell in row.iter_cells())
+        cells_html = "".join(
+            _HtmlTableSplitter._as_header_cell_html(cell.html) for cell in row.iter_cells()
+        )
         return f"<tr>{cells_html}</tr>"
 
     @staticmethod
