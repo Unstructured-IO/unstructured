@@ -2081,6 +2081,157 @@ class Describe_TableChunker:
         assert table.metadata.text_as_html is not None
         assert self._row_texts(table.metadata.text_as_html) == expected_row_texts
 
+    def and_it_does_not_synthesize_carried_header_rows_for_no_header_tables(self):
+        table_html = (
+            "<table>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha value</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo value</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie value</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "Body 1 Alpha value",
+            "Body 2 Bravo value",
+            "Body 3 Charlie value",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 2
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 0]
+        assert all("<thead>" not in (c.metadata.text_as_html or "") for c in chunks)
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
+    def and_it_keeps_single_chunk_tables_out_of_table_chunk_reconstruction(self):
+        table_html = (
+            "<table>"
+            "<thead><tr><th>Col A</th><th>Col B</th></tr></thead>"
+            "<tbody><tr><td>Only body row</td><td>42</td></tr></tbody>"
+            "</table>"
+        )
+        table_text = "Col A Col B\nOnly body row 42"
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=500,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 1
+        [single_chunk_table] = chunks
+        assert isinstance(single_chunk_table, Table)
+        assert not isinstance(single_chunk_table, TableChunk)
+        assert single_chunk_table.metadata.table_id is None
+        assert single_chunk_table.metadata.chunk_index is None
+        assert single_chunk_table.metadata.num_carried_over_header_rows is None
+
+        assert reconstruct_table_from_chunks(
+            [Text("Preamble"), single_chunk_table, Text("Epilogue")]
+        ) == []
+
+    def and_it_reconstructs_three_header_row_tables_without_duplication(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>H1</th><th>H2</th></tr>"
+            "<tr><th>SubA</th><th>SubB</th></tr>"
+            "<tr><th>Units</th><th>USD</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>100 units</td></tr>"
+            "<tr><td>Southwest Territory</td><td>200 units</td></tr>"
+            "<tr><td>Midwest Territory</td><td>300 units</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "H1 H2",
+            "SubA SubB",
+            "Units USD",
+            "Northwest Territory 100 units",
+            "Southwest Territory 200 units",
+            "Midwest Territory 300 units",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 3, 3]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
+    def and_it_reconstructs_mixed_section_markup_in_row_order(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th><section><span>Main Header</span></section></th><th>Value</th></tr>"
+            "<tr><th>Subhead</th><th><section>Units</section></th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td><section>North Region</section></td><td>10 widgets</td></tr>"
+            "<tr><td>South Region</td><td>20 widgets</td></tr>"
+            "</tbody>"
+            "<tfoot>"
+            "<tr><td>Total</td><td>30 widgets</td></tr>"
+            "</tfoot>"
+            "</table>"
+        )
+        expected_rows = [
+            "Main Header Value",
+            "Subhead Units",
+            "North Region 10 widgets",
+            "South Region 20 widgets",
+            "Total 30 widgets",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=70,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 2, 2]
+        for chunk in chunks[1:]:
+            assert chunk.metadata.text_as_html is not None
+            continuation_table = fragment_fromstring(chunk.metadata.text_as_html)
+            assert continuation_table.xpath("./thead/tr[1]/th[1]/section/span/text()") == [
+                "Main Header"
+            ]
+            assert continuation_table.xpath("./thead/tr[2]/th[2]/section/text()") == ["Units"]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
     def it_treats_missing_carried_header_row_counts_as_zero_during_reconstruction(self):
         """Missing carried-header metadata defaults to no carried rows during reconstruction."""
         table_id = "table-with-missing-header-count"
