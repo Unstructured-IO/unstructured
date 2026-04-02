@@ -1347,6 +1347,45 @@ class Describe_TableChunker:
             assert chunk.text.startswith(header_text_prefix)
             assert chunk.metadata.text_as_html.startswith(header_html_prefix)
 
+    def and_it_reproduces_loss_of_header_semantics_on_carried_header_rows(self):
+        source_table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th scope='col'>Region</th><th scope='col'>Quarter</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Q1 FY2026</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2 FY2026</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3 FY2026</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Quarter\n"
+            "Northwest Territory Q1 FY2026\n"
+            "Southwest Territory Q2 FY2026\n"
+            "Midwest Territory Q3 FY2026"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=source_table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        source_table = fragment_fromstring(source_table_html)
+        assert source_table.xpath(".//thead")
+        assert source_table.xpath(".//th")
+
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+        assert continuation_table.xpath(".//thead") == []
+        assert continuation_table.xpath(".//th") == []
+        assert continuation_table.xpath("./tr[1]/td/text()") == ["Region", "Quarter"]
+
     def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
         table_html = (
             "<table>"
