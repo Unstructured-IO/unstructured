@@ -1339,15 +1339,17 @@ class Describe_TableChunker:
         header_text_prefix = "Header A Header B Subhead A Subhead B "
         header_html_prefix = (
             "<table>"
-            "<tr><td>Header A</td><td>Header B</td></tr>"
-            "<tr><td>Subhead A</td><td>Subhead B</td></tr>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
         )
         assert len(chunks) >= 2
         for chunk in chunks[1:]:
             assert chunk.text.startswith(header_text_prefix)
             assert chunk.metadata.text_as_html.startswith(header_html_prefix)
 
-    def and_it_reproduces_loss_of_header_semantics_on_carried_header_rows(self):
+    def and_it_preserves_header_semantics_on_carried_header_rows(self):
         source_table_html = (
             "<table>"
             "<thead>"
@@ -1382,9 +1384,11 @@ class Describe_TableChunker:
         continuation_html = chunks[1].metadata.text_as_html
         assert continuation_html is not None
         continuation_table = fragment_fromstring(continuation_html)
-        assert continuation_table.xpath(".//thead") == []
-        assert continuation_table.xpath(".//th") == []
-        assert continuation_table.xpath("./tr[1]/td/text()") == ["Region", "Quarter"]
+        assert continuation_table.xpath("./thead")
+        assert continuation_table.xpath("./thead/tr[1]/th/text()") == ["Region", "Quarter"]
+        assert continuation_table.xpath("./thead/tr[1]/td") == []
+        assert continuation_table.xpath("./tr[1]/td/text()") == ["Southwest Territory", "Q2 FY2026"]
+        assert continuation_table.xpath("./tr[1]/th") == []
 
     def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
         table_html = (

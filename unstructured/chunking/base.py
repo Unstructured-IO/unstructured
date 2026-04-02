@@ -1229,8 +1229,12 @@ class _HtmlTableSplitter:
 
     @cached_property
     def _header_rows_html(self) -> str:
-        """HTML for repeated header rows."""
-        return "".join(row.html for row in self._header_rows)
+        """HTML for repeated header rows, preserving header semantics."""
+        if not self._header_rows:
+            return ""
+
+        rows_html = "".join(self._as_header_row_html(row) for row in self._header_rows)
+        return f"<thead>{rows_html}</thead>"
 
     @cached_property
     def carried_over_header_row_count(self) -> int:
@@ -1278,6 +1282,26 @@ class _HtmlTableSplitter:
         html_inner = html.removeprefix("<table>").removesuffix("</table>")
         chunk_html = f"<table>{self._header_rows_html}{html_inner}</table>"
         return chunk_text, chunk_html
+
+    @staticmethod
+    def _as_header_row_html(row: HtmlRow) -> str:
+        """Serialize `row` with direct cell tags emitted as semantic header cells."""
+        cells_html = "".join(_HtmlTableSplitter._as_header_cell_html(cell.html) for cell in row.iter_cells())
+        return f"<tr>{cells_html}</tr>"
+
+    @staticmethod
+    def _as_header_cell_html(cell_html: str) -> str:
+        """Translate compactified `<td>` cell HTML into semantic `<th>` cell HTML."""
+        if cell_html == "<td/>":
+            return "<th/>"
+        if not cell_html.startswith("<td"):
+            return cell_html
+
+        cell_html = cell_html.replace("<td", "<th", 1)
+        before, sep, after = cell_html.rpartition("</td>")
+        if not sep:
+            return cell_html
+        return f"{before}</th>{after}"
 
 
 class _TextSplitter:
