@@ -40,8 +40,9 @@ def test_it_chunks_text_followed_by_table_together_when_both_fit():
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
-    assert len(chunks) == 1
+    assert len(chunks) == 2
     assert isinstance(chunks[0], CompositeElement)
+    assert isinstance(chunks[1], Table)
 
 
 def test_it_chunks_table_followed_by_text_together_when_both_fit():
@@ -50,8 +51,9 @@ def test_it_chunks_table_followed_by_text_together_when_both_fit():
     # -- disable chunk combining so we test pre-chunking behavior, not chunk-combining --
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
-    assert len(chunks) == 1
-    assert isinstance(chunks[0], CompositeElement)
+    assert len(chunks) == 2
+    assert isinstance(chunks[0], Table)
+    assert isinstance(chunks[1], CompositeElement)
 
 
 def test_it_splits_oversized_table():
@@ -61,6 +63,55 @@ def test_it_splits_oversized_table():
 
     assert len(chunks) == 5
     assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+
+
+def test_it_repeats_table_headers_by_default_but_can_opt_out():
+    table_html = (
+        "<table>"
+        "<thead>"
+        "<tr><th>Header A</th><th>Header B</th></tr>"
+        "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+        "</thead>"
+        "<tbody>"
+        "<tr><td>Body 1</td><td>Alpha</td></tr>"
+        "<tr><td>Body 2</td><td>Bravo</td></tr>"
+        "<tr><td>Body 3</td><td>Charlie</td></tr>"
+        "<tr><td>Body 4</td><td>Delta</td></tr>"
+        "</tbody>"
+        "</table>"
+    )
+    table_text = (
+        "Header A Header B\n"
+        "Subhead A Subhead B\n"
+        "Body 1 Alpha\n"
+        "Body 2 Bravo\n"
+        "Body 3 Charlie\n"
+        "Body 4 Delta"
+    )
+    table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+
+    repeated_header_chunks = chunk_by_title(
+        [table], combine_text_under_n_chars=0, max_characters=55
+    )
+    opt_out_chunks = chunk_by_title(
+        [table],
+        combine_text_under_n_chars=0,
+        max_characters=55,
+        repeat_table_headers=False,
+    )
+
+    assert len(repeated_header_chunks) == 4
+    assert all(isinstance(chunk, TableChunk) for chunk in repeated_header_chunks)
+    assert [chunk.text for chunk in repeated_header_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Header A Header B Subhead A Subhead B Body 2 Bravo",
+        "Header A Header B Subhead A Subhead B Body 3 Charlie",
+        "Header A Header B Subhead A Subhead B Body 4 Delta",
+    ]
+    assert [chunk.text for chunk in opt_out_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Body 2 Bravo Body 3 Charlie Body 4 Delta",
+    ]
 
 
 def test_it_starts_new_chunk_for_table_after_full_text_chunk():
@@ -116,7 +167,7 @@ def test_it_splits_elements_by_title_and_table():
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=True)
 
-    assert len(chunks) == 3
+    assert len(chunks) == 4
     # --
     chunk = chunks[0]
     assert isinstance(chunk, CompositeElement)
@@ -124,10 +175,15 @@ def test_it_splits_elements_by_title_and_table():
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
-        Table("Heading\nCell text"),
     ]
     # --
     chunk = chunks[1]
+    assert isinstance(chunk, Table)
+    assert len(chunk.metadata.orig_elements) == 1
+    assert isinstance(chunk.metadata.orig_elements[0], Table)
+    assert chunk.metadata.orig_elements[0].text == "Heading\nCell text"
+    # --
+    chunk = chunks[2]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
@@ -135,7 +191,7 @@ def test_it_splits_elements_by_title_and_table():
         Text("It is rainy outside."),
     ]
     # --
-    chunk = chunks[2]
+    chunk = chunks[3]
     assert isinstance(chunk, CompositeElement)
     assert chunk.metadata.orig_elements == [
         Title("A Bad Day"),
@@ -162,15 +218,18 @@ def test_chunk_by_title():
 
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=False)
 
-    assert chunks == [
-        CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
-        ),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
+    assert len(chunks) == 4
+    assert chunks[0] == CompositeElement(
+        "A Great Day\n\nToday is a great day.\n\nIt is sunny outside."
+    )
+    assert isinstance(chunks[1], Table)
+    assert chunks[1].text == "Heading\nCell text"
+    assert chunks[2] == CompositeElement(
+        "An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."
+    )
+    assert chunks[3] == CompositeElement(
+        "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
+    )
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
 
 
@@ -190,16 +249,17 @@ def test_chunk_by_title_separates_by_page_number():
     ]
     chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
 
-    assert chunks == [
-        CompositeElement(
-            "A Great Day",
-        ),
-        CompositeElement("Today is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
+    assert len(chunks) == 5
+    assert chunks[0] == CompositeElement("A Great Day")
+    assert chunks[1] == CompositeElement("Today is a great day.\n\nIt is sunny outside.")
+    assert isinstance(chunks[2], Table)
+    assert chunks[2].text == "Heading\nCell text"
+    assert chunks[3] == CompositeElement(
+        "An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."
+    )
+    assert chunks[4] == CompositeElement(
+        "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
+    )
 
 
 def test_chuck_by_title_respects_multipage():
@@ -217,15 +277,18 @@ def test_chuck_by_title_respects_multipage():
         CheckBox(),
     ]
     chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
-    assert chunks == [
-        CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
-        ),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
+    assert len(chunks) == 4
+    assert chunks[0] == CompositeElement(
+        "A Great Day\n\nToday is a great day.\n\nIt is sunny outside."
+    )
+    assert isinstance(chunks[1], Table)
+    assert chunks[1].text == "Heading\nCell text"
+    assert chunks[2] == CompositeElement(
+        "An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."
+    )
+    assert chunks[3] == CompositeElement(
+        "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
+    )
 
 
 def test_chunk_by_title_groups_across_pages():
@@ -244,15 +307,18 @@ def test_chunk_by_title_groups_across_pages():
     ]
     chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
 
-    assert chunks == [
-        CompositeElement(
-            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.\n\nHeading Cell text"
-        ),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
+    assert len(chunks) == 4
+    assert chunks[0] == CompositeElement(
+        "A Great Day\n\nToday is a great day.\n\nIt is sunny outside."
+    )
+    assert isinstance(chunks[1], Table)
+    assert chunks[1].text == "Heading\nCell text"
+    assert chunks[2] == CompositeElement(
+        "An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."
+    )
+    assert chunks[3] == CompositeElement(
+        "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
+    )
 
 
 def test_add_chunking_strategy_on_partition_html():
@@ -287,6 +353,20 @@ def test_add_chunking_strategy_respects_max_characters():
     for chunk_element in chunk_elements:
         assert isinstance(chunk_element, Text)
         assert len(chunk_element.text) <= 100
+    assert chunk_elements != elements
+    assert chunk_elements == chunks
+
+
+def test_add_chunking_strategy_forwards_repeat_table_headers():
+    filename = "example-docs/example-10k-1p.html"
+    chunk_elements = partition_html(
+        filename,
+        chunking_strategy="by_title",
+        repeat_table_headers=False,
+    )
+    elements = partition_html(filename)
+    chunks = chunk_by_title(elements, repeat_table_headers=False)
+
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
@@ -464,6 +544,25 @@ class Describe_chunk_by_title:
 
         _, opts = _chunk_by_title_.call_args.args
         assert opts.include_orig_elements is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"repeat_table_headers": True}, True),
+            ({"repeat_table_headers": False}, False),
+            ({"repeat_table_headers": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_repeat_table_headers_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+    ):
+        # -- this line would raise if "repeat_table_headers" was not an available parameter on
+        # -- `chunk_by_title()`.
+        chunk_by_title([], **kwargs)
+
+        _, opts = _chunk_by_title_.call_args.args
+        assert opts.repeat_table_headers is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 

@@ -1,3 +1,22 @@
+## 0.22.12
+
+### Fixes
+- **Fix fast strategy silently skipping text in some PDFs**: Certain PDF generators (e.g. Prince XML) embed font encoding data in a non-standard way that pdfminer.six does not handle, causing body text to be silently dropped while headings still extract correctly. Added a workaround that reads the embedded encoding data directly.
+
+## 0.22.11
+
+### Enhancements
+- **Exclude unused spaCy components**: Exclude `ner`, `lemmatizer`, and `attribute_ruler` when loading `en_core_web_sm`, keeping `parser` for accurate sentence boundaries. Saves ~7 MiB peak memory.
+
+## 0.22.10
+### Enhancements
+- **Repeat table headers across continuation chunks**: Add `repeat_table_headers` to basic/title chunking options and table chunking internals so leading header rows are detected once and carried forward when large tables spill across multiple chunks.
+
+## 0.22.9
+
+### Enhancements
+- **Isolate `Table` elements during chunking**: `Table` and `TableChunk` elements are always placed in their own pre-chunk and are never merged with adjacent text into a `CompositeElement`, nor combined with neighboring pre-chunks when `combine_text_under_n_chars` is enabled. Shared helpers in `unstructured.chunking.base` centralize the table-isolation checks. Inter-chunk overlap (`overlap` + `overlap_all`) no longer carries narrative text into table pre-chunks or table tails into following text chunks.
+
 ## 0.22.8
 
 ### Enhancements

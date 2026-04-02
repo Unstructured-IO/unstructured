@@ -13,7 +13,7 @@ import inspect
 from functools import cached_property
 from typing import Any, Callable, Iterable, Optional, Protocol
 
-from lxml.etree import tostring
+from lxml.etree import ParserError, tostring
 from lxml.html import fragment_fromstring
 from typing_extensions import ParamSpec
 
@@ -68,6 +68,9 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\tmax_characters"
             + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
             + "\n\t\t\tof length n characters, a hard max."
+            + "\n\t\trepeat_table_headers"
+            + "\n\t\t\tDefault: True. Repeat detected table headers on continuation"
+            + "\n\t\t\ttable chunks. Set to False to opt out."
         )
 
     @functools.wraps(func)
@@ -173,23 +176,76 @@ def reconstruct_table_from_chunks(elements: Iterable[Element]) -> list[Table]:
 def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     """Merge an ordered list of TableChunks from the same table into a single Table."""
     # -- combine text --
-    text = " ".join(c.text for c in chunks)
+    text = " ".join(
+        chunk_text for chunk in chunks if (chunk_text := _strip_carried_over_header_text(chunk))
+    )
 
     # -- build metadata from first chunk --
     metadata = copy.deepcopy(chunks[0].metadata)
     metadata.is_continuation = None
     metadata.table_id = None
     metadata.chunk_index = None
+    metadata.num_carried_over_header_rows = None
 
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
         combined = fragment_fromstring("<table></table>")
         for c in chunks:
             parsed = fragment_fromstring(c.metadata.text_as_html)
-            for row in parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"):
+            carried_over_header_rows = _num_carried_over_header_rows(c)
+            rows = parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+            for row in rows[carried_over_header_rows:]:
                 combined.append(row)
         metadata.text_as_html = tostring(combined, encoding=str)
     else:
         metadata.text_as_html = None
 
     return Table(text=text, metadata=metadata)
+
+
+def _num_carried_over_header_rows(chunk: TableChunk) -> int:
+    """Header rows prepended synthetically to this chunk.
+
+    Reconstruction can be called on user-provided/deserialized chunks, so treat missing values as
+    "no carried header rows."
+    """
+    value = chunk.metadata.num_carried_over_header_rows
+    return value or 0
+
+
+def _strip_carried_over_header_text(chunk: TableChunk) -> str:
+    """Strip synthetic carried-over header text from continuation chunk text."""
+    carried_row_count = _num_carried_over_header_rows(chunk)
+    if carried_row_count == 0:
+        return chunk.text
+
+    text_as_html = chunk.metadata.text_as_html
+    if not text_as_html:
+        return chunk.text
+
+    try:
+        parsed = fragment_fromstring(text_as_html)
+    except (ParserError, ValueError):
+        return chunk.text
+
+    rows = parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+    if carried_row_count > len(rows):
+        return chunk.text
+
+    carried_header_text = " ".join(
+        text
+        for row in rows[:carried_row_count]
+        for text in (" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
+        if text
+    )
+    if not carried_header_text:
+        return chunk.text
+
+    chunk_text = chunk.text.lstrip()
+    if chunk_text == carried_header_text:
+        return ""
+    if chunk_text.startswith(f"{carried_header_text} "):
+        return chunk_text[len(carried_header_text) + 1 :]
+    if chunk_text.startswith(carried_header_text):
+        return chunk_text[len(carried_header_text) :].lstrip()
+    return chunk.text

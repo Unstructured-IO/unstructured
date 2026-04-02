@@ -493,6 +493,7 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "text_as_html": pd.StringDtype(),  # Optional[str]  # type: ignore
         "max_characters": "Int64",  # Optional[int]
         "is_continuation": "boolean",  # Optional[bool]
+        "num_carried_over_header_rows": "Int64",  # Optional[int]
         "detection_class_prob": float,  # Optional[float],
         "sender": pd.StringDtype(),  # type: ignore
         "coordinates_points": object,
