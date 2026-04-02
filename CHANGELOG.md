@@ -1,4 +1,5 @@
 ## 0.22.16
+
 ### Enhancements
 - **Formula markdown export (`element_to_md` / `elements_to_md`)**: New keyword-only `formula_markdown_style` (`"auto"`, `"display_math"`, `"plain"`; default `"auto"`). In `"auto"`, display math (`$$ ... $$`) is used only when the text looks like notation (heuristic score) and contains no `$`/`$$` (avoids breaking Markdown and noisy OCR captions). `"display_math"` wraps whenever safe (still falls back to plain if `$` would corrupt fences). `"plain"` emits text only. Optional `normalize_formula` (default `True`) maps common Unicode operators to LaTeX-like tokens; `normalize_formula` stays before keyword-only options so positional `encoding` / `no_group_by_page` callers are unchanged. Unicode `√` is never mapped to `\\sqrt{}`. Module constants: `FORMULA_MARKDOWN_AUTO`, `FORMULA_MARKDOWN_DISPLAY_MATH`, `FORMULA_MARKDOWN_PLAIN`.
 
