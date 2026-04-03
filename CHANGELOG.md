@@ -1,3 +1,8 @@
+## 0.22.13
+
+### Enhancements
+- **Speed up `standardize_quotes`**: Replace loop-based character replacement with a single `str.translate()` call using a pre-computed translation table. Also fixes a pre-existing bug where left smart quotes were never normalized due to duplicate dictionary keys.
+
 ## 0.22.12
 
 ### Fixes
