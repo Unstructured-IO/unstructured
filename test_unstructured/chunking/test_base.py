@@ -1386,6 +1386,8 @@ class Describe_TableChunker:
         continuation_table = fragment_fromstring(continuation_html)
         assert continuation_table.xpath("./thead")
         assert continuation_table.xpath("./thead/tr[1]/th/text()") == ["Region", "Quarter"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@scope") == ["col"]
         assert continuation_table.xpath("./thead/tr[1]/td") == []
         assert continuation_table.xpath("./tr[1]/td/text()") == ["Southwest Territory", "Q2 FY2026"]
         assert continuation_table.xpath("./tr[1]/th") == []
@@ -1395,8 +1397,8 @@ class Describe_TableChunker:
             "<table>"
             "<thead>"
             "<tr data-role='header-row'>"
-            "<th scope='col' abbr='region-code'>Region</th>"
-            "<td colspan='2' headers='sales-header'>"
+            "<th scope='col' abbr='region-code' rowspan='2'>Region</th>"
+            "<td class='sales-cell' data-k='1' colspan='2' headers='sales-header'>"
             "<img src='chart.svg' alt='Chart icon'/>"
             "<span> Sales</span>"
             "<table><tr><td>Nested Value</td></tr></table>"
@@ -1432,6 +1434,9 @@ class Describe_TableChunker:
         assert continuation_table.xpath("./thead/tr[1]/@data-role") == ["header-row"]
         assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
         assert continuation_table.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@rowspan") == ["2"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@class") == ["sales-cell"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@data-k") == ["1"]
         assert continuation_table.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
         assert continuation_table.xpath("./thead/tr[1]/th[2]/@headers") == ["sales-header"]
         assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@src") == ["chart.svg"]
@@ -1440,6 +1445,82 @@ class Describe_TableChunker:
             "Nested Value"
         ]
         assert continuation_table.xpath("./thead/tr[1]/td") == []
+
+    def and_it_preserves_non_text_only_carried_header_cells(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr>"
+            "<th>Region</th>"
+            "<th><img src='status.svg' alt='Status icon'/></th>"
+            "</tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Open</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Closed</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Pending</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region\n"
+            "Northwest Territory Open\n"
+            "Southwest Territory Closed\n"
+            "Midwest Territory Pending"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) >= 2
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+
+        assert continuation_table.xpath("./thead")
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@src") == ["status.svg"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@alt") == ["Status icon"]
+        assert "<th/>" not in continuation_html
+
+    def and_it_keeps_compactified_contracts_for_non_header_body_cells(self):
+        table_html = (
+            "<table>"
+            "<thead><tr><th scope='col'>Region</th><th scope='col'>Sales</th></tr></thead>"
+            "<tbody>"
+            "<tr><td class='region-cell'>Northwest Territory</td><td data-origin='crm'>1200</td></tr>"
+            "<tr><td class='region-cell'>Southwest Territory</td><td data-origin='crm'>1400</td></tr>"
+            "<tr><td class='region-cell'>Midwest Territory</td><td data-origin='crm'>1600</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Sales\n"
+            "Northwest Territory 1200\n"
+            "Southwest Territory 1400\n"
+            "Midwest Territory 1600"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) >= 2
+        for chunk in chunks:
+            assert chunk.metadata.text_as_html is not None
+            chunk_table = fragment_fromstring(chunk.metadata.text_as_html)
+            assert chunk_table.xpath("./tr/td/@class") == []
+            assert chunk_table.xpath("./tr/td/@data-origin") == []
+
+        continuation_table = fragment_fromstring(chunks[1].metadata.text_as_html)
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@scope") == ["col"]
 
     def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
         table_html = (
@@ -2127,6 +2208,52 @@ class Describe_TableChunker:
         assert len(reconstructed.xpath("./thead")) == 1
         assert reconstructed.xpath("./tr[1]/td/text()") == ["Body 1", "Alpha"]
         assert reconstructed.xpath("./tr[1]/th") == []
+
+    def and_it_preserves_header_attributes_in_reconstructed_canonical_thead(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th scope='col' abbr='region-code'>Region</th><th id='sales-group' colspan='2'>Sales</th></tr>"
+            "<tr><th headers='sales-group'>Quarter</th><th rowspan='2'>Revenue</th><th>Units</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>1200</td><td>17</td></tr>"
+            "<tr><td>Southwest Territory</td><td>1400</td><td>19</td></tr>"
+            "<tr><td>Midwest Territory</td><td>1600</td><td>21</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "Region Sales",
+            "Quarter Revenue Units",
+            "Northwest Territory 1200 17",
+            "Southwest Territory 1400 19",
+            "Midwest Territory 1600 21",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=70,
+            repeat_table_headers=True,
+        )
+        assert len(chunks) >= 2
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+
+        assert len(reconstructed.xpath("./thead")) == 1
+        assert len(reconstructed.xpath("./thead/tr")) == 2
+        assert reconstructed.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert reconstructed.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
+        assert reconstructed.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
+        assert reconstructed.xpath("./thead/tr[2]/th[1]/@headers") == ["sales-group"]
+        assert reconstructed.xpath("./thead/tr[2]/th[2]/@rowspan") == ["2"]
+        assert reconstructed.xpath("./tr[1]/th") == []
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
 
     def and_it_only_builds_a_canonical_thead_when_carried_rows_match_chunk_zero_prefix(self):
         table_id = "table-with-mismatched-carried-headers"
