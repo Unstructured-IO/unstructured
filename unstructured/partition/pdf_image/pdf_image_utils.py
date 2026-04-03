@@ -61,6 +61,8 @@ def convert_pdf_to_image(
     path_only: bool = False,
     password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
+    exactly_one(filename=filename, file=file)
+
     if dpi is None:
         dpi = env_config.PDF_RENDER_DPI
 
