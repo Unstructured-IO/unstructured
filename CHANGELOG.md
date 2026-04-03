@@ -1,3 +1,9 @@
+## 0.22.15
+
+### Security
+
+- **security:** fix(deps): upgrade vulnerable transitive dependencies [security]
+
 ## 0.22.14
 
 ### Enhancements
