@@ -190,11 +190,21 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
         combined = fragment_fromstring("<table></table>")
+        canonical_header_row_count, canonical_header_rows = _first_carried_header_rows(chunks)
+        if canonical_header_rows:
+            thead = fragment_fromstring("<thead></thead>")
+            for row in canonical_header_rows:
+                thead.append(row)
+            combined.append(thead)
+
         for c in chunks:
             parsed = fragment_fromstring(c.metadata.text_as_html)
             carried_over_header_rows = _num_carried_over_header_rows(c)
             rows = parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
-            for row in rows[carried_over_header_rows:]:
+            skip_count = carried_over_header_rows
+            if c is chunks[0] and canonical_header_row_count:
+                skip_count = canonical_header_row_count
+            for row in rows[skip_count:]:
                 combined.append(row)
         metadata.text_as_html = tostring(combined, encoding=str)
     else:
@@ -211,6 +221,31 @@ def _num_carried_over_header_rows(chunk: TableChunk) -> int:
     """
     value = chunk.metadata.num_carried_over_header_rows
     return value or 0
+
+
+def _first_carried_header_rows(chunks: list[TableChunk]) -> tuple[int, list[Any]]:
+    """Header rows from first continuation chunk carrying repeated headers, if any."""
+    for chunk in chunks:
+        carried_row_count = _num_carried_over_header_rows(chunk)
+        if carried_row_count <= 0:
+            continue
+
+        text_as_html = chunk.metadata.text_as_html
+        if not text_as_html:
+            continue
+
+        try:
+            parsed = fragment_fromstring(text_as_html)
+        except (ParserError, ValueError):
+            continue
+
+        rows = parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+        if carried_row_count > len(rows):
+            continue
+
+        return carried_row_count, [copy.deepcopy(row) for row in rows[:carried_row_count]]
+
+    return 0, []
 
 
 def _strip_carried_over_header_text(chunk: TableChunk) -> str:

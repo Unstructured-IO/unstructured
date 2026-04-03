@@ -1390,6 +1390,57 @@ class Describe_TableChunker:
         assert continuation_table.xpath("./tr[1]/td/text()") == ["Southwest Territory", "Q2 FY2026"]
         assert continuation_table.xpath("./tr[1]/th") == []
 
+    def and_it_preserves_source_header_row_html_for_carried_rows(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr data-role='header-row'>"
+            "<th scope='col' abbr='region-code'>Region</th>"
+            "<td colspan='2' headers='sales-header'>"
+            "<img src='chart.svg' alt='Chart icon'/>"
+            "<span> Sales</span>"
+            "<table><tr><td>Nested Value</td></tr></table>"
+            "</td>"
+            "</tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Q1 FY2026</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2 FY2026</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3 FY2026</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Sales Nested Value\n"
+            "Northwest Territory Q1 FY2026\n"
+            "Southwest Territory Q2 FY2026\n"
+            "Midwest Territory Q3 FY2026"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=80,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+
+        assert continuation_table.xpath("./thead/tr[1]/@data-role") == ["header-row"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@headers") == ["sales-header"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@src") == ["chart.svg"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@alt") == ["Chart icon"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]//table/tr/td/text()") == [
+            "Nested Value"
+        ]
+        assert continuation_table.xpath("./thead/tr[1]/td") == []
+
     def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
         table_html = (
             "<table>"
@@ -2035,6 +2086,47 @@ class Describe_TableChunker:
             "Body 3 Charlie",
             "Body 4 Delta",
         ]
+
+    def and_it_reconstructs_a_single_canonical_thead_for_carried_headers(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+
+        assert reconstructed.xpath("./thead/tr[1]/th/text()") == ["Header A", "Header B"]
+        assert reconstructed.xpath("./thead/tr[2]/th/text()") == ["Subhead A", "Subhead B"]
+        assert len(reconstructed.xpath("./thead")) == 1
+        assert reconstructed.xpath("./tr[1]/td/text()") == ["Body 1", "Alpha"]
+        assert reconstructed.xpath("./tr[1]/th") == []
 
     def and_it_handles_nested_markup_in_carried_header_rows_during_reconstruction(self):
         table_html = (

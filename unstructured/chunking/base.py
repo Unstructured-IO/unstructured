@@ -9,7 +9,8 @@ from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
-from lxml.etree import ParserError
+from lxml.etree import ParserError, tostring
+from lxml.html import fragment_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
@@ -1285,25 +1286,33 @@ class _HtmlTableSplitter:
 
     @staticmethod
     def _as_header_row_html(row: HtmlRow) -> str:
-        """Serialize `row` with direct cell tags emitted as semantic header cells."""
-        cells_html = "".join(
-            _HtmlTableSplitter._as_header_cell_html(cell.html) for cell in row.iter_cells()
-        )
-        return f"<tr>{cells_html}</tr>"
+        """Serialize `row` preserving source HTML while converting direct-child `<td>` to `<th>`."""
+        row_html = row.source_html or row.html
+        tr = _HtmlTableSplitter._parse_row_fragment(row_html)
+        if tr is None and row.source_html:
+            tr = _HtmlTableSplitter._parse_row_fragment(row.html)
+        if tr is None:
+            return row.html
+
+        for cell in tr:
+            if getattr(cell, "tag", None) == "td":
+                cell.tag = "th"
+
+        return tostring(tr, encoding=str)
 
     @staticmethod
-    def _as_header_cell_html(cell_html: str) -> str:
-        """Translate compactified `<td>` cell HTML into semantic `<th>` cell HTML."""
-        if cell_html == "<td/>":
-            return "<th/>"
-        if not cell_html.startswith("<td"):
-            return cell_html
+    def _parse_row_fragment(row_html: str):
+        """Parse `row_html` and return a `<tr>` element when recoverable."""
+        try:
+            parsed = fragment_fromstring(row_html)
+        except (ParserError, ValueError):
+            return None
 
-        cell_html = cell_html.replace("<td", "<th", 1)
-        before, sep, after = cell_html.rpartition("</td>")
-        if not sep:
-            return cell_html
-        return f"{before}</th>{after}"
+        if parsed.tag == "tr":
+            return parsed
+
+        rows = parsed.xpath(".//tr")
+        return rows[0] if rows else None
 
 
 class _TextSplitter:
