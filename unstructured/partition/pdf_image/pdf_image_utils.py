@@ -67,49 +67,64 @@ def _render_pdf_pages(
     last_page: Optional[int] = None,
     password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
-    """
-    Centralized function to render PDF pages using pypdfium.
-    """
     if path_only and not output_folder:
         raise ValueError("output_folder must be specified if path_only is True")
     exactly_one(filename=filename, file=file)
+
+    if dpi is None:
+        dpi = env_config.PDF_RENDER_DPI
+    scale = dpi / 72.0
+
+    if output_folder:
+        assert Path(output_folder).exists()
+        assert Path(output_folder).is_dir()
+
     with _pdfium_lock:
         pdf = pdfium.PdfDocument(filename or file, password=password)
-        try:
-            images: dict[int, Image.Image] = {}
-            if dpi is None:
-                dpi = env_config.PDF_RENDER_DPI
-            scale = dpi / 72.0
-            for i, page in enumerate(pdf, start=1):
-                if first_page is not None and i < first_page:
-                    continue
-                if last_page is not None and i > last_page:
-                    break
-                bitmap = page.render(
-                    scale=scale,
-                    no_smoothtext=False,
-                    no_smoothimage=False,
-                    no_smoothpath=False,
-                    optimize_mode="print",
-                )
+        n_pages = len(pdf)
+
+    try:
+        images: dict[int, Image.Image] = {}
+        filenames: list[str] = []
+        for i in range(n_pages):
+            page_num = i + 1
+            if first_page is not None and page_num < first_page:
+                continue
+            if last_page is not None and page_num > last_page:
+                break
+
+            with _pdfium_lock:
+                page = pdf[i]
                 try:
-                    images[i] = bitmap.to_pil()
+                    bitmap = page.render(
+                        scale=scale,
+                        no_smoothtext=False,
+                        no_smoothimage=False,
+                        no_smoothpath=False,
+                        optimize_mode="print",
+                    )
+                    try:
+                        pil_image = bitmap.to_pil()
+                    finally:
+                        bitmap.close()
                 finally:
-                    bitmap.close()
-            if not output_folder:
-                return list(images.values())
+                    page.close()
+
+            if output_folder:
+                fn: str = os.path.join(str(output_folder), f"page_{page_num}.png")
+                pil_image.save(fn, format="PNG", compress_level=1, optimize=False)
+                filenames.append(fn)
+                if not path_only:
+                    images[page_num] = pil_image
             else:
-                # Save images to output_folder
-                filenames: list[str] = []
-                assert Path(output_folder).exists()
-                assert Path(output_folder).is_dir()
-                for i, image in images.items():
-                    fn: str = os.path.join(str(output_folder), f"page_{i}.png")
-                    image.save(fn, format="PNG", compress_level=1, optimize=False)
-                    filenames.append(fn)
-                return filenames if path_only else list(images.values())
-        finally:
+                images[page_num] = pil_image
+    finally:
+        with _pdfium_lock:
             pdf.close()
+
+    if path_only:
+        return filenames
+    return list(images.values())
 
 
 def convert_pdf_to_image(

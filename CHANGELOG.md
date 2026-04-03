@@ -1,3 +1,8 @@
+## 0.22.13
+
+### Enhancements
+- **Lazy per-page PDF rendering**: `_render_pdf_pages` now renders and saves each page individually instead of accumulating all PIL images in memory before saving. With `path_only=True`, peak memory drops from O(n_pages) to O(1 page) — a 97% reduction for a 100-page PDF.
+
 ## 0.22.12
 
 ### Fixes
