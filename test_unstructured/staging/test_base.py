@@ -10,7 +10,7 @@ from unittest.mock import mock_open, patch
 import pandas as pd
 import pytest
 
-from test_unstructured.unit_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids, input_path
 from unstructured.documents.elements import (
     Address,
     CheckBox,
@@ -761,6 +761,44 @@ def test_elements_to_md_formula_markdown_style_keyword_only():
         formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
     )
     assert out_plain_unicode == "x ∈ A"
+
+
+def test_elements_from_json_to_md_with_formula_fixture():
+    """JSON fixture → elements_from_json → elements_to_md (real Formula types)."""
+    path = input_path("staging/formula-elements.json")
+    elements = base.elements_from_json(filename=path)
+    assert len(elements) == 2
+    assert elements[0].category == "NarrativeText"
+    assert elements[1].category == "Formula"
+    md = base.elements_to_md(elements)
+    assert md == "See equation below.\n$$\nE = mc^2\n$$"
+
+
+def test_elements_to_md_five_positional_args_order():
+    """Lock (elements, filename, exclude_binary_image_data, encoding, normalize_formula)."""
+    m = mock_open()
+    elements = [Formula("x ∈ A")]
+    with patch("builtins.open", m):
+        out = base.elements_to_md(elements, "out.md", False, "latin-1", False)
+    assert out == "$$\nx ∈ A\n$$"
+    assert m.call_args.kwargs.get("encoding") == "latin-1"
+
+
+def test_create_file_from_elements_propagates_formula_markdown_style():
+    elements = [Formula("x = 1")]
+    assert base.create_file_from_elements(elements, output_format="markdown") == "x = 1"
+    dm = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+    )
+    assert dm == "$$\nx = 1\n$$"
+    plain = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+    )
+    assert plain == "x = 1"
 
 
 def test_elements_to_md_file_output():
