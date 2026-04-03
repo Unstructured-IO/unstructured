@@ -2128,6 +2128,47 @@ class Describe_TableChunker:
         assert reconstructed.xpath("./tr[1]/td/text()") == ["Body 1", "Alpha"]
         assert reconstructed.xpath("./tr[1]/th") == []
 
+    def and_it_only_builds_a_canonical_thead_when_carried_rows_match_chunk_zero_prefix(self):
+        table_id = "table-with-mismatched-carried-headers"
+        chunks: list[TableChunk] = [
+            TableChunk(
+                text="Header A Body 1",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=0,
+                    num_carried_over_header_rows=0,
+                    text_as_html=(
+                        "<table>"
+                        "<tr><th>Header A</th></tr>"
+                        "<tr><td>Body 1</td></tr>"
+                        "</table>"
+                    ),
+                ),
+            ),
+            TableChunk(
+                text="Header A Header B Body 2",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=1,
+                    num_carried_over_header_rows=2,
+                    text_as_html=(
+                        "<table>"
+                        "<thead><tr><th>Header A</th></tr><tr><th>Header B</th></tr></thead>"
+                        "<tr><td>Body 2</td></tr>"
+                        "</table>"
+                    ),
+                ),
+            ),
+        ]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text == "Header A Body 1 Body 2"
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+        assert reconstructed.xpath("./thead") == []
+        assert self._row_texts(table.metadata.text_as_html) == ["Header A", "Body 1", "Body 2"]
+
     def and_it_handles_nested_markup_in_carried_header_rows_during_reconstruction(self):
         table_html = (
             "<table>"
