@@ -27,19 +27,23 @@ constraints = [
     { name = "urllib3", specifier = ">=2.0.0" },
     { name = "weaviate-client", specifier = ">=4.20.1" },
 ]
+overrides = [
+    { name = "numpy", specifier = ">=1.26.0" },
+    { name = "pandas", specifier = ">=1.5.0" },
+]
 
 [[package]]
 name = "accelerate"
 version = "1.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "psutil", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "safetensors", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "torch", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "huggingface-hub", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "psutil", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pyyaml", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "safetensors", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "torch", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/4a/8e/ac2a9566747a93f8be36ee08532eb0160558b07630a081a6056a9f89bf1d/accelerate-1.12.0.tar.gz", hash = "sha256:70988c352feb481887077d2ab845125024b2a137a5090d6d7a32b57d03a45df6", size = 398399, upload-time = "2025-11-21T11:27:46.973Z" }
 wheels = [
@@ -986,7 +990,7 @@ name = "contourpy"
 version = "1.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/58/01/1253e6698a07380cd31a736d248a3f2a50a7c88779a1813da27503cadc2a/contourpy-1.3.3.tar.gz", hash = "sha256:083e12155b210502d0bca491432bb04d56dc3432f95a979b429f2848c3dbe880", size = 13466174, upload-time = "2025-07-26T12:03:12.549Z" }
 wheels = [
@@ -2636,6 +2640,7 @@ dependencies = [
     { name = "cohere", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
+    { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
     { name = "pykx", marker = "python_full_version < '3.13'" },
     { name = "requests", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "voyageai", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
@@ -3030,15 +3035,15 @@ name = "matplotlib"
 version = "3.10.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "contourpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "cycler", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "fonttools", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "kiwisolver", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "pillow", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "pyparsing", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "python-dateutil", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "contourpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "cycler", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "fonttools", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "kiwisolver", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "packaging", version = "25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pillow", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pyparsing", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "python-dateutil", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8a/76/d3c6e3a13fe484ebe7718d14e269c9569c4eb0020a968a327acb3b9a8fe6/matplotlib-3.10.8.tar.gz", hash = "sha256:2299372c19d56bcd35cf05a2738308758d32b9eaed2371898d8f5bd33f084aa3", size = 34806269, upload-time = "2025-12-10T22:56:51.155Z" }
 wheels = [
@@ -3089,7 +3094,7 @@ name = "ml-dtypes"
 version = "0.5.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0e/4a/c27b42ed9b1c7d13d9ba8b6905dece787d6259152f2309338aed29b2447b/ml_dtypes-0.5.4.tar.gz", hash = "sha256:8ab06a50fb9bf9666dd0fe5dfb4676fa2b0ac0f31ecff72a6c3af8e22c063453", size = 692314, upload-time = "2025-11-17T22:32:31.031Z" }
 wheels = [
@@ -3704,10 +3709,10 @@ name = "onnx"
 version = "1.20.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ml-dtypes", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "protobuf", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "ml-dtypes", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "protobuf", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "typing-extensions", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3b/8a/335c03a8683a88a32f9a6bb98899ea6df241a41df64b37b9696772414794/onnx-1.20.1.tar.gz", hash = "sha256:ded16de1df563d51fbc1ad885f2a426f814039d8b5f4feb77febe09c0295ad67", size = 12048980, upload-time = "2026-01-10T01:40:03.043Z" }
 wheels = [
@@ -5150,6 +5155,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "grpcio", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "orjson", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
@@ -6756,11 +6762,11 @@ name = "timm"
 version = "1.0.25"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "safetensors", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "torch", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "torchvision", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "huggingface-hub", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pyyaml", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "safetensors", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "torch", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "torchvision", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d7/2c/593109822fe735e637382aca6640c1102c19797f7791f1fd1dab2d6c3cb1/timm-1.0.25.tar.gz", hash = "sha256:47f59fc2754725735cc81bb83bcbfce5bec4ebd5d4bb9e69da57daa92fcfa768", size = 2414743, upload-time = "2026-02-23T16:49:00.137Z" }
 wheels = [
@@ -6899,9 +6905,9 @@ name = "torchvision"
 version = "0.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "pillow", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
-    { name = "torch", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pillow", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "torch", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/be/c704bceaf11c4f6b19d64337a34a877fcdfe3bd68160a8c9ae9bea4a35a3/torchvision-0.25.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:db74a551946b75d19f9996c419a799ffdf6a223ecf17c656f90da011f1d75b20", size = 1874923, upload-time = "2026-01-21T16:27:46.574Z" },
@@ -7130,8 +7136,8 @@ all-docs = [
     { name = "pypdf" },
     { name = "python-docx" },
     { name = "python-pptx" },
-    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
     { name = "unstructured-pytesseract" },
     { name = "xlrd" },
 ]
@@ -7166,8 +7172,8 @@ image = [
     { name = "pi-heif" },
     { name = "pikepdf" },
     { name = "pypdf" },
-    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
     { name = "unstructured-pytesseract" },
 ]
 ingest = [
@@ -7190,8 +7196,8 @@ local-inference = [
     { name = "pypdf" },
     { name = "python-docx" },
     { name = "python-pptx" },
-    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
     { name = "unstructured-pytesseract" },
     { name = "xlrd" },
 ]
@@ -7216,8 +7222,8 @@ pdf = [
     { name = "pi-heif" },
     { name = "pikepdf" },
     { name = "pypdf" },
-    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "unstructured-inference", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "unstructured-inference", version = "1.6.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
     { name = "unstructured-pytesseract" },
 ]
 ppt = [
@@ -7373,14 +7379,18 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'huggingface'", specifier = ">=5.2.0,<6.0.0" },
     { name = "typing-extensions", specifier = ">=4.15.0,<5.0.0" },
     { name = "unstructured-client", specifier = ">=0.25.9,<1.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'all-docs'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'image'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'local-inference'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'pdf'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'all-docs'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'image'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'local-inference'", specifier = ">=1.2.0,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'pdf'", specifier = ">=1.2.0,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'all-docs'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'image'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'local-inference'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'pdf'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version >= '3.12' and sys_platform != 'win32' and extra == 'all-docs'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version >= '3.12' and sys_platform != 'win32' and extra == 'image'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version >= '3.12' and sys_platform != 'win32' and extra == 'local-inference'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version >= '3.12' and sys_platform != 'win32' and extra == 'pdf'", specifier = ">=1.6.2,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version < '3.12' and sys_platform != 'win32' and extra == 'all-docs'", specifier = ">=1.2.0,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version < '3.12' and sys_platform != 'win32' and extra == 'image'", specifier = ">=1.2.0,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version < '3.12' and sys_platform != 'win32' and extra == 'local-inference'", specifier = ">=1.2.0,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version < '3.12' and sys_platform != 'win32' and extra == 'pdf'", specifier = ">=1.2.0,<2.0.0" },
     { name = "unstructured-ingest", extras = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'ingest'", specifier = ">=1.4.0,<2.0.0" },
     { name = "unstructured-ingest", extras = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "sys_platform != 'win32' and extra == 'ingest'", specifier = ">=1.4.0,<2.0.0" },
     { name = "unstructured-paddleocr", marker = "extra == 'paddleocr'", specifier = "==2.10.0" },
@@ -7443,28 +7453,25 @@ name = "unstructured-inference"
 version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version == '3.12.*' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
 ]
 dependencies = [
-    { name = "accelerate", marker = "python_full_version < '3.13'" },
-    { name = "huggingface-hub", marker = "python_full_version < '3.13'" },
-    { name = "matplotlib", marker = "python_full_version < '3.13'" },
-    { name = "numpy", marker = "python_full_version < '3.13'" },
-    { name = "onnx", marker = "python_full_version < '3.13'" },
-    { name = "onnxruntime", marker = "python_full_version < '3.13'" },
-    { name = "opencv-python", marker = "python_full_version < '3.13'" },
-    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "pdfminer-six", marker = "python_full_version < '3.13'" },
-    { name = "pypdfium2", marker = "python_full_version < '3.13'" },
-    { name = "python-multipart", marker = "python_full_version < '3.13'" },
-    { name = "rapidfuzz", marker = "python_full_version < '3.13'" },
-    { name = "scipy", marker = "python_full_version < '3.13'" },
-    { name = "timm", marker = "python_full_version < '3.13'" },
-    { name = "torch", marker = "python_full_version < '3.13'" },
-    { name = "transformers", marker = "python_full_version < '3.13'" },
+    { name = "accelerate", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "huggingface-hub", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "matplotlib", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "numpy", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "onnx", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "onnxruntime", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "opencv-python", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "pdfminer-six", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "pypdfium2", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "python-multipart", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "rapidfuzz", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "scipy", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "timm", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "torch", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
+    { name = "transformers", marker = "python_full_version < '3.12' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ce/10/8f3bccfa9f1e0101a402ae1f529e07876541c6b18004747f0e793ed41f9e/unstructured_inference-1.2.0.tar.gz", hash = "sha256:19ca28512f3649c70a759cf2a4e98663e942a1b83c1acdb9506b0445f4862f23", size = 45732, upload-time = "2026-01-30T20:57:58.019Z" }
 wheels = [
@@ -7473,30 +7480,33 @@ wheels = [
 
 [[package]]
 name = "unstructured-inference"
-version = "1.5.2"
+version = "1.6.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
 ]
 dependencies = [
-    { name = "accelerate", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "huggingface-hub", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "matplotlib", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "numpy", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "onnx", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "onnxruntime", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "opencv-python", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "accelerate", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "huggingface-hub", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "matplotlib", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "numpy", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "onnx", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "onnxruntime", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "opencv-python", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*'" },
     { name = "pandas", version = "3.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "pypdfium2", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "rapidfuzz", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "scipy", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "timm", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "torch", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
-    { name = "transformers", marker = "python_full_version >= '3.13' and sys_platform != 'win32'" },
+    { name = "pypdfium2", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "rapidfuzz", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "scipy", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "timm", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "torch", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
+    { name = "transformers", marker = "(python_full_version >= '3.12' and sys_platform != 'win32') or (python_full_version == '3.12.*' and sys_platform == 'win32')" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/60/eb/7f19073948f50dacd2f4997b88207eb4ba12ad2ecb94e416b55849940564/unstructured_inference-1.5.2.tar.gz", hash = "sha256:5aa8e81009763fe44d17fc9305589ff5ffc168152d0edb73bc02978af49490bd", size = 46613, upload-time = "2026-02-13T01:01:38.702Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/28/c6/0358d6cdc32e7da70db566f5dedfe37f45989d1f38e847347d5da9f3a8b6/unstructured_inference-1.6.2.tar.gz", hash = "sha256:03b32785723c8382d3d009cbb2dce25e3bbbf5d2f5a3f2226db2ee7a7cc5de62", size = 46780, upload-time = "2026-04-03T03:27:24.29Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/d1/034b74bdaa172a338d75dc73870c41b6af30ac398c6153698731aa94be48/unstructured_inference-1.5.2-py3-none-any.whl", hash = "sha256:04e562178d18abcd9683171c02b994e4ce9928d1ea2ba73e465b004bb73523bf", size = 53423, upload-time = "2026-02-13T01:01:36.735Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/d6/b60391c2f916aef2887025ee62358ca8e0c01439461b6eff3da2f970a603/unstructured_inference-1.6.2-py3-none-any.whl", hash = "sha256:fdcac63d54cf1aa338c8b440e9574cd763aab9824f642ce008f5e4eb2a85c951", size = 53555, upload-time = "2026-04-03T03:27:23.092Z" },
 ]
 
 [[package]]
