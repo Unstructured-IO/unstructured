@@ -402,10 +402,42 @@ def test_prepare_string(text, expected):
             '「Chapter 1」: ❝The Beginning❞ - „A new story" begins «today».',
             '\'Chapter 1\': "The Beginning" - "A new story" begins "today".',
         ),
+        # --- Regression: U+201C / U+2018 were silently dropped by duplicate dict keys ---
+        # U+201C left double quotation mark (isolated)
+        ("\u201c", '"'),
+        # U+2018 left single quotation mark (isolated)
+        ("\u2018", "'"),
+        # Left + right double smart quotes wrapping a word
+        ("\u201cHello\u201d", '"Hello"'),
+        # Left + right single smart quotes wrapping a word
+        ("\u2018world\u2019", "'world'"),
+        # Mixed left/right smart quotes in a sentence
+        (
+            "She said \u201cHello\u201d and then whispered \u2018Goodbye\u2019",
+            "She said \"Hello\" and then whispered 'Goodbye'",
+        ),
+        # Possessive with left single smart quote
+        ("\u2018tis the season", "'tis the season"),
     ],
 )
 def test_standardize_quotes(input_text, expected_output):
     assert text_extraction.standardize_quotes(input_text) == expected_output
+
+
+@pytest.mark.parametrize(
+    ("codepoint", "expected"),
+    [
+        pytest.param(cp, '"', id=f"U+{ord(cp):04X}->double")
+        for cp in text_extraction._DOUBLE_QUOTE_CODEPOINTS
+    ]
+    + [
+        pytest.param(cp, "'", id=f"U+{ord(cp):04X}->single")
+        for cp in text_extraction._SINGLE_QUOTE_CODEPOINTS
+    ],
+)
+def test_standardize_quotes_every_codepoint(codepoint, expected):
+    """Every codepoint in the translation table must map to its ASCII equivalent."""
+    assert text_extraction.standardize_quotes(codepoint) == expected
 
 
 @pytest.mark.parametrize(

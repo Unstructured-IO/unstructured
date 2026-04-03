@@ -81,10 +81,10 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
             range_size = end_val - start_val + 1
             if total_mappings + range_size > _MAX_CODE2CID_MAPPINGS:
                 logger.warning(
-                    "Embedded CMap range too large (%d entries), skipping to avoid DoS",
-                    range_size,
+                    "Embedded CMap would exceed %d mappings; discarding partial CMap",
+                    _MAX_CODE2CID_MAPPINGS,
                 )
-                continue
+                return CMap()
             for i in range(range_size):
                 code_val = start_val + i
                 cid = start_cid + i
@@ -105,10 +105,10 @@ def _parse_embedded_cmap_stream(data: bytes) -> CMap:
         for code_hex, cid_str in entries:
             if total_mappings >= _MAX_CODE2CID_MAPPINGS:
                 logger.warning(
-                    "Embedded CMap exceeded %d mappings, skipping remaining cidchar entries",
+                    "Embedded CMap exceeded %d mappings; discarding partial CMap",
                     _MAX_CODE2CID_MAPPINGS,
                 )
-                break
+                return CMap()
             code_bytes = bytes.fromhex(code_hex.decode("ascii"))
             cid = int(cid_str)
             if len(code_bytes) == 1:
@@ -236,10 +236,19 @@ class CustomPDFCIDFont(PDFCIDFont):
                                 len(cmap.code2cid),
                             )
                             return cmap
-                except Exception:
-                    logger.debug(
-                        "Failed to parse embedded CMap stream %r",
+                except (
+                    ValueError,
+                    KeyError,
+                    TypeError,
+                    UnicodeDecodeError,
+                    zlib.error,
+                    PSSyntaxError,
+                ) as exc:
+                    logger.warning(
+                        "Failed to parse embedded CMap stream %r: %s",
                         cmap_name,
+                        exc,
+                        exc_info=True,
                     )
             if strict:
                 raise PDFFontError(e) from e
@@ -254,15 +263,13 @@ class CustomPDFResourceManager(PDFResourceManager):
     """
 
     def get_font(self, objid, spec):
-        if objid and objid in self._cached_fonts:
-            return self._cached_fonts[objid]
-
-        if pdfminer_settings.STRICT and spec["Type"] is not LITERAL_FONT:
-            raise PDFFontError("Type is not /Font")
-
         subtype = literal_name(spec["Subtype"]) if "Subtype" in spec else "Type1"
 
         if subtype in ("CIDFontType0", "CIDFontType2"):
+            if objid and objid in self._cached_fonts:
+                return self._cached_fonts[objid]
+            if pdfminer_settings.STRICT and spec.get("Type") is not LITERAL_FONT:
+                raise PDFFontError("Type is not /Font")
             font = CustomPDFCIDFont(self, spec)
             if objid and self.caching:
                 self._cached_fonts[objid] = font

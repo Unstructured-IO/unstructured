@@ -493,7 +493,24 @@ endcidrange
         # Use a small cap to verify bounding without allocating huge dicts
         with patch("unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100):
             cmap = self._parse(data)
-            assert not cmap.code2cid  # 65536 > 100, so the range is skipped entirely
+            assert not cmap.code2cid  # 65536 > 100: entire CMap discarded, not partial
+
+    def test_mapping_budget_second_range_discards_entire_cmap(self):
+        """If a later cidrange would exceed the cap, reject the whole map (no holes)."""
+        from unittest.mock import patch
+
+        data = b"""
+1 begincodespacerange
+<00> <19>
+endcodespacerange
+2 begincidrange
+<00> <09> 0
+<0A> <19> 10
+endcidrange
+"""
+        with patch("unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 15):
+            cmap = self._parse(data)
+            assert not cmap.code2cid
 
 
 class TestBoundedStreamDecode:
@@ -539,6 +556,21 @@ class TestBoundedStreamDecode:
 
         result = _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000)
         assert result == content
+
+    def test_encrypted_stream_without_objid_returns_none(self):
+        """Decipher requires objid/genno; missing values skip decode (no crash)."""
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            _decode_pdfstream_with_limit,
+        )
+
+        stream = PDFStream({}, b"encrypted-bytes", decipher=lambda *a: b"x")
+        stream.objid = None
+        stream.genno = 0
+        assert _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000) is None
+
+        stream.objid = 1
+        stream.genno = None
+        assert _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000) is None
 
     def test_uncompressed_stream_returns_raw(self):
         """A stream with no filters should return the raw data directly."""

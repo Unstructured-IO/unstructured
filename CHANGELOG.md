@@ -1,7 +1,28 @@
-## 0.22.13
+## 0.22.17
 
 ### Fixes
 - **Preserve semantic table headers across carried chunks**: Carried rows in split table chunks now keep original header semantics (`th` stays `th`, including section header rows and wrapped header text), preventing header cells from degrading to data cells in continuation chunks.
+
+## 0.22.16
+
+### Enhancements
+- **Formula markdown export (`element_to_md` / `elements_to_md`)**: New keyword-only `formula_markdown_style` (`"auto"`, `"display_math"`, `"plain"`; default `"auto"`). In `"auto"`, display math (`$$ ... $$`) is used only when the text looks like notation (heuristic score) and contains no `$`/`$$` (avoids breaking Markdown and noisy OCR captions). `"display_math"` wraps whenever safe (still falls back to plain if `$` would corrupt fences). `"plain"` emits text only. Optional `normalize_formula` (default `True`) maps common Unicode operators to LaTeX-like tokens; `normalize_formula` stays before keyword-only options so positional `encoding` / `no_group_by_page` callers are unchanged. Unicode `√` is never mapped to `\\sqrt{}`. Module constants: `FORMULA_MARKDOWN_AUTO`, `FORMULA_MARKDOWN_DISPLAY_MATH`, `FORMULA_MARKDOWN_PLAIN`.
+
+## 0.22.15
+
+### Security
+
+- **security:** fix(deps): upgrade vulnerable transitive dependencies [security]
+
+## 0.22.14
+
+### Enhancements
+- **Deduplicate PDF rendering**: Remove `_render_pdf_pages` and delegate to `unstructured-inference`'s `convert_pdf_to_image` (which already has lazy per-page rendering). Peak memory for `path_only=True` drops from O(n_pages) to O(1 page) — 97% reduction on a 100-page PDF. Bumps inference dep to `>=1.6.2`.
+
+## 0.22.13
+
+### Enhancements
+- **Speed up `standardize_quotes`**: Replace loop-based character replacement with a single `str.translate()` call using a pre-computed translation table. Also fixes a pre-existing bug where left smart quotes were never normalized due to duplicate dictionary keys.
 
 ## 0.22.12
 

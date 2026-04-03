@@ -8,14 +8,13 @@ import unicodedata
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path, PurePath
-from threading import Lock
 from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
 import cv2
 import numpy as np
 import pdf2image
-import pypdfium2 as pdfium
 from PIL import Image
+from unstructured_inference.inference.layout import convert_pdf_to_image as render_pdf_to_image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
@@ -28,9 +27,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
-
-
-_pdfium_lock = Lock()
 
 
 def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
@@ -57,61 +53,6 @@ def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
         raise ValueError("Unsupported Image Type")
 
 
-def _render_pdf_pages(
-    filename: Optional[str] = None,
-    file: Optional[Union[bytes, BinaryIO]] = None,
-    dpi: Optional[int] = None,
-    output_folder: Optional[Union[str, PurePath]] = None,
-    path_only: bool = False,
-    first_page: Optional[int] = None,
-    last_page: Optional[int] = None,
-    password: Optional[str] = None,
-) -> Union[List[Image.Image], List[str]]:
-    """
-    Centralized function to render PDF pages using pypdfium.
-    """
-    if path_only and not output_folder:
-        raise ValueError("output_folder must be specified if path_only is True")
-    exactly_one(filename=filename, file=file)
-    with _pdfium_lock:
-        pdf = pdfium.PdfDocument(filename or file, password=password)
-        try:
-            images: dict[int, Image.Image] = {}
-            if dpi is None:
-                dpi = env_config.PDF_RENDER_DPI
-            scale = dpi / 72.0
-            for i, page in enumerate(pdf, start=1):
-                if first_page is not None and i < first_page:
-                    continue
-                if last_page is not None and i > last_page:
-                    break
-                bitmap = page.render(
-                    scale=scale,
-                    no_smoothtext=False,
-                    no_smoothimage=False,
-                    no_smoothpath=False,
-                    optimize_mode="print",
-                )
-                try:
-                    images[i] = bitmap.to_pil()
-                finally:
-                    bitmap.close()
-            if not output_folder:
-                return list(images.values())
-            else:
-                # Save images to output_folder
-                filenames: list[str] = []
-                assert Path(output_folder).exists()
-                assert Path(output_folder).is_dir()
-                for i, image in images.items():
-                    fn: str = os.path.join(str(output_folder), f"page_{i}.png")
-                    image.save(fn, format="PNG", compress_level=1, optimize=False)
-                    filenames.append(fn)
-                return filenames if path_only else list(images.values())
-        finally:
-            pdf.close()
-
-
 def convert_pdf_to_image(
     filename: str,
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -120,11 +61,12 @@ def convert_pdf_to_image(
     path_only: bool = False,
     password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
-    """Get the image renderings of the pdf pages using pdf2image"""
+    exactly_one(filename=filename, file=file)
+
     if dpi is None:
         dpi = env_config.PDF_RENDER_DPI
 
-    return _render_pdf_pages(
+    return render_pdf_to_image(
         filename=filename,
         file=file,
         dpi=dpi,
@@ -463,14 +405,14 @@ def convert_pdf_to_images(
     total_pages = info["Pages"]
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
-        chunk_images = _render_pdf_pages(
+        chunk_images = render_pdf_to_image(
             filename=filename if f_bytes is None else None,
             file=f_bytes,
+            dpi=env_config.PDF_RENDER_DPI,
             first_page=start_page,
             last_page=end_page,
             password=password,
         )
-        # Type narrowing: when first_page/last_page are used, we always get Image.Image list
         chunk_images = cast(List[Image.Image], chunk_images)
 
         for image in chunk_images:
