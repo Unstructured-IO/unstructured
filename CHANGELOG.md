@@ -1,7 +1,11 @@
-## 0.22.13
+## 0.22.14
 
 ### Enhancements
 - **Deduplicate PDF rendering**: Remove `_render_pdf_pages` and delegate to `unstructured-inference`'s `convert_pdf_to_image` (which already has lazy per-page rendering). Peak memory for `path_only=True` drops from O(n_pages) to O(1 page) — 97% reduction on a 100-page PDF. Bumps inference dep to `>=1.6.2`.
+
+## 0.22.13
+
+### Enhancements
 - **Speed up `standardize_quotes`**: Replace loop-based character replacement with a single `str.translate()` call using a pre-computed translation table. Also fixes a pre-existing bug where left smart quotes were never normalized due to duplicate dictionary keys.
 
 ## 0.22.12
