@@ -653,7 +653,9 @@ def test_element_to_md_conversion(element: "Element", expected_markdown: str, ex
 
 def test_element_to_md_formula_normalizes_common_math_symbols():
     element = Formula("x ∈ A and y ≤ z and a × b = c")
-    assert base.element_to_md(element) == "$$\nx \\in A and y \\leq z and a \\times b = c\n$$"
+    assert base.element_to_md(element) == (
+        "$$\nx \\in{} A and y \\leq{} z and a \\times{} b = c\n$$"
+    )
 
 
 def test_element_to_md_formula_can_disable_normalization():
@@ -668,7 +670,7 @@ def test_element_to_md_formula_preserves_unicode_square_root():
     """√ must not become \\sqrt{} (would break √2, √(x+1), etc.)."""
     assert base.element_to_md(Formula("√2")) == "$$\n√2\n$$"
     assert base.element_to_md(Formula("√(x+1)")) == "$$\n√(x+1)\n$$"
-    assert base.element_to_md(Formula("√2 ≤ x")) == "$$\n√2 \\leq x\n$$"
+    assert base.element_to_md(Formula("√2 ≤ x")) == "$$\n√2 \\leq{} x\n$$"
 
 
 def test_elements_to_md_positional_encoding_backward_compat():
@@ -754,13 +756,39 @@ def test_element_to_md_formula_invalid_style_raises():
 def test_elements_to_md_formula_markdown_style_keyword_only():
     els = [Formula("x ∈ A")]
     out = base.elements_to_md(els, formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN)
-    assert out == "x \\in A"
+    assert out == "x ∈ A"
     out_plain_unicode = base.elements_to_md(
         els,
         normalize_formula=False,
         formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
     )
     assert out_plain_unicode == "x ∈ A"
+
+
+def test_element_to_md_formula_plain_never_normalizes_unicode_minus():
+    assert (
+        base.element_to_md(
+            Formula("a − b"),
+            formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+        )
+        == "a − b"
+    )
+
+
+def test_element_to_md_formula_in_brace_boundary_after_symbol():
+    out = base.element_to_md(
+        Formula("x∈S"),
+        formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+    )
+    assert out == "$$\nx\\in{}S\n$$"
+
+
+def test_formula_auto_scores_raw_text_prose_with_one_symbol_stays_plain():
+    text = (
+        "E ≤ threshold where E is the energy and threshold was determined experimentally "
+        "in the laboratory setup described above herein."
+    )
+    assert base.element_to_md(Formula(text)) == text
 
 
 def test_elements_from_json_to_md_with_formula_fixture():

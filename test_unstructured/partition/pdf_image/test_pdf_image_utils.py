@@ -109,6 +109,20 @@ def test_convert_pdf_to_image_raises_error():
     assert str(exc_info.value) == "output_folder must be specified if path_only is true"
 
 
+def test_convert_pdf_to_image_rejects_both_filename_and_file():
+    filename = example_doc_path("pdf/embedded-images.pdf")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with open(filename, "rb") as f:
+            with pytest.raises(ValueError) as exc_info:
+                pdf_image_utils.convert_pdf_to_image(
+                    filename=filename,
+                    file=f,
+                    output_folder=tmpdir,
+                    path_only=True,
+                )
+    assert "Exactly one of" in str(exc_info.value)
+
+
 @pytest.mark.parametrize(
     ("filename", "is_image"),
     [

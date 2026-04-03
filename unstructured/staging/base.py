@@ -62,17 +62,19 @@ def _normalize_formula_for_markdown(text: str) -> str:
     rewritten: mapping it to ``\\sqrt{}`` would require reparsing the radicand and could
     corrupt expressions like ``√2`` or ``√(x+1)``.
     """
+    # Use `{}` after each LaTeX command so the next character cannot fuse into the name
+    # (e.g. x∈S -> x\in{}S, not x\inS).
     substitutions = {
         "−": "-",  # Unicode minus -> ASCII hyphen-minus
-        "×": r"\times",
-        "÷": r"\div",
-        "∞": r"\infty",
-        "∈": r"\in",
-        "∉": r"\notin",
-        "≤": r"\leq",
-        "≥": r"\geq",
-        "≈": r"\approx",
-        "≠": r"\neq",
+        "×": r"\times{}",
+        "÷": r"\div{}",
+        "∞": r"\infty{}",
+        "∈": r"\in{}",
+        "∉": r"\notin{}",
+        "≤": r"\leq{}",
+        "≥": r"\geq{}",
+        "≈": r"\approx{}",
+        "≠": r"\neq{}",
     }
     normalized = text
     for source, target in substitutions.items():
@@ -127,11 +129,15 @@ def _emit_formula_markdown(
     normalize_formula: bool,
     formula_markdown_style: str,
 ) -> str:
-    text = raw_text.strip()
-    if not text:
-        return text
-    if normalize_formula:
-        text = _normalize_formula_for_markdown(text)
+    """Serialize Formula text for Markdown.
+
+    Heuristic scoring for ``auto`` runs on **raw** stripped text so Unicode symbols
+    are not replaced by ``\\command`` before the score is computed. Normalization
+    applies only to text emitted inside ``$$`` blocks. ``plain`` never normalizes.
+    """
+    raw = raw_text.strip()
+    if not raw:
+        return raw
 
     style = formula_markdown_style.strip().lower()
     if style not in _FORMULA_MARKDOWN_STYLES:
@@ -140,12 +146,22 @@ def _emit_formula_markdown(
             f"{sorted(_FORMULA_MARKDOWN_STYLES)!r}, got {formula_markdown_style!r}",
         )
     if style == FORMULA_MARKDOWN_PLAIN:
-        return text
-    if _formula_has_unsafe_markdown_delimiters(text):
-        return text
-    if style == FORMULA_MARKDOWN_AUTO and not _formula_auto_use_display_math(text):
-        return text
-    return f"$$\n{text}\n$$"
+        return raw
+
+    if _formula_has_unsafe_markdown_delimiters(raw):
+        return raw
+
+    use_display_math = False
+    if style == FORMULA_MARKDOWN_DISPLAY_MATH:
+        use_display_math = True
+    elif style == FORMULA_MARKDOWN_AUTO:
+        use_display_math = _formula_auto_use_display_math(raw)
+
+    if not use_display_math:
+        return raw
+
+    body = _normalize_formula_for_markdown(raw) if normalize_formula else raw
+    return f"$$\n{body}\n$$"
 
 
 def elements_from_base64_gzipped_json(b64_encoded_elements: str) -> list[Element]:
