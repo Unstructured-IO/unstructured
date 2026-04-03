@@ -1491,9 +1491,12 @@ class Describe_TableChunker:
             "<table>"
             "<thead><tr><th scope='col'>Region</th><th scope='col'>Sales</th></tr></thead>"
             "<tbody>"
-            "<tr><td class='region-cell'>Northwest Territory</td><td data-origin='crm'>1200</td></tr>"
-            "<tr><td class='region-cell'>Southwest Territory</td><td data-origin='crm'>1400</td></tr>"
-            "<tr><td class='region-cell'>Midwest Territory</td><td data-origin='crm'>1600</td></tr>"
+            "<tr><td class='region-cell'>Northwest Territory</td>"
+            "<td data-origin='crm'>1200</td></tr>"
+            "<tr><td class='region-cell'>Southwest Territory</td>"
+            "<td data-origin='crm'>1400</td></tr>"
+            "<tr><td class='region-cell'>Midwest Territory</td>"
+            "<td data-origin='crm'>1600</td></tr>"
             "</tbody>"
             "</table>"
         )
@@ -2213,8 +2216,10 @@ class Describe_TableChunker:
         table_html = (
             "<table>"
             "<thead>"
-            "<tr><th scope='col' abbr='region-code'>Region</th><th id='sales-group' colspan='2'>Sales</th></tr>"
-            "<tr><th headers='sales-group'>Quarter</th><th rowspan='2'>Revenue</th><th>Units</th></tr>"
+            "<tr><th scope='col' abbr='region-code'>Region</th>"
+            "<th id='sales-group' colspan='2'>Sales</th></tr>"
+            "<tr><th headers='sales-group'>Quarter</th>"
+            "<th rowspan='2'>Revenue</th><th>Units</th></tr>"
             "</thead>"
             "<tbody>"
             "<tr><td>Northwest Territory</td><td>1200</td><td>17</td></tr>"
@@ -2265,10 +2270,7 @@ class Describe_TableChunker:
                     chunk_index=0,
                     num_carried_over_header_rows=0,
                     text_as_html=(
-                        "<table>"
-                        "<tr><th>Header A</th></tr>"
-                        "<tr><td>Body 1</td></tr>"
-                        "</table>"
+                        "<table><tr><th>Header A</th></tr><tr><td>Body 1</td></tr></table>"
                     ),
                 ),
             ),
