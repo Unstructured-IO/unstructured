@@ -694,7 +694,10 @@ def test_process_file_with_ocr_chunks_pdf_pages(monkeypatch, mocker):
         "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
         side_effect=_fake_render,
     )
-    mocker.patch("unstructured.partition.pdf_image.ocr.PILImage.open", return_value=Image.new("RGB", (16, 16)))
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.PILImage.open",
+        return_value=Image.new("RGB", (16, 16)),
+    )
     supplement = mocker.patch(
         "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
         side_effect=lambda page_layout, image, **kwargs: page_layout,
@@ -727,7 +730,10 @@ def test_process_file_with_ocr_invalid_chunk_size_falls_back(monkeypatch, mocker
         "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
         side_effect=_fake_render,
     )
-    mocker.patch("unstructured.partition.pdf_image.ocr.PILImage.open", return_value=Image.new("RGB", (16, 16)))
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.PILImage.open",
+        return_value=Image.new("RGB", (16, 16)),
+    )
     mocker.patch(
         "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
         side_effect=lambda page_layout, image, **kwargs: page_layout,

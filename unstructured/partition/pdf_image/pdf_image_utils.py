@@ -8,7 +8,18 @@ import unicodedata
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path, PurePath
-from typing import IO, TYPE_CHECKING, BinaryIO, Callable, Iterator, List, Optional, Tuple, Union, cast
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    BinaryIO,
+    Callable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import cv2
 import numpy as np
@@ -288,7 +299,9 @@ def save_elements(
             figure_number += 1
             try:
                 image_path = (
-                    image_paths[page_index] if is_image else image_paths_by_page[metadata_page_number]
+                    image_paths[page_index]
+                    if is_image
+                    else image_paths_by_page[metadata_page_number]
                 )
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)

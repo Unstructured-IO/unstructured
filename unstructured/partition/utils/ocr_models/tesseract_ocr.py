@@ -230,7 +230,8 @@ class OCRAgentTesseract(OCRAgent):
             lambda text: str(text) if not isinstance(text, str) else text.strip()
         ).values
         mask = texts != ""
-        element_coords = ocr_data[["left", "top", "width", "height"]].values
+        # Pandas can return a read-only view here, so copy before mutating width/height in place.
+        element_coords = ocr_data[["left", "top", "width", "height"]].to_numpy(copy=True)
         element_coords[:, 2] += element_coords[:, 0]
         element_coords[:, 3] += element_coords[:, 1]
         element_coords = element_coords.astype(float) / zoom

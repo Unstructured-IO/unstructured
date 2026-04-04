@@ -34,6 +34,7 @@ IGNORED_PACKAGES=(
   chroma-hnswlib # Apache-2.0 (chroma-core/hnswlib)
   google-crc32c  # Apache-2.0 (googleapis/python-crc32c)
   iopath         # MIT (facebookresearch/iopath)
+  matplotlib-inline # BSD-3-Clause (ipython/matplotlib-inline)
   pypdfium2      # BSD-3-Clause (PDFium/PDFium)
   sentencepiece  # Apache-2.0 (google/sentencepiece)
   voyageai       # MIT (voyage-ai/voyageai-python)

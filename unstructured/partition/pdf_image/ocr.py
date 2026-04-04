@@ -212,7 +212,9 @@ def process_file_with_ocr(
                         )
                     for page_index, image_path in enumerate(image_paths, start=chunk_start):
                         extracted_regions = (
-                            extracted_layout[page_index] if page_index < len(extracted_layout) else None
+                            extracted_layout[page_index]
+                            if page_index < len(extracted_layout)
+                            else None
                         )
                         with PILImage.open(image_path) as image:
                             merged_page_layout = supplement_page_layout_with_ocr(

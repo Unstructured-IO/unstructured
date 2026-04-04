@@ -253,7 +253,7 @@ def test_save_elements(
 
 @pytest.mark.parametrize("storage_enabled", [False, True])
 def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
-    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", storage_enabled)
+    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", str(storage_enabled))
     with (
         patch("PIL.Image.open"),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
@@ -315,7 +315,10 @@ def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
 
     monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "2")
     with (
-        patch("unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image", side_effect=_fake_render),
+        patch(
+            "unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image",
+            side_effect=_fake_render,
+        ),
         patch("PIL.Image.open", return_value=PILImg.new("RGB", (32, 32))),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
         tempfile.TemporaryDirectory() as tmpdir,
