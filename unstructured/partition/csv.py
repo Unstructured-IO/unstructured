@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import csv
+import io
 from functools import cached_property
 from typing import IO, Any, Iterator
 
@@ -141,6 +142,16 @@ class _CsvPartitioningContext:
         try:
             return sniffer.sniff(data, delimiters=",;|").delimiter
         except csv.Error:
+            # -- `csv.Sniffer` can fail on small files with quoted delimiters. Fall back to
+            # -- testing candidate delimiters and accept only those that produce a consistent
+            # -- multi-column shape.
+            candidate_delimiters = (",", ";", "|")
+            for delimiter in candidate_delimiters:
+                rows = list(csv.reader(io.StringIO(data), delimiter=delimiter))
+                row_lengths = [len(row) for row in rows if row]
+                if row_lengths and min(row_lengths) > 1 and len(set(row_lengths)) == 1:
+                    return delimiter
+
             # -- sniffing will fail on single-column csv as no default can be assumed --
             return None
 

@@ -95,6 +95,24 @@ def test_partition_single_column_csv():
     )
 
 
+def test_partition_csv_with_quoted_commas():
+    csv_data = (
+        b"_id,title,reviewid,creationdate,criticname,originalscore,reviewstate,reviewtext\r\n"
+        b'60297eea-73d7-4fca-a97e-ea73d7cfca62,City Hunter: Shinjuku Private Eyes,2590987,'
+        b'2019-05-28,Reuben Baron,,fresh,"The choreography is so precise and lifelike at '
+        b"points one might wonder whether the movie was rotoscoped, but no live-action "
+        b"reference footage was used. The quality is due to the skill of the animators and "
+        b"Kodama's love for professional wrestling.\"\r\n"
+    )
+
+    elements = partition_csv(file=io.BytesIO(csv_data))
+
+    assert clean_extra_whitespace(elements[0].text).startswith(
+        "_id title reviewid creationdate criticname originalscore reviewstate reviewtext"
+    )
+    assert "<td>reviewtext</td>" in elements[0].metadata.text_as_html
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
