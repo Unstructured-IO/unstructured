@@ -87,11 +87,7 @@ def process_data_with_ocr(
     try:
         data_bytes = data if isinstance(data, bytes) else data.read()
     finally:
-        if (
-            original_position is not None
-            and not isinstance(data, bytes)
-            and hasattr(data, "seek")
-        ):
+        if original_position is not None and not isinstance(data, bytes) and hasattr(data, "seek"):
             data.seek(original_position)
 
     with tempfile.TemporaryDirectory() as tmp_dir_path:

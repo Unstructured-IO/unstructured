@@ -125,12 +125,7 @@ def test_partition_csv_with_quoted_commas():
 
 
 def test_partition_single_column_csv_preserves_quoted_fields():
-    csv_data = (
-        b"notes\r\n"
-        b'"hello, world"\r\n'
-        b'"a ""quote"""\r\n'
-        b'"line 1\nline 2"\r\n'
-    )
+    csv_data = b'notes\r\n"hello, world"\r\n"a ""quote"""\r\n"line 1\nline 2"\r\n'
 
     elements = partition_csv(file=io.BytesIO(csv_data), include_header=True)
 
