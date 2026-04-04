@@ -61,7 +61,11 @@ def partition_csv(
     with ctx.open() as file:
         if ctx.delimiter is None:
             text = file.read().decode(ctx.encoding or "utf-8")
-            dataframe = pd.DataFrame(text.splitlines())
+            lines = text.splitlines()
+            if ctx.header == 0 and lines:
+                dataframe = pd.DataFrame(lines[1:], columns=[lines[0]])
+            else:
+                dataframe = pd.DataFrame(lines)
         else:
             dataframe = pd.read_csv(
                 file,
@@ -132,11 +136,15 @@ class _CsvPartitioningContext:
         num_bytes = 65536
 
         with self.open() as file:
-            sample = file.read(num_bytes)
+            sample = file.read(num_bytes + 1)
+
+        is_truncated = len(sample) > num_bytes
+        if is_truncated:
+            sample = sample[:num_bytes]
 
         data = sample.decode(self._encoding or "utf-8", errors="ignore")
         lines = data.splitlines()
-        if len(sample) == num_bytes and lines and not data.endswith(("\n", "\r")):
+        if is_truncated and lines and not data.endswith(("\n", "\r")):
             data = "\n".join(lines[:-1])
 
         try:

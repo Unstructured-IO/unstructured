@@ -95,6 +95,17 @@ def test_partition_single_column_csv():
     )
 
 
+def test_partition_single_column_csv_with_header():
+    elements = partition_csv(example_doc_path("single-column.csv"), include_header=True)
+
+    assert clean_extra_whitespace(elements[0].text) == (
+        "Lorem, ipsum dolor sit amet consectetur adipiscing, elit sed, do eiusmod "
+        "tempor incididunt ut labore et dolore; magna aliqua Ut enim, ad minim, veniam"
+    )
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>0</td>" not in elements[0].metadata.text_as_html
+
+
 def test_partition_csv_with_quoted_commas():
     csv_data = (
         b"_id,title,reviewid,creationdate,criticname,originalscore,reviewstate,reviewtext\r\n"
@@ -289,6 +300,12 @@ class Describe_CsvPartitioningContext:
 
     def and_it_auto_detects_the_delimiter_for_a_small_file_without_a_trailing_newline(self):
         ctx = _CsvPartitioningContext(file=io.BytesIO(b"a,b"))
+        assert ctx.delimiter == ","
+
+    def and_it_auto_detects_the_delimiter_for_an_exact_size_file_without_a_trailing_newline(self):
+        line = ("a," * 32767) + "aa"
+        assert len(line) == 65536
+        ctx = _CsvPartitioningContext(file=io.BytesIO(line.encode()))
         assert ctx.delimiter == ","
 
     def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
