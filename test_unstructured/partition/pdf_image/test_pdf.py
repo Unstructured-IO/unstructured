@@ -31,11 +31,13 @@ from unstructured.documents.elements import (
     ElementType,
     Footer,
     Header,
-    Image as ImageElement,
     ListItem,
     NarrativeText,
     Text,
     Title,
+)
+from unstructured.documents.elements import (
+    Image as ImageElement,
 )
 from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
