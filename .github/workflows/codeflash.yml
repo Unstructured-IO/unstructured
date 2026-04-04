@@ -17,7 +17,7 @@ jobs:
     if: ${{ github.actor != 'codeflash-ai[bot]' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: 🐍 Set up Python 3.12
