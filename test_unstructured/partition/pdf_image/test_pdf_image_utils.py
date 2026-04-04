@@ -123,6 +123,33 @@ def test_convert_pdf_to_image_rejects_both_filename_and_file():
     assert "Exactly one of" in str(exc_info.value)
 
 
+def test_convert_pdf_to_images_uses_runtime_renderer(monkeypatch):
+    calls = []
+
+    def _fake_render(**kwargs):
+        calls.append(kwargs)
+        return [PILImg.new("RGB", (4, 4))]
+
+    monkeypatch.setattr(
+        "unstructured_inference.inference.layout.convert_pdf_to_image",
+        _fake_render,
+    )
+    monkeypatch.setattr(
+        pdf_image_utils.pdf2image,
+        "pdfinfo_from_path",
+        lambda filename, userpw=None: {"Pages": 2},
+    )
+
+    images = list(pdf_image_utils.convert_pdf_to_images(filename="dummy.pdf", chunk_size=1))
+
+    assert len(images) == 2
+    assert len(calls) == 2
+    assert calls[0]["first_page"] == 1
+    assert calls[0]["last_page"] == 1
+    assert calls[1]["first_page"] == 2
+    assert calls[1]["last_page"] == 2
+
+
 @pytest.mark.parametrize(
     ("filename", "is_image"),
     [
@@ -254,6 +281,55 @@ def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
         assert os.path.exists(expected_output_dir)
         assert os.path.isdir(expected_output_dir)
         os.chdir(original_cwd)
+
+
+def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
+    elements = [
+        Image(
+            text="Image Text 1",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=1),
+        ),
+        Image(
+            text="Image Text 2",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=2),
+        ),
+        Image(
+            text="Image Text 3",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=4),
+        ),
+    ]
+
+    render_calls = []
+
+    def _fake_render(*args, **kwargs):
+        first_page = kwargs["first_page"]
+        last_page = kwargs["last_page"]
+        render_calls.append((first_page, last_page))
+        return [f"/tmp/page_{page_number}.png" for page_number in range(first_page, last_page + 1)]
+
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "2")
+    with (
+        patch("unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image", side_effect=_fake_render),
+        patch("PIL.Image.open", return_value=PILImg.new("RGB", (32, 32))),
+        patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
+        tempfile.TemporaryDirectory() as tmpdir,
+    ):
+        pdf_image_utils.save_elements(
+            elements=elements,
+            starting_page_number=1,
+            element_category_to_save=ElementType.IMAGE,
+            pdf_image_dpi=200,
+            filename="dummy.pdf",
+            output_dir_path=str(tmpdir),
+        )
+
+    assert render_calls == [(1, 2), (4, 4)]
 
 
 def test_write_image_raises_error():

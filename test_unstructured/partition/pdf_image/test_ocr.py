@@ -673,3 +673,74 @@ def test_pass_down_agents(mock_ocr_get_instance, mocker, mock_page):
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
+
+
+def test_process_file_with_ocr_chunks_pdf_pages(monkeypatch, mocker):
+    image_paths = {
+        (1, 4): [f"/tmp/page_{i}.png" for i in range(1, 5)],
+        (5, 8): [f"/tmp/page_{i}.png" for i in range(5, 9)],
+        (9, 10): [f"/tmp/page_{i}.png" for i in range(9, 11)],
+    }
+    render_calls = []
+
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in range(10)]
+
+    def _fake_render(*args, **kwargs):
+        render_calls.append((kwargs["first_page"], kwargs["last_page"]))
+        return image_paths[(kwargs["first_page"], kwargs["last_page"])]
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        side_effect=_fake_render,
+    )
+    mocker.patch("unstructured.partition.pdf_image.ocr.PILImage.open", return_value=Image.new("RGB", (16, 16)))
+    supplement = mocker.patch(
+        "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
+        side_effect=lambda page_layout, image, **kwargs: page_layout,
+    )
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "4")
+
+    result = ocr.process_file_with_ocr(
+        filename="dummy.pdf",
+        out_layout=doc,
+        extracted_layout=[],
+        is_image=False,
+    )
+
+    assert result.pages == doc.pages
+    assert render_calls == [(1, 4), (5, 8), (9, 10)]
+    assert supplement.call_count == 10
+
+
+def test_process_file_with_ocr_invalid_chunk_size_falls_back(monkeypatch, mocker):
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in range(10)]
+
+    render_calls = []
+
+    def _fake_render(*args, **kwargs):
+        render_calls.append((kwargs["first_page"], kwargs["last_page"]))
+        return [f"/tmp/page_{i}.png" for i in range(kwargs["first_page"], kwargs["last_page"] + 1)]
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        side_effect=_fake_render,
+    )
+    mocker.patch("unstructured.partition.pdf_image.ocr.PILImage.open", return_value=Image.new("RGB", (16, 16)))
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
+        side_effect=lambda page_layout, image, **kwargs: page_layout,
+    )
+    warn = mocker.patch("unstructured.partition.pdf_image.pdf_image_utils.logger.warning")
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "auto")
+
+    ocr.process_file_with_ocr(
+        filename="dummy.pdf",
+        out_layout=doc,
+        extracted_layout=[],
+        is_image=False,
+    )
+
+    assert render_calls == [(1, 8), (9, 10)]
+    warn.assert_called_once()

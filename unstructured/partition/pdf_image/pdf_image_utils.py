@@ -8,13 +8,12 @@ import unicodedata
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path, PurePath
-from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
+from typing import IO, TYPE_CHECKING, BinaryIO, Callable, Iterator, List, Optional, Tuple, Union, cast
 
 import cv2
 import numpy as np
 import pdf2image
 from PIL import Image
-from unstructured_inference.inference.layout import convert_pdf_to_image as render_pdf_to_image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
@@ -53,12 +52,60 @@ def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
         raise ValueError("Unsupported Image Type")
 
 
-def convert_pdf_to_image(
-    filename: str,
+def _get_render_pdf_to_image() -> Callable[..., Union[List[Image.Image], List[str]]]:
+    # Resolve at call time so runtime monkey patches cannot be bypassed.
+    from unstructured_inference.inference import layout as inference_layout
+
+    return inference_layout.convert_pdf_to_image
+
+
+def get_pdfium_chunk_size(default: int = 8) -> int:
+    raw_value = os.environ.get("PDFIUM_CHUNK_SIZE")
+    if raw_value is None:
+        return default
+    try:
+        return max(1, int(raw_value))
+    except ValueError:
+        logger.warning(
+            "Invalid PDFIUM_CHUNK_SIZE=%r; falling back to %d.",
+            raw_value,
+            default,
+        )
+        return default
+
+
+def iter_chunked_page_ranges(page_numbers: List[int], chunk_size: int) -> Iterator[Tuple[int, int]]:
+    if not page_numbers:
+        return
+
+    sorted_pages = sorted(set(page_numbers))
+    chunk_start = sorted_pages[0]
+    chunk_end = chunk_start
+    chunk_len = 1
+
+    for page_number in sorted_pages[1:]:
+        is_consecutive = page_number == chunk_end + 1
+        if is_consecutive and chunk_len < chunk_size:
+            chunk_end = page_number
+            chunk_len += 1
+            continue
+
+        yield (chunk_start, chunk_end)
+        chunk_start = page_number
+        chunk_end = page_number
+        chunk_len = 1
+
+    yield (chunk_start, chunk_end)
+
+
+def _render_pdf_pages(
+    filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: Optional[int] = None,
     output_folder: Optional[Union[str, PurePath]] = None,
     path_only: bool = False,
+    first_page: Optional[int] = None,
+    last_page: Optional[int] = None,
     password: Optional[str] = None,
 ) -> Union[List[Image.Image], List[str]]:
     exactly_one(filename=filename, file=file)
@@ -66,12 +113,37 @@ def convert_pdf_to_image(
     if dpi is None:
         dpi = env_config.PDF_RENDER_DPI
 
+    render_pdf_to_image = _get_render_pdf_to_image()
     return render_pdf_to_image(
+        filename=filename or None,
+        file=file,
+        dpi=dpi,
+        output_folder=output_folder,
+        path_only=path_only,
+        first_page=first_page,
+        last_page=last_page,
+        password=password,
+    )
+
+
+def convert_pdf_to_image(
+    filename: str,
+    file: Optional[Union[bytes, BinaryIO]] = None,
+    dpi: Optional[int] = None,
+    output_folder: Optional[Union[str, PurePath]] = None,
+    path_only: bool = False,
+    first_page: Optional[int] = None,
+    last_page: Optional[int] = None,
+    password: Optional[str] = None,
+) -> Union[List[Image.Image], List[str]]:
+    return _render_pdf_pages(
         filename=filename,
         file=file,
         dpi=dpi,
         output_folder=output_folder,
         path_only=path_only,
+        first_page=first_page,
+        last_page=last_page,
         password=password,
     )
 
@@ -155,15 +227,38 @@ def save_elements(
                     tmp_file.write(file_data)
                 image_paths = [tmp_file_path]
         else:
-            _image_paths = convert_pdf_to_image(
-                filename,
-                file,
-                pdf_image_dpi,
-                output_folder=temp_dir,
-                path_only=True,
-                password=password,
-            )
-            image_paths = cast(List[str], _image_paths)
+            relevant_pages = [
+                el.metadata.page_number
+                for el in elements
+                if el.category == element_category_to_save
+                and el.metadata.coordinates
+                and el.metadata.coordinates.points
+                and el.metadata.page_number is not None
+            ]
+            image_paths_by_page: dict[int, str] = {}
+            chunk_size = get_pdfium_chunk_size()
+            for first_page, last_page in iter_chunked_page_ranges(relevant_pages, chunk_size):
+                chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
+                os.makedirs(chunk_dir, exist_ok=True)
+                _image_paths = convert_pdf_to_image(
+                    filename,
+                    file,
+                    pdf_image_dpi,
+                    output_folder=chunk_dir,
+                    path_only=True,
+                    first_page=first_page,
+                    last_page=last_page,
+                    password=password,
+                )
+                chunk_image_paths = cast(List[str], _image_paths)
+                expected_pages = last_page - first_page + 1
+                if len(chunk_image_paths) != expected_pages:
+                    raise ValueError(
+                        f"Expected {expected_pages} rendered page(s) for range "
+                        f"{first_page}-{last_page}, got {len(chunk_image_paths)}."
+                    )
+                for page_number, image_path in enumerate(chunk_image_paths, start=first_page):
+                    image_paths_by_page[page_number] = image_path
 
         figure_number = 0
         for el in elements:
@@ -192,7 +287,9 @@ def save_elements(
 
             figure_number += 1
             try:
-                image_path = image_paths[page_index]
+                image_path = (
+                    image_paths[page_index] if is_image else image_paths_by_page[metadata_page_number]
+                )
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
 
@@ -405,8 +502,8 @@ def convert_pdf_to_images(
     total_pages = info["Pages"]
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
-        chunk_images = render_pdf_to_image(
-            filename=filename if f_bytes is None else None,
+        chunk_images = _render_pdf_pages(
+            filename=filename if f_bytes is None else "",
             file=f_bytes,
             dpi=env_config.PDF_RENDER_DPI,
             first_page=start_page,
