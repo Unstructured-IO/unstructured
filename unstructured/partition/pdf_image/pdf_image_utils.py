@@ -238,8 +238,13 @@ def save_elements(
                     tmp_file.write(file_data)
                 image_paths = [tmp_file_path]
         else:
-            relevant_pages = [
-                el.metadata.page_number
+            render_file = file
+            if file is not None and not isinstance(file, bytes):
+                file.seek(0)
+                render_file = file.read()
+
+            relevant_pdf_pages = [
+                el.metadata.page_number - starting_page_number + 1
                 for el in elements
                 if el.category == element_category_to_save
                 and el.metadata.coordinates
@@ -248,12 +253,12 @@ def save_elements(
             ]
             image_paths_by_page: dict[int, str] = {}
             chunk_size = get_pdfium_chunk_size()
-            for first_page, last_page in iter_chunked_page_ranges(relevant_pages, chunk_size):
+            for first_page, last_page in iter_chunked_page_ranges(relevant_pdf_pages, chunk_size):
                 chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
                 os.makedirs(chunk_dir, exist_ok=True)
                 _image_paths = convert_pdf_to_image(
                     filename,
-                    file,
+                    render_file,
                     pdf_image_dpi,
                     output_folder=chunk_dir,
                     path_only=True,
@@ -295,13 +300,14 @@ def save_elements(
             assert el.metadata.page_number
             metadata_page_number = el.metadata.page_number
             page_index = metadata_page_number - starting_page_number
+            pdf_page_number = page_index + 1
 
             figure_number += 1
             try:
                 image_path = (
                     image_paths[page_index]
                     if is_image
-                    else image_paths_by_page[metadata_page_number]
+                    else image_paths_by_page[pdf_page_number]
                 )
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)

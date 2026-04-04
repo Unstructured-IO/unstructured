@@ -289,19 +289,19 @@ def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
             text="Image Text 1",
             coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
             coordinate_system=PixelSpace(width=100, height=100),
-            metadata=ElementMetadata(page_number=1),
+            metadata=ElementMetadata(page_number=11),
         ),
         Image(
             text="Image Text 2",
             coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
             coordinate_system=PixelSpace(width=100, height=100),
-            metadata=ElementMetadata(page_number=2),
+            metadata=ElementMetadata(page_number=12),
         ),
         Image(
             text="Image Text 3",
             coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
             coordinate_system=PixelSpace(width=100, height=100),
-            metadata=ElementMetadata(page_number=4),
+            metadata=ElementMetadata(page_number=14),
         ),
     ]
 
@@ -325,7 +325,7 @@ def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
     ):
         pdf_image_utils.save_elements(
             elements=elements,
-            starting_page_number=1,
+            starting_page_number=11,
             element_category_to_save=ElementType.IMAGE,
             pdf_image_dpi=200,
             filename="dummy.pdf",
@@ -333,6 +333,57 @@ def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
         )
 
     assert render_calls == [(1, 2), (4, 4)]
+
+
+def test_save_elements_materializes_binaryio_pdf_for_chunked_rendering(monkeypatch):
+    elements = [
+        Image(
+            text="Image Text 1",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=1),
+        ),
+        Image(
+            text="Image Text 2",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=2),
+        ),
+        Image(
+            text="Image Text 3",
+            coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+            coordinate_system=PixelSpace(width=100, height=100),
+            metadata=ElementMetadata(page_number=4),
+        ),
+    ]
+    render_inputs = []
+
+    def _fake_render(filename, file, dpi, **kwargs):
+        render_inputs.append(file.read() if hasattr(file, "read") else file)
+        first_page = kwargs["first_page"]
+        last_page = kwargs["last_page"]
+        return [f"/tmp/page_{page_number}.png" for page_number in range(first_page, last_page + 1)]
+
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "2")
+    with (
+        patch(
+            "unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image",
+            side_effect=_fake_render,
+        ),
+        patch("PIL.Image.open", return_value=PILImg.new("RGB", (32, 32))),
+        patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
+        tempfile.TemporaryDirectory() as tmpdir,
+    ):
+        pdf_image_utils.save_elements(
+            elements=elements,
+            starting_page_number=1,
+            element_category_to_save=ElementType.IMAGE,
+            pdf_image_dpi=200,
+            file=io.BytesIO(b"pdf-bytes"),
+            output_dir_path=str(tmpdir),
+        )
+
+    assert render_inputs == [b"pdf-bytes", b"pdf-bytes"]
 
 
 def test_write_image_raises_error():

@@ -30,14 +30,14 @@ Python-2.0"
 # upstream source repository.
 IGNORED_PACKAGES=(
   # Metadata missing -- verified permissive on GitHub
-  arro3-core     # MIT / Apache-2.0 (geoarrow/geoarrow-rs)
-  chroma-hnswlib # Apache-2.0 (chroma-core/hnswlib)
-  google-crc32c  # Apache-2.0 (googleapis/python-crc32c)
-  iopath         # MIT (facebookresearch/iopath)
+  arro3-core        # MIT / Apache-2.0 (geoarrow/geoarrow-rs)
+  chroma-hnswlib    # Apache-2.0 (chroma-core/hnswlib)
+  google-crc32c     # Apache-2.0 (googleapis/python-crc32c)
+  iopath            # MIT (facebookresearch/iopath)
   matplotlib-inline # BSD-3-Clause (ipython/matplotlib-inline)
-  pypdfium2      # BSD-3-Clause (PDFium/PDFium)
-  sentencepiece  # Apache-2.0 (google/sentencepiece)
-  voyageai       # MIT (voyage-ai/voyageai-python)
+  pypdfium2         # BSD-3-Clause (PDFium/PDFium)
+  sentencepiece     # Apache-2.0 (google/sentencepiece)
+  voyageai          # MIT (voyage-ai/voyageai-python)
 
   # Permissive but non-standard classifier
   lmdb # OpenLDAP Public License (BSD-style, jnwatson/py-lmdb)
