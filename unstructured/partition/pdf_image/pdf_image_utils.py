@@ -305,9 +305,7 @@ def save_elements(
             figure_number += 1
             try:
                 image_path = (
-                    image_paths[page_index]
-                    if is_image
-                    else image_paths_by_page[pdf_page_number]
+                    image_paths[page_index] if is_image else image_paths_by_page[pdf_page_number]
                 )
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
