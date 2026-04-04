@@ -80,7 +80,19 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    data_bytes = data if isinstance(data, bytes) else data.read()
+    original_position = None
+    if not isinstance(data, bytes) and hasattr(data, "tell"):
+        original_position = data.tell()
+
+    try:
+        data_bytes = data if isinstance(data, bytes) else data.read()
+    finally:
+        if (
+            original_position is not None
+            and not isinstance(data, bytes)
+            and hasattr(data, "seek")
+        ):
+            data.seek(original_position)
 
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
@@ -180,13 +192,20 @@ def process_file_with_ocr(
                 if not out_layout.pages:
                     # Preserve previous behavior for invalid files and empty placeholder layouts:
                     # force a render attempt so PdfiumError/FileNotFoundError still surface here.
-                    convert_pdf_to_image(
-                        filename,
-                        dpi=pdf_image_dpi,
-                        output_folder=temp_dir,
-                        path_only=True,
-                        password=password,
+                    image_paths = cast(
+                        List[str],
+                        convert_pdf_to_image(
+                            filename,
+                            dpi=pdf_image_dpi,
+                            output_folder=temp_dir,
+                            path_only=True,
+                            password=password,
+                        ),
                     )
+                    if image_paths:
+                        raise ValueError(
+                            "OCR received an empty layout for a PDF that rendered page images."
+                        )
                     return DocumentLayout.from_pages([])
                 chunk_size = get_pdfium_chunk_size()
                 for chunk_start in range(0, len(out_layout.pages), chunk_size):

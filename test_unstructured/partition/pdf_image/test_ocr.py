@@ -1,3 +1,4 @@
+import io
 from collections import namedtuple
 from typing import Optional
 from unittest.mock import MagicMock, patch
@@ -66,6 +67,27 @@ def test_process_file_with_ocr_invalid_filename(is_image):
             out_layout=DocumentLayout(),
             extracted_layout=[],
         )
+
+
+def test_process_data_with_ocr_restores_file_position(mocker):
+    source_file = io.BytesIO(b"pdf-bytes")
+    source_file.seek(4)
+    result_layout = MagicMock(DocumentLayout)
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+        return_value=result_layout,
+    )
+
+    result = ocr.process_data_with_ocr(
+        data=source_file,
+        is_image=False,
+        out_layout=DocumentLayout(),
+        extracted_layout=[],
+    )
+
+    assert result is result_layout
+    assert source_file.tell() == 4
 
 
 def test_supplement_page_layout_with_ocr_invalid_ocr():
@@ -750,3 +772,22 @@ def test_process_file_with_ocr_invalid_chunk_size_falls_back(monkeypatch, mocker
 
     assert render_calls == [(1, 8), (9, 10)]
     warn.assert_called_once()
+
+
+def test_process_file_with_ocr_raises_when_layout_is_empty_but_pdf_renders(mocker):
+    doc = MagicMock(DocumentLayout)
+    doc.pages = []
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        return_value=["/tmp/page_1.png"],
+    )
+    mocker.patch("unstructured.partition.pdf_image.ocr.os.path.isfile", return_value=True)
+
+    with pytest.raises(ValueError, match="empty layout"):
+        ocr.process_file_with_ocr(
+            filename="dummy.pdf",
+            out_layout=doc,
+            extracted_layout=[],
+            is_image=False,
+        )

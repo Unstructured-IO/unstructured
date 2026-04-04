@@ -60,12 +60,7 @@ def partition_csv(
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
         if ctx.delimiter is None:
-            text = file.read().decode(ctx.encoding or "utf-8")
-            lines = text.splitlines()
-            if ctx.header == 0 and lines:
-                dataframe = pd.DataFrame(lines[1:], columns=[lines[0]])
-            else:
-                dataframe = pd.DataFrame(lines)
+            dataframe = ctx.single_column_dataframe(file)
         else:
             dataframe = pd.read_csv(
                 file,
@@ -172,6 +167,23 @@ class _CsvPartitioningContext:
     def encoding(self) -> str | None:
         """The encoding to use for reading the file."""
         return self._encoding
+
+    def single_column_dataframe(self, file: IO[bytes]) -> pd.DataFrame:
+        """Parse a delimiter-less CSV while still honoring CSV quoting semantics.
+
+        These files are treated as a single logical column, so commas remain literal text, but
+        quoted commas, escaped quotes, and quoted multiline fields are still decoded by the CSV
+        parser instead of being left as raw source text.
+        """
+        text = file.read().decode(self.encoding or "utf-8")
+        rows = list(csv.reader(io.StringIO(text), delimiter="\0"))
+
+        if self.header == 0:
+            if not rows:
+                return pd.DataFrame()
+            return pd.DataFrame(rows[1:], columns=rows[0])
+
+        return pd.DataFrame(rows)
 
     @cached_property
     def last_modified(self) -> str | None:
