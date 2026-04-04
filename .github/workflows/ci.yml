@@ -308,7 +308,7 @@ jobs:
     runs-on: opensource-linux-8core
     needs: [ setup, lint ]
     steps:
-    - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
       - name: Test Dockerfile
         run: |
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
