@@ -86,6 +86,15 @@ def test_partition_csv_with_encoding():
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
 
 
+def test_partition_single_column_csv():
+    elements = partition_csv(example_doc_path("single-column.csv"))
+
+    assert clean_extra_whitespace(elements[0].text) == (
+        "Lorem, ipsum dolor sit amet consectetur adipiscing, elit sed, do eiusmod "
+        "tempor incididunt ut labore et dolore; magna aliqua Ut enim, ad minim, veniam"
+    )
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
@@ -259,6 +268,10 @@ class Describe_CsvPartitioningContext:
     def and_it_auto_detects_the_delimiter_for_a_semicolon_delimited_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("semicolon-delimited.csv"))
         assert ctx.delimiter == ";"
+
+    def and_it_auto_detects_the_delimiter_for_a_small_file_without_a_trailing_newline(self):
+        ctx = _CsvPartitioningContext(file=io.BytesIO(b"a,b"))
+        assert ctx.delimiter == ","
 
     def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("single-column.csv"))

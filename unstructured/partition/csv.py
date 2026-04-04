@@ -58,7 +58,16 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
+        if ctx.delimiter is None:
+            text = file.read().decode(ctx.encoding or "utf-8")
+            dataframe = pd.DataFrame(text.splitlines())
+        else:
+            dataframe = pd.read_csv(
+                file,
+                header=ctx.header,
+                sep=ctx.delimiter,
+                encoding=ctx.encoding,
+            )
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -122,10 +131,12 @@ class _CsvPartitioningContext:
         num_bytes = 65536
 
         with self.open() as file:
-            # -- read whole lines, sniffer can be confused by a trailing partial line --
-            data = "\n".join(
-                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
-            )
+            sample = file.read(num_bytes)
+
+        data = sample.decode(self._encoding or "utf-8", errors="ignore")
+        lines = data.splitlines()
+        if len(sample) == num_bytes and lines and not data.endswith(("\n", "\r")):
+            data = "\n".join(lines[:-1])
 
         try:
             return sniffer.sniff(data, delimiters=",;|").delimiter
