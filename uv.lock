@@ -7703,7 +7703,7 @@ wheels = [
 
 [[package]]
 name = "unstructured-ingest"
-version = "1.4.15"
+version = "1.4.18"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
@@ -7713,9 +7713,9 @@ dependencies = [
     { name = "python-dateutil", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "tqdm", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f8/a7/325f5a0ba6692b03cac10b1a99fb54cb6d06254d08c95a464455b5d1bf50/unstructured_ingest-1.4.15.tar.gz", hash = "sha256:bd456ee3e12cc78f2268cec9514b03cef7744589e39bb2df7f36c6b52ead1c5e", size = 215270, upload-time = "2026-03-23T20:58:24.892Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/ed/081631fc6f0914e3ea4cc745618c641bdb272baeb82487f3b9c8f9b27994/unstructured_ingest-1.4.18.tar.gz", hash = "sha256:ac66a8e4fb1aa770e4aceb142c62945bc029a7f297358e6c722745a0c51235c5", size = 216007, upload-time = "2026-04-04T17:47:00.229Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4b/13/6e1242c96a7b5097a01477409341b1684e3984005068212cb93ec8127908/unstructured_ingest-1.4.15-py3-none-any.whl", hash = "sha256:0233b88d13763b094788a8a41a56f5555b697e73e9d4ddbadc9fffb843489b9a", size = 360919, upload-time = "2026-03-23T20:58:22.867Z" },
+    { url = "https://files.pythonhosted.org/packages/48/bb/fe83be9fd1daa07989fea28d7af62897f14ed97cc68b5c54ff97556ec15b/unstructured_ingest-1.4.18-py3-none-any.whl", hash = "sha256:d4a05f5fe85aafc2f8271042f578650d4effd45a5db0e85f1987b69395a625f7", size = 361833, upload-time = "2026-04-04T17:46:58.392Z" },
 ]
 
 [package.optional-dependencies]
