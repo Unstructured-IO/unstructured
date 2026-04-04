@@ -109,7 +109,7 @@ def test_partition_single_column_csv_with_header():
 def test_partition_csv_with_quoted_commas():
     csv_data = (
         b"_id,title,reviewid,creationdate,criticname,originalscore,reviewstate,reviewtext\r\n"
-        b'60297eea-73d7-4fca-a97e-ea73d7cfca62,City Hunter: Shinjuku Private Eyes,2590987,'
+        b"60297eea-73d7-4fca-a97e-ea73d7cfca62,City Hunter: Shinjuku Private Eyes,2590987,"
         b'2019-05-28,Reuben Baron,,fresh,"The choreography is so precise and lifelike at '
         b"points one might wonder whether the movie was rotoscoped, but no live-action "
         b"reference footage was used. The quality is due to the skill of the animators and "
