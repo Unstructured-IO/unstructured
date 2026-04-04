@@ -335,7 +335,7 @@ def test_save_elements_renders_only_needed_page_ranges(monkeypatch):
     assert render_calls == [(1, 2), (4, 4)]
 
 
-def test_save_elements_materializes_binaryio_pdf_for_chunked_rendering(monkeypatch):
+def test_save_elements_rewinds_binaryio_pdf_for_each_chunk_and_restores_position(monkeypatch):
     elements = [
         Image(
             text="Image Text 1",
@@ -356,9 +356,13 @@ def test_save_elements_materializes_binaryio_pdf_for_chunked_rendering(monkeypat
             metadata=ElementMetadata(page_number=4),
         ),
     ]
+    source_file = io.BytesIO(b"pdf-bytes")
+    source_file.seek(3)
+    render_positions = []
     render_inputs = []
 
     def _fake_render(filename, file, dpi, **kwargs):
+        render_positions.append(file.tell())
         render_inputs.append(file.read() if hasattr(file, "read") else file)
         first_page = kwargs["first_page"]
         last_page = kwargs["last_page"]
@@ -379,11 +383,13 @@ def test_save_elements_materializes_binaryio_pdf_for_chunked_rendering(monkeypat
             starting_page_number=1,
             element_category_to_save=ElementType.IMAGE,
             pdf_image_dpi=200,
-            file=io.BytesIO(b"pdf-bytes"),
+            file=source_file,
             output_dir_path=str(tmpdir),
         )
 
+    assert render_positions == [0, 0]
     assert render_inputs == [b"pdf-bytes", b"pdf-bytes"]
+    assert source_file.tell() == 3
 
 
 def test_write_image_raises_error():

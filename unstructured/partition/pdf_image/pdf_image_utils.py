@@ -222,117 +222,130 @@ def save_elements(
 
         os.makedirs(output_dir_path, exist_ok=True)
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        if is_image:
-            if file is None:
-                image_paths = [filename]
+    original_position = None
+    if file is not None and not isinstance(file, bytes) and hasattr(file, "tell"):
+        original_position = file.tell()
+
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            if is_image:
+                if file is None:
+                    image_paths = [filename]
+                else:
+                    if isinstance(file, bytes):
+                        file_data = file
+                    else:
+                        file.seek(0)
+                        file_data = file.read()
+
+                    tmp_file_path = os.path.join(temp_dir, "tmp_file")
+                    with open(tmp_file_path, "wb") as tmp_file:
+                        tmp_file.write(file_data)
+                    image_paths = [tmp_file_path]
             else:
-                if isinstance(file, bytes):
-                    file_data = file
-                else:
-                    file.seek(0)
-                    file_data = file.read()
-
-                tmp_file_path = os.path.join(temp_dir, "tmp_file")
-                with open(tmp_file_path, "wb") as tmp_file:
-                    tmp_file.write(file_data)
-                image_paths = [tmp_file_path]
-        else:
-            render_file = file
-            if file is not None and not isinstance(file, bytes):
-                file.seek(0)
-                render_file = file.read()
-
-            relevant_pdf_pages = [
-                el.metadata.page_number - starting_page_number + 1
-                for el in elements
-                if el.category == element_category_to_save
-                and el.metadata.coordinates
-                and el.metadata.coordinates.points
-                and el.metadata.page_number is not None
-            ]
-            image_paths_by_page: dict[int, str] = {}
-            chunk_size = get_pdfium_chunk_size()
-            for first_page, last_page in iter_chunked_page_ranges(relevant_pdf_pages, chunk_size):
-                chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
-                os.makedirs(chunk_dir, exist_ok=True)
-                _image_paths = convert_pdf_to_image(
-                    filename,
-                    render_file,
-                    pdf_image_dpi,
-                    output_folder=chunk_dir,
-                    path_only=True,
-                    first_page=first_page,
-                    last_page=last_page,
-                    password=password,
-                )
-                chunk_image_paths = cast(List[str], _image_paths)
-                expected_pages = last_page - first_page + 1
-                if len(chunk_image_paths) != expected_pages:
-                    raise ValueError(
-                        f"Expected {expected_pages} rendered page(s) for range "
-                        f"{first_page}-{last_page}, got {len(chunk_image_paths)}."
+                render_file = file
+                relevant_pdf_pages = [
+                    el.metadata.page_number - starting_page_number + 1
+                    for el in elements
+                    if el.category == element_category_to_save
+                    and el.metadata.coordinates
+                    and el.metadata.coordinates.points
+                    and el.metadata.page_number is not None
+                ]
+                image_paths_by_page: dict[int, str] = {}
+                chunk_size = get_pdfium_chunk_size()
+                for first_page, last_page in iter_chunked_page_ranges(
+                    relevant_pdf_pages, chunk_size
+                ):
+                    chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
+                    os.makedirs(chunk_dir, exist_ok=True)
+                    if render_file is not None and not isinstance(render_file, bytes):
+                        render_file.seek(0)
+                    _image_paths = convert_pdf_to_image(
+                        filename,
+                        render_file,
+                        pdf_image_dpi,
+                        output_folder=chunk_dir,
+                        path_only=True,
+                        first_page=first_page,
+                        last_page=last_page,
+                        password=password,
                     )
-                for page_number, image_path in enumerate(chunk_image_paths, start=first_page):
-                    image_paths_by_page[page_number] = image_path
+                    chunk_image_paths = cast(List[str], _image_paths)
+                    expected_pages = last_page - first_page + 1
+                    if len(chunk_image_paths) != expected_pages:
+                        raise ValueError(
+                            f"Expected {expected_pages} rendered page(s) for range "
+                            f"{first_page}-{last_page}, got {len(chunk_image_paths)}."
+                        )
+                    for page_number, image_path in enumerate(chunk_image_paths, start=first_page):
+                        image_paths_by_page[page_number] = image_path
 
-        figure_number = 0
-        for el in elements:
-            if el.category != element_category_to_save:
-                continue
+            figure_number = 0
+            for el in elements:
+                if el.category != element_category_to_save:
+                    continue
 
-            coordinates = el.metadata.coordinates
-            if not coordinates or not coordinates.points:
-                continue
+                coordinates = el.metadata.coordinates
+                if not coordinates or not coordinates.points:
+                    continue
 
-            points = coordinates.points
-            x1, y1 = points[0]
-            x2, y2 = points[2]
-            h_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD
-            v_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD
-            padded_bbox = cast(
-                Tuple[int, int, int, int], pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
-            )
-
-            # The page number in the metadata may have been offset
-            # by starting_page_number. Make sure we use the right
-            # value for indexing!
-            assert el.metadata.page_number
-            metadata_page_number = el.metadata.page_number
-            page_index = metadata_page_number - starting_page_number
-            pdf_page_number = page_index + 1
-
-            figure_number += 1
-            try:
-                image_path = (
-                    image_paths[page_index] if is_image else image_paths_by_page[pdf_page_number]
+                points = coordinates.points
+                x1, y1 = points[0]
+                x2, y2 = points[2]
+                h_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD
+                v_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD
+                padded_bbox = cast(
+                    Tuple[int, int, int, int], pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
                 )
-                image = Image.open(image_path)
-                cropped_image = image.crop(padded_bbox)
 
-                # PNG images with transparency need to be converted before saving
-                if cropped_image.mode == "RGBA":
-                    cropped_image = cropped_image.convert("RGB")
+                # The page number in the metadata may have been offset
+                # by starting_page_number. Make sure we use the right
+                # value for indexing!
+                assert el.metadata.page_number
+                metadata_page_number = el.metadata.page_number
+                page_index = metadata_page_number - starting_page_number
+                pdf_page_number = page_index + 1
 
-                if extract_image_block_to_payload:
-                    buffered = BytesIO()
-                    cropped_image.save(buffered, format="JPEG")
-                    img_base64 = base64.b64encode(buffered.getvalue())
-                    img_base64_str = img_base64.decode()
-                    el.metadata.image_base64 = img_base64_str
-                    el.metadata.image_mime_type = "image/jpeg"
-                else:
-                    basename = "table" if el.category == ElementType.TABLE else "figure"
-                    assert output_dir_path
-                    output_f_path = os.path.join(
-                        output_dir_path,
-                        f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                figure_number += 1
+                try:
+                    image_path = (
+                        image_paths[page_index]
+                        if is_image
+                        else image_paths_by_page[pdf_page_number]
                     )
-                    write_image(cropped_image, output_f_path)
-                    # add image path to element metadata
-                    el.metadata.image_path = output_f_path
-            except (ValueError, IOError):
-                logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
+                    image = Image.open(image_path)
+                    cropped_image = image.crop(padded_bbox)
+
+                    # PNG images with transparency need to be converted before saving
+                    if cropped_image.mode == "RGBA":
+                        cropped_image = cropped_image.convert("RGB")
+
+                    if extract_image_block_to_payload:
+                        buffered = BytesIO()
+                        cropped_image.save(buffered, format="JPEG")
+                        img_base64 = base64.b64encode(buffered.getvalue())
+                        img_base64_str = img_base64.decode()
+                        el.metadata.image_base64 = img_base64_str
+                        el.metadata.image_mime_type = "image/jpeg"
+                    else:
+                        basename = "table" if el.category == ElementType.TABLE else "figure"
+                        assert output_dir_path
+                        output_f_path = os.path.join(
+                            output_dir_path,
+                            f"{basename}-{metadata_page_number}-{figure_number}.jpg",
+                        )
+                        write_image(cropped_image, output_f_path)
+                        # add image path to element metadata
+                        el.metadata.image_path = output_f_path
+                except (ValueError, IOError):
+                    logger.warning(
+                        "Image Extraction Error: Skipping the failed image",
+                        exc_info=True,
+                    )
+    finally:
+        if original_position is not None and file is not None and not isinstance(file, bytes):
+            file.seek(original_position)
 
 
 def check_element_types_to_extract(

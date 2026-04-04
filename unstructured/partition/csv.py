@@ -138,9 +138,10 @@ class _CsvPartitioningContext:
             sample = sample[:num_bytes]
 
         data = sample.decode(self._encoding or "utf-8", errors="ignore")
-        lines = data.splitlines()
-        if is_truncated and lines and not data.endswith(("\n", "\r")):
-            data = "\n".join(lines[:-1])
+        if is_truncated and not data.endswith(("\n", "\r")):
+            last_newline = max(data.rfind("\n"), data.rfind("\r"))
+            if last_newline != -1:
+                data = data[:last_newline]
 
         try:
             return sniffer.sniff(data, delimiters=",;|").delimiter

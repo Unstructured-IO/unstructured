@@ -124,6 +124,18 @@ def test_partition_csv_with_quoted_commas():
     assert "<td>reviewtext</td>" in elements[0].metadata.text_as_html
 
 
+def test_partition_csv_keeps_multicolumn_shape_when_first_row_exceeds_sniff_window():
+    long_first_row = b"a," * 40000 + b"aa\n"
+    csv_data = long_first_row + b"left,right\n1,2\n"
+
+    elements = partition_csv(file=io.BytesIO(csv_data))
+
+    assert "left right" in elements[0].text
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>left</td>" in elements[0].metadata.text_as_html
+    assert "<td>right</td>" in elements[0].metadata.text_as_html
+
+
 def test_partition_single_column_csv_preserves_quoted_fields():
     csv_data = b'notes\r\n"hello, world"\r\n"a ""quote"""\r\n"line 1\nline 2"\r\n'
 
@@ -320,6 +332,11 @@ class Describe_CsvPartitioningContext:
         line = ("a," * 32767) + "aa"
         assert len(line) == 65536
         ctx = _CsvPartitioningContext(file=io.BytesIO(line.encode()))
+        assert ctx.delimiter == ","
+
+    def and_it_keeps_the_delimiter_when_the_first_line_exceeds_the_sniff_window(self):
+        line = (b"a," * 40000) + b"aa\n1,2\n"
+        ctx = _CsvPartitioningContext(file=io.BytesIO(line))
         assert ctx.delimiter == ","
 
     def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
