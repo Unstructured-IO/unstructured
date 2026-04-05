@@ -5,6 +5,9 @@
 - **Chunk PDF rendering during OCR and image extraction**: `process_file_with_ocr()` now renders multi-page PDFs in configurable page ranges (`PDFIUM_CHUNK_SIZE`, default `8`) instead of one full-document render, and `save_elements()` renders only the page ranges actually needed for extracted images/tables instead of rasterizing the entire document.
 - **Harden `PDFIUM_CHUNK_SIZE` configuration**: Invalid `PDFIUM_CHUNK_SIZE` values now fall back safely to the default with a warning instead of raising a request-path `ValueError`.
 
+### Fixes
+- **Preserve CSV semantics for single-column files**: Keep using CSV parsing rules when delimiter detection falls back to a single-column shape so quoted commas, escaped quotes, and quoted multiline cells decode correctly instead of being split as raw lines.
+
 ## 0.22.16
 
 ### Enhancements
