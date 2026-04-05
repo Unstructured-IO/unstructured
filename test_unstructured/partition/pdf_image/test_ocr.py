@@ -637,6 +637,33 @@ def test_hocr_to_dataframe_when_no_prediction_empty_df():
     assert "text" in df.columns
 
 
+def test_tesseract_parse_data_requests_writable_numpy_copy(monkeypatch):
+    to_numpy_calls = []
+    original_to_numpy = pd.DataFrame.to_numpy
+
+    def _spy_to_numpy(self, *args, **kwargs):
+        to_numpy_calls.append(kwargs.get("copy"))
+        return original_to_numpy(self, *args, **kwargs)
+
+    monkeypatch.setattr(pd.DataFrame, "to_numpy", _spy_to_numpy)
+
+    ocr_data = pd.DataFrame(
+        {
+            "left": [10],
+            "top": [20],
+            "width": [30],
+            "height": [40],
+            "text": ["hello"],
+        }
+    )
+
+    regions = OCRAgentTesseract().parse_data(ocr_data)
+
+    assert to_numpy_calls == [True]
+    np.testing.assert_array_equal(regions.element_coords, np.array([[10.0, 20.0, 40.0, 60.0]]))
+    np.testing.assert_array_equal(regions.texts, np.array(["hello"]))
+
+
 @pytest.fixture
 def mock_page(mock_ocr_layout, mock_layout):
     mock_page = MagicMock(PageLayout)
