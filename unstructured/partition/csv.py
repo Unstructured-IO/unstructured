@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import csv
+import io
 from functools import cached_property
 from typing import IO, Any, Iterator
 
@@ -58,7 +59,15 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
+        if ctx.delimiter is None:
+            dataframe = ctx.single_column_dataframe(file)
+        else:
+            dataframe = pd.read_csv(
+                file,
+                header=ctx.header,
+                sep=ctx.delimiter,
+                encoding=ctx.encoding,
+            )
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -122,14 +131,31 @@ class _CsvPartitioningContext:
         num_bytes = 65536
 
         with self.open() as file:
-            # -- read whole lines, sniffer can be confused by a trailing partial line --
-            data = "\n".join(
-                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
-            )
+            sample = file.read(num_bytes + 1)
+
+        is_truncated = len(sample) > num_bytes
+        if is_truncated:
+            sample = sample[:num_bytes]
+
+        data = sample.decode(self._encoding or "utf-8", errors="ignore")
+        if is_truncated and not data.endswith(("\n", "\r")):
+            last_newline = max(data.rfind("\n"), data.rfind("\r"))
+            if last_newline != -1:
+                data = data[:last_newline]
 
         try:
             return sniffer.sniff(data, delimiters=",;|").delimiter
         except csv.Error:
+            # -- `csv.Sniffer` can fail on small files with quoted delimiters. Fall back to
+            # -- testing candidate delimiters and accept only those that produce a consistent
+            # -- multi-column shape.
+            candidate_delimiters = (",", ";", "|")
+            for delimiter in candidate_delimiters:
+                rows = list(csv.reader(io.StringIO(data), delimiter=delimiter))
+                row_lengths = [len(row) for row in rows if row]
+                if row_lengths and min(row_lengths) > 1 and len(set(row_lengths)) == 1:
+                    return delimiter
+
             # -- sniffing will fail on single-column csv as no default can be assumed --
             return None
 
@@ -142,6 +168,23 @@ class _CsvPartitioningContext:
     def encoding(self) -> str | None:
         """The encoding to use for reading the file."""
         return self._encoding
+
+    def single_column_dataframe(self, file: IO[bytes]) -> pd.DataFrame:
+        """Parse a delimiter-less CSV while still honoring CSV quoting semantics.
+
+        These files are treated as a single logical column, so commas remain literal text, but
+        quoted commas, escaped quotes, and quoted multiline fields are still decoded by the CSV
+        parser instead of being left as raw source text.
+        """
+        text = file.read().decode(self.encoding or "utf-8")
+        rows = list(csv.reader(io.StringIO(text), delimiter="\0"))
+
+        if self.header == 0:
+            if not rows:
+                return pd.DataFrame()
+            return pd.DataFrame(rows[1:], columns=rows[0])
+
+        return pd.DataFrame(rows)
 
     @cached_property
     def last_modified(self) -> str | None:

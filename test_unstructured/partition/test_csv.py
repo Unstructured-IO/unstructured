@@ -86,6 +86,70 @@ def test_partition_csv_with_encoding():
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
 
 
+def test_partition_single_column_csv():
+    elements = partition_csv(example_doc_path("single-column.csv"))
+
+    assert clean_extra_whitespace(elements[0].text) == (
+        "Lorem, ipsum dolor sit amet consectetur adipiscing, elit sed, do eiusmod "
+        "tempor incididunt ut labore et dolore; magna aliqua Ut enim, ad minim, veniam"
+    )
+
+
+def test_partition_single_column_csv_with_header():
+    elements = partition_csv(example_doc_path("single-column.csv"), include_header=True)
+
+    assert clean_extra_whitespace(elements[0].text) == (
+        "Lorem, ipsum dolor sit amet consectetur adipiscing, elit sed, do eiusmod "
+        "tempor incididunt ut labore et dolore; magna aliqua Ut enim, ad minim, veniam"
+    )
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>0</td>" not in elements[0].metadata.text_as_html
+
+
+def test_partition_csv_with_quoted_commas():
+    csv_data = (
+        b"_id,title,reviewid,creationdate,criticname,originalscore,reviewstate,reviewtext\r\n"
+        b"60297eea-73d7-4fca-a97e-ea73d7cfca62,City Hunter: Shinjuku Private Eyes,2590987,"
+        b'2019-05-28,Reuben Baron,,fresh,"The choreography is so precise and lifelike at '
+        b"points one might wonder whether the movie was rotoscoped, but no live-action "
+        b"reference footage was used. The quality is due to the skill of the animators and "
+        b"Kodama's love for professional wrestling.\"\r\n"
+    )
+
+    elements = partition_csv(file=io.BytesIO(csv_data))
+
+    assert clean_extra_whitespace(elements[0].text).startswith(
+        "_id title reviewid creationdate criticname originalscore reviewstate reviewtext"
+    )
+    assert "<td>reviewtext</td>" in elements[0].metadata.text_as_html
+
+
+def test_partition_csv_keeps_multicolumn_shape_when_first_row_exceeds_sniff_window():
+    long_first_row = b"a," * 40000 + b"aa\n"
+    csv_data = long_first_row + b"left,right\n1,2\n"
+
+    elements = partition_csv(file=io.BytesIO(csv_data))
+
+    assert "left right" in elements[0].text
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>left</td>" in elements[0].metadata.text_as_html
+    assert "<td>right</td>" in elements[0].metadata.text_as_html
+
+
+def test_partition_single_column_csv_preserves_quoted_fields():
+    csv_data = b'notes\r\n"hello, world"\r\n"a ""quote"""\r\n"line 1\nline 2"\r\n'
+
+    elements = partition_csv(file=io.BytesIO(csv_data), include_header=True)
+
+    assert elements[0].text == 'notes hello, world a "quote" line 1\\nline 2'
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>hello, world</td>" in elements[0].metadata.text_as_html
+    assert '<td>a "quote"</td>' in elements[0].metadata.text_as_html
+    assert "<td>line 1\\nline 2</td>" in elements[0].metadata.text_as_html
+    assert '"hello, world"' not in elements[0].metadata.text_as_html
+    assert '""quote""' not in elements[0].metadata.text_as_html
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
@@ -259,6 +323,21 @@ class Describe_CsvPartitioningContext:
     def and_it_auto_detects_the_delimiter_for_a_semicolon_delimited_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("semicolon-delimited.csv"))
         assert ctx.delimiter == ";"
+
+    def and_it_auto_detects_the_delimiter_for_a_small_file_without_a_trailing_newline(self):
+        ctx = _CsvPartitioningContext(file=io.BytesIO(b"a,b"))
+        assert ctx.delimiter == ","
+
+    def and_it_auto_detects_the_delimiter_for_an_exact_size_file_without_a_trailing_newline(self):
+        line = ("a," * 32767) + "aa"
+        assert len(line) == 65536
+        ctx = _CsvPartitioningContext(file=io.BytesIO(line.encode()))
+        assert ctx.delimiter == ","
+
+    def and_it_keeps_the_delimiter_when_the_first_line_exceeds_the_sniff_window(self):
+        line = (b"a," * 40000) + b"aa\n1,2\n"
+        ctx = _CsvPartitioningContext(file=io.BytesIO(line))
+        assert ctx.delimiter == ","
 
     def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("single-column.csv"))
