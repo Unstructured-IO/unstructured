@@ -5,6 +5,7 @@ import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import numpy as np
+import pdf2image
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
 # unstructured.documents.elements.Image
@@ -15,7 +16,11 @@ from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
-from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import (
+    convert_pdf_to_image,
+    get_pdfium_chunk_size,
+    valid_text,
+)
 from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
@@ -76,7 +81,15 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    data_bytes = data if isinstance(data, bytes) else data.read()
+    original_position = None
+    if not isinstance(data, bytes) and hasattr(data, "tell"):
+        original_position = data.tell()
+
+    try:
+        data_bytes = data if isinstance(data, bytes) else data.read()
+    finally:
+        if original_position is not None and not isinstance(data, bytes) and hasattr(data, "seek"):
+            data.seek(original_position)
 
     with tempfile.TemporaryDirectory() as tmp_dir_path:
         tmp_file_path = os.path.join(tmp_dir_path, "tmp_file")
@@ -173,29 +186,65 @@ def process_file_with_ocr(
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
-                _image_paths = convert_pdf_to_image(
-                    filename,
-                    dpi=pdf_image_dpi,
-                    output_folder=temp_dir,
-                    path_only=True,
-                    password=password,
-                )
-                image_paths = cast(List[str], _image_paths)
-                for i, image_path in enumerate(image_paths):
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    with PILImage.open(image_path) as image:
-                        merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout=out_layout.pages[i],
-                            image=image,
-                            infer_table_structure=infer_table_structure,
-                            ocr_agent=ocr_agent,
-                            ocr_languages=ocr_languages,
-                            ocr_mode=ocr_mode,
-                            extracted_regions=extracted_regions,
-                            ocr_layout_dumper=ocr_layout_dumper,
-                            table_ocr_agent=table_ocr_agent,
+                if not out_layout.pages:
+                    convert_pdf_to_image(
+                        filename,
+                        dpi=pdf_image_dpi,
+                        output_folder=temp_dir,
+                        path_only=True,
+                        password=password,
+                    )
+                    raise ValueError("OCR received an empty layout for a PDF.")
+
+                rendered_page_count = pdf2image.pdfinfo_from_path(filename, userpw=password)["Pages"]
+                layout_page_count = len(out_layout.pages)
+
+                if rendered_page_count != layout_page_count:
+                    raise ValueError(
+                        "OCR page-count mismatch: rendered PDF has "
+                        f"{rendered_page_count} page(s) but layout has {layout_page_count}."
+                    )
+                chunk_size = get_pdfium_chunk_size()
+                for chunk_start in range(0, len(out_layout.pages), chunk_size):
+                    first_page = chunk_start + 1
+                    last_page = min(chunk_start + chunk_size, len(out_layout.pages))
+                    chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
+                    os.makedirs(chunk_dir, exist_ok=True)
+                    _image_paths = convert_pdf_to_image(
+                        filename,
+                        dpi=pdf_image_dpi,
+                        output_folder=chunk_dir,
+                        path_only=True,
+                        first_page=first_page,
+                        last_page=last_page,
+                        password=password,
+                    )
+                    image_paths = cast(List[str], _image_paths)
+                    expected_pages = last_page - first_page + 1
+                    if len(image_paths) != expected_pages:
+                        raise ValueError(
+                            f"Expected {expected_pages} rendered page(s) for range "
+                            f"{first_page}-{last_page}, got {len(image_paths)}."
                         )
-                        merged_page_layouts.append(merged_page_layout)
+                    for page_index, image_path in enumerate(image_paths, start=chunk_start):
+                        extracted_regions = (
+                            extracted_layout[page_index]
+                            if page_index < len(extracted_layout)
+                            else None
+                        )
+                        with PILImage.open(image_path) as image:
+                            merged_page_layout = supplement_page_layout_with_ocr(
+                                page_layout=out_layout.pages[page_index],
+                                image=image,
+                                infer_table_structure=infer_table_structure,
+                                ocr_agent=ocr_agent,
+                                ocr_languages=ocr_languages,
+                                ocr_mode=ocr_mode,
+                                extracted_regions=extracted_regions,
+                                ocr_layout_dumper=ocr_layout_dumper,
+                                table_ocr_agent=table_ocr_agent,
+                            )
+                            merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):

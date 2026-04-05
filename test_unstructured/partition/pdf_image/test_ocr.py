@@ -1,3 +1,4 @@
+import io
 from collections import namedtuple
 from typing import Optional
 from unittest.mock import MagicMock, patch
@@ -66,6 +67,27 @@ def test_process_file_with_ocr_invalid_filename(is_image):
             out_layout=DocumentLayout(),
             extracted_layout=[],
         )
+
+
+def test_process_data_with_ocr_restores_file_position(mocker):
+    source_file = io.BytesIO(b"pdf-bytes")
+    source_file.seek(4)
+    result_layout = MagicMock(DocumentLayout)
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+        return_value=result_layout,
+    )
+
+    result = ocr.process_data_with_ocr(
+        data=source_file,
+        is_image=False,
+        out_layout=DocumentLayout(),
+        extracted_layout=[],
+    )
+
+    assert result is result_layout
+    assert source_file.tell() == 4
 
 
 def test_supplement_page_layout_with_ocr_invalid_ocr():
@@ -673,3 +695,134 @@ def test_pass_down_agents(mock_ocr_get_instance, mocker, mock_page):
         "language": "eng",
         "ocr_agent_module": OCR_AGENT_TESSERACT,
     }
+
+
+def test_process_file_with_ocr_chunks_pdf_pages(monkeypatch, mocker):
+    image_paths = {
+        (1, 4): [f"/tmp/page_{i}.png" for i in range(1, 5)],
+        (5, 8): [f"/tmp/page_{i}.png" for i in range(5, 9)],
+        (9, 10): [f"/tmp/page_{i}.png" for i in range(9, 11)],
+    }
+    render_calls = []
+
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in range(10)]
+
+    def _fake_render(*args, **kwargs):
+        render_calls.append((kwargs["first_page"], kwargs["last_page"]))
+        return image_paths[(kwargs["first_page"], kwargs["last_page"])]
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        side_effect=_fake_render,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.pdf2image.pdfinfo_from_path",
+        return_value={"Pages": 10},
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.PILImage.open",
+        return_value=Image.new("RGB", (16, 16)),
+    )
+    supplement = mocker.patch(
+        "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
+        side_effect=lambda page_layout, image, **kwargs: page_layout,
+    )
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "4")
+
+    result = ocr.process_file_with_ocr(
+        filename="dummy.pdf",
+        out_layout=doc,
+        extracted_layout=[],
+        is_image=False,
+    )
+
+    assert result.pages == doc.pages
+    assert render_calls == [(1, 4), (5, 8), (9, 10)]
+    assert supplement.call_count == 10
+
+
+def test_process_file_with_ocr_invalid_chunk_size_falls_back(monkeypatch, mocker):
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in range(10)]
+
+    render_calls = []
+
+    def _fake_render(*args, **kwargs):
+        render_calls.append((kwargs["first_page"], kwargs["last_page"]))
+        return [f"/tmp/page_{i}.png" for i in range(kwargs["first_page"], kwargs["last_page"] + 1)]
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        side_effect=_fake_render,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.pdf2image.pdfinfo_from_path",
+        return_value={"Pages": 10},
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.PILImage.open",
+        return_value=Image.new("RGB", (16, 16)),
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.supplement_page_layout_with_ocr",
+        side_effect=lambda page_layout, image, **kwargs: page_layout,
+    )
+    warn = mocker.patch("unstructured.partition.pdf_image.pdf_image_utils.logger.warning")
+    monkeypatch.setenv("PDFIUM_CHUNK_SIZE", "auto")
+
+    ocr.process_file_with_ocr(
+        filename="dummy.pdf",
+        out_layout=doc,
+        extracted_layout=[],
+        is_image=False,
+    )
+
+    assert render_calls == [(1, 8), (9, 10)]
+    warn.assert_called_once()
+
+
+def test_process_file_with_ocr_raises_when_layout_is_empty_but_pdf_renders(mocker):
+    doc = MagicMock(DocumentLayout)
+    doc.pages = []
+
+    render = mocker.patch(
+        "unstructured.partition.pdf_image.ocr.convert_pdf_to_image",
+        return_value=["/tmp/page_1.png"],
+    )
+    mocker.patch("unstructured.partition.pdf_image.ocr.os.path.isfile", return_value=True)
+
+    with pytest.raises(ValueError, match="empty layout"):
+        ocr.process_file_with_ocr(
+            filename="dummy.pdf",
+            out_layout=doc,
+            extracted_layout=[],
+            is_image=False,
+        )
+
+    render.assert_called_once()
+
+
+@pytest.mark.parametrize("rendered_page_count", [1, 3])
+def test_process_file_with_ocr_raises_on_pdf_layout_page_count_mismatch(
+    rendered_page_count, mocker
+):
+    doc = MagicMock(DocumentLayout)
+    doc.pages = [MagicMock(PageLayout) for _ in range(2)]
+
+    render = mocker.patch("unstructured.partition.pdf_image.ocr.convert_pdf_to_image")
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.pdf2image.pdfinfo_from_path",
+        return_value={"Pages": rendered_page_count},
+    )
+    mocker.patch("unstructured.partition.pdf_image.ocr.os.path.isfile", return_value=True)
+
+    with pytest.raises(ValueError, match="page-count mismatch"):
+        ocr.process_file_with_ocr(
+            filename="dummy.pdf",
+            out_layout=doc,
+            extracted_layout=[],
+            is_image=False,
+        )
+
+    render.assert_not_called()

@@ -36,6 +36,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.documents.elements import (
+    Image as ImageElement,
+)
 from unstructured.errors import PageCountExceededError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
@@ -209,6 +212,67 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 def test_partition_pdf_local_raises_with_no_filename():
     with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
+
+
+def test_partition_pdf_local_rewinds_file_for_follow_on_hi_res_stages(mocker: MockFixture):
+    source_file = io.BytesIO(b"pdf-bytes")
+    mock_document_layout = mocker.Mock(spec=DocumentLayout)
+    mock_document_layout.pages = [mocker.Mock(spec=PageLayout)]
+    extracted_image = ImageElement(
+        text="Image Text 1",
+        coordinates=((10, 10), (10, 20), (20, 20), (20, 10)),
+        coordinate_system=PixelSpace(width=100, height=100),
+        metadata=ElementMetadata(page_number=1),
+    )
+
+    mocker.patch(
+        "unstructured_inference.inference.layout.process_data_with_model",
+        return_value=mock_document_layout,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.pdfminer_processing.merge_inferred_with_extracted_layout",
+        return_value=mock_document_layout,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.pdfminer_processing.clean_pdfminer_inner_elements",
+        side_effect=lambda document_layout: document_layout,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
+        return_value=mock_document_layout,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf.document_to_element_list",
+        return_value=[extracted_image],
+    )
+
+    downstream_positions = []
+
+    def _save_elements(*args, **kwargs):
+        downstream_positions.append(("save_elements", kwargs["file"].tell()))
+
+    def _run_form_extraction(*args, **kwargs):
+        downstream_positions.append(("run_form_extraction", kwargs["file"].tell()))
+        return []
+
+    mocker.patch(
+        "unstructured.partition.pdf_image.pdf_image_utils.save_elements",
+        side_effect=_save_elements,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf_image.form_extraction.run_form_extraction",
+        side_effect=_run_form_extraction,
+    )
+
+    pdf._partition_pdf_or_image_local(
+        filename="",
+        file=source_file,
+        is_image=False,
+        extract_image_block_types=[ElementType.IMAGE],
+        extract_forms=True,
+    )
+
+    assert downstream_positions == [("save_elements", 0), ("run_form_extraction", 0)]
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
