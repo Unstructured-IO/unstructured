@@ -9,6 +9,9 @@
 - **Preserve CSV semantics for single-column files**: Keep using CSV parsing rules when delimiter detection falls back to a single-column shape so quoted commas, escaped quotes, and quoted multiline cells decode correctly instead of being split as raw lines.
 - **Avoid mutating read-only Tesseract OCR coordinate views**: Copy Pandas-backed OCR coordinate arrays before converting width/height into right/bottom coordinates so OCR post-processing does not fail when Pandas returns a read-only NumPy view.
 
+### Maintenance
+- **Refresh CI and repository maintenance automation**: Update GitHub Actions workflow versions, adjust license-check allowlists, and sync the lockfile updates that support the new CI/runtime maintenance baseline.
+
 ## 0.22.16
 
 ### Enhancements

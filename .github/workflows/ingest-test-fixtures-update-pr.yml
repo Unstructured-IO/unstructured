@@ -14,7 +14,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -24,7 +24,7 @@ jobs:
     needs: [setup]
     steps:
       # actions/checkout MUST come before auth
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v5"
       - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
