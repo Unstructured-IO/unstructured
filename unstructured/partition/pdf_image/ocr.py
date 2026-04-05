@@ -196,7 +196,10 @@ def process_file_with_ocr(
                     )
                     raise ValueError("OCR received an empty layout for a PDF.")
 
-                rendered_page_count = pdf2image.pdfinfo_from_path(filename, userpw=password)["Pages"]
+                rendered_page_count = pdf2image.pdfinfo_from_path(
+                    filename,
+                    userpw=password,
+                )["Pages"]
                 layout_page_count = len(out_layout.pages)
 
                 if rendered_page_count != layout_page_count:
