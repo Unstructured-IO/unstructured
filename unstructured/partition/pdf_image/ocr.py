@@ -229,9 +229,7 @@ def process_file_with_ocr(
                     )
                     if image_paths:
                         raise ValueError("OCR received an empty layout for a PDF.")
-                    raise ValueError(
-                        "OCR received an empty layout for a PDF."
-                    )
+                    raise ValueError("OCR received an empty layout for a PDF.")
 
                 layout_page_count = len(out_layout.pages)
                 chunk_size = get_pdfium_chunk_size()
