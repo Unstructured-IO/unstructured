@@ -133,20 +133,28 @@ jobs:
         include:
           - extra: csv
             uv-extras: "--extra csv"
+            pandas-spec: "pandas<3"
           - extra: docx
             uv-extras: "--extra docx"
+            pandas-spec: ""
           - extra: odt
             uv-extras: "--extra odt"
+            pandas-spec: ""
           - extra: markdown
             uv-extras: "--extra md"
+            pandas-spec: ""
           - extra: pypandoc
             uv-extras: "--extra epub --extra org --extra rtf --extra rst"
+            pandas-spec: ""
           - extra: pdf-image
             uv-extras: "--extra pdf --extra image --extra paddleocr"
+            pandas-spec: ""
           - extra: pptx
             uv-extras: "--extra pptx"
+            pandas-spec: ""
           - extra: xlsx
             uv-extras: "--extra xlsx"
+            pandas-spec: "pandas<3"
     runs-on: opensource-linux-8core
     needs: [setup, lint, test_unit_no_extras]
     steps:
@@ -162,6 +170,10 @@ jobs:
     - name: Install extra dependencies
       run: |
         uv sync --locked ${{ matrix.uv-extras }} --group test
+    - name: Install supported pandas baseline
+      if: matrix.pandas-spec != ''
+      run: |
+        uv pip install --reinstall "${{ matrix.pandas-spec }}"
     - name: Install system dependencies
       run: |
         sudo apt-get update
