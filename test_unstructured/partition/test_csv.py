@@ -136,6 +136,16 @@ def test_partition_csv_keeps_multicolumn_shape_when_first_row_exceeds_sniff_wind
     assert "<td>right</td>" in elements[0].metadata.text_as_html
 
 
+def test_partition_tsv_when_delimiter_sniffing_falls_back():
+    elements = partition_csv(file=io.BytesIO(b"left\tright\n1\t2\n"))
+
+    assert elements[0].metadata.text_as_html is not None
+    assert "<td>left</td>" in elements[0].metadata.text_as_html
+    assert "<td>right</td>" in elements[0].metadata.text_as_html
+    assert "<td>1</td>" in elements[0].metadata.text_as_html
+    assert "<td>2</td>" in elements[0].metadata.text_as_html
+
+
 def test_partition_single_column_csv_preserves_quoted_fields():
     csv_data = b'notes\r\n"hello, world"\r\n"a ""quote"""\r\n"line 1\nline 2"\r\n'
 
@@ -323,6 +333,10 @@ class Describe_CsvPartitioningContext:
     def and_it_auto_detects_the_delimiter_for_a_semicolon_delimited_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("semicolon-delimited.csv"))
         assert ctx.delimiter == ";"
+
+    def and_it_auto_detects_the_delimiter_for_a_tab_delimited_CSV_file(self):
+        ctx = _CsvPartitioningContext(file=io.BytesIO(b"a\tb\n1\t2\n"))
+        assert ctx.delimiter == "\t"
 
     def and_it_auto_detects_the_delimiter_for_a_small_file_without_a_trailing_newline(self):
         ctx = _CsvPartitioningContext(file=io.BytesIO(b"a,b"))

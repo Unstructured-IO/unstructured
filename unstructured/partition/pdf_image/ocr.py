@@ -5,7 +5,6 @@ import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import numpy as np
-import pdf2image
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
 # unstructured.documents.elements.Image
@@ -114,6 +113,37 @@ def process_data_with_ocr(
     return merged_layouts
 
 
+def _render_pdf_image_paths(
+    filename: str,
+    output_folder: str,
+    pdf_image_dpi: int,
+    first_page: int,
+    last_page: int,
+    password: Optional[str] = None,
+    allow_empty: bool = False,
+) -> list[str]:
+    os.makedirs(output_folder, exist_ok=True)
+    _image_paths = convert_pdf_to_image(
+        filename,
+        dpi=pdf_image_dpi,
+        output_folder=output_folder,
+        path_only=True,
+        first_page=first_page,
+        last_page=last_page,
+        password=password,
+    )
+    image_paths = cast(List[str], _image_paths)
+    expected_pages = last_page - first_page + 1
+    if len(image_paths) > expected_pages or (
+        not allow_empty and len(image_paths) != expected_pages
+    ):
+        raise ValueError(
+            f"Expected {expected_pages} rendered page(s) for range "
+            f"{first_page}-{last_page}, got {len(image_paths)}."
+        )
+    return image_paths
+
+
 @requires_dependencies("unstructured_inference")
 def process_file_with_ocr(
     filename: str,
@@ -187,45 +217,34 @@ def process_file_with_ocr(
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
                 if not out_layout.pages:
-                    convert_pdf_to_image(
+                    probe_dir = os.path.join(temp_dir, "probe_1_1")
+                    image_paths = _render_pdf_image_paths(
                         filename,
-                        dpi=pdf_image_dpi,
-                        output_folder=temp_dir,
-                        path_only=True,
+                        output_folder=probe_dir,
+                        pdf_image_dpi=pdf_image_dpi,
+                        first_page=1,
+                        last_page=1,
                         password=password,
+                        allow_empty=True,
                     )
+                    if image_paths:
+                        raise ValueError("OCR received an empty layout for a PDF.")
                     raise ValueError("OCR received an empty layout for a PDF.")
 
-                rendered_page_count = pdf2image.pdfinfo_from_path(filename, userpw=password)["Pages"]
                 layout_page_count = len(out_layout.pages)
-
-                if rendered_page_count != layout_page_count:
-                    raise ValueError(
-                        "OCR page-count mismatch: rendered PDF has "
-                        f"{rendered_page_count} page(s) but layout has {layout_page_count}."
-                    )
                 chunk_size = get_pdfium_chunk_size()
-                for chunk_start in range(0, len(out_layout.pages), chunk_size):
+                for chunk_start in range(0, layout_page_count, chunk_size):
                     first_page = chunk_start + 1
-                    last_page = min(chunk_start + chunk_size, len(out_layout.pages))
+                    last_page = min(chunk_start + chunk_size, layout_page_count)
                     chunk_dir = os.path.join(temp_dir, f"chunk_{first_page}_{last_page}")
-                    os.makedirs(chunk_dir, exist_ok=True)
-                    _image_paths = convert_pdf_to_image(
+                    image_paths = _render_pdf_image_paths(
                         filename,
-                        dpi=pdf_image_dpi,
                         output_folder=chunk_dir,
-                        path_only=True,
+                        pdf_image_dpi=pdf_image_dpi,
                         first_page=first_page,
                         last_page=last_page,
                         password=password,
                     )
-                    image_paths = cast(List[str], _image_paths)
-                    expected_pages = last_page - first_page + 1
-                    if len(image_paths) != expected_pages:
-                        raise ValueError(
-                            f"Expected {expected_pages} rendered page(s) for range "
-                            f"{first_page}-{last_page}, got {len(image_paths)}."
-                        )
                     for page_index, image_path in enumerate(image_paths, start=chunk_start):
                         extracted_regions = (
                             extracted_layout[page_index]
@@ -245,6 +264,24 @@ def process_file_with_ocr(
                                 table_ocr_agent=table_ocr_agent,
                             )
                             merged_page_layouts.append(merged_page_layout)
+
+                overflow_probe_dir = os.path.join(
+                    temp_dir,
+                    f"probe_{layout_page_count + 1}_{layout_page_count + 1}",
+                )
+                overflow_paths = _render_pdf_image_paths(
+                    filename,
+                    output_folder=overflow_probe_dir,
+                    pdf_image_dpi=pdf_image_dpi,
+                    first_page=layout_page_count + 1,
+                    last_page=layout_page_count + 1,
+                    password=password,
+                    allow_empty=True,
+                )
+                if overflow_paths:
+                    raise ValueError(
+                        "OCR page-count mismatch: rendered PDF has more pages than the layout."
+                    )
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):

@@ -17,6 +17,7 @@ from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN: str = "csv"
 CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
+SNIFFABLE_DELIMITERS = ",;\t|"
 
 
 @apply_metadata(FileType.CSV)
@@ -144,12 +145,12 @@ class _CsvPartitioningContext:
                 data = data[:last_newline]
 
         try:
-            return sniffer.sniff(data, delimiters=",;|").delimiter
+            return sniffer.sniff(data, delimiters=SNIFFABLE_DELIMITERS).delimiter
         except csv.Error:
             # -- `csv.Sniffer` can fail on small files with quoted delimiters. Fall back to
             # -- testing candidate delimiters and accept only those that produce a consistent
             # -- multi-column shape.
-            candidate_delimiters = (",", ";", "|")
+            candidate_delimiters = (",", ";", "\t", "|")
             for delimiter in candidate_delimiters:
                 rows = list(csv.reader(io.StringIO(data), delimiter=delimiter))
                 row_lengths = [len(row) for row in rows if row]
