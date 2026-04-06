@@ -149,6 +149,25 @@ class DescribeHtmlTable:
 
         assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
 
+    def and_it_preserves_source_row_html_before_compactification(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <thead><tr data-row='header'><th scope='col'>Header</th></tr></thead>"
+            "  <tbody><tr><td class='body-cell'>Body</td></tr></tbody>"
+            "</table>"
+        )
+        rows = list(html_table.iter_rows())
+        header_row = fragment_fromstring(rows[0].source_html or "<tr/>")
+        body_row = fragment_fromstring(rows[1].source_html or "<tr/>")
+
+        assert header_row.xpath("./@data-row") == ["header"]
+        assert header_row.xpath("./th/@scope") == ["col"]
+        assert body_row.xpath("./td/@class") == ["body-cell"]
+
+        # -- compactified row HTML contract remains unchanged --
+        assert rows[0].html == "<tr><td>Header</td></tr>"
+        assert rows[1].html == "<tr><td>Body</td></tr>"
+
     def it_provides_access_to_the_clear_concatenated_text_of_the_table(self):
         html_table = HtmlTable.from_html_text(
             "<table>"
