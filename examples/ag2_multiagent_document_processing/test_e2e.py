@@ -26,6 +26,7 @@ sys.path.insert(0, str(REPO_ROOT))
 EXAMPLE_DOCS = REPO_ROOT / "example-docs"
 
 from examples.ag2_multiagent_document_processing.run import (  # noqa: E402
+    filter_elements_by_confidence,
     find_sample_document,
     format_elements_summary,
     partition_document,
@@ -67,9 +68,9 @@ class TestUnstructuredPartitioning:
         elements = partition_document(str(html_10k))
         types = {el.get("type") for el in elements}
 
-        assert (
-            "Title" in types or "NarrativeText" in types
-        ), f"Expected Title or NarrativeText in rich document, got: {types}"
+        assert "Title" in types or "NarrativeText" in types, (
+            f"Expected Title or NarrativeText in rich document, got: {types}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -111,9 +112,86 @@ class TestFormatting:
         summary = format_elements_summary(elements)
         assert "truncated" in summary, "Long text should be marked as truncated"
 
+    def test_format_includes_confidence_scores(self) -> None:
+        """Test that confidence scores are shown when present."""
+        elements = [
+            {
+                "type": "Title",
+                "text": "High confidence title",
+                "metadata": {"detection_class_prob": 0.95},
+            },
+            {
+                "type": "NarrativeText",
+                "text": "No confidence text",
+                "metadata": {},
+            },
+        ]
+
+        summary = format_elements_summary(elements)
+        assert "[conf=0.95]" in summary, "Should show confidence for scored elements"
+        # The NarrativeText line should NOT have a conf= tag
+        for line in summary.splitlines():
+            if "No confidence text" in line:
+                assert "[conf=" not in line, "No score element should not show conf="
+
 
 # ---------------------------------------------------------------------------
-# Test 3: Sample document finder works
+# Test 3: Confidence score filtering
+# ---------------------------------------------------------------------------
+
+
+class TestConfidenceFiltering:
+    """Verify confidence-based element filtering (addresses issue #4320)."""
+
+    def test_filter_keeps_high_confidence(self) -> None:
+        """Elements above threshold are kept."""
+        elements = [
+            {"type": "Title", "text": "Good", "metadata": {"detection_class_prob": 0.9}},
+            {"type": "NarrativeText", "text": "Bad", "metadata": {"detection_class_prob": 0.2}},
+        ]
+        result = filter_elements_by_confidence(elements, min_confidence=0.5)
+        assert len(result["kept"]) == 1
+        assert result["kept"][0]["text"] == "Good"
+        assert len(result["filtered_out"]) == 1
+
+    def test_filter_keeps_elements_without_score(self) -> None:
+        """Elements without confidence scores are kept by default."""
+        elements = [
+            {"type": "Title", "text": "No score", "metadata": {}},
+            {"type": "NarrativeText", "text": "Also no score"},
+        ]
+        result = filter_elements_by_confidence(elements, min_confidence=0.5)
+        assert len(result["kept"]) == 2
+        assert result["stats"]["no_score"] == 2
+
+    def test_filter_stats_are_correct(self) -> None:
+        """Verify filter stats report correct counts."""
+        elements = [
+            {"type": "Title", "text": "A", "metadata": {"detection_class_prob": 0.9}},
+            {"type": "Title", "text": "B", "metadata": {"detection_class_prob": 0.3}},
+            {"type": "Title", "text": "C", "metadata": {}},
+        ]
+        result = filter_elements_by_confidence(elements, min_confidence=0.5)
+        stats = result["stats"]
+        assert stats["total"] == 3
+        assert stats["kept"] == 2
+        assert stats["filtered_out"] == 1
+        assert stats["no_score"] == 1
+        assert stats["min_confidence"] == 0.5
+
+    def test_filter_with_zero_threshold(self) -> None:
+        """Zero threshold keeps everything with a score."""
+        elements = [
+            {"type": "Title", "text": "A", "metadata": {"detection_class_prob": 0.01}},
+            {"type": "Title", "text": "B", "metadata": {"detection_class_prob": 0.0}},
+        ]
+        result = filter_elements_by_confidence(elements, min_confidence=0.0)
+        assert len(result["kept"]) == 2
+        assert len(result["filtered_out"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# Test 4: Sample document finder works
 # ---------------------------------------------------------------------------
 
 
@@ -131,7 +209,7 @@ class TestSampleDocumentFinder:
 
 
 # ---------------------------------------------------------------------------
-# Test 4: AG2 agent setup works (no LLM call)
+# Test 5: AG2 agent setup works (no LLM call)
 # ---------------------------------------------------------------------------
 
 
@@ -226,7 +304,7 @@ class TestAG2AgentSetup:
 
 
 # ---------------------------------------------------------------------------
-# Test 5: Full pipeline with LIVE LLM (requires API key)
+# Test 6: Full pipeline with LIVE LLM (requires API key)
 # ---------------------------------------------------------------------------
 
 
@@ -307,11 +385,11 @@ class TestLiveLLMPipeline:
         ).process()
 
         all_messages = group_chat.messages
-        assert (
-            len(all_messages) > 2
-        ), f"Expected multi-turn conversation, got {len(all_messages)} messages"
+        assert len(all_messages) > 2, (
+            f"Expected multi-turn conversation, got {len(all_messages)} messages"
+        )
 
         last_messages = [m.get("content", "") for m in all_messages[-3:]]
-        assert any(
-            "TERMINATE" in msg for msg in last_messages
-        ), "Analyst should have terminated the conversation"
+        assert any("TERMINATE" in msg for msg in last_messages), (
+            "Analyst should have terminated the conversation"
+        )

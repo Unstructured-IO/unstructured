@@ -46,16 +46,25 @@ from unstructured.staging.base import elements_to_dicts
 # ---------------------------------------------------------------------------
 
 
-def partition_document(file_path: str) -> list[dict]:
+def partition_document(file_path: str, strategy: str = "hi_res") -> list[dict]:
     """Partition a document into structured elements using Unstructured.
+
+    Uses ``hi_res`` strategy by default so that confidence scores
+    (``detection_class_prob``) are populated for PDF/image files.
+    Falls back to ``auto`` if hi_res fails (e.g. missing system deps).
 
     Args:
         file_path: Path to the document file.
+        strategy: Partitioning strategy (``hi_res``, ``fast``, ``auto``).
 
     Returns:
         List of element dicts with type, text, and metadata.
     """
-    elements = partition(filename=file_path)
+    try:
+        elements = partition(filename=file_path, strategy=strategy)
+    except Exception:
+        # Fall back to auto if hi_res is unavailable
+        elements = partition(filename=file_path, strategy="auto")
     return elements_to_dicts(elements)
 
 
@@ -85,12 +94,60 @@ def format_elements_summary(elements: list[dict]) -> str:
         el_type = el.get("type", "Unknown")
         text = el.get("text", "").strip()
         if text:
-            summary_parts.append(f"[{i}] ({el_type}) {text[:500]}")
+            metadata = el.get("metadata", {})
+            conf = metadata.get("detection_class_prob")
+            origin = metadata.get("detection_origin", "")
+            conf_str = f" [conf={conf:.2f}]" if conf is not None else ""
+            origin_str = f" [origin={origin}]" if origin else ""
+            summary_parts.append(f"[{i}] ({el_type}){conf_str}{origin_str} {text[:500]}")
             if len(text) > 500:
                 summary_parts.append(f"    ... (truncated, {len(text)} chars total)")
             summary_parts.append("")
 
     return "\n".join(summary_parts)
+
+
+def filter_elements_by_confidence(
+    elements: list[dict],
+    min_confidence: float = 0.5,
+) -> dict:
+    """Filter elements by detection confidence score.
+
+    Elements without a confidence score are kept by default (they come from
+    non-Hi-Res strategies where confidence is not computed).
+
+    Args:
+        elements: List of element dicts from Unstructured.
+        min_confidence: Minimum confidence threshold (0.0-1.0).
+
+    Returns:
+        Dict with 'kept', 'filtered_out' lists and summary stats.
+    """
+    kept = []
+    filtered_out = []
+    no_score_count = 0
+
+    for el in elements:
+        conf = el.get("metadata", {}).get("detection_class_prob")
+        if conf is None:
+            kept.append(el)
+            no_score_count += 1
+        elif conf >= min_confidence:
+            kept.append(el)
+        else:
+            filtered_out.append(el)
+
+    return {
+        "kept": kept,
+        "filtered_out": filtered_out,
+        "stats": {
+            "total": len(elements),
+            "kept": len(kept),
+            "filtered_out": len(filtered_out),
+            "no_score": no_score_count,
+            "min_confidence": min_confidence,
+        },
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -111,7 +168,14 @@ def find_sample_document() -> str:
     example_docs = repo_root / "example-docs"
 
     if example_docs.exists():
-        for pattern in ["layout-parser-paper.pdf", "example-10k.html", "*.pdf", "*.html"]:
+        # Prefer PDFs (Hi-Res strategy yields confidence scores), then HTML
+        for pattern in [
+            "pdf/layout-parser-paper.pdf",
+            "pdf/*.pdf",
+            "example-10k.html",
+            "*.pdf",
+            "*.html",
+        ]:
             matches = list(example_docs.glob(pattern))
             if matches:
                 return str(matches[0])
@@ -170,7 +234,8 @@ def main(file_path: Optional[str] = None) -> None:
             "provided by the document_agent, produce a comprehensive analysis "
             "including: (1) document structure overview, (2) key topics and themes, "
             "(3) important facts or data points, (4) a concise executive summary. "
-            "Reference specific element types and content. "
+            "Reference specific element types and content. If confidence scores "
+            "are available, note which elements have low confidence. "
             "End with TERMINATE when done."
         ),
         llm_config=llm_config,
@@ -232,6 +297,30 @@ def main(file_path: Optional[str] = None) -> None:
         print(f">>> Found {len(elements)} elements across {len(type_counts)} types")
         print(">>> [TOOL DONE]\n")
         return result
+
+    @user_proxy.register_for_execution()
+    @document_agent.register_for_llm(
+        description=(
+            "Filter document elements by confidence score. Removes low-confidence "
+            "extractions (e.g. rotated tables, blurry OCR). Confidence scores are "
+            "available when using Hi-Res strategy. Elements without a score are kept. "
+            "Returns filtered elements summary and stats."
+        )
+    )
+    def filter_low_confidence(
+        document_path: str,
+        min_confidence: float = 0.5,
+    ) -> str:
+        """Filter out low-confidence elements from a document."""
+        print(f"\n>>> [TOOL CALL] filter_low_confidence('{document_path}', {min_confidence})")
+        elements = partition_document(document_path)
+        result = filter_elements_by_confidence(elements, min_confidence)
+        stats = result["stats"]
+        print(f">>> Kept {stats['kept']}/{stats['total']} elements (threshold={min_confidence})")
+        print(f">>> Filtered out: {stats['filtered_out']}, No score: {stats['no_score']}")
+        print(">>> [TOOL DONE]\n")
+        summary = format_elements_summary(result["kept"])
+        return f"Confidence filter stats: {json.dumps(stats, indent=2)}\n\n{summary}"
 
     group_chat = GroupChat(
         agents=[user_proxy, document_agent, analyst],
