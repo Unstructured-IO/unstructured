@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import logging
 import os
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
+
+logger = logging.getLogger(__name__)
 
 import numpy as np
 
@@ -181,6 +184,7 @@ def process_file_with_ocr(
                     password=password,
                 )
                 image_paths = cast(List[str], _image_paths)
+
                 for i, image_path in enumerate(image_paths):
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
@@ -196,6 +200,7 @@ def process_file_with_ocr(
                             table_ocr_agent=table_ocr_agent,
                         )
                         merged_page_layouts.append(merged_page_layout)
+
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):
@@ -473,9 +478,13 @@ def supplement_layout_with_ocr_elements(
         else:
             ocr_regions_to_add = ocr_layout
     else:
-        mask = ~bboxes1_is_almost_subregion_of_bboxes2(
-            ocr_layout.element_coords, layout.element_coords, subregion_threshold
-        ).sum(axis=1).astype(bool)
+        mask = (
+            ~bboxes1_is_almost_subregion_of_bboxes2(
+                ocr_layout.element_coords, layout.element_coords, subregion_threshold
+            )
+            .sum(axis=1)
+            .astype(bool)
+        )
 
         # add ocr regions that are not covered by layout
         ocr_regions_to_add = ocr_layout.slice(mask)

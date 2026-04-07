@@ -230,7 +230,7 @@ class _ElementAccumulator:
     - `flush()` resets the accumulator to its initial empty state.
     """
 
-    def __init__(self, element: etree.ElementBase):
+    def __init__(self, element: Flow):
         self._element = element
         self._text_segments: list[TextSegment] = []
 
@@ -270,6 +270,7 @@ class _ElementAccumulator:
             metadata=ElementMetadata(
                 **_consolidate_annotations(ts.annotation for ts in text_segments),
                 category_depth=category_depth,
+                page_number=self._element._page_number,
             ),
         )
 
@@ -348,6 +349,20 @@ class Flow(etree.ElementBase):
     @property
     def is_phrasing(self) -> bool:
         return False
+
+    @cached_property
+    def _page_number(self) -> int | None:
+        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
+        page_attr = self.get("data-page-number")
+        if page_attr is not None:
+            try:
+                return int(page_attr)
+            except (ValueError, TypeError):
+                pass
+        parent = self.getparent()
+        if parent is not None and isinstance(parent, Flow):
+            return parent._page_number
+        return None
 
     def iter_elements(self) -> Iterator[Element]:
         """Generate paragraph string for each block item within."""
@@ -507,6 +522,7 @@ class ImageBlock(Flow):
                 image_mime_type=img_mime_type,
                 image_base64=img_base64,
                 image_url=img_url,
+                page_number=self._page_number,
             ),
         )
 
@@ -544,7 +560,10 @@ class TableBlock(Flow):
         if table_text == "":
             return
 
-        yield Table(table_text, metadata=ElementMetadata(text_as_html=html_table))
+        yield Table(
+            table_text,
+            metadata=ElementMetadata(text_as_html=html_table, page_number=self._page_number),
+        )
 
 
 class RemovedBlock(Flow):
