@@ -2,6 +2,7 @@ from importlib import reload
 from unittest.mock import MagicMock, patch
 
 from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
+from pdfminer.pdftypes import PDFStream
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf import partition_pdf
@@ -409,3 +410,382 @@ class TestFakeBoldPdfIntegration:
             f"Deduplicated text ({len(text_with_dedup)} chars) should be shorter "
             f"than non-deduplicated text ({len(text_no_dedup)} chars)"
         )
+
+
+# -- Tests for embedded CMap stream parsing --
+
+
+class TestParseEmbeddedCmapStream:
+    """Unit tests for _parse_embedded_cmap_stream.
+
+    pdfminer.six does not parse embedded Encoding CMap streams for CIDFonts.
+    _parse_embedded_cmap_stream is our workaround that extracts code-to-CID
+    mappings and writing mode from the raw CMap stream bytes.
+    """
+
+    @staticmethod
+    def _parse(data: bytes):
+        from unstructured.partition.pdf_image.pdfminer_utils import _parse_embedded_cmap_stream
+
+        return _parse_embedded_cmap_stream(data)
+
+    def test_vertical_wmode_is_preserved(self):
+        """Embedded CMaps with WMode=1 (vertical) should produce a vertical CMap."""
+        data = b"""
+/WMode 1
+1 begincodespacerange
+<00> <0A>
+endcodespacerange
+1 begincidrange
+<00> <0A> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert cmap.is_vertical() is True
+        assert len(cmap.code2cid) == 11
+
+    def test_horizontal_wmode_is_default(self):
+        """CMaps without WMode or with WMode=0 should produce a horizontal CMap."""
+        data = b"""
+1 begincodespacerange
+<00> <05>
+endcodespacerange
+1 begincidrange
+<00> <05> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert cmap.is_vertical() is False
+
+    def test_oversized_stream_returns_empty_cmap(self):
+        """Streams exceeding the size cap should be rejected before any parsing."""
+        from unstructured.partition.pdf_image.pdfminer_utils import _MAX_CMAP_STREAM_BYTES
+
+        data = b"x" * (_MAX_CMAP_STREAM_BYTES + 1)
+        cmap = self._parse(data)
+        assert not cmap.code2cid
+
+    def test_reversed_range_is_skipped(self):
+        """A begincidrange where end < start should be silently skipped."""
+        data = b"""
+1 begincodespacerange
+<00> <FF>
+endcodespacerange
+1 begincidrange
+<80> <10> 0
+endcidrange
+"""
+        cmap = self._parse(data)
+        assert not cmap.code2cid
+
+    def test_mapping_cap_bounds_total_entries(self):
+        """The total mapping count should be bounded across both cidrange and cidchar."""
+        from unittest.mock import patch
+
+        data = b"""
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+1 begincidrange
+<0000> <FFFF> 0
+endcidrange
+"""
+        # Use a small cap to verify bounding without allocating huge dicts
+        with patch("unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 100):
+            cmap = self._parse(data)
+            assert not cmap.code2cid  # 65536 > 100: entire CMap discarded, not partial
+
+    def test_mapping_budget_second_range_discards_entire_cmap(self):
+        """If a later cidrange would exceed the cap, reject the whole map (no holes)."""
+        from unittest.mock import patch
+
+        data = b"""
+1 begincodespacerange
+<00> <19>
+endcodespacerange
+2 begincidrange
+<00> <09> 0
+<0A> <19> 10
+endcidrange
+"""
+        with patch("unstructured.partition.pdf_image.pdfminer_utils._MAX_CODE2CID_MAPPINGS", 15):
+            cmap = self._parse(data)
+            assert not cmap.code2cid
+
+
+class TestBoundedStreamDecode:
+    """Tests for _decode_pdfstream_with_limit.
+
+    Verifies that oversized embedded CMap streams are rejected *before* full
+    materialization, and that the shared PDFStream object is never mutated.
+    """
+
+    def test_oversized_flate_stream_rejected_before_materialization(self):
+        """A small compressed payload that expands past the limit should be rejected
+        without fully materializing the output, and the stream should not be mutated."""
+        import zlib
+
+        from pdfminer.psparser import LIT
+
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            _decode_pdfstream_with_limit,
+        )
+
+        payload = zlib.compress(b"x" * 200)
+        stream = PDFStream({"Filter": LIT("FlateDecode")}, payload)
+
+        result = _decode_pdfstream_with_limit(stream, max_decoded_bytes=100)
+        assert result is None
+        # Stream object must not be mutated
+        assert stream.get_rawdata() is not None
+        assert stream.data is None
+
+    def test_normal_stream_decodes_within_limit(self):
+        """A stream that fits within the limit should decode successfully."""
+        import zlib
+
+        from pdfminer.psparser import LIT
+
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            _decode_pdfstream_with_limit,
+        )
+
+        content = b"begincidrange <00> <05> 0 endcidrange"
+        payload = zlib.compress(content)
+        stream = PDFStream({"Filter": LIT("FlateDecode")}, payload)
+
+        result = _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000)
+        assert result == content
+
+    def test_encrypted_stream_without_objid_returns_none(self):
+        """Decipher requires objid/genno; missing values skip decode (no crash)."""
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            _decode_pdfstream_with_limit,
+        )
+
+        stream = PDFStream({}, b"encrypted-bytes", decipher=lambda *a: b"x")
+        stream.objid = None
+        stream.genno = 0
+        assert _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000) is None
+
+        stream.objid = 1
+        stream.genno = None
+        assert _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000) is None
+
+    def test_uncompressed_stream_returns_raw(self):
+        """A stream with no filters should return the raw data directly."""
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            _decode_pdfstream_with_limit,
+        )
+
+        content = b"begincidrange <00> <05> 0 endcidrange"
+        stream = PDFStream({}, content)
+
+        result = _decode_pdfstream_with_limit(stream, max_decoded_bytes=1000)
+        assert result == content
+
+
+class TestCustomPDFCIDFont:
+    """Tests for CustomPDFCIDFont constructor-time CMap resolution."""
+
+    def test_vertical_wmode_sets_font_vertical_flag(self):
+        """A vertical embedded CMap (WMode=1) should set font.vertical=True and
+        font.default_disp != 0 at construction time, not just on the CMap."""
+        import zlib
+
+        from pdfminer.pdfinterp import PDFResourceManager
+        from pdfminer.psparser import LIT
+
+        from unstructured.partition.pdf_image.pdfminer_utils import CustomPDFCIDFont
+
+        cmap_data = b"""/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> def
+/CMapName /Test-Vertical-H def
+/CMapType 1 def
+/WMode 1 def
+1 begincodespacerange
+<00> <0A>
+endcodespacerange
+1 begincidrange
+<00> <0A> 0
+endcidrange
+endcmap
+end
+end"""
+
+        encoding_stream = PDFStream(
+            {
+                "Type": LIT("CMap"),
+                "CMapName": LIT("Test-Vertical-H"),
+                "CIDSystemInfo": {
+                    "Registry": b"Adobe",
+                    "Ordering": b"Identity",
+                    "Supplement": 0,
+                },
+                "Filter": LIT("FlateDecode"),
+            },
+            zlib.compress(cmap_data),
+        )
+
+        tounicode_data = b"""/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def
+/CMapName /Adobe-Identity-UCS def
+/CMapType 2 def
+1 begincodespacerange
+<00> <FF>
+endcodespacerange
+1 beginbfrange
+<00> <0A> <0041>
+endbfrange
+endcmap
+end
+end"""
+        tounicode_stream = PDFStream({}, tounicode_data)
+
+        spec = {
+            "Type": LIT("Font"),
+            "Subtype": LIT("CIDFontType2"),
+            "BaseFont": LIT("TestSans"),
+            "CIDSystemInfo": {
+                "Registry": b"Adobe",
+                "Ordering": b"Identity",
+                "Supplement": 0,
+            },
+            "FontDescriptor": {
+                "Type": LIT("FontDescriptor"),
+                "FontName": LIT("TestSans"),
+                "Flags": 32,
+                "FontBBox": [0, -200, 1000, 800],
+                "ItalicAngle": 0,
+                "Ascent": 800,
+                "Descent": -200,
+                "CapHeight": 700,
+                "StemV": 80,
+            },
+            "DW": 500,
+            "Encoding": encoding_stream,
+            "ToUnicode": tounicode_stream,
+        }
+
+        rsrcmgr = PDFResourceManager()
+        font = CustomPDFCIDFont(rsrcmgr, spec, strict=False)
+
+        assert font.cmap.is_vertical() is True
+        assert font.vertical is True
+        assert font.default_disp != 0
+
+
+class TestCustomPDFResourceManager:
+    """Tests for CustomPDFResourceManager font construction routing."""
+
+    def test_returns_custom_cidfont_for_cid_subtypes(self):
+        """CIDFontType2 fonts should be constructed as CustomPDFCIDFont."""
+        from pdfminer.psparser import LIT
+
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            CustomPDFCIDFont,
+            CustomPDFResourceManager,
+        )
+
+        cmap_data = b"""begincmap
+1 begincodespacerange <00> <05> endcodespacerange
+1 begincidrange <00> <05> 0 endcidrange
+endcmap"""
+
+        spec = {
+            "Type": LIT("Font"),
+            "Subtype": LIT("CIDFontType2"),
+            "BaseFont": LIT("TestSans"),
+            "CIDSystemInfo": {
+                "Registry": b"Adobe",
+                "Ordering": b"Identity",
+                "Supplement": 0,
+            },
+            "FontDescriptor": {
+                "Type": LIT("FontDescriptor"),
+                "FontName": LIT("TestSans"),
+                "Flags": 32,
+                "FontBBox": [0, -200, 1000, 800],
+                "ItalicAngle": 0,
+                "Ascent": 800,
+                "Descent": -200,
+                "CapHeight": 700,
+                "StemV": 80,
+            },
+            "DW": 500,
+            "Encoding": PDFStream(
+                {
+                    "Type": LIT("CMap"),
+                    "CMapName": LIT("Test-Custom-H"),
+                    "CIDSystemInfo": {
+                        "Registry": b"Adobe",
+                        "Ordering": b"Identity",
+                        "Supplement": 0,
+                    },
+                },
+                cmap_data,
+            ),
+        }
+
+        rsrcmgr = CustomPDFResourceManager()
+        font = rsrcmgr.get_font(1, spec)
+
+        assert isinstance(font, CustomPDFCIDFont)
+
+    def test_caches_font_on_repeated_calls(self):
+        """Repeated get_font calls with the same objid should return the cached instance."""
+        from pdfminer.psparser import LIT
+
+        from unstructured.partition.pdf_image.pdfminer_utils import (
+            CustomPDFResourceManager,
+        )
+
+        cmap_data = b"""begincmap
+1 begincodespacerange <00> <05> endcodespacerange
+1 begincidrange <00> <05> 0 endcidrange
+endcmap"""
+
+        spec = {
+            "Type": LIT("Font"),
+            "Subtype": LIT("CIDFontType2"),
+            "BaseFont": LIT("TestSans"),
+            "CIDSystemInfo": {
+                "Registry": b"Adobe",
+                "Ordering": b"Identity",
+                "Supplement": 0,
+            },
+            "FontDescriptor": {
+                "Type": LIT("FontDescriptor"),
+                "FontName": LIT("TestSans"),
+                "Flags": 32,
+                "FontBBox": [0, -200, 1000, 800],
+                "ItalicAngle": 0,
+                "Ascent": 800,
+                "Descent": -200,
+                "CapHeight": 700,
+                "StemV": 80,
+            },
+            "DW": 500,
+            "Encoding": PDFStream(
+                {
+                    "Type": LIT("CMap"),
+                    "CMapName": LIT("Test-Custom-H"),
+                    "CIDSystemInfo": {
+                        "Registry": b"Adobe",
+                        "Ordering": b"Identity",
+                        "Supplement": 0,
+                    },
+                },
+                cmap_data,
+            ),
+        }
+
+        rsrcmgr = CustomPDFResourceManager()
+        font1 = rsrcmgr.get_font(42, spec)
+        font2 = rsrcmgr.get_font(42, spec)
+
+        assert font1 is font2

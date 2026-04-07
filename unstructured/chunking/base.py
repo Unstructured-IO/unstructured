@@ -9,7 +9,8 @@ from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
-from lxml.etree import ParserError
+from lxml.etree import ParserError, tostring
+from lxml.html import fragment_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
@@ -1229,8 +1230,12 @@ class _HtmlTableSplitter:
 
     @cached_property
     def _header_rows_html(self) -> str:
-        """HTML for repeated header rows."""
-        return "".join(row.html for row in self._header_rows)
+        """HTML for repeated header rows, preserving header semantics."""
+        if not self._header_rows:
+            return ""
+
+        rows_html = "".join(self._as_header_row_html(row) for row in self._header_rows)
+        return f"<thead>{rows_html}</thead>"
 
     @cached_property
     def carried_over_header_row_count(self) -> int:
@@ -1278,6 +1283,36 @@ class _HtmlTableSplitter:
         html_inner = html.removeprefix("<table>").removesuffix("</table>")
         chunk_html = f"<table>{self._header_rows_html}{html_inner}</table>"
         return chunk_text, chunk_html
+
+    @staticmethod
+    def _as_header_row_html(row: HtmlRow) -> str:
+        """Serialize `row` preserving source HTML while converting direct-child `<td>` to `<th>`."""
+        row_html = row.source_html or row.html
+        tr = _HtmlTableSplitter._parse_row_fragment(row_html)
+        if tr is None and row.source_html:
+            tr = _HtmlTableSplitter._parse_row_fragment(row.html)
+        if tr is None:
+            return row.html
+
+        for cell in tr:
+            if getattr(cell, "tag", None) == "td":
+                cell.tag = "th"
+
+        return tostring(tr, encoding=str)
+
+    @staticmethod
+    def _parse_row_fragment(row_html: str):
+        """Parse `row_html` and return a `<tr>` element when recoverable."""
+        try:
+            parsed = fragment_fromstring(row_html)
+        except (ParserError, ValueError):
+            return None
+
+        if parsed.tag == "tr":
+            return parsed
+
+        rows = parsed.xpath(".//tr")
+        return rows[0] if rows else None
 
 
 class _TextSplitter:

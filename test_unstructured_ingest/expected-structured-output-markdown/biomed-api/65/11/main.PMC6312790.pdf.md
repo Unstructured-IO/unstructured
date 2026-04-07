@@ -77,7 +77,9 @@ The corrosion rate (CR) was calculated using Eq. (1) [1–5]
 Corrosion rate CRð Þ ¼ 87:6W DAT ð1Þ
 where: W is weight loss in mg, A is specimen surface area, T is immersion period in hours and D is the specimen density. From the corrosion rate, the surface coverage (θ) and inhibition efﬁciencies (IE %) were determined using Eqs. (2) and (3) respectively
 _ CRo—CR O= OR
+$$
 CRo=CR , 100 IE (0) = CR
+$$
 where: CRo and CR are the corrosion rate in absence and presence of inhibitor respectively.
 2.3. Potentiodynamic polarization method
 The potentiodynamic polarization method was performed on the prepared test samples immersed in 0.5 M H2SO4 solution in the presence and absence of different ES concentrations. A three electrode system was used; stainless steel Type 316 plate as working electrode with an exposed area of 1.0 cm2, platinum rod as counter electrode and silver chloride electrode as reference electrode. The electrode was polished, degreased in acetone and thoroughly rinsed with distilled water before the experiment. Current density against applied potential was plotted. The slope of the linear part in anodic and cathodic plots gives anodic and cathodic constants according to the Stern–Geary equation, and the

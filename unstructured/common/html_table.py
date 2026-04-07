@@ -51,9 +51,15 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
 class HtmlTable:
     """A `<table>` element."""
 
-    def __init__(self, table: HtmlElement, header_row_idxs: set[int] | None = None):
+    def __init__(
+        self,
+        table: HtmlElement,
+        header_row_idxs: set[int] | None = None,
+        source_row_htmls: Sequence[str] | None = None,
+    ):
         self._table = table
         self._header_row_idxs = header_row_idxs or set()
+        self._source_row_htmls = tuple(source_row_htmls or ())
 
     @classmethod
     def from_html_text(cls, html_text: str) -> HtmlTable:
@@ -64,8 +70,9 @@ class HtmlTable:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
 
-        # -- capture header semantics before compactification strips `<thead>`/`<th>` details --
+        # -- capture header semantics and source row HTML before compactification strips details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
+        source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
         header_row_idxs = {
             idx
             for idx, tr in enumerate(rows)
@@ -96,7 +103,7 @@ class HtmlTable:
             if e.tail:
                 e.tail = None
 
-        return cls(table, header_row_idxs=header_row_idxs)
+        return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
 
     @cached_property
     def html(self) -> str:
@@ -113,7 +120,8 @@ class HtmlTable:
     def iter_rows(self) -> Iterator[HtmlRow]:
         rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
         for idx, tr in enumerate(rows):
-            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs))
+            source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
+            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)
 
     @cached_property
     def text(self) -> str:
@@ -126,9 +134,10 @@ class HtmlTable:
 class HtmlRow:
     """A `<tr>` element."""
 
-    def __init__(self, tr: HtmlElement, is_header: bool = False):
+    def __init__(self, tr: HtmlElement, is_header: bool = False, source_html: str | None = None):
         self._tr = tr
         self._is_header = is_header
+        self._source_html = source_html
 
     @cached_property
     def html(self) -> str:
@@ -143,6 +152,11 @@ class HtmlRow:
     def is_header(self) -> bool:
         """True when this row originated from `<thead>` or contains `<th>` cells."""
         return self._is_header
+
+    @property
+    def source_html(self) -> str | None:
+        """Original source `<tr>` HTML captured before compactification, when available."""
+        return self._source_html
 
     def iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each cell of this row as a separate string.

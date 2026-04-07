@@ -5,12 +5,12 @@ import pathlib
 import platform
 import tempfile
 import zlib
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
 import pandas as pd
 import pytest
 
-from test_unstructured.unit_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids, input_path
 from unstructured.documents.elements import (
     Address,
     CheckBox,
@@ -22,6 +22,7 @@ from unstructured.documents.elements import (
     ElementType,
     FigureCaption,
     Form,
+    Formula,
     Image,
     Link,
     ListItem,
@@ -592,6 +593,7 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
     [
         (Title("Test Title"), "# Test Title", False),
         (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
+        (Formula(r"\int_a^b x^2 dx"), "$$\n\\int_a^b x^2 dx\n$$", False),
         (
             Image(
                 "Test Image",
@@ -647,6 +649,184 @@ def test_element_to_md_conversion(element: "Element", expected_markdown: str, ex
     assert (
         base.element_to_md(element, exclude_binary_image_data=exclude_binary) == expected_markdown
     )
+
+
+def test_element_to_md_formula_normalizes_common_math_symbols():
+    element = Formula("x ∈ A and y ≤ z and a × b = c")
+    assert base.element_to_md(element) == (
+        "$$\nx \\in{} A and y \\leq{} z and a \\times{} b = c\n$$"
+    )
+
+
+def test_element_to_md_formula_can_disable_normalization():
+    element = Formula("x ∈ A and y ≤ z and a × b = c")
+    assert (
+        base.element_to_md(element, normalize_formula=False)
+        == "$$\nx ∈ A and y ≤ z and a × b = c\n$$"
+    )
+
+
+def test_element_to_md_formula_preserves_unicode_square_root():
+    """√ must not become \\sqrt{} (would break √2, √(x+1), etc.)."""
+    assert base.element_to_md(Formula("√2")) == "$$\n√2\n$$"
+    assert base.element_to_md(Formula("√(x+1)")) == "$$\n√(x+1)\n$$"
+    assert base.element_to_md(Formula("√2 ≤ x")) == "$$\n√2 \\leq{} x\n$$"
+
+
+def test_elements_to_md_positional_encoding_backward_compat():
+    """Legacy positional (... filename, exclude_binary_image_data, encoding) must still work."""
+    m = mock_open()
+    with patch("builtins.open", m):
+        base.elements_to_md([Title("x")], "out.md", False, "latin-1")
+    assert m.call_count == 1
+    _args, kwargs = m.call_args
+    assert kwargs.get("encoding") == "latin-1"
+
+
+def test_create_file_from_elements_positional_no_group_by_page_backward_compat():
+    """Legacy HTML positional args through no_group_by_page still bind correctly."""
+    with patch("unstructured.partition.html.convert.elements_to_html") as mock_html:
+        mock_html.return_value = "<html></html>"
+        base.create_file_from_elements([Title("P")], "html", None, "utf-8", False, False)
+    mock_html.assert_called_once()
+    assert mock_html.call_args.kwargs["exclude_binary_image_data"] is False
+    assert mock_html.call_args.kwargs["no_group_by_page"] is False
+
+
+def test_elements_to_md_formula_can_disable_normalization():
+    elements = [Formula("x ∈ A")]
+    assert base.elements_to_md(elements, normalize_formula=False) == "$$\nx ∈ A\n$$"
+
+
+def test_create_file_from_elements_markdown_passes_formula_normalization_flag():
+    elements = [Formula("x ∈ A")]
+    content = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        normalize_formula=False,
+    )
+    assert content == "$$\nx ∈ A\n$$"
+
+
+def test_element_to_md_formula_auto_plain_for_noisy_ocr():
+    text = "_ CRo—CR O= OR"
+    assert base.element_to_md(Formula(text)) == text
+
+
+def test_element_to_md_formula_auto_plain_when_embedded_dollar_delimiters():
+    assert base.element_to_md(Formula("a $$ b")) == "a $$ b"
+    assert base.element_to_md(Formula("inline $x$ math")) == "inline $x$ math"
+
+
+def test_element_to_md_formula_display_math_fallback_when_unsafe_delimiters():
+    raw = "a $$ b"
+    assert (
+        base.element_to_md(
+            Formula(raw),
+            formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+        )
+        == raw
+    )
+
+
+def test_element_to_md_formula_display_math_wraps_when_auto_would_plain():
+    assert base.element_to_md(Formula("x = 1")) == "x = 1"
+    assert (
+        base.element_to_md(
+            Formula("x = 1"),
+            formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+        )
+        == "$$\nx = 1\n$$"
+    )
+
+
+def test_element_to_md_formula_auto_plain_for_prose_style_caption():
+    text = (
+        "The corrosion rate (CR) was calculated using Eq. (1) "
+        "and we reference [1–5] for detail in this manuscript."
+    )
+    assert base.element_to_md(Formula(text)) == text
+
+
+def test_element_to_md_formula_invalid_style_raises():
+    with pytest.raises(ValueError, match="formula_markdown_style"):
+        base.element_to_md(Formula("x=1"), formula_markdown_style="nope")
+
+
+def test_elements_to_md_formula_markdown_style_keyword_only():
+    els = [Formula("x ∈ A")]
+    out = base.elements_to_md(els, formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN)
+    assert out == "x ∈ A"
+    out_plain_unicode = base.elements_to_md(
+        els,
+        normalize_formula=False,
+        formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+    )
+    assert out_plain_unicode == "x ∈ A"
+
+
+def test_element_to_md_formula_plain_never_normalizes_unicode_minus():
+    assert (
+        base.element_to_md(
+            Formula("a − b"),
+            formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+        )
+        == "a − b"
+    )
+
+
+def test_element_to_md_formula_in_brace_boundary_after_symbol():
+    out = base.element_to_md(
+        Formula("x∈S"),
+        formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+    )
+    assert out == "$$\nx\\in{}S\n$$"
+
+
+def test_formula_auto_scores_raw_text_prose_with_one_symbol_stays_plain():
+    text = (
+        "E ≤ threshold where E is the energy and threshold was determined experimentally "
+        "in the laboratory setup described above herein."
+    )
+    assert base.element_to_md(Formula(text)) == text
+
+
+def test_elements_from_json_to_md_with_formula_fixture():
+    """JSON fixture → elements_from_json → elements_to_md (real Formula types)."""
+    path = input_path("staging/formula-elements.json")
+    elements = base.elements_from_json(filename=path)
+    assert len(elements) == 2
+    assert elements[0].category == "NarrativeText"
+    assert elements[1].category == "Formula"
+    md = base.elements_to_md(elements)
+    assert md == "See equation below.\n$$\nE = mc^2\n$$"
+
+
+def test_elements_to_md_five_positional_args_order():
+    """Lock (elements, filename, exclude_binary_image_data, encoding, normalize_formula)."""
+    m = mock_open()
+    elements = [Formula("x ∈ A")]
+    with patch("builtins.open", m):
+        out = base.elements_to_md(elements, "out.md", False, "latin-1", False)
+    assert out == "$$\nx ∈ A\n$$"
+    assert m.call_args.kwargs.get("encoding") == "latin-1"
+
+
+def test_create_file_from_elements_propagates_formula_markdown_style():
+    elements = [Formula("x = 1")]
+    assert base.create_file_from_elements(elements, output_format="markdown") == "x = 1"
+    dm = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        formula_markdown_style=base.FORMULA_MARKDOWN_DISPLAY_MATH,
+    )
+    assert dm == "$$\nx = 1\n$$"
+    plain = base.create_file_from_elements(
+        elements,
+        output_format="markdown",
+        formula_markdown_style=base.FORMULA_MARKDOWN_PLAIN,
+    )
+    assert plain == "x = 1"
 
 
 def test_elements_to_md_file_output():
