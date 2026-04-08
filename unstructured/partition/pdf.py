@@ -737,7 +737,7 @@ def _enable_detect_vertical_if_rotated(
     pdfminer_config: Optional["PDFMinerConfig"],
 ) -> Optional["PDFMinerConfig"]:
     """Enable detect_vertical in pdfminer when the PDF has rotated pages."""
-    if any(p.image and p.image.info.get("pdf_rotation", 0) for p in inferred_document_layout.pages):
+    if any((p.image_metadata or {}).get("pdf_rotation", 0) for p in inferred_document_layout.pages):
         pdfminer_config = pdfminer_config or PDFMinerConfig()
         pdfminer_config.detect_vertical = True
 
