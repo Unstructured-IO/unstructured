@@ -1,3 +1,8 @@
+## 0.22.18
+
+### Enhancements
+- **Add page number support to v1 HTML parser**: The v1 HTML parser now reads `data-page-number` attributes from ancestor elements and includes the page number in element metadata, consistent with the v2 parser behavior.
+
 ## 0.22.17
 
 ### Fixes
