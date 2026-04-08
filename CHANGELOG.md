@@ -1,3 +1,8 @@
+## 0.22.19
+
+### Enhancements
+- **Auto-detect vertical text for rotated PDFs**: Add `detect_vertical` field to `PDFMinerConfig` and auto-enable it when rendered pages have `/Rotate` metadata, so pdfminer groups rotated text into proper words instead of per-character regions
+
 ## 0.22.18
 
 ### Enhancements
