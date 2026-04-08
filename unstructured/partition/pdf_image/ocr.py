@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
@@ -31,8 +30,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
     from unstructured_inference.models.tables import UnstructuredTableTransformerModel
-
-logger = logging.getLogger(__name__)
 
 
 def process_data_with_ocr(
