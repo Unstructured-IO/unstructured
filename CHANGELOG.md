@@ -1,3 +1,8 @@
+## 0.22.18-dev0
+
+### Fixes
+- Make `ingest-test-fixtures-update-pr` CI job also update the markdown versions of the fixtures.
+
 ## 0.22.18
 
 ### Enhancements
