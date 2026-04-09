@@ -3,6 +3,9 @@
 ### Enhancements
 - **Add page number support to v1 HTML parser**: The v1 HTML parser now reads `data-page-number` attributes from ancestor elements and includes the page number in element metadata, consistent with the v2 parser behavior.
 
+### Fixes
+- **Fix PaddleOCR language code conversion in `OCRAgent.get_agent()`**: When PaddleOCR is configured as the OCR agent, `get_agent()` now converts Tesseract language codes (e.g., `"eng"`) to PaddleOCR language codes (e.g., `"en"`) before instantiating the agent. Previously, Tesseract-format codes were passed directly to PaddleOCR in the `ocr_only` strategy path and `table_structure` module, causing language detection failures.
+
 ## 0.22.17
 
 ### Fixes
