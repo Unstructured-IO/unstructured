@@ -49,7 +49,7 @@ dependencies = [
 [project.optional-dependencies]
 # Document type extras
 csv = [
-    "pandas>=2.0.0, <4.0.0",
+    "pandas>=2.0.0, <3.0.0",
 ]
 doc = [
     "unstructured[docx]",
@@ -109,7 +109,7 @@ xlsx = [
     "msoffcrypto-tool>=6.0.0, <7.0.0",
     "networkx>=3.2.0, <4.0.0",
     "openpyxl>=3.1.5, <4.0.0",
-    "pandas>=2.0.0, <4.0.0",
+    "pandas>=2.0.0, <3.0.0",
     "xlrd>=2.0.1, <3.0.0",
 ]
 # Speech-to-text for partition_audio (multimodal: audio -> elements)
@@ -200,7 +200,9 @@ override-dependencies = [
     # that conflict with kdbai-client (via pykx). The inference codebase only uses
     # basic APIs available since numpy 1.26 / pandas 1.5.
     "numpy>=1.26.0",
-    "pandas>=1.5.0",
+    # pykx (transitive via kdbai-client) requires pandas<3, and pandas 3.x is
+    # not yet broadly supported by this repo.
+    "pandas>=1.5.0,<3.0.0",
 ]
 constraint-dependencies = [
     # deltalake 1.3.0 is missing Linux ARM64 wheels, causing Docker ARM64 builds to fail
