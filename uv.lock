@@ -22,6 +22,7 @@ required-markers = [
 
 [manifest]
 constraints = [
+    { name = "adlfs", specifier = "==2026.2.0" },
     { name = "deltalake", specifier = "<1.3.0" },
     { name = "fonttools", specifier = ">=4.60.2" },
     { name = "protobuf", specifier = ">=6.30.0" },
@@ -52,7 +53,7 @@ wheels = [
 
 [[package]]
 name = "adlfs"
-version = "2026.4.0"
+version = "2026.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "azure-core", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
@@ -61,9 +62,9 @@ dependencies = [
     { name = "azure-storage-blob", extra = ["aio"], marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
     { name = "fsspec", marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ca/51/c766cea8a00f84f224aa672ea0f20e4f24091eb90ce56104accd003c7405/adlfs-2026.4.0.tar.gz", hash = "sha256:84c6f0fc28403629ef6d6d90f0d1a35a3302179f65ce4686c939a42ad0496d8d", size = 54730, upload-time = "2026-04-09T17:35:54.837Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/39/5d7bde68327d9f6b9d73353664f4b247e194130b0ebcd4ca2d0e101fbd57/adlfs-2026.2.0.tar.gz", hash = "sha256:7661330ef67d99e55d15750cadef5a604a82e1513787039be830efc5b53ba533", size = 54018, upload-time = "2026-02-09T18:46:49.876Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/71/45/6e6061498d2cd7fecfcaa6e17c2057bfcac3578c656b9646c343c7021c6e/adlfs-2026.4.0-py3-none-any.whl", hash = "sha256:a12a420583ae2d86d1b02902db147b7da5cf3e6eef40ee53024756a781d5d84f", size = 46249, upload-time = "2026-04-09T17:35:53.891Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/95/123783625038056187f5bc9036d5249e52751e5dcc685e3f201a0a5d40ba/adlfs-2026.2.0-py3-none-any.whl", hash = "sha256:995fc9acc2ff8d794af15b36c604ab8dc02fe2301a973ce2df0f5b246d13e439", size = 45681, upload-time = "2026-02-09T18:46:48.362Z" },
 ]
 
 [[package]]
