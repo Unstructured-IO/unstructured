@@ -1,3 +1,9 @@
+## 0.22.19
+
+### Security
+
+- **security:** fix(deps): upgrade vulnerable transitive dependencies [security]
+
 ## 0.22.18-dev0
 
 ### Fixes
