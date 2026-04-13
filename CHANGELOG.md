@@ -1,3 +1,8 @@
+## 0.22.20
+
+### Enhancements
+- **Skip table chunking option**: Add `skip_table_chunking` to basic/title chunking options. When `True`, `Table` elements are passed through unchanged without being split into `TableChunk` elements, regardless of their size. Defaults to `False` to preserve existing behavior.
+
 ## 0.22.19
 
 ### Security

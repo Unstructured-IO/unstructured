@@ -71,6 +71,9 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\trepeat_table_headers"
             + "\n\t\t\tDefault: True. Repeat detected table headers on continuation"
             + "\n\t\t\ttable chunks. Set to False to opt out."
+            + "\n\t\tskip_table_chunking"
+            + "\n\t\t\tDefault: False. When True, Table elements are passed through"
+            + "\n\t\t\tunchanged without being split into TableChunk elements."
         )
 
     @functools.wraps(func)

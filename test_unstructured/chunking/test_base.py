@@ -115,6 +115,18 @@ class DescribeChunkingOptions:
     ):
         assert ChunkingOptions(**kwargs).repeat_table_headers is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"skip_table_chunking": True}, True),
+            ({"skip_table_chunking": False}, False),
+            ({"skip_table_chunking": None}, False),
+            ({}, False),
+        ],
+    )
+    def it_knows_whether_to_skip_table_chunking(self, kwargs: dict[str, Any], expected_value: bool):
+        assert ChunkingOptions(**kwargs).skip_table_chunking is expected_value
+
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
         with pytest.raises(
@@ -693,6 +705,29 @@ class DescribePreChunk:
 
         assert len(chunks) == 1
         assert chunks[0].text == "hello world"
+
+    def it_yields_an_oversized_table_unchanged_when_skip_table_chunking_is_True(self):
+        table_text = "cell " * 200  # 1000 chars, well above default max_characters=500
+        table = Table(table_text.strip())
+        opts = ChunkingOptions(max_characters=100, skip_table_chunking=True)
+        pre_chunk = PreChunk([table], overlap_prefix="", opts=opts)
+
+        chunks = list(pre_chunk.iter_chunks())
+
+        assert len(chunks) == 1
+        assert isinstance(chunks[0], Table)
+        assert chunks[0] is table
+
+    def it_splits_an_oversized_table_when_skip_table_chunking_is_False(self):
+        table_text = "cell " * 200  # 1000 chars, well above max_characters=100
+        table = Table(table_text.strip())
+        opts = ChunkingOptions(max_characters=100, skip_table_chunking=False)
+        pre_chunk = PreChunk([table], overlap_prefix="", opts=opts)
+
+        chunks = list(pre_chunk.iter_chunks())
+
+        assert len(chunks) > 1
+        assert all(isinstance(c, TableChunk) for c in chunks)
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
