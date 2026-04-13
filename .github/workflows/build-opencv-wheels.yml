@@ -38,6 +38,19 @@ jobs:
       OPENCV_VERSION: ${{ inputs.opencv_version }}
       DOCKER_PLATFORM: ${{ matrix.docker-platform }}
     steps:
+      # Docker is preinstalled on amd64 ubuntu-latest runners but not on
+      # the arm64 ubuntu-latest-arm-X-cores image. Install it on demand
+      # and make the socket accessible to the runner user without needing
+      # to re-login for the docker group to take effect.
+      - name: Install Docker (arm64 runner)
+        if: matrix.arch == 'arm64'
+        run: |
+          set -euo pipefail
+          curl -fsSL https://get.docker.com | sudo sh
+          sudo systemctl start docker
+          sudo chmod 666 /var/run/docker.sock
+          docker version --format '{{.Server.Version}}'
+
       - name: Build opencv-contrib-python-headless from source
         run: |
           mkdir -p wheels
