@@ -105,9 +105,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # --latest=false keeps this auxiliary wheel release from displacing
+          # the actual package release on the repo's Releases page.
           gh release create "$RELEASE_TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --title "OpenCV Wheels ${OPENCV_VERSION} (no ffmpeg)" \
+            --latest=false \
             --notes "$(cat <<NOTES
           OpenCV Python contrib-headless wheels built from source with WITH_FFMPEG=OFF.
 
