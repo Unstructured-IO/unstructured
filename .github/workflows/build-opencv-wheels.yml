@@ -60,10 +60,19 @@ jobs:
             -v "$PWD/wheels:/out" \
             cgr.dev/chainguard/wolfi-base:latest sh -c '
               set -euo pipefail
-              apk update
-              apk add python-3.12 python-3.12-dev python-3.12-base-dev \
-                opencv-dev cmake gcc glibc-dev libstdc++-dev make pkgconf \
-                py3.12-pip py3.12-numpy
+              # Retry apk install: the chainguard mirror occasionally returns
+              # transient errors mid-install (matches the pattern in unstructured/Dockerfile).
+              apk_ok=false
+              for attempt in 1 2 3; do
+                apk update && \
+                apk add python-3.12 python-3.12-dev python-3.12-base-dev \
+                  opencv-dev cmake gcc glibc-dev libstdc++-dev make pkgconf \
+                  py3.12-pip py3.12-numpy && \
+                apk_ok=true && break
+                echo "apk install failed (attempt $attempt/3), retrying in 5s..."
+                sleep 5
+              done
+              $apk_ok || { echo "apk install failed after 3 attempts"; exit 1; }
 
               CMAKE_ARGS="-DWITH_FFMPEG=OFF" \
               ENABLE_CONTRIB=1 \
