@@ -1,7 +1,11 @@
 name: Build OpenCV Wheels (No FFmpeg)
 
-# Produces opencv-python-headless wheels compiled from source with
+# Produces opencv-contrib-python-headless wheels compiled from source with
 # WITH_FFMPEG=OFF to eliminate bundled ffmpeg CVEs from PyPI wheels.
+# The contrib-headless variant is a strict superset of opencv-python,
+# opencv-python-headless, and opencv-contrib-python: same cv2 module with
+# core + contrib modules and no GUI / no X11. One wheel can therefore
+# satisfy all four opencv-* package names in downstream Dockerfiles.
 # Wheels are uploaded as a GitHub release so both unstructured and
 # unstructured-api Dockerfiles can download them at build time.
 
@@ -9,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       opencv_version:
-        description: "opencv-python-headless version to build (must have sdist on PyPI)"
+        description: "opencv-contrib-python-headless version to build (must have sdist on PyPI)"
         required: true
         default: "4.12.0.88"
       release_tag:
@@ -34,7 +38,7 @@ jobs:
       OPENCV_VERSION: ${{ inputs.opencv_version }}
       DOCKER_PLATFORM: ${{ matrix.docker-platform }}
     steps:
-      - name: Build opencv-python-headless from source
+      - name: Build opencv-contrib-python-headless from source
         run: |
           mkdir -p wheels
           docker run --rm \
@@ -49,21 +53,25 @@ jobs:
                 py3.12-pip py3.12-numpy
 
               CMAKE_ARGS="-DWITH_FFMPEG=OFF" \
+              ENABLE_CONTRIB=1 \
               ENABLE_HEADLESS=1 \
               python3.12 -m pip wheel \
-                --no-binary opencv-python-headless \
+                --no-binary opencv-contrib-python-headless \
                 --no-deps \
-                "opencv-python-headless==${OPENCV_VERSION}" \
+                "opencv-contrib-python-headless==${OPENCV_VERSION}" \
                 -w /out
 
-              echo "=== Validate no bundled ffmpeg ==="
-              python3.12 -m pip install /out/opencv_python_headless-*.whl
+              echo "=== Validate no bundled ffmpeg and contrib modules present ==="
+              python3.12 -m pip install /out/opencv_contrib_python_headless-*.whl
               python3.12 -c "
           import cv2, pathlib
           d = pathlib.Path(cv2.__file__).parent
           libs = d / \".libs\"
           assert not libs.exists(), f\"Unexpected .libs dir: {list(libs.iterdir())}\"
-          print(f\"OK: cv2 {cv2.__version__}, no bundled ffmpeg\")
+          # Sanity check that contrib modules made it into the build
+          assert hasattr(cv2, \"ximgproc\"), \"contrib module cv2.ximgproc missing\"
+          assert hasattr(cv2, \"aruco\"), \"contrib module cv2.aruco missing\"
+          print(f\"OK: cv2 {cv2.__version__}, contrib modules present, no bundled ffmpeg\")
           "
             '
           ls -lh wheels/
@@ -72,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: opencv-wheel-${{ matrix.arch }}
-          path: wheels/opencv_python_headless-*.whl
+          path: wheels/opencv_contrib_python_headless-*.whl
           retention-days: 90
 
   create-release:
@@ -101,13 +109,18 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --title "OpenCV Wheels ${OPENCV_VERSION} (no ffmpeg)" \
             --notes "$(cat <<NOTES
-          OpenCV Python headless wheels built from source with WITH_FFMPEG=OFF.
+          OpenCV Python contrib-headless wheels built from source with WITH_FFMPEG=OFF.
 
           These wheels eliminate bundled ffmpeg CVEs present in the stock PyPI wheels.
           Built against cgr.dev/chainguard/wolfi-base:latest with Python 3.12.
 
-          **Source version:** opencv-python-headless==${OPENCV_VERSION}
-          **Build flags:** CMAKE_ARGS='-DWITH_FFMPEG=OFF' ENABLE_HEADLESS=1
+          The contrib-headless variant provides the full cv2 API (core + contrib
+          modules, no GUI), so a single wheel can satisfy opencv-python,
+          opencv-python-headless, opencv-contrib-python, and
+          opencv-contrib-python-headless in downstream Dockerfiles.
+
+          **Source version:** opencv-contrib-python-headless==${OPENCV_VERSION}
+          **Build flags:** CMAKE_ARGS='-DWITH_FFMPEG=OFF' ENABLE_CONTRIB=1 ENABLE_HEADLESS=1
           NOTES
           )" \
             wheels/*.whl
