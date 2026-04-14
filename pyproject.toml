@@ -49,7 +49,7 @@ dependencies = [
 [project.optional-dependencies]
 # Document type extras
 csv = [
-    "pandas>=2.0.0, <4.0.0",
+    "pandas>=2.0.0, <3.0.0",
 ]
 doc = [
     "unstructured[docx]",
@@ -68,9 +68,9 @@ image = [
     "pi-heif>=1.2.0, <2.0.0",
     "pikepdf>=10.3.0, <11.0.0",
     "pypdf>=6.6.2, <7.0.0",
-    "unstructured-inference>=1.6.2, <2.0.0; platform_system != 'Windows' and python_version >= '3.12'",
+    "unstructured-inference>=1.6.6, <2.0.0; platform_system != 'Windows' and python_version >= '3.12'",
     "unstructured-inference>=1.2.0, <2.0.0; platform_system != 'Windows' and python_version < '3.12'",
-    "unstructured-inference>=1.6.2, <2.0.0; platform_system == 'Windows' and python_version >= '3.12' and python_version < '3.13'",
+    "unstructured-inference>=1.6.6, <2.0.0; platform_system == 'Windows' and python_version >= '3.12' and python_version < '3.13'",
     "unstructured-pytesseract>=0.3.15, <1.0.0",
 ]
 md = [
@@ -109,7 +109,7 @@ xlsx = [
     "msoffcrypto-tool>=6.0.0, <7.0.0",
     "networkx>=3.2.0, <4.0.0",
     "openpyxl>=3.1.5, <4.0.0",
-    "pandas>=2.0.0, <4.0.0",
+    "pandas>=2.0.0, <3.0.0",
     "xlrd>=2.0.1, <3.0.0",
 ]
 # Speech-to-text for partition_audio (multimodal: audio -> elements)
@@ -195,14 +195,9 @@ required-environments = [
     "sys_platform == 'darwin' and platform_machine == 'arm64'",
     "sys_platform == 'win32'",
 ]
-override-dependencies = [
-    # unstructured-inference 1.6.2 has unnecessarily aggressive numpy/pandas floors
-    # that conflict with kdbai-client (via pykx). The inference codebase only uses
-    # basic APIs available since numpy 1.26 / pandas 1.5.
-    "numpy>=1.26.0",
-    "pandas>=1.5.0",
-]
 constraint-dependencies = [
+    # Temporary pin for Azure public-container ingest regression in adlfs 2026.4.0 stack
+    "adlfs==2026.2.0",
     # deltalake 1.3.0 is missing Linux ARM64 wheels, causing Docker ARM64 builds to fail
     "deltalake<1.3.0",
     "fonttools>=4.60.2",
