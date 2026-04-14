@@ -747,6 +747,18 @@ def is_pdf_too_complex(
     return False
 
 
+def _enable_detect_vertical_if_rotated(
+    inferred_document_layout,
+    pdfminer_config: Optional["PDFMinerConfig"],
+) -> Optional["PDFMinerConfig"]:
+    """Enable detect_vertical in pdfminer when the PDF has rotated pages."""
+    if any((p.image_metadata or {}).get("pdf_rotation", 0) for p in inferred_document_layout.pages):
+        pdfminer_config = pdfminer_config or PDFMinerConfig()
+        pdfminer_config.detect_vertical = True
+
+    return pdfminer_config
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -830,6 +842,11 @@ def _partition_pdf_or_image_local(
             password=password,
         )
 
+        pdfminer_config = _enable_detect_vertical_if_rotated(
+            inferred_document_layout,
+            pdfminer_config,
+        )
+
         extracted_layout, layouts_links = (
             process_file_with_pdfminer(
                 filename=filename,
@@ -891,6 +908,11 @@ def _partition_pdf_or_image_local(
 
         if hasattr(file, "seek"):
             file.seek(0)
+
+        pdfminer_config = _enable_detect_vertical_if_rotated(
+            inferred_document_layout,
+            pdfminer_config,
+        )
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(

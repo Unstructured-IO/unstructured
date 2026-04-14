@@ -69,6 +69,7 @@ class MockPageLayout(layout.PageLayout):
     def __init__(self, number: int, image: Image):
         self.number = number
         self.image = image
+        self.image_metadata = {"pdf_rotation": 0}
         self.elements = [
             layout.LayoutElement.from_coords(
                 type="Title",

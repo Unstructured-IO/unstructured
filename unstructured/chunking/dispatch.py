@@ -71,6 +71,9 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\trepeat_table_headers"
             + "\n\t\t\tDefault: True. Repeat detected table headers on continuation"
             + "\n\t\t\ttable chunks. Set to False to opt out."
+            + "\n\t\tskip_table_chunking"
+            + "\n\t\t\tDefault: False. When True, Table elements are passed through"
+            + "\n\t\t\tunchanged without being split into TableChunk elements."
         )
 
     @functools.wraps(func)
@@ -190,11 +193,21 @@ def _merge_table_chunks(chunks: list[TableChunk]) -> Table:
     # -- combine HTML if all chunks have it --
     if all(c.metadata.text_as_html for c in chunks):
         combined = fragment_fromstring("<table></table>")
+        canonical_header_row_count, canonical_header_rows = _first_carried_header_rows(chunks)
+        if canonical_header_rows:
+            thead = fragment_fromstring("<thead></thead>")
+            for row in canonical_header_rows:
+                thead.append(row)
+            combined.append(thead)
+
         for c in chunks:
             parsed = fragment_fromstring(c.metadata.text_as_html)
             carried_over_header_rows = _num_carried_over_header_rows(c)
             rows = parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
-            for row in rows[carried_over_header_rows:]:
+            skip_count = carried_over_header_rows
+            if c is chunks[0] and canonical_header_row_count:
+                skip_count = canonical_header_row_count
+            for row in rows[skip_count:]:
                 combined.append(row)
         metadata.text_as_html = tostring(combined, encoding=str)
     else:
@@ -211,6 +224,63 @@ def _num_carried_over_header_rows(chunk: TableChunk) -> int:
     """
     value = chunk.metadata.num_carried_over_header_rows
     return value or 0
+
+
+def _first_carried_header_rows(chunks: list[TableChunk]) -> tuple[int, list[Any]]:
+    """Header rows from first continuation chunk carrying repeated headers, if any."""
+    first_chunk_rows = _top_level_table_rows(chunks[0].metadata.text_as_html)
+    if first_chunk_rows is None:
+        return 0, []
+
+    for chunk in chunks:
+        carried_row_count = _num_carried_over_header_rows(chunk)
+        if carried_row_count <= 0:
+            continue
+
+        rows = _top_level_table_rows(chunk.metadata.text_as_html)
+        if rows is None:
+            continue
+
+        if carried_row_count > len(rows):
+            continue
+
+        carried_rows = rows[:carried_row_count]
+        if not _leading_row_texts_match(first_chunk_rows, carried_rows):
+            continue
+
+        return carried_row_count, [copy.deepcopy(row) for row in rows[:carried_row_count]]
+
+    return 0, []
+
+
+def _top_level_table_rows(text_as_html: str | None) -> list[Any] | None:
+    """Top-level rows from a table fragment, preserving section ordering."""
+    if not text_as_html:
+        return None
+
+    try:
+        parsed = fragment_fromstring(text_as_html)
+    except (ParserError, ValueError):
+        return None
+
+    return parsed.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+
+
+def _leading_row_texts_match(first_chunk_rows: list[Any], carried_rows: list[Any]) -> bool:
+    """True when carried rows match first chunk's leading rows by normalized cell text."""
+    if len(first_chunk_rows) < len(carried_rows):
+        return False
+
+    for first_row, carried_row in zip(first_chunk_rows, carried_rows):
+        if _row_text_signature(first_row) != _row_text_signature(carried_row):
+            return False
+
+    return True
+
+
+def _row_text_signature(row: Any) -> tuple[str, ...]:
+    """Normalized cell text tuple for a row."""
+    return tuple(" ".join(cell.text_content().split()) for cell in row.iter("td", "th"))
 
 
 def _strip_carried_over_header_text(chunk: TableChunk) -> str:

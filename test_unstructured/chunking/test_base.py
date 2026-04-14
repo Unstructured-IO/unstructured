@@ -115,6 +115,18 @@ class DescribeChunkingOptions:
     ):
         assert ChunkingOptions(**kwargs).repeat_table_headers is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"skip_table_chunking": True}, True),
+            ({"skip_table_chunking": False}, False),
+            ({"skip_table_chunking": None}, False),
+            ({}, False),
+        ],
+    )
+    def it_knows_whether_to_skip_table_chunking(self, kwargs: dict[str, Any], expected_value: bool):
+        assert ChunkingOptions(**kwargs).skip_table_chunking is expected_value
+
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
         with pytest.raises(
@@ -693,6 +705,29 @@ class DescribePreChunk:
 
         assert len(chunks) == 1
         assert chunks[0].text == "hello world"
+
+    def it_yields_an_oversized_table_unchanged_when_skip_table_chunking_is_True(self):
+        table_text = "cell " * 200  # 1000 chars, well above default max_characters=500
+        table = Table(table_text.strip())
+        opts = ChunkingOptions(max_characters=100, skip_table_chunking=True)
+        pre_chunk = PreChunk([table], overlap_prefix="", opts=opts)
+
+        chunks = list(pre_chunk.iter_chunks())
+
+        assert len(chunks) == 1
+        assert isinstance(chunks[0], Table)
+        assert chunks[0] is table
+
+    def it_splits_an_oversized_table_when_skip_table_chunking_is_False(self):
+        table_text = "cell " * 200  # 1000 chars, well above max_characters=100
+        table = Table(table_text.strip())
+        opts = ChunkingOptions(max_characters=100, skip_table_chunking=False)
+        pre_chunk = PreChunk([table], overlap_prefix="", opts=opts)
+
+        chunks = list(pre_chunk.iter_chunks())
+
+        assert len(chunks) > 1
+        assert all(isinstance(c, TableChunk) for c in chunks)
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
@@ -1339,13 +1374,191 @@ class Describe_TableChunker:
         header_text_prefix = "Header A Header B Subhead A Subhead B "
         header_html_prefix = (
             "<table>"
-            "<tr><td>Header A</td><td>Header B</td></tr>"
-            "<tr><td>Subhead A</td><td>Subhead B</td></tr>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
         )
         assert len(chunks) >= 2
         for chunk in chunks[1:]:
             assert chunk.text.startswith(header_text_prefix)
             assert chunk.metadata.text_as_html.startswith(header_html_prefix)
+
+    def and_it_preserves_header_semantics_on_carried_header_rows(self):
+        source_table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th scope='col'>Region</th><th scope='col'>Quarter</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Q1 FY2026</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2 FY2026</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3 FY2026</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Quarter\n"
+            "Northwest Territory Q1 FY2026\n"
+            "Southwest Territory Q2 FY2026\n"
+            "Midwest Territory Q3 FY2026"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=source_table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        source_table = fragment_fromstring(source_table_html)
+        assert source_table.xpath(".//thead")
+        assert source_table.xpath(".//th")
+
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+        assert continuation_table.xpath("./thead")
+        assert continuation_table.xpath("./thead/tr[1]/th/text()") == ["Region", "Quarter"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/td") == []
+        assert continuation_table.xpath("./tr[1]/td/text()") == ["Southwest Territory", "Q2 FY2026"]
+        assert continuation_table.xpath("./tr[1]/th") == []
+
+    def and_it_preserves_source_header_row_html_for_carried_rows(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr data-role='header-row'>"
+            "<th scope='col' abbr='region-code' rowspan='2'>Region</th>"
+            "<td class='sales-cell' data-k='1' colspan='2' headers='sales-header'>"
+            "<img src='chart.svg' alt='Chart icon'/>"
+            "<span> Sales</span>"
+            "<table><tr><td>Nested Value</td></tr></table>"
+            "</td>"
+            "</tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Q1 FY2026</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2 FY2026</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3 FY2026</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Sales Nested Value\n"
+            "Northwest Territory Q1 FY2026\n"
+            "Southwest Territory Q2 FY2026\n"
+            "Midwest Territory Q3 FY2026"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=80,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+
+        assert continuation_table.xpath("./thead/tr[1]/@data-role") == ["header-row"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@rowspan") == ["2"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@class") == ["sales-cell"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@data-k") == ["1"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@headers") == ["sales-header"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@src") == ["chart.svg"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@alt") == ["Chart icon"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]//table/tr/td/text()") == [
+            "Nested Value"
+        ]
+        assert continuation_table.xpath("./thead/tr[1]/td") == []
+
+    def and_it_preserves_non_text_only_carried_header_cells(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr>"
+            "<th>Region</th>"
+            "<th><img src='status.svg' alt='Status icon'/></th>"
+            "</tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>Open</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Closed</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Pending</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region\n"
+            "Northwest Territory Open\n"
+            "Southwest Territory Closed\n"
+            "Midwest Territory Pending"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) >= 2
+        continuation_html = chunks[1].metadata.text_as_html
+        assert continuation_html is not None
+        continuation_table = fragment_fromstring(continuation_html)
+
+        assert continuation_table.xpath("./thead")
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@src") == ["status.svg"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@alt") == ["Status icon"]
+        assert "<th/>" not in continuation_html
+
+    def and_it_keeps_compactified_contracts_for_non_header_body_cells(self):
+        table_html = (
+            "<table>"
+            "<thead><tr><th scope='col'>Region</th><th scope='col'>Sales</th></tr></thead>"
+            "<tbody>"
+            "<tr><td class='region-cell'>Northwest Territory</td>"
+            "<td data-origin='crm'>1200</td></tr>"
+            "<tr><td class='region-cell'>Southwest Territory</td>"
+            "<td data-origin='crm'>1400</td></tr>"
+            "<tr><td class='region-cell'>Midwest Territory</td>"
+            "<td data-origin='crm'>1600</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Sales\n"
+            "Northwest Territory 1200\n"
+            "Southwest Territory 1400\n"
+            "Midwest Territory 1600"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) >= 2
+        for chunk in chunks:
+            assert chunk.metadata.text_as_html is not None
+            chunk_table = fragment_fromstring(chunk.metadata.text_as_html)
+            assert chunk_table.xpath("./tr/td/@class") == []
+            assert chunk_table.xpath("./tr/td/@data-origin") == []
+
+        continuation_table = fragment_fromstring(chunks[1].metadata.text_as_html)
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@scope") == ["col"]
 
     def and_it_records_carried_over_header_row_counts_on_split_chunks(self):
         table_html = (
@@ -1993,6 +2206,133 @@ class Describe_TableChunker:
             "Body 4 Delta",
         ]
 
+    def and_it_reconstructs_a_single_canonical_thead_for_carried_headers(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>Header A</th><th>Header B</th></tr>"
+            "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie</td></tr>"
+            "<tr><td>Body 4</td><td>Delta</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Header A Header B\n"
+            "Subhead A Subhead B\n"
+            "Body 1 Alpha\n"
+            "Body 2 Bravo\n"
+            "Body 3 Charlie\n"
+            "Body 4 Delta"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+
+        assert reconstructed.xpath("./thead/tr[1]/th/text()") == ["Header A", "Header B"]
+        assert reconstructed.xpath("./thead/tr[2]/th/text()") == ["Subhead A", "Subhead B"]
+        assert len(reconstructed.xpath("./thead")) == 1
+        assert reconstructed.xpath("./tr[1]/td/text()") == ["Body 1", "Alpha"]
+        assert reconstructed.xpath("./tr[1]/th") == []
+
+    def and_it_preserves_header_attributes_in_reconstructed_canonical_thead(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th scope='col' abbr='region-code'>Region</th>"
+            "<th id='sales-group' colspan='2'>Sales</th></tr>"
+            "<tr><th headers='sales-group'>Quarter</th>"
+            "<th rowspan='2'>Revenue</th><th>Units</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>1200</td><td>17</td></tr>"
+            "<tr><td>Southwest Territory</td><td>1400</td><td>19</td></tr>"
+            "<tr><td>Midwest Territory</td><td>1600</td><td>21</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "Region Sales",
+            "Quarter Revenue Units",
+            "Northwest Territory 1200 17",
+            "Southwest Territory 1400 19",
+            "Midwest Territory 1600 21",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=70,
+            repeat_table_headers=True,
+        )
+        assert len(chunks) >= 2
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+
+        assert len(reconstructed.xpath("./thead")) == 1
+        assert len(reconstructed.xpath("./thead/tr")) == 2
+        assert reconstructed.xpath("./thead/tr[1]/th[1]/@scope") == ["col"]
+        assert reconstructed.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
+        assert reconstructed.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
+        assert reconstructed.xpath("./thead/tr[2]/th[1]/@headers") == ["sales-group"]
+        assert reconstructed.xpath("./thead/tr[2]/th[2]/@rowspan") == ["2"]
+        assert reconstructed.xpath("./tr[1]/th") == []
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
+    def and_it_only_builds_a_canonical_thead_when_carried_rows_match_chunk_zero_prefix(self):
+        table_id = "table-with-mismatched-carried-headers"
+        chunks: list[TableChunk] = [
+            TableChunk(
+                text="Header A Body 1",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=0,
+                    num_carried_over_header_rows=0,
+                    text_as_html=(
+                        "<table><tr><th>Header A</th></tr><tr><td>Body 1</td></tr></table>"
+                    ),
+                ),
+            ),
+            TableChunk(
+                text="Header A Header B Body 2",
+                metadata=ElementMetadata(
+                    table_id=table_id,
+                    chunk_index=1,
+                    num_carried_over_header_rows=2,
+                    text_as_html=(
+                        "<table>"
+                        "<thead><tr><th>Header A</th></tr><tr><th>Header B</th></tr></thead>"
+                        "<tr><td>Body 2</td></tr>"
+                        "</table>"
+                    ),
+                ),
+            ),
+        ]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text == "Header A Body 1 Body 2"
+        assert table.metadata.text_as_html is not None
+        reconstructed = fragment_fromstring(table.metadata.text_as_html)
+        assert reconstructed.xpath("./thead") == []
+        assert self._row_texts(table.metadata.text_as_html) == ["Header A", "Body 1", "Body 2"]
+
     def and_it_handles_nested_markup_in_carried_header_rows_during_reconstruction(self):
         table_html = (
             "<table>"
@@ -2037,6 +2377,158 @@ class Describe_TableChunker:
         assert table.text.split() == expected_text.split()
         assert table.metadata.text_as_html is not None
         assert self._row_texts(table.metadata.text_as_html) == expected_row_texts
+
+    def and_it_does_not_synthesize_carried_header_rows_for_no_header_tables(self):
+        table_html = (
+            "<table>"
+            "<tbody>"
+            "<tr><td>Body 1</td><td>Alpha value</td></tr>"
+            "<tr><td>Body 2</td><td>Bravo value</td></tr>"
+            "<tr><td>Body 3</td><td>Charlie value</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "Body 1 Alpha value",
+            "Body 2 Bravo value",
+            "Body 3 Charlie value",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 2
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 0]
+        assert all("<thead>" not in (c.metadata.text_as_html or "") for c in chunks)
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
+    def and_it_keeps_single_chunk_tables_out_of_table_chunk_reconstruction(self):
+        table_html = (
+            "<table>"
+            "<thead><tr><th>Col A</th><th>Col B</th></tr></thead>"
+            "<tbody><tr><td>Only body row</td><td>42</td></tr></tbody>"
+            "</table>"
+        )
+        table_text = "Col A Col B\nOnly body row 42"
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=500,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 1
+        [single_chunk_table] = chunks
+        assert isinstance(single_chunk_table, Table)
+        assert not isinstance(single_chunk_table, TableChunk)
+        assert single_chunk_table.metadata.table_id is None
+        assert single_chunk_table.metadata.chunk_index is None
+        assert single_chunk_table.metadata.num_carried_over_header_rows is None
+
+        assert (
+            reconstruct_table_from_chunks([Text("Preamble"), single_chunk_table, Text("Epilogue")])
+            == []
+        )
+
+    def and_it_reconstructs_three_header_row_tables_without_duplication(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th>H1</th><th>H2</th></tr>"
+            "<tr><th>SubA</th><th>SubB</th></tr>"
+            "<tr><th>Units</th><th>USD</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest Territory</td><td>100 units</td></tr>"
+            "<tr><td>Southwest Territory</td><td>200 units</td></tr>"
+            "<tr><td>Midwest Territory</td><td>300 units</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        expected_rows = [
+            "H1 H2",
+            "SubA SubB",
+            "Units USD",
+            "Northwest Territory 100 units",
+            "Southwest Territory 200 units",
+            "Midwest Territory 300 units",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=55,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 3, 3]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
+
+    def and_it_reconstructs_mixed_section_markup_in_row_order(self):
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th><section><span>Main Header</span></section></th><th>Value</th></tr>"
+            "<tr><th>Subhead</th><th><section>Units</section></th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td><section>North Region</section></td><td>10 widgets</td></tr>"
+            "<tr><td>South Region</td><td>20 widgets</td></tr>"
+            "</tbody>"
+            "<tfoot>"
+            "<tr><td>Total</td><td>30 widgets</td></tr>"
+            "</tfoot>"
+            "</table>"
+        )
+        expected_rows = [
+            "Main Header Value",
+            "Subhead Units",
+            "North Region 10 widgets",
+            "South Region 20 widgets",
+            "Total 30 widgets",
+        ]
+        table_text = "\n".join(expected_rows)
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=70,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) == 3
+        assert [c.metadata.num_carried_over_header_rows for c in chunks] == [0, 2, 2]
+        for chunk in chunks[1:]:
+            assert chunk.metadata.text_as_html is not None
+            continuation_table = fragment_fromstring(chunk.metadata.text_as_html)
+            assert continuation_table.xpath("./thead/tr[1]/th[1]/section/span/text()") == [
+                "Main Header"
+            ]
+            assert continuation_table.xpath("./thead/tr[2]/th[2]/section/text()") == ["Units"]
+
+        [table] = reconstruct_table_from_chunks(chunks)
+
+        assert table.text.split() == table_text.split()
+        assert table.metadata.text_as_html is not None
+        assert self._row_texts(table.metadata.text_as_html) == expected_rows
 
     def it_treats_missing_carried_header_row_counts_as_zero_during_reconstruction(self):
         """Missing carried-header metadata defaults to no carried rows during reconstruction."""

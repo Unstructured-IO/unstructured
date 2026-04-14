@@ -1824,3 +1824,20 @@ def test_reproductible_pdf_loader():
                 assert e1.text == e2.text, f"load two time {f=} return differents results"
             else:
                 break
+
+
+def test_hi_res_groups_rotated_page_text_into_words():
+    elements = pdf.partition_pdf(
+        filename=example_doc_path("rotated-page-90.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+    )
+
+    texts = [e.text for e in elements if e.text and len(e.text) > 5]
+    assert any("Hello World" in t for t in texts), (
+        f"Expected 'Hello World' as grouped text from rotated page, got: {texts[:5]}"
+    )
+
+    single_chars = [e.text for e in elements if e.text and len(e.text) == 1]
+    assert len(single_chars) == 0, (
+        f"Rotated page produced {len(single_chars)} single-char elements: {single_chars[:10]}"
+    )

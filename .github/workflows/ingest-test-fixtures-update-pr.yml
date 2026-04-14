@@ -116,6 +116,7 @@ jobs:
           add-paths: |
             test_unstructured_ingest/expected-structured-output
             test_unstructured_ingest/expected-structured-output-html
+            test_unstructured_ingest/expected-structured-output-markdown
             test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}

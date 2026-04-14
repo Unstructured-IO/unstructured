@@ -1517,3 +1517,37 @@ def test_partition_html_with_empty_content_raises_error(test_case, content):
             assert len(elements) == 0
         finally:
             os.unlink(temp_filename)
+
+
+# ================================================================================================
+# PAGE NUMBER FROM data-page-number ATTRIBUTE
+# ================================================================================================
+
+
+def test_partition_html_assigns_page_number_from_data_page_number_attribute():
+    html_text = (
+        "<html><body>"
+        '  <div data-page-number="1">'
+        "    <p>First page content.</p>"
+        "    <table><tr><td>Table on page 1</td></tr></table>"
+        "  </div>"
+        '  <div data-page-number="2">'
+        "    <p>Second page content.</p>"
+        "  </div>"
+        "</body></html>"
+    )
+    elements = partition_html(text=html_text)
+
+    page_1_elements = [e for e in elements if e.metadata.page_number == 1]
+    page_2_elements = [e for e in elements if e.metadata.page_number == 2]
+
+    assert len(page_1_elements) == 2
+    assert any(isinstance(e, Table) for e in page_1_elements)
+    assert len(page_2_elements) == 1
+    assert page_2_elements[0].text == "Second page content."
+
+
+def test_partition_html_leaves_page_number_None_when_not_present():
+    html_text = "<html><body><p>No page markup.</p></body></html>"
+    elements = partition_html(text=html_text)
+    assert all(e.metadata.page_number is None for e in elements)
