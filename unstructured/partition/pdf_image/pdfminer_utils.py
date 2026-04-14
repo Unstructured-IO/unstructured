@@ -303,6 +303,7 @@ class PDFMinerConfig(BaseModel):
     word_margin: Optional[float] = None
     line_margin: Optional[float] = None
     char_margin: Optional[float] = None
+    detect_vertical: Optional[bool] = None
 
 
 def init_pdfminer(pdfminer_config: Optional[PDFMinerConfig] = None):
