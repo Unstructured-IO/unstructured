@@ -1,3 +1,9 @@
+## 0.22.21
+
+### Security
+
+- **Replace PyPI opencv wheels with ffmpeg-free builds in Docker image**: After `uv sync`, the Dockerfile now substitutes all PyPI opencv-python variants with a source-built `opencv-contrib-python-headless` wheel compiled with `WITH_FFMPEG=OFF`, eliminating 14 bundled ffmpeg CVEs. The contrib-headless variant is a strict superset of the cv2 API (core + contrib modules, no GUI) so a single wheel replaces `opencv-python`, `opencv-python-headless`, and `opencv-contrib-python`.
+
 ## 0.22.20
 
 ### Enhancements
