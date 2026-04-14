@@ -200,6 +200,15 @@ class ChunkingOptions:
         return True if arg_value is None else bool(arg_value)
 
     @cached_property
+    def skip_table_chunking(self) -> bool:
+        """When True, Table elements are passed through without chunking.
+
+        Default value is `False`.
+        """
+        arg_value = self._kwargs.get("skip_table_chunking")
+        return False if arg_value is None else bool(arg_value)
+
+    @cached_property
     def inter_chunk_overlap(self) -> int:
         """Characters of overlap to add between chunks.
 
@@ -662,9 +671,12 @@ class PreChunk:
         # -- it may need to be split into multiple `TableChunk` elements and that operation is
         # -- quite specialized.
         if len(self._elements) == 1 and isinstance(self._elements[0], Table):
-            yield from _TableChunker.iter_chunks(
-                self._elements[0], self._overlap_prefix, self._opts
-            )
+            if self._opts.skip_table_chunking:
+                yield self._elements[0]
+            else:
+                yield from _TableChunker.iter_chunks(
+                    self._elements[0], self._overlap_prefix, self._opts
+                )
         else:
             yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
 

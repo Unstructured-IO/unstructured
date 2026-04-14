@@ -183,6 +183,44 @@ def test_it_repeats_table_headers_by_default_but_can_opt_out():
     ]
 
 
+def test_skip_table_chunking_passes_oversized_table_through_unchanged():
+    table_text = "cell " * 200  # 1000 chars, well above max_characters=100
+    table = Table(table_text.strip())
+    text_before = Text("Hello world")
+    text_after = Text("Goodbye world")
+
+    chunks = chunk_elements(
+        [text_before, table, text_after],
+        max_characters=100,
+        skip_table_chunking=True,
+    )
+
+    assert len(chunks) == 3
+    assert isinstance(chunks[0], CompositeElement)
+    assert isinstance(chunks[1], Table)
+    assert isinstance(chunks[2], CompositeElement)
+    # -- table text is unchanged --
+    assert chunks[1].text == table_text.strip()
+
+
+def test_skip_table_chunking_does_not_affect_text_element_chunking():
+    long_text = Text("word " * 200)
+    table = Table("small table")
+
+    chunks = chunk_elements(
+        [long_text, table],
+        max_characters=100,
+        skip_table_chunking=True,
+    )
+
+    # -- long text element is still split, table is still isolated --
+    text_chunks = [c for c in chunks if isinstance(c, CompositeElement)]
+    table_chunks = [c for c in chunks if isinstance(c, Table)]
+    assert len(text_chunks) > 1
+    assert len(table_chunks) == 1
+    assert table_chunks[0].text == "small table"
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
@@ -228,6 +266,23 @@ class Describe_chunk_elements:
 
         _, opts = _chunk_elements_.call_args.args
         assert opts.repeat_table_headers is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"skip_table_chunking": True}, True),
+            ({"skip_table_chunking": False}, False),
+            ({"skip_table_chunking": None}, False),
+            ({}, False),
+        ],
+    )
+    def it_supports_the_skip_table_chunking_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+    ):
+        chunk_elements([], **kwargs)
+
+        _, opts = _chunk_elements_.call_args.args
+        assert opts.skip_table_chunking is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 

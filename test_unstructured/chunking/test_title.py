@@ -65,6 +65,34 @@ def test_it_splits_oversized_table():
     assert all(isinstance(chunk, TableChunk) for chunk in chunks)
 
 
+def test_skip_table_chunking_passes_oversized_table_through_unchanged():
+    elements = elements_from_json(input_path("chunking/table_2000.json"))
+
+    chunks = chunk_by_title(elements, skip_table_chunking=True)
+
+    assert len(chunks) == 1
+    assert isinstance(chunks[0], Table)
+
+
+def test_skip_table_chunking_does_not_combine_table_with_adjacent_text():
+    table_text = "cell " * 200
+    table = Table(table_text.strip())
+    text_before = Text("Hello world")
+    text_after = Text("Goodbye world")
+
+    chunks = chunk_by_title(
+        [text_before, table, text_after],
+        max_characters=5000,
+        combine_text_under_n_chars=5000,
+        skip_table_chunking=True,
+    )
+
+    assert isinstance(chunks[0], CompositeElement)
+    assert isinstance(chunks[1], Table)
+    assert isinstance(chunks[2], CompositeElement)
+    assert chunks[1].text == table_text.strip()
+
+
 def test_it_repeats_table_headers_by_default_but_can_opt_out():
     table_html = (
         "<table>"
@@ -563,6 +591,23 @@ class Describe_chunk_by_title:
 
         _, opts = _chunk_by_title_.call_args.args
         assert opts.repeat_table_headers is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"skip_table_chunking": True}, True),
+            ({"skip_table_chunking": False}, False),
+            ({"skip_table_chunking": None}, False),
+            ({}, False),
+        ],
+    )
+    def it_supports_the_skip_table_chunking_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+    ):
+        chunk_by_title([], **kwargs)
+
+        _, opts = _chunk_by_title_.call_args.args
+        assert opts.skip_table_chunking is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 
