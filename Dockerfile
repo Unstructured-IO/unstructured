@@ -97,10 +97,16 @@ RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test
 # Bump this when a newer version publishes an sdist.
 ARG OPENCV_WHEEL_TAG=opencv-4.12.0.88
 ARG OPENCV_WHEEL_VERSION=4.12.0.88
+# SHA-256 hashes of the wheels we built in build-opencv-wheels.yml.
+# Update these when bumping OPENCV_WHEEL_VERSION.
+ARG OPENCV_SHA256_aarch64=498fbb787dbfe7d6bc853ddad4ea1154e8fbefbfafd05aafb417f576e27850d5
+ARG OPENCV_SHA256_x86_64=50545ffc1efabf06cd70894b65a7fbca56786f560f452bf67a42c1bbd7a85961
 RUN ARCH=$(uname -m) && \
     WHEEL="opencv_contrib_python_headless-${OPENCV_WHEEL_VERSION}-cp312-cp312-linux_${ARCH}.whl" && \
     wget -q -O /tmp/"${WHEEL}" \
       "https://github.com/Unstructured-IO/unstructured/releases/download/${OPENCV_WHEEL_TAG}/${WHEEL}" && \
+    EXPECTED=$(eval echo "\$OPENCV_SHA256_${ARCH}") && \
+    echo "${EXPECTED}  /tmp/${WHEEL}" | sha256sum -c - && \
     uv pip uninstall \
       opencv-python opencv-python-headless \
       opencv-contrib-python opencv-contrib-python-headless && \
