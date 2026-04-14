@@ -90,16 +90,22 @@ RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test
 # would silently no-op for the non-matching names.
 #
 # See: https://github.com/opencv/opencv-python/issues/1212
+#
+# Note: uv.lock resolves opencv packages to 4.13.0.92, but our wheel is pinned
+# to 4.12.0.88 because 4.13.0.92 has no sdist on PyPI — our GHA workflow
+# (build-opencv-wheels.yml) compiles from source and requires an sdist.
+# Bump this when a newer version publishes an sdist.
 ARG OPENCV_WHEEL_TAG=opencv-4.12.0.88
 ARG OPENCV_WHEEL_VERSION=4.12.0.88
 RUN ARCH=$(uname -m) && \
-    wget -q -O /tmp/opencv.whl \
-      "https://github.com/Unstructured-IO/unstructured/releases/download/${OPENCV_WHEEL_TAG}/opencv_contrib_python_headless-${OPENCV_WHEEL_VERSION}-cp312-cp312-linux_${ARCH}.whl" && \
+    WHEEL="opencv_contrib_python_headless-${OPENCV_WHEEL_VERSION}-cp312-cp312-linux_${ARCH}.whl" && \
+    wget -q -O /tmp/"${WHEEL}" \
+      "https://github.com/Unstructured-IO/unstructured/releases/download/${OPENCV_WHEEL_TAG}/${WHEEL}" && \
     uv pip uninstall \
       opencv-python opencv-python-headless \
       opencv-contrib-python opencv-contrib-python-headless && \
-    uv pip install --no-deps /tmp/opencv.whl && \
-    rm /tmp/opencv.whl
+    uv pip install --no-deps /tmp/"${WHEEL}" && \
+    rm /tmp/"${WHEEL}"
 
 ENV PATH="/app/.venv/bin:${PATH}"
 ENV HF_HUB_OFFLINE=1
