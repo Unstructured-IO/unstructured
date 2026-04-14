@@ -18,6 +18,10 @@ env:
 
 jobs:
   release:
+    # Skip opencv wheel releases (tagged 'opencv-*') produced by the
+    # build-opencv-wheels workflow - those aren't package releases and would
+    # otherwise trigger a spurious PyPI publish failure.
+    if: ${{ !startsWith(github.event.release.tag_name, 'opencv-') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
