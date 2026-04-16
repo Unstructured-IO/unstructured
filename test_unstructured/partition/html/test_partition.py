@@ -108,6 +108,28 @@ def test_partition_html_accepts_an_html_str():
     assert len(elements) > 0
 
 
+def test_partition_html_parses_deeply_nested_html():
+    """Regression for #4289: large/deeply-nested HTML must not silently yield zero elements.
+
+    lxml's ``HTMLParser`` defaults to ``huge_tree=False``, which causes subtrees beyond its
+    depth limit (~256) to be dropped silently. We enable ``huge_tree=True`` on the module-level
+    parser so ``partition_html`` returns the inner text instead of an empty list.
+    """
+    depth = 260
+    html = (
+        "<html><body>"
+        + "<div>" * depth
+        + "<p>deeply nested paragraph</p>"
+        + "</div>" * depth
+        + "</body></html>"
+    )
+
+    elements = partition_html(text=html)
+
+    assert len(elements) == 1
+    assert elements[0].text == "deeply nested paragraph"
+
+
 def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
     requests_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),
