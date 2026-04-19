@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Parse large/deeply nested HTML documents**: `partition_html` previously returned an empty element list for HTML with deep subtree nesting because the module-level `etree.HTMLParser` used lxml's default `huge_tree=False`, which silently drops nodes past the default depth limit. Enable `huge_tree=True` on the parser so deep documents round-trip correctly (#4289).
+- **Parse large/deeply nested HTML documents (opt-in)**: `partition_html` previously returned an empty element list for HTML with deep subtree nesting because the module-level `etree.HTMLParser` used lxml's default `huge_tree=False`, which silently drops nodes past the default depth limit. Set the `UNSTRUCTURED_HTML_HUGE_TREE` environment variable to `1`/`true`/`yes` to enable `huge_tree=True` and parse deeply nested documents. The default remains `False` because `huge_tree=True` disables libxml2's safety guards against malicious inputs (see https://lxml.de/FAQ.html) (#4289).
 
 ## 0.22.21
 
