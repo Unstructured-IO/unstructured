@@ -77,6 +77,42 @@ RUN uv sync --locked --all-extras --no-group dev --no-group lint --no-group test
     uv run --no-sync $PYTHON -c "from unstructured.partition.model_init import initialize; initialize()" && \
     uv run --no-sync $PYTHON -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
+# Replace PyPI opencv wheels (which bundle vulnerable ffmpeg 5.1.x with 14 CVEs)
+# with a source-built opencv-contrib-python-headless wheel compiled with
+# WITH_FFMPEG=OFF + ENABLE_CONTRIB=1 + ENABLE_HEADLESS=1.
+#
+# The contrib-headless variant is a strict superset of the cv2 API exposed by
+# opencv-python, opencv-python-headless, and opencv-contrib-python (all of
+# which are pulled in transitively by unstructured-paddleocr / unstructured-
+# inference). One wheel can therefore replace all three. Because the wheel's
+# metadata name only matches opencv-contrib-python-headless, we have to
+# uninstall the other variants first - `uv pip install --reinstall-package`
+# would silently no-op for the non-matching names.
+#
+# See: https://github.com/opencv/opencv-python/issues/1212
+#
+# Note: uv.lock resolves opencv packages to 4.13.0.92, but our wheel is pinned
+# to 4.12.0.88 because 4.13.0.92 has no sdist on PyPI — our GHA workflow
+# (build-opencv-wheels.yml) compiles from source and requires an sdist.
+# Bump this when a newer version publishes an sdist.
+ARG OPENCV_WHEEL_TAG=opencv-4.12.0.88
+ARG OPENCV_WHEEL_VERSION=4.12.0.88
+# SHA-256 hashes of the wheels we built in build-opencv-wheels.yml.
+# Update these when bumping OPENCV_WHEEL_VERSION.
+ARG OPENCV_SHA256_aarch64=498fbb787dbfe7d6bc853ddad4ea1154e8fbefbfafd05aafb417f576e27850d5
+ARG OPENCV_SHA256_x86_64=50545ffc1efabf06cd70894b65a7fbca56786f560f452bf67a42c1bbd7a85961
+RUN ARCH=$(uname -m) && \
+    WHEEL="opencv_contrib_python_headless-${OPENCV_WHEEL_VERSION}-cp312-cp312-linux_${ARCH}.whl" && \
+    wget -q -O /tmp/"${WHEEL}" \
+      "https://github.com/Unstructured-IO/unstructured/releases/download/${OPENCV_WHEEL_TAG}/${WHEEL}" && \
+    EXPECTED=$(eval echo "\$OPENCV_SHA256_${ARCH}") && \
+    echo "${EXPECTED}  /tmp/${WHEEL}" | sha256sum -c - && \
+    uv pip uninstall \
+      opencv-python opencv-python-headless \
+      opencv-contrib-python opencv-contrib-python-headless && \
+    uv pip install --no-deps /tmp/"${WHEEL}" && \
+    rm /tmp/"${WHEEL}"
+
 ENV PATH="/app/.venv/bin:${PATH}"
 ENV HF_HUB_OFFLINE=1
 
