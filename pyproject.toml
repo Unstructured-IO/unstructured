@@ -141,6 +141,9 @@ ingest = [
     "unstructured-ingest[airtable,astradb,azure,azure-ai-search,bedrock,biomed,box,chroma,confluence,couchbase,databricks-volumes,delta-table,discord,dropbox,elasticsearch,gcs,github,gitlab,google-drive,hubspot,huggingface,jira,kafka,kdbai,milvus,mongodb,notion,octoai,onedrive,openai,opensearch,outlook,pinecone,postgres,qdrant,reddit,remote,s3,salesforce,sftp,sharepoint,singlestore,slack,vectara,vertexai,voyageai,weaviate,wikipedia]>=1.4.0, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 
+[project.scripts]
+unstructured = "unstructured.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/Unstructured-IO/unstructured"
 
@@ -257,6 +260,12 @@ python_functions = ["test_", "it_", "they_", "but_", "and_"]
 testpaths = [
     "test_unstructured",
     "test_unstructured_ingest",
+]
+
+[tool.coverage.run]
+omit = [
+    # Entrypoint only; exercised via `unstructured` console script, not imports in tests.
+    "unstructured/__main__.py",
 ]
 
 [tool.coverage.report]
