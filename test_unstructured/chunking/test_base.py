@@ -1521,6 +1521,52 @@ class Describe_TableChunker:
         assert continuation_table.xpath("./thead/tr[1]/th[2]/img/@alt") == ["Status icon"]
         assert "<th/>" not in continuation_html
 
+    def and_it_preserves_colspan_and_rowspan_in_the_first_chunk_header_rows(self):
+        # -- regression: col/row-span on header cells must survive in the first chunk the same way
+        # -- they do in continuation chunks.
+        table_html = (
+            "<table>"
+            "<thead>"
+            "<tr><th rowspan='2'>Region</th><th colspan='2'>Sales</th></tr>"
+            "<tr><th>Q1</th><th>Q2</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>Northwest</td><td>100</td><td>150</td></tr>"
+            "<tr><td>Southwest</td><td>200</td><td>250</td></tr>"
+            "<tr><td>Midwest</td><td>300</td><td>350</td></tr>"
+            "<tr><td>Northeast</td><td>400</td><td>450</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        table_text = (
+            "Region Sales Q1 Q2\n"
+            "Northwest 100 150\n"
+            "Southwest 200 250\n"
+            "Midwest 300 350\n"
+            "Northeast 400 450"
+        )
+
+        chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=80,
+            repeat_table_headers=True,
+        )
+
+        assert len(chunks) >= 2
+        first_html = chunks[0].metadata.text_as_html
+        assert first_html is not None
+        first_table = fragment_fromstring(first_html)
+
+        # -- first chunk header rows keep the structural span attributes --
+        assert first_table.xpath("./tr[1]/td[1]/@rowspan") == ["2"]
+        assert first_table.xpath("./tr[1]/td[2]/@colspan") == ["2"]
+
+        # -- and the same attributes remain on the repeated headers of continuation chunks --
+        continuation_table = fragment_fromstring(chunks[1].metadata.text_as_html)
+        assert continuation_table.xpath("./thead/tr[1]/th[1]/@rowspan") == ["2"]
+        assert continuation_table.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
+
     def and_it_keeps_compactified_contracts_for_non_header_body_cells(self):
         table_html = (
             "<table>"
