@@ -1,3 +1,9 @@
+## 0.22.23
+
+### Fixes
+
+- **Preserve `colspan`/`rowspan` in first table chunk headers**: `HtmlTable` compactification no longer strips `colspan` and `rowspan` attributes from table cells. Previously, the first `TableChunk` lost merged-cell structural information while continuation chunks retained it (via the source-HTML path used for repeated headers), yielding inconsistent header layout across a split table.
+
 ## 0.22.22
 
 ### Security
