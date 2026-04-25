@@ -1,3 +1,9 @@
+## 0.22.24
+
+### Fixes
+
+- **Reject oversized hi-res PDF renders before rasterization**: Hi-res PDF partitioning now checks estimated per-page rendered pixels before rendering and returns an unprocessable document error when a page exceeds the configured safe limit.
+
 ## 0.22.23
 
 ### Fixes
