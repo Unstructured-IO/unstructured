@@ -18,6 +18,19 @@ def test_env_override(monkeypatch):
     assert env_config.IMAGE_CROP_PAD == 1
 
 
+def test_pdf_render_max_pixels_per_page_default():
+    from unstructured.partition.utils.config import env_config
+
+    assert env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE == 1_000_000_000
+
+
+def test_pdf_render_max_pixels_per_page_env_override(monkeypatch):
+    monkeypatch.setenv("PDF_RENDER_MAX_PIXELS_PER_PAGE", "123")
+    from unstructured.partition.utils.config import env_config
+
+    assert env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE == 123
+
+
 @pytest.fixture()
 def _setup_tmpdir():
     from unstructured.partition.utils.config import env_config

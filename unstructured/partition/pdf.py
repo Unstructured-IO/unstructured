@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import copy
 import io
+import math
 import os
 import re
 import warnings
@@ -38,7 +39,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -105,6 +106,7 @@ TEXT_OPS_PATTERN = re.compile(
 )
 DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
 DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
+PDF_POINTS_PER_INCH = 72
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -593,6 +595,61 @@ def check_pdf_hi_res_max_pages_exceeded(
             )
 
 
+def check_pdf_render_max_pixels_exceeded(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    pdf_image_dpi: Optional[int] = None,
+    pdf_render_max_pixels_per_page: Optional[int] = None,
+    password: Optional[str] = None,
+) -> None:
+    """Checks whether any PDF page would render beyond the configured pixel limit."""
+    pdf_image_dpi = pdf_image_dpi or env_config.PDF_RENDER_DPI
+    if pdf_render_max_pixels_per_page is None:
+        pdf_render_max_pixels_per_page = env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE
+
+    if not pdf_render_max_pixels_per_page:
+        return
+
+    original_pos: Optional[int] = None
+
+    try:
+        if file is not None:
+            if isinstance(file, bytes):
+                reader = PdfReader(io.BytesIO(file))
+            else:
+                original_pos = file.tell()
+                file.seek(0)
+                reader = PdfReader(file)
+        elif filename:
+            reader = PdfReader(filename)
+        else:
+            raise ValueError("Either 'file' or 'filename' must be provided.")
+
+        if password:
+            reader.decrypt(password)
+
+        scale = pdf_image_dpi / PDF_POINTS_PER_INCH
+
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_box = page.cropbox or page.mediabox
+            rendered_width = math.ceil(abs(float(page_box.width)) * scale)
+            rendered_height = math.ceil(abs(float(page_box.height)) * scale)
+            rendered_pixels = rendered_width * rendered_height
+
+            if rendered_pixels > pdf_render_max_pixels_per_page:
+                raise UnprocessableEntityError(
+                    "PDF page would render to too many pixels for safe processing: "
+                    f"page={page_number}, pixels={rendered_pixels}, "
+                    f"maximum={pdf_render_max_pixels_per_page}, dpi={pdf_image_dpi}. "
+                    "Try splitting the PDF, reducing the page dimensions, or using a lower "
+                    "render DPI."
+                )
+
+    finally:
+        if file is not None and not isinstance(file, bytes) and original_pos is not None:
+            file.seek(original_pos)
+
+
 def is_pdf_too_complex(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
@@ -802,14 +859,20 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
+    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
+    if pdf_image_dpi is None:
+        pdf_image_dpi = env_config.PDF_RENDER_DPI
+
     if not is_image:
         check_pdf_hi_res_max_pages_exceeded(
             filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
         )
-
-    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
-    if pdf_image_dpi is None:
-        pdf_image_dpi = env_config.PDF_RENDER_DPI
+        check_pdf_render_max_pixels_exceeded(
+            filename=filename,
+            file=file,
+            pdf_image_dpi=pdf_image_dpi,
+            password=password,
+        )
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
     extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None

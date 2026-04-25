@@ -36,7 +36,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
@@ -1579,6 +1579,64 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
                 pdf_hi_res_max_pages=pdf_hi_res_max_pages,
                 is_image=is_image,
             )
+
+
+def test_check_pdf_render_max_pixels_exceeded_raises_for_oversized_page():
+    page = mock.Mock()
+    page.cropbox.width = 720
+    page.cropbox.height = 720
+    reader = mock.Mock(pages=[page])
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            pdf.check_pdf_render_max_pixels_exceeded(
+                filename="oversized.pdf",
+                pdf_image_dpi=100,
+                pdf_render_max_pixels_per_page=999_999,
+            )
+
+
+def test_check_pdf_render_max_pixels_exceeded_allows_page_under_limit():
+    page = mock.Mock()
+    page.cropbox.width = 72
+    page.cropbox.height = 72
+    reader = mock.Mock(pages=[page])
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        pdf.check_pdf_render_max_pixels_exceeded(
+            filename="normal.pdf",
+            pdf_image_dpi=100,
+            pdf_render_max_pixels_per_page=20_000,
+        )
+
+
+def test_check_pdf_render_max_pixels_exceeded_can_be_disabled():
+    with mock.patch.object(pdf, "PdfReader") as pdf_reader:
+        pdf.check_pdf_render_max_pixels_exceeded(
+            filename="oversized.pdf",
+            pdf_image_dpi=100,
+            pdf_render_max_pixels_per_page=0,
+        )
+
+    pdf_reader.assert_not_called()
+
+
+def test_check_pdf_render_max_pixels_exceeded_restores_file_cursor_position():
+    file = io.BytesIO(b"%PDF-1.7 fake")
+    file.seek(4)
+    page = mock.Mock()
+    page.cropbox.width = 72
+    page.cropbox.height = 72
+    reader = mock.Mock(pages=[page])
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        pdf.check_pdf_render_max_pixels_exceeded(
+            file=file,
+            pdf_image_dpi=100,
+            pdf_render_max_pixels_per_page=20_000,
+        )
+
+    assert file.tell() == 4
 
 
 def test_is_pdf_too_complex_skips_small_file_size():
