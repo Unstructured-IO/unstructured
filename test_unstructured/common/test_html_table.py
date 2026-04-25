@@ -76,6 +76,27 @@ class DescribeHtmlTable:
         )
         assert html_table.html == "<table><tr><td>foobar</td></tr></table>"
 
+    def but_it_preserves_colspan_and_rowspan_as_structural_cell_attributes(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "<tr><th colspan='2' class='hdr' style='x'>A</th>"
+            "<th rowspan='2' id='foo'>B</th></tr>"
+            "<tr><td colspan='2' rowspan='3' data-k='v'>C</td><td>D</td></tr>"
+            "</table>"
+        )
+        table = fragment_fromstring(html_table.html)
+
+        # -- colspan/rowspan survive compactification --
+        assert table.xpath("./tr[1]/td[1]/@colspan") == ["2"]
+        assert table.xpath("./tr[1]/td[2]/@rowspan") == ["2"]
+        assert table.xpath("./tr[2]/td[1]/@colspan") == ["2"]
+        assert table.xpath("./tr[2]/td[1]/@rowspan") == ["3"]
+        # -- cosmetic / arbitrary attributes are still stripped --
+        assert table.xpath("./tr[1]/td[1]/@class") == []
+        assert table.xpath("./tr[1]/td[1]/@style") == []
+        assert table.xpath("./tr[1]/td[2]/@id") == []
+        assert table.xpath("./tr[2]/td[1]/@data-k") == []
+
     @pytest.mark.parametrize(
         "html_text",
         [
