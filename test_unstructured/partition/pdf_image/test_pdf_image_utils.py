@@ -7,10 +7,12 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 from PIL import Image as PILImg
+from unstructured_inference.inference import pdf_image
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import ElementMetadata, ElementType, Image, Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.pdf_image import pdf_image_utils
 
 
@@ -60,6 +62,29 @@ def test_convert_pdf_to_image(file_mode, path_only):
             assert isinstance(images[0], str)
         else:
             assert isinstance(images[0], PILImg.Image)
+
+
+def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
+    with patch.object(
+        pdf_image_utils,
+        "render_pdf_to_image",
+        side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            pdf_image_utils.convert_pdf_to_image(filename="example.pdf")
+
+
+def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
+    with (
+        patch.object(pdf_image_utils.pdf2image, "pdfinfo_from_path", return_value={"Pages": 1}),
+        patch.object(
+            pdf_image_utils,
+            "render_pdf_to_image",
+            side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
+        ),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            list(pdf_image_utils.convert_pdf_to_images(filename="example.pdf"))
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
