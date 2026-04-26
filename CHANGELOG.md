@@ -1,3 +1,9 @@
+## 0.22.24
+
+### Fixes
+
+- **Reject oversized hi-res PDF renders before bitmap allocation**: Hi-res PDF partitioning now passes the configured per-page pixel limit to `unstructured-inference` so oversized pages are rejected immediately before rendering, then returned as unprocessable document errors.
+
 ## 0.22.23
 
 ### Fixes
