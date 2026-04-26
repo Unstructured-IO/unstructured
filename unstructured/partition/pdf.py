@@ -38,7 +38,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -781,6 +781,7 @@ def _partition_pdf_or_image_local(
         process_data_with_model,
         process_file_with_model,
     )
+    from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 
     from unstructured.partition.pdf_image.analysis.layout_dump import (
         ExtractedLayoutDumper,
@@ -802,14 +803,19 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
+    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
+    if pdf_image_dpi is None:
+        pdf_image_dpi = env_config.PDF_RENDER_DPI
+    model_render_kwargs = (
+        {"pdf_render_max_pixels_per_page": env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE}
+        if not is_image
+        else {}
+    )
+
     if not is_image:
         check_pdf_hi_res_max_pages_exceeded(
             filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
         )
-
-    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
-    if pdf_image_dpi is None:
-        pdf_image_dpi = env_config.PDF_RENDER_DPI
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
     extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None
@@ -818,14 +824,21 @@ def _partition_pdf_or_image_local(
 
     skip_analysis_dump = env_config.ANALYSIS_DUMP_OD_SKIP
 
+    def _run_layout_inference(processor, source):
+        try:
+            return processor(
+                source,
+                is_image=is_image,
+                model_name=hi_res_model_name,
+                pdf_image_dpi=pdf_image_dpi,
+                password=password,
+                **model_render_kwargs,
+            )
+        except PdfRenderTooLargeError as exc:
+            raise UnprocessableEntityError(str(exc)) from exc
+
     if file is None:
-        inferred_document_layout = process_file_with_model(
-            filename,
-            is_image=is_image,
-            model_name=hi_res_model_name,
-            pdf_image_dpi=pdf_image_dpi,
-            password=password,
-        )
+        inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
 
         pdfminer_config = _enable_detect_vertical_if_rotated(
             inferred_document_layout,
@@ -883,13 +896,7 @@ def _partition_pdf_or_image_local(
             table_ocr_agent=table_ocr_agent,
         )
     else:
-        inferred_document_layout = process_data_with_model(
-            file,
-            is_image=is_image,
-            model_name=hi_res_model_name,
-            pdf_image_dpi=pdf_image_dpi,
-            password=password,
-        )
+        inferred_document_layout = _run_layout_inference(process_data_with_model, file)
 
         if hasattr(file, "seek"):
             file.seek(0)
