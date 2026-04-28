@@ -12,7 +12,7 @@ import uuid
 from functools import cached_property
 from itertools import groupby
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Literal, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -213,7 +213,7 @@ class ElementMetadata:
     text_as_html: Optional[str]
     is_extracted: Optional[str]
     table_as_cells: Optional[dict[str, str | int]]
-    table_extraction_method: Optional[Literal["grid", "tatr", "vlm"]]
+    table_extraction_method: Optional[str]  # "grid", "tatr", or "vlm"
 
     # -- used for TableChunk elements to enable table reconstruction --
     table_id: Optional[str]
@@ -268,7 +268,7 @@ class ElementMetadata:
         signature: Optional[str] = None,
         subject: Optional[str] = None,
         table_as_cells: Optional[dict[str, str | int]] = None,
-        table_extraction_method: Optional[Literal["grid", "tatr", "vlm"]] = None,
+        table_extraction_method: Optional[str] = None,
         table_id: Optional[str] = None,
         chunk_index: Optional[int] = None,
         num_carried_over_header_rows: Optional[int] = None,
