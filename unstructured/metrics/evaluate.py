@@ -292,7 +292,8 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
         if self.include_false_positives:
             # we give false positive tables a 1 table worth of weight in computing table level acc
-            df["_table_weights"][df.total_tables.eq(0) & df.total_predicted_tables.gt(0)] = 1
+            _fp_mask = df.total_tables.eq(0) & df.total_predicted_tables.gt(0)
+            df.loc[_fp_mask, "_table_weights"] = 1
 
         # filter down to only those with actual and/or predicted tables
         has_tables_df = df[df["_table_weights"] > 0]

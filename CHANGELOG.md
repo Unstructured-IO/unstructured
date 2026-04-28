@@ -1,3 +1,9 @@
+## 0.22.25
+
+### Enhancements
+
+- **`unstructured doctor` CLI**: Add a `unstructured` console script and `python -m unstructured` entry point with a `doctor` subcommand for dependency and capability diagnostics (environment, optional system tools such as libmagic, tesseract, pandoc, ffmpeg, and LibreOffice, and per file-type extras). Supports `doctor --for <type>` (including `image` and `audio` families) and `doctor --file <path>`; exits non-zero when the requested capability is not available.
+
 ## 0.22.24
 
 ### Fixes
