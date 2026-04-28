@@ -22,6 +22,7 @@ from unstructured.nlp.tokenize import pos_tag, sent_tokenize, word_tokenize
 POS_VERB_TAGS: Final[List[str]] = ["VB", "VBG", "VBD", "VBN", "VBP", "VBZ"]
 ENGLISH_WORD_SPLIT_RE = re.compile(r"[\s\-,.!?_\/]+")
 NON_LOWERCASE_ALPHA_RE = re.compile(r"[^a-z]")
+HAN_IDEOGRAPH_RE = re.compile(r"[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]")
 
 
 def is_possible_narrative_text(
@@ -128,9 +129,21 @@ def is_possible_title(
     title_max_word_length = int(
         os.environ.get("UNSTRUCTURED_TITLE_MAX_WORD_LENGTH", title_max_word_length),
     )
+    title_max_no_space_length = int(
+        os.environ.get("UNSTRUCTURED_TITLE_MAX_NO_SPACE_LENGTH", 120),
+    )
     # NOTE(robinson) - splitting on spaces here instead of word tokenizing because it
     # is less expensive and actual tokenization doesn't add much value for the length check
     if len(text.split(" ")) > title_max_word_length:
+        return False
+    # NOTE: Chinese text is commonly written without spaces. Without this guard, long body text
+    # can be misclassified as a title because it appears as a single "word". Scope this to Han
+    # ideograph text to avoid regressions for other no-space scripts.
+    if (
+        HAN_IDEOGRAPH_RE.search(text) is not None
+        and not any(char.isspace() for char in text)
+        and len(text) > title_max_no_space_length
+    ):
         return False
 
     non_alpha_threshold = float(
