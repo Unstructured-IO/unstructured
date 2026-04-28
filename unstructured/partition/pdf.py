@@ -1443,6 +1443,9 @@ def document_to_element_list(
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
+                element.metadata.table_extraction_method = getattr(
+                    layout_element, "table_extraction_method", None
+                )
 
                 if (isinstance(element, Title) and element.metadata.category_depth is None) and (
                     has_headline
