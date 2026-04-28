@@ -1,3 +1,9 @@
+## 0.22.26
+
+### Enhancements
+
+- Add `table_extraction_method` field to `ElementMetadata` to track which algorithm produced a table (grid, tatr, vlm). Propagated from `LayoutElement` during PDF partitioning.
+
 ## 0.22.25
 
 ### Enhancements

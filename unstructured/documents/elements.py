@@ -12,7 +12,7 @@ import uuid
 from functools import cached_property
 from itertools import groupby
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, Literal, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -213,6 +213,7 @@ class ElementMetadata:
     text_as_html: Optional[str]
     is_extracted: Optional[str]
     table_as_cells: Optional[dict[str, str | int]]
+    table_extraction_method: Optional[Literal["grid", "tatr", "vlm"]]
 
     # -- used for TableChunk elements to enable table reconstruction --
     table_id: Optional[str]
@@ -267,6 +268,7 @@ class ElementMetadata:
         signature: Optional[str] = None,
         subject: Optional[str] = None,
         table_as_cells: Optional[dict[str, str | int]] = None,
+        table_extraction_method: Optional[Literal["grid", "tatr", "vlm"]] = None,
         table_id: Optional[str] = None,
         chunk_index: Optional[int] = None,
         num_carried_over_header_rows: Optional[int] = None,
@@ -320,6 +322,7 @@ class ElementMetadata:
         self.subject = subject
         self.text_as_html = text_as_html
         self.table_as_cells = table_as_cells
+        self.table_extraction_method = table_extraction_method
         self.table_id = table_id
         self.chunk_index = chunk_index
         self.num_carried_over_header_rows = num_carried_over_header_rows
@@ -548,6 +551,7 @@ class ConsolidationStrategy(enum.Enum):
             "subject": cls.FIRST,
             "text_as_html": cls.STRING_CONCATENATE,
             "table_as_cells": cls.FIRST,  # -- only occurs in Table --
+            "table_extraction_method": cls.FIRST,
             "table_id": cls.DROP,  # -- added by chunking, not before --
             "chunk_index": cls.DROP,  # -- added by chunking, not before --
             "num_carried_over_header_rows": cls.DROP,  # -- added by chunking, not before --
