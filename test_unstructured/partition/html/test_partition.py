@@ -108,6 +108,72 @@ def test_partition_html_accepts_an_html_str():
     assert len(elements) > 0
 
 
+def test_partition_html_huge_tree_defaults_to_disabled():
+    """`UNSTRUCTURED_HTML_HUGE_TREE` defaults to off so libxml2 safety guards stay on.
+
+    `huge_tree=True` disables protections against malicious inputs (see
+    https://lxml.de/FAQ.html), so it must remain opt-in. This test asserts the
+    module-level parser is constructed with `huge_tree=False` when the env var is unset.
+    """
+    # The libxml2 parser doesn't expose `huge_tree` directly, so assert by behavior:
+    # parsing a deeply-nested document without the env var should silently return [].
+    depth = 260
+    html = (
+        "<html><body>"
+        + "<div>" * depth
+        + "<p>deep</p>"
+        + "</div>" * depth
+        + "</body></html>"
+    )
+
+    elements = partition_html(text=html)
+
+    # With huge_tree disabled, lxml drops nodes past the depth limit.
+    assert elements == []
+
+
+def test_partition_html_parses_deeply_nested_html_when_huge_tree_enabled(monkeypatch):
+    """Regression for #4289: large/deeply-nested HTML must not silently yield zero elements.
+
+    lxml's ``HTMLParser`` defaults to ``huge_tree=False``, which causes subtrees beyond its
+    depth limit (~256) to be dropped silently. Setting ``UNSTRUCTURED_HTML_HUGE_TREE=1`` opts
+    into ``huge_tree=True`` on the module-level parser so ``partition_html`` returns the inner
+    text instead of an empty list. The opt-in is required because ``huge_tree=True`` disables
+    libxml2's safety guards (see https://lxml.de/FAQ.html).
+    """
+    from unstructured.partition.html import parser as html_parser_module
+
+    monkeypatch.setenv("UNSTRUCTURED_HTML_HUGE_TREE", "1")
+    # The parser is built at module import time, so swap it in directly for the test.
+    original_parser = html_parser_module.html_parser
+    fresh_parser = etree.HTMLParser(remove_comments=True, huge_tree=True)
+    fresh_parser.set_element_class_lookup(html_parser_module.element_class_lookup)
+    monkeypatch.setattr(html_parser_module, "html_parser", fresh_parser)
+    # `partition.py` imported `html_parser` directly into its namespace, so patch that too.
+    from unstructured.partition.html import partition as partition_module
+
+    monkeypatch.setattr(partition_module, "html_parser", fresh_parser)
+
+    try:
+        depth = 260
+        html = (
+            "<html><body>"
+            + "<div>" * depth
+            + "<p>deeply nested paragraph</p>"
+            + "</div>" * depth
+            + "</body></html>"
+        )
+
+        elements = partition_html(text=html)
+
+        assert len(elements) == 1
+        assert elements[0].text == "deeply nested paragraph"
+    finally:
+        # Restore for any subsequent tests in this process.
+        monkeypatch.setattr(html_parser_module, "html_parser", original_parser)
+        monkeypatch.setattr(partition_module, "html_parser", original_parser)
+
+
 def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
     requests_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),

@@ -1,32 +1,8 @@
-## 0.22.26
-
-### Enhancements
-
-- Add `table_extraction_method` field to `ElementMetadata` to track which algorithm produced a table (grid, tatr, vlm). Propagated from `LayoutElement` during PDF partitioning.
-
-## 0.22.25
-
-### Enhancements
-
-- **`unstructured doctor` CLI**: Add a `unstructured` console script and `python -m unstructured` entry point with a `doctor` subcommand for dependency and capability diagnostics (environment, optional system tools such as libmagic, tesseract, pandoc, ffmpeg, and LibreOffice, and per file-type extras). Supports `doctor --for <type>` (including `image` and `audio` families) and `doctor --file <path>`; exits non-zero when the requested capability is not available.
-
-## 0.22.24
-
-### Fixes
-
-- **Reject oversized hi-res PDF renders before bitmap allocation**: Hi-res PDF partitioning now passes the configured per-page pixel limit to `unstructured-inference` so oversized pages are rejected immediately before rendering, then returned as unprocessable document errors.
-
-## 0.22.23
-
-### Fixes
-
-- **Preserve `colspan`/`rowspan` in first table chunk headers**: `HtmlTable` compactification no longer strips `colspan` and `rowspan` attributes from table cells. Previously, the first `TableChunk` lost merged-cell structural information while continuation chunks retained it (via the source-HTML path used for repeated headers), yielding inconsistent header layout across a split table.
-
 ## 0.22.22
 
-### Security
+### Fixes
 
-- **Replace PyPI opencv wheels with ffmpeg-free builds in Docker image**: After `uv sync`, the Dockerfile now substitutes all PyPI opencv-python variants with a source-built `opencv-contrib-python-headless` wheel compiled with `WITH_FFMPEG=OFF`, eliminating 14 bundled ffmpeg CVEs. The contrib-headless variant is a strict superset of the cv2 API (core + contrib modules, no GUI) so a single wheel replaces `opencv-python`, `opencv-python-headless`, and `opencv-contrib-python`.
+- **Parse large/deeply nested HTML documents (opt-in)**: `partition_html` previously returned an empty element list for HTML with deep subtree nesting because the module-level `etree.HTMLParser` used lxml's default `huge_tree=False`, which silently drops nodes past the default depth limit. Set the `UNSTRUCTURED_HTML_HUGE_TREE` environment variable to `1`/`true`/`yes` to enable `huge_tree=True` and parse deeply nested documents. The default remains `False` because `huge_tree=True` disables libxml2's safety guards against malicious inputs (see https://lxml.de/FAQ.html) (#4289).
 
 ## 0.22.21
 

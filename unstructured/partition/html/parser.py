@@ -75,6 +75,7 @@ Other background
 
 from __future__ import annotations
 
+import os
 import re
 from collections import defaultdict, deque
 from functools import cached_property
@@ -945,7 +946,13 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 # ------------------------------------------------------------------------------------------------
 
 
-html_parser = etree.HTMLParser(remove_comments=True)
+# `huge_tree=True` allows lxml to parse deeply nested HTML (>256 levels) but
+# disables libxml2's safety guards against malicious inputs. Default to off and
+# require explicit opt-in via the `UNSTRUCTURED_HTML_HUGE_TREE` env var.
+# See https://lxml.de/FAQ.html for the security tradeoffs.
+_HUGE_TREE = os.environ.get("UNSTRUCTURED_HTML_HUGE_TREE", "").lower() in ("1", "true", "yes")
+
+html_parser = etree.HTMLParser(remove_comments=True, huge_tree=_HUGE_TREE)
 # -- elements that don't have a registered class get DefaultElement --
 fallback = etree.ElementDefaultClassLookup(element=DefaultElement)
 # -- elements that do have a registered class are assigned that class via lookup --
