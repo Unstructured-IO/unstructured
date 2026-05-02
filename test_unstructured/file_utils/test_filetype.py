@@ -601,7 +601,32 @@ def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype
     file_type = detect_filetype(example_doc_path("not-unstructured-payload.json"))
     # A multi-line single-object JSON file used to get classified as NDJSON. It should now end up
     # as JSON (and partition_json will reject it with the existing schema-mismatch error).
-    assert file_type != FileType.NDJSON
+    assert file_type == FileType.JSON
+
+
+def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
+    """NDJSON whose first record is longer than the 4096-char text_head prefix.
+
+    `_disambiguate_json_file_type` reads past `text_head` to find the first newline, so the
+    heuristic must not rely on the first record fitting in the prefix. Both single-record and
+    multi-record cases are exercised — both must round-trip as `FileType.NDJSON`.
+    """
+    big_value = "x" * 5000
+    payload_one_record = json.dumps({"text": big_value, "type": "NarrativeText"}).encode()
+    payload_many_records = (
+        payload_one_record + b"\n" + json.dumps({"text": "tiny", "type": "Title"}).encode()
+    )
+
+    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.NDJSON
+    assert detect_filetype(file=io.BytesIO(payload_many_records)) == FileType.NDJSON
+    assert is_ndjson_processable(file=io.BytesIO(payload_one_record)) is True
+
+
+def it_classifies_multiline_json_as_json_when_first_newline_exceeds_text_head_prefix():
+    big_value = "x" * 5000
+    payload = ('{"text": "' + big_value + '",\n "type": "NarrativeText"\n}').encode()
+
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
 
 
 # ================================================================================================
