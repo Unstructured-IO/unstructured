@@ -58,7 +58,11 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
+        read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
+        # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
+        if ctx.delimiter is None:
+            read_kw["engine"] = "python"
+        dataframe = pd.read_csv(file, **read_kw)
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")

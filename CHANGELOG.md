@@ -1,8 +1,26 @@
-## 0.22.24
+## 0.22.27
 
 ### Fixes
 
 - **Stop misclassifying multi-line JSON files as NDJSON**: `is_ndjson_processable` previously returned `True` for any text starting with `{`, so `.json` and `.ipynb` files containing a single multi-line JSON object (e.g. Jupyter notebooks) were routed to `partition_ndjson`, which then crashed in its `splitlines()`-based parser.
+
+## 0.22.26
+
+### Enhancements
+
+- Add `table_extraction_method` field to `ElementMetadata` to track which algorithm produced a table (grid, tatr, vlm). Propagated from `LayoutElement` during PDF partitioning.
+
+## 0.22.25
+
+### Enhancements
+
+- **`unstructured doctor` CLI**: Add a `unstructured` console script and `python -m unstructured` entry point with a `doctor` subcommand for dependency and capability diagnostics (environment, optional system tools such as libmagic, tesseract, pandoc, ffmpeg, and LibreOffice, and per file-type extras). Supports `doctor --for <type>` (including `image` and `audio` families) and `doctor --file <path>`; exits non-zero when the requested capability is not available.
+
+## 0.22.24
+
+### Fixes
+
+- **Reject oversized hi-res PDF renders before bitmap allocation**: Hi-res PDF partitioning now passes the configured per-page pixel limit to `unstructured-inference` so oversized pages are rejected immediately before rendering, then returned as unprocessable document errors.
 
 ## 0.22.23
 

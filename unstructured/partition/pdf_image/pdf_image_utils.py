@@ -15,8 +15,10 @@ import numpy as np
 import pdf2image
 from PIL import Image
 from unstructured_inference.inference.layout import convert_pdf_to_image as render_pdf_to_image
+from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 
 from unstructured.documents.elements import ElementType
+from unstructured.errors import UnprocessableEntityError
 from unstructured.logger import logger
 from unstructured.partition.common.common import convert_to_bytes, exactly_one
 from unstructured.partition.utils.config import env_config
@@ -66,14 +68,18 @@ def convert_pdf_to_image(
     if dpi is None:
         dpi = env_config.PDF_RENDER_DPI
 
-    return render_pdf_to_image(
-        filename=filename,
-        file=file,
-        dpi=dpi,
-        output_folder=output_folder,
-        path_only=path_only,
-        password=password,
-    )
+    try:
+        return render_pdf_to_image(
+            filename=filename,
+            file=file,
+            dpi=dpi,
+            output_folder=output_folder,
+            path_only=path_only,
+            password=password,
+            pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
+        )
+    except PdfRenderTooLargeError as exc:
+        raise UnprocessableEntityError(str(exc)) from exc
 
 
 def pad_element_bboxes(
@@ -405,14 +411,18 @@ def convert_pdf_to_images(
     total_pages = info["Pages"]
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
-        chunk_images = render_pdf_to_image(
-            filename=filename if f_bytes is None else None,
-            file=f_bytes,
-            dpi=env_config.PDF_RENDER_DPI,
-            first_page=start_page,
-            last_page=end_page,
-            password=password,
-        )
+        try:
+            chunk_images = render_pdf_to_image(
+                filename=filename if f_bytes is None else None,
+                file=f_bytes,
+                dpi=env_config.PDF_RENDER_DPI,
+                first_page=start_page,
+                last_page=end_page,
+                password=password,
+                pdf_render_max_pixels_per_page=env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE,
+            )
+        except PdfRenderTooLargeError as exc:
+            raise UnprocessableEntityError(str(exc)) from exc
         chunk_images = cast(List[Image.Image], chunk_images)
 
         for image in chunk_images:

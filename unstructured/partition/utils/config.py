@@ -315,5 +315,10 @@ class ENVConfig:
         """The DPI to use for rendering PDF pages"""
         return self._get_int("PDF_RENDER_DPI", 350)
 
+    @property
+    def PDF_RENDER_MAX_PIXELS_PER_PAGE(self) -> int:
+        """Maximum rendered pixels allowed for a single PDF page"""
+        return self._get_int("PDF_RENDER_MAX_PIXELS_PER_PAGE", 1_000_000_000)
+
 
 env_config = ENVConfig()
