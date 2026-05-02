@@ -137,10 +137,12 @@ def is_ndjson_processable(
     file_text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
 ) -> bool:
-    """True when file looks like a JSON array of objects.
+    """True when file looks like newline-delimited JSON objects.
 
-    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
-    file is JSON.
+    NDJSON is a sequence of one JSON value per line, conventionally an object on each line. A
+    payload that parses as a single JSON value (e.g. a multi-line `{...}` object or a `[...]`
+    array) is *not* NDJSON and must not be matched here, otherwise `partition_ndjson` will fail
+    later when it splits the text by lines and tries to parse each fragment.
     """
     exactly_one(filename=filename, file=file, file_text=file_text)
 
@@ -148,7 +150,36 @@ def is_ndjson_processable(
         file_text = _FileTypeDetectionContext.new(
             file_path=filename, file=file, encoding=encoding
         ).text_head
-    return file_text.lstrip().startswith("{")
+
+    text = file_text.lstrip()
+    if not text:
+        return False
+
+    # Case 1: the entire payload parses as a single JSON value.
+    #
+    # A single-line JSON object is a valid 1-record NDJSON payload, and `partition_ndjson`
+    # accepts it (existing tests rely on this). A multi-line single object — or any JSON
+    # array/scalar — is NOT NDJSON: routing it through `partition_ndjson` would crash in
+    # `splitlines()`-based parsing.
+    try:
+        parsed = json.loads(text)
+        return isinstance(parsed, dict) and "\n" not in text.rstrip()
+    except json.JSONDecodeError:
+        pass
+
+    # Case 2: payload does not parse as a single JSON value, so it must be multiple
+    # newline-separated values. The first non-empty line must independently parse as a JSON
+    # object — that is exactly what `partition_ndjson` will require.
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            return False
+        return isinstance(obj, dict)
+    return False
 
 
 class _FileTypeDetector:
@@ -224,12 +255,17 @@ class _FileTypeDetector:
 
     @property
     def _disambiguate_json_file_type(self) -> FileType:
-        """Disambiguate JSON/NDJSON file-type based on file contents."""
-        if is_json_processable(file_text=self._ctx.text_head):
-            return FileType.JSON
+        """Disambiguate JSON/NDJSON file-type based on file contents.
+
+        NDJSON is detected first because it has the strictest signature (multiple JSON values
+        separated by newlines, with the first line independently parsable). Anything else that
+        libmagic flagged as JSON is classified as `FileType.JSON`; the JSON partitioner has its
+        own `is_json_processable` schema check and will reject non-conforming payloads with a
+        clear error.
+        """
         if is_ndjson_processable(file_text=self._ctx.text_head):
             return FileType.NDJSON
-        raise ValueError("Unable to process JSON file")
+        return FileType.JSON
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:

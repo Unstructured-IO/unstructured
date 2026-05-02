@@ -1,3 +1,9 @@
+## 0.22.24
+
+### Fixes
+
+- **Stop misclassifying multi-line JSON files as NDJSON**: `is_ndjson_processable` previously returned `True` for any text starting with `{`, so `.json` and `.ipynb` files containing a single multi-line JSON object (e.g. Jupyter notebooks) were routed to `partition_ndjson`, which then crashed in its `splitlines()`-based parser.
+
 ## 0.22.23
 
 ### Fixes
