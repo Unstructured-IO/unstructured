@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from unstructured.logger import logger
+from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_MODULES_WHITELIST,
@@ -29,8 +30,12 @@ class OCRAgent(ABC):
         """Get the configured OCRAgent instance.
 
         The OCR package used by the agent is determined by the `OCR_AGENT` environment variable.
+        If PaddleOCR is configured, Tesseract language codes are automatically converted
+        to PaddleOCR language codes.
         """
         ocr_agent_cls_qname = cls._get_ocr_agent_cls_qname()
+        if ocr_agent_cls_qname == OCR_AGENT_PADDLE:
+            language = tesseract_to_paddle_language(language)
         return cls.get_instance(ocr_agent_cls_qname, language)
 
     @staticmethod
