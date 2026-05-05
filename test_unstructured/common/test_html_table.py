@@ -197,7 +197,24 @@ class DescribeHtmlTable:
             "  <tr><td/><td> m n op\n</td><td/></tr>"
             "</table>"
         )
-        assert html_table.text == "a b c def gh i jk l m n op"
+        # Rows are separated by double newlines so callers can reconstruct row boundaries.
+        assert html_table.text == "a b c def\n\ngh i jk l\n\nm n op"
+
+    def it_separates_rows_with_double_newlines_for_boundary_reconstruction(self):
+        """Regression test for issue #4235: row boundaries must be preserved in Table.text."""
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "<tr><td>Name</td><td>Score</td><td>URL</td></tr>"
+            "<tr><td>Alice</td><td>1</td><td>www.example.com</td></tr>"
+            "<tr><td>Bob</td><td>2</td><td>www.example2.com</td></tr>"
+            "</table>"
+        )
+        rows = html_table.text.split("\n\n")
+        assert rows == [
+            "Name Score URL",
+            "Alice 1 www.example.com",
+            "Bob 2 www.example2.com",
+        ]
 
 
 class DescribeHtmlRow:
