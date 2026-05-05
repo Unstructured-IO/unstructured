@@ -38,7 +38,7 @@ import re
 import tempfile
 import zipfile
 from functools import cached_property
-from typing import IO, Callable, Iterator, Optional
+from typing import IO, Callable, Iterator, Optional, cast
 
 import filetype as ft
 from olefile import OleFileIO
@@ -53,6 +53,9 @@ from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
 from unstructured.utils import get_call_args_applying_defaults
+
+_JSON_DISAMBIGUATION_CHUNK_SIZE = 8192
+_JSON_DISAMBIGUATION_MAX_CHARS = 1024 * 1024
 
 try:
     importlib.import_module("magic")
@@ -136,19 +139,50 @@ def is_ndjson_processable(
     file: Optional[IO[bytes]] = None,
     file_text: Optional[str] = None,
     encoding: Optional[str] = "utf-8",
+    allow_truncated_single_line: bool = False,
 ) -> bool:
-    """True when file looks like a JSON array of objects.
+    """True when file looks like newline-delimited JSON objects.
 
-    Uses regex on a file prefix, so not entirely reliable but good enough if you already know the
-    file is JSON.
+    NDJSON is a sequence of one JSON value per line, conventionally an object on each line. A
+    payload that parses as a single JSON value (e.g. a multi-line `{...}` object or a `[...]`
+    array) is *not* NDJSON and must not be matched here, otherwise `partition_ndjson` will fail
+    later when it splits the text by lines and tries to parse each fragment.
     """
     exactly_one(filename=filename, file=file, file_text=file_text)
 
+    allow_truncated = allow_truncated_single_line
     if file_text is None:
-        file_text = _FileTypeDetectionContext.new(
+        file_text, allow_truncated = _FileTypeDetectionContext.new(
             file_path=filename, file=file, encoding=encoding
-        ).text_head
-    return file_text.lstrip().startswith("{")
+        ).json_disambiguation_text
+
+    text = file_text.lstrip()
+    if not text or not text.startswith("{"):
+        return False
+
+    newline_idx = text.find("\n")
+
+    if newline_idx == -1:
+        # Single-line input. A complete `{...}` parses as a dict and is treated as 1-record
+        # NDJSON (existing tests and `partition_ndjson` rely on this). When the caller knows this
+        # is a truncated first line from a JSON-like payload, a parse failure is still compatible
+        # with a long 1-record NDJSON payload.
+        try:
+            return isinstance(json.loads(text), dict)
+        except json.JSONDecodeError:
+            return allow_truncated
+
+    # Multi-line input. NDJSON requires each record to be on its own line, so the first line
+    # must independently parse as a JSON object. A pretty-printed single JSON object has its
+    # first line be just `{` (or similar fragment) which won't parse alone — that's how we
+    # distinguish it from real NDJSON.
+    first_line = text[:newline_idx].rstrip()
+    if not first_line:
+        return False
+    try:
+        return isinstance(json.loads(first_line), dict)
+    except json.JSONDecodeError:
+        return False
 
 
 class _FileTypeDetector:
@@ -224,12 +258,21 @@ class _FileTypeDetector:
 
     @property
     def _disambiguate_json_file_type(self) -> FileType:
-        """Disambiguate JSON/NDJSON file-type based on file contents."""
-        if is_json_processable(file_text=self._ctx.text_head):
-            return FileType.JSON
-        if is_ndjson_processable(file_text=self._ctx.text_head):
+        """Disambiguate JSON/NDJSON file-type based on file contents.
+
+        NDJSON is detected first because it has the strictest signature (multiple JSON values
+        separated by newlines, with the first line independently parsable). Anything else that
+        libmagic flagged as JSON is classified as `FileType.JSON`; the JSON partitioner has its
+        own `is_json_processable` schema check and will reject non-conforming payloads with a
+        clear error.
+        """
+        file_text, allow_truncated_single_line = self._ctx.json_disambiguation_text
+        if is_ndjson_processable(
+            file_text=file_text,
+            allow_truncated_single_line=allow_truncated_single_line,
+        ):
             return FileType.NDJSON
-        raise ValueError("Unable to process JSON file")
+        return FileType.JSON
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
@@ -553,12 +596,72 @@ class _FileTypeDetectionContext:
             with open(file_path, encoding=encoding) as f:
                 return f.read(4096)
 
+    @cached_property
+    def json_disambiguation_text(self) -> tuple[str, bool]:
+        """Text prefix for JSON/NDJSON disambiguation and whether the first line was truncated."""
+
+        if file := self._file_arg:
+            file.seek(0)
+            content, first_line_truncated = self._read_until_newline_or_limit(file)
+            file.seek(0)
+            if isinstance(content, str):
+                return content, first_line_truncated
+            return content.decode(encoding=self.encoding, errors="ignore"), first_line_truncated
+
+        file_path = self.file_path
+        assert file_path is not None  # -- guaranteed by `._validate` --
+
+        try:
+            with open(file_path, encoding=self.encoding) as f:
+                content, first_line_truncated = self._read_until_newline_or_limit(f)
+                assert isinstance(content, str)
+                return content, first_line_truncated
+        except UnicodeDecodeError:
+            encoding, _ = detect_file_encoding(filename=file_path)
+            with open(file_path, encoding=encoding) as f:
+                content, first_line_truncated = self._read_until_newline_or_limit(f)
+                assert isinstance(content, str)
+                return content, first_line_truncated
+
     def _validate(self) -> None:
         """Raise if the context is invalid."""
         if self.file_path and not os.path.isfile(self.file_path):
             raise FileNotFoundError(f"no such file {self._file_path_arg}")
         if not self.file_path and not self._file_arg:
             raise ValueError("either `file_path` or `file` argument must be provided")
+
+    @staticmethod
+    def _read_until_newline_or_limit(file: IO) -> tuple[str | bytes, bool]:
+        """Read through the first newline, stopping at a bounded prefix if none is found."""
+        chunks: list[str | bytes] = []
+        chars_read = 0
+
+        while chars_read < _JSON_DISAMBIGUATION_MAX_CHARS:
+            chars_to_read = min(
+                _JSON_DISAMBIGUATION_CHUNK_SIZE,
+                _JSON_DISAMBIGUATION_MAX_CHARS - chars_read,
+            )
+            chunk = file.read(chars_to_read)
+            if not chunk:
+                return _FileTypeDetectionContext._join_text_chunks(chunks), False
+
+            newline = b"\n" if isinstance(chunk, bytes) else "\n"
+            newline_idx = chunk.find(newline)
+            if newline_idx != -1:
+                chunks.append(chunk[: newline_idx + 1])
+                return _FileTypeDetectionContext._join_text_chunks(chunks), False
+
+            chunks.append(chunk)
+            chars_read += len(chunk)
+
+        return _FileTypeDetectionContext._join_text_chunks(chunks), True
+
+    @staticmethod
+    def _join_text_chunks(chunks: list[str | bytes]) -> str | bytes:
+        """Join chunks without mixing text and bytes types."""
+        if chunks and isinstance(chunks[0], bytes):
+            return b"".join(cast(list[bytes], chunks))
+        return "".join(cast(list[str], chunks))
 
 
 class _OleFileDetector:

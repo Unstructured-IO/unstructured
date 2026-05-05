@@ -85,11 +85,24 @@ jobs:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
         TESSERACT_VERSION: "5.5.1"
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        retry() {
+          local n=1 max=5 delay=15
+          while true; do
+            "$@" && return 0
+            if (( n >= max )); then
+              echo "Command failed after $n attempts: $*" >&2
+              return 1
+            fi
+            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
+            sleep "$delay"
+            n=$((n+1))
+          done
+        }
+        retry sudo apt-get update
+        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
+        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
         installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
         if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
@@ -161,11 +174,24 @@ jobs:
         uv sync --locked ${{ matrix.uv-extras }} --group test
     - name: Install system dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
+        retry() {
+          local n=1 max=5 delay=15
+          while true; do
+            "$@" && return 0
+            if (( n >= max )); then
+              echo "Command failed after $n attempts: $*" >&2
+              return 1
+            fi
+            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
+            sleep "$delay"
+            n=$((n+1))
+          done
+        }
+        retry sudo apt-get update
+        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
+        retry sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
     - name: Test
       env:
@@ -237,13 +263,26 @@ jobs:
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
-        sudo apt-get update
-        sudo apt-get install -y tesseract-ocr
-        sudo apt-get install -y tesseract-ocr-kor
-        sudo apt-get install diffstat
+        retry() {
+          local n=1 max=5 delay=15
+          while true; do
+            "$@" && return 0
+            if (( n >= max )); then
+              echo "Command failed after $n attempts: $*" >&2
+              return 1
+            fi
+            echo "Attempt $n/$max failed for: $*. Retrying in ${delay}s..." >&2
+            sleep "$delay"
+            n=$((n+1))
+          done
+        }
+        retry sudo apt-get update
+        retry sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        retry sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        retry sudo apt-get update -o "APT::Update::Error-Mode=any"
+        retry sudo apt-get install -y tesseract-ocr
+        retry sudo apt-get install -y tesseract-ocr-kor
+        retry sudo apt-get install -y diffstat
         tesseract --version
         uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
 
