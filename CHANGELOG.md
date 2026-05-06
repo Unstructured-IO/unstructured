@@ -15,9 +15,6 @@
 ### Enhancements
 
 - Add `table_extraction_method` field to `ElementMetadata` to track which algorithm produced a table (grid, tatr, vlm). Propagated from `LayoutElement` during PDF partitioning.
-=======
-- **Reduce false-positive `Title` classification for Chinese no-space text**: Add a Han-script max-length guard for whitespace-free title candidates in `is_possible_title()` so long Chinese body text without spaces is not treated as a single-word title. Adds `UNSTRUCTURED_TITLE_MAX_NO_SPACE_LENGTH` (default `120`) and regression coverage for Chinese short-title vs long-body cases without affecting non-Han no-space scripts.
->>>>>>> 33b7dfb3f (fix: update)
 
 ## 0.22.25
 
