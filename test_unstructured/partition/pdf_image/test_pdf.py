@@ -16,7 +16,7 @@ import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pytest_mock import MockFixture
-from unstructured_inference.inference import layout
+from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
@@ -36,7 +36,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
@@ -298,6 +298,59 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
         assert mock_process.call_args[1]["pdf_image_dpi"] == 350
+
+
+def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+
+    with (
+        mock.patch.object(
+            layout,
+            "process_file_with_model",
+            return_value=MockDocumentLayout(),
+        ) as mock_process,
+        mock.patch.object(
+            ocr,
+            "process_file_with_ocr",
+            return_value=MockDocumentLayout(),
+        ),
+    ):
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+    assert mock_process.call_args[1]["pdf_render_max_pixels_per_page"] == 1_000_000_000
+
+    with (
+        open(filename, "rb") as file,
+        mock.patch.object(
+            layout,
+            "process_data_with_model",
+            return_value=MockDocumentLayout(),
+        ) as mock_process,
+        mock.patch.object(
+            ocr,
+            "process_data_with_ocr",
+            return_value=MockDocumentLayout(),
+        ),
+    ):
+        pdf.partition_pdf(file=file, strategy=PartitionStrategy.HI_RES)
+
+    assert mock_process.call_args[1]["pdf_render_max_pixels_per_page"] == 1_000_000_000
+
+
+def test_partition_pdf_render_too_large_error_is_unprocessable(monkeypatch):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        side_effect=pdf_image.PdfRenderTooLargeError(
+            "PDF page would render to too many pixels for safe processing: "
+            "page=1, pixels=1000000001, maximum=1000000000.",
+        ),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
 
 
 @pytest.mark.parametrize("model_name", ["checkbox", "yolox"])

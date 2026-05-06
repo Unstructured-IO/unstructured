@@ -109,10 +109,12 @@ def _write_to_file(
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if directory:
         Path(directory).mkdir(exist_ok=True)
+    # Operate on a copy so callers can pass a view/slice without chained-assignment warnings.
+    df = df.copy()
     if "count" in df.columns:
         df["count"] = df["count"].astype(int)
     if "filename" in df.columns and "connector" in df.columns:
-        df.sort_values(by=["connector", "filename"], inplace=True)
+        df = df.sort_values(by=["connector", "filename"])
     if not overwrite:
         filename = _get_non_duplicated_filename(directory, filename)
     df.to_csv(

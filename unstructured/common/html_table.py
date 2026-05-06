@@ -86,9 +86,14 @@ class HtmlTable:
 
         # -- normalize and compactify the HTML --
         for e in table.iter():
-            # -- Strip all attributes from elements, like border="1", class="dataframe" added
+            # -- Strip cosmetic attributes like border="1", class="dataframe" added
             # -- by pandas.DataFrame.to_html(), style="text-align: right;", etc.
+            # -- Preserve colspan/rowspan: they are structural, not cosmetic, and are
+            # -- required to reconstruct merged-cell layout in chunk HTML.
+            preserved = {k: e.attrib[k] for k in ("colspan", "rowspan") if k in e.attrib}
             e.attrib.clear()
+            for k, v in preserved.items():
+                e.attrib[k] = v
 
             # -- change any `<th>` elements to `<td>` so all cells have the same tag --
             if e.tag == "th":
