@@ -1,7 +1,7 @@
 """Infer hierarchical heading levels (H1-H6) for PDF elements.
 
 Two strategies in order of preference:
-1. Outline extraction - match PDF bookmarks to Title elements by page + text similarity.
+1. Outline extraction - match PDF bookmarks to Title elements by destination + text similarity.
 2. Font-size analysis - cluster distinct font sizes across Titles, largest font -> depth 0.
 
 Sets element.metadata.category_depth using the 0-indexed convention (0=H1, 1=H2, ... 5=H6).
@@ -10,16 +10,35 @@ Sets element.metadata.category_depth using the 0-indexed convention (0=H1, 1=H2,
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import dataclass
 from difflib import SequenceMatcher
-from typing import IO, Optional
+from typing import IO, Any, BinaryIO, Optional, cast
 
 from pypdf import PdfReader
 
+from unstructured.documents.coordinates import CoordinateSystem, PointSpace
 from unstructured.documents.elements import Element, Title
 from unstructured.logger import logger
 
 _SIMILARITY_THRESHOLD = 0.85
 _MAX_HEADING_DEPTH = 6
+
+
+@dataclass(frozen=True)
+class _OutlineEntry:
+    text: str
+    depth: int
+    page_number: int
+    left: Optional[float] = None
+    top: Optional[float] = None
+    right: Optional[float] = None
+    bottom: Optional[float] = None
+
+    @property
+    def has_destination_coordinates(self) -> bool:
+        return any(
+            coordinate is not None for coordinate in (self.left, self.top, self.right, self.bottom)
+        )
 
 
 def infer_heading_levels(
@@ -59,23 +78,23 @@ def _apply_outline_levels(titles: list[Title], reader: PdfReader) -> int:
     if not outline:
         return 0
 
-    outline_entries: list[tuple[str, int, Optional[int]]] = []
+    outline_entries: list[_OutlineEntry] = []
     _walk_outline(outline, reader, depth=0, entries=outline_entries)
     if not outline_entries:
         return 0
 
-    titles_by_page: dict[Optional[int], list[Title]] = defaultdict(list)
+    titles_by_page: dict[int, list[Title]] = defaultdict(list)
     for title in titles:
-        titles_by_page[title.metadata.page_number].append(title)
+        if title.metadata.page_number is not None:
+            titles_by_page[title.metadata.page_number].append(title)
 
     matched = 0
-    for entry_text, depth, page_number in outline_entries:
-        capped_depth = min(depth, _MAX_HEADING_DEPTH - 1)
-        candidates = titles_by_page.get(page_number, [])
-        best_title, best_ratio = _best_match(entry_text, candidates)
-        if best_ratio < _SIMILARITY_THRESHOLD:
-            all_unmatched = [t for t in titles if t.metadata.category_depth is None]
-            best_title, best_ratio = _best_match(entry_text, all_unmatched)
+    for entry in outline_entries:
+        capped_depth = min(entry.depth, _MAX_HEADING_DEPTH - 1)
+        candidates = titles_by_page.get(entry.page_number, [])
+        best_title, best_ratio = _best_destination_match(entry, candidates, reader)
+        if best_title is None:
+            best_title, best_ratio = _best_match(entry.text, candidates)
         if best_title is not None and best_ratio >= _SIMILARITY_THRESHOLD:
             best_title.metadata.category_depth = capped_depth
             matched += 1
@@ -83,10 +102,10 @@ def _apply_outline_levels(titles: list[Title], reader: PdfReader) -> int:
 
 
 def _walk_outline(
-    items: list,
+    items: list[Any],
     reader: PdfReader,
     depth: int,
-    entries: list[tuple[str, int, Optional[int]]],
+    entries: list[_OutlineEntry],
 ) -> None:
     """Recursively walk an outline tree produced by ``PdfReader.outline``."""
     for item in items:
@@ -96,15 +115,37 @@ def _walk_outline(
             title_text = (getattr(item, "title", None) or "").strip()
             if not title_text:
                 continue
-            entries.append((title_text, depth, _resolve_page_number(item, reader)))
+            page_number = _resolve_page_number(item, reader)
+            if page_number is None:
+                continue
+            entries.append(
+                _OutlineEntry(
+                    text=title_text,
+                    depth=depth,
+                    page_number=page_number,
+                    left=_as_float(getattr(item, "left", None)),
+                    top=_as_float(getattr(item, "top", None)),
+                    right=_as_float(getattr(item, "right", None)),
+                    bottom=_as_float(getattr(item, "bottom", None)),
+                ),
+            )
 
 
-def _resolve_page_number(destination, reader: PdfReader) -> Optional[int]:
+def _resolve_page_number(destination: object, reader: PdfReader) -> Optional[int]:
     """Return the 1-based page number for an outline destination."""
     try:
-        page_obj = destination.page
+        page_idx = reader.get_destination_page_number(cast(Any, destination))
+        if page_idx is not None and page_idx >= 0:
+            return page_idx + 1
+    except Exception:
+        pass
+
+    try:
+        page_obj = getattr(destination, "page", None)
         if page_obj is None:
             return None
+        if isinstance(page_obj, int):
+            return page_obj + 1 if page_obj >= 0 else None
         page_obj = page_obj.get_object() if hasattr(page_obj, "get_object") else page_obj
         for idx, page in enumerate(reader.pages):
             if page.get_object() == page_obj:
@@ -112,6 +153,122 @@ def _resolve_page_number(destination, reader: PdfReader) -> Optional[int]:
     except Exception:
         pass
     return None
+
+
+def _as_float(value: Any) -> Optional[float]:
+    """Return *value* as a float when it is a numeric PDF destination coordinate."""
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _best_destination_match(
+    entry: _OutlineEntry,
+    candidates: list[Title],
+    reader: PdfReader,
+) -> tuple[Optional[Title], float]:
+    """Find the unassigned candidate nearest the outline destination on the target page."""
+    if not entry.has_destination_coordinates:
+        return None, 0.0
+
+    best_title: Optional[Title] = None
+    best_ratio = 0.0
+    best_distance = float("inf")
+    query_lower = entry.text.lower().strip()
+    for title in candidates:
+        if title.metadata.category_depth is not None:
+            continue
+        title_text = (title.text or "").strip().lower()
+        if not title_text:
+            continue
+        ratio = SequenceMatcher(None, query_lower, title_text).ratio()
+        if ratio < _SIMILARITY_THRESHOLD:
+            continue
+        distance = _distance_to_destination(entry, title, reader)
+        if distance is None:
+            continue
+        if distance < best_distance or (distance == best_distance and ratio > best_ratio):
+            best_distance = distance
+            best_ratio = ratio
+            best_title = title
+    return best_title, best_ratio
+
+
+def _distance_to_destination(
+    entry: _OutlineEntry,
+    title: Title,
+    reader: PdfReader,
+) -> Optional[float]:
+    """Return distance from the outline destination point to a Title bounding box."""
+    coordinates = title.metadata.coordinates
+    if coordinates is None or coordinates.points is None or coordinates.system is None:
+        return None
+
+    destination_point = _destination_point_in_coordinate_system(entry, coordinates.system, reader)
+    if destination_point is None:
+        return None
+    destination_x, destination_y = destination_point
+    if destination_x is None and destination_y is None:
+        return None
+
+    xs = [point[0] for point in coordinates.points]
+    ys = [point[1] for point in coordinates.points]
+    x_min, x_max = min(xs), max(xs)
+    y_min, y_max = min(ys), max(ys)
+
+    dx = _axis_distance(destination_x, x_min, x_max)
+    dy = _axis_distance(destination_y, y_min, y_max)
+    return (dx**2 + dy**2) ** 0.5
+
+
+def _destination_point_in_coordinate_system(
+    entry: _OutlineEntry,
+    coordinate_system: CoordinateSystem,
+    reader: PdfReader,
+) -> Optional[tuple[Optional[float], Optional[float]]]:
+    """Convert the PDF outline destination point into an element coordinate system."""
+    pdf_x = entry.left if entry.left is not None else entry.right
+    pdf_y = entry.top if entry.top is not None else entry.bottom
+    if pdf_x is None and pdf_y is None:
+        return None
+
+    page_space = _page_point_space(reader, entry.page_number)
+    if page_space is None:
+        return None
+
+    converted_x, converted_y = page_space.convert_coordinates_to_new_system(
+        new_system=coordinate_system,
+        x=pdf_x if pdf_x is not None else 0,
+        y=pdf_y if pdf_y is not None else 0,
+    )
+    return (
+        converted_x if pdf_x is not None else None,
+        converted_y if pdf_y is not None else None,
+    )
+
+
+def _page_point_space(reader: PdfReader, page_number: int) -> Optional[PointSpace]:
+    """Return the PDF point-space for *page_number*."""
+    try:
+        page = reader.pages[page_number - 1]
+        box = getattr(page, "cropbox", None) or page.mediabox
+        return PointSpace(width=float(box.width), height=float(box.height))
+    except Exception:
+        return None
+
+
+def _axis_distance(point: Optional[float], lower: float, upper: float) -> float:
+    """Return zero when *point* falls inside the axis range, else edge distance."""
+    if point is None:
+        return 0.0
+    if point < lower:
+        return lower - point
+    if point > upper:
+        return point - upper
+    return 0.0
 
 
 def _best_match(query: str, candidates: list[Title]) -> tuple[Optional[Title], float]:
@@ -212,7 +369,7 @@ def _collect_font_data(
     from unstructured.partition.pdf_image.pdfminer_utils import open_pdfminer_pages_generator
 
     for page_number, (_page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, password=password),
+        open_pdfminer_pages_generator(cast(BinaryIO, fp), password=password),
         start=1,
     ):
         page_entries: list[tuple[str, float]] = []
@@ -253,13 +410,12 @@ def _open_reader(
 ) -> Optional[PdfReader]:
     """Open a PdfReader, returning None on failure."""
     try:
-        kwargs = {"password": password} if password else {}
         if filename:
-            return PdfReader(filename, **kwargs)
+            return PdfReader(filename, password=password) if password else PdfReader(filename)
         elif file:
             if hasattr(file, "seek"):
                 file.seek(0)
-            return PdfReader(file, **kwargs)
+            return PdfReader(file, password=password) if password else PdfReader(file)
         return None
     except Exception:
         logger.debug("Could not open PdfReader for heading inference.", exc_info=True)
