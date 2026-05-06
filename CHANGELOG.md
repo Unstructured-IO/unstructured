@@ -71,7 +71,7 @@
 ## 0.22.16
 
 ### Enhancements
-
+- **Infer hierarchical heading levels (H1–H6) for PDFs**: `Title` elements now receive accurate `category_depth` values via two strategies: (1) PDF outline/bookmark extraction matches the document's table-of-contents tree to titles by page and text similarity, and (2) font-size analysis clusters distinct character sizes across titles when outlines are unavailable. Works with all partition strategies (`fast`, `hi_res`, `ocr_only`). Resolves #4204.
 - **Formula markdown export (`element_to_md` / `elements_to_md`)**: New keyword-only `formula_markdown_style` (`"auto"`, `"display_math"`, `"plain"`; default `"auto"`). In `"auto"`, display math (`$$ ... $$`) is used only when the text looks like notation (heuristic score) and contains no `$`/`$$` (avoids breaking Markdown and noisy OCR captions). `"display_math"` wraps whenever safe (still falls back to plain if `$` would corrupt fences). `"plain"` emits text only. Optional `normalize_formula` (default `True`) maps common Unicode operators to LaTeX-like tokens; `normalize_formula` stays before keyword-only options so positional `encoding` / `no_group_by_page` callers are unchanged. Unicode `√` is never mapped to `\\sqrt{}`. Module constants: `FORMULA_MARKDOWN_AUTO`, `FORMULA_MARKDOWN_DISPLAY_MATH`, `FORMULA_MARKDOWN_PLAIN`.
 
 ## 0.22.15
