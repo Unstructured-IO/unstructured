@@ -486,6 +486,48 @@ def test_get_table_tokens(mock_ocr_layout):
         assert table_tokens == expected_tokens
 
 
+def test_get_table_tokens_prefers_extracted_regions_over_ocr(mock_ocr_layout):
+    extracted_regions = TextRegions.from_list(
+        [
+            EmbeddedTextRegion.from_coords(
+                20, 30, 40, 50, text="AUTOSAR Administration", source=None
+            ),
+            EmbeddedTextRegion.from_coords(45, 30, 55, 50, text="2.1.0", source=None),
+        ]
+    )
+    with patch.object(OCRAgentTesseract, "get_layout_from_image", return_value=mock_ocr_layout):
+        ocr_agent = OCRAgent.get_agent(language="eng")
+        table_tokens = ocr.get_table_tokens(
+            table_element_image=Image.new("RGB", (80, 80)),
+            ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_bbox=(10, 20, 70, 70),
+            padding=0,
+        )
+
+        assert [token["text"] for token in table_tokens] == ["AUTOSAR Administration", "2.1.0"]
+        assert table_tokens[0]["bbox"] == [10, 10, 30, 30]
+
+
+def test_get_table_tokens_falls_back_to_ocr_when_extracted_is_sparse(mock_ocr_layout):
+    extracted_regions = TextRegions.from_list(
+        [
+            EmbeddedTextRegion.from_coords(20, 30, 40, 50, text="only-one-token", source=None),
+        ]
+    )
+    with patch.object(OCRAgentTesseract, "get_layout_from_image", return_value=mock_ocr_layout):
+        ocr_agent = OCRAgent.get_agent(language="eng")
+        table_tokens = ocr.get_table_tokens(
+            table_element_image=Image.new("RGB", (80, 80)),
+            ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_bbox=(10, 20, 70, 70),
+            padding=0,
+        )
+
+        assert [token["text"] for token in table_tokens] == ["Token1", "Token2"]
+
+
 def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
     monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")

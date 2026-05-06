@@ -312,17 +312,26 @@ def supplement_element_with_table_extraction(
     table_elements = elements.slice(table_ele_indices)
     padding = env_config.TABLE_IMAGE_CROP_PAD
     for i, element_coords in enumerate(table_elements.element_coords):
+        table_bbox = (
+            float(element_coords[0]),
+            float(element_coords[1]),
+            float(element_coords[2]),
+            float(element_coords[3]),
+        )
         cropped_image = image.crop(
             (
-                element_coords[0] - padding,
-                element_coords[1] - padding,
-                element_coords[2] + padding,
-                element_coords[3] + padding,
+                table_bbox[0] - padding,
+                table_bbox[1] - padding,
+                table_bbox[2] + padding,
+                table_bbox[3] + padding,
             ),
         )
         table_tokens = get_table_tokens(
             table_element_image=cropped_image,
             ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_bbox=table_bbox,
+            padding=padding,
         )
         tatr_cells = tables_agent.predict(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
@@ -344,13 +353,15 @@ def supplement_element_with_table_extraction(
 def get_table_tokens(
     table_element_image: PILImage.Image,
     ocr_agent: OCRAgent,
+    extracted_regions: Optional[TextRegions] = None,
+    table_bbox: Optional[tuple[float, float, float, float]] = None,
+    padding: float = 0,
 ) -> List[dict[str, Any]]:
-    """Get OCR tokens from either paddleocr or tesseract"""
-
+    """Get table tokens, preferring embedded PDF text when coverage is sufficient."""
     ocr_layout = ocr_agent.get_layout_from_image(image=table_element_image)
-    table_tokens = []
+    ocr_tokens = []
     for i, text in enumerate(ocr_layout.texts):
-        table_tokens.append(
+        ocr_tokens.append(
             {
                 "bbox": [
                     ocr_layout.x1[i],
@@ -362,6 +373,99 @@ def get_table_tokens(
                 # 'table_tokens' is a list of tokens
                 # Need to be in a relative reading order
                 "span_num": i,
+                "line_num": 0,
+                "block_num": 0,
+            }
+        )
+
+    if extracted_regions is None or table_bbox is None:
+        return ocr_tokens
+
+    extracted_tokens = _get_table_tokens_from_extracted_regions(
+        extracted_regions=extracted_regions,
+        table_bbox=table_bbox,
+        table_image_size=table_element_image.size,
+        padding=padding,
+    )
+    if _prefer_extracted_table_tokens(extracted_tokens, ocr_tokens):
+        return extracted_tokens
+
+    return ocr_tokens
+
+
+def _prefer_extracted_table_tokens(
+    extracted_tokens: List[dict[str, Any]],
+    ocr_tokens: List[dict[str, Any]],
+    token_ratio_threshold: float = 0.8,
+    text_ratio_threshold: float = 0.8,
+) -> bool:
+    """Choose extracted tokens only when they have comparable coverage to OCR."""
+    if not extracted_tokens:
+        return False
+    if not ocr_tokens:
+        return True
+
+    extracted_count = len(extracted_tokens)
+    ocr_count = len(ocr_tokens)
+    extracted_chars = sum(len(str(token.get("text", ""))) for token in extracted_tokens)
+    ocr_chars = sum(len(str(token.get("text", ""))) for token in ocr_tokens)
+
+    return (
+        extracted_count >= token_ratio_threshold * ocr_count
+        and extracted_chars >= text_ratio_threshold * ocr_chars
+    )
+
+
+def _get_table_tokens_from_extracted_regions(
+    extracted_regions: TextRegions,
+    table_bbox: tuple[float, float, float, float],
+    table_image_size: tuple[int, int],
+    padding: float,
+) -> List[dict[str, Any]]:
+    if len(extracted_regions) == 0:
+        return []
+
+    mask = (
+        bboxes1_is_almost_subregion_of_bboxes2(
+            extracted_regions.element_coords,
+            np.array([table_bbox]),
+            env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
+    if not np.any(mask):
+        return []
+
+    selected_regions = extracted_regions.slice(mask)
+    left = table_bbox[0] - padding
+    top = table_bbox[1] - padding
+    width, height = table_image_size
+
+    valid = [
+        (idx, text) for idx, text in enumerate(selected_regions.texts) if text and str(text).strip()
+    ]
+    if not valid:
+        return []
+
+    # Keep deterministic reading order (top-to-bottom then left-to-right).
+    sorted_indices = sorted(
+        valid,
+        key=lambda item: (selected_regions.y1[item[0]], selected_regions.x1[item[0]]),
+    )
+    table_tokens = []
+    for span_num, (idx, text) in enumerate(sorted_indices):
+        x1 = max(0, min(width, int(round(selected_regions.x1[idx] - left))))
+        y1 = max(0, min(height, int(round(selected_regions.y1[idx] - top))))
+        x2 = max(0, min(width, int(round(selected_regions.x2[idx] - left))))
+        y2 = max(0, min(height, int(round(selected_regions.y2[idx] - top))))
+        if x2 <= x1 or y2 <= y1:
+            continue
+        table_tokens.append(
+            {
+                "bbox": [x1, y1, x2, y2],
+                "text": str(text),
+                "span_num": span_num,
                 "line_num": 0,
                 "block_num": 0,
             }
