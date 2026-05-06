@@ -1,3 +1,9 @@
+## 0.22.28
+
+### Fixes
+
+- **Reduce false-positive `Title` classification for no-space text (e.g., Chinese OCR)**: Add a max-length guard for whitespace-free title candidates in `is_possible_title()` so long body text without spaces is not treated as a single-word title. Adds `UNSTRUCTURED_TITLE_MAX_NO_SPACE_LENGTH` (default `40`) and regression coverage for Chinese short-title vs long-body cases.
+
 ## 0.22.27
 
 ### Fixes

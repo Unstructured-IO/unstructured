@@ -130,6 +130,28 @@ def test_title_language_checks():
     assert text_type.is_possible_narrative_text(text, language_checks=True) is False
 
 
+def test_is_possible_title_handles_chinese_without_spaces(monkeypatch):
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "false")
+
+    short_title = "市场风险"
+    long_body = (
+        "这是一个用于测试标题分类的中文段落没有空格并且长度明显超过标题合理范围用于避免误判"
+        "这是一个用于测试标题分类的中文段落没有空格并且长度明显超过标题合理范围用于避免误判"
+        "这是一个用于测试标题分类的中文段落没有空格并且长度明显超过标题合理范围用于避免误判"
+    )
+
+    assert text_type.is_possible_title(short_title) is True
+    assert text_type.is_possible_title(long_body) is False
+
+
+def test_is_possible_title_does_not_apply_no_space_guard_to_non_han_text(monkeypatch):
+    monkeypatch.setenv("UNSTRUCTURED_LANGUAGE_CHECKS", "false")
+
+    long_non_han_no_space = "የሰው፡ልጅ፡ሁሉ፡ሲወለድ፡ነጻና፡በክብርና፡በመብትም፡እኩልነት፡ያለው፡ነው።"
+
+    assert text_type.is_possible_title(long_non_han_no_space) is True
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
