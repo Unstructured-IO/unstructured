@@ -1,9 +1,3 @@
-## 0.22.28
-
-### Features
-
-- Add support for VoyageAI voyage-4 family models: `voyage-4`, `voyage-4-lite`, `voyage-4-large`
-
 ## 0.22.27
 
 ### Fixes
@@ -545,6 +539,7 @@
 - Speed up function \_assign_hash_ids by 34% (codeflash)
 
 ### Features
+- Add support for VoyageAI voyage-4 family models: `voyage-4`, `voyage-4-lite`, `voyage-4-large`
 
 ### Fixes
 
@@ -592,6 +587,7 @@
 ## 0.18.13
 
 ### Enhancements
+- **Refactoring the VoyageAI integration** to use voyageai package directly, allowing extra features.
 
 ### Features
 
