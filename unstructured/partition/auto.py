@@ -42,6 +42,7 @@ def partition(
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
+    language_fallback: Optional[Callable[[str], Optional[list[str]]]] = None,
     pdf_infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
@@ -95,9 +96,12 @@ def partition(
         image or pdf documents with Tesseract, you'll first need to install the appropriate
         Tesseract language pack. For other partitions, language is detected using naive Bayesian
         filter via `langdetect`. Multiple languages indicates text could be in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
+    detect_language_per_element
+        Detect language per element instead of at the document level.
+    language_fallback
+        Optional callable for short text (e.g. when detection defaults to English).
+        Called with the text; return a list of ISO 639-3 codes or None to leave
+        language unspecified.
     pdf_infer_table_structure
         Deprecated! Use `skip_infer_table_types` to opt out of table extraction for any document
         type.
@@ -217,6 +221,7 @@ def partition(
             strategy=strategy,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            language_fallback=language_fallback,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
@@ -237,6 +242,7 @@ def partition(
             strategy=strategy,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            language_fallback=language_fallback,
             hi_res_model_name=hi_res_model_name or model_name,
             extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
@@ -280,6 +286,7 @@ def partition(
 
     partitioning_kwargs = copy.deepcopy(kwargs)
     partitioning_kwargs["detect_language_per_element"] = detect_language_per_element
+    partitioning_kwargs["language_fallback"] = language_fallback
     partitioning_kwargs["encoding"] = encoding
     partitioning_kwargs["infer_table_structure"] = infer_table_structure
     partitioning_kwargs["languages"] = languages

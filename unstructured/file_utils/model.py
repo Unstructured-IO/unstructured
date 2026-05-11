@@ -45,7 +45,7 @@ def _create_file_type_enum(
 class FileType(enum.Enum):
     """The collection of file-types recognized by `unstructured`.
 
-    Note not all of these can be partitioned, e.g. WAV and ZIP have no partitioner.
+    Note not all of these can be partitioned, e.g. ZIP has no partitioner.
     """
 
     _partitioner_shortname: str | None
@@ -170,7 +170,7 @@ class FileType(enum.Enum):
 
         Note this does not check whether the dependencies for this file-type are installed so
         attempting to partition a file of this type may still fail. This is meant for
-        distinguishing file-types like WAV, ZIP, EMPTY, and UNK which are legitimate file-types
+        distinguishing file-types like ZIP, EMPTY, and UNK which are legitimate file-types
         but have no associated partitioner.
         """
         return bool(self._partitioner_shortname) or bool(self._partitioner_full_module_path)
@@ -245,7 +245,10 @@ class FileType(enum.Enum):
         "image",  # -- extra_name - like `pip install "unstructured[image]"` in this case --
         [".bmp"],  # -- extensions - filename extensions that map to this file-type --
         "image/bmp",  # -- canonical_mime_type -  MIME-type written to `.metadata.filetype` --
-        cast(list[str], []),  # -- alias_mime-types - other MIME-types that map to this file-type --
+        [
+            "image/x-bmp",
+            "image/x-ms-bmp",  # returned by older libmagic versions
+        ],
     )
     CSV = (
         "csv",
@@ -290,6 +293,15 @@ class FileType(enum.Enum):
         "application/epub",
         ["application/epub+zip"],
     )
+    FLAC = (
+        "flac",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".flac"],
+        "audio/flac",
+        ["audio/x-flac"],
+    )
     HEIC = (
         "heic",
         "image",
@@ -297,7 +309,7 @@ class FileType(enum.Enum):
         "image",
         [".heic"],
         "image/heic",
-        cast(list[str], []),
+        ["image/x-heic"],
     )
     HTML = (
         "html",
@@ -326,7 +338,25 @@ class FileType(enum.Enum):
         "application/json",
         cast(list[str], []),
     )
+    M4A = (
+        "m4a",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".m4a"],
+        "audio/mp4",
+        ["audio/x-m4a"],
+    )
     MD = ("md", "md", ["markdown"], "md", [".md"], "text/markdown", ["text/x-markdown"])
+    MP3 = (
+        "mp3",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".mp3"],
+        "audio/mpeg",
+        ["audio/mp3", "audio/x-mp3", "audio/x-mpeg"],
+    )
     MSG = (
         "msg",
         "msg",
@@ -352,6 +382,24 @@ class FileType(enum.Enum):
         "odt",
         [".odt"],
         "application/vnd.oasis.opendocument.text",
+        cast(list[str], []),
+    )
+    OGG = (
+        "ogg",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".ogg", ".oga"],
+        "audio/ogg",
+        ["audio/x-ogg"],
+    )
+    OPUS = (
+        "opus",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".opus"],
+        "audio/opus",
         cast(list[str], []),
     )
     ORG = ("org", "org", ["pypandoc"], "org", [".org"], "text/org", cast(list[str], []))
@@ -441,9 +489,9 @@ class FileType(enum.Enum):
     )
     WAV = (
         "wav",
-        None,
-        cast(list[str], []),
-        None,
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
         [".wav"],
         "audio/wav",
         [
@@ -453,6 +501,15 @@ class FileType(enum.Enum):
             "audio/x-pn-wav",
             "audio/x-wav",
         ],
+    )
+    WEBM = (
+        "webm",
+        "audio",
+        cast(list[str], []),  # STT agent deps validated at runtime by the chosen agent
+        "audio",
+        [".webm"],
+        "audio/webm",
+        [],  # Do not alias video/webm: WebM is a container; this type is for audio-only.
     )
     XLS = (
         "xls",

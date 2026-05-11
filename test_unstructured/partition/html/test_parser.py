@@ -323,6 +323,27 @@ class Describe_ElementAccumulator:
 
         assert accum._normalized_text == "Ford... you're turning into a penguin."
 
+    # -- page_number --------------------------------------------------------
+
+    def it_includes_page_number_in_metadata_when_ancestor_has_data_page_number(self):
+        html = '<div data-page-number="2"><p>text</p></div>'
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+        accum = _ElementAccumulator(p)
+        accum.add(TextSegment("Ford... you're turning into a penguin.", {}))
+
+        (element,) = accum.flush(None)
+
+        assert element.metadata.page_number == 2
+
+    def it_leaves_page_number_None_when_no_data_page_number_in_tree(self):
+        p = etree.fromstring("<p/>", html_parser).xpath(".//p")[0]
+        accum = _ElementAccumulator(p)
+        accum.add(TextSegment("Ford... you're turning into a penguin.", {}))
+
+        (element,) = accum.flush(None)
+
+        assert element.metadata.page_number is None
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()
@@ -417,6 +438,37 @@ class DescribeFlow:
         }
         with pytest.raises(StopIteration):
             e = next(elements)
+
+    # -- ._page_number ----------------------------------------------------
+
+    def it_returns_None_when_no_data_page_number_in_tree(self):
+        p = etree.fromstring("<div><p>text</p></div>", html_parser).xpath(".//p")[0]
+        assert p._page_number is None
+
+    def it_finds_page_number_from_ancestor(self):
+        html = '<div data-page-number="1"><p>text</p></div>'
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+        assert p._page_number == 1
+
+    def it_finds_page_number_on_self(self):
+        html = '<div data-page-number="3"><span>text</span></div>'
+        div = etree.fromstring(html, html_parser).xpath(".//div")[0]
+        assert div._page_number == 3
+
+    def it_returns_nearest_ancestors_page_number(self):
+        html = '<div data-page-number="1"><div data-page-number="2"><p>text</p></div></div>'
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+        assert p._page_number == 2
+
+    def it_returns_None_for_non_numeric_data_page_number(self):
+        html = '<div data-page-number="abc"><p>text</p></div>'
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+        assert p._page_number is None
+
+    def it_falls_back_to_outer_page_number_when_inner_is_non_numeric(self):
+        html = '<div data-page-number="1"><div data-page-number="abc"><p>text</p></div></div>'
+        p = etree.fromstring(html, html_parser).xpath(".//p")[0]
+        assert p._page_number == 1
 
     # -- ._element_from_text_or_tail() ------------------------------------
 

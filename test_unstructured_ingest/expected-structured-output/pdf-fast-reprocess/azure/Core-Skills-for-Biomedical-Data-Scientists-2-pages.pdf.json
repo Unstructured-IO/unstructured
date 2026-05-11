@@ -264,7 +264,7 @@
     }
   },
   {
-    "type": "UncategorizedText",
+    "type": "NarrativeText",
     "element_id": "26c704088ae82677871f8f8abd78459c",
     "text": "The report further details specific skills and expertise relevant to biomedical data scientists.",
     "metadata": {

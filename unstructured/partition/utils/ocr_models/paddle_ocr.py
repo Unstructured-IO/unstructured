@@ -48,6 +48,7 @@ class OCRAgentPaddle(OCRAgent):
                 lang=language,
                 enable_mkldnn=True,
                 show_log=False,
+                rec_batch_num=1,
             )
         except AttributeError:
             paddle_ocr = PaddleOCR(
@@ -56,6 +57,7 @@ class OCRAgentPaddle(OCRAgent):
                 lang=language,
                 enable_mkldnn=False,
                 show_log=False,
+                rec_batch_num=1,
             )
         return paddle_ocr
 

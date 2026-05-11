@@ -34,24 +34,24 @@ Open-domain question answering relies on ef- ﬁcient passage retrieval to selec
 
 1
   </div>
-  <div class="CompositeElement" id="3ef998ac1d905d8ff1016f96a243295c">
+  <div class="CompositeElement" id="72920dc33110e7f5bd0b4a6141535a69">
    Introduction
 
 Open-domain question answering (QA) (Voorhees, 1999) is a task that answers factoid questions us- ing a large collection of documents. While early QA systems are often complicated and consist of multiple components (Ferrucci (2012); Moldovan et al. (2003), inter alia), the advances of reading comprehension models suggest a much simpliﬁed two-stage framework: (1) a context retriever ﬁrst selects a small subset of passages where some of them contain the answer to the question, and then (2) a machine reader can thoroughly exam- ine the retrieved contexts and identify the correct answer (Chen et al., 2017). Although reducing open-domain QA to machine reading is a very rea- sonable strategy, a huge performance degradation is often observed in practice2, indicating the needs of improving retrieval.
 
 ∗Equal contribution 1The code and trained models have been released at
-
-https://github.com/facebookresearch/DPR.
   </div>
-  <div class="CompositeElement" id="71b12f58c99f6097b17f4d5b6147201b">
-   2For instance, the exact match score on SQuAD v1.1 drops
+  <div class="CompositeElement" id="f241d24be2b6044f03c1019a78599ff7">
+   https://github.com/facebookresearch/DPR.
+
+2For instance, the exact match score on SQuAD v1.1 drops
 
 Retrieval in open-domain QA is usually imple- mented using TF-IDF or BM25 (Robertson and Zaragoza, 2009), which matches keywords efﬁ- ciently with an inverted index and can be seen as representing the question and context in high- dimensional, sparse vectors (with weighting). Con- versely, the dense, latent semantic encoding is com- plementary to sparse representations by design. For example, synonyms or paraphrases that consist of completely different tokens may still be mapped to vectors close to each other. Consider the question “Who is the bad guy in lord of the rings?”, which can be answered from the context “Sala Baker is best known for portraying the villain Sauron in the Lord of the Rings trilogy.” A term-based system would have difﬁculty retrieving such a context, while a dense retrieval system would be able to better match “bad guy” with “villain” and fetch the cor- rect context. Dense encodings are also learnable by adjusting the embedding functions, which pro- vides additional ﬂexibility to have a task-speciﬁc representation. With special in-memory data struc- tures and indexing schemes, retrieval can be done efﬁciently using maximum inner product search (MIPS) algorithms (e.g., Shrivastava and Li (2014); Guo et al. (2016)).
-
-However, it is generally believed that learn- ing a good dense vector representation needs a large number of labeled pairs of question and con- texts. Dense retrieval methods have thus never be shown to outperform TF-IDF/BM25 for open- domain QA before ORQA (Lee et al., 2019), which proposes a sophisticated inverse cloze task (ICT) objective, predicting the blocks that contain the masked sentence, for additional pretraining. The question encoder and the reader model are then ﬁne- tuned using pairs of questions and answers jointly. Although ORQA successfully demonstrates that dense retrieval can outperform BM25, setting new state-of-the-art results on multiple open-domain
   </div>
-  <div class="CompositeElement" id="ef458b0b4659bfd57b11fbfb571c38d1">
-   from above 80% to less than 40% (Yang et al., 2019a).
+  <div class="CompositeElement" id="fd26a182d12dc6c11f988a8b825c3bc7">
+   However, it is generally believed that learn- ing a good dense vector representation needs a large number of labeled pairs of question and con- texts. Dense retrieval methods have thus never be shown to outperform TF-IDF/BM25 for open- domain QA before ORQA (Lee et al., 2019), which proposes a sophisticated inverse cloze task (ICT) objective, predicting the blocks that contain the masked sentence, for additional pretraining. The question encoder and the reader model are then ﬁne- tuned using pairs of questions and answers jointly. Although ORQA successfully demonstrates that dense retrieval can outperform BM25, setting new state-of-the-art results on multiple open-domain
+
+from above 80% to less than 40% (Yang et al., 2019a).
 
 QA datasets, it also suffers from two weaknesses. First, ICT pretraining is computationally intensive and it is not completely clear that regular sentences are good surrogates of questions in the objective function. Second, because the context encoder is not ﬁne-tuned using pairs of questions and answers, the corresponding representations could be subop- timal.
   </div>

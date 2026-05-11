@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import base64
+import io
 import logging
 import math
 import os
 import tempfile
 from dataclasses import dataclass
+from importlib import reload
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
@@ -14,7 +16,7 @@ import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pytest_mock import MockFixture
-from unstructured_inference.inference import layout
+from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
@@ -34,10 +36,11 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
+from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
@@ -297,6 +300,59 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
         assert mock_process.call_args[1]["pdf_image_dpi"] == 350
 
 
+def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+
+    with (
+        mock.patch.object(
+            layout,
+            "process_file_with_model",
+            return_value=MockDocumentLayout(),
+        ) as mock_process,
+        mock.patch.object(
+            ocr,
+            "process_file_with_ocr",
+            return_value=MockDocumentLayout(),
+        ),
+    ):
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+    assert mock_process.call_args[1]["pdf_render_max_pixels_per_page"] == 1_000_000_000
+
+    with (
+        open(filename, "rb") as file,
+        mock.patch.object(
+            layout,
+            "process_data_with_model",
+            return_value=MockDocumentLayout(),
+        ) as mock_process,
+        mock.patch.object(
+            ocr,
+            "process_data_with_ocr",
+            return_value=MockDocumentLayout(),
+        ),
+    ):
+        pdf.partition_pdf(file=file, strategy=PartitionStrategy.HI_RES)
+
+    assert mock_process.call_args[1]["pdf_render_max_pixels_per_page"] == 1_000_000_000
+
+
+def test_partition_pdf_render_too_large_error_is_unprocessable(monkeypatch):
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        side_effect=pdf_image.PdfRenderTooLargeError(
+            "PDF page would render to too many pixels for safe processing: "
+            "page=1, pixels=1000000001, maximum=1000000000.",
+        ),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
+
+
 @pytest.mark.parametrize("model_name", ["checkbox", "yolox"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
@@ -437,6 +493,79 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(caplog):
     assert "unstructured_inference is not installed" not in caplog.text
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
+
+
+def test_partition_pdf_with_fast_strategy_deduplicates_fake_bold(monkeypatch):
+    """Test that fast strategy properly deduplicates fake-bold text in PDFs.
+
+    Some PDFs create bold text by rendering each character twice at slightly offset
+    positions (fake-bold). The fast strategy should remove these duplicate characters.
+    """
+    filename = example_doc_path("pdf/fake-bold-sample.pdf")
+
+    # Extract WITHOUT deduplication (threshold=0) - shows doubled characters
+    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "0")
+    reload(partition_config)
+    elements_no_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    text_no_dedup = " ".join([el.text for el in elements_no_dedup])
+
+    # Extract WITH deduplication (threshold=2.0) - shows clean text
+    monkeypatch.setenv("PDF_CHAR_DUPLICATE_THRESHOLD", "2.0")
+    reload(partition_config)
+    elements_with_dedup = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    text_with_dedup = " ".join([el.text for el in elements_with_dedup])
+
+    # Verify fake-bold text shows doubled characters without deduplication
+    assert "BBOOLLDD" in text_no_dedup, (
+        "Without deduplication, fake-bold text should show doubled chars like 'BBOOLLDD'"
+    )
+
+    # Verify deduplication produces clean text
+    assert "BOLD" in text_with_dedup, "With deduplication, text should contain clean 'BOLD'"
+
+    # Verify deduplicated text is shorter
+    assert len(text_with_dedup) < len(text_no_dedup), (
+        f"Deduplicated text ({len(text_with_dedup)} chars) should be shorter "
+        f"than non-deduplicated text ({len(text_no_dedup)} chars)"
+    )
+
+
+def test_partition_pdf_with_fast_strategy_extracts_embedded_cmap_text():
+    """Test that fast strategy extracts text from CIDFonts with embedded CMap streams.
+
+    Some PDF generators (e.g. Prince XML) embed custom Encoding CMaps as PDF streams
+    rather than using predefined CMap names. Without handling this, pdfminer.six silently
+    falls back to an empty CMap and all text using those fonts is lost.
+
+    The test fixture has two fonts: a simple Type1 font (Helvetica) that pdfminer handles
+    fine, and a Type0/CIDFont with an embedded CMap named "Test-Identity-H" that triggers
+    the bug.
+    """
+    filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
+
+    all_text = " ".join(e.text for e in elements)
+
+    # The Helvetica heading should always be extracted
+    assert "Heading in Helvetica" in all_text
+
+    # These strings are rendered with the CIDFont using the embedded CMap.
+    # Without the fix, they would be silently dropped.
+    assert "This text uses an embedded CMap" in all_text
+    assert "and should be extractable" in all_text
+
+    assert len(elements) == 3
+
+
+def test_partition_pdf_with_hi_res_strategy_extracts_embedded_cmap_text():
+    """Same as the fast strategy test but through hi_res, since both strategies use pdfminer."""
+    filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
+
+    all_text = " ".join(e.text for e in elements)
+
+    assert "This text uses an embedded CMap" in all_text
+    assert "and should be extractable" in all_text
 
 
 def test_partition_pdf_raises_with_bad_strategy():
@@ -1505,6 +1634,79 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
             )
 
 
+def test_is_pdf_too_complex_skips_small_file_size():
+    assert not pdf.is_pdf_too_complex(file=b"tiny", min_file_size_bytes=10)
+
+
+def test_is_pdf_too_complex_detects_vector_heavy_page():
+    class MockStream:
+        def get_data(self):
+            return b" ".join([b"m"] * 120 + [b"Tj"] * 2)
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": MockStream()}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            max_graphics_ops=100,
+            min_graphics_to_text_ratio=20.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_skips_pages_without_contents():
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": None}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_skips_small_content_streams():
+    class MockStream:
+        def get_data(self):
+            return b"m Tj"
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": MockStream()}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            max_graphics_ops=1,
+            min_graphics_to_text_ratio=1.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=20,
+        )
+
+
+def test_is_pdf_too_complex_restores_file_cursor_position():
+    file = io.BytesIO(b"x" * 20)
+    file.seek(7)
+
+    reader = mock.Mock()
+    reader.pages = []
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert not pdf.is_pdf_too_complex(
+            file=file,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+    assert file.tell() == 7
+
+
+def test_is_pdf_too_complex_returns_false_for_normal_pdf():
+    assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
+
+
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # TODO (yao): investigate why we need this test. The LayoutElement definition suggests bbox
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
@@ -1675,3 +1877,20 @@ def test_reproductible_pdf_loader():
                 assert e1.text == e2.text, f"load two time {f=} return differents results"
             else:
                 break
+
+
+def test_hi_res_groups_rotated_page_text_into_words():
+    elements = pdf.partition_pdf(
+        filename=example_doc_path("rotated-page-90.pdf"),
+        strategy=PartitionStrategy.HI_RES,
+    )
+
+    texts = [e.text for e in elements if e.text and len(e.text) > 5]
+    assert any("Hello World" in t for t in texts), (
+        f"Expected 'Hello World' as grouped text from rotated page, got: {texts[:5]}"
+    )
+
+    single_chars = [e.text for e in elements if e.text and len(e.text) == 1]
+    assert len(single_chars) == 0, (
+        f"Rotated page produced {len(single_chars)} single-char elements: {single_chars[:10]}"
+    )

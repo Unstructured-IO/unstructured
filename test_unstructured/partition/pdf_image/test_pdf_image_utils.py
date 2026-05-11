@@ -7,10 +7,12 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 from PIL import Image as PILImg
+from unstructured_inference.inference import pdf_image
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import ElementMetadata, ElementType, Image, Table
+from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.pdf_image import pdf_image_utils
 
 
@@ -62,6 +64,29 @@ def test_convert_pdf_to_image(file_mode, path_only):
             assert isinstance(images[0], PILImg.Image)
 
 
+def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
+    with patch.object(
+        pdf_image_utils,
+        "render_pdf_to_image",
+        side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            pdf_image_utils.convert_pdf_to_image(filename="example.pdf")
+
+
+def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
+    with (
+        patch.object(pdf_image_utils.pdf2image, "pdfinfo_from_path", return_value={"Pages": 1}),
+        patch.object(
+            pdf_image_utils,
+            "render_pdf_to_image",
+            side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
+        ),
+    ):
+        with pytest.raises(UnprocessableEntityError, match="too many pixels"):
+            list(pdf_image_utils.convert_pdf_to_images(filename="example.pdf"))
+
+
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
 @pytest.mark.parametrize("path_only", [True, False])
 def test_convert_pdf_to_image_twice(file_mode, path_only):
@@ -106,7 +131,21 @@ def test_convert_pdf_to_image_raises_error():
     with pytest.raises(ValueError) as exc_info:
         pdf_image_utils.convert_pdf_to_image(filename=filename, path_only=True, output_folder=None)
 
-    assert str(exc_info.value) == "output_folder must be specified if path_only is True"
+    assert str(exc_info.value) == "output_folder must be specified if path_only is true"
+
+
+def test_convert_pdf_to_image_rejects_both_filename_and_file():
+    filename = example_doc_path("pdf/embedded-images.pdf")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with open(filename, "rb") as f:
+            with pytest.raises(ValueError) as exc_info:
+                pdf_image_utils.convert_pdf_to_image(
+                    filename=filename,
+                    file=f,
+                    output_folder=tmpdir,
+                    path_only=True,
+                )
+    assert "Exactly one of" in str(exc_info.value)
 
 
 @pytest.mark.parametrize(
@@ -212,7 +251,10 @@ def test_save_elements(
 
 @pytest.mark.parametrize("storage_enabled", [False, True])
 def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
-    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", storage_enabled)
+    monkeypatch.setenv(
+        "GLOBAL_WORKING_DIR_ENABLED",
+        "true" if storage_enabled else "false",
+    )
     with (
         patch("PIL.Image.open"),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),

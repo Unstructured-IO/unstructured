@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+from functools import cached_property
 from typing import IO, Any, Iterator, Optional
 
 import networkx as nx
@@ -33,7 +34,6 @@ from unstructured.partition.text_type import (
     is_possible_numbered_list,
     is_possible_title,
 )
-from unstructured.utils import lazyproperty
 
 _CellCoordinate: TypeAlias = "tuple[int, int]"
 
@@ -153,7 +153,7 @@ class _XlsxPartitionerOptions:
         self._include_header = include_header
         self._infer_table_structure = infer_table_structure
 
-    @lazyproperty
+    @cached_property
     def find_subtable(self) -> bool:
         """True when partitioner should detect and emit separate `Table` elements for subtables.
 
@@ -161,32 +161,32 @@ class _XlsxPartitionerOptions:
         """
         return self._find_subtable
 
-    @lazyproperty
+    @cached_property
     def header_row_idx(self) -> int | None:
         """The index of the row Pandas should treat as column-headings. Either 0 or None."""
         return 0 if self._include_header else None
 
-    @lazyproperty
+    @cached_property
     def include_header(self) -> bool:
         """True when column headers should be included in tables."""
         return self._include_header
 
-    @lazyproperty
+    @cached_property
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata."""
         return self._infer_table_structure
 
-    @lazyproperty
+    @cached_property
     def last_modified(self) -> Optional[str]:
         """The best last-modified date available, None if no sources are available."""
         return get_last_modified_date(self._file_path) if self._file_path else None
 
-    @lazyproperty
+    @cached_property
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
         return self._file_path
 
-    @lazyproperty
+    @cached_property
     def sheets(self) -> dict[str, pd.DataFrame]:
         """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
         try:
@@ -201,7 +201,7 @@ class _XlsxPartitionerOptions:
             io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
         )
 
-    @lazyproperty
+    @cached_property
     def _file_bytes(self) -> bytes:
         if file := self._file:
             file.seek(0)
@@ -224,7 +224,7 @@ class _ConnectedComponent:
         self._worksheet = worksheet
         self._cell_coordinate_set = cell_coordinate_set
 
-    @lazyproperty
+    @cached_property
     def max_x(self) -> int:
         """The right-most column index of the connected component."""
         return self._extents[2]
@@ -239,12 +239,12 @@ class _ConnectedComponent:
             self._worksheet, self._cell_coordinate_set.union(other._cell_coordinate_set)
         )
 
-    @lazyproperty
+    @cached_property
     def min_x(self) -> int:
         """The left-most column index of the connected component."""
         return self._extents[0]
 
-    @lazyproperty
+    @cached_property
     def subtable(self) -> pd.DataFrame:
         """The connected region of the worksheet as a `DataFrame`.
 
@@ -254,7 +254,7 @@ class _ConnectedComponent:
         min_x, min_y, max_x, max_y = self._extents
         return self._worksheet.iloc[min_x : max_x + 1, min_y : max_y + 1]
 
-    @lazyproperty
+    @cached_property
     def _extents(self) -> tuple[int, int, int, int]:
         """Compute bounding box of this connected component."""
         min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
@@ -288,7 +288,7 @@ class _ConnectedComponents:
         """Construct from a worksheet dataframe produced by reading Excel with pandas."""
         return cls(worksheet_df)
 
-    @lazyproperty
+    @cached_property
     def _connected_components(self) -> list[_ConnectedComponent]:
         """The `_ConnectedComponent` objects comprising this collection."""
         # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
@@ -367,7 +367,7 @@ class _SubtableParser:
     def __init__(self, subtable: pd.DataFrame):
         self._subtable = subtable
 
-    @lazyproperty
+    @cached_property
     def core_table(self) -> pd.DataFrame | None:
         """The part between the leading and trailing single-cell rows, if any."""
         core_table_start = len(self._leading_single_cell_row_indices)
@@ -395,7 +395,7 @@ class _SubtableParser:
         for row_idx in self._trailing_single_cell_row_indices:
             yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
 
-    @lazyproperty
+    @cached_property
     def _leading_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each leading single-cell row in subtable, in top-down order."""
 
@@ -407,7 +407,7 @@ class _SubtableParser:
 
         return tuple(iter_leading_single_cell_row_indices())
 
-    @lazyproperty
+    @cached_property
     def _single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each single-cell row in subtable, in top-down order."""
 
@@ -419,7 +419,7 @@ class _SubtableParser:
 
         return tuple(iter_single_cell_row_idxs())
 
-    @lazyproperty
+    @cached_property
     def _trailing_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each trailing single-cell row in subtable, in top-down order."""
         # -- if all subtable rows are single-cell, then by convention they are all leading --

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import csv
+from functools import cached_property
 from typing import IO, Any, Iterator
 
 import pandas as pd
@@ -11,7 +12,7 @@ from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.utils import is_temp_file_path, lazyproperty
+from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN: str = "csv"
 CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
@@ -57,7 +58,11 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        dataframe = pd.read_csv(file, header=ctx.header, sep=ctx.delimiter, encoding=ctx.encoding)
+        read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
+        # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
+        if ctx.delimiter is None:
+            read_kw["engine"] = "python"
+        dataframe = pd.read_csv(file, **read_kw)
 
     html_table = HtmlTable.from_html_text(
         dataframe.to_html(index=False, header=include_header, na_rep="")
@@ -111,7 +116,7 @@ class _CsvPartitioningContext:
             infer_table_structure=infer_table_structure,
         )._validate()
 
-    @lazyproperty
+    @cached_property
     def delimiter(self) -> str | None:
         """The CSV delimiter, nominally a comma ",".
 
@@ -132,17 +137,17 @@ class _CsvPartitioningContext:
             # -- sniffing will fail on single-column csv as no default can be assumed --
             return None
 
-    @lazyproperty
+    @cached_property
     def header(self) -> int | None:
         """Identifies the header row, if any, to Pandas, by idx."""
         return 0 if self._include_header else None
 
-    @lazyproperty
+    @cached_property
     def encoding(self) -> str | None:
         """The encoding to use for reading the file."""
         return self._encoding
 
-    @lazyproperty
+    @cached_property
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
         return (

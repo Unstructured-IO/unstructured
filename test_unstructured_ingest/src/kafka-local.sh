@@ -33,7 +33,7 @@ function cleanup() {
   fi
 
   echo "Stopping local Kafka instance"
-  docker-compose -f scripts/kafka-test-helpers/docker-compose.yml down --remove-orphans -v
+  docker compose -f scripts/kafka-test-helpers/docker-compose.yml down --remove-orphans -v
 
 }
 trap cleanup EXIT

@@ -32,6 +32,8 @@ def chunk_elements(
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
     tokenizer: Optional[str] = None,
+    repeat_table_headers: Optional[bool] = None,
+    skip_table_chunking: Optional[bool] = None,
 ) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
@@ -76,6 +78,12 @@ def chunk_elements(
     tokenizer
         The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
         "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
+    repeat_table_headers
+        Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
+        continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
+    skip_table_chunking
+        Default: `False`. When `True`, `Table` elements are passed through unchanged without
+        being split into `TableChunk` elements, regardless of their size.
     """
     # -- raises ValueError on invalid parameters --
     opts = _BasicChunkingOptions.new(
@@ -87,6 +95,8 @@ def chunk_elements(
         overlap=overlap,
         overlap_all=overlap_all,
         tokenizer=tokenizer,
+        repeat_table_headers=repeat_table_headers,
+        skip_table_chunking=skip_table_chunking,
     )
 
     return _chunk_elements(elements, opts)

@@ -22,7 +22,7 @@ source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
   echo "Stopping Elasticsearch Docker container"
-  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
+  docker compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"

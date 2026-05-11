@@ -1,12 +1,5 @@
-import sys
-from typing import List
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
-
 import re
+from typing import Final, List
 
 # NOTE(robinson) - Modified from answers found on this stackoverflow post
 # ref: https://stackoverflow.com/questions/16699007/

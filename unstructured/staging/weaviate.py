@@ -91,6 +91,8 @@ def _annotation_to_weaviate_data_type(annotation: str):
         return ["text"]
     elif "int" in annotation:
         return ["int"]
+    elif "float" in annotation:
+        return ["number"]
     elif "date" in annotation:
         return ["date"]
     else:

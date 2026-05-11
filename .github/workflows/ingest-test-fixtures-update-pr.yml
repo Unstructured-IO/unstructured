@@ -5,7 +5,6 @@ on:
 
 env:
   PYTHON_VERSION: "3.12"
-  NLTK_DATA: ${{ github.workspace }}/nltk_data
 
 permissions:
   id-token: write
@@ -29,10 +28,8 @@ jobs:
       - uses: ./.github/actions/base-cache
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Setup docker-compose
-        uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: "2.22.0"
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -89,7 +86,7 @@ jobs:
           sudo apt-get install -y tesseract-ocr-kor
           sudo apt-get install diffstat
           tesseract --version
-          uv run ./test_unstructured_ingest/test-ingest-src.sh
+          uv run --no-sync ./test_unstructured_ingest/test-ingest-src.sh
       - name: Update HTML fixtures
         run: make html-fixtures-update
       - name: Update markdown fixtures
@@ -119,6 +116,7 @@ jobs:
           add-paths: |
             test_unstructured_ingest/expected-structured-output
             test_unstructured_ingest/expected-structured-output-html
+            test_unstructured_ingest/expected-structured-output-markdown
             test_unstructured_ingest/metrics
           commit-message: "Update ingest test fixtures"
           branch: ${{ env.BRANCH_NAME }}

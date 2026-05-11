@@ -1,0 +1,151 @@
+name: Build OpenCV Wheels (No FFmpeg)
+
+# Produces opencv-contrib-python-headless wheels compiled from source with
+# WITH_FFMPEG=OFF to eliminate bundled ffmpeg CVEs from PyPI wheels.
+# The contrib-headless variant is a strict superset of opencv-python,
+# opencv-python-headless, and opencv-contrib-python: same cv2 module with
+# core + contrib modules and no GUI / no X11. One wheel can therefore
+# satisfy all four opencv-* package names in downstream Dockerfiles.
+# Wheels are uploaded as a GitHub release so both unstructured and
+# unstructured-api Dockerfiles can download them at build time.
+
+on:
+  workflow_dispatch:
+    inputs:
+      opencv_version:
+        description: "opencv-contrib-python-headless version to build (must have sdist on PyPI)"
+        required: true
+        default: "4.12.0.88"
+      release_tag:
+        description: "GitHub release tag for the wheels (e.g. opencv-4.12.0.88)"
+        required: true
+        default: "opencv-4.12.0.88"
+
+jobs:
+  build-wheel:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runs-on: ubuntu-latest-8-cores
+            docker-platform: linux/amd64
+          - arch: arm64
+            runs-on: ubuntu-latest-arm-8-cores
+            docker-platform: linux/arm64
+    runs-on: ${{ matrix.runs-on }}
+    env:
+      OPENCV_VERSION: ${{ inputs.opencv_version }}
+      DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+    steps:
+      # Docker is preinstalled on amd64 ubuntu-latest runners but not on
+      # the arm64 ubuntu-latest-arm-X-cores image. Install it on demand
+      # and make the socket accessible to the runner user without needing
+      # to re-login for the docker group to take effect.
+      - name: Install Docker (arm64 runner)
+        if: matrix.arch == 'arm64'
+        run: |
+          set -euo pipefail
+          curl -fsSL https://get.docker.com | sudo sh
+          sudo systemctl start docker
+          sudo chmod 666 /var/run/docker.sock
+          docker version --format '{{.Server.Version}}'
+
+      - name: Build opencv-contrib-python-headless from source
+        run: |
+          mkdir -p wheels
+          docker run --rm \
+            --platform="$DOCKER_PLATFORM" \
+            -e "OPENCV_VERSION=$OPENCV_VERSION" \
+            -v "$PWD/wheels:/out" \
+            cgr.dev/chainguard/wolfi-base:latest sh -c '
+              set -euo pipefail
+              # Retry apk install: the chainguard mirror occasionally returns
+              # transient errors mid-install (matches the pattern in unstructured/Dockerfile).
+              apk_ok=false
+              for attempt in 1 2 3; do
+                apk update && \
+                apk add python-3.12 python-3.12-dev python-3.12-base-dev \
+                  opencv-dev cmake gcc glibc-dev libstdc++-dev make pkgconf \
+                  py3.12-pip py3.12-numpy && \
+                apk_ok=true && break
+                echo "apk install failed (attempt $attempt/3), retrying in 5s..."
+                sleep 5
+              done
+              $apk_ok || { echo "apk install failed after 3 attempts"; exit 1; }
+
+              CMAKE_ARGS="-DWITH_FFMPEG=OFF" \
+              ENABLE_CONTRIB=1 \
+              ENABLE_HEADLESS=1 \
+              python3.12 -m pip wheel \
+                --no-binary opencv-contrib-python-headless \
+                --no-deps \
+                "opencv-contrib-python-headless==${OPENCV_VERSION}" \
+                -w /out
+
+              echo "=== Validate no bundled ffmpeg and contrib modules present ==="
+              python3.12 -m pip install /out/opencv_contrib_python_headless-*.whl
+              python3.12 -c "
+          import cv2, pathlib
+          d = pathlib.Path(cv2.__file__).parent
+          libs = d / \".libs\"
+          assert not libs.exists(), f\"Unexpected .libs dir: {list(libs.iterdir())}\"
+          # Sanity check that contrib modules made it into the build
+          assert hasattr(cv2, \"ximgproc\"), \"contrib module cv2.ximgproc missing\"
+          assert hasattr(cv2, \"aruco\"), \"contrib module cv2.aruco missing\"
+          print(f\"OK: cv2 {cv2.__version__}, contrib modules present, no bundled ffmpeg\")
+          "
+            '
+          ls -lh wheels/
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: opencv-wheel-${{ matrix.arch }}
+          path: wheels/opencv_contrib_python_headless-*.whl
+          retention-days: 90
+
+  create-release:
+    needs: build-wheel
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      OPENCV_VERSION: ${{ inputs.opencv_version }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
+    steps:
+      - name: Download all wheel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: wheels
+          merge-multiple: true
+
+      - name: List wheels
+        run: ls -lh wheels/
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # --latest=false keeps this auxiliary wheel release from displacing
+          # the actual package release on the repo's Releases page.
+          gh release create "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "OpenCV Wheels ${OPENCV_VERSION} (no ffmpeg)" \
+            --latest=false \
+            --notes "$(cat <<NOTES
+          OpenCV Python contrib-headless wheels built from source with WITH_FFMPEG=OFF.
+
+          These wheels eliminate bundled ffmpeg CVEs present in the stock PyPI wheels.
+          Built against cgr.dev/chainguard/wolfi-base:latest with Python 3.12.
+
+          The contrib-headless variant provides the full cv2 API (core + contrib
+          modules, no GUI), so a single wheel can satisfy opencv-python,
+          opencv-python-headless, opencv-contrib-python, and
+          opencv-contrib-python-headless in downstream Dockerfiles.
+
+          **Source version:** opencv-contrib-python-headless==${OPENCV_VERSION}
+          **Build flags:** CMAKE_ARGS='-DWITH_FFMPEG=OFF' ENABLE_CONTRIB=1 ENABLE_HEADLESS=1
+          NOTES
+          )" \
+            wheels/*.whl

@@ -77,6 +77,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict, deque
+from functools import cached_property
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, Sequence, cast
 
@@ -104,7 +105,6 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_us_city_state_zip,
 )
-from unstructured.utils import lazyproperty
 
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
@@ -230,7 +230,7 @@ class _ElementAccumulator:
     - `flush()` resets the accumulator to its initial empty state.
     """
 
-    def __init__(self, element: etree.ElementBase):
+    def __init__(self, element: Flow):
         self._element = element
         self._text_segments: list[TextSegment] = []
 
@@ -270,6 +270,7 @@ class _ElementAccumulator:
             metadata=ElementMetadata(
                 **_consolidate_annotations(ts.annotation for ts in text_segments),
                 category_depth=category_depth,
+                page_number=self._element._page_number,
             ),
         )
 
@@ -349,6 +350,20 @@ class Flow(etree.ElementBase):
     def is_phrasing(self) -> bool:
         return False
 
+    @cached_property
+    def _page_number(self) -> int | None:
+        """Page number from nearest ancestor (or self) with a valid `data-page-number` attribute."""
+        page_attr = self.get("data-page-number")
+        if page_attr is not None:
+            try:
+                return int(page_attr)
+            except (ValueError, TypeError):
+                pass
+        parent = self.getparent()
+        if parent is not None and isinstance(parent, Flow):
+            return parent._page_number
+        return None
+
     def iter_elements(self) -> Iterator[Element]:
         """Generate paragraph string for each block item within."""
         # -- place child elements in a queue --
@@ -362,7 +377,7 @@ class Flow(etree.ElementBase):
             yield from block_item.iter_elements()
             yield from self._element_from_text_or_tail(block_item.tail or "", q)
 
-    @lazyproperty
+    @cached_property
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _ElementAccumulator(self)
@@ -477,7 +492,7 @@ class Pre(BlockItem):
 
     _ElementCls = CodeSnippet
 
-    @lazyproperty
+    @cached_property
     def _element_accum(self) -> _ElementAccumulator:
         """Text-segment accumulator suitable for this block-element."""
         return _PreElementAccumulator(self)
@@ -507,6 +522,7 @@ class ImageBlock(Flow):
                 image_mime_type=img_mime_type,
                 image_base64=img_base64,
                 image_url=img_url,
+                page_number=self._page_number,
             ),
         )
 
@@ -544,7 +560,10 @@ class TableBlock(Flow):
         if table_text == "":
             return
 
-        yield Table(table_text, metadata=ElementMetadata(text_as_html=html_table))
+        yield Table(
+            table_text,
+            metadata=ElementMetadata(text_as_html=html_table, page_number=self._page_number),
+        )
 
 
 class RemovedBlock(Flow):

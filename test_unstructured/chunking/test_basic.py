@@ -12,7 +12,14 @@ import pytest
 
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.basic import chunk_elements
-from unstructured.documents.elements import CompositeElement, Text, Title
+from unstructured.documents.elements import (
+    CompositeElement,
+    ElementMetadata,
+    Table,
+    TableChunk,
+    Text,
+    Title,
+)
 from unstructured.partition.docx import partition_docx
 
 
@@ -134,6 +141,86 @@ def test_it_includes_original_elements_as_metadata_when_requested():
     assert chunk.metadata.orig_elements == [element_3]
 
 
+def test_it_repeats_table_headers_by_default_but_can_opt_out():
+    table_html = (
+        "<table>"
+        "<thead>"
+        "<tr><th>Header A</th><th>Header B</th></tr>"
+        "<tr><th>Subhead A</th><th>Subhead B</th></tr>"
+        "</thead>"
+        "<tbody>"
+        "<tr><td>Body 1</td><td>Alpha</td></tr>"
+        "<tr><td>Body 2</td><td>Bravo</td></tr>"
+        "<tr><td>Body 3</td><td>Charlie</td></tr>"
+        "<tr><td>Body 4</td><td>Delta</td></tr>"
+        "</tbody>"
+        "</table>"
+    )
+    table_text = (
+        "Header A Header B\n"
+        "Subhead A Subhead B\n"
+        "Body 1 Alpha\n"
+        "Body 2 Bravo\n"
+        "Body 3 Charlie\n"
+        "Body 4 Delta"
+    )
+    table = Table(table_text, metadata=ElementMetadata(text_as_html=table_html))
+
+    repeated_header_chunks = chunk_elements([table], max_characters=55)
+    opt_out_chunks = chunk_elements([table], max_characters=55, repeat_table_headers=False)
+
+    assert len(repeated_header_chunks) == 4
+    assert all(isinstance(chunk, TableChunk) for chunk in repeated_header_chunks)
+    assert [chunk.text for chunk in repeated_header_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Header A Header B Subhead A Subhead B Body 2 Bravo",
+        "Header A Header B Subhead A Subhead B Body 3 Charlie",
+        "Header A Header B Subhead A Subhead B Body 4 Delta",
+    ]
+    assert [chunk.text for chunk in opt_out_chunks] == [
+        "Header A Header B Subhead A Subhead B Body 1 Alpha",
+        "Body 2 Bravo Body 3 Charlie Body 4 Delta",
+    ]
+
+
+def test_skip_table_chunking_passes_oversized_table_through_unchanged():
+    table_text = "cell " * 200  # 1000 chars, well above max_characters=100
+    table = Table(table_text.strip())
+    text_before = Text("Hello world")
+    text_after = Text("Goodbye world")
+
+    chunks = chunk_elements(
+        [text_before, table, text_after],
+        max_characters=100,
+        skip_table_chunking=True,
+    )
+
+    assert len(chunks) == 3
+    assert isinstance(chunks[0], CompositeElement)
+    assert isinstance(chunks[1], Table)
+    assert isinstance(chunks[2], CompositeElement)
+    # -- table text is unchanged --
+    assert chunks[1].text == table_text.strip()
+
+
+def test_skip_table_chunking_does_not_affect_text_element_chunking():
+    long_text = Text("word " * 200)
+    table = Table("small table")
+
+    chunks = chunk_elements(
+        [long_text, table],
+        max_characters=100,
+        skip_table_chunking=True,
+    )
+
+    # -- long text element is still split, table is still isolated --
+    text_chunks = [c for c in chunks if isinstance(c, CompositeElement)]
+    table_chunks = [c for c in chunks if isinstance(c, Table)]
+    assert len(text_chunks) > 1
+    assert len(table_chunks) == 1
+    assert table_chunks[0].text == "small table"
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
@@ -160,6 +247,42 @@ class Describe_chunk_elements:
 
         _, opts = _chunk_elements_.call_args.args
         assert opts.include_orig_elements is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"repeat_table_headers": True}, True),
+            ({"repeat_table_headers": False}, False),
+            ({"repeat_table_headers": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_repeat_table_headers_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+    ):
+        # -- this line would raise if "repeat_table_headers" was not an available parameter on
+        # -- `chunk_elements()`.
+        chunk_elements([], **kwargs)
+
+        _, opts = _chunk_elements_.call_args.args
+        assert opts.repeat_table_headers is expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"skip_table_chunking": True}, True),
+            ({"skip_table_chunking": False}, False),
+            ({"skip_table_chunking": None}, False),
+            ({}, False),
+        ],
+    )
+    def it_supports_the_skip_table_chunking_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+    ):
+        chunk_elements([], **kwargs)
+
+        _, opts = _chunk_elements_.call_args.args
+        assert opts.skip_table_chunking is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 

@@ -181,6 +181,7 @@ def process_file_with_ocr(
                     password=password,
                 )
                 image_paths = cast(List[str], _image_paths)
+
                 for i, image_path in enumerate(image_paths):
                     extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
@@ -196,6 +197,7 @@ def process_file_with_ocr(
                             table_ocr_agent=table_ocr_agent,
                         )
                         merged_page_layouts.append(merged_page_layout)
+
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):

@@ -1,0 +1,12 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "n1",
+    "text": "See equation below."
+  },
+  {
+    "type": "Formula",
+    "element_id": "f1",
+    "text": "E = mc^2"
+  }
+]

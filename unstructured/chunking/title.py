@@ -5,6 +5,7 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
@@ -17,7 +18,6 @@ from unstructured.chunking.base import (
     is_title,
 )
 from unstructured.documents.elements import Element
-from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
@@ -33,6 +33,8 @@ def chunk_by_title(
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
     tokenizer: Optional[str] = None,
+    repeat_table_headers: Optional[bool] = None,
+    skip_table_chunking: Optional[bool] = None,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
@@ -83,6 +85,12 @@ def chunk_by_title(
     tokenizer
         The tokenizer to use for token-based chunking. Can be either an encoding name (e.g.,
         "cl100k_base") or a model name (e.g., "gpt-4"). Required when using `max_tokens`.
+    repeat_table_headers
+        Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
+        continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
+    skip_table_chunking
+        Default: `False`. When `True`, `Table` elements are passed through unchanged without
+        being split into `TableChunk` elements, regardless of their size.
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
@@ -95,6 +103,8 @@ def chunk_by_title(
         overlap=overlap,
         overlap_all=overlap_all,
         tokenizer=tokenizer,
+        repeat_table_headers=repeat_table_headers,
+        skip_table_chunking=skip_table_chunking,
     )
     return _chunk_by_title(elements, opts)
 
@@ -124,7 +134,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         appearing on two different pages can appear in the same chunk.
     """
 
-    @lazyproperty
+    @cached_property
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
@@ -140,7 +150,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         return tuple(iter_boundary_predicates())
 
-    @lazyproperty
+    @cached_property
     def combine_text_under_n_chars(self) -> int:
         """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
 
@@ -152,7 +162,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return self.hard_max if arg_value is None else arg_value
 
-    @lazyproperty
+    @cached_property
     def multipage_sections(self) -> bool:
         """When False, break pre-chunks on page-boundaries."""
         arg_value = self._kwargs.get("multipage_sections")

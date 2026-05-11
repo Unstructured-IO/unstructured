@@ -12,17 +12,18 @@ import email.utils
 import io
 import os
 from email.message import EmailMessage, MIMEPart
+from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
 
 from dateutil import parser
 
 from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
-from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.logger import logger
+from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
-from unstructured.utils import lazyproperty
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
 
@@ -118,7 +119,7 @@ class EmailPartitioningContext:
             kwargs=kwargs,
         )._validate()
 
-    @lazyproperty
+    @cached_property
     def bcc_addresses(self) -> list[str] | None:
         """The "blind carbon-copy" Bcc: addresses of the message."""
         bccs = self.msg.get_all("Bcc")
@@ -127,7 +128,7 @@ class EmailPartitioningContext:
         addrs = email.utils.getaddresses(bccs)
         return [email.utils.formataddr(addr) for addr in addrs]
 
-    @lazyproperty
+    @cached_property
     def body_part(self) -> MIMEPart | None:
         """The message part containing the actual textual email message.
 
@@ -136,7 +137,7 @@ class EmailPartitioningContext:
         """
         return self.msg.get_body(preferencelist=self.content_type_preference)
 
-    @lazyproperty
+    @cached_property
     def cc_addresses(self) -> list[str] | None:
         """The "carbon-copy" Cc: addresses of the message."""
         ccs = self.msg.get_all("Cc")
@@ -145,7 +146,7 @@ class EmailPartitioningContext:
         addrs = email.utils.getaddresses(ccs)
         return [email.utils.formataddr(addr) for addr in addrs]
 
-    @lazyproperty
+    @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
         """Whether to prefer HTML or plain-text body when message-body has both.
 
@@ -154,7 +155,7 @@ class EmailPartitioningContext:
         """
         return ("plain", "html") if self._content_source == "text/plain" else ("html", "plain")
 
-    @lazyproperty
+    @cached_property
     def email_metadata(self) -> ElementMetadata:
         """The email-specific metadata fields for this message.
 
@@ -170,7 +171,7 @@ class EmailPartitioningContext:
             subject=self.subject,
         )
 
-    @lazyproperty
+    @cached_property
     def from_address(self) -> str | None:
         """The address of the message sender."""
         froms = self.msg.get_all("From")
@@ -181,7 +182,7 @@ class EmailPartitioningContext:
         formatted_addrs = [email.utils.formataddr(addr) for addr in addrs]
         return formatted_addrs[0]
 
-    @lazyproperty
+    @cached_property
     def message_id(self) -> str | None:
         """The value of the Message-ID: header, when present."""
         raw_id = self.msg.get("Message-ID")
@@ -189,7 +190,7 @@ class EmailPartitioningContext:
             return None
         return raw_id.strip().strip("<>")
 
-    @lazyproperty
+    @cached_property
     def metadata_file_path(self) -> str | None:
         """The best available file-path information for this email message.
 
@@ -204,7 +205,7 @@ class EmailPartitioningContext:
         """
         return self._metadata_file_path or self._file_path or None
 
-    @lazyproperty
+    @cached_property
     def metadata_last_modified(self) -> str | None:
         """The best available last-modified date for this message, as an ISO8601 string.
 
@@ -220,7 +221,7 @@ class EmailPartitioningContext:
         """
         return self._metadata_last_modified or self._sent_date or self._filesystem_last_modified
 
-    @lazyproperty
+    @cached_property
     def msg(self) -> EmailMessage:
         """The Python stdlib `email.message.EmailMessage` object parsed from the EML file."""
         if self._file_path is not None:
@@ -235,7 +236,7 @@ class EmailPartitioningContext:
 
         return cast(EmailMessage, email.message_from_bytes(file_bytes, policy=email.policy.default))
 
-    @lazyproperty
+    @cached_property
     def partitioning_kwargs(self) -> dict[str, Any]:
         """The "extra" keyword arguments received by `partition_email()`.
 
@@ -244,7 +245,7 @@ class EmailPartitioningContext:
         """
         return self._kwargs
 
-    @lazyproperty
+    @cached_property
     def process_attachments(self) -> bool:
         """When True, partition attachments in addition to the email message body.
 
@@ -253,7 +254,7 @@ class EmailPartitioningContext:
         """
         return self._process_attachments
 
-    @lazyproperty
+    @cached_property
     def subject(self) -> str | None:
         """The value of the Subject: header, when present."""
         subject = self.msg.get("Subject")
@@ -261,7 +262,7 @@ class EmailPartitioningContext:
             return None
         return subject
 
-    @lazyproperty
+    @cached_property
     def to_addresses(self) -> list[str] | None:
         """The To: addresses of the message."""
         tos = self.msg.get_all("To")
@@ -270,12 +271,12 @@ class EmailPartitioningContext:
         addrs = email.utils.getaddresses(tos)
         return [email.utils.formataddr(addr) for addr in addrs]
 
-    @lazyproperty
+    @cached_property
     def _filesystem_last_modified(self) -> str | None:
         """Last-modified retrieved from filesystem when a file-path was provided, None otherwise."""
         return get_last_modified_date(self._file_path) if self._file_path else None
 
-    @lazyproperty
+    @cached_property
     def _sent_date(self) -> str | None:
         """ISO-8601 str representation of message sent-date, if available."""
         date_str = self.msg.get("Date")
@@ -401,16 +402,21 @@ class _AttachmentPartitioner:
                 metadata_last_modified=self._ctx.metadata_last_modified,
                 **self._ctx.partitioning_kwargs,
             )
-        except UnsupportedFileFormatError:
-            # -- indicates `auto.partition()` has no partitioner for this file-format;
-            # -- silently skip the attachment
+        except BaseException as e:
+            if not isinstance(e, EXPECTED_ATTACHMENT_ERRORS):
+                raise
+            logger.warning(
+                "Skipping attachment %s: %s",
+                self._attachment_file_name,
+                f"{type(e).__name__}: {e}",
+            )
             return
 
         for e in elements:
             e.metadata.attached_to_filename = self._attached_to_filename
             yield e
 
-    @lazyproperty
+    @cached_property
     def _attached_to_filename(self) -> str | None:
         """The file-name (no path) of the message. `None` if not available."""
         file_path = self._ctx.metadata_file_path
@@ -418,12 +424,12 @@ class _AttachmentPartitioner:
             return None
         return os.path.basename(file_path)
 
-    @lazyproperty
+    @cached_property
     def _attachment_file_name(self) -> str | None:
         """The original name of the attached file, `None` if not present in the MIME part."""
         return self._attachment.get_filename()
 
-    @lazyproperty
+    @cached_property
     def _file_bytes(self) -> bytes:
         """The bytes of the attached file."""
         content = self._attachment.get_content()

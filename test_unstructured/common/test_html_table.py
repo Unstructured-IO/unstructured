@@ -76,6 +76,27 @@ class DescribeHtmlTable:
         )
         assert html_table.html == "<table><tr><td>foobar</td></tr></table>"
 
+    def but_it_preserves_colspan_and_rowspan_as_structural_cell_attributes(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "<tr><th colspan='2' class='hdr' style='x'>A</th>"
+            "<th rowspan='2' id='foo'>B</th></tr>"
+            "<tr><td colspan='2' rowspan='3' data-k='v'>C</td><td>D</td></tr>"
+            "</table>"
+        )
+        table = fragment_fromstring(html_table.html)
+
+        # -- colspan/rowspan survive compactification --
+        assert table.xpath("./tr[1]/td[1]/@colspan") == ["2"]
+        assert table.xpath("./tr[1]/td[2]/@rowspan") == ["2"]
+        assert table.xpath("./tr[2]/td[1]/@colspan") == ["2"]
+        assert table.xpath("./tr[2]/td[1]/@rowspan") == ["3"]
+        # -- cosmetic / arbitrary attributes are still stripped --
+        assert table.xpath("./tr[1]/td[1]/@class") == []
+        assert table.xpath("./tr[1]/td[1]/@style") == []
+        assert table.xpath("./tr[1]/td[2]/@id") == []
+        assert table.xpath("./tr[2]/td[1]/@data-k") == []
+
     @pytest.mark.parametrize(
         "html_text",
         [
@@ -136,6 +157,38 @@ class DescribeHtmlTable:
         with pytest.raises(StopIteration):
             next(row_iter)
 
+    def it_preserves_row_header_semantics_when_iterating_rows(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <thead><tr><td>head-from-thead</td></tr></thead>"
+            "  <tbody>"
+            "    <tr><th>head-from-th</th></tr>"
+            "    <tr><td>body</td></tr>"
+            "  </tbody>"
+            "</table>"
+        )
+
+        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
+
+    def and_it_preserves_source_row_html_before_compactification(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <thead><tr data-row='header'><th scope='col'>Header</th></tr></thead>"
+            "  <tbody><tr><td class='body-cell'>Body</td></tr></tbody>"
+            "</table>"
+        )
+        rows = list(html_table.iter_rows())
+        header_row = fragment_fromstring(rows[0].source_html or "<tr/>")
+        body_row = fragment_fromstring(rows[1].source_html or "<tr/>")
+
+        assert header_row.xpath("./@data-row") == ["header"]
+        assert header_row.xpath("./th/@scope") == ["col"]
+        assert body_row.xpath("./td/@class") == ["body-cell"]
+
+        # -- compactified row HTML contract remains unchanged --
+        assert rows[0].html == "<tr><td>Header</td></tr>"
+        assert rows[1].html == "<tr><td>Body</td></tr>"
+
     def it_provides_access_to_the_clear_concatenated_text_of_the_table(self):
         html_table = HtmlTable.from_html_text(
             "<table>"
@@ -185,6 +238,23 @@ class DescribeHtmlRow:
         with pytest.raises(StopIteration):
             next(text_iter)
 
+    def and_it_includes_descendant_inline_text_in_cell_texts(self):
+        row = HtmlRow(
+            fragment_fromstring(
+                "<tr>"
+                "<td>ID</td>"
+                "<td><a href='#'>Category Link</a></td>"
+                "<td><span>  Extra  spacing </span></td>"
+                "</tr>"
+            )
+        )
+
+        assert list(row.iter_cell_texts()) == ["ID", "Category Link", "Extra spacing"]
+
+    def it_knows_when_it_represents_a_header_row(self):
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>")).is_header is False
+        assert HtmlRow(fragment_fromstring("<tr><td>a</td></tr>"), is_header=True).is_header is True
+
 
 class DescribeHtmlCell:
     """Unit-test suite for `unstructured.common.html_table.HtmlCell`."""
@@ -192,9 +262,18 @@ class DescribeHtmlCell:
     def it_can_serialize_the_cell_to_html(self):
         assert HtmlCell(fragment_fromstring("<td>a b c</td>")).html == "<td>a b c</td>"
 
+    def and_it_preserves_nested_markup_when_serializing_nonempty_cells(self):
+        assert HtmlCell(fragment_fromstring("<td><a href='#'>Category Link</a></td>")).html == (
+            '<td><a href="#">Category Link</a></td>'
+        )
+
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
-        [("<td>  Lorem ipsum  </td>", "Lorem ipsum"), ("<td/>", "")],
+        [
+            ("<td>  Lorem ipsum  </td>", "Lorem ipsum"),
+            ("<td><a href='#'>Category Link</a></td>", "Category Link"),
+            ("<td/>", ""),
+        ],
     )
     def it_knows_the_text_in_the_cell(self, cell_html: str, expected_value: str):
         assert HtmlCell(fragment_fromstring(cell_html)).text == expected_value

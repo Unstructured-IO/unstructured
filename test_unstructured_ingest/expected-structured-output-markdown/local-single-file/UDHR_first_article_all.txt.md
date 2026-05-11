@@ -97,7 +97,7 @@ Chinantec, Ojitlán La juu dsa lu siä –Dsa kö ñi ba dsa, nía kö ni' ba na
 # Chinese, Mandarin (Nanjing)
 # 大家生而自由，在尊严告权利上头一律平等。他们赋有理性告良心，并该派以兄弟关系的精神相对待。
 # Chinese, Mandarin (Simplified)
-# 人人生而自由,在尊严和权利上一律平等。他们赋有理性和良心,并应以兄弟关系的精神相对待。
+人人生而自由,在尊严和权利上一律平等。他们赋有理性和良心,并应以兄弟关系的精神相对待。
 # Chinese, Mandarin (Tianjin)
 # 人个顶个生而自由，在尊严和权利上般儿般儿大。他们趁理性和良心，并应以兄弟关系的精神相对待。
 # Chinese, Mandarin (Traditional)
@@ -167,7 +167,7 @@ Gen Agbetɔwo kpata le jijimɛa, ɖo vosinɔnɔ, nyi gbèsɔɛ́mɛ́wó le nuj�
 Georgian ყოველი ადამიანი იბადება თავისუფალი და თანასწორი თავისი ღირსებითა და უფლებებით. მათ მინიჭებული აქვთ გონება და სინდისი და ერთმანეთის მიმართ უნდა ექცეოდნენ ძმობის სულისკვეთებით.
 German, Standard (1901) Alle Menschen sind frei und gleich an Würde und Rechten geboren. Sie sind mit Vernunft und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
 German, Standard (1996) Alle Menschen sind frei und gleich an Würde und Rechten geboren. Sie sind mit Vernunft und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
-# Gilyak Сик нивгун куғытӻарта, пʼинамад яймта адяй правоғир̌ пʼӊафқ-ӊафқғир̌ салӻата ӿат пантадғун.
+Gilyak Сик нивгун куғытӻарта, пʼинамад яймта адяй правоғир̌ пʼӊафқ-ӊафқғир̌ салӻата ӿат пантадғун.
 Gonja Bu kurwe dimedi kikɛ mobe kumu so, nɛ mobe, eyilikpa, kesheŋ nɛ kashinteŋ maŋ kɔr eko peyɛ to. Nyinpela sa dimedi kikɛ lakal nɛ mfɛra fanɛ bu chena abarso kelepo so.
 Greek (monotonic) Όλοι οι άνθρωποι γεννιούνται ελεύθεροι και ίσοι στην αξιοπρέπεια και τα δικαιώματα. Είναι προικισμένοι με λογική και συνείδηση, και οφείλουν να συμπεριφέρονται μεταξύ τους με πνεύμα αδελφοσύνης.
 Greek (polytonic) Ὅλοι οἱ ἄνθρωποι γεννιοῦνται ἐλεύθεροι καὶ ἴσοι στὴν ἀξιοπρέπεια καὶ τὰ δικαιώματα. Εἶναι προικισμένοι μὲ λογικὴ καὶ συνείδηση, καὶ ὀφείλουν νὰ συμπεριφέρονται μεταξύ τους μὲ πνεῦμα ἀδελφοσύνης.
@@ -294,7 +294,7 @@ Mazatec, Ixcatlán Nga ndindie xuta ngatsen de’e ko ngondsejen ngatjin-kjua ng
 Mbundu O athu woso avwala abhuluka ni kusokela mu kijingu ni mu itekelu. Ene ala ni ulungilu ni kilunji ni atokala kulaya kumoxi nya akwa mu mixima ya undandu.
 Mbundu (009) Mutu uoso uoso a mu vuala ni ufolo ni kutena kumoxi mu kijingu ni mu ubinganu. Mu kilembu kia kubanga ni mu ubanzelu, Atena uê kubanga ioso kua akua mu muxima ua tululuka mba upange.
 Mende Numuvuisia Kpɛlɛɛ ta ti le tɛ yɛ nduwɔ ya hu, tao ti nuvuu yei kɛɛ ti lɔnyi maa hɛwungɔ. Kiiya kɛɛ hindaluahu gɔɔla a yɛlɔ ti hun. Fale mahoungɔ ti ti nyɔnyɔhu hoi kia ndeegaa.
-Micmac Msit mimajulnu’k weskwijinu’ltijik alsumsultijik aqq newte’ tett wkpimte’tmut aqq koqwajo’taqnn wejkul’aqmititl.
+# Micmac Msit mimajulnu’k weskwijinu’ltijik alsumsultijik aqq newte’ tett wkpimte’tmut aqq koqwajo’taqnn wejkul’aqmititl.
 Minangkabau Sadonyo manusia dilahiakan mardeka dan punyo martabat sarato hak-hak nan samo. Mareka dikaruniai aka jo hati nurani, supayo satu samo lain bagaul sarupo urang badunsanak.
 Mískito Upla sut ba kulkanka lakara, airaitka nanira bara pri, sin, aikuki, baku takisa. Bamna sins laka bri baku, lukanka bain pri baku aimuihni lakara, pana pana tabaikan kaiasa.
 Mixe, Totontepec Tum akijpxa xa ve’e jayu kye’ex, ve’em ax jö’n tyukidaakjüva tijaty mëkin; ve’empa axjö’n jä jyööjtykin di yaknaxy, jats oy myujatyöö’tëjk di mëët nayjavajüt.

@@ -6,12 +6,11 @@ Used during partitioning as well as chunking.
 from __future__ import annotations
 
 import html
+from functools import cached_property
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 from lxml import etree
 from lxml.html import fragment_fromstring
-
-from unstructured.utils import lazyproperty
 
 if TYPE_CHECKING:
     from lxml.html import HtmlElement
@@ -52,8 +51,15 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
 class HtmlTable:
     """A `<table>` element."""
 
-    def __init__(self, table: HtmlElement):
+    def __init__(
+        self,
+        table: HtmlElement,
+        header_row_idxs: set[int] | None = None,
+        source_row_htmls: Sequence[str] | None = None,
+    ):
         self._table = table
+        self._header_row_idxs = header_row_idxs or set()
+        self._source_row_htmls = tuple(source_row_htmls or ())
 
     @classmethod
     def from_html_text(cls, html_text: str) -> HtmlTable:
@@ -64,6 +70,15 @@ class HtmlTable:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
 
+        # -- capture header semantics and source row HTML before compactification strips details --
+        rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
+        source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
+        header_row_idxs = {
+            idx
+            for idx, tr in enumerate(rows)
+            if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
+        }
+
         # -- remove `<thead>`, `<tbody>`, and `<tfoot>` noise elements when present --
         noise_elements = table.xpath(".//thead | .//tbody | .//tfoot")
         for e in noise_elements:
@@ -71,9 +86,14 @@ class HtmlTable:
 
         # -- normalize and compactify the HTML --
         for e in table.iter():
-            # -- Strip all attributes from elements, like border="1", class="dataframe" added
+            # -- Strip cosmetic attributes like border="1", class="dataframe" added
             # -- by pandas.DataFrame.to_html(), style="text-align: right;", etc.
+            # -- Preserve colspan/rowspan: they are structural, not cosmetic, and are
+            # -- required to reconstruct merged-cell layout in chunk HTML.
+            preserved = {k: e.attrib[k] for k in ("colspan", "rowspan") if k in e.attrib}
             e.attrib.clear()
+            for k, v in preserved.items():
+                e.attrib[k] = v
 
             # -- change any `<th>` elements to `<td>` so all cells have the same tag --
             if e.tag == "th":
@@ -88,9 +108,9 @@ class HtmlTable:
             if e.tail:
                 e.tail = None
 
-        return cls(table)
+        return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """The HTML-fragment for this `<table>` element, all on one line.
 
@@ -103,9 +123,12 @@ class HtmlTable:
         return etree.tostring(self._table, encoding=str)
 
     def iter_rows(self) -> Iterator[HtmlRow]:
-        yield from (HtmlRow(tr) for tr in cast("list[HtmlElement]", self._table.xpath("./tr")))
+        rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
+        for idx, tr in enumerate(rows):
+            source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
+            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)
 
-    @lazyproperty
+    @cached_property
     def text(self) -> str:
         """The clean, concatenated, text for this table."""
         table_text = " ".join(self._table.itertext())
@@ -116,10 +139,12 @@ class HtmlTable:
 class HtmlRow:
     """A `<tr>` element."""
 
-    def __init__(self, tr: HtmlElement):
+    def __init__(self, tr: HtmlElement, is_header: bool = False, source_html: str | None = None):
         self._tr = tr
+        self._is_header = is_header
+        self._source_html = source_html
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """Like  "<tr><td>foo</td><td>bar</td></tr>"."""
         return etree.tostring(self._tr, encoding=str)
@@ -128,19 +153,28 @@ class HtmlRow:
         for td in self._tr:
             yield HtmlCell(td)
 
+    @property
+    def is_header(self) -> bool:
+        """True when this row originated from `<thead>` or contains `<th>` cells."""
+        return self._is_header
+
+    @property
+    def source_html(self) -> str | None:
+        """Original source `<tr>` HTML captured before compactification, when available."""
+        return self._source_html
+
     def iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each cell of this row as a separate string.
 
         A cell that is empty or contains only whitespace does not generate a string.
         """
         for td in self._tr:
-            if (text := td.text) is None:
-                continue
+            text = " ".join(td.text_content().split())
             if not text:
                 continue
             yield text
 
-    @lazyproperty
+    @cached_property
     def text_len(self) -> int:
         """Length of the normalized text, as it would appear in `element.text`."""
         return len(" ".join(self.iter_cell_texts()))
@@ -152,14 +186,12 @@ class HtmlCell:
     def __init__(self, td: HtmlElement):
         self._td = td
 
-    @lazyproperty
+    @cached_property
     def html(self) -> str:
         """Like  "<td>foo bar baz</td>"."""
         return etree.tostring(self._td, encoding=str) if self.text else "<td/>"
 
-    @lazyproperty
+    @cached_property
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
-        if (text := self._td.text) is None:
-            return ""
-        return " ".join(text.strip().split())
+        return " ".join(self._td.text_content().split())

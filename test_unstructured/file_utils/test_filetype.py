@@ -26,6 +26,7 @@ from unstructured.file_utils.filetype import (
     _ZipFileDetector,
     detect_filetype,
     is_json_processable,
+    is_ndjson_processable,
 )
 from unstructured.file_utils.model import FileType, create_file_type
 
@@ -169,11 +170,14 @@ def test_it_identifies_NDJSON_for_file_with_ndjson_extension_but_JSON_content_ty
     ("expected_value", "file_name", "mime_type"),
     [
         (FileType.BMP, "img/bmp_24.bmp", "image/bmp"),
+        (FileType.BMP, "img/bmp_24.bmp", "image/x-bmp"),
+        (FileType.BMP, "img/bmp_24.bmp", "image/x-ms-bmp"),
         (FileType.CSV, "stanley-cups.csv", "text/csv"),
         (FileType.CSV, "stanley-cups.csv", "application/csv"),
         (FileType.CSV, "stanley-cups.csv", "application/x-csv"),
         (FileType.EML, "eml/fake-email.eml", "message/rfc822"),
         (FileType.HEIC, "img/DA-1p.heic", "image/heic"),
+        (FileType.HEIC, "img/DA-1p.heic", "image/x-heic"),
         (FileType.HTML, "example-10k-1p.html", "text/html"),
         (FileType.JPG, "img/example.jpg", "image/jpeg"),
         (FileType.JSON, "spring-weather.html.json", "application/json"),
@@ -250,6 +254,29 @@ def test_it_detects_most_file_types_using_mime_guessing_when_libmagic_guesses_mi
         file = io.BytesIO(f.read())
 
     assert detect_filetype(file=file) is expected_value
+
+
+@pytest.mark.parametrize(
+    ("file_name", "fallback_mime_type", "expected_value"),
+    [
+        ("img/bmp_24.bmp", "image/bmp", FileType.BMP),
+        ("img/DA-1p.heic", "image/heic", FileType.HEIC),
+        ("CantinaBand3.wav", "audio/wav", FileType.WAV),
+    ],
+)
+def test_it_falls_back_to_filetype_mime_guessing_when_libmagic_returns_unrecognized_mime_type(
+    file_name: str, fallback_mime_type: str, expected_value: FileType, ctx_mime_type_: Mock
+):
+    # -- simulate libmagic returning an unhelpful MIME-type --
+    ctx_mime_type_.return_value = "application/octet-stream"
+    with patch("unstructured.file_utils.filetype.LIBMAGIC_AVAILABLE", True):
+        with patch(
+            "unstructured.file_utils.filetype.ft.guess_mime", return_value=fallback_mime_type
+        ):
+            with open(example_doc_path(file_name), "rb") as f:
+                file = io.BytesIO(f.read())
+
+            assert detect_filetype(file=file) is expected_value
 
 
 @pytest.mark.parametrize(
@@ -510,6 +537,96 @@ def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_text():
     with open(example_doc_path("not-unstructured-payload.json")) as f:
         text = f.read()
     assert is_json_processable(file_text=text) is False
+
+
+# ================================================================================================
+# Describe `is_ndjson_processable()`
+# ================================================================================================
+
+
+def it_recognizes_real_ndjson_with_multiple_object_lines():
+    assert is_ndjson_processable(file_text='{"a": 1}\n{"b": 2}\n') is True
+
+
+def it_recognizes_single_line_ndjson_with_trailing_newline():
+    assert is_ndjson_processable(file_text='{"a": 1}\n{"b": 2}') is True
+
+
+def it_rejects_a_multiline_single_json_object():
+    # The bug: was True; now must be False so partition_ndjson does not get this payload.
+    text = '{\n  "id": "Sample-1",\n  "name": "Sample 1"\n}'
+    assert is_ndjson_processable(file_text=text) is False
+
+
+def it_accepts_a_single_line_json_object_as_one_record_ndjson():
+    """A single-line JSON object is a valid 1-record NDJSON payload.
+
+    `partition_ndjson` parses it via `splitlines()` and yields one record. Existing callers
+    rely on this; only multi-line single objects are pathological.
+    """
+    assert is_ndjson_processable(file_text='{"a": 1}') is True
+
+
+def it_rejects_a_json_array_of_objects():
+    assert is_ndjson_processable(file_text='[{"a": 1}, {"b": 2}]') is False
+
+
+def it_rejects_whitespace_only():
+    assert is_ndjson_processable(file_text="   \n  ") is False
+
+
+def it_rejects_garbage_text():
+    assert is_ndjson_processable(file_text="not json at all") is False
+
+
+def it_rejects_a_jupyter_notebook_payload():
+    """Jupyter notebooks are a single multi-line JSON object — must not route to NDJSON."""
+    notebook_text = (
+        "{\n"
+        ' "cells": [],\n'
+        ' "metadata": {"kernelspec": {"name": "python3"}},\n'
+        ' "nbformat": 4,\n'
+        ' "nbformat_minor": 5\n'
+        "}\n"
+    )
+    assert is_ndjson_processable(file_text=notebook_text) is False
+
+
+def it_rejects_ndjson_first_line_is_a_bare_value_not_an_object():
+    # NDJSON of bare values is uncommon and partition_ndjson expects dicts. Be strict.
+    assert is_ndjson_processable(file_text="1\n2\n3\n") is False
+
+
+def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
+    file_type = detect_filetype(example_doc_path("not-unstructured-payload.json"))
+    # A multi-line single-object JSON file used to get classified as NDJSON. It should now end up
+    # as JSON (and partition_json will reject it with the existing schema-mismatch error).
+    assert file_type == FileType.JSON
+
+
+def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
+    """NDJSON whose first record is longer than the 4096-char text_head prefix.
+
+    `_disambiguate_json_file_type` reads past `text_head` to find the first newline, so the
+    heuristic must not rely on the first record fitting in the prefix. Both single-record and
+    multi-record cases are exercised — both must round-trip as `FileType.NDJSON`.
+    """
+    big_value = "x" * 5000
+    payload_one_record = json.dumps({"text": big_value, "type": "NarrativeText"}).encode()
+    payload_many_records = (
+        payload_one_record + b"\n" + json.dumps({"text": "tiny", "type": "Title"}).encode()
+    )
+
+    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.NDJSON
+    assert detect_filetype(file=io.BytesIO(payload_many_records)) == FileType.NDJSON
+    assert is_ndjson_processable(file=io.BytesIO(payload_one_record)) is True
+
+
+def it_classifies_multiline_json_as_json_when_first_newline_exceeds_text_head_prefix():
+    big_value = "x" * 5000
+    payload = ('{"text": "' + big_value + '",\n "type": "NarrativeText"\n}').encode()
+
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
 
 
 # ================================================================================================

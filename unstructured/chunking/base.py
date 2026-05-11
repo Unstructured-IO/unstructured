@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import collections
 import copy
+import uuid
+from functools import cached_property
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
 
 import regex
+from lxml.etree import ParserError, tostring
+from lxml.html import fragment_fromstring
 from typing_extensions import Self, TypeAlias
 
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
@@ -20,7 +24,7 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
-from unstructured.utils import lazyproperty
+from unstructured.logger import logger
 
 # ================================================================================================
 # MODEL
@@ -56,7 +60,7 @@ class TokenCounter:
     def __init__(self, tokenizer: str):
         self._tokenizer_name = tokenizer
 
-    @lazyproperty
+    @cached_property
     def _encoder(self):
         """Lazily initialize the tiktoken encoder."""
         import tiktoken
@@ -118,6 +122,9 @@ class ChunkingOptions:
         Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
         elements and not subject to text-splitting. Use this with caution as it entails a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
+    repeat_table_headers
+        Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
+        continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -141,7 +148,7 @@ class ChunkingOptions:
         self._validate()
         return self
 
-    @lazyproperty
+    @cached_property
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
@@ -149,7 +156,7 @@ class ChunkingOptions:
         """
         return ()
 
-    @lazyproperty
+    @cached_property
     def combine_text_under_n_chars(self) -> int:
         """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
@@ -159,7 +166,7 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return arg_value if arg_value is not None else 0
 
-    @lazyproperty
+    @cached_property
     def hard_max(self) -> int:
         """The maximum size for a chunk (in characters or tokens depending on mode).
 
@@ -174,7 +181,7 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("max_characters")
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
-    @lazyproperty
+    @cached_property
     def include_orig_elements(self) -> bool:
         """When True, add original elements from pre-chunk to `.metadata.orig_elements` of chunk.
 
@@ -183,7 +190,25 @@ class ChunkingOptions:
         arg_value = self._kwargs.get("include_orig_elements")
         return True if arg_value is None else bool(arg_value)
 
-    @lazyproperty
+    @cached_property
+    def repeat_table_headers(self) -> bool:
+        """When True, repeat detected table headers in continuation table chunks.
+
+        Default value is `True`.
+        """
+        arg_value = self._kwargs.get("repeat_table_headers")
+        return True if arg_value is None else bool(arg_value)
+
+    @cached_property
+    def skip_table_chunking(self) -> bool:
+        """When True, Table elements are passed through without chunking.
+
+        Default value is `False`.
+        """
+        arg_value = self._kwargs.get("skip_table_chunking")
+        return False if arg_value is None else bool(arg_value)
+
+    @cached_property
     def inter_chunk_overlap(self) -> int:
         """Characters of overlap to add between chunks.
 
@@ -193,7 +218,7 @@ class ChunkingOptions:
         overlap_all_arg = self._kwargs.get("overlap_all")
         return self.overlap if overlap_all_arg else 0
 
-    @lazyproperty
+    @cached_property
     def overlap(self) -> int:
         """The number of characters to overlap text when splitting chunks mid-text.
 
@@ -203,7 +228,7 @@ class ChunkingOptions:
         overlap_arg = self._kwargs.get("overlap")
         return overlap_arg or 0
 
-    @lazyproperty
+    @cached_property
     def soft_max(self) -> int:
         """A pre-chunk of this size or greater is considered full.
 
@@ -235,7 +260,7 @@ class ChunkingOptions:
         # -- otherwise, give them what they asked for --
         return new_after_n_chars_arg
 
-    @lazyproperty
+    @cached_property
     def split(self) -> Callable[[str], tuple[str, str]]:
         """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
 
@@ -244,7 +269,7 @@ class ChunkingOptions:
         """
         return _TextSplitter(self)
 
-    @lazyproperty
+    @cached_property
     def text_separator(self) -> str:
         """The string to insert between elements when concatenating their text for a chunk.
 
@@ -254,7 +279,7 @@ class ChunkingOptions:
         """
         return "\n\n"
 
-    @lazyproperty
+    @cached_property
     def text_splitting_separators(self) -> tuple[str, ...]:
         """Sequence of text-splitting target strings to be used in order of preference."""
         text_splitting_separators_arg = self._kwargs.get("text_splitting_separators")
@@ -264,13 +289,13 @@ class ChunkingOptions:
             else tuple(text_splitting_separators_arg)
         )
 
-    @lazyproperty
+    @cached_property
     def token_counter(self) -> TokenCounter | None:
         """The token counter for token-based chunking, or None for character-based chunking."""
         tokenizer = self._kwargs.get("tokenizer")
         return TokenCounter(tokenizer) if tokenizer else None
 
-    @lazyproperty
+    @cached_property
     def use_token_counting(self) -> bool:
         """True when token-based chunking is configured, False for character-based."""
         return self._kwargs.get("max_tokens") is not None
@@ -330,6 +355,41 @@ class ChunkingOptions:
                 f"'overlap' argument must be less than `max_characters`,"
                 f" got {self.overlap} >= {hard_max}"
             )
+
+
+# ================================================================================================
+# TABLE ISOLATION (SHARED PRECHECKS)
+# ================================================================================================
+# Tables are always staged alone in a pre-chunk so downstream splitting can emit `Table` /
+# `TableChunk` elements instead of folding them into `CompositeElement` with surrounding text.
+# See GitHub issue #3921 and the chunking strategy docs for rationale.
+
+
+def _element_is_table_family(element: Element) -> bool:
+    """True when ``element`` is a `Table` or a concrete subtype such as `TableChunk`.
+
+    Subclasses share the same isolation contract: they must not share a pre-chunk with arbitrary
+    text elements, and two table-bearing sequences must not be merged by `PreChunkCombiner`.
+    """
+    return isinstance(element, Table)
+
+
+def _elements_contain_table_family(elements: Iterable[Element]) -> bool:
+    """True when ``elements`` already includes at least one table-family element."""
+    return any(_element_is_table_family(e) for e in elements)
+
+
+def _table_isolation_forbids_side_by_side_merge(
+    left: Iterable[Element],
+    right: Iterable[Element],
+) -> bool:
+    """True when a proposed merge of two element streams must be rejected for table isolation.
+
+    If either side already contains a table, the combiner must flush before accepting the other
+    side. This keeps `combine_text_under_n_chars` from concatenating a table pre-chunk with
+    neighboring narrative pre-chunks.
+    """
+    return _elements_contain_table_family(left) or _elements_contain_table_family(right)
 
 
 # ================================================================================================
@@ -398,7 +458,7 @@ class PreChunker:
         # -- processed
         yield from pre_chunk_builder.flush()
 
-    @lazyproperty
+    @cached_property
     def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
         return self._opts.boundary_predicates
@@ -441,6 +501,12 @@ class PreChunkBuilder:
 
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
+        # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
+        if len(self._elements) == 0 and _element_is_table_family(element):
+            self._overlap_prefix = ""
+            self._text_segments = []
+            self._text_len = 0
+
         self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
@@ -463,7 +529,11 @@ class PreChunkBuilder:
         pre_chunk = PreChunk(elements, self._overlap_prefix, self._opts)
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state(pre_chunk.overlap_tail)
+        overlap_for_next = pre_chunk.overlap_tail
+        # -- table tails must not prefix the following narrative pre-chunk (overlap_all) --
+        if len(elements) == 1 and _element_is_table_family(elements[0]):
+            overlap_for_next = ""
+        self._reset_state(overlap_for_next)
         yield pre_chunk
 
     def will_fit(self, element: Element) -> bool:
@@ -478,6 +548,14 @@ class PreChunkBuilder:
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
         """
+        # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty pre-chunk --
+        if _element_is_table_family(element):
+            return len(self._elements) == 0
+
+        # -- no non-table element may share a pre-chunk with a `Table` --
+        if _elements_contain_table_family(self._elements):
+            return False
+
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
             return True
@@ -559,6 +637,8 @@ class PreChunk:
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
+        if _table_isolation_forbids_side_by_side_merge(self._elements, pre_chunk._elements):
+            return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
@@ -591,13 +671,16 @@ class PreChunk:
         # -- it may need to be split into multiple `TableChunk` elements and that operation is
         # -- quite specialized.
         if len(self._elements) == 1 and isinstance(self._elements[0], Table):
-            yield from _TableChunker.iter_chunks(
-                self._elements[0], self._overlap_prefix, self._opts
-            )
+            if self._opts.skip_table_chunking:
+                yield self._elements[0]
+            else:
+                yield from _TableChunker.iter_chunks(
+                    self._elements[0], self._overlap_prefix, self._opts
+                )
         else:
             yield from _Chunker.iter_chunks(self._elements, self._text, self._opts)
 
-    @lazyproperty
+    @cached_property
     def overlap_tail(self) -> str:
         """The portion of this chunk's text to be repeated as a prefix in the next chunk.
 
@@ -626,7 +709,7 @@ class PreChunk:
                     if text:
                         yield text
 
-    @lazyproperty
+    @cached_property
     def _text(self) -> str:
         """The concatenated text of all elements in this pre-chunk, including any overlap.
 
@@ -683,7 +766,7 @@ class _Chunker:
             s, remainder = split(remainder)
             yield CompositeElement(text=s, metadata=self._continuation_metadata)
 
-    @lazyproperty
+    @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
         """Collection of all populated metadata values across elements.
 
@@ -718,7 +801,7 @@ class _Chunker:
 
         return dict(field_values)
 
-    @lazyproperty
+    @cached_property
     def _consolidated_metadata(self) -> ElementMetadata:
         """Metadata applicable to this pre-chunk as a single chunk.
 
@@ -734,7 +817,7 @@ class _Chunker:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
-    @lazyproperty
+    @cached_property
     def _continuation_metadata(self) -> ElementMetadata:
         """Metadata applicable to the second and later text-split chunks of the pre-chunk.
 
@@ -748,7 +831,7 @@ class _Chunker:
         continuation_metadata.is_continuation = True
         return continuation_metadata
 
-    @lazyproperty
+    @cached_property
     def _meta_kwargs(self) -> dict[str, Any]:
         """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
 
@@ -785,7 +868,7 @@ class _Chunker:
 
         return dict(iter_kwarg_pairs())
 
-    @lazyproperty
+    @cached_property
     def _orig_elements(self) -> list[Element]:
         """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
 
@@ -856,7 +939,7 @@ class _TableChunker:
         # -- otherwise, form splits with "synchronized" text and html --
         yield from self._iter_text_and_html_table_chunks()
 
-    @lazyproperty
+    @cached_property
     def _html(self) -> str:
         """The compactified HTML for this table when it has text-as-HTML.
 
@@ -868,7 +951,7 @@ class _TableChunker:
 
         return html_table.html
 
-    @lazyproperty
+    @cached_property
     def _html_table(self) -> HtmlTable | None:
         """The `lxml` HTML element object for this table.
 
@@ -881,7 +964,29 @@ class _TableChunker:
         if not text_as_html:  # pragma: no cover
             return None
 
-        return HtmlTable.from_html_text(text_as_html)
+        try:
+            return HtmlTable.from_html_text(text_as_html)
+        except (ParserError, ValueError):
+            logger.warning(
+                "Could not parse text_as_html for table element; skipping HTML-based chunking."
+                " text_as_html: %s",
+                text_as_html[:100] + "..." if len(text_as_html) > 100 else text_as_html,
+            )
+            return None
+
+    @cached_property
+    def _leading_header_row_count(self) -> int:
+        """Number of contiguous leading rows that should be treated as table headers."""
+        html_table = self._html_table
+        if html_table is None:
+            return 0
+
+        count = 0
+        for row in html_table.iter_rows():
+            if not row.is_header:
+                break
+            count += 1
+        return count
 
     def _iter_text_and_html_table_chunks(self) -> Iterator[TableChunk]:
         """Split table into chunks where HTML corresponds exactly to text.
@@ -891,16 +996,20 @@ class _TableChunker:
         if (html_table := self._html_table) is None:  # pragma: no cover
             raise ValueError("this method is undefined for a table having no .text_as_html")
 
-        is_continuation = False
-
-        for text, html in _HtmlTableSplitter.iter_subtables(html_table, self._opts):
-            metadata = self._metadata
-            metadata.text_as_html = html
-            # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
-
-            yield TableChunk(text=text, metadata=metadata)
+        header_row_count = self._leading_header_row_count if self._opts.repeat_table_headers else 0
+        splitter = _HtmlTableSplitter(
+            html_table,
+            self._opts,
+            header_row_count=header_row_count,
+        )
+        yield from self._make_table_chunks(
+            _HtmlTableSplitter.iter_subtables(
+                html_table,
+                self._opts,
+                header_row_count=header_row_count,
+            ),
+            num_carried_over_header_rows=splitter.carried_over_header_row_count,
+        )
 
     def _iter_text_only_table_chunks(self) -> Iterator[TableChunk]:
         """Split oversized text-only table (no text-as-html) into chunks.
@@ -908,19 +1017,47 @@ class _TableChunker:
         `.metadata.text_as_html` is optional, not included when `infer_table_structure` is
         `False`.
         """
-        text_remainder = self._text_with_overlap
-        split = self._opts.split
-        is_continuation = False
 
-        while text_remainder:
-            # -- split off the next chunk-worth of characters into a TableChunk --
-            chunk_text, text_remainder = split(text_remainder)
+        def _iter_text_splits() -> Iterator[tuple[str, None]]:
+            text_remainder = self._text_with_overlap
+            split = self._opts.split
+            while text_remainder:
+                # -- split off the next chunk-worth of characters into a TableChunk --
+                chunk_text, text_remainder = split(text_remainder)
+                yield chunk_text, None
+
+        yield from self._make_table_chunks(_iter_text_splits())
+
+    def _make_table_chunks(
+        self,
+        text_html_pairs: Iterator[tuple[str, str | None]],
+        num_carried_over_header_rows: int = 0,
+    ) -> Iterator[TableChunk]:
+        """Form `TableChunk` objects from (text, html) pairs.
+
+        Handles `is_continuation` and chunk sequencing metadata (`table_id`, `chunk_index`)
+        so the original table can be reconstructed from its chunks. Carries
+        `num_carried_over_header_rows` so synthetic repeated header rows can be removed.
+        """
+        table_id = str(uuid.uuid4())
+        carried_header_row_count = max(0, num_carried_over_header_rows)
+
+        for chunk_index, (text, html) in enumerate(text_html_pairs):
             metadata = self._metadata
+            if html is not None:
+                metadata.text_as_html = html
+            else:
+                metadata.text_as_html = None
             # -- second and later chunks get `.metadata.is_continuation = True` --
-            metadata.is_continuation = is_continuation or None
-            is_continuation = True
+            metadata.is_continuation = (chunk_index > 0) or None
+            metadata.num_carried_over_header_rows = (
+                carried_header_row_count if chunk_index > 0 else 0
+            )
 
-            yield TableChunk(text=chunk_text, metadata=metadata)
+            chunk = TableChunk(text=text, metadata=metadata)
+            chunk.metadata.table_id = table_id
+            chunk.metadata.chunk_index = chunk_index
+            yield chunk
 
     @property
     def _metadata(self) -> ElementMetadata:
@@ -950,7 +1087,7 @@ class _TableChunker:
             metadata.orig_elements = self._orig_elements
         return metadata
 
-    @lazyproperty
+    @cached_property
     def _orig_elements(self) -> list[Element]:
         """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
 
@@ -965,14 +1102,14 @@ class _TableChunker:
         orig_table.metadata.orig_elements = None
         return [orig_table]
 
-    @lazyproperty
+    @cached_property
     def _table_text(self) -> str:
         """The text in this table, not including any overlap-prefix or extra whitespace."""
         if not self._table.text:
             return ""
         return " ".join(self._table.text.split())
 
-    @lazyproperty
+    @cached_property
     def _text_with_overlap(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix
@@ -996,20 +1133,21 @@ class _HtmlTableSplitter:
     The returned `html` value is always a parseable HTML `<table>` subtree.
     """
 
-    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions):
+    def __init__(self, table_element: HtmlTable, opts: ChunkingOptions, header_row_count: int = 0):
         self._table_element = table_element
         self._opts = opts
+        self._header_row_count = max(0, header_row_count)
 
     @classmethod
     def iter_subtables(
-        cls, table_element: HtmlTable, opts: ChunkingOptions
+        cls, table_element: HtmlTable, opts: ChunkingOptions, header_row_count: int = 0
     ) -> Iterator[TextAndHtml]:
         """Generate (text, html) pair for each split of this table pre-chunk.
 
         Each split is on an even row boundary whenever possible, falling back to even cell and even
         word boundaries when a row or cell is by itself oversized, respectively.
         """
-        return cls(table_element, opts)._iter_subtables()
+        return cls(table_element, opts, header_row_count=header_row_count)._iter_subtables()
 
     def _iter_subtables(self) -> Iterator[TextAndHtml]:
         """Generate (text, html) pairs containing as many whole rows as will fit in window.
@@ -1017,23 +1155,36 @@ class _HtmlTableSplitter:
         Falls back to splitting rows into whole cells when a single row is by itself too big to
         fit in the chunking window.
         """
-        accum = _RowAccumulator(maxlen=self._opts.hard_max)
+        is_first_chunk = True
+        accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
         for row in self._table_element.iter_rows():
             # -- if row won't fit, any WIP chunk is done, send it on its way --
             if not accum.will_fit(row):
-                yield from accum.flush()
+                for text, html in accum.flush():
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
             # -- if row fits, add it to accumulator --
             if accum.will_fit(row):
                 accum.add_row(row)
             else:  # -- otherwise, single row is bigger than chunking window --
-                yield from self._iter_row_splits(row)
+                for text, html in self._iter_row_splits(row, maxlen=self._maxlen(is_first_chunk)):
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
 
-        yield from accum.flush()
+        for text, html in accum.flush():
+            yield self._prepend_repeated_headers(text, html, is_first_chunk)
+            is_first_chunk = False
 
-    def _iter_row_splits(self, row: HtmlRow) -> Iterator[TextAndHtml]:
+    def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
-        accum = _CellAccumulator(maxlen=self._opts.hard_max)
+        accum = _CellAccumulator(maxlen=maxlen)
 
         for cell in row.iter_cells():
             # -- if cell won't fit, flush and check again --
@@ -1043,11 +1194,11 @@ class _HtmlTableSplitter:
             if accum.will_fit(cell):
                 accum.add_cell(cell)
             else:  # -- otherwise, single cell is bigger than chunking window --
-                yield from self._iter_cell_splits(cell)
+                yield from self._iter_cell_splits(cell, maxlen=maxlen)
 
         yield from accum.flush()
 
-    def _iter_cell_splits(self, cell: HtmlCell) -> Iterator[TextAndHtml]:
+    def _iter_cell_splits(self, cell: HtmlCell, maxlen: int) -> Iterator[TextAndHtml]:
         """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
         # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
         # -- For token-based chunking, we subtract 33 chars worth of overhead but still use tokens
@@ -1056,11 +1207,11 @@ class _HtmlTableSplitter:
             # -- In token mode, keep token limit but account for HTML overhead in char terms --
             # -- The HTML tags themselves are usually ~10-15 tokens, so we reduce by a small amount
             opts = ChunkingOptions(
-                max_tokens=max(1, self._opts.hard_max - 10),
+                max_tokens=max(1, maxlen - 10),
                 tokenizer=self._opts._kwargs.get("tokenizer"),
             )
         else:
-            opts = ChunkingOptions(max_characters=(self._opts.hard_max - 33))
+            opts = ChunkingOptions(max_characters=max(1, maxlen - 33))
         split = _TextSplitter(opts)
 
         text, remainder = split(cell.text)
@@ -1070,6 +1221,110 @@ class _HtmlTableSplitter:
         while remainder:
             text, remainder = split(remainder)
             yield text, f"<table><tr><td>{text}</td></tr></table>"
+
+    @cached_property
+    def _header_text(self) -> str:
+        """Concatenated text for leading header rows identified by caller."""
+        return " ".join(text for row in self._header_rows for text in row.iter_cell_texts())
+
+    @cached_property
+    def _header_rows(self) -> tuple[HtmlRow, ...]:
+        """Leading rows that should be repeated on continuation chunks, if any."""
+        if self._header_row_count <= 0:
+            return ()
+
+        rows: list[HtmlRow] = []
+        for idx, row in enumerate(self._table_element.iter_rows()):
+            if idx >= self._header_row_count:
+                break
+            rows.append(row)
+        return tuple(rows)
+
+    @cached_property
+    def _header_rows_html(self) -> str:
+        """HTML for repeated header rows, preserving header semantics."""
+        if not self._header_rows:
+            return ""
+
+        rows_html = "".join(self._as_header_row_html(row) for row in self._header_rows)
+        return f"<thead>{rows_html}</thead>"
+
+    @cached_property
+    def carried_over_header_row_count(self) -> int:
+        """Header-row count prepended to each continuation chunk, or 0 when disabled."""
+        return len(self._header_rows) if self._should_repeat_headers else 0
+
+    @cached_property
+    def _should_repeat_headers(self) -> bool:
+        """True when header repetition is enabled and not pathologically expensive."""
+        if not self._header_rows:
+            return False
+
+        # -- guard against pathological headers where a single repeated header row would consume
+        # -- more than half the chunking window.
+        return self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+
+    @cached_property
+    def _max_header_row_len(self) -> int:
+        """Largest leading-header row text length."""
+        if not self._header_rows:
+            return 0
+        return max(self._opts.measure(" ".join(row.iter_cell_texts())) for row in self._header_rows)
+
+    @cached_property
+    def _header_text_len(self) -> int:
+        """Size of repeated header text in chunking units."""
+        return self._opts.measure(self._header_text)
+
+    def _maxlen(self, is_first_chunk: bool) -> int:
+        """Available size for non-header row content of the next chunk."""
+        if is_first_chunk or not self._should_repeat_headers:
+            return self._opts.hard_max
+
+        # -- reserve one separator between repeated header text and chunk body text --
+        return max(1, self._opts.hard_max - self._header_text_len - 1)
+
+    def _prepend_repeated_headers(self, text: str, html: str, is_first_chunk: bool) -> TextAndHtml:
+        """Prepend repeated header rows to continuation chunk when enabled."""
+        if is_first_chunk or not self._should_repeat_headers:
+            return text, html
+
+        header_text = self._header_text
+        chunk_text = f"{header_text} {text}" if header_text and text else (header_text or text)
+
+        html_inner = html.removeprefix("<table>").removesuffix("</table>")
+        chunk_html = f"<table>{self._header_rows_html}{html_inner}</table>"
+        return chunk_text, chunk_html
+
+    @staticmethod
+    def _as_header_row_html(row: HtmlRow) -> str:
+        """Serialize `row` preserving source HTML while converting direct-child `<td>` to `<th>`."""
+        row_html = row.source_html or row.html
+        tr = _HtmlTableSplitter._parse_row_fragment(row_html)
+        if tr is None and row.source_html:
+            tr = _HtmlTableSplitter._parse_row_fragment(row.html)
+        if tr is None:
+            return row.html
+
+        for cell in tr:
+            if getattr(cell, "tag", None) == "td":
+                cell.tag = "th"
+
+        return tostring(tr, encoding=str)
+
+    @staticmethod
+    def _parse_row_fragment(row_html: str):
+        """Parse `row_html` and return a `<tr>` element when recoverable."""
+        try:
+            parsed = fragment_fromstring(row_html)
+        except (ParserError, ValueError):
+            return None
+
+        if parsed.tag == "tr":
+            return parsed
+
+        rows = parsed.xpath(".//tr")
+        return rows[0] if rows else None
 
 
 class _TextSplitter:
@@ -1246,7 +1501,7 @@ class _TextSplitter:
 
         return text[pos:]
 
-    @lazyproperty
+    @cached_property
     def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
         """Sequence of (pattern, len) pairs to match against.
 
@@ -1358,13 +1613,16 @@ class _RowAccumulator:
     subtable composed of all those rows that fit in the window.
     """
 
-    def __init__(self, maxlen: int):
+    def __init__(self, maxlen: int, measure: Callable[[str], int] = len):
         self._maxlen = maxlen
+        self._measure = measure
         self._rows: list[HtmlRow] = []
+        self._row_text_len = 0
 
     def add_row(self, row: HtmlRow) -> None:
         """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
         self._rows.append(row)
+        self._row_text_len += self._measured_row_text_len(row)
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
@@ -1374,11 +1632,12 @@ class _RowAccumulator:
         trs_str = "".join(r.html for r in self._rows)
         html = f"<table>{trs_str}</table>"
         self._rows.clear()
+        self._row_text_len = 0
         yield text, html
 
     def will_fit(self, row: HtmlRow) -> bool:
         """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= row.text_len
+        return self._remaining_space >= self._measured_row_text_len(row)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1390,11 +1649,15 @@ class _RowAccumulator:
 
     @property
     def _remaining_space(self) -> int:
-        """Number of characters remaining when accumulated rows are formed into HTML."""
+        """Number of chunk-size units remaining for accumulated row text."""
         # -- separators are one space (" ") at the end of each row's text, including last one to
         # -- account for space before prospective next row.
         separators_len = len(self._rows)
-        return self._maxlen - separators_len - sum(r.text_len for r in self._rows)
+        return self._maxlen - separators_len - self._row_text_len
+
+    def _measured_row_text_len(self, row: HtmlRow) -> int:
+        """Length of `row` text in configured chunk-size units."""
+        return self._measure(" ".join(row.iter_cell_texts()))
 
 
 # ================================================================================================

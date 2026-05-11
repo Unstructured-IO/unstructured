@@ -13,3 +13,15 @@ class PageCountExceededError(ValueError):
 
 class UnprocessableEntityError(Exception):
     """Error raised when a file is not valid."""
+
+
+class DecompressedSizeExceededError(ValueError):
+    """Error raised when decompressed data exceeds the maximum size limit."""
+
+    def __init__(self, max_size: int):
+        self.max_size = max_size
+        self.message = (
+            f"Decompressed data exceeds maximum allowed size of {max_size} bytes "
+            f"({max_size / (1024 * 1024):.1f} MB)."
+        )
+        super().__init__(self.message)

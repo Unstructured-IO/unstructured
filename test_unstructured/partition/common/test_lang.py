@@ -196,6 +196,45 @@ def test_detect_languages_handles_spelled_out_languages():
     assert languages == ["spa"]
 
 
+def test_detect_languages_short_text_fallback_returns_none():
+    """Short ASCII text with language_fallback returning None leaves language unspecified."""
+    result = detect_languages(
+        text="Hi there.",
+        language_fallback=lambda t: None,
+    )
+    assert result is None
+
+
+def test_detect_languages_short_text_fallback_returns_custom():
+    """Short ASCII text triggers fallback; we assert the fallback's return is used as-is."""
+    # Any short (<5 word) ASCII text would hit the fallback; content is irrelevant.
+    result = detect_languages(
+        text="Hi there.",
+        language_fallback=lambda t: ["fra"],
+    )
+    assert result == ["fra"]
+
+
+def test_detect_languages_short_text_default_eng_without_fallback():
+    """Short ASCII text without fallback still defaults to English (backward compat)."""
+    result = detect_languages(text="Hi there.")
+    assert result == ["eng"]
+
+
+def test_apply_lang_metadata_with_language_fallback():
+    """apply_lang_metadata passes language_fallback so short text can return None."""
+    elements = [NarrativeText("Hi.")]
+    result = list(
+        apply_lang_metadata(
+            elements=elements,
+            languages=["auto"],
+            language_fallback=lambda t: None,
+        )
+    )
+    assert len(result) == 1
+    assert result[0].metadata.languages is None
+
+
 @pytest.mark.parametrize(
     ("languages", "ocr_languages", "expected_langs"),
     [

@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import tempfile
+import time
 import warnings
 from importlib import import_module
 from typing import Iterator
@@ -563,6 +564,7 @@ def test_auto_partition_pdf_with_fast_strategy(request: FixtureRequest):
         languages=None,
         metadata_filename=None,
         detect_language_per_element=False,
+        language_fallback=None,
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
@@ -1074,9 +1076,32 @@ def test_auto_partition_respects_detect_language_per_element_arg():
 )
 def test_auto_partition_respects_language_arg(file_extension: str):
     elements = partition(
-        example_doc_path(f"language-docs/eng_spa_mult.{file_extension}"), languages=["deu"]
+        example_doc_path(f"language-docs/eng_spa_mult.{file_extension}"),
+        languages=["deu"],
     )
     assert all(element.metadata.languages == ["deu"] for element in elements)
+
+
+def test_auto_partition_language_fallback_flows_through_call_chain():
+    """Integration test: language_fallback must flow partition() -> partitioner -> apply_metadata
+    -> apply_lang_metadata -> detect_languages(). A fallback returning None yields no language.
+    """
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        suffix=".txt",
+        delete=False,
+        encoding="utf-8",
+    ) as f:
+        f.write("Hi.")
+        path = f.name
+    try:
+        elements = partition(filename=path, language_fallback=lambda t: None)
+        assert elements, "expected at least one element"
+        assert all(e.metadata.languages is None for e in elements), (
+            "language_fallback=lambda t: None should leave metadata.languages unset"
+        )
+    finally:
+        os.unlink(path)
 
 
 # -- include_page_breaks --------------------------------------------------
@@ -1313,11 +1338,31 @@ def test_auto_partition_passes_user_provided_languages_arg_to_PDF():
 )
 def test_auto_partition_detects_pdf_language_per_element(strategy):
     filename = example_doc_path("language-docs/fr_olap.pdf")
-    elements = partition(
-        filename=filename,
-        strategy=strategy,
-        detect_language_per_element=True,
-    )
+
+    def _partition() -> list[Element]:
+        return partition(
+            filename=filename,
+            strategy=strategy,
+            detect_language_per_element=True,
+        )
+
+    # OCR_ONLY shells out to Tesseract with a temp PNG; under CI load the file can disappear
+    # before Tesseract reads it ("cannot read input file"). Retry a few times on that flake.
+    if strategy == PartitionStrategy.OCR_ONLY:
+        from unstructured_pytesseract import TesseractError
+
+        elements: list[Element] | None = None
+        for attempt in range(3):
+            try:
+                elements = _partition()
+                break
+            except TesseractError as e:
+                if attempt == 2 or "cannot read input file" not in str(e).lower():
+                    raise
+                time.sleep(0.25 * (attempt + 1))
+        assert elements is not None
+    else:
+        elements = _partition()
 
     assert len(elements) > 0
     assert elements[0].metadata.languages == ["fra"]

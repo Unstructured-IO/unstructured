@@ -7,7 +7,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -16,8 +16,7 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
-from unstructured_inference.inference.layout import DocumentLayout
-from unstructured_inference.inference.layoutelement import LayoutElement
+from pypdf.generic import ArrayObject, IndirectObject
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -39,7 +38,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.errors import PageCountExceededError
+from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
@@ -51,35 +50,17 @@ from unstructured.partition.common.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.common.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
+from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.pdf_image.analysis.layout_dump import (
-    ExtractedLayoutDumper,
-    FinalLayoutDumper,
-    ObjectDetectionLayoutDumper,
-    OCRLayoutDumper,
-)
-from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
-from unstructured.partition.pdf_image.form_extraction import run_form_extraction
-from unstructured.partition.pdf_image.pdf_image_utils import (
-    check_element_types_to_extract,
-    convert_pdf_to_images,
-    save_elements,
-)
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
-    clean_pdfminer_inner_elements,
-    get_links_in_element,
     get_uris,
     get_words_from_obj,
     map_bbox_and_index,
-    merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
+    get_text_with_deduplication,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
@@ -99,7 +80,8 @@ from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 # Correct a bug that was introduced by a previous patch to
@@ -109,6 +91,20 @@ patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
+# Regex patterns for counting graphics and text operators in PDF content streams.
+GRAPHICS_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))"
+    rb"(?:m|l|c|v|y|h|re|S|s|f|F|f\*|B|B\*|b|b\*|n|W|W\*|cm|q|Q|Do|"
+    rb"g|G|rg|RG|k|K|cs|CS|w|J|j|M|d|i|gs)"
+    rb"(?=\s|$)",
+    re.MULTILINE,
+)
+TEXT_OPS_PATTERN = re.compile(
+    rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
+    re.MULTILINE,
+)
+DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -298,25 +294,34 @@ def partition_pdf_or_image(
         line_overlap=pdfminer_line_overlap,
         word_margin=pdfminer_word_margin,
     )
-    extracted_elements = []
+
+    extracted_elements: list[list[Element]] = []
     pdf_text_extractable = False
+
     if not is_image:
         try:
-            extracted_elements = extractable_elements(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modified,
-                starting_page_number=starting_page_number,
-                password=password,
-                pdfminer_config=pdfminer_config,
-                **kwargs,
-            )
-            pdf_text_extractable = any(
-                isinstance(el, Text) and el.text.strip()
-                for page_elements in extracted_elements
-                for el in page_elements
-            )
+            if is_pdf_too_complex(filename=filename, file=file):
+                logger.info(
+                    "PDF is too complex for text extraction based on heuristic checks. "
+                    "Falling back to hi_res strategy without text extraction."
+                )
+
+            else:
+                extracted_elements = extractable_elements(
+                    filename=filename,
+                    file=spooled_to_bytes_io_if_needed(file),
+                    languages=languages,
+                    metadata_last_modified=metadata_last_modified or last_modified,
+                    starting_page_number=starting_page_number,
+                    password=password,
+                    pdfminer_config=pdfminer_config,
+                    **kwargs,
+                )
+                pdf_text_extractable = any(
+                    isinstance(el, Text) and el.text.strip()
+                    for page_elements in extracted_elements
+                    for el in page_elements
+                )
         except Exception as e:
             logger.debug(e)
             logger.info("PDF text extraction failed, skip text extraction...")
@@ -334,7 +339,7 @@ def partition_pdf_or_image(
         file.seek(0)
 
     if languages is None:
-        print("Warning: No languages specified, defaulting to English.")
+        logger.warning("No languages specified, defaulting to English.")
         languages = ["eng"]
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -342,7 +347,7 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            elements = _partition_pdf_or_image_local(
+            return _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -369,16 +374,13 @@ def partition_pdf_or_image(
             # NOTE(crag): do not call _process_uncategorized_text_elements here, because
             # extracted elements (which are text blocks outside of OD-determined blocks)
             # are likely not Titles and should not be identified as such.
-            return elements
 
     elif strategy == PartitionStrategy.FAST:
-        out_elements = _partition_pdf_with_pdfparser(
+        return _partition_pdf_with_pdfparser(
             extracted_elements=extracted_elements,
             include_page_breaks=include_page_breaks,
             **kwargs,
         )
-
-        return out_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -395,9 +397,9 @@ def partition_pdf_or_image(
                 password=password,
                 **kwargs,
             )
-            out_elements = _process_uncategorized_text_elements(elements)
+            return _process_uncategorized_text_elements(elements)
 
-    return out_elements
+    raise ValueError(f"Unsupported partitioning strategy: {strategy}")
 
 
 def extractable_elements(
@@ -523,7 +525,10 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets: list[str] = [obj.get_text()]
+                # Use deduplication to handle fake bold text (characters rendered twice)
+                _text_snippets: list[str] = [
+                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
+                ]
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
@@ -588,6 +593,157 @@ def check_pdf_hi_res_max_pages_exceeded(
             )
 
 
+def is_pdf_too_complex(
+    filename: str = "",
+    file: Optional[Union[bytes, IO[bytes]]] = None,
+    max_graphics_ops: int = 10_000,
+    min_graphics_to_text_ratio: float = 20.0,
+    min_file_size_bytes: int = DEFAULT_MIN_FILE_SIZE_BYTES,
+    min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
+) -> bool:
+    """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
+    that would be extremely slow or produce garbage results with PDFMiner text extraction.
+
+    Try to minimize overhead with early exits:
+    1. Avoid overhead by skipping files smaller than min_file_size_bytes.
+    2. For each page, decode the raw content stream bytes. Skip pages where the
+       decoded stream is smaller than min_raw_stream_bytes.
+    3. For large streams, regex to count graphics without parsing the stream.
+
+    A page is flagged as too complex when it has a high number of graphics operators
+    AND a high ratio of graphics-to-text operators.
+
+    Parameters
+    ----------
+    filename
+        Path to a PDF file.
+    file
+        A file-like object or bytes.
+    max_graphics_ops
+        If any page exceeds this many graphics operators AND the graphics-to-text ratio
+        exceeds `min_graphics_to_text_ratio`, the PDF is considered too complex.
+    min_graphics_to_text_ratio
+        Minimum ratio of graphics ops to text ops required (in conjunction with
+        `max_graphics_ops`) to flag a page as too complex.
+    min_file_size_bytes
+        Skip the complexity check entirely for files smaller than this (default 1 MB).
+    min_raw_stream_bytes
+        Skip operator counting for pages whose decoded content stream is smaller than
+        this (default 100 KB). Small streams can't have enough operators to trigger
+        the threshold.
+    """
+
+    original_pos: Optional[int] = None
+
+    try:
+        # Preserve file cursor position for file-like inputs
+        if file is not None and not isinstance(file, bytes) and hasattr(file, "tell"):
+            original_pos = file.tell()
+
+        # Skip for small files
+        if file is not None:
+            if isinstance(file, bytes):
+                file_size = len(file)
+            else:
+                file.seek(0, 2)
+                file_size = file.tell()
+                file.seek(original_pos or 0)
+        elif filename:
+            file_size = os.path.getsize(filename)
+        else:
+            return False
+
+        if file_size < min_file_size_bytes:
+            return False
+
+        # Build reader
+        if file is not None:
+            if isinstance(file, bytes):
+                reader = PdfReader(io.BytesIO(file))
+            else:
+                file.seek(0)
+                reader = PdfReader(file)
+        else:
+            reader = PdfReader(filename)
+
+        if not reader.pages:
+            return False
+
+        for page_index, page in enumerate(reader.pages):
+            contents = page.get("/Contents")
+            if contents is None:
+                continue
+
+            # Decode raw stream bytes (cheap relative to full ContentStream parsing)
+            raw_data = b""
+            try:
+                if isinstance(contents, ArrayObject):
+                    for item in contents:
+                        obj = item.get_object() if isinstance(item, IndirectObject) else item
+                        if hasattr(obj, "get_data"):
+                            raw_data += obj.get_data()
+                else:
+                    obj = (
+                        contents.get_object() if isinstance(contents, IndirectObject) else contents
+                    )
+                    if hasattr(obj, "get_data"):
+                        raw_data = obj.get_data()
+            except Exception:
+                continue
+
+            # Skip pages with small content streams
+            if len(raw_data) < min_raw_stream_bytes:
+                continue
+
+            # Regex count graphics and text operators without fully parsing the stream
+            num_graphics_ops = len(GRAPHICS_OPS_PATTERN.findall(raw_data))
+
+            # Early exit: if graphics ops don't even reach threshold, skip text counting
+            if num_graphics_ops <= max_graphics_ops:
+                continue
+
+            num_text_ops = len(TEXT_OPS_PATTERN.findall(raw_data))
+            ratio = num_graphics_ops / max(num_text_ops, 1)
+
+            if ratio > min_graphics_to_text_ratio:
+                logger.info(
+                    f"Page {page_index + 1} has {num_graphics_ops} graphics ops, "
+                    f"{num_text_ops} text ops (ratio: {ratio:.1f}). "
+                    f"Exceeds thresholds (ops: {max_graphics_ops}, "
+                    f"ratio: {min_graphics_to_text_ratio}). "
+                    "Flagging PDF as too complex for text extraction."
+                )
+                return True
+
+    except Exception as e:
+        logger.debug(f"is_pdf_too_complex check failed: {e}")
+        return False
+
+    finally:
+        # Restore original cursor position for file-like inputs
+        if (
+            file is not None
+            and not isinstance(file, bytes)
+            and hasattr(file, "seek")
+            and original_pos is not None
+        ):
+            file.seek(original_pos)
+
+    return False
+
+
+def _enable_detect_vertical_if_rotated(
+    inferred_document_layout,
+    pdfminer_config: Optional["PDFMinerConfig"],
+) -> Optional["PDFMinerConfig"]:
+    """Enable detect_vertical in pdfminer when the PDF has rotated pages."""
+    if any((p.image_metadata or {}).get("pdf_rotation", 0) for p in inferred_document_layout.pages):
+        pdfminer_config = pdfminer_config or PDFMinerConfig()
+        pdfminer_config.detect_vertical = True
+
+    return pdfminer_config
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -625,21 +781,41 @@ def _partition_pdf_or_image_local(
         process_data_with_model,
         process_file_with_model,
     )
+    from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 
+    from unstructured.partition.pdf_image.analysis.layout_dump import (
+        ExtractedLayoutDumper,
+        FinalLayoutDumper,
+        ObjectDetectionLayoutDumper,
+        OCRLayoutDumper,
+    )
+    from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
+    from unstructured.partition.pdf_image.form_extraction import run_form_extraction
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
+    from unstructured.partition.pdf_image.pdf_image_utils import (
+        check_element_types_to_extract,
+        save_elements,
+    )
     from unstructured.partition.pdf_image.pdfminer_processing import (
+        clean_pdfminer_inner_elements,
+        merge_inferred_with_extracted_layout,
         process_data_with_pdfminer,
         process_file_with_pdfminer,
+    )
+
+    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
+    if pdf_image_dpi is None:
+        pdf_image_dpi = env_config.PDF_RENDER_DPI
+    model_render_kwargs = (
+        {"pdf_render_max_pixels_per_page": env_config.PDF_RENDER_MAX_PIXELS_PER_PAGE}
+        if not is_image
+        else {}
     )
 
     if not is_image:
         check_pdf_hi_res_max_pages_exceeded(
             filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
         )
-
-    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
-    if pdf_image_dpi is None:
-        pdf_image_dpi = env_config.PDF_RENDER_DPI
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
     extracted_layout_dumper: Optional[ExtractedLayoutDumper] = None
@@ -648,13 +824,25 @@ def _partition_pdf_or_image_local(
 
     skip_analysis_dump = env_config.ANALYSIS_DUMP_OD_SKIP
 
+    def _run_layout_inference(processor, source):
+        try:
+            return processor(
+                source,
+                is_image=is_image,
+                model_name=hi_res_model_name,
+                pdf_image_dpi=pdf_image_dpi,
+                password=password,
+                **model_render_kwargs,
+            )
+        except PdfRenderTooLargeError as exc:
+            raise UnprocessableEntityError(str(exc)) from exc
+
     if file is None:
-        inferred_document_layout = process_file_with_model(
-            filename,
-            is_image=is_image,
-            model_name=hi_res_model_name,
-            pdf_image_dpi=pdf_image_dpi,
-            password=password,
+        inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
+
+        pdfminer_config = _enable_detect_vertical_if_rotated(
+            inferred_document_layout,
+            pdfminer_config,
         )
 
         extracted_layout, layouts_links = (
@@ -708,16 +896,15 @@ def _partition_pdf_or_image_local(
             table_ocr_agent=table_ocr_agent,
         )
     else:
-        inferred_document_layout = process_data_with_model(
-            file,
-            is_image=is_image,
-            model_name=hi_res_model_name,
-            pdf_image_dpi=pdf_image_dpi,
-            password=password,
-        )
+        inferred_document_layout = _run_layout_inference(process_data_with_model, file)
 
         if hasattr(file, "seek"):
             file.seek(0)
+
+        pdfminer_config = _enable_detect_vertical_if_rotated(
+            inferred_document_layout,
+            pdfminer_config,
+        )
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(
@@ -921,6 +1108,7 @@ def _partition_pdf_or_image_with_ocr(
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
+    from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_images
 
     elements = []
     if is_image:
@@ -1188,6 +1376,8 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
+    from unstructured.partition.pdf_image.pdfminer_processing import get_links_in_element
+
     elements: list[Element] = []
 
     num_pages = len(document.pages)
@@ -1253,6 +1443,9 @@ def document_to_element_list(
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
+                element.metadata.table_extraction_method = getattr(
+                    layout_element, "table_extraction_method", None
+                )
 
                 if (isinstance(element, Title) and element.metadata.category_depth is None) and (
                     has_headline

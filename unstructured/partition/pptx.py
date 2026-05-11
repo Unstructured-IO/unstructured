@@ -7,6 +7,7 @@ unlike the `.ppt` format which was binary and proprietary.
 from __future__ import annotations
 
 import io
+from functools import cached_property
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Protocol, Sequence
 
@@ -42,7 +43,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.utils import is_temp_file_path, lazyproperty
+from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
 
@@ -314,7 +315,7 @@ class _PptxPartitioner:
 
         return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
 
-    @lazyproperty
+    @cached_property
     def _presentation(self) -> Presentation:
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._opts.pptx_file)
@@ -363,7 +364,7 @@ class PptxPartitionerOptions:
         """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
         cls._PicturePartitionerCls = picture_partitioner
 
-    @lazyproperty
+    @cached_property
     def include_page_breaks(self) -> bool:
         """When True, include `PageBreak` elements in element-stream.
 
@@ -373,7 +374,7 @@ class PptxPartitionerOptions:
         """
         return self._include_page_breaks
 
-    @lazyproperty
+    @cached_property
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
         return False if self._include_slide_notes is None else self._include_slide_notes
@@ -394,12 +395,12 @@ class PptxPartitionerOptions:
                 ),
             )
 
-    @lazyproperty
+    @cached_property
     def infer_table_structure(self) -> bool:
         """True when partitioner should compute and apply `text_as_html` metadata for tables."""
         return self._infer_table_structure
 
-    @lazyproperty
+    @cached_property
     def last_modified(self) -> str | None:
         """The best last-modified date available, None if no sources are available."""
         if not self._file_path:
@@ -409,7 +410,7 @@ class PptxPartitionerOptions:
             None if is_temp_file_path(self._file_path) else get_last_modified_date(self._file_path)
         )
 
-    @lazyproperty
+    @cached_property
     def metadata_file_path(self) -> str | None:
         """The best available file-path for this document or `None` if unavailable."""
         return self._file_path
@@ -419,7 +420,7 @@ class PptxPartitionerOptions:
         """The current page (slide) number."""
         return self._page_counter
 
-    @lazyproperty
+    @cached_property
     def picture_partitioner(self) -> AbstractPicturePartitioner:
         """The sub-partitioner to use for PPTX Picture shapes."""
         # -- Note this value has partitioning-run scope. An instance of this options class is
@@ -436,7 +437,7 @@ class PptxPartitionerOptions:
             else self._PicturePartitionerCls
         )
 
-    @lazyproperty
+    @cached_property
     def pptx_file(self) -> str | IO[bytes]:
         """The PowerPoint document file to be partitioned.
 
@@ -460,7 +461,7 @@ class PptxPartitionerOptions:
             "No PPTX document specified, either `filename` or `file` argument must be provided"
         )
 
-    @lazyproperty
+    @cached_property
     def strategy(self) -> str:
         """The requested partitioning strategy.
 

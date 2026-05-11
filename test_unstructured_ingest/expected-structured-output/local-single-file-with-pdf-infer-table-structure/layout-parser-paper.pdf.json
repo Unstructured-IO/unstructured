@@ -267,8 +267,8 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "4dfee7e352ae892814e46bb220094b0f",
-    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson®, and Weining Li>",
+    "element_id": "607ee712429ac9cf3540dbdc5e55e143",
+    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson?, and Weining Li®",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
@@ -3292,8 +3292,8 @@
   },
   {
     "type": "ListItem",
-    "element_id": "2b7101f39954d5301166b82906202ea9",
-    "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA",
+    "element_id": "f1b03448874d9c98a0a59a20b134c513",
+    "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA 13",
     "metadata": {
       "is_extracted": "true",
       "filetype": "application/pdf",
