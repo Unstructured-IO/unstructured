@@ -66,6 +66,22 @@ class DescribeHtmlTable:
         assert isinstance(html_table, HtmlTable)
         assert html_table._table.tag == "table"
 
+    def test_from_html_text_preserves_br_tail_text(self):
+        html_text = """
+        <table>
+        <tr>
+        <td>This is 1st line.<br/>2nd line.<br/>3rd line.</td>
+        </tr>
+        </table>
+        """
+
+        html_table = HtmlTable.from_html_text(html_text)
+
+        assert html_table.html == (
+            "<table><tr><td>This is 1st line.<br/>2nd line.<br/>3rd line.</td></tr></table>"
+        )
+        assert html_table.text == "This is 1st line. 2nd line. 3rd line."
+
     def but_it_raises_when_no_table_element_is_present_in_the_html(self):
         with pytest.raises(ValueError, match="`html_text` contains no `<table>` element"):
             HtmlTable.from_html_text("<html><body><tr><td>foobar</td></tr></body></html>")
