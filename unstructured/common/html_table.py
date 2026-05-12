@@ -104,9 +104,8 @@ class HtmlTable:
             if e.text:
                 e.text = " ".join(e.text.split())
 
-            # -- remove all tails, those are newline + indent if anything --
             if e.tail:
-                e.tail = None
+                e.tail = " ".join(e.tail.split()) if e.tag == "br" else None
 
         return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
 
