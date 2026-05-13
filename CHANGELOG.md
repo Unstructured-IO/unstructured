@@ -1,3 +1,9 @@
+## 0.22.28
+
+### Fixes
+
+- **Preserve mixed-content tail text in table HTML**: `HtmlTable` compactification previously cleared every element's `.tail`, silently dropping real text between inline children. Pure-whitespace tails are still removed, but tails carrying content are now kept with internal whitespace collapsed.
+
 ## 0.22.27
 
 ### Fixes
