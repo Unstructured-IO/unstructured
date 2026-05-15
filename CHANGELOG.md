@@ -1,3 +1,9 @@
+## 0.22.29
+
+### Fixes
+
+- **Truncate text if it exceeds `spacy` limit**: add a gaurd against calling `spacy` tokenizer with very long text. Now long text are truncated to fit under the character limit.
+
 ## 0.22.28
 
 ### Fixes
