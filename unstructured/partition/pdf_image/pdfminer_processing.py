@@ -78,7 +78,7 @@ def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
 
 def _inferred_is_elementtype(
     inferred_layout: LayoutElements, etypes: Iterable[ElementType]
-) -> np.ndarry:
+) -> np.ndarray:
     inferred_text_idx = [
         idx
         for idx, class_name in inferred_layout.element_class_id_map.items()
@@ -92,7 +92,7 @@ def _inferred_is_elementtype(
     return inferred_is_etypes
 
 
-def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
+def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarray:
     """return a boolean array masking for each element if it is non-image type (True) or image like
     type (False); image types are ElementType.FIGURE/IMAGE/PAGE_BREAK/TABLE"""
     return ~_inferred_is_elementtype(
