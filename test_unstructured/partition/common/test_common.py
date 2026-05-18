@@ -2,6 +2,8 @@ import pathlib
 from multiprocessing import Pool
 
 import numpy as np
+from io import BytesIO
+from unstructured.partition.common.common import convert_to_bytes
 import pytest
 from PIL import Image
 from unstructured_inference.constants import IsExtracted
@@ -466,3 +468,10 @@ def test_normalize_layout_element_layout_element_text_source_metadata():
     assert hasattr(element, "metadata")
     assert hasattr(element.metadata, "is_extracted")
     assert element.metadata.is_extracted == "true"
+    
+def test_convert_to_bytes_preserves_seekable_file_position():
+    file = BytesIO(b"hello world")
+    file.seek(6)
+
+    assert convert_to_bytes(file) == b"hello world"
+    assert file.tell() == 6

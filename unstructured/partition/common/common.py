@@ -371,7 +371,8 @@ def spooled_to_bytes_io_if_needed(file: _T | SpooledTemporaryFile[bytes]) -> _T 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     """Extract the bytes from `file` without preventing it from being read again later.
 
-    As a convenience to simplify client code, also returns `file` unchanged if it is already bytes.
+    As a convenience to simplify client code, also returns `file` unchanged if it is already
+    bytes.
     """
     if isinstance(file, bytes):
         return file
@@ -388,6 +389,30 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     if isinstance(file, (TextIOWrapper, BufferedReader)):
         with open(file.name, "rb") as f:
             return f.read()
+
+    if hasattr(file, "read"):
+        original_position = None
+
+        if hasattr(file, "tell") and hasattr(file, "seek"):
+            try:
+                original_position = file.tell()
+                file.seek(0)
+            except (OSError, ValueError):
+                original_position = None
+
+        data = file.read()
+
+        if original_position is not None:
+            try:
+                file.seek(original_position)
+            except (OSError, ValueError):
+                pass
+
+        if isinstance(data, str):
+            return data.encode()
+
+        if isinstance(data, bytes):
+            return data
 
     raise ValueError("Invalid file-like object type")
 
