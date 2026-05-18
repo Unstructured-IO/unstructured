@@ -334,6 +334,16 @@ def clean_extra_whitespace(text: str) -> str:
     return cleaned_text.strip()
 
 
+def clean_newline(text: str) -> str:
+    """Concatenates hyphenated words split across newlines or significant whitespace.
+
+    Example
+    -------
+    re- \nsearch -> research
+    """
+    return re.sub(r"(\w+)-\s+(\w+)", r"\1\2", text)
+
+
 def clean_dashes(text: str) -> str:
     """Cleans dash characters in text.
 
