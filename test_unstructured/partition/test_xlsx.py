@@ -169,6 +169,42 @@ def test_partition_xlsx_from_file_with_header():
     assert e.metadata.text_as_html is not None
 
 
+def test_partition_xlsx_no_future_warning_for_bytes():
+    """Test that partition_xlsx doesn't raise FutureWarning when passing bytes to read_excel.
+
+    This test ensures that bytes are properly wrapped in BytesIO before being passed to
+    pd.read_excel(), preventing the deprecation warning.
+    """
+    import warnings
+
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        file_bytes = f.read()
+
+    # Create a BytesIO object from bytes to simulate the scenario
+    file_like = io.BytesIO(file_bytes)
+
+    # Capture warnings
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        elements = partition_xlsx(file=file_like, include_header=False)
+
+        # Filter for FutureWarning related to read_excel
+        future_warnings = [
+            warning
+            for warning in w
+            if issubclass(warning.category, FutureWarning)
+            and "read_excel" in str(warning.message).lower()
+            and "bytes" in str(warning.message).lower()
+        ]
+
+        # Assert no FutureWarning was raised
+        assert len(future_warnings) == 0, f"FutureWarning raised: {[str(w.message) for w in future_warnings]}"
+
+    # Verify the function still works correctly
+    assert len(elements) > 0
+    assert sum(isinstance(element, Table) for element in elements) == 2
+
+
 def test_partition_xlsx_password_protected_raises_exception():
     with pytest.raises(UnprocessableEntityError):
         partition_xlsx(filename="example-docs/password_protected.xlsx")
