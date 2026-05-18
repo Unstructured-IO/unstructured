@@ -52,6 +52,7 @@ from unstructured.partition.common.common import (
 )
 from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.partition.pdf_heading_hierarchy import infer_heading_levels
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
     get_uris,
@@ -347,7 +348,7 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            return _partition_pdf_or_image_local(
+            elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -376,7 +377,7 @@ def partition_pdf_or_image(
             # are likely not Titles and should not be identified as such.
 
     elif strategy == PartitionStrategy.FAST:
-        return _partition_pdf_with_pdfparser(
+        elements = _partition_pdf_with_pdfparser(
             extracted_elements=extracted_elements,
             include_page_breaks=include_page_breaks,
             **kwargs,
@@ -385,7 +386,7 @@ def partition_pdf_or_image(
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            elements = _partition_pdf_or_image_with_ocr(
+            ocr_elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -397,9 +398,23 @@ def partition_pdf_or_image(
                 password=password,
                 **kwargs,
             )
-            return _process_uncategorized_text_elements(elements)
+            elements = _process_uncategorized_text_elements(ocr_elements)
 
-    raise ValueError(f"Unsupported partitioning strategy: {strategy}")
+    else:
+        raise ValueError(f"Unsupported partitioning strategy: {strategy}")
+
+    # Infer hierarchical heading levels for PDF documents (not images).
+    if not is_image:
+        if file is not None:
+            file.seek(0)
+        infer_heading_levels(
+            elements,
+            filename=filename or "",
+            file=file,
+            password=password,
+        )
+
+    return elements
 
 
 def extractable_elements(
