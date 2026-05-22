@@ -34,6 +34,7 @@ def chunk_elements(
     tokenizer: Optional[str] = None,
     repeat_table_headers: Optional[bool] = None,
     skip_table_chunking: Optional[bool] = None,
+    isolate_tables: Optional[bool] = None,
 ) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
@@ -84,6 +85,11 @@ def chunk_elements(
     skip_table_chunking
         Default: `False`. When `True`, `Table` elements are passed through unchanged without
         being split into `TableChunk` elements, regardless of their size.
+    isolate_tables
+        Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
+        their own pre-chunk and never combined with adjacent non-table elements. Specify
+        `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
+        behavior).
     """
     # -- raises ValueError on invalid parameters --
     opts = _BasicChunkingOptions.new(
@@ -97,6 +103,7 @@ def chunk_elements(
         tokenizer=tokenizer,
         repeat_table_headers=repeat_table_headers,
         skip_table_chunking=skip_table_chunking,
+        isolate_tables=isolate_tables,
     )
 
     return _chunk_elements(elements, opts)

@@ -35,6 +35,7 @@ def chunk_by_title(
     tokenizer: Optional[str] = None,
     repeat_table_headers: Optional[bool] = None,
     skip_table_chunking: Optional[bool] = None,
+    isolate_tables: Optional[bool] = None,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
@@ -91,6 +92,11 @@ def chunk_by_title(
     skip_table_chunking
         Default: `False`. When `True`, `Table` elements are passed through unchanged without
         being split into `TableChunk` elements, regardless of their size.
+    isolate_tables
+        Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
+        their own pre-chunk and never combined with adjacent non-table elements. Specify
+        `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
+        behavior).
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
@@ -105,6 +111,7 @@ def chunk_by_title(
         tokenizer=tokenizer,
         repeat_table_headers=repeat_table_headers,
         skip_table_chunking=skip_table_chunking,
+        isolate_tables=isolate_tables,
     )
     return _chunk_by_title(elements, opts)
 

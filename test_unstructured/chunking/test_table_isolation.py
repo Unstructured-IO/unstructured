@@ -238,6 +238,62 @@ class DescribeTableIsolationChunkElements:
             assert not any(isinstance(e, Table) for e in orig)
 
 
+class DescribeTableIsolationDisabled:
+    """When `isolate_tables=False`, the pre-#4307 behavior is restored."""
+
+    def it_lets_a_table_share_a_pre_chunk_with_adjacent_text_when_disabled(self):
+        opts = ChunkingOptions(max_characters=500, isolate_tables=False)
+        builder = PreChunkBuilder(opts=opts)
+        builder.add_element(Text("Short preamble."))
+
+        assert builder.will_fit(Table("Heading\nCell text"))
+
+    def it_lets_text_follow_a_table_in_the_same_pre_chunk_when_disabled(self):
+        opts = ChunkingOptions(max_characters=500, isolate_tables=False)
+        builder = PreChunkBuilder(opts=opts)
+        builder.add_element(Table("Heading\nCell text"))
+
+        assert builder.will_fit(Text("Follow-up paragraph."))
+
+    def it_combines_a_table_pre_chunk_with_text_neighbors_when_disabled(self):
+        opts = ChunkingOptions(
+            max_characters=500, combine_text_under_n_chars=500, isolate_tables=False
+        )
+        stream = [
+            PreChunk([Text("Hello world.")], overlap_prefix="", opts=opts),
+            PreChunk([Table("H\nC")], overlap_prefix="", opts=opts),
+            PreChunk([Text("Goodbye world.")], overlap_prefix="", opts=opts),
+        ]
+
+        combined = list(PreChunkCombiner(stream, opts=opts).iter_combined_pre_chunks())
+
+        assert len(combined) == 1
+        assert combined[0]._elements == [
+            Text("Hello world."),
+            Table("H\nC"),
+            Text("Goodbye world."),
+        ]
+
+    def it_wraps_a_table_into_a_composite_element_with_neighbors_when_disabled(self):
+        """End-to-end: opting out collapses tiny table + text into one CompositeElement."""
+        elements = [
+            Text("preamble"),
+            Table("H\nC"),
+            Text("post"),
+        ]
+        chunks = chunk_elements(
+            elements,
+            max_characters=500,
+            isolate_tables=False,
+        )
+
+        assert len(chunks) == 1
+        assert isinstance(chunks[0], CompositeElement)
+        text = chunks[0].text
+        assert "preamble" in text
+        assert "post" in text
+
+
 class DescribeTableIsolationOverlapAll:
     """With overlap_all=True, overlap must not cross table / narrative boundaries."""
 
