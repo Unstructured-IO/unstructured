@@ -1,3 +1,9 @@
+## 0.22.30
+
+### Enhancements
+
+- **Toggle table isolation in chunking**: Add `isolate_tables` to basic/title chunking options. Defaults to `True` (the post-#4307 behavior: `Table`/`TableChunk` elements always staged alone). Set to `False` to allow tables to share pre-chunks with adjacent non-table elements and be combined by `PreChunkCombiner`.
+
 ## 0.22.29
 
 ### Fixes

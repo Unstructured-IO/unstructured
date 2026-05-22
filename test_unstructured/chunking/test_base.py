@@ -127,6 +127,18 @@ class DescribeChunkingOptions:
     def it_knows_whether_to_skip_table_chunking(self, kwargs: dict[str, Any], expected_value: bool):
         assert ChunkingOptions(**kwargs).skip_table_chunking is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"isolate_tables": True}, True),
+            ({"isolate_tables": False}, False),
+            ({"isolate_tables": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_knows_whether_to_isolate_tables(self, kwargs: dict[str, Any], expected_value: bool):
+        assert ChunkingOptions(**kwargs).isolate_tables is expected_value
+
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
         with pytest.raises(

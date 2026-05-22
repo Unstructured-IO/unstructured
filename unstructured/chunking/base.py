@@ -125,6 +125,12 @@ class ChunkingOptions:
     repeat_table_headers
         Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
         continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
+    isolate_tables
+        Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
+        their own pre-chunk and never combined with adjacent non-table elements. Specify
+        `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
+        behavior), which is sometimes useful when downstream consumers expect mixed-content
+        composite chunks.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -207,6 +213,17 @@ class ChunkingOptions:
         """
         arg_value = self._kwargs.get("skip_table_chunking")
         return False if arg_value is None else bool(arg_value)
+
+    @cached_property
+    def isolate_tables(self) -> bool:
+        """When True, `Table`/`TableChunk` elements are staged in their own pre-chunk.
+
+        Default value is `True`. When `False`, table-family elements are allowed to share a
+        pre-chunk with adjacent non-table elements (and may be merged by `PreChunkCombiner`),
+        restoring the pre-#4307 behavior.
+        """
+        arg_value = self._kwargs.get("isolate_tables")
+        return True if arg_value is None else bool(arg_value)
 
     @cached_property
     def inter_chunk_overlap(self) -> int:
@@ -502,7 +519,11 @@ class PreChunkBuilder:
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
         # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
-        if len(self._elements) == 0 and _element_is_table_family(element):
+        if (
+            self._opts.isolate_tables
+            and len(self._elements) == 0
+            and _element_is_table_family(element)
+        ):
             self._overlap_prefix = ""
             self._text_segments = []
             self._text_len = 0
@@ -531,7 +552,11 @@ class PreChunkBuilder:
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
         overlap_for_next = pre_chunk.overlap_tail
         # -- table tails must not prefix the following narrative pre-chunk (overlap_all) --
-        if len(elements) == 1 and _element_is_table_family(elements[0]):
+        if (
+            self._opts.isolate_tables
+            and len(elements) == 1
+            and _element_is_table_family(elements[0])
+        ):
             overlap_for_next = ""
         self._reset_state(overlap_for_next)
         yield pre_chunk
@@ -548,13 +573,15 @@ class PreChunkBuilder:
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
         """
-        # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty pre-chunk --
-        if _element_is_table_family(element):
-            return len(self._elements) == 0
+        if self._opts.isolate_tables:
+            # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty
+            # -- pre-chunk --
+            if _element_is_table_family(element):
+                return len(self._elements) == 0
 
-        # -- no non-table element may share a pre-chunk with a `Table` --
-        if _elements_contain_table_family(self._elements):
-            return False
+            # -- no non-table element may share a pre-chunk with a `Table` --
+            if _elements_contain_table_family(self._elements):
+                return False
 
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
@@ -637,7 +664,9 @@ class PreChunk:
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
-        if _table_isolation_forbids_side_by_side_merge(self._elements, pre_chunk._elements):
+        if self._opts.isolate_tables and _table_isolation_forbids_side_by_side_merge(
+            self._elements, pre_chunk._elements
+        ):
             return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
