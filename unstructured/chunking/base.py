@@ -370,7 +370,7 @@ class ChunkingOptions:
         # -- fires when the pre-chunk contains a single `Table` element. With isolation disabled,
         # -- tables can fold into `CompositeElement` alongside neighbors and the skip would be
         # -- silently ignored, breaking the contract.
-        if self._kwargs.get("skip_table_chunking") and self._kwargs.get("isolate_tables") is False:
+        if self.skip_table_chunking and not self.isolate_tables:
             raise ValueError(
                 "'skip_table_chunking=True' requires 'isolate_tables=True' (the default);"
                 " tables cannot be passed through unchanged while also sharing a pre-chunk with"
