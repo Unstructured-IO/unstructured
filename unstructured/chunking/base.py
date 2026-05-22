@@ -366,6 +366,17 @@ class ChunkingOptions:
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
 
+        # -- `skip_table_chunking` requires `isolate_tables` because the pass-through path only
+        # -- fires when the pre-chunk contains a single `Table` element. With isolation disabled,
+        # -- tables can fold into `CompositeElement` alongside neighbors and the skip would be
+        # -- silently ignored, breaking the contract.
+        if self._kwargs.get("skip_table_chunking") and self._kwargs.get("isolate_tables") is False:
+            raise ValueError(
+                "'skip_table_chunking=True' requires 'isolate_tables=True' (the default);"
+                " tables cannot be passed through unchanged while also sharing a pre-chunk with"
+                " adjacent elements"
+            )
+
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
             raise ValueError(

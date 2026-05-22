@@ -139,6 +139,13 @@ class DescribeChunkingOptions:
     def it_knows_whether_to_isolate_tables(self, kwargs: dict[str, Any], expected_value: bool):
         assert ChunkingOptions(**kwargs).isolate_tables is expected_value
 
+    def it_rejects_skip_table_chunking_when_isolation_is_disabled(self):
+        with pytest.raises(
+            ValueError,
+            match="'skip_table_chunking=True' requires 'isolate_tables=True'",
+        ):
+            ChunkingOptions(skip_table_chunking=True, isolate_tables=False)._validate()
+
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
         with pytest.raises(
