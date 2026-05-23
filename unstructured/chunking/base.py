@@ -125,7 +125,7 @@ class ChunkingOptions:
     repeat_table_headers
         Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
         continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
-    isolate_tables
+    isolate_table
         Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
         their own pre-chunk and never combined with adjacent non-table elements. Specify
         `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
@@ -215,14 +215,14 @@ class ChunkingOptions:
         return False if arg_value is None else bool(arg_value)
 
     @cached_property
-    def isolate_tables(self) -> bool:
+    def isolate_table(self) -> bool:
         """When True, `Table`/`TableChunk` elements are staged in their own pre-chunk.
 
         Default value is `True`. When `False`, table-family elements are allowed to share a
         pre-chunk with adjacent non-table elements (and may be merged by `PreChunkCombiner`),
         restoring the pre-#4307 behavior.
         """
-        arg_value = self._kwargs.get("isolate_tables")
+        arg_value = self._kwargs.get("isolate_table")
         return True if arg_value is None else bool(arg_value)
 
     @cached_property
@@ -366,13 +366,13 @@ class ChunkingOptions:
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
 
-        # -- `skip_table_chunking` requires `isolate_tables` because the pass-through path only
+        # -- `skip_table_chunking` requires `isolate_table` because the pass-through path only
         # -- fires when the pre-chunk contains a single `Table` element. With isolation disabled,
         # -- tables can fold into `CompositeElement` alongside neighbors and the skip would be
         # -- silently ignored, breaking the contract.
-        if self.skip_table_chunking and not self.isolate_tables:
+        if self.skip_table_chunking and not self.isolate_table:
             raise ValueError(
-                "'skip_table_chunking=True' requires 'isolate_tables=True' (the default);"
+                "'skip_table_chunking=True' requires 'isolate_table=True' (the default);"
                 " tables cannot be passed through unchanged while also sharing a pre-chunk with"
                 " adjacent elements"
             )
@@ -531,7 +531,7 @@ class PreChunkBuilder:
         """Add `element` to this section."""
         # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
         if (
-            self._opts.isolate_tables
+            self._opts.isolate_table
             and len(self._elements) == 0
             and _element_is_table_family(element)
         ):
@@ -564,7 +564,7 @@ class PreChunkBuilder:
         overlap_for_next = pre_chunk.overlap_tail
         # -- table tails must not prefix the following narrative pre-chunk (overlap_all) --
         if (
-            self._opts.isolate_tables
+            self._opts.isolate_table
             and len(elements) == 1
             and _element_is_table_family(elements[0])
         ):
@@ -584,7 +584,7 @@ class PreChunkBuilder:
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
         """
-        if self._opts.isolate_tables:
+        if self._opts.isolate_table:
             # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty
             # -- pre-chunk --
             if _element_is_table_family(element):
@@ -675,7 +675,7 @@ class PreChunk:
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
-        if self._opts.isolate_tables and _table_isolation_forbids_side_by_side_merge(
+        if self._opts.isolate_table and _table_isolation_forbids_side_by_side_merge(
             self._elements, pre_chunk._elements
         ):
             return False

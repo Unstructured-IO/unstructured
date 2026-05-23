@@ -1,3 +1,9 @@
+## 0.22.31
+
+### Enhancements
+
+- **Rename `isolate_tables` chunking option to `isolate_table`**: the option added in 0.22.30 has been renamed for naming consistency. Callers passing `isolate_tables=` must update to `isolate_table=`.
+
 ## 0.22.30
 
 ### Enhancements

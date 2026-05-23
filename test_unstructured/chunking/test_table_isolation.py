@@ -239,17 +239,17 @@ class DescribeTableIsolationChunkElements:
 
 
 class DescribeTableIsolationDisabled:
-    """When `isolate_tables=False`, the pre-#4307 behavior is restored."""
+    """When `isolate_table=False`, the pre-#4307 behavior is restored."""
 
     def it_lets_a_table_share_a_pre_chunk_with_adjacent_text_when_disabled(self):
-        opts = ChunkingOptions(max_characters=500, isolate_tables=False)
+        opts = ChunkingOptions(max_characters=500, isolate_table=False)
         builder = PreChunkBuilder(opts=opts)
         builder.add_element(Text("Short preamble."))
 
         assert builder.will_fit(Table("Heading\nCell text"))
 
     def it_lets_text_follow_a_table_in_the_same_pre_chunk_when_disabled(self):
-        opts = ChunkingOptions(max_characters=500, isolate_tables=False)
+        opts = ChunkingOptions(max_characters=500, isolate_table=False)
         builder = PreChunkBuilder(opts=opts)
         builder.add_element(Table("Heading\nCell text"))
 
@@ -257,7 +257,7 @@ class DescribeTableIsolationDisabled:
 
     def it_combines_a_table_pre_chunk_with_text_neighbors_when_disabled(self):
         opts = ChunkingOptions(
-            max_characters=500, combine_text_under_n_chars=500, isolate_tables=False
+            max_characters=500, combine_text_under_n_chars=500, isolate_table=False
         )
         stream = [
             PreChunk([Text("Hello world.")], overlap_prefix="", opts=opts),
@@ -284,7 +284,7 @@ class DescribeTableIsolationDisabled:
         chunks = chunk_elements(
             elements,
             max_characters=500,
-            isolate_tables=False,
+            isolate_table=False,
         )
 
         assert len(chunks) == 1

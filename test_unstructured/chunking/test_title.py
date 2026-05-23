@@ -612,19 +612,19 @@ class Describe_chunk_by_title:
     @pytest.mark.parametrize(
         ("kwargs", "expected_value"),
         [
-            ({"isolate_tables": True}, True),
-            ({"isolate_tables": False}, False),
-            ({"isolate_tables": None}, True),
+            ({"isolate_table": True}, True),
+            ({"isolate_table": False}, False),
+            ({"isolate_table": None}, True),
             ({}, True),
         ],
     )
-    def it_supports_the_isolate_tables_option(
+    def it_supports_the_isolate_table_option(
         self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
     ):
         chunk_by_title([], **kwargs)
 
         _, opts = _chunk_by_title_.call_args.args
-        assert opts.isolate_tables is expected_value
+        assert opts.isolate_table is expected_value
 
     # -- fixtures --------------------------------------------------------------------------------
 

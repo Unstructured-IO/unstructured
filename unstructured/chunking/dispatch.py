@@ -74,7 +74,7 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
             + "\n\t\tskip_table_chunking"
             + "\n\t\t\tDefault: False. When True, Table elements are passed through"
             + "\n\t\t\tunchanged without being split into TableChunk elements."
-            + "\n\t\tisolate_tables"
+            + "\n\t\tisolate_table"
             + "\n\t\t\tDefault: True. When True, Table/TableChunk elements are always"
             + "\n\t\t\tstaged in their own pre-chunk. Set to False to allow tables to"
             + "\n\t\t\tshare pre-chunks with adjacent non-table elements."
