@@ -150,6 +150,21 @@ def test_clean_extra_whitespace(text, expected):
 @pytest.mark.parametrize(
     ("text", "expected"),
     [
+        ("re- \nsearch", "research"),
+        (
+            "This is an example of text contin-\nuing to next line",
+            "This is an example of text continuing to next line",
+        ),
+        ("pre-\n  processing", "preprocessing"),
+    ],
+)
+def test_clean_newline(text, expected):
+    assert core.clean_newline(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
         ("Risk-factors", "Risk factors"),
         ("Risk – factors", "Risk   factors"),
         ("Risk\u2013factors", "Risk factors"),
