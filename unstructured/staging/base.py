@@ -493,7 +493,9 @@ def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
                 rounded_points.append(rounded_point)
             el.metadata.coordinates.points = tuple(rounded_points)
 
-        if el.metadata.detection_class_prob:
+        if el.metadata.confidence_score is not None:
+            el.metadata.confidence_score = round(el.metadata.confidence_score, 5)
+        if el.metadata.detection_class_prob is not None:
             el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
 
         out_elements.append(el)
@@ -641,6 +643,8 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
         "attached_to_filename": pd.StringDtype(),  # Optional[str]  # type: ignore
         "parent_id": pd.StringDtype(),  # Optional[str],  # type: ignore
         "category_depth": "Int64",  # Optional[int]
+        "confidence_score": float,  # Optional[float],
+        "extraction_method": pd.StringDtype(),  # Optional[str]  # type: ignore
         "image_path": pd.StringDtype(),  # Optional[str]  # type: ignore
         "languages": object,  # Optional[list[str]]
         "page_number": "Int64",  # Optional[int]
