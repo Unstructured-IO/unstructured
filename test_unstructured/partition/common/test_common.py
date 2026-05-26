@@ -111,6 +111,26 @@ def test_normalize_layout_element_preserves_layout_confidence_metadata():
     assert metadata_dict["extraction_method"] == "ocr"
 
 
+def test_normalize_layout_element_ignores_empty_layout_confidence_metadata():
+    layout_element = {
+        "type": "Title",
+        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "text": "Some text with no confidence score",
+        "prob": "",
+        "source": "ocr",
+    }
+    coordinate_system = PixelSpace(width=10, height=20)
+    element = common.normalize_layout_element(
+        layout_element,
+        coordinate_system=coordinate_system,
+    )
+
+    assert isinstance(element, Title)
+    assert element.metadata.confidence_score is None
+    assert element.metadata.detection_class_prob is None
+    assert element.metadata.extraction_method == "ocr"
+
+
 def test_normalize_layout_element_dict_caption():
     layout_element = {
         "type": "Figure",

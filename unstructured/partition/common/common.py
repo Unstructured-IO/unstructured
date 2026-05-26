@@ -74,7 +74,7 @@ def normalize_layout_element(
         is_extracted = layout_dict["is_extracted"].value
     else:
         is_extracted = None
-    if prob is not None and isinstance(prob, (int, str, float, numbers.Number)):
+    if prob not in (None, "") and isinstance(prob, (int, str, float, numbers.Number)):
         confidence_score = float(prob)
         class_prob_metadata = ElementMetadata(
             confidence_score=confidence_score,
