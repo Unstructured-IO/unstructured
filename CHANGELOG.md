@@ -1,3 +1,9 @@
+## 0.22.32
+
+### Enhancements
+
+- **Optimize XLSX subtable detection memory usage**: replace dense worksheet-sized graph construction with sparse connected-component traversal over populated cells, preserving existing `partition_xlsx()` output while reducing peak memory on sparse sheets.
+
 ## 0.22.31
 
 ### Enhancements
