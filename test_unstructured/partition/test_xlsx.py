@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import sys
 import tempfile
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -297,6 +298,100 @@ def test_partition_xlsx_with_more_than_1k_cells():
         sys.setrecursionlimit(old_recursion_limit)
 
 
+def test_partition_xlsx_generated_dense_table_preserves_text_and_html(tmp_path: Path):
+    xlsx_path = _write_generated_xlsx(
+        tmp_path,
+        [
+            ["Team", "Location", "Stanley Cups"],
+            ["Blues", "STL", 1],
+            ["Flyers", "PHI", 2],
+        ],
+    )
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [Table("Team Location Stanley Cups Blues STL 1 Flyers PHI 2")]
+    assert elements[0].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Team</td><td>Location</td><td>Stanley Cups</td></tr>"
+        "<tr><td>Blues</td><td>STL</td><td>1</td></tr>"
+        "<tr><td>Flyers</td><td>PHI</td><td>2</td></tr>"
+        "</table>"
+    )
+    assert elements[0].metadata.page_name == "Sheet1"
+    assert elements[0].metadata.page_number == 1
+
+
+def test_partition_xlsx_generated_sparse_far_edge_cells_preserves_text_and_html(tmp_path: Path):
+    rows = [[None for _ in range(10)] for _ in range(8)]
+    rows[0][0] = "Far Edge Title"
+    rows[6][8] = "Key"
+    rows[6][9] = "Value"
+    rows[7][8] = "answer"
+    rows[7][9] = 42
+    xlsx_path = _write_generated_xlsx(tmp_path, rows)
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [Title("Far Edge Title"), Table("Key Value answer 42")]
+    assert elements[1].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Key</td><td>Value</td></tr>"
+        "<tr><td>answer</td><td>42</td></tr>"
+        "</table>"
+    )
+
+
+def test_partition_xlsx_generated_separated_blocks_and_single_cell_rows(tmp_path: Path):
+    xlsx_path = _write_generated_xlsx(
+        tmp_path,
+        [
+            ["North Report", None, None, None, None, None],
+            ["Region", "Revenue", None, None, None, None],
+            ["North", 100, None, None, None, None],
+            [None, "Reviewed", None, None, None, None],
+            [None, None, None, None, None, None],
+            [None, None, None, "South Report", None, None],
+            [None, None, None, "Region", "Revenue", None],
+            [None, None, None, "EU", 200, None],
+            [None, None, None, None, "Approved", None],
+            [None, None, None, None, None, None],
+            ["A", "B", None, None, "C", "D"],
+            [1, 2, None, None, 3, 4],
+        ],
+    )
+
+    elements = partition_xlsx(str(xlsx_path))
+
+    assert elements == [
+        Title("North Report"),
+        Table("Region Revenue North 100"),
+        Title("Reviewed"),
+        Title("South Report"),
+        Table("Region Revenue EU 200"),
+        Title("Approved"),
+        Table("A B C D 1 2 3 4"),
+    ]
+    assert elements[1].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Region</td><td>Revenue</td></tr>"
+        "<tr><td>North</td><td>100</td></tr>"
+        "</table>"
+    )
+    assert elements[4].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Region</td><td>Revenue</td></tr>"
+        "<tr><td>EU</td><td>200</td></tr>"
+        "</table>"
+    )
+    assert elements[6].metadata.text_as_html == (
+        "<table>"
+        "<tr><td>A</td><td>B</td><td/><td/><td>C</td><td>D</td></tr>"
+        "<tr><td>1</td><td>2</td><td/><td/><td>3</td><td>4</td></tr>"
+        "</table>"
+    )
+
+
 # ================================================================================================
 # OTHER ARGS
 # ================================================================================================
@@ -340,6 +435,12 @@ def test_partition_xlsx_with_find_subtables_False_and_infer_table_structure_Fals
 # These test components used by `partition_xlsx()` in isolation such that all edge cases can be
 # exercised.
 # ------------------------------------------------------------------------------------------------
+
+
+def _write_generated_xlsx(tmp_path: Path, rows: list[list[Any]]) -> Path:
+    xlsx_path = tmp_path / "generated.xlsx"
+    pd.DataFrame(rows).to_excel(xlsx_path, index=False, header=False)
+    return xlsx_path
 
 
 class Describe_XlsxPartitionerOptions:
