@@ -87,9 +87,7 @@ def main() -> None:
 
     with _workspace(args.work_dir) as work_dir:
         print(f"Generated worksheet directory: {work_dir}")
-        print(
-            "case,algorithm,components,seconds,baseline_rss_mb,peak_rss_mb,peak_delta_mb"
-        )
+        print("case,algorithm,components,seconds,baseline_rss_mb,peak_rss_mb,peak_delta_mb")
 
         for case in cases:
             worksheet_path = _write_worksheet(case, work_dir, args.storage)
@@ -237,9 +235,7 @@ def _measure_worker(args: argparse.Namespace) -> Measurement:
 
     worksheet_df = _read_worksheet(args.input_path, args.storage)
     benchmark_function = (
-        _sparse_connected_components
-        if args.algorithm == "sparse"
-        else _dense_connected_components
+        _sparse_connected_components if args.algorithm == "sparse" else _dense_connected_components
     )
     return _measure(lambda: benchmark_function(worksheet_df))
 
@@ -300,6 +296,7 @@ def _measure(benchmark_function: Callable[[], list[_ConnectedComponent]]) -> Mea
         peak_delta_mb=(peak_rss - baseline_rss) / 1024 / 1024,
         component_count=len(components),
     )
+
 
 if __name__ == "__main__":
     main()

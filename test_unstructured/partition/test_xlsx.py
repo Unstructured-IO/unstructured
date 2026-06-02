@@ -335,10 +335,7 @@ def test_partition_xlsx_generated_sparse_far_edge_cells_preserves_text_and_html(
 
     assert elements == [Title("Far Edge Title"), Table("Key Value answer 42")]
     assert elements[1].metadata.text_as_html == (
-        "<table>"
-        "<tr><td>Key</td><td>Value</td></tr>"
-        "<tr><td>answer</td><td>42</td></tr>"
-        "</table>"
+        "<table><tr><td>Key</td><td>Value</td></tr><tr><td>answer</td><td>42</td></tr></table>"
     )
 
 
@@ -373,16 +370,10 @@ def test_partition_xlsx_generated_separated_blocks_and_single_cell_rows(tmp_path
         Table("A B C D 1 2 3 4"),
     ]
     assert elements[1].metadata.text_as_html == (
-        "<table>"
-        "<tr><td>Region</td><td>Revenue</td></tr>"
-        "<tr><td>North</td><td>100</td></tr>"
-        "</table>"
+        "<table><tr><td>Region</td><td>Revenue</td></tr><tr><td>North</td><td>100</td></tr></table>"
     )
     assert elements[4].metadata.text_as_html == (
-        "<table>"
-        "<tr><td>Region</td><td>Revenue</td></tr>"
-        "<tr><td>EU</td><td>200</td></tr>"
-        "</table>"
+        "<table><tr><td>Region</td><td>Revenue</td></tr><tr><td>EU</td><td>200</td></tr></table>"
     )
     assert elements[6].metadata.text_as_html == (
         "<table>"
