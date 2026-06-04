@@ -156,6 +156,76 @@ def test_category_depth_is_derived_from_heading_level():
     assert body.metadata.category_depth is None
 
 
+def test_converter_assigns_heading_based_parent_id_without_decorator():
+    """ML-1328: the converter's output is self-sufficient.
+
+    `ontology_to_unstructured_elements` applies `set_element_hierarchy` itself, so content elements
+    get their heading-based `parent_id` directly from the converter -- no dependency on the
+    `@apply_metadata` decorator on `partition_html`. Layout containers keep their tree `parent_id`.
+    """
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Title(text="Section A"),  # h1 -> root (no heading ancestor)
+                    Paragraph(text="intro body"),  # -> Section A
+                    Subtitle(text="Sub A1"),  # h2 -> Section A
+                    Paragraph(text="a1 body"),  # -> Sub A1
+                    Heading(text="Sub A1a", html_tag_name="h3"),  # h3 -> Sub A1
+                    Paragraph(text="a1a body"),  # -> Sub A1a
+                ]
+            ),
+        ]
+    )
+
+    elements = ontology_to_unstructured_elements(ontology)
+    page, section_a, intro, sub_a1, a1_body, sub_a1a, a1a_body = elements
+    by_id = {e.id: e for e in elements}
+
+    # -- layout container keeps its tree parent (here the Document root, not a heading) --
+    assert page.metadata.parent_id not in {e.id for e in elements}
+    # -- top-level heading has no heading ancestor --
+    assert section_a.metadata.parent_id is None
+    # -- content/subsections are parented to their enclosing heading --
+    assert by_id[intro.metadata.parent_id] is section_a
+    assert by_id[sub_a1.metadata.parent_id] is section_a
+    assert by_id[a1_body.metadata.parent_id] is sub_a1
+    assert by_id[sub_a1a.metadata.parent_id] is sub_a1
+    assert by_id[a1a_body.metadata.parent_id] is sub_a1a
+
+
+def test_re_running_set_element_hierarchy_on_converter_output_is_a_noop():
+    """ML-1328: the decorator's second `set_element_hierarchy` pass must not change anything.
+
+    `partition_html` runs the converter inside `@apply_metadata`, which re-runs
+    `set_element_hierarchy`. Because the converter already assigned every `parent_id`, that pass
+    must be a no-op (no reassignment, no reordering).
+    """
+    from unstructured.partition.common.metadata import set_element_hierarchy
+
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Title(text="Section A"),
+                    Paragraph(text="intro body"),
+                    Subtitle(text="Sub A1"),
+                    Paragraph(text="a1 body"),
+                ]
+            ),
+        ]
+    )
+
+    elements = ontology_to_unstructured_elements(ontology)
+    before = [(e.id, e.metadata.parent_id) for e in elements]
+
+    reprocessed = set_element_hierarchy(elements)
+
+    after = [(e.id, e.metadata.parent_id) for e in reprocessed]
+    assert [e.id for e in reprocessed] == [e.id for e in elements]  # order preserved
+    assert after == before  # parent_ids unchanged
+
+
 def test_chunking_is_applied_on_elements():
     ontology = Document(
         children=[

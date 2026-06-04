@@ -13,7 +13,10 @@ from unstructured.documents.mappings import (
     HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP,
     ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE,
 )
-from unstructured.partition.common.metadata import category_depth_from_html_tag
+from unstructured.partition.common.metadata import (
+    category_depth_from_html_tag,
+    set_element_hierarchy,
+)
 
 # -- ontology layout classes whose nesting represents a list (ol/ul/dl); used to count the
 # -- list-container ancestors of a ListItem so its `category_depth` matches the v1 parser. --
@@ -70,12 +73,49 @@ def ontology_to_unstructured_elements(
         bump every element's depth).
 
         `parent_id` is handled in two ways. Layout/container elements (Page, Column, ...) keep their
-        tree parent so the physical layout structure is preserved. Content elements are emitted with
-        `parent_id=None` so the shared `set_element_hierarchy` post-processor (run by
-        `@apply_metadata` on `partition_html`) assigns a heading-based parent -- i.e. a subsection's
-        parent becomes its enclosing heading rather than the page/column container. Leaving content
-        `parent_id` unset is required because `set_element_hierarchy` skips any element that already
-        has one.
+        tree parent so the physical layout structure is preserved. Content elements get a
+        heading-based parent -- i.e. a subsection's parent becomes its enclosing heading rather than
+        the page/column container -- computed by the shared `set_element_hierarchy` helper, which
+        this function applies itself (at the top-level `Document` call) so its output is
+        self-sufficient and does not depend on a decorator on a different function.
+
+        `set_element_hierarchy` only assigns a `parent_id` to elements that don't already have one,
+        so it leaves the layout containers' tree `parent_id` untouched. When `partition_html` runs
+        this converter inside its `@apply_metadata` decorator, that decorator re-runs
+        `set_element_hierarchy`; because every element now already has a `parent_id`, the second
+        pass is a no-op (it neither reassigns nor reorders).
+    """
+    elements_to_return = _ontology_to_unstructured_elements(
+        ontology_element,
+        parent_id=parent_id,
+        page_number=page_number,
+        depth=depth,
+        filename=filename,
+        add_img_alt_text=add_img_alt_text,
+        list_ancestor_count=list_ancestor_count,
+    )
+    # -- Assign heading-based `parent_id` to content elements here so the converter's output is
+    # -- self-sufficient. This public entry point runs `set_element_hierarchy` once over the whole
+    # -- flat element list (recursion goes through the private worker, so this fires exactly once).
+    # -- `set_element_hierarchy` skips elements that already have a `parent_id` (the layout
+    # -- containers), preserving their tree parent. --
+    return set_element_hierarchy(elements_to_return)
+
+
+def _ontology_to_unstructured_elements(
+    ontology_element: ontology.OntologyElement,
+    parent_id: str | None = None,
+    page_number: int | None = None,
+    depth: int = 0,
+    filename: str | None = None,
+    add_img_alt_text: bool = True,
+    list_ancestor_count: int = 0,
+) -> list[elements.Element]:
+    """Recursive worker for `ontology_to_unstructured_elements`.
+
+    Builds the flat element list with layout-container `parent_id` set to the tree parent and
+    content `parent_id` left as ``None``. The public wrapper applies `set_element_hierarchy` once
+    over the result to fill in content elements' heading-based `parent_id`.
     """
     elements_to_return: list[elements.Element] = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
@@ -108,7 +148,7 @@ def ontology_to_unstructured_elements(
         )
         children: list[elements.Element] = []
         for child in ontology_element.children:
-            child = ontology_to_unstructured_elements(
+            child = _ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
@@ -140,8 +180,8 @@ def ontology_to_unstructured_elements(
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
             metadata=elements.ElementMetadata(
-                # -- `parent_id` left unset so `set_element_hierarchy` (run by @apply_metadata on
-                # -- partition_html) assigns a heading-based parent; see function docstring. --
+                # -- `parent_id` left unset here; the public wrapper applies `set_element_hierarchy`
+                # -- over the full list to assign a heading-based parent. See the wrapper docstring.
                 parent_id=None,
                 text_as_html=html_code_of_ontology_element,
                 page_number=page_number,
