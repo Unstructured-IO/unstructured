@@ -74,7 +74,13 @@ def test_when_two_combined_elements_have_the_same_parent():
     assert len(page.children) == 4
 
 
-def test_element_without_parent_isnt_lost():
+def test_content_element_without_parent_nests_in_current_container():
+    """ML-1328: tree reconstruction is layout-container driven, not content-`parent_id` driven.
+
+    Content elements nest in the innermost open layout container regardless of their (now
+    heading-based, possibly absent) `parent_id`. A paragraph with no `parent_id` therefore lands in
+    the current Page rather than being lifted to a Document-level sibling -- and is not lost.
+    """
     unstructured_elements = [
         Text(
             element_id="1",
@@ -99,12 +105,13 @@ def test_element_without_parent_isnt_lost():
     ontology = unstructured_elements_to_ontology(unstructured_elements)
 
     assert isinstance(ontology, Document)
-    assert len(ontology.children) == 2
-    page, paragraph = ontology.children
+    assert len(ontology.children) == 1
+    page = ontology.children[0]
     assert isinstance(page, Page)
-    assert len(page.children) == 1
-    assert isinstance(paragraph, Paragraph)
-    assert paragraph.text == "Example text without parent"
+    assert len(page.children) == 2
+    first, second = page.children
+    assert first.text == "Example text"
+    assert second.text == "Example text without parent"
 
 
 def test_multiple_pages_can_be_combined():

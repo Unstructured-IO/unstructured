@@ -1,3 +1,9 @@
+## 0.22.32
+
+### Enhancements
+
+- **v2 (ontology) HTML parser derives `category_depth` from heading level**: `partition_html(html_parser_version="v2")` (the VLM-partitioner path) now sets `category_depth` from a heading element's HTML level (`h1`→0, `h2`→1, …) via a shared helper reused by the v1 parser, instead of DOM/recursion nesting depth. As a result `category_depth` no longer changes solely because of multi-column layout, and `parent_id` (assigned by `set_element_hierarchy`) now chains subsections under their enclosing section heading. Layout-container structure and `text_as_html` are preserved.
+
 ## 0.22.31
 
 ### Enhancements

@@ -8,12 +8,15 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.ontology import (
     Column,
     Document,
+    Heading,
     Hyperlink,
     Image,
     Page,
     Paragraph,
     Section,
+    Subtitle,
     Table,
+    Title,
     remove_ids_and_class_from_table,
 )
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
@@ -44,9 +47,7 @@ def test_remove_ids_and_class_from_table():
     </table>
     """
     soup = BeautifulSoup(html_text, "html.parser")
-    assert (
-        str(remove_ids_and_class_from_table(soup))
-        == """
+    assert str(remove_ids_and_class_from_table(soup)) == """
 <table>
 <tr>
 <td><img alt="cell 1" class="Signature"/></td>
@@ -62,7 +63,6 @@ def test_remove_ids_and_class_from_table():
 </tr>
 </table>
 """
-    )
 
 
 def test_page_number_is_passed_correctly():
@@ -98,7 +98,13 @@ def test_invalid_page_number_is_not_passed():
     assert not p1.metadata.page_number
 
 
-def test_depth_is_passed_correctly():
+def test_category_depth_is_not_derived_from_layout_nesting():
+    """ML-1328: `category_depth` reflects heading level, not DOM/layout nesting.
+
+    Layout containers (Page/Column) and non-heading content carry no `category_depth`, so a
+    paragraph reads the same whether it sits in a single-column page or inside a column of a
+    two-column page (i.e. depth does not change solely due to multi-column layout).
+    """
     ontology = Document(
         children=[
             Page(children=[Paragraph(text="Paragraph1")]),
@@ -114,16 +120,40 @@ def test_depth_is_passed_correctly():
     unstructured_elements = ontology_to_unstructured_elements(ontology)
     page1, p1, page2, c1, p2, c2, p3 = unstructured_elements
 
-    assert page1.metadata.category_depth == 0
-    assert page2.metadata.category_depth == 0
+    # -- layout containers are not headings -> no depth --
+    assert page1.metadata.category_depth is None
+    assert page2.metadata.category_depth is None
+    assert c1.metadata.category_depth is None
+    assert c2.metadata.category_depth is None
 
-    assert p1.metadata.category_depth == 1
+    # -- plain paragraphs are not headings -> no depth, regardless of single- vs multi-column --
+    assert p1.metadata.category_depth is None
+    assert p2.metadata.category_depth is None
+    assert p3.metadata.category_depth is None
 
-    assert c2.metadata.category_depth == 1
-    assert c1.metadata.category_depth == 1
 
-    assert p2.metadata.category_depth == 2
-    assert p3.metadata.category_depth == 2
+def test_category_depth_is_derived_from_heading_level():
+    """ML-1328: heading elements get `category_depth` from their HTML heading level."""
+    ontology = Document(
+        children=[
+            Page(
+                children=[
+                    Title(text="Section"),  # <h1> -> 0
+                    Subtitle(text="Subsection"),  # <h2> -> 1
+                    Heading(text="Sub-subsection", html_tag_name="h3"),  # <h3> -> 2
+                    Paragraph(text="Body text"),  # not a heading -> None
+                ]
+            ),
+        ]
+    )
+
+    unstructured_elements = ontology_to_unstructured_elements(ontology)
+    _page, title, subtitle, heading, body = unstructured_elements
+
+    assert title.metadata.category_depth == 0
+    assert subtitle.metadata.category_depth == 1
+    assert heading.metadata.category_depth == 2
+    assert body.metadata.category_depth is None
 
 
 def test_chunking_is_applied_on_elements():

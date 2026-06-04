@@ -10,7 +10,7 @@ from typing import Any, Callable, Iterator, Sequence
 
 from typing_extensions import ParamSpec
 
-from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.documents.elements import Element, ElementMetadata, ListItem, Title
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.utils import get_call_args_applying_defaults
@@ -58,6 +58,35 @@ HIERARCHY_RULE_SET = {
         "Table",
     ],
 }
+
+
+_HEADING_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6")
+
+
+def category_depth_from_html_tag(
+    ElementCls: type[Element], tag: str | None, list_ancestor_count: int = 0
+) -> int | None:
+    """Compute `category_depth` from an element's HTML heading level (not DOM-nesting depth).
+
+    This is the canonical mapping used by both the v1 HTML parser and the v2 (ontology) HTML
+    converter so the two paths agree on what `category_depth` means:
+
+    - `Title` (which includes ontology Title/Subtitle/Heading, i.e. ``<h1>``-``<h6>``): the heading
+      level, zero-indexed -- ``h1`` -> 0, ``h2`` -> 1, ... ``h6`` -> 5. A `Title` whose tag is not a
+      heading (e.g. a styled paragraph) is treated as a top-level heading (0).
+    - `ListItem`: the number of enclosing list containers (``ol``/``ul``/``dl``), passed in by the
+      caller since list nesting is found differently in the two parsers.
+    - Everything else: ``None`` (no meaningful depth).
+
+    `tag` is the element's HTML tag name (e.g. ``"h2"``); it may be ``None`` for derived elements.
+    """
+    if ElementCls is ListItem:
+        return list_ancestor_count
+
+    if ElementCls is Title:
+        return int(tag[1]) - 1 if tag in _HEADING_TAGS else 0
+
+    return None
 
 
 def set_element_hierarchy(

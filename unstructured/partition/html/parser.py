@@ -99,6 +99,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.partition.common.metadata import category_depth_from_html_tag
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -275,22 +276,19 @@ class _ElementAccumulator:
         )
 
     def _category_depth(self, ElementCls: type[Element]) -> int | None:
-        """Not clear on concept. Something to do with hierarchy ..."""
-        if ElementCls is ListItem:
-            return (
-                len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
-                if self._element.tag in ("li", "dd")
-                else 0
-            )
+        """`category_depth` from heading level (Title) or list-nesting (ListItem).
 
-        if ElementCls is Title:
-            return (
-                int(self._element.tag[1]) - 1
-                if self._element.tag in ("h1", "h2", "h3", "h4", "h5", "h6")
-                else 0
-            )
-
-        return None
+        Delegates to the shared `category_depth_from_html_tag` helper so the v1 and v2 (ontology)
+        HTML parsers compute `category_depth` identically.
+        """
+        list_ancestor_count = (
+            len([e for e in self._element.iterancestors() if e.tag in ("dl", "ol", "ul")])
+            if self._element.tag in ("li", "dd")
+            else 0
+        )
+        return category_depth_from_html_tag(
+            ElementCls, self._element.tag, list_ancestor_count=list_ancestor_count
+        )
 
     @property
     def _normalized_text(self) -> str:
