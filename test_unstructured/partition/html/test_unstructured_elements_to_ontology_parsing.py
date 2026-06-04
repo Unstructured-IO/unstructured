@@ -1,5 +1,5 @@
 from unstructured.documents.elements import ElementMetadata, NarrativeText, Text
-from unstructured.documents.ontology import Document, Page, Paragraph
+from unstructured.documents.ontology import Column, Document, Page, Paragraph
 from unstructured.partition.html.transformations import unstructured_elements_to_ontology
 
 
@@ -157,3 +157,104 @@ def test_multiple_pages_can_be_combined():
     assert isinstance(paragraph2, Paragraph)
     assert paragraph1.text == "Example text on page 1"
     assert paragraph2.text == "Example text on page 2"
+
+
+def test_empty_input_returns_empty_document():
+    """ML-1328: empty input must return an empty Document, not raise IndexError."""
+    ontology = unstructured_elements_to_ontology([])
+
+    assert isinstance(ontology, Document)
+    assert ontology.children == []
+
+
+def test_nested_layout_containers_rebuild_column_nesting():
+    """ML-1328: a Column nests inside its Page (container `parent_id` drives the layout tree).
+
+    Two columns under one page; content nests in the innermost open container. This is the
+    multi-column round-trip that exercises container-under-container nesting.
+    """
+    unstructured_elements = [
+        Text(
+            element_id="page",
+            text="",
+            metadata=ElementMetadata(text_as_html='<div class="Page"/>'),
+        ),
+        Text(
+            element_id="col1",
+            text="",
+            metadata=ElementMetadata(text_as_html='<div class="Column"/>', parent_id="page"),
+        ),
+        NarrativeText(
+            element_id="c1",
+            text="Left column text",
+            metadata=ElementMetadata(
+                text_as_html='<p class="Paragraph"> Left column text </p>', parent_id="col1"
+            ),
+        ),
+        Text(
+            element_id="col2",
+            text="",
+            metadata=ElementMetadata(text_as_html='<div class="Column"/>', parent_id="page"),
+        ),
+        NarrativeText(
+            element_id="c2",
+            text="Right column text",
+            metadata=ElementMetadata(
+                text_as_html='<p class="Paragraph"> Right column text </p>', parent_id="col2"
+            ),
+        ),
+    ]
+    ontology = unstructured_elements_to_ontology(unstructured_elements)
+
+    assert isinstance(ontology, Document)
+    assert len(ontology.children) == 1
+    page = ontology.children[0]
+    assert isinstance(page, Page)
+    # -- both columns nest under the page; the second column did not pop past the page to root --
+    assert len(page.children) == 2
+    col1, col2 = page.children
+    assert isinstance(col1, Column)
+    assert isinstance(col2, Column)
+    assert [c.text for c in col1.children] == ["Left column text"]
+    assert [c.text for c in col2.children] == ["Right column text"]
+
+
+def test_layout_container_with_unknown_parent_id_does_not_pop_to_root():
+    """ML-1328: a container whose `parent_id` matches no open container nests in the current one.
+
+    Malformed/reordered input (violating the documented parent-before-child precondition) must not
+    pop past valid ancestors to the Document root and mis-nest subsequent content. The Column here
+    references a non-existent parent; it should stay inside the open Page, and nothing is lost.
+    """
+    unstructured_elements = [
+        Text(
+            element_id="page",
+            text="",
+            metadata=ElementMetadata(text_as_html='<div class="Page"/>'),
+        ),
+        Text(
+            element_id="col",
+            text="",
+            metadata=ElementMetadata(
+                text_as_html='<div class="Column"/>', parent_id="DOES_NOT_EXIST"
+            ),
+        ),
+        NarrativeText(
+            element_id="c1",
+            text="Body text",
+            metadata=ElementMetadata(
+                text_as_html='<p class="Paragraph"> Body text </p>', parent_id="col"
+            ),
+        ),
+    ]
+    ontology = unstructured_elements_to_ontology(unstructured_elements)
+
+    assert isinstance(ontology, Document)
+    assert len(ontology.children) == 1
+    page = ontology.children[0]
+    assert isinstance(page, Page)
+    # -- the Column stayed nested in the Page rather than being lifted to a Document-level sibling --
+    assert len(page.children) == 1
+    column = page.children[0]
+    assert isinstance(column, Column)
+    assert [c.text for c in column.children] == ["Body text"]

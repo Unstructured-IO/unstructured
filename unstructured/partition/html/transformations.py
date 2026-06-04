@@ -300,6 +300,12 @@ def unstructured_elements_to_ontology(
     Returns:
         OntologyElement: The converted OntologyElement object.
     """
+    if not unstructured_elements:
+        # -- empty input -> empty Document; avoid an IndexError dereferencing element[0] --
+        return ontology.Document(
+            additional_attributes={"id": ontology.OntologyElement.generate_unique_id()}
+        )
+
     root_element_id = unstructured_elements[0].metadata.parent_id
 
     if root_element_id is None:
@@ -326,10 +332,17 @@ def unstructured_elements_to_ontology(
 
             is_layout_container = ontology_element.elementType == ontology.ElementTypeEnum.layout
             if is_layout_container:
-                # -- pop back to this container's tree parent, then attach + open it --
-                parent_id = element.metadata.parent_id
-                while len(container_stack) > 1 and container_stack[-1][0] != parent_id:
-                    container_stack.pop()
+                # -- pop back to this container's tree parent, then attach + open it. Only pop if
+                # -- that parent is actually open on the stack; a `parent_id` matching no open
+                # -- container (e.g. malformed/reordered input that violates the documented
+                # -- parent-before-child precondition) must not pop past valid ancestors to root --
+                # -- which would mis-nest later content. In that case attach to the current
+                # -- innermost container instead, preserving document order and losing nothing. --
+                # -- a container with no `parent_id` is a top-level container -> attach at root --
+                parent_id = element.metadata.parent_id or root_element_id
+                if any(container_id == parent_id for container_id, _ in container_stack):
+                    while len(container_stack) > 1 and container_stack[-1][0] != parent_id:
+                        container_stack.pop()
                 container_stack[-1][1].children.append(ontology_element)
                 container_stack.append((element.id, ontology_element))
             else:

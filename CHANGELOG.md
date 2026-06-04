@@ -4,6 +4,10 @@
 
 - **v2 (ontology) HTML parser derives `category_depth` from heading level**: `partition_html(html_parser_version="v2")` (the VLM-partitioner path) now sets `category_depth` from a heading element's HTML level (`h1`→0, `h2`→1, …) via a shared helper reused by the v1 parser, instead of DOM/recursion nesting depth. As a result `category_depth` no longer changes solely because of multi-column layout, and `parent_id` (assigned by `set_element_hierarchy`) now chains subsections under their enclosing section heading. Layout-container structure and `text_as_html` are preserved.
 
+### Fixes
+
+- **`unstructured_elements_to_ontology` handles empty and malformed input**: returns an empty `Document` for empty input (instead of raising `IndexError`), and a layout container whose `parent_id` matches no open container now nests in the current container rather than popping to the document root and mis-nesting subsequent content.
+
 ## 0.22.31
 
 ### Enhancements
