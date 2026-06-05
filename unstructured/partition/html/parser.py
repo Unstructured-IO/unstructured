@@ -366,8 +366,11 @@ class Flow(etree.ElementBase):
 
     def iter_elements(self) -> Iterator[Element]:
         """Generate paragraph string for each block item within."""
-        # -- place child elements in a queue --
-        q: deque[Flow | Phrasing] = deque(self)
+        # -- place child elements in a queue, filtering out non-Element nodes
+        # -- (e.g. ProcessingInstruction, Comment) that lack is_phrasing --
+        q: deque[Flow | Phrasing] = deque(
+            child for child in self if isinstance(child, (Flow, Phrasing))
+        )
 
         yield from self._element_from_text_or_tail(self.text or "", q, self._ElementCls)
 
@@ -638,7 +641,9 @@ class Phrasing(etree.ElementBase):
         All generated text segments will be annotated with `emphasis` when it is other than the
         empty string.
         """
-        q: deque[Flow | Phrasing] = deque(self)
+        q: deque[Flow | Phrasing] = deque(
+            child for child in self if isinstance(child, (Flow, Phrasing))
+        )
         # -- Recurse into any nested tags. Phrasing children contribute `TextSegment`s to the
         # -- stream. Block children contribute document `Element`s. Note however that a phrasing
         # -- child can also produce an `Element` from any nested block element.
@@ -734,8 +739,11 @@ class Anchor(Phrasing):
 
     def _iter_phrases_and_elements(self, emphasis: str) -> Iterator[Phrase | Element]:
         """Divide contents (text+children, but not tail) into phrases and document-elements."""
-        # -- place child elements in a queue, method calls use some and leave the rest --
-        q: deque[Flow | Phrasing] = deque(self)
+        # -- place child elements in a queue, filtering out non-Element nodes
+        # -- (e.g. ProcessingInstruction, Comment) that lack is_phrasing --
+        q: deque[Flow | Phrasing] = deque(
+            child for child in self if isinstance(child, (Flow, Phrasing))
+        )
 
         yield from self._iter_phrasing(self.text or "", q, emphasis)
 

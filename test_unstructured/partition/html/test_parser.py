@@ -1517,3 +1517,45 @@ class DescribeDefaultElement:
             "O Deep Thought computer, he said, The task we have designed you to perform is this.",
             "We want you to tell us.... he paused,",
         ]
+
+
+class DescribeProcessingInstructionHandling:
+    """ProcessingInstruction nodes in HTML must not crash the parser."""
+
+    def it_skips_pi_nodes_in_flow_elements(self):
+        """PI nodes (e.g. injected by lxml during HTML/XML parsing) should be silently skipped."""
+        from lxml import etree as raw_etree
+
+        root = etree.fromstring(
+            "<div><p>Before.</p><p>After.</p></div>",
+            html_parser,
+        )
+        div = root.find(".//body/div")
+        assert div is not None
+
+        # Inject a PI node between the two paragraphs
+        pi = raw_etree.ProcessingInstruction("xml-stylesheet", 'type="text/xsl"')
+        div.insert(1, pi)
+
+        # Should not raise AttributeError on PI nodes
+        elements = list(div.iter_elements())
+        texts = [e.text for e in elements if e.text]
+        assert any("Before" in t for t in texts)
+        assert any("After" in t for t in texts)
+
+    def it_skips_pi_nodes_in_phrasing_elements(self):
+        """PI nodes inside phrasing elements should be silently skipped."""
+        from lxml import etree as raw_etree
+
+        root = etree.fromstring(
+            "<div><p>Hello <b>world</b></p></div>",
+            html_parser,
+        )
+        div = root.find(".//body/div")
+        p = div.find(".//p")
+        # Inject a PI node into the paragraph
+        pi = raw_etree.ProcessingInstruction("mypi", 'test="value"')
+        p.insert(1, pi)
+
+        elements = list(div.iter_elements())
+        assert any("Hello" in (e.text or "") for e in elements)

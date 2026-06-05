@@ -1,5 +1,9 @@
 ## 0.22.31
 
+### Fixes
+
+- **Fix HTML parser crash on ProcessingInstruction nodes**: The HTML parser raised `AttributeError` when encountering `lxml.etree._ProcessingInstruction` nodes (e.g. `<?xml ... ?>` inside markdown code blocks). PI and Comment nodes are now silently skipped during child iteration. Regression of #3578.
+
 ### Enhancements
 
 - **Rename `isolate_tables` chunking option to `isolate_table`**: the option added in 0.22.30 has been renamed for naming consistency. Callers passing `isolate_tables=` must update to `isolate_table=`.
