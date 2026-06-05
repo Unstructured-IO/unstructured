@@ -1,3 +1,9 @@
+## 0.22.35
+
+### Fixes
+
+- **Fix crash on processing instructions in HTML**: `partition_html()` no longer raises `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the document contains a processing instruction such as `<?xml ...?>`. Processing instructions are now dropped during parsing, consistent with how comments are already handled.
+
 ## 0.22.34
 
 ### Fixes

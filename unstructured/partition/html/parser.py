@@ -945,7 +945,10 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 # ------------------------------------------------------------------------------------------------
 
 
-html_parser = etree.HTMLParser(remove_comments=True)
+# -- `remove_pis` drops processing-instructions (e.g. `<?xml ...?>`); like comments they
+# -- carry no rendered text and otherwise reach the parser as `_ProcessingInstruction` nodes
+# -- that lack the custom-element interface (`.is_phrasing`), crashing iteration.
+html_parser = etree.HTMLParser(remove_comments=True, remove_pis=True)
 # -- elements that don't have a registered class get DefaultElement --
 fallback = etree.ElementDefaultClassLookup(element=DefaultElement)
 # -- elements that do have a registered class are assigned that class via lookup --
