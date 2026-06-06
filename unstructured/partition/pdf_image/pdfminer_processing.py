@@ -437,10 +437,30 @@ def extract_text_lines_from_loose_chars(
         else:
             lines.append([char])
 
+    # Insert a space between two characters when their horizontal gap exceeds this fraction of the
+    # character width. This recovers word/phrase breaks that carry no space glyph -- e.g. two
+    # separate labels in a figure -- so spatially separated phrases are not concatenated
+    # ("Model Customization" + "Document Images" -> "Model CustomizationDocument Images").
+    word_gap_ratio = 0.5
     results: list[tuple[tuple[float, float, float, float], str]] = []
     for line in lines:
         line.sort(key=lambda c: c.x0)
-        text = "".join(c.get_text() for c in line).strip()
+        pieces: list[str] = []
+        prev: LTChar | None = None
+        for char in line:
+            char_text = char.get_text()
+            if (
+                prev is not None
+                and char_text
+                and not char_text.isspace()
+                and pieces
+                and not pieces[-1].endswith(" ")
+                and (char.x0 - prev.x1) > word_gap_ratio * max(prev.width, char.width)
+            ):
+                pieces.append(" ")
+            pieces.append(char_text)
+            prev = char
+        text = "".join(pieces).strip()
         if not text:
             continue
         bbox = (
