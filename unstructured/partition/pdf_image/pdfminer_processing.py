@@ -398,11 +398,10 @@ def extract_text_lines_from_loose_chars(
 
     pdfminer does not always aggregate characters that live inside non-text containers such as
     ``LTFigure`` into ``LTTextLine`` objects. ``extract_text_objects`` only collects
-    ``LTTextLine``, so such characters are otherwise dropped from the extracted layout. This most
-    visibly affects text that document-signing tools (e.g. DocuSign) render into a figure overlay
-    above a signature block -- typed names, titles, and dates that are real, rendered, embedded
-    text but never reach the output. This recovers them by grouping the loose characters into
-    lines geometrically (top-to-bottom, then left-to-right).
+    ``LTTextLine``, so such characters are otherwise dropped from the extracted layout -- for
+    example text drawn into a figure/XObject overlay rather than the main content stream, which
+    is real, rendered, embedded text but never reaches the output. This recovers it by grouping
+    the loose characters into lines geometrically (top-to-bottom, then left-to-right).
 
     Non-rendered characters (text render mode 3 -- hidden OCR layers) and rotated characters are
     skipped, mirroring ``text_is_embedded``, so we do not resurface invisible/low-fidelity text.
@@ -572,9 +571,9 @@ def process_page_layout_from_pdfminer(
                 is_extracted.append(None)
             # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
             # real embedded text as loose `LTChar`s that were not grouped into `LTTextLine`
-            # objects -- most notably the typed names/titles/dates document-signing tools render
-            # into a figure above a signature block. `extract_text_objects` (LTTextLine only)
-            # misses these, so recover them here as their own text elements.
+            # objects -- for example text drawn into a figure/XObject overlay rather than the main
+            # content stream. `extract_text_objects` (LTTextLine only) misses these, so recover
+            # them here as their own text elements.
             if isinstance(obj, LTContainer):
                 for line_bbox, line_text in extract_text_lines_from_loose_chars(obj):
                     inner_bbox = rect_to_bbox(line_bbox, page_height)
