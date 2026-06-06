@@ -447,6 +447,12 @@ def extract_text_lines_from_loose_chars(
         pieces: list[str] = []
         prev: LTChar | None = None
         for char in line:
+            # Skip fake-bold duplicate glyphs (same char drawn twice at an offset), matching the
+            # deduplication get_text_with_deduplication applies on the main text path.
+            if prev is not None and _is_duplicate_char(
+                prev, char, env_config.PDF_CHAR_DUPLICATE_THRESHOLD
+            ):
+                continue
             char_text = char.get_text()
             if (
                 prev is not None
