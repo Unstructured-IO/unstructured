@@ -1,3 +1,9 @@
+## 0.22.32
+
+### Fixes
+
+- **Recover typed text inside PDF figure overlays in hi_res**: hi_res pdfminer extraction only pulled text from objects exposing `get_text` (e.g. `LTTextBox`), and `extract_text_objects` only collected `LTTextLine`. Text held as loose `LTChar`s inside an `LTFigure` — such as the typed names/titles/dates document-signing tools (e.g. DocuSign) render into a figure overlay above a signature block — was dropped, causing missing printed names/titles/dates under signatures. hi_res now groups such loose characters into text lines, skipping hidden (render mode 3) and rotated characters.
+
 ## 0.22.31
 
 ### Enhancements

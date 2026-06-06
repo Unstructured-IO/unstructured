@@ -391,6 +391,68 @@ def _ltchar_is_rotated(char: LTChar) -> bool:
     return abs(rotation_radians) > 0.001
 
 
+def extract_text_lines_from_loose_chars(
+    container: LTContainer,
+) -> list[tuple[tuple[float, float, float, float], str]]:
+    """Group loose ``LTChar`` objects inside a container into text lines.
+
+    pdfminer does not always aggregate characters that live inside non-text containers such as
+    ``LTFigure`` into ``LTTextLine`` objects. ``extract_text_objects`` only collects
+    ``LTTextLine``, so such characters are otherwise dropped from the extracted layout. This most
+    visibly affects text that document-signing tools (e.g. DocuSign) render into a figure overlay
+    above a signature block -- typed names, titles, and dates that are real, rendered, embedded
+    text but never reach the output. This recovers them by grouping the loose characters into
+    lines geometrically (top-to-bottom, then left-to-right).
+
+    Non-rendered characters (text render mode 3 -- hidden OCR layers) and rotated characters are
+    skipped, mirroring ``text_is_embedded``, so we do not resurface invisible/low-fidelity text.
+
+    Returns a list of ``(bbox, text)`` where ``bbox`` is ``(x0, y0, x1, y1)`` in pdfminer
+    coordinates (origin bottom-left).
+    """
+    chars: list[LTChar] = []
+
+    def _collect(obj):
+        for child in obj:
+            if isinstance(child, LTChar):
+                if getattr(child, "rendermode", None) == 3 or _ltchar_is_rotated(child):
+                    continue
+                chars.append(child)
+            elif isinstance(child, LTContainer):
+                _collect(child)
+
+    _collect(container)
+    if not chars:
+        return []
+
+    # Sort top-to-bottom (pdfminer y decreases downward), then left-to-right, and start a new
+    # line whenever a character has no vertical overlap with the current line's y-range.
+    chars.sort(key=lambda c: (-c.y1, c.x0))
+    lines: list[list[LTChar]] = []
+    for char in chars:
+        if lines and not (
+            char.y1 < min(c.y0 for c in lines[-1]) or char.y0 > max(c.y1 for c in lines[-1])
+        ):
+            lines[-1].append(char)
+        else:
+            lines.append([char])
+
+    results: list[tuple[tuple[float, float, float, float], str]] = []
+    for line in lines:
+        line.sort(key=lambda c: c.x0)
+        text = "".join(c.get_text() for c in line).strip()
+        if not text:
+            continue
+        bbox = (
+            min(c.x0 for c in line),
+            min(c.y0 for c in line),
+            max(c.x1 for c in line),
+            max(c.y1 for c in line),
+        )
+        results.append((bbox, text))
+    return results
+
+
 def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
     """Check if text object contains too many low_fidelity text: invisible or rotated
 
@@ -488,6 +550,20 @@ def process_page_layout_from_pdfminer(
                 element_coords.append(inner_bbox)
                 element_class.append(1)
                 is_extracted.append(None)
+            # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
+            # real embedded text as loose `LTChar`s that were not grouped into `LTTextLine`
+            # objects -- most notably the typed names/titles/dates document-signing tools render
+            # into a figure above a signature block. `extract_text_objects` (LTTextLine only)
+            # misses these, so recover them here as their own text elements.
+            if isinstance(obj, LTContainer):
+                for line_bbox, line_text in extract_text_lines_from_loose_chars(obj):
+                    inner_bbox = rect_to_bbox(line_bbox, page_height)
+                    if not _validate_bbox(inner_bbox):
+                        continue
+                    texts.append(line_text)
+                    element_coords.append(inner_bbox)
+                    element_class.append(0)
+                    is_extracted.append(IsExtracted.TRUE)
 
     return (
         LayoutElements(
