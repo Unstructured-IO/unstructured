@@ -425,16 +425,19 @@ def extract_text_lines_from_loose_chars(
         return []
 
     # Sort top-to-bottom (pdfminer y decreases downward), then left-to-right, and start a new
-    # line whenever a character has no vertical overlap with the current line's y-range.
+    # line whenever a character has no vertical overlap with the current line's y-range. The
+    # current line's y-range is tracked incrementally (cur_y0/cur_y1) rather than recomputed over
+    # the whole line each character, keeping this O(n) instead of O(n^2) on char-dense containers.
     chars.sort(key=lambda c: (-c.y1, c.x0))
     lines: list[list[LTChar]] = []
+    cur_y0 = cur_y1 = 0.0
     for char in chars:
-        if lines and not (
-            char.y1 < min(c.y0 for c in lines[-1]) or char.y0 > max(c.y1 for c in lines[-1])
-        ):
+        if lines and not (char.y1 < cur_y0 or char.y0 > cur_y1):
             lines[-1].append(char)
+            cur_y0, cur_y1 = min(cur_y0, char.y0), max(cur_y1, char.y1)
         else:
             lines.append([char])
+            cur_y0, cur_y1 = char.y0, char.y1
 
     # Insert a space between two characters when their horizontal gap exceeds this fraction of the
     # character width. This recovers word/phrase breaks that carry no space glyph -- e.g. two
