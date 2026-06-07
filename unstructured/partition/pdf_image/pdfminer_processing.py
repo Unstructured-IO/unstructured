@@ -5,7 +5,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTContainer, LTTextBox
+from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
@@ -391,96 +391,6 @@ def _ltchar_is_rotated(char: LTChar) -> bool:
     return abs(rotation_radians) > 0.001
 
 
-def extract_text_lines_from_loose_chars(
-    container: LTContainer,
-) -> list[tuple[tuple[float, float, float, float], str]]:
-    """Group loose ``LTChar`` objects inside a container into text lines.
-
-    pdfminer does not always aggregate characters that live inside non-text containers such as
-    ``LTFigure`` into ``LTTextLine`` objects. ``extract_text_objects`` only collects
-    ``LTTextLine``, so such characters are otherwise dropped from the extracted layout -- for
-    example text drawn into a figure/XObject overlay rather than the main content stream, which
-    is real, rendered, embedded text but never reaches the output. This recovers it by grouping
-    the loose characters into lines geometrically (top-to-bottom, then left-to-right).
-
-    Non-rendered characters (text render mode 3 -- hidden OCR layers) and rotated characters are
-    skipped, mirroring ``text_is_embedded``, so we do not resurface invisible/low-fidelity text.
-
-    Returns a list of ``(bbox, text)`` where ``bbox`` is ``(x0, y0, x1, y1)`` in pdfminer
-    coordinates (origin bottom-left).
-    """
-    chars: list[LTChar] = []
-
-    def _collect(obj):
-        for child in obj:
-            if isinstance(child, LTChar):
-                if getattr(child, "rendermode", None) == 3 or _ltchar_is_rotated(child):
-                    continue
-                chars.append(child)
-            elif isinstance(child, LTContainer):
-                _collect(child)
-
-    _collect(container)
-    if not chars:
-        return []
-
-    # Sort top-to-bottom (pdfminer y decreases downward), then left-to-right, and start a new
-    # line whenever a character has no vertical overlap with the current line's y-range. The
-    # current line's y-range is tracked incrementally (cur_y0/cur_y1) rather than recomputed over
-    # the whole line each character, keeping this O(n) instead of O(n^2) on char-dense containers.
-    chars.sort(key=lambda c: (-c.y1, c.x0))
-    lines: list[list[LTChar]] = []
-    cur_y0 = cur_y1 = 0.0
-    for char in chars:
-        if lines and not (char.y1 < cur_y0 or char.y0 > cur_y1):
-            lines[-1].append(char)
-            cur_y0, cur_y1 = min(cur_y0, char.y0), max(cur_y1, char.y1)
-        else:
-            lines.append([char])
-            cur_y0, cur_y1 = char.y0, char.y1
-
-    # Insert a space between two characters when their horizontal gap exceeds this fraction of the
-    # character width. This recovers word/phrase breaks that carry no space glyph -- e.g. two
-    # separate labels in a figure -- so spatially separated phrases are not concatenated
-    # ("Model Customization" + "Document Images" -> "Model CustomizationDocument Images").
-    word_gap_ratio = 0.5
-    results: list[tuple[tuple[float, float, float, float], str]] = []
-    for line in lines:
-        line.sort(key=lambda c: c.x0)
-        pieces: list[str] = []
-        prev: LTChar | None = None
-        for char in line:
-            # Skip fake-bold duplicate glyphs (same char drawn twice at an offset), matching the
-            # deduplication get_text_with_deduplication applies on the main text path.
-            if prev is not None and _is_duplicate_char(
-                prev, char, env_config.PDF_CHAR_DUPLICATE_THRESHOLD
-            ):
-                continue
-            char_text = char.get_text()
-            if (
-                prev is not None
-                and char_text
-                and not char_text.isspace()
-                and pieces
-                and not pieces[-1].endswith(" ")
-                and (char.x0 - prev.x1) > word_gap_ratio * max(prev.width, char.width)
-            ):
-                pieces.append(" ")
-            pieces.append(char_text)
-            prev = char
-        text = "".join(pieces).strip()
-        if not text:
-            continue
-        bbox = (
-            min(c.x0 for c in line),
-            min(c.y0 for c in line),
-            max(c.x1 for c in line),
-            max(c.y1 for c in line),
-        )
-        results.append((bbox, text))
-    return results
-
-
 def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
     """Check if text object contains too many low_fidelity text: invisible or rotated
 
@@ -579,19 +489,22 @@ def process_page_layout_from_pdfminer(
                 element_class.append(1)
                 is_extracted.append(None)
             # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
-            # real embedded text as loose `LTChar`s that were not grouped into `LTTextLine`
-            # objects -- for example text drawn into a figure/XObject overlay rather than the main
-            # content stream. `extract_text_objects` (LTTextLine only) misses these, so recover
-            # them here as their own text elements.
+            # real, rendered text as loose `LTChar`s -- for example text drawn into a figure/XObject
+            # overlay rather than the main content stream -- which `extract_text_objects`
+            # (LTTextLine only) misses. Re-run pdfminer layout analysis on the container with
+            # `all_texts=True` so those characters are grouped into `LTTextLine`s, then extract them
+            # through the same path as the main text branch above.
             if isinstance(obj, LTContainer):
-                for line_bbox, line_text in extract_text_lines_from_loose_chars(obj):
-                    inner_bbox = rect_to_bbox(line_bbox, page_height)
+                obj.analyze(LAParams(all_texts=True))
+                char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
+                for inner_obj in extract_text_objects(obj):
+                    inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
                     if not _validate_bbox(inner_bbox):
                         continue
-                    texts.append(line_text)
+                    texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
                     element_coords.append(inner_bbox)
                     element_class.append(0)
-                    is_extracted.append(IsExtracted.TRUE)
+                    is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
 
     return (
         LayoutElements(
