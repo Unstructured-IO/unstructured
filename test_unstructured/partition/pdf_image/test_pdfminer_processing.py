@@ -297,6 +297,19 @@ def test_process_file_hidden_ocr_text():
     assert layout[0].is_extracted_array[-1] == IsExtracted.TRUE
 
 
+def test_process_file_recovers_figure_overlay_text():
+    """Text inside a Form XObject (LTFigure overlay) is recovered, not dropped.
+
+    Regression test: such text is real, embedded text held as loose LTChars that pdfminer does not
+    group into LTTextLine objects, so extract_text_objects (LTTextLine only) used to drop it. The
+    fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a form XObject.
+    """
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/figure-overlay-text.pdf"))
+    texts = " ".join(str(t) for page in layout for t in page.texts if t)
+    assert "Printed Name:" in texts  # main content stream
+    assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
+
+
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
 def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
     partition(

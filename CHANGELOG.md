@@ -1,3 +1,9 @@
+## 0.22.32
+
+### Fixes
+
+- **Recover text inside PDF figure overlays in hi_res**: hi_res pdfminer extraction only pulled text from objects exposing `get_text` (e.g. `LTTextBox`), and `extract_text_objects` only collected `LTTextLine`. Text held as loose `LTChar`s inside an `LTFigure` — for example text drawn into a figure/XObject overlay rather than the main content stream — was dropped from the output. hi_res now groups such loose characters into text lines, inserting spaces on wide inter-character gaps and skipping hidden (render mode 3) and rotated characters.
+
 ## 0.22.31
 
 ### Enhancements

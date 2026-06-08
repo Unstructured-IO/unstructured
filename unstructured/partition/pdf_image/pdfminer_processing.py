@@ -5,7 +5,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTContainer, LTTextBox
+from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from unstructured_inference.config import inference_config
@@ -443,6 +443,7 @@ def process_page_layout_from_pdfminer(
     page_height: int | float,
     page_number: int,
     coord_coef: float,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[LayoutElements, list]:
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -488,6 +489,28 @@ def process_page_layout_from_pdfminer(
                 element_coords.append(inner_bbox)
                 element_class.append(1)
                 is_extracted.append(None)
+            # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
+            # real, rendered text as loose `LTChar`s -- for example text drawn into a figure/XObject
+            # overlay rather than the main content stream -- which `extract_text_objects`
+            # (LTTextLine only) misses. Re-run pdfminer layout analysis on the container, reusing
+            # the same LAParams settings as the main pass plus `all_texts=True`, so those characters
+            # are grouped into `LTTextLine`s, then extract them through the same path as the main
+            # text branch above.
+            if isinstance(obj, LTContainer):
+                laparams_kwargs = (
+                    pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
+                )
+                laparams_kwargs["all_texts"] = True
+                obj.analyze(LAParams(**laparams_kwargs))
+                char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
+                for inner_obj in extract_text_objects(obj):
+                    inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
+                    if not _validate_bbox(inner_bbox):
+                        continue
+                    texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
+                    element_coords.append(inner_bbox)
+                    element_class.append(0)
+                    is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
 
     return (
         LayoutElements(
@@ -532,7 +555,7 @@ def process_data_with_pdfminer(
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         layout, urls_metadata = process_page_layout_from_pdfminer(
-            annotation_list, page_layout, height, page_number, coef
+            annotation_list, page_layout, height, page_number, coef, pdfminer_config
         )
 
         links = [
