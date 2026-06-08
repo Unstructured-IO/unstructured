@@ -443,6 +443,7 @@ def process_page_layout_from_pdfminer(
     page_height: int | float,
     page_number: int,
     coord_coef: float,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
 ) -> tuple[LayoutElements, list]:
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -491,11 +492,16 @@ def process_page_layout_from_pdfminer(
             # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
             # real, rendered text as loose `LTChar`s -- for example text drawn into a figure/XObject
             # overlay rather than the main content stream -- which `extract_text_objects`
-            # (LTTextLine only) misses. Re-run pdfminer layout analysis on the container with
-            # `all_texts=True` so those characters are grouped into `LTTextLine`s, then extract them
-            # through the same path as the main text branch above.
+            # (LTTextLine only) misses. Re-run pdfminer layout analysis on the container, reusing
+            # the same LAParams settings as the main pass plus `all_texts=True`, so those characters
+            # are grouped into `LTTextLine`s, then extract them through the same path as the main
+            # text branch above.
             if isinstance(obj, LTContainer):
-                obj.analyze(LAParams(all_texts=True))
+                laparams_kwargs = (
+                    pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
+                )
+                laparams_kwargs["all_texts"] = True
+                obj.analyze(LAParams(**laparams_kwargs))
                 char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
                 for inner_obj in extract_text_objects(obj):
                     inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
@@ -549,7 +555,7 @@ def process_data_with_pdfminer(
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         layout, urls_metadata = process_page_layout_from_pdfminer(
-            annotation_list, page_layout, height, page_number, coef
+            annotation_list, page_layout, height, page_number, coef, pdfminer_config
         )
 
         links = [
