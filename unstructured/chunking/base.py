@@ -798,7 +798,7 @@ class _Chunker:
 
         # -- emit first chunk --
         s, remainder = split(self._text)
-        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
+        yield CompositeElement(text=s, metadata=self._chunk_metadata())
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
         # -- Note these get continuation_metadata which includes is_continuation=True.
@@ -868,18 +868,20 @@ class _Chunker:
         enrichment may mutate in place, and a shared object would let one chunk's mutation leak
         into its siblings.
         """
-        # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk (e.g. the first text-split chunk). A shallow copy
-        # -- suffices for scalar fields, but `enrichment_origins` is mutable, so deep-copy it.
-        # -- (Deep-copying the whole metadata is avoided because it may carry the full
-        # -- `orig_elements`.)
-        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata = self._chunk_metadata()
         continuation_metadata.is_continuation = True
-        if continuation_metadata.enrichment_origins is not None:
-            continuation_metadata.enrichment_origins = copy.deepcopy(
-                continuation_metadata.enrichment_origins
-            )
         return continuation_metadata
+
+    def _chunk_metadata(self) -> ElementMetadata:
+        """Fresh metadata for one text-split chunk of the pre-chunk."""
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk. A shallow copy suffices for scalar fields, but
+        # -- `enrichment_origins` is mutable, so deep-copy it. (Deep-copying the whole metadata is
+        # -- avoided because it may carry the full `orig_elements`.)
+        metadata = copy.copy(self._consolidated_metadata)
+        if metadata.enrichment_origins is not None:
+            metadata.enrichment_origins = copy.deepcopy(metadata.enrichment_origins)
+        return metadata
 
     @cached_property
     def _meta_kwargs(self) -> dict[str, Any]:

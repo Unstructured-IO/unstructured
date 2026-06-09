@@ -961,7 +961,7 @@ class Describe_Chunker:
             "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
             " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
         )
-        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata == chunker._consolidated_metadata
         assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
@@ -982,16 +982,14 @@ class Describe_Chunker:
         chunk_iter = chunker._iter_chunks()
 
         # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
-        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
-        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
-        # -- `._consolidated_metadata)` for each text-split chunk.
+        # -- each text-split chunk.
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
             " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
             " veniam, quis nostrud exercitation ullamco laboris nisi ut"
         )
-        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata == chunker._consolidated_metadata
         assert chunk.metadata.orig_elements == elements
         # --
         chunk = next(chunk_iter)
@@ -1036,6 +1034,24 @@ class Describe_Chunker:
         origins[0]["text"].append({"type": "caption", "provider": "p2", "model": "m2"})
         assert all(o["text"] is not origins[0]["text"] for o in origins[1:])
         assert all(len(o["text"]) == 1 for o in origins[1:])
+
+    def and_first_split_chunk_mutation_does_not_affect_lazily_produced_continuations(self):
+        """The first yielded chunk must not be the mutable base for later continuation metadata."""
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        origin = {"type": "ocr", "provider": "p", "model": "m"}
+        metadata = ElementMetadata(enrichment_origins={"text": [origin]})
+        elements = [Text(text, metadata=metadata)]
+
+        chunk_iter = _Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20))
+
+        first_chunk = next(chunk_iter)
+        first_chunk.metadata.enrichment_origins["text"].append(
+            {"type": "caption", "provider": "p2", "model": "m2"}
+        )
+        second_chunk = next(chunk_iter)
+
+        assert second_chunk.metadata.enrichment_origins == {"text": [origin]}
 
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
