@@ -31,6 +31,17 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layoutelement import LayoutElement
 
 
+def _layout_source_to_extraction_method(source: Any) -> str | None:
+    """Returns a serializable layout extraction method from inference source metadata."""
+    if source is None:
+        return None
+    if isinstance(source, str):
+        return source
+    if hasattr(source, "value"):
+        return str(source.value)
+    return str(source)
+
+
 def normalize_layout_element(
     layout_element: LayoutElement | Element | dict[str, Any],
     coordinate_system: Optional[CoordinateSystem] = None,
@@ -58,23 +69,26 @@ def normalize_layout_element(
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
     aux_origin = layout_dict.get("source", None)
-    origin = None
+    extraction_method = _layout_source_to_extraction_method(aux_origin)
     if isinstance(layout_dict.get("is_extracted"), Enum):
         is_extracted = layout_dict["is_extracted"].value
     else:
         is_extracted = None
-    if aux_origin:
-        origin = aux_origin.value
-    if prob and isinstance(prob, (int, str, float, numbers.Number)):
-        class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
+    if prob not in (None, "") and isinstance(prob, (int, str, float, numbers.Number)):
+        confidence_score = float(prob)
+        class_prob_metadata = ElementMetadata(
+            confidence_score=confidence_score,
+            detection_class_prob=confidence_score,
+            extraction_method=extraction_method,
+        )
     else:
-        class_prob_metadata = ElementMetadata()
+        class_prob_metadata = ElementMetadata(extraction_method=extraction_method)
     class_prob_metadata.is_extracted = is_extracted
     common_kwargs = {
         "coordinates": coordinates,
         "coordinate_system": coordinate_system,
         "metadata": class_prob_metadata,
-        "detection_origin": origin,
+        "detection_origin": extraction_method,
     }
     if element_type == ElementType.LIST:
         if infer_list_items:

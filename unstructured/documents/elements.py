@@ -162,6 +162,7 @@ class ElementMetadata:
 
     attached_to_filename: Optional[str]
     category_depth: Optional[int]
+    confidence_score: Optional[float]
     coordinates: Optional[CoordinatesMetadata]
     data_source: Optional[DataSourceMetadata]
     # -- Detection Model Class Probabilities from Unstructured-Inference Hi-Res --
@@ -170,6 +171,7 @@ class ElementMetadata:
     detection_origin: Optional[str]
     emphasized_text_contents: Optional[list[str]]
     emphasized_text_tags: Optional[list[str]]
+    extraction_method: Optional[str]
     file_directory: Optional[str]
     filename: Optional[str]
     filetype: Optional[str]
@@ -236,9 +238,11 @@ class ElementMetadata:
         bcc_recipient: Optional[list[str]] = None,
         category_depth: Optional[int] = None,
         cc_recipient: Optional[list[str]] = None,
+        confidence_score: Optional[float] = None,
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
+        extraction_method: Optional[str] = None,
         emphasized_text_contents: Optional[list[str]] = None,
         emphasized_text_tags: Optional[list[str]] = None,
         file_directory: Optional[str] = None,
@@ -281,9 +285,11 @@ class ElementMetadata:
         self.bcc_recipient = bcc_recipient
         self.category_depth = category_depth
         self.cc_recipient = cc_recipient
+        self.confidence_score = confidence_score
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
+        self.extraction_method = extraction_method
         self.emphasized_text_contents = emphasized_text_contents
         self.emphasized_text_tags = emphasized_text_tags
 
@@ -515,10 +521,12 @@ class ConsolidationStrategy(enum.Enum):
             "cc_recipient": cls.FIRST,
             "bcc_recipient": cls.FIRST,
             "category_depth": cls.DROP,
+            "confidence_score": cls.DROP,
             "coordinates": cls.DROP,
             "data_source": cls.FIRST,
             "detection_class_prob": cls.DROP,
             "detection_origin": cls.DROP,
+            "extraction_method": cls.DROP,
             "emphasized_text_contents": cls.LIST_CONCATENATE,
             "emphasized_text_tags": cls.LIST_CONCATENATE,
             "file_directory": cls.FIRST,
