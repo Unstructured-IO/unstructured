@@ -1,8 +1,14 @@
-## 0.22.33
+## 0.22.34
 
 ### Fixes
 
 - **Keep extracted text aligned with rotated PDF page images in hi_res**: when unstructured-inference rotates a rendered page image to make its text upright, the same rotation is now mirrored onto the pdfminer-extracted coordinates so the extracted-text layer and the object-detection layer share one coordinate frame and merge correctly. Previously the two layers could be off by the page's `/Rotate`, scattering extracted text in the merged output.
+
+## 0.22.33
+
+### Fixes
+
+- **Fix over-aggressive de-duplication of embedded text on dense PDF pages**: `remove_duplicate_elements` chunks its IoU computation for pages with more than ~2000 extracted elements, but the per-chunk "keep" mask was not offset by the chunk's global start index. As a result, every element in a chunk after the first was compared against itself (and earlier elements) and wrongly dropped, so dense pages (large tables, engineering drawings) lost a large fraction of their extracted text. The diagonal offset is now applied per chunk so only genuine later-duplicate boxes are removed.
 
 ## 0.22.32
 
