@@ -508,10 +508,13 @@ def _process_pdfminer_pages(
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         # Collect font sizes from all text objects on page for heading hierarchy inference
+        # Cache results to avoid re-extraction in element loop (P2 performance optimization)
         page_font_sizes: dict[float, int] = {}
+        obj_font_cache: dict[int, list[float]] = {}  # Cache by object id
         for obj_temp in page_layout:
             if hasattr(obj_temp, "get_text") or isinstance(obj_temp, LTTextBox):
                 font_sizes_temp = _extract_font_sizes_from_text_obj(obj_temp)
+                obj_font_cache[id(obj_temp)] = font_sizes_temp  # Store in cache
                 for size in font_sizes_temp:
                     page_font_sizes[size] = page_font_sizes.get(size, 0) + 1
 
@@ -557,7 +560,11 @@ def _process_pdfminer_pages(
                     links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
                     # Extract font size and calculate category_depth for heading hierarchy
-                    font_sizes = _extract_font_sizes_from_text_obj(obj)
+                    # Use cached font sizes to avoid re-extraction (P2 performance optimization)
+                    font_sizes = obj_font_cache.get(id(obj), [])
+                    if not font_sizes:  # Fallback if object wasn't in page_layout iteration
+                        font_sizes = _extract_font_sizes_from_text_obj(obj)
+
                     representative_font_size = _get_representative_font_size(font_sizes)
                     is_title = hasattr(element, 'category') and element.category == "Title"
                     category_depth = _infer_category_depth_from_font_size(
@@ -1352,13 +1359,24 @@ def _infer_category_depth_from_font_size(
         return None
 
     # Find the rank of this font size among headings
+    # Use closest match instead of exact equality to handle median averaging edge case
+    # (median of even-length font list may not exist in discrete page_font_sizes keys)
+    if font_size not in heading_sizes:
+        # Find closest heading size within tolerance
+        closest = min(heading_sizes, key=lambda x: abs(x - font_size))
+        if abs(closest - font_size) < 1.0:  # 1pt tolerance for floating point median
+            font_size = closest
+        else:
+            # Font size too far from any heading size (likely body text edge case)
+            return None
+
     try:
         rank = heading_sizes.index(font_size)
         # Map to category_depth (1-6), capping at 6
         category_depth = min(rank + 1, 6)
         return category_depth
     except ValueError:
-        # Font size not in heading sizes (shouldn't happen, but handle gracefully)
+        # Should not happen after closest-match logic, but handle gracefully
         return None
 
 
