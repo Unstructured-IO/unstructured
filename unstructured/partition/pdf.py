@@ -507,6 +507,14 @@ def _process_pdfminer_pages(
         if page.annots:
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
+        # Collect font sizes from all text objects on page for heading hierarchy inference
+        page_font_sizes: dict[float, int] = {}
+        for obj_temp in page_layout:
+            if hasattr(obj_temp, "get_text") or isinstance(obj_temp, LTTextBox):
+                font_sizes_temp = _extract_font_sizes_from_text_obj(obj_temp)
+                for size in font_sizes_temp:
+                    page_font_sizes[size] = page_font_sizes.get(size, 0) + 1
+
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
@@ -548,6 +556,16 @@ def _process_pdfminer_pages(
                     )
                     links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
+                    # Extract font size and calculate category_depth for heading hierarchy
+                    font_sizes = _extract_font_sizes_from_text_obj(obj)
+                    representative_font_size = _get_representative_font_size(font_sizes)
+                    is_title = hasattr(element, 'category') and element.category == "Title"
+                    category_depth = _infer_category_depth_from_font_size(
+                        representative_font_size,
+                        page_font_sizes,
+                        is_title
+                    )
+
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=page_number,
@@ -555,6 +573,7 @@ def _process_pdfminer_pages(
                         last_modified=metadata_last_modified,
                         links=links,
                         languages=languages,
+                        category_depth=category_depth,
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
@@ -1226,6 +1245,121 @@ def _extract_text(item: LTItem) -> str:
         # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
+
+
+def _extract_font_sizes_from_text_obj(obj: LTItem) -> list[float]:
+    """Extract font sizes from LTChar objects within a PDF text object.
+
+    Recursively traverses LTTextBox/LTContainer objects to find LTChar instances
+    and calculates font size from their bounding box height (y1 - y0).
+
+    Args:
+        obj: PDFMiner layout object (LTTextBox, LTContainer, etc.)
+
+    Returns:
+        List of font sizes (in points) for all characters in the object.
+        Returns empty list if no LTChar objects found.
+    """
+    from pdfminer.layout import LTChar, LTContainer
+
+    font_sizes = []
+
+    def collect_chars(item: LTItem) -> None:
+        """Recursively collect LTChar objects and their font sizes."""
+        if isinstance(item, LTChar):
+            # Font size = character height (y1 - y0)
+            font_size = item.y1 - item.y0
+            if font_size > 0:  # Ignore zero or negative sizes
+                font_sizes.append(font_size)
+        elif isinstance(item, LTContainer):
+            # Recursively process container's children
+            for child in item:
+                collect_chars(child)
+
+    collect_chars(obj)
+    return font_sizes
+
+
+def _get_representative_font_size(font_sizes: list[float]) -> Optional[float]:
+    """Calculate representative font size from a list of font sizes.
+
+    Uses median to avoid outliers (e.g., superscripts, drop caps).
+
+    Args:
+        font_sizes: List of font sizes extracted from text object
+
+    Returns:
+        Median font size, or None if list is empty
+    """
+    if not font_sizes:
+        return None
+
+    # Use median to be robust against outliers
+    sorted_sizes = sorted(font_sizes)
+    n = len(sorted_sizes)
+
+    if n % 2 == 0:
+        # Even number of elements: average of middle two
+        median = (sorted_sizes[n // 2 - 1] + sorted_sizes[n // 2]) / 2
+    else:
+        # Odd number of elements: middle element
+        median = sorted_sizes[n // 2]
+
+    return median
+
+
+def _infer_category_depth_from_font_size(
+    font_size: Optional[float],
+    page_font_sizes: dict[float, int],
+    is_title: bool = False,
+) -> Optional[int]:
+    """Infer heading hierarchy level (category_depth) from font size.
+
+    Maps font sizes to heading levels (1-6) where 1 is the largest heading.
+    Only applies to Title elements; returns None for other element types.
+
+    Algorithm:
+    - Collects unique font sizes across the page
+    - Ranks them by size (largest = level 1, second largest = level 2, etc.)
+    - Maps up to 6 distinct heading levels (H1-H6)
+    - Body text (most common font size) is not assigned a level
+
+    Args:
+        font_size: The font size to classify (in points)
+        page_font_sizes: Dict mapping font sizes to their frequency counts on the page
+        is_title: Whether this element is classified as a Title
+
+    Returns:
+        category_depth value (1-6) for headings, None for body text or non-Title elements
+    """
+    if not is_title or font_size is None or not page_font_sizes:
+        return None
+
+    # Get sorted unique font sizes (largest first)
+    sorted_sizes = sorted(page_font_sizes.keys(), reverse=True)
+
+    # Find the most common font size (likely body text)
+    body_text_size = max(page_font_sizes.items(), key=lambda x: x[1])[0]
+
+    # Don't assign category_depth to body text
+    if abs(font_size - body_text_size) < 0.5:  # 0.5pt tolerance for floating point
+        return None
+
+    # Filter out body text size from heading candidates
+    heading_sizes = [s for s in sorted_sizes if abs(s - body_text_size) >= 0.5]
+
+    if not heading_sizes:
+        return None
+
+    # Find the rank of this font size among headings
+    try:
+        rank = heading_sizes.index(font_size)
+        # Map to category_depth (1-6), capping at 6
+        category_depth = min(rank + 1, 6)
+        return category_depth
+    except ValueError:
+        # Font size not in heading sizes (shouldn't happen, but handle gracefully)
+        return None
 
 
 # Some pages with a ICC color space do not follow the pdf spec
