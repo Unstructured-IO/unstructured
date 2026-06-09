@@ -19,6 +19,7 @@ from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
 from unstructured.partition.pdf_image.pdfminer_processing import (
     _deduplicate_ltchars,
+    _rotate_bboxes,
     _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
@@ -84,6 +85,34 @@ mix_elements_inside_table = [
     LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.PDFMINER),
     LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.PDFMINER),
 ]
+
+
+def test_rotate_bboxes_matches_pil_rotation_directions():
+    """_rotate_bboxes mirrors PIL.Image.rotate(angle, expand=True) (counter-clockwise)."""
+    W, H = 100.0, 200.0  # portrait display-frame canvas
+    coords = np.array([[10.0, 20.0, 30.0, 60.0]])
+
+    # 0 / 360 are no-ops
+    assert np.array_equal(_rotate_bboxes(coords, 0, W, H), coords)
+    assert np.array_equal(_rotate_bboxes(coords, 360, W, H), coords)
+
+    # 90 CCW (expand): x' = y, y' = W - x
+    r90 = _rotate_bboxes(coords, 90, W, H)
+    assert np.allclose(r90, [[20.0, W - 30.0, 60.0, W - 10.0]])
+    # 180
+    r180 = _rotate_bboxes(coords, 180, W, H)
+    assert np.allclose(r180, [[W - 30.0, H - 60.0, W - 10.0, H - 20.0]])
+    # 270 CCW
+    assert np.allclose(_rotate_bboxes(coords, 270, W, H), [[H - 60.0, 10.0, H - 20.0, 30.0]])
+
+    # rotating 90 then 270 (about the post-rotation H x W canvas) restores the original box
+    assert np.allclose(_rotate_bboxes(r90, 270, H, W), coords)
+
+    # outputs remain valid bboxes (x1 < x2, y1 < y2)
+    for angle in (90, 180, 270):
+        r = _rotate_bboxes(coords, angle, W, H)
+        assert r[0, 0] < r[0, 2]
+        assert r[0, 1] < r[0, 3]
 
 
 @pytest.mark.parametrize(
