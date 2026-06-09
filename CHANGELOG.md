@@ -1,3 +1,9 @@
+## 0.22.34
+
+### Fixes
+
+- **Keep extracted text aligned with rotated PDF page images in hi_res**: when unstructured-inference rotates a rendered page image to make its text upright, the same rotation is now mirrored onto the pdfminer-extracted coordinates so the extracted-text layer and the object-detection layer share one coordinate frame and merge correctly. Previously the two layers could be off by the page's `/Rotate`, scattering extracted text in the merged output.
+
 ## 0.22.33
 
 ### Fixes
