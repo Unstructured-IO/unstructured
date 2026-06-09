@@ -804,7 +804,7 @@ class _Chunker:
         # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=self._continuation_metadata)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata())
 
     @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
@@ -857,19 +857,22 @@ class _Chunker:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
-    @cached_property
     def _continuation_metadata(self) -> ElementMetadata:
-        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+        """Fresh metadata for one second-or-later text-split chunk of the pre-chunk.
 
         The same metadata as the first text-split chunk but includes `.is_continuation = True`.
         Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+
+        A new object is produced on each call (not cached) because each continuation chunk needs
+        its own copy: `enrichment_origins` is a mutable dict-of-lists that a downstream additive
+        enrichment may mutate in place, and a shared object would let one chunk's mutation leak
+        into its siblings.
         """
         # -- we need to make a copy, otherwise adding a field would also change metadata value
         # -- already assigned to another chunk (e.g. the first text-split chunk). A shallow copy
-        # -- suffices for scalar fields, but `enrichment_origins` is a mutable dict-of-lists that
-        # -- a downstream additive enrichment may mutate in place; deep-copy it so split chunks
-        # -- don't cross-mutate each other's provenance. (Deep-copying the whole metadata is
-        # -- avoided because it may carry the full `orig_elements`.)
+        # -- suffices for scalar fields, but `enrichment_origins` is mutable, so deep-copy it.
+        # -- (Deep-copying the whole metadata is avoided because it may carry the full
+        # -- `orig_elements`.)
         continuation_metadata = copy.copy(self._consolidated_metadata)
         continuation_metadata.is_continuation = True
         if continuation_metadata.enrichment_origins is not None:

@@ -996,7 +996,7 @@ class Describe_Chunker:
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
-        assert chunk.metadata is chunker._continuation_metadata
+        assert chunk.metadata.is_continuation
         assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
@@ -1028,11 +1028,14 @@ class Describe_Chunker:
 
         chunks = list(_Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20)))
 
+        # -- one head + two continuation chunks (the latter previously shared a single cached
+        # -- metadata object, so they cross-mutated each other) --
+        assert len(chunks) >= 3
         origins = [c.metadata.enrichment_origins for c in chunks]
         # -- a downstream additive enrichment mutating one chunk in place must not leak to others --
         origins[0]["text"].append({"type": "caption", "provider": "p2", "model": "m2"})
-        assert origins[0]["text"] is not origins[1]["text"]
-        assert len(origins[1]["text"]) == 1
+        assert all(o["text"] is not origins[0]["text"] for o in origins[1:])
+        assert all(len(o["text"]) == 1 for o in origins[1:])
 
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
