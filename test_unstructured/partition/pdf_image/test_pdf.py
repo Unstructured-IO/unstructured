@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from importlib import reload
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -209,6 +210,65 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 def test_partition_pdf_local_raises_with_no_filename():
     with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
+
+
+def _layout_with_rotation_corrections(corrections):
+    """Build a minimal document-layout stub whose pages carry ``pdf_rotation_correction``."""
+    return SimpleNamespace(pages=[SimpleNamespace(image_metadata=meta) for meta in corrections])
+
+
+def test_rotation_corrections_from_layout_reads_metadata():
+    """The main path: per-page corrections recorded by unstructured-inference are surfaced."""
+    document_layout = _layout_with_rotation_corrections(
+        [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 270}]
+    )
+    assert pdf._rotation_corrections_from_layout(document_layout) == [90, 270]
+
+
+def test_rotation_corrections_from_layout_defaults_to_zero_on_missing_metadata():
+    """The default path: missing or empty image metadata yields a 0 (no-op) correction."""
+    document_layout = _layout_with_rotation_corrections([None, {}, {"width": 10, "height": 10}])
+    assert pdf._rotation_corrections_from_layout(document_layout) == [0, 0, 0]
+
+
+@pytest.mark.parametrize(
+    ("file_arg", "model_target", "pdfminer_target"),
+    [
+        (None, "process_file_with_model", "process_file_with_pdfminer"),
+        (b"0000", "process_data_with_model", "process_data_with_pdfminer"),
+    ],
+)
+def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
+    monkeypatch, file_arg, model_target, pdfminer_target
+):
+    """Both branches of `_partition_pdf_or_image_local` forward the page rotation
+    corrections derived from the inferred layout into the pdfminer extraction call."""
+
+    rotated_layout = _layout_with_rotation_corrections(
+        [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
+    )
+    monkeypatch.setattr(layout, model_target, lambda *a, **k: rotated_layout)
+
+    captured = {}
+
+    def _capture_pdfminer(*args, **kwargs):
+        captured["rotation_corrections"] = kwargs.get("rotation_corrections")
+        return ([], [])
+
+    monkeypatch.setattr(pdfminer_processing, pdfminer_target, _capture_pdfminer)
+    monkeypatch.setattr(
+        pdfminer_processing, "merge_inferred_with_extracted_layout", lambda **k: rotated_layout
+    )
+    monkeypatch.setattr(ocr, "process_file_with_ocr", lambda *a, **k: MockDocumentLayout())
+    monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        file=file_arg,
+        pdf_text_extractable=True,
+    )
+
+    assert captured["rotation_corrections"] == [90, 0]
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])

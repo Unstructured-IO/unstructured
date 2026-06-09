@@ -744,6 +744,15 @@ def _enable_detect_vertical_if_rotated(
     return pdfminer_config
 
 
+def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
+    """Per-page rotations unstructured-inference applied to the page images to make their
+    text upright. Mirrored onto the pdfminer coordinates so both layers share one frame."""
+    return [
+        int((p.image_metadata or {}).get("pdf_rotation_correction", 0))
+        for p in inferred_document_layout.pages
+    ]
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -851,6 +860,7 @@ def _partition_pdf_or_image_local(
                 dpi=pdf_image_dpi,
                 password=password,
                 pdfminer_config=pdfminer_config,
+                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
             else ([], [])
@@ -908,7 +918,11 @@ def _partition_pdf_or_image_local(
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(
-                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+                file=file,
+                dpi=pdf_image_dpi,
+                password=password,
+                pdfminer_config=pdfminer_config,
+                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
             else ([], [])
