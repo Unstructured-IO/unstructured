@@ -1,3 +1,9 @@
+## 0.22.35
+
+### Fixes
+
+- **Fix `ValueError: Coordinate 'lower' is less than 'upper'` when extracting figure/table images**: `save_elements` assumed `points[0]`/`points[2]` were always the top-left/bottom-right corners in screen orientation. For elements whose coordinates carried (or were converted from) a y-up orientation, that ordering inverted the PIL crop box and raised the error, which was then silently swallowed and the image dropped. The crop box is now derived from the extent (min/max) of all coordinate points, so it is always valid regardless of point ordering.
+
 ## 0.22.34
 
 ### Fixes

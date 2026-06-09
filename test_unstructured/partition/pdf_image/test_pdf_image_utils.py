@@ -249,6 +249,40 @@ def test_save_elements(
                 assert not el.metadata.image_mime_type
 
 
+def test_save_elements_with_inverted_point_ordering(monkeypatch):
+    """Regression: points whose ordering puts points[0] below points[2] (as happens when
+    coordinates come from / were converted from a y-up CARTESIAN system) must not raise
+    PIL's "Coordinate 'lower' is less than 'upper'" ValueError."""
+    filename = example_doc_path("img/layout-parser-paper-fast.jpg")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # points[0] is the bottom-left (larger y) and points[2] the top-right (smaller y),
+        # i.e. the reverse of the usual ((x1,y1),(x1,y2),(x2,y2),(x2,y1)) screen ordering.
+        element = Image(
+            text="Inverted Image",
+            coordinates=((78, 519), (78, 86), (512, 86), (512, 519)),
+            coordinate_system=PixelSpace(width=1575, height=1166),
+            metadata=ElementMetadata(page_number=1),
+        )
+
+        pdf_image_utils.save_elements(
+            elements=[element],
+            starting_page_number=1,
+            element_category_to_save=ElementType.IMAGE,
+            pdf_image_dpi=200,
+            filename=filename,
+            is_image=True,
+            output_dir_path=str(tmpdir),
+        )
+
+        expected_image_path = os.path.join(str(tmpdir), "figure-1-1.jpg")
+        assert os.path.isfile(expected_image_path)
+        assert element.metadata.image_path == expected_image_path
+        # The crop box is taken from the extent of all points regardless of their order.
+        image = PILImg.open(expected_image_path)
+        assert image.width == 512 - 78
+        assert image.height == 519 - 86
+
+
 @pytest.mark.parametrize("storage_enabled", [False, True])
 def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
     monkeypatch.setenv(
