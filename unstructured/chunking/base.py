@@ -865,10 +865,17 @@ class _Chunker:
         Unused for non-oversized pre-chunks since those are not subject to text-splitting.
         """
         # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
-        # -- required though since we're not changing any collection fields.
+        # -- already assigned to another chunk (e.g. the first text-split chunk). A shallow copy
+        # -- suffices for scalar fields, but `enrichment_origins` is a mutable dict-of-lists that
+        # -- a downstream additive enrichment may mutate in place; deep-copy it so split chunks
+        # -- don't cross-mutate each other's provenance. (Deep-copying the whole metadata is
+        # -- avoided because it may carry the full `orig_elements`.)
         continuation_metadata = copy.copy(self._consolidated_metadata)
         continuation_metadata.is_continuation = True
+        if continuation_metadata.enrichment_origins is not None:
+            continuation_metadata.enrichment_origins = copy.deepcopy(
+                continuation_metadata.enrichment_origins
+            )
         return continuation_metadata
 
     @cached_property

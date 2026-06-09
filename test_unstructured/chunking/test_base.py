@@ -1017,6 +1017,23 @@ class Describe_Chunker:
 
         assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
 
+    def and_each_split_chunk_gets_its_own_enrichment_origins_dict(self):
+        """Split chunks must not share `enrichment_origins`, an in-place-mutated dict-of-lists."""
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        metadata = ElementMetadata(
+            enrichment_origins={"text": [{"type": "ocr", "provider": "p", "model": "m"}]},
+        )
+        elements = [Text(text, metadata=metadata)]
+
+        chunks = list(_Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20)))
+
+        origins = [c.metadata.enrichment_origins for c in chunks]
+        # -- a downstream additive enrichment mutating one chunk in place must not leak to others --
+        origins[0]["text"].append({"type": "caption", "provider": "p2", "model": "m2"})
+        assert origins[0]["text"] is not origins[1]["text"]
+        assert len(origins[1]["text"]) == 1
+
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
 
