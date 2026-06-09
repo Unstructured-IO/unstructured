@@ -897,6 +897,20 @@ class _Chunker:
                     yield field_name, list(ordered_unique_keys.keys())
                 elif strategy is CS.STRING_CONCATENATE:
                     yield field_name, " ".join(val.strip() for val in values)
+                # -- merge dict-of-list values: union keys, per key concatenate then dedupe
+                # -- records, preserving first-seen order --
+                elif strategy is CS.DICT_LIST_UNIQUE:
+                    merged: dict[str, list[Any]] = {}
+                    for value in values:
+                        for key, records in value.items():
+                            seen = merged.setdefault(key, [])
+                            seen_ids = {tuple(sorted(r.items())) for r in seen}
+                            for record in records:
+                                record_id = tuple(sorted(record.items()))
+                                if record_id not in seen_ids:
+                                    seen_ids.add(record_id)
+                                    seen.append(record)
+                    yield field_name, merged
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

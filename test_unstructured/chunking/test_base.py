@@ -1164,6 +1164,45 @@ class Describe_Chunker:
             "languages": ["lat", "eng"],
         }
 
+    def and_it_merges_and_dedupes_enrichment_origins_across_elements(self):
+        """enrichment_origins has DICT_LIST_UNIQUE: union keys, concat+dedupe per-key records."""
+        shared = {"type": "enrichment_shared", "provider": "a", "model": "m"}
+        elements = [
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(
+                    enrichment_origins={
+                        "text": [
+                            {"type": "enrichment_foo", "provider": "a", "model": "m"},
+                            shared,
+                        ]
+                    },
+                ),
+            ),
+            Text(
+                "Lorem ipsum dolor.",
+                metadata=ElementMetadata(
+                    enrichment_origins={
+                        "text": [
+                            {"type": "enrichment_bar", "provider": "a", "model": "m"},
+                            dict(shared),  # -- identical record, must collapse to one --
+                        ]
+                    },
+                ),
+            ),
+        ]
+        chunker = _Chunker(
+            elements, text="Lorem Ipsum\n\nLorem ipsum dolor.", opts=ChunkingOptions()
+        )
+
+        assert chunker._meta_kwargs["enrichment_origins"] == {
+            "text": [
+                {"type": "enrichment_foo", "provider": "a", "model": "m"},
+                shared,
+                {"type": "enrichment_bar", "provider": "a", "model": "m"},
+            ]
+        }
+
     def it_computes_the_original_elements_list_to_help(self):
         opts = ChunkingOptions(include_orig_elements=True)
         element = Title("Introduction")

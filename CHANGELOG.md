@@ -1,3 +1,9 @@
+## 0.23.0
+
+### Enhancements
+
+- **Add `enrichment_origins` metadata field for per-attribute model provenance**: `ElementMetadata` gains a serialized `enrichment_origins` field mapping a written attribute name (e.g. `text`, `text_as_html`, `embeddings`) to a list of records `{"type", "provider", "model"}`, in application order. Enrichment producers stamp which model wrote (or contributed to) each attribute; authoring enrichments overwrite the list while additive ones append, preserving the prior author. A new `ConsolidationStrategy.DICT_LIST_UNIQUE` merges these dicts across elements during chunking (union keys, concatenate then dedupe records, preserving first-seen order).
+
 ## 0.22.33
 
 ### Fixes
