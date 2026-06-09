@@ -1,3 +1,9 @@
+## 0.22.33
+
+### Fixes
+
+- **Fix over-aggressive de-duplication of embedded text on dense PDF pages**: `remove_duplicate_elements` chunks its IoU computation for pages with more than ~2000 extracted elements, but the per-chunk "keep" mask was not offset by the chunk's global start index. As a result, every element in a chunk after the first was compared against itself (and earlier elements) and wrongly dropped, so dense pages (large tables, engineering drawings) lost a large fraction of their extracted text. The diagonal offset is now applied per chunk so only genuine later-duplicate boxes are removed.
+
 ## 0.22.32
 
 ### Fixes
