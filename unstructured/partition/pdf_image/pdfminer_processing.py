@@ -805,6 +805,8 @@ def remove_duplicate_elements(
     # function; that accounts for all the intermediate matricies allocated and memory for storing
     # final results
     memory_cap_in_gb = float(os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1))
+    if memory_cap_in_gb <= 0:
+        raise ValueError("UNST_MATMUL_MEMORY_CAP_IN_GB must be > 0")
     n_split = np.ceil(coords.shape[0] / 2e3 / memory_cap_in_gb)
     splits = np.array_split(coords, n_split, axis=0)
 
