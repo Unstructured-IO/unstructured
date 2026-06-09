@@ -804,12 +804,22 @@ def remove_duplicate_elements(
     # experiments show 2e3 is the block size that constrains the peak memory around 1Gb for this
     # function; that accounts for all the intermediate matricies allocated and memory for storing
     # final results
-    memory_cap_in_gb = os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1)
+    memory_cap_in_gb = float(os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1))
     n_split = np.ceil(coords.shape[0] / 2e3 / memory_cap_in_gb)
     splits = np.array_split(coords, n_split, axis=0)
 
-    ious = [~np.triu(boxes_iou(split, coords, threshold), k=1).any(axis=1) for split in splits]
-    return elements.slice(np.concatenate(ious))
+    # A box is dropped only when it near-duplicates a *later* box (higher global index) -- the
+    # strict upper triangle of the full IoU matrix. Each split is a contiguous block of rows
+    # compared against all coords, so the triangle's diagonal must be offset by the split's
+    # global start index; otherwise rows in later splits match themselves (and earlier boxes)
+    # and get wrongly removed, decimating dense pages (> 2000 elements).
+    keep_masks = []
+    offset = 0
+    for split in splits:
+        iou = boxes_iou(split, coords, threshold)
+        keep_masks.append(~np.triu(iou, k=1 + offset).any(axis=1))
+        offset += split.shape[0]
+    return elements.slice(np.concatenate(keep_masks))
 
 
 def _aggregated_iou(box1s, box2):

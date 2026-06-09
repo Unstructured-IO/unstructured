@@ -276,6 +276,31 @@ def test_remove_duplicate_elements():
     assert result.element_coords.tolist() == [[0, 0, 10, 10], [20, 20, 30, 30]]
 
 
+def test_remove_duplicate_elements_dense_page_is_not_decimated():
+    """Pages with more than ~2000 elements are chunked internally; the dedup mask for each
+    chunk must be offset by the chunk's global index. Otherwise rows in later chunks match
+    themselves and are wrongly dropped, decimating dense pages."""
+    # 2500 unique, non-overlapping boxes on a 50x50 grid (zero IoU between any two)
+    unique = [
+        EmbeddedTextRegion(
+            bbox=Rectangle((i % 50) * 20, (i // 50) * 20, (i % 50) * 20 + 10, (i // 50) * 20 + 10),
+            text=f"Text {i}",
+        )
+        for i in range(2500)
+    ]
+    # one exact duplicate of the first box, appended last so the pair spans two chunks
+    duplicate = EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 0 dup")
+    sample_elements = TextRegions.from_list([*unique, duplicate])
+
+    result = remove_duplicate_elements(sample_elements)
+
+    # only the single cross-chunk duplicate pair collapses; every unique box is kept
+    assert len(result) == 2500
+    # the later element of the duplicate pair is the one retained
+    assert "Text 0 dup" in result.texts.tolist()
+    assert "Text 0" not in result.texts.tolist()
+
+
 def test_process_file_with_pdfminer():
     layout, links = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     assert len(layout)
