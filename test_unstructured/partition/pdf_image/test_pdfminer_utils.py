@@ -50,7 +50,7 @@ def _make_char_with_bbox(x0=0, y0=0, x1=10, y1=12):
 
     Font size is calculated from character height: y1 - y0
     """
-    return LTChar(
+    char = LTChar(
         matrix=(1, 0, 0, 1, 0, 0),
         font=MagicMock(),
         fontsize=12,  # This is ignored by extraction logic
@@ -62,6 +62,12 @@ def _make_char_with_bbox(x0=0, y0=0, x1=10, y1=12):
         ncs=MagicMock(),
         graphicstate=MagicMock(),
     )
+    # Set bounding box coordinates for font size calculation
+    char.x0 = x0
+    char.y0 = y0
+    char.x1 = x1
+    char.y1 = y1
+    return char
 
 
 def test_patch_render_mode_only_new_chars():
