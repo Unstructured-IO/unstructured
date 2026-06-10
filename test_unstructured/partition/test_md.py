@@ -43,6 +43,15 @@ def test_partition_md_from_text():
     assert all(e.metadata.filename is None for e in elements)
 
 
+def test_partition_md_ignores_processing_instructions():
+    """A processing-instruction like `<?xml ...?>` must not crash partition_md (see #4358)."""
+    elements = partition_md(text='Before\n\n<?xml version="1.0"?>\n\nAfter')
+
+    texts = [e.text for e in elements]
+    assert "Before" in texts
+    assert "After" in texts
+
+
 class MockResponse:
     def __init__(self, text: str, status_code: int, headers: dict[str, Any] = {}):
         self.text = text

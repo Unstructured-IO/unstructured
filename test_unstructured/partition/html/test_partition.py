@@ -203,6 +203,15 @@ def test_partition_html_processes_chinese_chracters():
     assert elements[0].text == "每日新闻"
 
 
+def test_partition_html_ignores_processing_instructions():
+    """A processing-instruction like `<?xml ...?>` must not crash the parser (see #4358)."""
+    html_text = (
+        '<html><body><div>\n<?xml version="1.0" encoding="UTF-8"?>\n'
+        "<p>hello world</p></div></body></html>"
+    )
+    assert partition_html(text=html_text) == [Text("hello world")]
+
+
 def test_emoji_appears_with_emoji_utf8_code():
     assert partition_html(text='<html charset="utf-8"><p>Hello &#128512;</p></html>') == [
         Text("Hello 😀")
