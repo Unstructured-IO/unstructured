@@ -511,12 +511,22 @@ def _process_pdfminer_pages(
         # Cache results to avoid re-extraction in element loop (P2 performance optimization)
         page_font_sizes: dict[float, int] = {}
         obj_font_cache: dict[int, list[float]] = {}  # Cache by object id
-        for obj_temp in page_layout:
-            if hasattr(obj_temp, "get_text") or isinstance(obj_temp, LTTextBox):
-                font_sizes_temp = _extract_font_sizes_from_text_obj(obj_temp)
-                obj_font_cache[id(obj_temp)] = font_sizes_temp  # Store in cache
+
+        def collect_font_sizes_recursive(item: LTItem) -> None:
+            """Recursively collect font sizes from all text objects including nested containers."""
+            if hasattr(item, "get_text") or isinstance(item, LTTextBox):
+                font_sizes_temp = _extract_font_sizes_from_text_obj(item)
+                obj_font_cache[id(item)] = font_sizes_temp
                 for size in font_sizes_temp:
                     page_font_sizes[size] = page_font_sizes.get(size, 0) + 1
+
+            # Recursively process nested containers (e.g., text inside LTFigure)
+            if isinstance(item, LTContainer):
+                for child in item:
+                    collect_font_sizes_recursive(child)
+
+        for obj_temp in page_layout:
+            collect_font_sizes_recursive(obj_temp)
 
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
