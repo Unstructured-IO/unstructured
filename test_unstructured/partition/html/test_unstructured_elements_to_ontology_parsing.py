@@ -253,7 +253,7 @@ def test_layout_container_with_unknown_parent_id_does_not_pop_to_root():
     assert len(ontology.children) == 1
     page = ontology.children[0]
     assert isinstance(page, Page)
-    # -- the Column stayed nested in the Page rather than being lifted to a Document-level sibling --
+    # -- the Column stayed nested in the Page rather than being lifted to a Document-level sibling
     assert len(page.children) == 1
     column = page.children[0]
     assert isinstance(column, Column)
