@@ -376,7 +376,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     extracted_to_keep = np.concatenate(
         (image_indices_to_keep, text_element_indices[extracted_to_proc])
     )
-    if any(extracted_to_keep):
+    if extracted_to_keep.size:
         inferred_to_proc = np.logical_or(
             inferred_to_proc,
             _inferred_is_elementtype(

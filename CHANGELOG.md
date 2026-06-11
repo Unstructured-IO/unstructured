@@ -4,6 +4,10 @@
 
 - **Extract filled AcroForm field values as text**: values typed into fillable PDF form fields live in widget annotations rather than the page content stream, so pdfminer's text pass missed them. They are now recovered for both the `fast` and `hi_res` strategies and emitted as elements alongside the content-stream text.
 
+### Fixes
+
+- **Fix inferred/extracted layout merge skipping subregion removal for single-region pages**: the rule that removes an inferred box overlapping an extracted region was gated on `any(extracted_to_keep)`, which evaluated `False` when the only kept extracted region was at index 0. On single-region pages (e.g. a PDF whose only text is one filled form field) this left a duplicate element; the guard now checks the array size.
+
 ## 0.23.0
 
 ### Enhancements
