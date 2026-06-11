@@ -1,3 +1,5 @@
+import os
+import tempfile
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -25,6 +27,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
     clean_pdfminer_inner_elements,
+    get_widget_text_from_annots,
     process_file_with_pdfminer,
     remove_duplicate_elements,
     text_is_embedded,
@@ -362,6 +365,163 @@ def test_process_file_recovers_figure_overlay_text():
     texts = " ".join(str(t) for page in layout for t in page.texts if t)
     assert "Printed Name:" in texts  # main content stream
     assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
+
+
+# A synthetic AcroForm: filled text fields whose values live only in widget annotations
+# (the page content stream is empty), plus one empty field that must be skipped.
+SYNTHETIC_FORM_FIELDS = [
+    ("name", "Jane Doe", (40, 700, 300, 720)),
+    ("date of birth", "1990-01-01", (40, 650, 300, 670)),
+    ("address", "123 Main Street", (40, 600, 300, 620)),
+    ("phone", "", (40, 550, 300, 570)),  # empty -> should be skipped
+]
+
+
+def _build_synthetic_form_pdf(path: str) -> None:
+    """Write a 1-page PDF whose only text lives in AcroForm text-field (/Tx) widgets.
+
+    The page content stream is empty, so pdfminer's normal text pass yields nothing; the
+    values are reachable only through the widget annotations in ``page.annots``.
+    """
+    from pypdf import PdfWriter
+    from pypdf.generic import (
+        ArrayObject,
+        DictionaryObject,
+        NameObject,
+        NumberObject,
+        TextStringObject,
+    )
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    page = writer.pages[0]
+
+    refs = []
+    for field_name, value, rect in SYNTHETIC_FORM_FIELDS:
+        widget = DictionaryObject()
+        widget[NameObject("/Type")] = NameObject("/Annot")
+        widget[NameObject("/Subtype")] = NameObject("/Widget")
+        widget[NameObject("/FT")] = NameObject("/Tx")
+        widget[NameObject("/T")] = TextStringObject(field_name)
+        widget[NameObject("/V")] = TextStringObject(value)
+        widget[NameObject("/Rect")] = ArrayObject([NumberObject(c) for c in rect])
+        refs.append(writer._add_object(widget))
+
+    page[NameObject("/Annots")] = ArrayObject(refs)
+    acro_form = DictionaryObject()
+    acro_form[NameObject("/Fields")] = ArrayObject(refs)
+    writer._root_object[NameObject("/AcroForm")] = writer._add_object(acro_form)
+
+    with open(path, "wb") as f:
+        writer.write(f)
+
+
+def test_get_widget_text_from_annots_extracts_filled_text_fields():
+    """The widget helper recovers filled /Tx field values and skips empty ones."""
+    from pdfminer.pdfpage import PDFPage
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        with open(pdf_path, "rb") as fp:
+            page = next(PDFPage.get_pages(fp))
+            widgets = get_widget_text_from_annots(page.annots, height=792)
+
+    texts = [w["text"] for w in widgets]
+    assert texts == ["Jane Doe", "1990-01-01", "123 Main Street"]  # empty "phone" skipped
+    # Every widget carries a valid bounding box.
+    assert all(_validate_bbox(w["bbox"]) for w in widgets)
+
+
+def test_get_widget_text_from_annots_decodes_utf16_text_without_bom():
+    from pdfminer.psparser import PSLiteral
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "FT": PSLiteral("Tx"),
+                "V": b"\xfe\xff\x00J\x00a\x00n\x00e",
+                "Rect": (10, 80, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
+
+
+def test_get_widget_text_from_annots_decodes_choice_field_value_arrays():
+    from pdfminer.psparser import PSLiteral
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "FT": PSLiteral("Ch"),
+                "V": [PSLiteral("ChoiceA"), b"\xfe\xff\x00C\x00h\x00o\x00i\x00c\x00e\x00B"],
+                "Rect": (10, 70, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "ChoiceA\nChoiceB", "bbox": (10.0, 5.0, 90.0, 30.0)}]
+
+
+def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent():
+    """FT/V absent on the widget are inherited by walking up the /Parent chain.
+
+    The intermediate parent is a direct dict (the case PDFObjRef-only traversal missed) and
+    the root parent carries the inherited /FT, exercising multi-level inheritance.
+    """
+    from pdfminer.psparser import PSLiteral
+
+    root_parent = {"FT": PSLiteral("Tx")}  # field type lives at the top of the hierarchy
+    mid_parent = {"V": b"\xfe\xff\x00J\x00a\x00n\x00e", "Parent": root_parent}  # value mid-chain
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "Parent": mid_parent,  # neither FT nor V on the widget itself
+                "Rect": (10, 80, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
+
+
+def test_process_file_with_pdfminer_recovers_form_field_text():
+    """The extracted (hi_res) layer includes AcroForm field values as text regions."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        layout, _ = process_file_with_pdfminer(pdf_path)
+
+    texts = [str(t) for t in layout[0].texts if t]
+    assert "Jane Doe" in texts
+    assert "1990-01-01" in texts
+    assert "123 Main Street" in texts
+    # Widget-sourced regions are marked as extracted text.
+    assert IsExtracted.TRUE in list(layout[0].is_extracted_array)
+
+
+def test_partition_pdf_fast_recovers_form_field_text():
+    """End-to-end: the fast strategy emits elements for filled form fields."""
+    from unstructured.partition.pdf import partition_pdf
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        elements = partition_pdf(filename=pdf_path, strategy="fast")
+
+    blob = "\n".join(el.text for el in elements)
+    assert "Jane Doe" in blob
+    assert "1990-01-01" in blob
+    assert "123 Main Street" in blob
 
 
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union
 import numpy as np
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
-from pdfminer.utils import open_filename
+from pdfminer.utils import decode_text, open_filename
 from unstructured_inference.config import inference_config
 from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle
@@ -376,7 +376,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     extracted_to_keep = np.concatenate(
         (image_indices_to_keep, text_element_indices[extracted_to_proc])
     )
-    if any(extracted_to_keep):
+    if extracted_to_keep.size:
         inferred_to_proc = np.logical_or(
             inferred_to_proc,
             _inferred_is_elementtype(
@@ -471,6 +471,7 @@ def process_page_layout_from_pdfminer(
     page_number: int,
     coord_coef: float,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    widget_list: Optional[list[dict[str, Any]]] = None,
 ) -> tuple[LayoutElements, list]:
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -539,6 +540,17 @@ def process_page_layout_from_pdfminer(
                     element_class.append(0)
                     is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
 
+    # Filled AcroForm field values live in widget annotations rather than the content
+    # stream, so add them here as extracted text regions (see get_widget_text_from_annots).
+    for widget in widget_list or []:
+        widget_bbox = widget["bbox"]
+        if not _validate_bbox(widget_bbox):
+            continue
+        texts.append(widget["text"])
+        element_coords.append(widget_bbox)
+        element_class.append(0)
+        is_extracted.append(IsExtracted.TRUE)
+
     return (
         LayoutElements(
             element_coords=coord_coef * np.array(element_coords),
@@ -581,15 +593,17 @@ def process_data_with_pdfminer(
         width, height = page_layout.width, page_layout.height
 
         annotation_list = []
+        widget_list = []
         coordinate_system = PixelSpace(
             width=width,
             height=height,
         )
         if page.annots:
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+            widget_list = get_widget_text_from_annots(page.annots, height)
 
         layout, urls_metadata = process_page_layout_from_pdfminer(
-            annotation_list, page_layout, height, page_number, coef, pdfminer_config
+            annotation_list, page_layout, height, page_number, coef, pdfminer_config, widget_list
         )
 
         # Mirror any image rotation unstructured-inference applied for this page so the
@@ -1059,6 +1073,99 @@ def try_resolve(annot: PDFObjRef):
         return annot.resolve()
     except Exception:
         return annot
+
+
+def _decode_scalar_field_value(value: Any) -> Optional[str]:
+    """Decode a single AcroForm field value into text.
+
+    PDF text strings may be UTF-16 or PDFDocEncoded; choice-field export values can
+    arrive as name objects (PSLiteral).
+    """
+    if isinstance(value, bytes):
+        return decode_text(value)
+    if isinstance(value, str):
+        return value
+    name = getattr(value, "name", None)  # PSLiteral (e.g. choice export value)
+    if isinstance(name, bytes):
+        return name.decode("utf-8", "replace")
+    if isinstance(name, str):
+        return name
+    return None
+
+
+def _decode_field_value(value: Any) -> Optional[str]:
+    """Decode an AcroForm field value into text."""
+    value = try_resolve(value)
+    if isinstance(value, (list, tuple)):
+        decoded_values = [
+            text.strip()
+            for item in value
+            if (text := _decode_scalar_field_value(try_resolve(item))) and text.strip()
+        ]
+        return "\n".join(decoded_values) if decoded_values else None
+    return _decode_scalar_field_value(value)
+
+
+def get_widget_text_from_annots(
+    annots: PDFObjRef | list[PDFObjRef],
+    height: float,
+) -> list[dict[str, Any]]:
+    """Extract text from filled AcroForm widget annotations (fillable form fields).
+
+    pdfminer's page layout only covers the page content stream, so values typed into
+    fillable form fields are invisible to the normal text pass -- they live in widget
+    annotation objects (``/Annots``), not in the content stream. This recovers the value
+    text and bounding box for text (``/Tx``) and choice (``/Ch``) fields so they can be
+    emitted as elements alongside the content-stream text.
+
+    Returns a list of ``{"text", "bbox"}`` dicts, where ``bbox`` is ``(x1, y1, x2, y2)``
+    in the top-left page coordinate frame (same as ``rect_to_bbox``).
+    """
+    resolved = annots if isinstance(annots, list) else try_resolve(annots)
+    if not isinstance(resolved, list):
+        return []
+
+    results: list[dict[str, Any]] = []
+    for annotation in resolved:
+        annotation_dict = try_resolve(annotation)
+        if not isinstance(annotation_dict, dict):
+            continue
+        if getattr(annotation_dict.get("Subtype"), "name", None) != "Widget":
+            continue
+
+        # Field type (FT) and value (V) may be inherited from a parent field node, so walk
+        # up the hierarchy until both are found (bounded to avoid cycles).
+        field_type = annotation_dict.get("FT")
+        value = annotation_dict.get("V")
+        parent = annotation_dict.get("Parent")
+        seen = 0
+        while (field_type is None or value is None) and parent is not None and seen < 32:
+            parent_dict = try_resolve(parent)
+            seen += 1
+            if not isinstance(parent_dict, dict):
+                break
+            field_type = field_type or parent_dict.get("FT")
+            value = value or parent_dict.get("V")
+            parent = parent_dict.get("Parent")
+
+        if getattr(field_type, "name", None) not in ("Tx", "Ch"):
+            continue
+
+        text = _decode_field_value(value)
+        if not text or not text.strip():
+            continue
+
+        rect = annotation_dict.get("Rect")
+        if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
+            continue
+        try:
+            bbox = rect_to_bbox(tuple(float(v) for v in rect), height)
+        except (TypeError, ValueError):
+            continue
+
+        results.append({"text": text.strip(), "bbox": bbox})
+
+    return results
 
 
 def check_annotations_within_element(
