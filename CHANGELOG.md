@@ -1,3 +1,9 @@
+## 0.23.1
+
+### Enhancements
+
+- **Extract filled AcroForm field values as text**: values typed into fillable PDF form fields live in widget annotations rather than the page content stream, so pdfminer's text pass missed them. They are now recovered for both the `fast` and `hi_res` strategies and emitted as elements alongside the content-stream text.
+
 ## 0.23.0
 
 ### Enhancements
