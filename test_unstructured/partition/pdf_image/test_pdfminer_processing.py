@@ -469,6 +469,31 @@ def test_get_widget_text_from_annots_decodes_choice_field_value_arrays():
     assert widgets == [{"text": "ChoiceA\nChoiceB", "bbox": (10.0, 5.0, 90.0, 30.0)}]
 
 
+def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent():
+    """FT/V absent on the widget are inherited by walking up the /Parent chain.
+
+    The intermediate parent is a direct dict (the case PDFObjRef-only traversal missed) and
+    the root parent carries the inherited /FT, exercising multi-level inheritance.
+    """
+    from pdfminer.psparser import PSLiteral
+
+    root_parent = {"FT": PSLiteral("Tx")}  # field type lives at the top of the hierarchy
+    mid_parent = {"V": b"\xfe\xff\x00J\x00a\x00n\x00e", "Parent": root_parent}  # value mid-chain
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "Parent": mid_parent,  # neither FT nor V on the widget itself
+                "Rect": (10, 80, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
+
+
 def test_process_file_with_pdfminer_recovers_form_field_text():
     """The extracted (hi_res) layer includes AcroForm field values as text regions."""
     with tempfile.TemporaryDirectory() as tmp_dir:

@@ -1139,7 +1139,7 @@ def get_widget_text_from_annots(
         value = annotation_dict.get("V")
         parent = annotation_dict.get("Parent")
         seen = 0
-        while (field_type is None or value is None) and isinstance(parent, PDFObjRef) and seen < 32:
+        while (field_type is None or value is None) and parent is not None and seen < 32:
             parent_dict = try_resolve(parent)
             seen += 1
             if not isinstance(parent_dict, dict):
