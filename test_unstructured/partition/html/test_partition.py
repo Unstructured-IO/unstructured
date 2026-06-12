@@ -203,6 +203,43 @@ def test_partition_html_processes_chinese_chracters():
     assert elements[0].text == "每日新闻"
 
 
+def test_partition_html_preserves_numeric_table_cell_text_in_chunked_html():
+    html_text = """
+    <html>
+      <body>
+        <h1>Financial metrics</h1>
+        <table>
+          <tr><th>metric</th><th>value</th></tr>
+          <tr><td>revenue</td><td>478923</td></tr>
+          <tr><td>shares</td><td>1234567</td></tr>
+          <tr><td>ticker</td><td>000001</td></tr>
+          <tr><td>ratio</td><td>0.000123</td></tr>
+          <tr><td>market cap</td><td>999999999999999999</td></tr>
+        </table>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(
+        text=html_text,
+        chunking_strategy="by_title",
+        max_characters=80,
+        new_after_n_chars=80,
+    )
+
+    table_html = "".join(
+        e.metadata.text_as_html or "" for e in elements if isinstance(e, TableChunk)
+    )
+
+    assert "<td>478923</td>" in table_html
+    assert "<td>1234567</td>" in table_html
+    assert "<td>000001</td>" in table_html
+    assert "<td>0.000123</td>" in table_html
+    assert "<td>999999999999999999</td>" in table_html
+    assert "e+" not in table_html.lower()
+    assert "e-" not in table_html.lower()
+
+
 def test_emoji_appears_with_emoji_utf8_code():
     assert partition_html(text='<html charset="utf-8"><p>Hello &#128512;</p></html>') == [
         Text("Hello 😀")
