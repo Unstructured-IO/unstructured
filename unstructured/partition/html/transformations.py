@@ -86,7 +86,9 @@ def ontology_to_unstructured_elements(
         `set_element_hierarchy`; because every element now already has a `parent_id`, the second
         pass is a no-op (it neither reassigns nor reorders).
     """
-    elements_to_return = _ontology_to_unstructured_elements(
+    # -- The worker carries each element's DOM-nesting depth alongside it (used only to decide
+    # -- inline merging); strip those depths here so the public output is plain Elements. --
+    elements_with_depth = _ontology_to_unstructured_elements(
         ontology_element,
         parent_id=parent_id,
         page_number=page_number,
@@ -95,6 +97,7 @@ def ontology_to_unstructured_elements(
         add_img_alt_text=add_img_alt_text,
         list_ancestor_count=list_ancestor_count,
     )
+    elements_to_return = [element for element, _nesting_depth in elements_with_depth]
     # -- Assign heading-based `parent_id` to content elements here so the converter's output is
     # -- self-sufficient. This public entry point runs `set_element_hierarchy` once over the whole
     # -- flat element list (recursion goes through the private worker, so this fires exactly once).
@@ -111,14 +114,19 @@ def _ontology_to_unstructured_elements(
     filename: str | None = None,
     add_img_alt_text: bool = True,
     list_ancestor_count: int = 0,
-) -> list[elements.Element]:
+) -> list[tuple[elements.Element, int]]:
     """Recursive worker for `ontology_to_unstructured_elements`.
 
     Builds the flat element list with layout-container `parent_id` set to the tree parent and
     content `parent_id` left as ``None``. The public wrapper applies `set_element_hierarchy` once
     over the result to fill in content elements' heading-based `parent_id`.
+
+    Each element is returned paired with its DOM-nesting `depth`. That depth is recursion-local
+    bookkeeping consumed only by `combine_inline_elements` (to gate inline merging by tree level);
+    it is deliberately NOT stored on the element or its `ElementMetadata`, and the public wrapper
+    discards it.
     """
-    elements_to_return: list[elements.Element] = []
+    elements_to_return: list[tuple[elements.Element, int]] = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
         if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
@@ -139,15 +147,14 @@ def _ontology_to_unstructured_elements(
                     filename=filename,
                 ),
             )
-            # -- transient (non-serialized) DOM-nesting depth, used only to decide inline merging;
+            # -- pair the container with its DOM-nesting depth, used only to decide inline merging;
             # -- `category_depth` now carries heading level, not nesting, so it can't be reused. --
-            _set_nesting_depth(container_element, depth)
-            elements_to_return += [container_element]
+            elements_to_return += [(container_element, depth)]
         # -- A list container adds one to the list-ancestor count its ListItem descendants see. --
         child_list_ancestor_count = list_ancestor_count + (
             1 if isinstance(ontology_element, _LIST_CONTAINER_CLASSES) else 0
         )
-        children: list[elements.Element] = []
+        children: list[tuple[elements.Element, int]] = []
         for child in ontology_element.children:
             child = _ontology_to_unstructured_elements(
                 child,
@@ -190,27 +197,14 @@ def _ontology_to_unstructured_elements(
                 filename=filename,
             ),
         )
-        _set_nesting_depth(unstructured_element, depth)
-        elements_to_return = [unstructured_element]
+        elements_to_return = [(unstructured_element, depth)]
 
     return elements_to_return
 
 
-# -- transient attribute name carrying an element's DOM-nesting depth during ontology conversion.
-# -- It is only consulted while deciding whether to merge consecutive inline elements (see
-# -- `combine_inline_elements`) and is intentionally not part of `ElementMetadata`. --
-_NESTING_DEPTH_ATTR = "_ontology_nesting_depth"
-
-
-def _set_nesting_depth(element: elements.Element, depth: int) -> None:
-    setattr(element, _NESTING_DEPTH_ATTR, depth)
-
-
-def _get_nesting_depth(element: elements.Element) -> int | None:
-    return getattr(element, _NESTING_DEPTH_ATTR, None)
-
-
-def combine_inline_elements(elements: list[elements.Element]) -> list[elements.Element]:
+def combine_inline_elements(
+    elements_with_depth: list[tuple[elements.Element, int]],
+) -> list[tuple[elements.Element, int]]:
     """
     Combines consecutive inline elements into a single element. Inline elements
     can be also combined with text elements.
@@ -223,35 +217,47 @@ def combine_inline_elements(elements: list[elements.Element]) -> list[elements.E
         }
     }
 
+    Each element is paired with its DOM-nesting depth; merging is only allowed between elements at
+    the same depth (see `can_unstructured_elements_be_merged`). The depth travels with the element
+    rather than being stored on it.
+
     Args:
-        elements (list[Element]): A list of elements to be combined.
+        elements_with_depth (list[tuple[Element, int]]): (element, nesting-depth) pairs to combine.
 
     Returns:
-        list[Element]: A list of combined elements.
+        list[tuple[Element, int]]: The combined (element, nesting-depth) pairs.
     """
-    result_elements: list[elements.Element] = []
+    result_elements: list[tuple[elements.Element, int]] = []
 
-    current_element: elements.Element | None = None
-    for next_element in elements:
-        if current_element is None:
-            current_element = next_element
+    current: tuple[elements.Element, int] | None = None
+    for nxt in elements_with_depth:
+        if current is None:
+            current = nxt
             continue
 
-        if can_unstructured_elements_be_merged(current_element, next_element):
+        current_element, current_depth = current
+        next_element, next_depth = nxt
+        if can_unstructured_elements_be_merged(
+            current_element, next_element, current_depth=current_depth, next_depth=next_depth
+        ):
             current_element.text += " " + next_element.text
             current_element.metadata.text_as_html += next_element.metadata.text_as_html
         else:
-            result_elements.append(current_element)
-            current_element = next_element
+            result_elements.append(current)
+            current = nxt
 
-    if current_element is not None:
-        result_elements.append(current_element)
+    if current is not None:
+        result_elements.append(current)
 
     return result_elements
 
 
 def can_unstructured_elements_be_merged(
-    current_element: elements.Element, next_element: elements.Element
+    current_element: elements.Element,
+    next_element: elements.Element,
+    *,
+    current_depth: int,
+    next_depth: int,
 ) -> bool:
     """
     Elements can be merged when:
@@ -259,10 +265,10 @@ def can_unstructured_elements_be_merged(
     - Neither of them has children
     - All elements are inline elements or text element
     """
-    # NOTE(ML-1328): "same level in the HTML tree" is the DOM-nesting depth, tracked on the
-    # transient `_ontology_nesting_depth` attribute. It used to live on `category_depth`, but that
-    # field now carries heading level, so it can no longer be used as the nesting signal here.
-    if _get_nesting_depth(current_element) != _get_nesting_depth(next_element):
+    # NOTE(ML-1328): "same level in the HTML tree" is the DOM-nesting depth, passed in alongside
+    # each element. It used to live on `category_depth`, but that field now carries heading level,
+    # so it can no longer be used as the nesting signal here.
+    if current_depth != next_depth:
         return False
 
     current_html_tags = BeautifulSoup(

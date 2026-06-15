@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import ElementMetadata, Text
 from unstructured.documents.ontology import (
     Column,
     Document,
@@ -22,6 +23,7 @@ from unstructured.documents.ontology import (
 from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.transformations import (
+    can_unstructured_elements_be_merged,
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
@@ -480,3 +482,27 @@ def test_inline_elements_are_on_many_depths():
     assert text1.text == "Hyperlink1 Paragraph1"
     assert text2.text == "Hyperlink2 Hyperlink3"
     assert text3.text == "Paragraph2 Hyperlink4"
+
+
+def _inline_element(text: str) -> Text:
+    """A childless inline (Hyperlink) element -- mergeable on the content rules alone."""
+    html = f'<a class="Hyperlink">{text}</a>'
+    return Text(text=text, metadata=ElementMetadata(text_as_html=html))
+
+
+def test_inline_elements_at_the_same_nesting_depth_can_be_merged():
+    # ML-1328: "same level in the HTML tree" is the DOM-nesting depth. Two childless inline
+    # elements sitting at the same depth are eligible to be merged into one element.
+    first, second = _inline_element("a"), _inline_element("b")
+
+    assert can_unstructured_elements_be_merged(first, second, current_depth=2, next_depth=2) is True
+
+
+def test_inline_elements_at_different_nesting_depths_are_not_merged():
+    # ML-1328: elements on different levels of the HTML tree must never merge, even when their
+    # content (childless inline) would otherwise allow it.
+    first, second = _inline_element("a"), _inline_element("b")
+
+    assert (
+        can_unstructured_elements_be_merged(first, second, current_depth=1, next_depth=2) is False
+    )
