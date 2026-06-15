@@ -161,74 +161,79 @@ def test_category_depth_is_derived_from_heading_level():
     assert body.metadata.category_depth is None
 
 
-def test_converter_assigns_heading_based_parent_id_without_decorator():
-    """ML-1328: the converter's output is self-sufficient.
+def test_partition_html_v2_assigns_heading_based_parent_id():
+    """ML-1328 (AC #3): partition_html(v2) yields section->subsection parent_id.
 
-    `ontology_to_unstructured_elements` applies `set_element_hierarchy` itself, so content elements
-    get their heading-based `parent_id` directly from the converter -- no dependency on the
-    `@apply_metadata` decorator on `partition_html`. Layout containers keep their tree `parent_id`.
+    Hierarchy is assigned by the `@apply_metadata` decorator from the heading-level
+    `category_depth`, exactly as for every other partitioner -- the v2 converter only
+    sets `category_depth`, it does not run `set_element_hierarchy` itself. Both production
+    callers (unstructured and the VLM partitioner) go through `partition_html`, so the
+    decorator always runs; this exercises that real path end to end.
     """
-    ontology = Document(
-        children=[
-            Page(
-                children=[
-                    Title(text="Section A"),  # h1 -> root (no heading ancestor)
-                    Paragraph(text="intro body"),  # -> Section A
-                    Subtitle(text="Sub A1"),  # h2 -> Section A
-                    Paragraph(text="a1 body"),  # -> Sub A1
-                    Heading(text="Sub A1a", html_tag_name="h3"),  # h3 -> Sub A1
-                    Paragraph(text="a1a body"),  # -> Sub A1a
-                ]
-            ),
-        ]
+    html = (
+        '<div class="Page">'
+        '<h1 class="Title">Section A</h1>'
+        '<p class="NarrativeText">intro body under A</p>'
+        '<h2 class="Subtitle">Sub A1</h2>'
+        '<p class="NarrativeText">body under A1</p>'
+        '<h3 class="Heading">Sub A1a</h3>'
+        '<p class="NarrativeText">body under A1a</p>'
+        '<h2 class="Subtitle">Sub A2</h2>'
+        '<p class="NarrativeText">body under A2</p>'
+        "</div>"
     )
 
-    elements = ontology_to_unstructured_elements(ontology)
-    page, section_a, intro, sub_a1, a1_body, sub_a1a, a1a_body = elements
+    elements = partition_html(text=html, html_parser_version="v2")
     by_id = {e.id: e for e in elements}
+    by_text = {e.text: e for e in elements if e.text}
 
-    # -- layout container keeps its tree parent (here the Document root, not a heading) --
-    assert page.metadata.parent_id not in {e.id for e in elements}
-    # -- top-level heading has no heading ancestor --
-    assert section_a.metadata.parent_id is None
-    # -- content/subsections are parented to their enclosing heading --
-    assert by_id[intro.metadata.parent_id] is section_a
-    assert by_id[sub_a1.metadata.parent_id] is section_a
-    assert by_id[a1_body.metadata.parent_id] is sub_a1
-    assert by_id[sub_a1a.metadata.parent_id] is sub_a1
-    assert by_id[a1a_body.metadata.parent_id] is sub_a1a
+    def parent_of(text):
+        pid = by_text[text].metadata.parent_id
+        return by_id.get(pid) if pid else None
+
+    # top-level heading has no heading ancestor
+    assert parent_of("Section A") is None
+    # content + subsections are parented to their enclosing heading
+    assert parent_of("intro body under A") is by_text["Section A"]
+    assert parent_of("Sub A1") is by_text["Section A"]
+    assert parent_of("body under A1") is by_text["Sub A1"]
+    assert parent_of("Sub A1a") is by_text["Sub A1"]
+    assert parent_of("body under A1a") is by_text["Sub A1a"]
+    # a sibling subsection resets back to its section, not the deeper preceding heading
+    assert parent_of("Sub A2") is by_text["Section A"]
+    assert parent_of("body under A2") is by_text["Sub A2"]
 
 
-def test_re_running_set_element_hierarchy_on_converter_output_is_a_noop():
-    """ML-1328: the decorator's second `set_element_hierarchy` pass must not change anything.
-
-    `partition_html` runs the converter inside `@apply_metadata`, which re-runs
-    `set_element_hierarchy`. Because the converter already assigned every `parent_id`, that pass
-    must be a no-op (no reassignment, no reordering).
+def test_converter_leaves_content_parent_id_for_the_metadata_layer():
+    """ML-1328 contract (abstraction boundary): called directly, the converter sets
+    `category_depth` but leaves content `parent_id=None` -- hierarchy is the
+    `@apply_metadata` layer's job, as for every other partitioner. This documents the
+    intended boundary (a direct caller does NOT get heading-based parent_id) and guards
+    against silently reintroducing a self-sufficient hierarchy pass in the converter.
     """
-    from unstructured.partition.common.metadata import set_element_hierarchy
-
     ontology = Document(
         children=[
             Page(
                 children=[
-                    Title(text="Section A"),
+                    Title(text="Section A"),  # h1 -> category_depth 0
                     Paragraph(text="intro body"),
-                    Subtitle(text="Sub A1"),
-                    Paragraph(text="a1 body"),
+                    Subtitle(text="Sub A1"),  # h2 -> category_depth 1
                 ]
             ),
         ]
     )
 
-    elements = ontology_to_unstructured_elements(ontology)
-    before = [(e.id, e.metadata.parent_id) for e in elements]
+    page, section_a, intro, sub_a1 = ontology_to_unstructured_elements(ontology)
 
-    reprocessed = set_element_hierarchy(elements)
-
-    after = [(e.id, e.metadata.parent_id) for e in reprocessed]
-    assert [e.id for e in reprocessed] == [e.id for e in elements]  # order preserved
-    assert after == before  # parent_ids unchanged
+    # layout container keeps its tree parent (physical structure preserved)
+    assert page.metadata.parent_id is not None
+    # content carries heading-level category_depth ...
+    assert section_a.metadata.category_depth == 0
+    assert sub_a1.metadata.category_depth == 1
+    # ... but no parent_id yet -- the decorator assigns the heading-based parent downstream
+    assert section_a.metadata.parent_id is None
+    assert intro.metadata.parent_id is None
+    assert sub_a1.metadata.parent_id is None
 
 
 def test_chunking_is_applied_on_elements():

@@ -16,7 +16,6 @@ from unstructured.documents.mappings import (
 from unstructured.partition.common.metadata import (
     HEADING_TAGS,
     category_depth_from_html_tag,
-    set_element_hierarchy,
 )
 
 # -- ontology layout classes whose nesting represents a list (ol/ul/dl); used to count the
@@ -73,18 +72,14 @@ def ontology_to_unstructured_elements(
         metadata contract, and makes depth independent of layout (e.g. multi-column pages no longer
         bump every element's depth).
 
-        `parent_id` is handled in two ways. Layout/container elements (Page, Column, ...) keep their
-        tree parent so the physical layout structure is preserved. Content elements get a
-        heading-based parent -- i.e. a subsection's parent becomes its enclosing heading rather than
-        the page/column container -- computed by the shared `set_element_hierarchy` helper, which
-        this function applies itself (at the top-level `Document` call) so its output is
-        self-sufficient and does not depend on a decorator on a different function.
-
-        `set_element_hierarchy` only assigns a `parent_id` to elements that don't already have one,
-        so it leaves the layout containers' tree `parent_id` untouched. When `partition_html` runs
-        this converter inside its `@apply_metadata` decorator, that decorator re-runs
-        `set_element_hierarchy`; because every element now already has a `parent_id`, the second
-        pass is a no-op (it neither reassigns nor reorders).
+        `parent_id` is left to the metadata layer, like every other partitioner. Layout/container
+        elements (Page, Column, ...) keep their tree parent so the physical layout structure is
+        preserved; content elements are emitted with ``parent_id=None``. The `@apply_metadata`
+        decorator that wraps `partition_html` then runs `set_element_hierarchy`, which fills each
+        content element's heading-based parent (a subsection's parent becomes its enclosing heading)
+        from the heading-level `category_depth` and skips the containers that already have a parent.
+        Both production callers -- `partition_html` and the VLM partitioner -- go through that
+        decorator, so this converter does not run `set_element_hierarchy` itself.
     """
     # -- The worker carries each element's DOM-nesting depth alongside it (used only to decide
     # -- inline merging); strip those depths here so the public output is plain Elements. --
@@ -97,13 +92,7 @@ def ontology_to_unstructured_elements(
         add_img_alt_text=add_img_alt_text,
         list_ancestor_count=list_ancestor_count,
     )
-    elements_to_return = [element for element, _nesting_depth in elements_with_depth]
-    # -- Assign heading-based `parent_id` to content elements here so the converter's output is
-    # -- self-sufficient. This public entry point runs `set_element_hierarchy` once over the whole
-    # -- flat element list (recursion goes through the private worker, so this fires exactly once).
-    # -- `set_element_hierarchy` skips elements that already have a `parent_id` (the layout
-    # -- containers), preserving their tree parent. --
-    return set_element_hierarchy(elements_to_return)
+    return [element for element, _nesting_depth in elements_with_depth]
 
 
 def _ontology_to_unstructured_elements(
@@ -118,8 +107,8 @@ def _ontology_to_unstructured_elements(
     """Recursive worker for `ontology_to_unstructured_elements`.
 
     Builds the flat element list with layout-container `parent_id` set to the tree parent and
-    content `parent_id` left as ``None``. The public wrapper applies `set_element_hierarchy` once
-    over the result to fill in content elements' heading-based `parent_id`.
+    content `parent_id` left as ``None`` -- the `@apply_metadata` decorator on `partition_html`
+    fills in content elements' heading-based `parent_id` via `set_element_hierarchy`.
 
     Each element is returned paired with its DOM-nesting `depth`. That depth is recursion-local
     bookkeeping consumed only by `combine_inline_elements` (to gate inline merging by tree level);
@@ -188,8 +177,8 @@ def _ontology_to_unstructured_elements(
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
             metadata=elements.ElementMetadata(
-                # -- `parent_id` left unset here; the public wrapper applies `set_element_hierarchy`
-                # -- over the full list to assign a heading-based parent. See the wrapper docstring.
+                # -- `parent_id` left unset; `@apply_metadata` runs `set_element_hierarchy` to
+                # -- assign a heading-based parent (see the docstring). --
                 parent_id=None,
                 text_as_html=html_code_of_ontology_element,
                 page_number=page_number,
