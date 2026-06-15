@@ -798,13 +798,13 @@ class _Chunker:
 
         # -- emit first chunk --
         s, remainder = split(self._text)
-        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
+        yield CompositeElement(text=s, metadata=self._chunk_metadata())
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
         # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=self._continuation_metadata)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata())
 
     @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
@@ -857,19 +857,31 @@ class _Chunker:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
-    @cached_property
     def _continuation_metadata(self) -> ElementMetadata:
-        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+        """Fresh metadata for one second-or-later text-split chunk of the pre-chunk.
 
         The same metadata as the first text-split chunk but includes `.is_continuation = True`.
         Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+
+        A new object is produced on each call (not cached) because each continuation chunk needs
+        its own copy: `enrichment_origins` is a mutable dict-of-lists that a downstream additive
+        enrichment may mutate in place, and a shared object would let one chunk's mutation leak
+        into its siblings.
         """
-        # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
-        # -- required though since we're not changing any collection fields.
-        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata = self._chunk_metadata()
         continuation_metadata.is_continuation = True
         return continuation_metadata
+
+    def _chunk_metadata(self) -> ElementMetadata:
+        """Fresh metadata for one text-split chunk of the pre-chunk."""
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk. A shallow copy suffices for scalar fields, but
+        # -- `enrichment_origins` is mutable, so deep-copy it. (Deep-copying the whole metadata is
+        # -- avoided because it may carry the full `orig_elements`.)
+        metadata = copy.copy(self._consolidated_metadata)
+        if metadata.enrichment_origins is not None:
+            metadata.enrichment_origins = copy.deepcopy(metadata.enrichment_origins)
+        return metadata
 
     @cached_property
     def _meta_kwargs(self) -> dict[str, Any]:
@@ -897,6 +909,20 @@ class _Chunker:
                     yield field_name, list(ordered_unique_keys.keys())
                 elif strategy is CS.STRING_CONCATENATE:
                     yield field_name, " ".join(val.strip() for val in values)
+                # -- merge dict-of-list values: union keys, per key concatenate then dedupe
+                # -- records, preserving first-seen order --
+                elif strategy is CS.DICT_LIST_UNIQUE:
+                    merged: dict[str, list[Any]] = {}
+                    for value in values:
+                        for key, records in value.items():
+                            seen = merged.setdefault(key, [])
+                            seen_ids = {tuple(sorted(r.items())) for r in seen}
+                            for record in records:
+                                record_id = tuple(sorted(record.items()))
+                                if record_id not in seen_ids:
+                                    seen_ids.add(record_id)
+                                    seen.append(record)
+                    yield field_name, merged
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

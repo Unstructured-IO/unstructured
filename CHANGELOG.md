@@ -1,4 +1,4 @@
-## 0.22.32
+## 0.23.2
 
 ### Enhancements
 
@@ -7,6 +7,40 @@
 ### Fixes
 
 - **`unstructured_elements_to_ontology` handles empty and malformed input**: returns an empty `Document` for empty input (instead of raising `IndexError`), and a layout container whose `parent_id` matches no open container now nests in the current container rather than popping to the document root and mis-nesting subsequent content.
+
+## 0.23.1
+
+### Enhancements
+
+- **Extract filled AcroForm field values as text**: values typed into fillable PDF form fields live in widget annotations rather than the page content stream, so pdfminer's text pass missed them. They are now recovered for both the `fast` and `hi_res` strategies and emitted as elements alongside the content-stream text.
+
+### Fixes
+
+- **Fix inferred/extracted layout merge skipping subregion removal for single-region pages**: the rule that removes an inferred box overlapping an extracted region was gated on `any(extracted_to_keep)`, which evaluated `False` when the only kept extracted region was at index 0. On single-region pages (e.g. a PDF whose only text is one filled form field) this left a duplicate element; the guard now checks the array size.
+
+## 0.23.0
+
+### Enhancements
+
+- **Add `enrichment_origins` metadata field for per-attribute model provenance**: `ElementMetadata` gains a serialized `enrichment_origins` field mapping a written attribute name (e.g. `text`, `text_as_html`, `embeddings`) to a list of records `{"type", "provider", "model"}`, in application order. Enrichment producers stamp which model wrote (or contributed to) each attribute; authoring enrichments overwrite the list while additive ones append, preserving the prior author. A new `ConsolidationStrategy.DICT_LIST_UNIQUE` merges these dicts across elements during chunking (union keys, concatenate then dedupe records, preserving first-seen order).
+
+## 0.22.34
+
+### Fixes
+
+- **Keep extracted text aligned with rotated PDF page images in hi_res**: when unstructured-inference rotates a rendered page image to make its text upright, the same rotation is now mirrored onto the pdfminer-extracted coordinates so the extracted-text layer and the object-detection layer share one coordinate frame and merge correctly. Previously the two layers could be off by the page's `/Rotate`, scattering extracted text in the merged output.
+
+## 0.22.33
+
+### Fixes
+
+- **Fix over-aggressive de-duplication of embedded text on dense PDF pages**: `remove_duplicate_elements` chunks its IoU computation for pages with more than ~2000 extracted elements, but the per-chunk "keep" mask was not offset by the chunk's global start index. As a result, every element in a chunk after the first was compared against itself (and earlier elements) and wrongly dropped, so dense pages (large tables, engineering drawings) lost a large fraction of their extracted text. The diagonal offset is now applied per chunk so only genuine later-duplicate boxes are removed.
+
+## 0.22.32
+
+### Fixes
+
+- **Recover text inside PDF figure overlays in hi_res**: hi_res pdfminer extraction only pulled text from objects exposing `get_text` (e.g. `LTTextBox`), and `extract_text_objects` only collected `LTTextLine`. Text held as loose `LTChar`s inside an `LTFigure` — for example text drawn into a figure/XObject overlay rather than the main content stream — was dropped from the output. hi_res now groups such loose characters into text lines, inserting spaces on wide inter-character gaps and skipping hidden (render mode 3) and rotated characters.
 
 ## 0.22.31
 

@@ -55,6 +55,7 @@ from unstructured.partition.common.metadata import apply_metadata, get_last_modi
 from unstructured.partition.pdf_image.pdfminer_processing import (
     check_annotations_within_element,
     get_uris,
+    get_widget_text_from_annots,
     get_words_from_obj,
     map_bbox_and_index,
 )
@@ -559,6 +560,27 @@ def _process_pdfminer_pages(
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
 
+        # Filled AcroForm field values live in widget annotations rather than the page
+        # content stream, so pdfminer's layout pass misses them; recover them here.
+        widget_list = get_widget_text_from_annots(page.annots, height) if page.annots else []
+        for widget in widget_list:
+            wx1, wy1, wx2, wy2 = widget["bbox"]
+            points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
+            element = element_from_text(
+                widget["text"],
+                coordinates=points,
+                coordinate_system=coordinate_system,
+            )
+            element.metadata = ElementMetadata(
+                filename=filename,
+                page_number=page_number,
+                coordinates=CoordinatesMetadata(points=points, system=coordinate_system),
+                last_modified=metadata_last_modified,
+                languages=languages,
+            )
+            element.metadata.detection_origin = "pdfminer"
+            page_elements.append(element)
+
         page_elements = _combine_list_elements(page_elements, coordinate_system)
         elements.append(page_elements)
 
@@ -744,6 +766,15 @@ def _enable_detect_vertical_if_rotated(
     return pdfminer_config
 
 
+def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
+    """Per-page rotations unstructured-inference applied to the page images to make their
+    text upright. Mirrored onto the pdfminer coordinates so both layers share one frame."""
+    return [
+        int((p.image_metadata or {}).get("pdf_rotation_correction", 0))
+        for p in inferred_document_layout.pages
+    ]
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -851,6 +882,7 @@ def _partition_pdf_or_image_local(
                 dpi=pdf_image_dpi,
                 password=password,
                 pdfminer_config=pdfminer_config,
+                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
             else ([], [])
@@ -908,7 +940,11 @@ def _partition_pdf_or_image_local(
 
         extracted_layout, layouts_links = (
             process_data_with_pdfminer(
-                file=file, dpi=pdf_image_dpi, password=password, pdfminer_config=pdfminer_config
+                file=file,
+                dpi=pdf_image_dpi,
+                password=password,
+                pdfminer_config=pdfminer_config,
+                rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
             else ([], [])

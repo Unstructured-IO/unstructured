@@ -961,7 +961,7 @@ class Describe_Chunker:
             "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
             " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
         )
-        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata == chunker._consolidated_metadata
         assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
@@ -982,21 +982,19 @@ class Describe_Chunker:
         chunk_iter = chunker._iter_chunks()
 
         # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
-        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
-        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
-        # -- `._consolidated_metadata)` for each text-split chunk.
+        # -- each text-split chunk.
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
             " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
             " veniam, quis nostrud exercitation ullamco laboris nisi ut"
         )
-        assert chunk.metadata is chunker._consolidated_metadata
+        assert chunk.metadata == chunker._consolidated_metadata
         assert chunk.metadata.orig_elements == elements
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
-        assert chunk.metadata is chunker._continuation_metadata
+        assert chunk.metadata.is_continuation
         assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
@@ -1016,6 +1014,44 @@ class Describe_Chunker:
         chunk_iter = _Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20))
 
         assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
+
+    def and_each_split_chunk_gets_its_own_enrichment_origins_dict(self):
+        """Split chunks must not share `enrichment_origins`, an in-place-mutated dict-of-lists."""
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        metadata = ElementMetadata(
+            enrichment_origins={"text": [{"type": "ocr", "provider": "p", "model": "m"}]},
+        )
+        elements = [Text(text, metadata=metadata)]
+
+        chunks = list(_Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20)))
+
+        # -- one head + two continuation chunks (the latter previously shared a single cached
+        # -- metadata object, so they cross-mutated each other) --
+        assert len(chunks) >= 3
+        origins = [c.metadata.enrichment_origins for c in chunks]
+        # -- a downstream additive enrichment mutating one chunk in place must not leak to others --
+        origins[0]["text"].append({"type": "caption", "provider": "p2", "model": "m2"})
+        assert all(o["text"] is not origins[0]["text"] for o in origins[1:])
+        assert all(len(o["text"]) == 1 for o in origins[1:])
+
+    def and_first_split_chunk_mutation_does_not_affect_lazily_produced_continuations(self):
+        """The first yielded chunk must not be the mutable base for later continuation metadata."""
+        # --    |--------------------- 48 ---------------------|
+        text = "'Lorem ipsum dolor' means 'Thank you very much'."
+        origin = {"type": "ocr", "provider": "p", "model": "m"}
+        metadata = ElementMetadata(enrichment_origins={"text": [origin]})
+        elements = [Text(text, metadata=metadata)]
+
+        chunk_iter = _Chunker.iter_chunks(elements, text, opts=ChunkingOptions(max_characters=20))
+
+        first_chunk = next(chunk_iter)
+        first_chunk.metadata.enrichment_origins["text"].append(
+            {"type": "caption", "provider": "p2", "model": "m2"}
+        )
+        second_chunk = next(chunk_iter)
+
+        assert second_chunk.metadata.enrichment_origins == {"text": [origin]}
 
     def but_it_generates_no_chunks_when_the_pre_chunk_contains_no_text(self):
         metadata = ElementMetadata()
@@ -1162,6 +1198,45 @@ class Describe_Chunker:
             "emphasized_text_contents": ["Lorem", "Ipsum", "Lorem", "ipsum"],
             "emphasized_text_tags": ["b", "i", "i", "b"],
             "languages": ["lat", "eng"],
+        }
+
+    def and_it_merges_and_dedupes_enrichment_origins_across_elements(self):
+        """enrichment_origins has DICT_LIST_UNIQUE: union keys, concat+dedupe per-key records."""
+        shared = {"type": "enrichment_shared", "provider": "a", "model": "m"}
+        elements = [
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(
+                    enrichment_origins={
+                        "text": [
+                            {"type": "enrichment_foo", "provider": "a", "model": "m"},
+                            shared,
+                        ]
+                    },
+                ),
+            ),
+            Text(
+                "Lorem ipsum dolor.",
+                metadata=ElementMetadata(
+                    enrichment_origins={
+                        "text": [
+                            {"type": "enrichment_bar", "provider": "a", "model": "m"},
+                            dict(shared),  # -- identical record, must collapse to one --
+                        ]
+                    },
+                ),
+            ),
+        ]
+        chunker = _Chunker(
+            elements, text="Lorem Ipsum\n\nLorem ipsum dolor.", opts=ChunkingOptions()
+        )
+
+        assert chunker._meta_kwargs["enrichment_origins"] == {
+            "text": [
+                {"type": "enrichment_foo", "provider": "a", "model": "m"},
+                shared,
+                {"type": "enrichment_bar", "provider": "a", "model": "m"},
+            ]
         }
 
     def it_computes_the_original_elements_list_to_help(self):
