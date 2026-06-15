@@ -360,6 +360,11 @@ def unstructured_elements_to_ontology(
     container_stack: list[tuple[str, ontology.OntologyElement]] = [(root_element_id, root_element)]
 
     for element in unstructured_elements:
+        # -- an element with no HTML payload carries nothing to rebuild the tree from;
+        # -- skip it per-element rather than letting BeautifulSoup(None) abort the whole
+        # -- reconstruction (e.g. mixed/partially-stripped element streams). --
+        if not element.metadata.text_as_html:
+            continue
         html_as_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
             recursive=False
         )

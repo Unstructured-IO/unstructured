@@ -33,6 +33,40 @@ def test_when_first_elements_does_not_have_id():
     assert paragraph.text == "Example text"
 
 
+def test_elements_without_text_as_html_are_skipped_not_fatal():
+    # An element with no HTML payload (text_as_html=None) carries nothing to rebuild the
+    # ontology tree from. It must be skipped per-element, not crash the whole conversion.
+    unstructured_elements = [
+        Text(
+            element_id="1",
+            text="",
+            metadata=ElementMetadata(text_as_html='<div class="Page"/>'),
+        ),
+        NarrativeText(
+            element_id="2",
+            text="no html payload",
+            metadata=ElementMetadata(text_as_html=None, parent_id="1"),
+        ),
+        NarrativeText(
+            element_id="3",
+            text="Example text",
+            metadata=ElementMetadata(
+                text_as_html='<p class="Paragraph"> Example text </p>', parent_id="1"
+            ),
+        ),
+    ]
+
+    ontology = unstructured_elements_to_ontology(unstructured_elements)  # must not raise
+
+    assert isinstance(ontology, Document)
+    page = ontology.children[0]
+    assert isinstance(page, Page)
+    # the None-payload element is skipped; the valid one still reconstructs
+    assert len(page.children) == 1
+    assert isinstance(page.children[0], Paragraph)
+    assert page.children[0].text == "Example text"
+
+
 def test_when_two_combined_elements_have_the_same_parent():
     unstructured_elements = [
         Text(
