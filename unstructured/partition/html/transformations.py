@@ -14,6 +14,7 @@ from unstructured.documents.mappings import (
     ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE,
 )
 from unstructured.partition.common.metadata import (
+    HEADING_TAGS,
     category_depth_from_html_tag,
     set_element_hierarchy,
 )
@@ -435,7 +436,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
 
     def is_empty(tag):
         # Remove only specific tags, omit self-closing ones
-        if tag.name not in ["p", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6"]:
+        if tag.name not in (*HEADING_TAGS, "p", "span", "div"):
             return False
 
         if tag.find():

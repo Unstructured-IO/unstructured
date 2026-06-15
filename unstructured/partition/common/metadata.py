@@ -60,7 +60,12 @@ HIERARCHY_RULE_SET = {
 }
 
 
-_HEADING_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6")
+# Canonical HTML heading levels -> zero-indexed category_depth. The HTML spec
+# defines exactly six heading levels (there is no h7), so this closed mapping is
+# the single source of truth for both the depth value and the heading-tag set
+# (HEADING_TAGS is derived from it, not a second copy).
+_HEADING_DEPTH = {"h1": 0, "h2": 1, "h3": 2, "h4": 3, "h5": 4, "h6": 5}
+HEADING_TAGS = tuple(_HEADING_DEPTH)
 
 
 def category_depth_from_html_tag(
@@ -84,7 +89,7 @@ def category_depth_from_html_tag(
         return list_ancestor_count
 
     if ElementCls is Title:
-        return int(tag[1]) - 1 if tag in _HEADING_TAGS else 0
+        return _HEADING_DEPTH.get(tag, 0)
 
     return None
 
