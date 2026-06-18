@@ -80,7 +80,9 @@ def category_depth_from_html_tag(
       level, zero-indexed -- ``h1`` -> 0, ``h2`` -> 1, ... ``h6`` -> 5. A `Title` whose tag is not a
       heading (e.g. a styled paragraph) is treated as a top-level heading (0).
     - `ListItem`: the number of enclosing list containers (``ol``/``ul``/``dl``), passed in by the
-      caller since list nesting is found differently in the two parsers.
+      caller (the v1 HTML parser, which computes it from list nesting). The v2 converter serializes
+      a whole ``ol``/``ul``/``dl`` as one element and never emits a standalone ``ListItem``, so it
+      does not use this.
     - Everything else: ``None`` (no meaningful depth).
 
     `tag` is the element's HTML tag name (e.g. ``"h2"``); it may be ``None`` for derived elements.

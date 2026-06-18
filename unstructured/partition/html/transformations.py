@@ -18,14 +18,6 @@ from unstructured.partition.common.metadata import (
     category_depth_from_html_tag,
 )
 
-# -- ontology layout classes whose nesting represents a list (ol/ul/dl); used to count the
-# -- list-container ancestors of a ListItem so its `category_depth` matches the v1 parser. --
-_LIST_CONTAINER_CLASSES = (
-    ontology.OrderedList,
-    ontology.UnorderedList,
-    ontology.DefinitionList,
-)
-
 RECURSION_LIMIT = 50
 
 
@@ -36,7 +28,6 @@ def ontology_to_unstructured_elements(
     depth: int = 0,
     filename: str | None = None,
     add_img_alt_text: bool = True,
-    list_ancestor_count: int = 0,
 ) -> list[elements.Element]:
     """
     Converts an OntologyElement object to a list of unstructured Element objects.
@@ -60,8 +51,6 @@ def ontology_to_unstructured_elements(
         filename (str, optional): The name of the file the element comes from. Defaults to None.
         add_img_alt_text (bool): Whether to include the alternative text of images
                                             in the output. Defaults to True.
-        list_ancestor_count (int): Number of enclosing list containers (ol/ul/dl). Used only to
-                                            compute `category_depth` for ListItem elements.
     Returns:
         list[Element]: A list of unstructured Element objects.
 
@@ -90,7 +79,6 @@ def ontology_to_unstructured_elements(
         depth=depth,
         filename=filename,
         add_img_alt_text=add_img_alt_text,
-        list_ancestor_count=list_ancestor_count,
     )
     return [element for element, _nesting_depth in elements_with_depth]
 
@@ -102,7 +90,6 @@ def _ontology_to_unstructured_elements(
     depth: int = 0,
     filename: str | None = None,
     add_img_alt_text: bool = True,
-    list_ancestor_count: int = 0,
 ) -> list[tuple[elements.Element, int]]:
     """Recursive worker for `ontology_to_unstructured_elements`.
 
@@ -139,10 +126,6 @@ def _ontology_to_unstructured_elements(
             # -- pair the container with its DOM-nesting depth, used only to decide inline merging;
             # -- `category_depth` now carries heading level, not nesting, so it can't be reused. --
             elements_to_return += [(container_element, depth)]
-        # -- A list container adds one to the list-ancestor count its ListItem descendants see. --
-        child_list_ancestor_count = list_ancestor_count + (
-            1 if isinstance(ontology_element, _LIST_CONTAINER_CLASSES) else 0
-        )
         children: list[tuple[elements.Element, int]] = []
         for child in ontology_element.children:
             child = _ontology_to_unstructured_elements(
@@ -152,7 +135,6 @@ def _ontology_to_unstructured_elements(
                 depth=0 if isinstance(ontology_element, ontology.Document) else depth + 1,
                 filename=filename,
                 add_img_alt_text=add_img_alt_text,
-                list_ancestor_count=child_list_ancestor_count,
             )
             children += child
 
@@ -169,7 +151,6 @@ def _ontology_to_unstructured_elements(
         category_depth = category_depth_from_html_tag(
             element_class,
             ontology_element.html_tag_name,
-            list_ancestor_count=list_ancestor_count,
         )
 
         unstructured_element = element_class(
