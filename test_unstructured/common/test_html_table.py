@@ -67,6 +67,23 @@ class Describe_htmlify_dataframe:
             "</table>"
         )
 
+    def it_renders_dataframe_null_values_as_empty_cells(self):
+        dataframe = pd.DataFrame(
+            [
+                ["real nulls", None, float("nan"), pd.NA],
+                ["literal text", "None", "nan", "<NA>"],
+            ],
+            columns=["kind", "a", "b", "c"],
+        )
+
+        assert htmlify_dataframe(dataframe, include_header=True) == (
+            "<table>"
+            "<tr><td>kind</td><td>a</td><td>b</td><td>c</td></tr>"
+            "<tr><td>real nulls</td><td/><td/><td/></tr>"
+            "<tr><td>literal text</td><td>None</td><td>nan</td><td>&lt;NA&gt;</td></tr>"
+            "</table>"
+        )
+
 
 class DescribeHtmlTable:
     """Unit-test suite for `unstructured.common.html_table.HtmlTable`."""

@@ -50,7 +50,13 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
 
 def htmlify_dataframe(dataframe: Any, include_header: bool) -> str:
     """Render a dataframe as table HTML without pandas numeric formatting."""
-    rows = dataframe.astype(str).values.tolist()
+    rows = [
+        ["" if isna else str(value) for value, isna in zip(value_row, isna_row)]
+        for value_row, isna_row in zip(
+            dataframe.to_numpy(dtype=object).tolist(),
+            dataframe.isna().to_numpy().tolist(),
+        )
+    ]
     matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
     return htmlify_matrix_of_cell_texts(matrix)
 
