@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import io
+
 import pytest
 from pytest_mock import MockFixture
 
@@ -95,6 +97,21 @@ def test_partition_tsv_preserves_numeric_cell_text_in_table_html(tmp_path):
         "<tr><td>ticker</td><td>000001</td></tr>"
         "<tr><td>ratio</td><td>0.000123</td></tr>"
         "<tr><td>market cap</td><td>999999999999999999</td></tr>"
+        "</table>"
+    )
+
+
+def test_partition_tsv_from_file_preserves_numeric_cell_text_in_table_html():
+    file = io.BytesIO(b"metric\tvalue\nrevenue\t478923\nticker\t000001\nratio\t0.000123\n")
+
+    table = partition_tsv(file=file, include_header=False)[0]
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        "<tr><td>metric</td><td>value</td></tr>"
+        "<tr><td>revenue</td><td>478923</td></tr>"
+        "<tr><td>ticker</td><td>000001</td></tr>"
+        "<tr><td>ratio</td><td>0.000123</td></tr>"
         "</table>"
     )
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import html
 from functools import cached_property
-from typing import TYPE_CHECKING, Iterator, Sequence, cast
+from typing import TYPE_CHECKING, Any, Iterator, Sequence, cast
 
 from lxml import etree
 from lxml.html import fragment_fromstring
@@ -46,6 +46,13 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             yield f"<td>{cell_text}</td>" if cell_text else "<td/>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def htmlify_dataframe(dataframe: Any, include_header: bool) -> str:
+    """Render a dataframe as table HTML without pandas numeric formatting."""
+    rows = dataframe.astype(str).values.tolist()
+    matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
+    return htmlify_matrix_of_cell_texts(matrix)
 
 
 class HtmlTable:

@@ -5,7 +5,7 @@ from typing import IO, Any, Optional
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import HtmlTable, htmlify_dataframe
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
@@ -56,7 +56,7 @@ def partition_tsv(
         f = spooled_to_bytes_io_if_needed(file)
         dataframe = pd.read_csv(f, **read_kw)
 
-    html_table = HtmlTable.from_html_text(_dataframe_to_html_text(dataframe, include_header))
+    html_table = HtmlTable.from_html_text(htmlify_dataframe(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -66,10 +66,3 @@ def partition_tsv(
     metadata.detection_origin = DETECTION_ORIGIN
 
     return [Table(text=html_table.text, metadata=metadata)]
-
-
-def _dataframe_to_html_text(dataframe: pd.DataFrame, include_header: bool) -> str:
-    """Render a dataframe as table HTML without pandas numeric formatting."""
-    rows = dataframe.astype(str).values.tolist()
-    matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
-    return htmlify_matrix_of_cell_texts(matrix)

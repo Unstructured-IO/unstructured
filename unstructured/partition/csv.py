@@ -8,7 +8,7 @@ from typing import IO, Any, Iterator
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import HtmlTable, htmlify_dataframe
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -70,7 +70,7 @@ def partition_csv(
             read_kw["engine"] = "python"
         dataframe = pd.read_csv(file, **read_kw)
 
-    html_table = HtmlTable.from_html_text(_dataframe_to_html_text(dataframe, include_header))
+    html_table = HtmlTable.from_html_text(htmlify_dataframe(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -80,13 +80,6 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
-
-
-def _dataframe_to_html_text(dataframe: pd.DataFrame, include_header: bool) -> str:
-    """Render a dataframe as table HTML without pandas numeric formatting."""
-    rows = dataframe.astype(str).values.tolist()
-    matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
-    return htmlify_matrix_of_cell_texts(matrix)
 
 
 class _CsvPartitioningContext:
