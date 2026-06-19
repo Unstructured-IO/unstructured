@@ -5,7 +5,7 @@ from typing import IO, Any, Optional
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable
+from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
@@ -41,18 +41,22 @@ def partition_tsv(
 
     header = 0 if include_header else None
 
+    read_kw: dict[str, Any] = {
+        "sep": "\t",
+        "header": header,
+        "dtype": str,
+        "keep_default_na": False,
+    }
     if filename:
-        dataframe = pd.read_csv(filename, sep="\t", header=header)
+        dataframe = pd.read_csv(filename, **read_kw)
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
-        dataframe = pd.read_csv(f, sep="\t", header=header)
+        dataframe = pd.read_csv(f, **read_kw)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(_dataframe_to_html_text(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -62,3 +66,10 @@ def partition_tsv(
     metadata.detection_origin = DETECTION_ORIGIN
 
     return [Table(text=html_table.text, metadata=metadata)]
+
+
+def _dataframe_to_html_text(dataframe: pd.DataFrame, include_header: bool) -> str:
+    """Render a dataframe as table HTML without pandas numeric formatting."""
+    rows = dataframe.astype(str).values.tolist()
+    matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
+    return htmlify_matrix_of_cell_texts(matrix)

@@ -8,7 +8,7 @@ from typing import IO, Any, Iterator
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable
+from unstructured.common.html_table import HtmlTable, htmlify_matrix_of_cell_texts
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -58,15 +58,19 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
+        read_kw: dict = {
+            "header": ctx.header,
+            "sep": ctx.delimiter,
+            "encoding": ctx.encoding,
+            "dtype": str,
+            "keep_default_na": False,
+        }
         # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
         if ctx.delimiter is None:
             read_kw["engine"] = "python"
         dataframe = pd.read_csv(file, **read_kw)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(_dataframe_to_html_text(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,
@@ -76,6 +80,13 @@ def partition_csv(
 
     # -- a CSV file becomes a single `Table` element --
     return [Table(text=html_table.text, metadata=metadata, detection_origin=DETECTION_ORIGIN)]
+
+
+def _dataframe_to_html_text(dataframe: pd.DataFrame, include_header: bool) -> str:
+    """Render a dataframe as table HTML without pandas numeric formatting."""
+    rows = dataframe.astype(str).values.tolist()
+    matrix = [[str(column) for column in dataframe.columns]] + rows if include_header else rows
+    return htmlify_matrix_of_cell_texts(matrix)
 
 
 class _CsvPartitioningContext:
