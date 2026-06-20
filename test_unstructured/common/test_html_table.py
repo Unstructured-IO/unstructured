@@ -53,6 +53,8 @@ class Describe_htmlify_dataframe:
             [
                 ["revenue", "478923"],
                 ["ticker", "000001"],
+                ["account", "000123"],
+                ["clause", "007"],
                 ["ratio", "0.000123"],
             ],
             columns=["metric", "value"],
@@ -63,6 +65,8 @@ class Describe_htmlify_dataframe:
             "<tr><td>metric</td><td>value</td></tr>"
             "<tr><td>revenue</td><td>478923</td></tr>"
             "<tr><td>ticker</td><td>000001</td></tr>"
+            "<tr><td>account</td><td>000123</td></tr>"
+            "<tr><td>clause</td><td>007</td></tr>"
             "<tr><td>ratio</td><td>0.000123</td></tr>"
             "</table>"
         )

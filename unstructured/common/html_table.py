@@ -50,6 +50,7 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
 
 def htmlify_dataframe(dataframe: Any, include_header: bool) -> str:
     """Render a dataframe as table HTML without pandas numeric formatting."""
+    # Preserve missing cells as empty cells instead of leaking pandas null tokens like "nan".
     rows = [
         ["" if isna else str(value) for value, isna in zip(value_row, isna_row)]
         for value_row, isna_row in zip(

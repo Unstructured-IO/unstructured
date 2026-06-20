@@ -213,6 +213,8 @@ def test_partition_html_preserves_numeric_table_cell_text_in_chunked_html():
           <tr><td>revenue</td><td>478923</td></tr>
           <tr><td>shares</td><td>1234567</td></tr>
           <tr><td>ticker</td><td>000001</td></tr>
+          <tr><td>account</td><td>000123</td></tr>
+          <tr><td>clause</td><td>007</td></tr>
           <tr><td>ratio</td><td>0.000123</td></tr>
           <tr><td>market cap</td><td>999999999999999999</td></tr>
         </table>
@@ -234,6 +236,8 @@ def test_partition_html_preserves_numeric_table_cell_text_in_chunked_html():
     assert "<td>478923</td>" in table_html
     assert "<td>1234567</td>" in table_html
     assert "<td>000001</td>" in table_html
+    assert "<td>000123</td>" in table_html
+    assert "<td>007</td>" in table_html
     assert "<td>0.000123</td>" in table_html
     assert "<td>999999999999999999</td>" in table_html
     assert "e+" not in table_html.lower()
