@@ -1,9 +1,11 @@
 name: Partition Benchmark
 
-# Runs on every PR targeting main to detect regressions.
-# Can also be triggered manually to establish or inspect a new baseline.
+# PRs are gated against a rolling median baseline; pushes to main record a new
+# baseline sample. Can also be triggered manually to inspect a run.
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -15,13 +17,19 @@ env:
   PYTHON_VERSION: "3.12"
   # Number of times to run the full benchmark suite.
   NUM_ITERATIONS: "3"
-  # 20% threshold for now and tune later
-  REGRESSION_THRESHOLD: "0.20"
+  # Allowance over the rolling median baseline. Sized to absorb runner-speed
+  # variance on shared ubuntu-latest runners (observed ~1.6x), not just a code delta.
+  REGRESSION_THRESHOLD: "0.30"
+  # How many recent main-run samples the baseline median is taken over.
+  BASELINE_WINDOW: "20"
+  # Below this many samples, the gate is in warm-up (records, does not fail).
+  BASELINE_MIN_SAMPLES: "5"
   # Increment to change cache key when benchmark-affecting dependencies are updated, to ensure clean slate runs.
   CACHE_VERSION: "v2"
   # S3 location for metrics – matches core-product convention.
   S3_METRICS_BUCKET_KEY: utic-metrics/ci-metrics
-  S3_BENCHMARK_PATH: open-source/partition-benchmark/benchmark_best.json
+  # Prefix holding one immutable JSON record per main run (the rolling history).
+  S3_HISTORY_PREFIX: open-source/partition-benchmark/history
 
 jobs:
   setup:
@@ -78,35 +86,48 @@ jobs:
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
 
-      - name: Download previous best from S3
+      # Pull the whole history prefix (one object per past main run). On fork PRs
+      # the S3 secrets are absent, so this no-ops -> empty dir -> warm-up/pass.
+      - name: Download benchmark history from S3
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
         run: |
-          aws s3 cp \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}" \
-            benchmark_best.json
+          mkdir -p bench_history
+          aws s3 cp --recursive \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_HISTORY_PREFIX }}/" \
+            bench_history/
 
 
-      - name: Compare results against stored best
+      # Gate against the rolling median. On pushes to main, --record also writes
+      # this run's record into bench_history/ for the upload step below.
+      - name: Compare against rolling baseline
         id: compare
         run: |
+          RECORD=""
+          if [ "${{ github.event_name }}" = "push" ]; then RECORD="--record"; fi
           uv run --no-sync python scripts/performance/compare_benchmark.py \
             benchmark_results.json \
-            benchmark_best.json \
-            ${{ env.REGRESSION_THRESHOLD }}
+            bench_history \
+            --threshold ${{ env.REGRESSION_THRESHOLD }} \
+            --window ${{ env.BASELINE_WINDOW }} \
+            --min-samples ${{ env.BASELINE_MIN_SAMPLES }} \
+            $RECORD
 
 
-      - name: Upload best result to S3
+      # Only main pushes extend the baseline. `sync` (no --delete) uploads the one
+      # new record written above; existing objects are unchanged. PR runs never write.
+      - name: Upload new baseline record to S3
+        if: github.event_name == 'push'
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
         run: |
-          aws s3 cp \
-            benchmark_best.json \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}"
+          aws s3 sync \
+            bench_history/ \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_HISTORY_PREFIX }}/"
 
 
       - name: Upload benchmark artifacts
@@ -116,5 +137,5 @@ jobs:
           name: benchmark-results-${{ github.sha }}
           path: |
             benchmark_results.json
-            benchmark_best.json
+            bench_history/
           retention-days: 30
