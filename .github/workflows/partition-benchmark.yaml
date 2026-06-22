@@ -1,13 +1,21 @@
 name: Partition Benchmark
 
 # PRs are gated against a rolling median baseline; pushes to main record a new
-# baseline sample. Can also be triggered manually to inspect a run.
+# baseline sample. Can also be triggered manually to inspect a run, or with
+# `self_test: true` to exercise the full record+upload path against a throwaway
+# `-selftest` prefix (so the write path can be validated on a branch, before merge,
+# without touching the real baseline).
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      self_test:
+        description: "Record + upload to a throwaway -selftest prefix (does not touch the real baseline)."
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -86,8 +94,32 @@ jobs:
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
 
-      # Pull the whole history prefix (one object per past main run). On fork PRs
-      # the S3 secrets are absent, so this no-ops -> empty dir -> warm-up/pass.
+      # Decide, in one place, which baseline mode this run is in:
+      #   push:main                       -> record + upload to the real prefix
+      #   workflow_dispatch + self_test    -> record + upload to a throwaway -selftest prefix
+      #   pull_request / plain dispatch    -> read-only, real prefix (gate only, never write)
+      - name: Resolve baseline mode
+        id: mode
+        run: |
+          prefix="${{ env.S3_HISTORY_PREFIX }}"
+          record=""
+          upload="false"
+          if [ "${{ github.event_name }}" = "push" ]; then
+            record="--record"; upload="true"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && \
+               [ "${{ inputs.self_test }}" = "true" ]; then
+            prefix="${prefix}-selftest"; record="--record"; upload="true"
+          fi
+          {
+            echo "prefix=$prefix"
+            echo "record=$record"
+            echo "upload=$upload"
+          } >> "$GITHUB_OUTPUT"
+          echo "mode: prefix=$prefix record='$record' upload=$upload"
+
+
+      # Pull the whole history prefix (one object per past run). On fork PRs the S3
+      # secrets are absent, so this no-ops -> empty dir -> warm-up/pass.
       - name: Download benchmark history from S3
         continue-on-error: true
         env:
@@ -96,30 +128,28 @@ jobs:
         run: |
           mkdir -p bench_history
           aws s3 cp --recursive \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_HISTORY_PREFIX }}/" \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ steps.mode.outputs.prefix }}/" \
             bench_history/
 
 
-      # Gate against the rolling median. On pushes to main, --record also writes
-      # this run's record into bench_history/ for the upload step below.
+      # Gate against the rolling median. When recording (push, or dispatch self-test),
+      # --record also writes this run's record into bench_history/ for the upload below.
       - name: Compare against rolling baseline
         id: compare
         run: |
-          RECORD=""
-          if [ "${{ github.event_name }}" = "push" ]; then RECORD="--record"; fi
           uv run --no-sync python scripts/performance/compare_benchmark.py \
             benchmark_results.json \
             bench_history \
             --threshold ${{ env.REGRESSION_THRESHOLD }} \
             --window ${{ env.BASELINE_WINDOW }} \
             --min-samples ${{ env.BASELINE_MIN_SAMPLES }} \
-            $RECORD
+            ${{ steps.mode.outputs.record }}
 
 
-      # Only main pushes extend the baseline. `sync` (no --delete) uploads the one
-      # new record written above; existing objects are unchanged. PR runs never write.
+      # Extend the baseline. `sync` (no --delete) uploads the one new record written
+      # above; existing objects are unchanged. PR/read-only runs skip this entirely.
       - name: Upload new baseline record to S3
-        if: github.event_name == 'push'
+        if: steps.mode.outputs.upload == 'true'
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
@@ -127,7 +157,7 @@ jobs:
         run: |
           aws s3 sync \
             bench_history/ \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_HISTORY_PREFIX }}/"
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ steps.mode.outputs.prefix }}/"
 
 
       - name: Upload benchmark artifacts
