@@ -1,21 +1,18 @@
 name: Partition Benchmark
 
 # PRs are gated against a rolling median baseline; pushes to main record a new
-# baseline sample. Can also be triggered manually to inspect a run, or with
-# `self_test: true` to exercise the full record+upload path against a throwaway
-# `-selftest` prefix (so the write path can be validated on a branch, before merge,
-# without touching the real baseline).
+# baseline sample. A manual run (workflow_dispatch) on main is a read-only
+# inspection; a manual run on any OTHER branch is a self-test that records +
+# uploads to a throwaway `-selftest` prefix -- so the write path can be validated
+# on a branch, before merge, without touching the real baseline. (Keying on the
+# ref rather than an input is deliberate: dispatch inputs are validated against
+# the default-branch workflow, so a branch-only input can't be passed pre-merge.)
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      self_test:
-        description: "Record + upload to a throwaway -selftest prefix (does not touch the real baseline)."
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -95,9 +92,9 @@ jobs:
 
 
       # Decide, in one place, which baseline mode this run is in:
-      #   push:main                       -> record + upload to the real prefix
-      #   workflow_dispatch + self_test    -> record + upload to a throwaway -selftest prefix
-      #   pull_request / plain dispatch    -> read-only, real prefix (gate only, never write)
+      #   push:main                          -> record + upload to the real prefix
+      #   workflow_dispatch on a non-main ref -> record + upload to a throwaway -selftest prefix
+      #   pull_request / dispatch on main     -> read-only, real prefix (gate only, never write)
       - name: Resolve baseline mode
         id: mode
         run: |
@@ -107,7 +104,7 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             record="--record"; upload="true"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && \
-               [ "${{ inputs.self_test }}" = "true" ]; then
+               [ "${{ github.ref_name }}" != "main" ]; then
             prefix="${prefix}-selftest"; record="--record"; upload="true"
           fi
           {
