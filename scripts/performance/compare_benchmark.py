@@ -128,7 +128,10 @@ def load_history(history_dir: Path) -> list[dict]:
             if sha:
                 by_sha[sha] = len(deduped)
             deduped.append(rec)
-    return deduped
+    # Overwriting a same-sha record in place keeps the *first* occurrence's slot but
+    # the *newer* record's timestamp, which can leave deduped out of chronological
+    # order. Re-sort so callers can rely on history[-window:] being the newest runs.
+    return sorted(deduped, key=lambda r: r.get("timestamp") or "")
 
 
 def build_record(current: dict) -> dict:
@@ -219,8 +222,10 @@ def main() -> None:
         rec_path = write_record(args.history_dir, build_record(current))
         logger.info(f"recorded this run -> {rec_path.name}")
 
-    # Warm-up: not enough history to gate yet. Observe and pass.
-    if len(window) < args.min_samples:
+    # Warm-up: not enough history to gate yet. Observe and pass. An empty window can
+    # never produce a baseline (statistics.median([]) raises), so it is always warm-up
+    # regardless of --min-samples (which may be 0).
+    if not window or len(window) < args.min_samples:
         logger.info(
             f"WARM-UP: {len(window)} of {args.min_samples} baseline samples present "
             f"-- recording only, not gating. (current total {current_total:.2f}s)"
