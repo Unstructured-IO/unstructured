@@ -86,8 +86,20 @@ def _runner_info() -> dict:
     return {"cpu_model": cpu_model, "nproc": os.cpu_count()}
 
 
+def _is_number(value: object) -> bool:
+    """True for real numeric values; bool is rejected (it's a subclass of int)."""
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def load_history(history_dir: Path) -> list[dict]:
-    """Load every per-run record from HISTORY_DIR, sorted oldest -> newest."""
+    """Load every per-run record from HISTORY_DIR, sorted oldest -> newest.
+
+    Records are deduped by sha (keeping the newest per sha by timestamp) so the
+    median is correct even if S3 still holds legacy timestamped objects that share
+    a sha. Records without a sha are kept individually -- they're never collapsed
+    together. Records whose ``total`` is missing or non-numeric are skipped so a
+    malformed object can't crash ``statistics.median``.
+    """
     if not history_dir.is_dir():
         return []
     records: list[dict] = []
@@ -97,10 +109,26 @@ def load_history(history_dir: Path) -> list[dict]:
         except (json.JSONDecodeError, OSError) as e:
             logger.warning(f"skipping unreadable history record {f.name}: {e}")
             continue
-        if "total" in rec:
+        if isinstance(rec, dict) and _is_number(rec.get("total")):
             records.append(rec)
+        else:
+            logger.warning(f"skipping history record {f.name}: missing/non-numeric 'total'")
     records.sort(key=lambda r: r.get("timestamp") or "")
-    return records
+
+    # Dedupe by sha, keeping the newest record per sha. Records sort oldest->newest
+    # above, so a later same-sha record overwrites the earlier one. Empty/absent sha
+    # is kept per-record (do not collapse all sha-less records together).
+    deduped: list[dict] = []
+    by_sha: dict[str, int] = {}
+    for rec in records:
+        sha = rec.get("sha") or ""
+        if sha and sha in by_sha:
+            deduped[by_sha[sha]] = rec
+        else:
+            if sha:
+                by_sha[sha] = len(deduped)
+            deduped.append(rec)
+    return deduped
 
 
 def build_record(current: dict) -> dict:
@@ -122,19 +150,23 @@ def build_record(current: dict) -> dict:
 
 
 def write_record(history_dir: Path, record: dict) -> Path:
-    """Write the record into HISTORY_DIR, replacing any prior record for this sha."""
+    """Write the record into HISTORY_DIR, replacing any prior record for this sha.
+
+    The object name is keyed by sha alone (not timestamped), so a re-run of the
+    same commit overwrites the same object. This is what keeps the rolling median
+    from double-counting a commit: the workflow's ``aws s3 sync`` (no ``--delete``)
+    would otherwise leave a stale, differently-named same-sha object behind. The
+    timestamp survives as a record field, which is what load/sort uses.
+    """
     history_dir.mkdir(parents=True, exist_ok=True)
     sha = record.get("sha") or ""
-    # Dedupe: a re-run of the same commit supersedes its earlier record.
     if sha:
-        for f in history_dir.glob("*.json"):
-            try:
-                if json.loads(f.read_text()).get("sha") == sha:
-                    f.unlink()
-            except (json.JSONDecodeError, OSError):
-                continue
-    ts_compact = record["timestamp"].replace("-", "").replace(":", "")
-    out = history_dir / f"{ts_compact}-{sha[:12]}.json"
+        name = f"{sha[:12]}.json"
+    else:
+        # No sha (e.g. local/manual): fall back to a timestamp-derived name. Keep it
+        # filesystem-safe by stripping the separators, as the old naming did.
+        name = record["timestamp"].replace("-", "").replace(":", "") + ".json"
+    out = history_dir / name
     out.write_text(json.dumps(record, indent=2) + "\n")
     return out
 
@@ -145,7 +177,9 @@ def _median_per_file(window: list[dict]) -> dict[str, float]:
         files.update(r.get("per_file", {}).keys())
     medians: dict[str, float] = {}
     for fname in files:
-        vals = [r["per_file"][fname] for r in window if fname in r.get("per_file", {})]
+        vals = [
+            r["per_file"][fname] for r in window if _is_number(r.get("per_file", {}).get(fname))
+        ]
         if vals:
             medians[fname] = statistics.median(vals)
     return medians
@@ -164,6 +198,13 @@ def main() -> None:
         "--record", action="store_true", help="write this run into the history (main runs)"
     )
     args = ap.parse_args()
+
+    # --window is used as history[-args.window:]; 0 silently means "all history"
+    # ([-0:] == [0:]) and negatives slice from the wrong end. Require >= 1.
+    if args.window < 1:
+        ap.error("--window must be >= 1")
+    if args.min_samples < 0:
+        ap.error("--min-samples must be >= 0")
 
     current: dict[str, float] = json.loads(args.current_results.read_text())
     current_total: float = current["__total__"]

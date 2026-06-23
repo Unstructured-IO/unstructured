@@ -145,8 +145,12 @@ jobs:
 
       # Extend the baseline. `sync` (no --delete) uploads the one new record written
       # above; existing objects are unchanged. PR/read-only runs skip this entirely.
+      # `!cancelled()` (instead of the implicit success() &&) so the record still
+      # persists when the compare step fails the gate on a regression -- otherwise a
+      # red run never reaches S3 and the baseline can't track the new reality. The
+      # record is written before the gate check, so the local file exists either way.
       - name: Upload new baseline record to S3
-        if: steps.mode.outputs.upload == 'true'
+        if: ${{ !cancelled() && steps.mode.outputs.upload == 'true' }}
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
