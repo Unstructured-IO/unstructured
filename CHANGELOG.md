@@ -1,3 +1,9 @@
+## 0.23.3
+
+### Fixes
+
+- **Stabilize the partition-runtime benchmark CI check**: the gate compared each run against a single all-time-minimum runtime, which a one-off fast runner could poison into an unbeatable floor (a frozen ~81s baseline vs a real ~130s fleet), failing every PR. It now compares against a rolling median of recent `main` runs with a warm-up period, so runner-speed variance can't block unrelated PRs. CI/tooling only; no library behavior changes.
+
 ## 0.23.2
 
 ### Enhancements
