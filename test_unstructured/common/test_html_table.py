@@ -219,7 +219,17 @@ class DescribeHtmlTable:
             "  <tr><td/><td> m n op\n</td><td/></tr>"
             "</table>"
         )
-        assert html_table.text == "a b c def gh i jk l m n op"
+        assert html_table.text == "a b c def\n\ngh i jk l\n\nm n op"
+
+    def and_it_suppresses_blank_rows_when_constructing_text(self):
+        html_table = HtmlTable.from_html_text(
+            "<table>"
+            "  <tr><td>alpha</td><td>beta</td></tr>"
+            "  <tr><td/><td>  </td></tr>"
+            "  <tr><td>gamma</td><td>delta</td></tr>"
+            "</table>"
+        )
+        assert html_table.text == "alpha beta\n\ngamma delta"
 
 
 class DescribeHtmlRow:
@@ -259,6 +269,11 @@ class DescribeHtmlRow:
         assert next(text_iter) == "b"
         with pytest.raises(StopIteration):
             next(text_iter)
+
+    def it_provides_the_clear_concatenated_text_of_the_row(self):
+        row = HtmlRow(fragment_fromstring("<tr><td> a\n b </td><td/><td> c  d </td></tr>"))
+
+        assert row.text == "a b c d"
 
     def and_it_includes_descendant_inline_text_in_cell_texts(self):
         row = HtmlRow(

@@ -140,10 +140,8 @@ class HtmlTable:
 
     @cached_property
     def text(self) -> str:
-        """The clean, concatenated, text for this table."""
-        table_text = " ".join(self._table.itertext())
-        # -- blank cells will introduce extra whitespace, so normalize after accumulating --
-        return " ".join(table_text.split())
+        """The clean text for this table, preserving row boundaries."""
+        return "\n\n".join(row_text for row in self.iter_rows() if (row_text := row.text))
 
 
 class HtmlRow:
@@ -183,6 +181,11 @@ class HtmlRow:
             if not text:
                 continue
             yield text
+
+    @cached_property
+    def text(self) -> str:
+        """The clean, concatenated text for this row."""
+        return " ".join(self.iter_cell_texts())
 
     @cached_property
     def text_len(self) -> int:

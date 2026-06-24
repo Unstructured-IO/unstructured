@@ -1,3 +1,11 @@
+## 0.23.3
+
+### Fixes
+
+- **Preserve row boundaries in table text**: `HtmlTable.text` now joins cells within each
+  row while separating rows with blank lines, restoring stable row boundaries for `Table`
+  elements produced from table HTML such as XLSX, CSV, and TSV partitions.
+
 ## 0.23.2
 
 ### Enhancements

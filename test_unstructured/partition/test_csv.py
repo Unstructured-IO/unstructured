@@ -16,7 +16,7 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_SEMICOLON_DELIMITER,
     EXPECTED_TEXT_WITH_EMOJI,
     EXPECTED_TEXT_WITH_LINE_DELIMITER,
-    EXPECTED_TEXT_XLSX,
+    EXPECTED_TEXT_XLSX_WITH_ROW_BOUNDARIES,
 )
 from test_unstructured.unit_utils import (
     FixtureRequest,
@@ -207,7 +207,9 @@ def test_partition_csv_header():
     )
 
     table = elements[0]
-    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert table.text == (
+        "Stanley Cups Unnamed: 1 Unnamed: 2\n\n" + EXPECTED_TEXT_XLSX_WITH_ROW_BOUNDARIES
+    )
     assert table.metadata.text_as_html is not None
 
 
