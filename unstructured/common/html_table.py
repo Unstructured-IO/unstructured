@@ -133,7 +133,9 @@ class HtmlTable:
         return etree.tostring(self._table, encoding=str)
 
     def iter_rows(self) -> Iterator[HtmlRow]:
-        rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
+        rows = cast(
+            "list[HtmlElement]", self._table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+        )
         for idx, tr in enumerate(rows):
             source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
             yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)

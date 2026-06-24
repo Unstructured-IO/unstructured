@@ -231,6 +231,17 @@ class DescribeHtmlTable:
         )
         assert html_table.text == "alpha beta\n\ngamma delta"
 
+    def it_provides_text_for_directly_instantiated_sectioned_tables(self):
+        table = fragment_fromstring(
+            "<table>"
+            "  <thead><tr><th>header</th></tr></thead>"
+            "  <tbody><tr><td>body</td></tr></tbody>"
+            "  <tfoot><tr><td>footer</td></tr></tfoot>"
+            "</table>"
+        )
+
+        assert HtmlTable(table).text == "header\n\nbody\n\nfooter"
+
 
 class DescribeHtmlRow:
     """Unit-test suite for `unstructured.common.html_table.HtmlRow`."""
