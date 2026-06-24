@@ -8,7 +8,7 @@ from typing import IO, Any, Iterator
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable
+from unstructured.common.html_table import HtmlTable, htmlify_dataframe
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
@@ -58,15 +58,19 @@ def partition_csv(
 
     csv.field_size_limit(CSV_FIELD_LIMIT)
     with ctx.open() as file:
-        read_kw: dict = {"header": ctx.header, "sep": ctx.delimiter, "encoding": ctx.encoding}
+        read_kw: dict = {
+            "header": ctx.header,
+            "sep": ctx.delimiter,
+            "encoding": ctx.encoding,
+            "dtype": str,
+            "keep_default_na": False,
+        }
         # sep=None is not supported by the C engine; use Python engine to avoid ParserWarning.
         if ctx.delimiter is None:
             read_kw["engine"] = "python"
         dataframe = pd.read_csv(file, **read_kw)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(htmlify_dataframe(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,

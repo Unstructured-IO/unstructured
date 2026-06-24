@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import pandas as pd
 import pytest
 from lxml.html import fragment_fromstring
 
@@ -11,6 +12,7 @@ from unstructured.common.html_table import (
     HtmlCell,
     HtmlRow,
     HtmlTable,
+    htmlify_dataframe,
     htmlify_matrix_of_cell_texts,
 )
 
@@ -41,6 +43,50 @@ class Describe_htmlify_matrix_of_cell_texts:
 
     def test_htmlify_matrix_handles_empty_matrix(self):
         assert htmlify_matrix_of_cell_texts([]) == ""
+
+
+class Describe_htmlify_dataframe:
+    """Unit-test suite for `unstructured.common.html_table.htmlify_dataframe()`."""
+
+    def it_preserves_numeric_text_when_rendering_dataframe_cell_values(self):
+        dataframe = pd.DataFrame(
+            [
+                ["revenue", "478923"],
+                ["ticker", "000001"],
+                ["account", "000123"],
+                ["clause", "007"],
+                ["ratio", "0.000123"],
+            ],
+            columns=["metric", "value"],
+        )
+
+        assert htmlify_dataframe(dataframe, include_header=True) == (
+            "<table>"
+            "<tr><td>metric</td><td>value</td></tr>"
+            "<tr><td>revenue</td><td>478923</td></tr>"
+            "<tr><td>ticker</td><td>000001</td></tr>"
+            "<tr><td>account</td><td>000123</td></tr>"
+            "<tr><td>clause</td><td>007</td></tr>"
+            "<tr><td>ratio</td><td>0.000123</td></tr>"
+            "</table>"
+        )
+
+    def it_renders_dataframe_null_values_as_empty_cells(self):
+        dataframe = pd.DataFrame(
+            [
+                ["real nulls", None, float("nan"), pd.NA],
+                ["literal text", "None", "nan", "<NA>"],
+            ],
+            columns=["kind", "a", "b", "c"],
+        )
+
+        assert htmlify_dataframe(dataframe, include_header=True) == (
+            "<table>"
+            "<tr><td>kind</td><td>a</td><td>b</td><td>c</td></tr>"
+            "<tr><td>real nulls</td><td/><td/><td/></tr>"
+            "<tr><td>literal text</td><td>None</td><td>nan</td><td>&lt;NA&gt;</td></tr>"
+            "</table>"
+        )
 
 
 class DescribeHtmlTable:
