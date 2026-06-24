@@ -55,9 +55,25 @@ EXPECTED_TEXT = (
 
 EXPECTED_TEXT_XLSX = "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13"
 
+EXPECTED_TEXT_WITH_ROW_BOUNDARIES = (
+    "Stanley Cups\n\n"
+    "Team Location Stanley Cups\n\n"
+    "Blues STL 1\n\n"
+    "Flyers PHI 2\n\n"
+    "Maple Leafs TOR 13"
+)
+
+EXPECTED_TEXT_XLSX_WITH_ROW_BOUNDARIES = (
+    "Team Location Stanley Cups\n\nBlues STL 1\n\nFlyers PHI 2\n\nMaple Leafs TOR 13"
+)
+
 EXPECTED_TEXT_WITH_EMOJI = (
     "Stanley Cups "
     "Team Location Stanley Cups Blues STL 1 Flyers PHI 2 Maple Leafs TOR 13 👨\\U+1F3FB🔧 TOR 15"
+)
+
+EXPECTED_TEXT_WITH_EMOJI_ROW_BOUNDARIES = (
+    EXPECTED_TEXT_WITH_ROW_BOUNDARIES + "\n\n👨\\U+1F3FB🔧 TOR 15"
 )
 
 EXPECTED_TEXT_SEMICOLON_DELIMITER = (

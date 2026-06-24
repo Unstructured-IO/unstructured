@@ -133,17 +133,17 @@ class HtmlTable:
         return etree.tostring(self._table, encoding=str)
 
     def iter_rows(self) -> Iterator[HtmlRow]:
-        rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
+        rows = cast(
+            "list[HtmlElement]", self._table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+        )
         for idx, tr in enumerate(rows):
             source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
             yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)
 
     @cached_property
     def text(self) -> str:
-        """The clean, concatenated, text for this table."""
-        table_text = " ".join(self._table.itertext())
-        # -- blank cells will introduce extra whitespace, so normalize after accumulating --
-        return " ".join(table_text.split())
+        """The clean text for this table, preserving row boundaries."""
+        return "\n\n".join(row_text for row in self.iter_rows() if (row_text := row.text))
 
 
 class HtmlRow:
@@ -183,6 +183,11 @@ class HtmlRow:
             if not text:
                 continue
             yield text
+
+    @cached_property
+    def text(self) -> str:
+        """The clean, concatenated text for this row."""
+        return " ".join(self.iter_cell_texts())
 
     @cached_property
     def text_len(self) -> int:

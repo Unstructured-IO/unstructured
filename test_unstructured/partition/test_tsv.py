@@ -8,9 +8,9 @@ from pytest_mock import MockFixture
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_WITH_EMOJI,
-    EXPECTED_TEXT,
-    EXPECTED_TEXT_WITH_EMOJI,
-    EXPECTED_TEXT_XLSX,
+    EXPECTED_TEXT_WITH_EMOJI_ROW_BOUNDARIES,
+    EXPECTED_TEXT_WITH_ROW_BOUNDARIES,
+    EXPECTED_TEXT_XLSX_WITH_ROW_BOUNDARIES,
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -23,8 +23,12 @@ EXPECTED_FILETYPE = "text/tsv"
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
-        ("stanley-cups.tsv", EXPECTED_TEXT, EXPECTED_TABLE),
-        ("stanley-cups-with-emoji.tsv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
+        ("stanley-cups.tsv", EXPECTED_TEXT_WITH_ROW_BOUNDARIES, EXPECTED_TABLE),
+        (
+            "stanley-cups-with-emoji.tsv",
+            EXPECTED_TEXT_WITH_EMOJI_ROW_BOUNDARIES,
+            EXPECTED_TABLE_WITH_EMOJI,
+        ),
     ],
 )
 def test_partition_tsv_from_filename(filename: str, expected_text: str, expected_table: str):
@@ -42,15 +46,19 @@ def test_partition_tsv_from_filename_with_metadata_filename():
         example_doc_path("stanley-cups.tsv"), metadata_filename="test", include_header=False
     )
 
-    assert elements[0].text == EXPECTED_TEXT
+    assert elements[0].text == EXPECTED_TEXT_WITH_ROW_BOUNDARIES
     assert all(e.metadata.filename == "test" for e in elements)
 
 
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
-        ("stanley-cups.tsv", EXPECTED_TEXT, EXPECTED_TABLE),
-        ("stanley-cups-with-emoji.tsv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
+        ("stanley-cups.tsv", EXPECTED_TEXT_WITH_ROW_BOUNDARIES, EXPECTED_TABLE),
+        (
+            "stanley-cups-with-emoji.tsv",
+            EXPECTED_TEXT_WITH_EMOJI_ROW_BOUNDARIES,
+            EXPECTED_TABLE_WITH_EMOJI,
+        ),
     ],
 )
 def test_partition_tsv_from_file(filename: str, expected_text: str, expected_table: str):
@@ -69,7 +77,7 @@ def test_partition_tsv_from_file_with_metadata_filename():
     with open(example_doc_path("stanley-cups.tsv"), "rb") as f:
         elements = partition_tsv(file=f, metadata_filename="test", include_header=False)
 
-    assert elements[0].text == EXPECTED_TEXT
+    assert elements[0].text == EXPECTED_TEXT_WITH_ROW_BOUNDARIES
     assert all(element.metadata.filename == "test" for element in elements)
 
 
@@ -140,7 +148,9 @@ def test_partition_tsv_header():
     )
 
     table = elements[0]
-    assert table.text == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
+    assert table.text == (
+        "Stanley Cups Unnamed: 1 Unnamed: 2\n\n" + EXPECTED_TEXT_XLSX_WITH_ROW_BOUNDARIES
+    )
     assert table.metadata.text_as_html is not None
     assert "<table>" in table.metadata.text_as_html
 
