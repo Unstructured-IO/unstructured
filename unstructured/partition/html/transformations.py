@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import html
-from collections import OrderedDict
 from itertools import chain
 from typing import Sequence, Type
 
@@ -13,6 +12,10 @@ from unstructured.documents.mappings import (
     HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP,
     HTML_TAG_TO_DEFAULT_ELEMENT_TYPE_MAP,
     ONTOLOGY_CLASS_TO_UNSTRUCTURED_ELEMENT_TYPE,
+)
+from unstructured.partition.common.metadata import (
+    HEADING_TAGS,
+    category_depth_from_html_tag,
 )
 
 RECURSION_LIMIT = 50
@@ -50,30 +53,82 @@ def ontology_to_unstructured_elements(
                                             in the output. Defaults to True.
     Returns:
         list[Element]: A list of unstructured Element objects.
+
+    Note on `category_depth` and `parent_id` (ML-1328):
+        `category_depth` is derived from the element's HTML *heading level* (h1 -> 0, h2 -> 1, ...)
+        via the shared `category_depth_from_html_tag` helper, NOT from DOM/recursion nesting depth.
+        This keeps the v2 (ontology) parser consistent with the v1 parser and with the documented
+        metadata contract, and makes depth independent of layout (e.g. multi-column pages no longer
+        bump every element's depth).
+
+        `parent_id` is left to the metadata layer, like every other partitioner. Layout/container
+        elements (Page, Column, ...) keep their tree parent so the physical layout structure is
+        preserved; content elements are emitted with ``parent_id=None``. The `@apply_metadata`
+        decorator that wraps `partition_html` then runs `set_element_hierarchy`, which fills each
+        content element's heading-based parent (a subsection's parent becomes its enclosing heading)
+        from the heading-level `category_depth` and skips the containers that already have a parent.
+        Both production callers -- `partition_html` and the VLM partitioner -- go through that
+        decorator, so this converter does not run `set_element_hierarchy` itself.
     """
-    elements_to_return: list[elements.Element] = []
+    # -- The worker carries each element's DOM-nesting depth alongside it (used only to decide
+    # -- inline merging); strip those depths here so the public output is plain Elements. --
+    elements_with_depth = _ontology_to_unstructured_elements(
+        ontology_element,
+        parent_id=parent_id,
+        page_number=page_number,
+        depth=depth,
+        filename=filename,
+        add_img_alt_text=add_img_alt_text,
+    )
+    return [element for element, _nesting_depth in elements_with_depth]
+
+
+def _ontology_to_unstructured_elements(
+    ontology_element: ontology.OntologyElement,
+    parent_id: str | None = None,
+    page_number: int | None = None,
+    depth: int = 0,
+    filename: str | None = None,
+    add_img_alt_text: bool = True,
+) -> list[tuple[elements.Element, int]]:
+    """Recursive worker for `ontology_to_unstructured_elements`.
+
+    Builds the flat element list with layout-container `parent_id` set to the tree parent and
+    content `parent_id` left as ``None`` -- the `@apply_metadata` decorator on `partition_html`
+    fills in content elements' heading-based `parent_id` via `set_element_hierarchy`.
+
+    Each element is returned paired with its DOM-nesting `depth`. That depth is recursion-local
+    bookkeeping consumed only by `combine_inline_elements` (to gate inline merging by tree level);
+    it is deliberately NOT stored on the element or its `ElementMetadata`, and the public wrapper
+    discards it.
+    """
+    elements_to_return: list[tuple[elements.Element, int]] = []
     if ontology_element.elementType == ontology.ElementTypeEnum.layout and depth <= RECURSION_LIMIT:
         if page_number is None and isinstance(ontology_element, ontology.Page):
             page_number = ontology_element.page_number
 
         if not isinstance(ontology_element, ontology.Document):
-            elements_to_return += [
-                elements.Text(
-                    text="",
-                    element_id=ontology_element.id,
-                    detection_origin="vlm_partitioner",
-                    metadata=elements.ElementMetadata(
-                        parent_id=parent_id,
-                        text_as_html=ontology_element.to_html(add_children=False),
-                        page_number=page_number,
-                        category_depth=depth,
-                        filename=filename,
-                    ),
-                )
-            ]
-        children: list[elements.Element] = []
+            # -- Layout/container element (Page, Column, ...). Keep its tree `parent_id` so the
+            # -- physical layout structure is preserved, and leave `category_depth` unset -- a
+            # -- container is not a heading. --
+            container_element = elements.Text(
+                text="",
+                element_id=ontology_element.id,
+                detection_origin="vlm_partitioner",
+                metadata=elements.ElementMetadata(
+                    parent_id=parent_id,
+                    text_as_html=ontology_element.to_html(add_children=False),
+                    page_number=page_number,
+                    category_depth=None,
+                    filename=filename,
+                ),
+            )
+            # -- pair the container with its DOM-nesting depth, used only to decide inline merging;
+            # -- `category_depth` now carries heading level, not nesting, so it can't be reused. --
+            elements_to_return += [(container_element, depth)]
+        children: list[tuple[elements.Element, int]] = []
         for child in ontology_element.children:
-            child = ontology_to_unstructured_elements(
+            child = _ontology_to_unstructured_elements(
                 child,
                 parent_id=ontology_element.id,
                 page_number=page_number,
@@ -92,24 +147,34 @@ def ontology_to_unstructured_elements(
         html_code_of_ontology_element = ontology_element.to_html()
         element_text = ontology_element.to_text(add_img_alt_text=add_img_alt_text)
 
+        # -- `category_depth` from heading level (not nesting depth); see function docstring. --
+        category_depth = category_depth_from_html_tag(
+            element_class,
+            ontology_element.html_tag_name,
+        )
+
         unstructured_element = element_class(
             text=element_text,  # type: ignore
             element_id=ontology_element.id,
             detection_origin="vlm_partitioner",
             metadata=elements.ElementMetadata(
-                parent_id=parent_id,
+                # -- `parent_id` left unset; `@apply_metadata` runs `set_element_hierarchy` to
+                # -- assign a heading-based parent (see the docstring). --
+                parent_id=None,
                 text_as_html=html_code_of_ontology_element,
                 page_number=page_number,
-                category_depth=depth,
+                category_depth=category_depth,
                 filename=filename,
             ),
         )
-        elements_to_return = [unstructured_element]
+        elements_to_return = [(unstructured_element, depth)]
 
     return elements_to_return
 
 
-def combine_inline_elements(elements: list[elements.Element]) -> list[elements.Element]:
+def combine_inline_elements(
+    elements_with_depth: list[tuple[elements.Element, int]],
+) -> list[tuple[elements.Element, int]]:
     """
     Combines consecutive inline elements into a single element. Inline elements
     can be also combined with text elements.
@@ -122,35 +187,47 @@ def combine_inline_elements(elements: list[elements.Element]) -> list[elements.E
         }
     }
 
+    Each element is paired with its DOM-nesting depth; merging is only allowed between elements at
+    the same depth (see `can_unstructured_elements_be_merged`). The depth travels with the element
+    rather than being stored on it.
+
     Args:
-        elements (list[Element]): A list of elements to be combined.
+        elements_with_depth (list[tuple[Element, int]]): (element, nesting-depth) pairs to combine.
 
     Returns:
-        list[Element]: A list of combined elements.
+        list[tuple[Element, int]]: The combined (element, nesting-depth) pairs.
     """
-    result_elements: list[elements.Element] = []
+    result_elements: list[tuple[elements.Element, int]] = []
 
-    current_element: elements.Element | None = None
-    for next_element in elements:
-        if current_element is None:
-            current_element = next_element
+    current: tuple[elements.Element, int] | None = None
+    for nxt in elements_with_depth:
+        if current is None:
+            current = nxt
             continue
 
-        if can_unstructured_elements_be_merged(current_element, next_element):
+        current_element, current_depth = current
+        next_element, next_depth = nxt
+        if can_unstructured_elements_be_merged(
+            current_element, next_element, current_depth=current_depth, next_depth=next_depth
+        ):
             current_element.text += " " + next_element.text
             current_element.metadata.text_as_html += next_element.metadata.text_as_html
         else:
-            result_elements.append(current_element)
-            current_element = next_element
+            result_elements.append(current)
+            current = nxt
 
-    if current_element is not None:
-        result_elements.append(current_element)
+    if current is not None:
+        result_elements.append(current)
 
     return result_elements
 
 
 def can_unstructured_elements_be_merged(
-    current_element: elements.Element, next_element: elements.Element
+    current_element: elements.Element,
+    next_element: elements.Element,
+    *,
+    current_depth: int,
+    next_depth: int,
 ) -> bool:
     """
     Elements can be merged when:
@@ -158,7 +235,10 @@ def can_unstructured_elements_be_merged(
     - Neither of them has children
     - All elements are inline elements or text element
     """
-    if current_element.metadata.category_depth != next_element.metadata.category_depth:
+    # NOTE(ML-1328): "same level in the HTML tree" is the DOM-nesting depth, passed in alongside
+    # each element. It used to live on `category_depth`, but that field now carries heading level,
+    # so it can no longer be used as the nesting signal here.
+    if current_depth != next_depth:
         return False
 
     current_html_tags = BeautifulSoup(
@@ -237,7 +317,11 @@ def unstructured_elements_to_ontology(
     Returns:
         OntologyElement: The converted OntologyElement object.
     """
-    id_to_element_mapping: OrderedDict[str, ontology.OntologyElement] = OrderedDict()
+    if not unstructured_elements:
+        # -- empty input -> empty Document; avoid an IndexError dereferencing element[0] --
+        return ontology.Document(
+            additional_attributes={"id": ontology.OntologyElement.generate_unique_id()}
+        )
 
     root_element_id = unstructured_elements[0].metadata.parent_id
 
@@ -245,27 +329,48 @@ def unstructured_elements_to_ontology(
         root_element_id = ontology.OntologyElement.generate_unique_id()
         unstructured_elements[0].metadata.parent_id = root_element_id
 
-    id_to_element_mapping[root_element_id] = ontology.Document(
-        additional_attributes={"id": root_element_id}
-    )
+    root_element = ontology.Document(additional_attributes={"id": root_element_id})
+
+    # NOTE(ML-1328): Tree reconstruction is driven by the *layout-container* elements (Page,
+    # Column, Section, ...), which retain their tree `parent_id`. Content-element `parent_id` is no
+    # longer the tree parent -- it is the heading-based parent assigned by `set_element_hierarchy`
+    # -- so it must NOT be used to rebuild the layout tree. Instead, each content element is nested
+    # in the innermost open layout container, tracked with a stack keyed on the containers' own
+    # (tree) `parent_id`. This is independent of document content `parent_id` and reproduces the
+    # original layout nesting exactly.
+    container_stack: list[tuple[str, ontology.OntologyElement]] = [(root_element_id, root_element)]
 
     for element in unstructured_elements:
+        # -- an element with no HTML payload carries nothing to rebuild the tree from;
+        # -- skip it per-element rather than letting BeautifulSoup(None) abort the whole
+        # -- reconstruction (e.g. mixed/partially-stripped element streams). --
+        if not element.metadata.text_as_html:
+            continue
         html_as_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
             recursive=False
         )
-        element_id = element.id
-        parent_id = element.metadata.parent_id
-
-        if parent_id is None:
-            # Make sure that no element is lost
-            parent_id = root_element_id
-
         for html_as_tag in html_as_tags:
             ontology_element = parse_html_to_ontology_element(html_as_tag)
-            id_to_element_mapping[element_id] = ontology_element
-            id_to_element_mapping[parent_id].children.append(ontology_element)
 
-    root_id, root_element = id_to_element_mapping.popitem(last=False)
+            is_layout_container = ontology_element.elementType == ontology.ElementTypeEnum.layout
+            if is_layout_container:
+                # -- pop back to this container's tree parent, then attach + open it. Only pop if
+                # -- that parent is actually open on the stack; a `parent_id` matching no open
+                # -- container (e.g. malformed/reordered input that violates the documented
+                # -- parent-before-child precondition) must not pop past valid ancestors to root --
+                # -- which would mis-nest later content. In that case attach to the current
+                # -- innermost container instead, preserving document order and losing nothing. --
+                # -- a container with no `parent_id` is a top-level container -> attach at root --
+                parent_id = element.metadata.parent_id or root_element_id
+                if any(container_id == parent_id for container_id, _ in container_stack):
+                    while len(container_stack) > 1 and container_stack[-1][0] != parent_id:
+                        container_stack.pop()
+                container_stack[-1][1].children.append(ontology_element)
+                container_stack.append((element.id, ontology_element))
+            else:
+                # -- content nests in the innermost currently-open layout container --
+                container_stack[-1][1].children.append(ontology_element)
+
     return root_element
 
 
@@ -312,7 +417,7 @@ def remove_empty_tags_from_html_content(html_content: str) -> str:
 
     def is_empty(tag):
         # Remove only specific tags, omit self-closing ones
-        if tag.name not in ["p", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6"]:
+        if tag.name not in (*HEADING_TAGS, "p", "span", "div"):
             return False
 
         if tag.find():
