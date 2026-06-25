@@ -197,6 +197,8 @@ class _XlsxPartitionerOptions:
         if office_file.is_encrypted():
             raise UnprocessableEntityError("XLSX file is password protected.")
 
+        # Wrap bytes in BytesIO to avoid FutureWarning from pd.read_excel
+        # See: https://github.com/Unstructured-IO/unstructured/issues/4036
         return pd.read_excel(
             io.BytesIO(self._file_bytes), sheet_name=None, header=self.header_row_idx
         )
