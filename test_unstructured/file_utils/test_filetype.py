@@ -968,6 +968,25 @@ class Describe_OleFileDetector:
 
         assert _OleFileDetector.file_type(ctx) is expected_value
 
+    def it_detects_confluence_exported_doc_files(self, monkeypatch: pytest.MonkeyPatch):
+        """Detect Confluence-exported DOC files that store content in FileContents."""
+        with open(example_doc_path("simple.doc"), "rb") as f:
+            file = io.BytesIO(f.read())
+        ctx = _FileTypeDetectionContext(file=file)
+
+        class MockStream:
+            name = "FileContents"
+
+        class MockStorage:
+            streams = [MockStream()]
+
+        monkeypatch.setattr(
+            "unstructured.file_utils.filetype.Storage.from_ole",
+            lambda _: MockStorage(),
+        )
+
+        assert _OleFileDetector.file_type(ctx) is FileType.DOC
+
 
 class Describe_TextFileDifferentiator:
     """Unit-test suite for `unstructured.file_utils.filetype._TextFileDifferentiator`."""

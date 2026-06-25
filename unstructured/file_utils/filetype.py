@@ -715,6 +715,9 @@ class _OleFileDetector:
         for stream in root_storage.streams:
             if stream.name == "WordDocument":
                 return FileType.DOC
+            elif stream.name == "FileContents":
+                # Confluence-exported legacy DOC files store content in this stream.
+                return FileType.DOC
             elif stream.name == "PowerPoint Document":
                 return FileType.PPT
             elif stream.name == "Workbook":
