@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import zipfile
 import os
 import pathlib
 import tempfile
@@ -1118,6 +1119,28 @@ def test_auto_partition_forwards_include_page_breaks_to_partition_pdf():
 
 # -- metadata_filename ----------------------------------------------------
 
+def test_partition_txt_from_zip_ext_file(tmp_path):
+    zip_path = tmp_path / "text_file.zip"
+
+    with zipfile.ZipFile(zip_path, "w") as zf:
+        zf.writestr(
+            "hello.txt",
+            "Hello from inside a zip file.\nThis should be partitioned successfully.",
+        )
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        info = zf.infolist()[0]
+
+        with zf.open(info) as file:
+            elements = partition(
+                file=file,
+                metadata_filename=info.filename,
+            )
+
+    assert [element.text for element in elements] == [
+        "Hello from inside a zip file.",
+        "This should be partitioned successfully.",
+    ]
 
 def test_auto_partition_forwards_metadata_filename_via_kwargs():
     with open(example_doc_path("fake-text.txt"), "rb") as f:
