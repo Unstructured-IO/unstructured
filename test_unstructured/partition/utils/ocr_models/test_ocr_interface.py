@@ -41,6 +41,42 @@ class DescribeOCRAgent:
         get_instance_.assert_called_once_with(OCR_AGENT_TESSERACT, "eng")
         assert ocr_agent is ocr_agent_
 
+    def it_converts_tesseract_language_to_paddle_when_paddle_is_configured(
+        self, _get_ocr_agent_cls_qname_: Mock, get_instance_: Mock, ocr_agent_: Mock
+    ):
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_PADDLE
+        get_instance_.return_value = ocr_agent_
+
+        ocr_agent = OCRAgent.get_agent(language="eng")
+
+        _get_ocr_agent_cls_qname_.assert_called_once_with()
+        get_instance_.assert_called_once_with(OCR_AGENT_PADDLE, "en")
+        assert ocr_agent is ocr_agent_
+
+    @pytest.mark.parametrize(
+        ("tesseract_lang", "expected_paddle_lang"),
+        [
+            ("eng", "en"),
+            ("ara", "ar"),
+            ("chi_sim", "ch"),
+            ("deu", "german"),
+        ],
+    )
+    def it_converts_various_tesseract_languages_to_paddle_format(
+        self,
+        tesseract_lang: str,
+        expected_paddle_lang: str,
+        _get_ocr_agent_cls_qname_: Mock,
+        get_instance_: Mock,
+        ocr_agent_: Mock,
+    ):
+        _get_ocr_agent_cls_qname_.return_value = OCR_AGENT_PADDLE
+        get_instance_.return_value = ocr_agent_
+
+        OCRAgent.get_agent(language=tesseract_lang)
+
+        get_instance_.assert_called_once_with(OCR_AGENT_PADDLE, expected_paddle_lang)
+
     def but_it_raises_when_the_requested_agent_is_not_whitelisted(
         self, _get_ocr_agent_cls_qname_: Mock
     ):
