@@ -410,6 +410,30 @@ def test_chunk_by_title_max_page_1_breaks_on_every_page():
     assert chunks[2] == CompositeElement("Page three.")
 
 
+def test_chunk_by_title_max_page_not_undone_by_combiner():
+    """PreChunkCombiner must not re-merge pre-chunks that were split by max_page.
+
+    By default combine_text_under_n_chars == max_characters (500). Without the page-span
+    guard in PreChunk.can_combine(), the combiner would merge small pre-chunks back
+    together, silently violating the max_page limit.
+    """
+    elements: list[Element] = [
+        Title("Section", metadata=ElementMetadata(page_number=1)),
+        Text("short", metadata=ElementMetadata(page_number=1)),
+        Text("short", metadata=ElementMetadata(page_number=2)),
+        Text("short", metadata=ElementMetadata(page_number=3)),
+        Text("short", metadata=ElementMetadata(page_number=4)),
+    ]
+
+    # Do NOT pass combine_text_under_n_chars=0 — that's the whole point: the combiner
+    # must be blocked by the max_page guard, not suppressed manually by the caller.
+    chunks = chunk_by_title(elements, max_page=2)
+
+    assert len(chunks) == 2
+    assert chunks[0] == CompositeElement("Section\n\nshort\n\nshort")
+    assert chunks[1] == CompositeElement("short\n\nshort")
+
+
 def test_chunk_by_title_max_page_none_does_not_add_page_boundary():
     """Omitting max_page leaves all existing by-title behavior unchanged."""
     elements: list[Element] = [

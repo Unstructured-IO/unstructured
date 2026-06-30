@@ -182,6 +182,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
     @cached_property
     def max_page(self) -> Optional[int]:
         """Maximum number of pages a single chunk may span, or None for no page-count limit."""
+        # -- overrides ChunkingOptions.max_page (which returns None) to read the caller's kwarg --
         return self._kwargs.get("max_page")
 
     @cached_property

@@ -173,6 +173,16 @@ class ChunkingOptions:
         return arg_value if arg_value is not None else 0
 
     @cached_property
+    def max_page(self) -> Optional[int]:
+        """Maximum number of pages a chunk may span; `None` means no page-span limit.
+
+        Overridden by `_ByTitleChunkingOptions` to respect the `max_page` argument. The default
+        here is `None` so that `PreChunk.can_combine()` can check this property without needing to
+        know which chunking strategy is in use.
+        """
+        return None
+
+    @cached_property
     def hard_max(self) -> int:
         """The maximum size for a chunk (in characters or tokens depending on mode).
 
@@ -681,6 +691,17 @@ class PreChunk:
             return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
+        # -- refuse to combine when doing so would violate the max_page page-span limit.
+        # -- This prevents PreChunkCombiner from undoing boundaries placed by the
+        # -- `is_on_page_exceeding_max` predicate.
+        if self._opts.max_page is not None:
+            self_span = self._page_span
+            other_span = pre_chunk._page_span
+            if self_span is not None and other_span is not None:
+                combined_first = min(self_span[0], other_span[0])
+                combined_last = max(self_span[1], other_span[1])
+                if combined_last - combined_first + 1 > self._opts.max_page:
+                    return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
         # -- efficient and definitely more robust than hoping two different computations of combined
         # -- length continue to get the same answer as the code evolves. Only possible because
@@ -730,6 +751,20 @@ class PreChunk:
         """
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
+
+    @cached_property
+    def _page_span(self) -> tuple[int, int] | None:
+        """Return `(first_page, last_page)` across elements in this pre-chunk.
+
+        Returns `None` when no element carries a page number, in which case no page-span
+        enforcement is possible and the caller should not block combination on that basis.
+        """
+        pages = [
+            e.metadata.page_number
+            for e in self._elements
+            if e.metadata.page_number is not None
+        ]
+        return (min(pages), max(pages)) if pages else None
 
     def _iter_text_segments(self) -> Iterator[str]:
         """Generate overlap text and each element text segment in order.
