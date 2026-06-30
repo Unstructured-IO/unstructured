@@ -443,7 +443,7 @@ class PreChunker:
     - **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
       either side of those boundaries into different sections. In this case, the primary indicator
       of a semantic boundary is a `Title` element. A page-break (change in page-number) is also a
-      semantic boundary when `multipage_sections` is `False`.
+      semantic boundary when `max_page` is set.
 
     - **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
       into sections as big as possible without exceeding the chunk window size.
