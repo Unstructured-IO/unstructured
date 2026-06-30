@@ -923,6 +923,8 @@ class _Chunker:
                                     seen_ids.add(record_id)
                                     seen.append(record)
                     yield field_name, merged
+                elif strategy is CS.ANY:
+                    yield field_name, any(values)
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

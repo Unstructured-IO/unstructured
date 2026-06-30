@@ -58,6 +58,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     get_widget_text_from_annots,
     get_words_from_obj,
     map_bbox_and_index,
+    text_contains_invisible_text,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
@@ -530,9 +531,11 @@ def _process_pdfminer_pages(
                 _text_snippets: list[str] = [
                     get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
                 ]
+                contains_invisible_text = text_contains_invisible_text(obj)
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+                contains_invisible_text = text_contains_invisible_text(obj)
 
             for _text in _text_snippets:
                 _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
@@ -553,6 +556,7 @@ def _process_pdfminer_pages(
                         filename=filename,
                         page_number=page_number,
                         coordinates=coordinates_metadata,
+                        contains_invisible_text=contains_invisible_text or None,
                         last_modified=metadata_last_modified,
                         links=links,
                         languages=languages,
@@ -1292,6 +1296,10 @@ def _combine_list_elements(
             coordinates=element.metadata.coordinates,
             boundary=tmp_coords,
         ):
+            contains_invisible_text = (
+                tmp_element.metadata.contains_invisible_text
+                or element.metadata.contains_invisible_text
+            )
             tmp_element.text = f"{tmp_text} {element.text}"
             # replace "element" with the corrected element
             element = _combine_coordinates_into_element1(
@@ -1299,6 +1307,7 @@ def _combine_list_elements(
                 element2=element,
                 coordinate_system=coordinate_system,
             )
+            element.metadata.contains_invisible_text = contains_invisible_text or None
             # remove previously added ListItem element with incomplete text
             updated_elements.pop()
         updated_elements.append(element)
