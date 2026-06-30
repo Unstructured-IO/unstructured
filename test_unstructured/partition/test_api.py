@@ -639,7 +639,6 @@ def expected_call_():
                 include_page_breaks=False,
                 languages=None,
                 max_characters=None,
-                multipage_sections=True,
                 new_after_n_chars=None,
                 ocr_languages=None,
                 output_format=shared.OutputFormat.APPLICATION_JSON,

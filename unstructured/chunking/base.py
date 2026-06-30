@@ -173,6 +173,16 @@ class ChunkingOptions:
         return arg_value if arg_value is not None else 0
 
     @cached_property
+    def max_page(self) -> Optional[int]:
+        """Maximum number of pages a chunk may span; `None` means no page-span limit.
+
+        Overridden by `_ByTitleChunkingOptions` to respect the `max_page` argument. The default
+        here is `None` so that `PreChunk.can_combine()` can check this property without needing to
+        know which chunking strategy is in use.
+        """
+        return None
+
+    @cached_property
     def hard_max(self) -> int:
         """The maximum size for a chunk (in characters or tokens depending on mode).
 
@@ -433,7 +443,7 @@ class PreChunker:
     - **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
       either side of those boundaries into different sections. In this case, the primary indicator
       of a semantic boundary is a `Title` element. A page-break (change in page-number) is also a
-      semantic boundary when `multipage_sections` is `False`.
+      semantic boundary when `max_page` is set.
 
     - **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
       into sections as big as possible without exceeding the chunk window size.
@@ -681,6 +691,17 @@ class PreChunk:
             return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
+        # -- refuse to combine when doing so would violate the max_page page-span limit.
+        # -- This prevents PreChunkCombiner from undoing boundaries placed by the
+        # -- `is_on_page_exceeding_max` predicate.
+        if self._opts.max_page is not None:
+            self_span = self._page_span
+            other_span = pre_chunk._page_span
+            if self_span is not None and other_span is not None:
+                combined_first = min(self_span[0], other_span[0])
+                combined_last = max(self_span[1], other_span[1])
+                if combined_last - combined_first + 1 > self._opts.max_page:
+                    return False
         # -- avoid duplicating length computations by doing a trial-combine which is just as
         # -- efficient and definitely more robust than hoping two different computations of combined
         # -- length continue to get the same answer as the code evolves. Only possible because
@@ -730,6 +751,20 @@ class PreChunk:
         """
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
+
+    @cached_property
+    def _page_span(self) -> tuple[int, int] | None:
+        """Return `(first_page, last_page)` across elements in this pre-chunk.
+
+        Returns `None` when no element carries a page number, in which case no page-span
+        enforcement is possible and the caller should not block combination on that basis.
+        """
+        pages = [
+            e.metadata.page_number
+            for e in self._elements
+            if e.metadata.page_number is not None
+        ]
+        return (min(pages), max(pages)) if pages else None
 
     def _iter_text_segments(self) -> Iterator[str]:
         """Generate overlap text and each element text segment in order.
@@ -1872,6 +1907,54 @@ def is_on_next_page() -> BoundaryPredicate:
         return True
 
     return page_number_incremented
+
+
+def is_on_page_exceeding_max(max_page: int) -> BoundaryPredicate:
+    """Returns a predicate that fires when a chunk would span more than `max_page` pages.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (chunk-start page and current page) that is particular to that stream.
+
+    The returned predicate tracks the page where the current chunk began. It fires (returns True)
+    when the current element's page number is more than `max_page - 1` pages past the chunk-start
+    page, i.e. when adding the element would make the chunk span more than `max_page` pages.
+
+    When it fires, it resets the chunk-start page to the current element's page so that the next
+    chunk begins fresh from that page.
+
+    A `Title` element resets the chunk-start page without firing, because the `is_title` predicate
+    already handles the boundary there; this keeps the two predicates consistent.
+    """
+    chunk_start_page: int = 1
+    current_page: int = 1
+    is_first: bool = True
+
+    def page_count_exceeded(element: Element) -> bool:
+        nonlocal chunk_start_page, current_page, is_first
+
+        page_number = element.metadata.page_number
+
+        if is_first:
+            current_page = page_number or 1
+            chunk_start_page = current_page
+            is_first = False
+            return False
+
+        if page_number is not None:
+            current_page = page_number
+
+        # A Title element resets the chunk-start page (is_title handles the actual boundary).
+        if isinstance(element, Title):
+            chunk_start_page = current_page
+            return False
+
+        if current_page - chunk_start_page >= max_page:
+            chunk_start_page = current_page
+            return True
+
+        return False
+
+    return page_count_exceeded
 
 
 def is_title(element: Element) -> bool:

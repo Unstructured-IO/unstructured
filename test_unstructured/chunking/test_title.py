@@ -275,7 +275,8 @@ def test_chunk_by_title_separates_by_page_number():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
 
     assert len(chunks) == 5
     assert chunks[0] == CompositeElement("A Great Day")
@@ -304,7 +305,8 @@ def test_chuck_by_title_respects_multipage():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
     assert len(chunks) == 4
     assert chunks[0] == CompositeElement(
         "A Great Day\n\nToday is a great day.\n\nIt is sunny outside."
@@ -333,7 +335,8 @@ def test_chunk_by_title_groups_across_pages():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
 
     assert len(chunks) == 4
     assert chunks[0] == CompositeElement(
@@ -347,6 +350,124 @@ def test_chunk_by_title_groups_across_pages():
     assert chunks[3] == CompositeElement(
         "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
     )
+
+
+def test_max_page_1_is_equivalent_to_multipage_sections_false():
+    """max_page=1 produces identical output to the deprecated multipage_sections=False."""
+    elements: list[Element] = [
+        Title("A Great Day", metadata=ElementMetadata(page_number=1)),
+        Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
+        Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+    ]
+
+    chunks_new = chunk_by_title(elements, max_page=1, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning):
+        chunks_old = chunk_by_title(
+            elements, multipage_sections=False, combine_text_under_n_chars=0
+        )
+
+    assert chunks_new == chunks_old
+
+
+def test_chunk_by_title_respects_max_page():
+    """A chunk is closed when its elements would span more than max_page pages."""
+    elements: list[Element] = [
+        Title("Section A", metadata=ElementMetadata(page_number=1)),
+        Text("Page one text.", metadata=ElementMetadata(page_number=1)),
+        Text("Page two text.", metadata=ElementMetadata(page_number=2)),
+        Text("Page three text.", metadata=ElementMetadata(page_number=3)),
+        Text("Page four text.", metadata=ElementMetadata(page_number=4)),
+        Text("Page five text.", metadata=ElementMetadata(page_number=5)),
+    ]
+
+    chunks = chunk_by_title(elements, max_page=2, combine_text_under_n_chars=0)
+
+    # max_page=2: chunk 1 covers pages 1-2, page 3 triggers new chunk covering pages 3-4,
+    # page 5 triggers another new chunk.
+    assert len(chunks) == 3
+    assert chunks[0] == CompositeElement(
+        "Section A\n\nPage one text.\n\nPage two text."
+    )
+    assert chunks[1] == CompositeElement("Page three text.\n\nPage four text.")
+    assert chunks[2] == CompositeElement("Page five text.")
+
+
+def test_chunk_by_title_max_page_resets_on_title():
+    """Title boundaries reset the max_page page-counter so each section is counted independently."""
+    elements: list[Element] = [
+        Title("Section A", metadata=ElementMetadata(page_number=1)),
+        Text("Page one.", metadata=ElementMetadata(page_number=1)),
+        Title("Section B", metadata=ElementMetadata(page_number=2)),
+        Text("Page two.", metadata=ElementMetadata(page_number=2)),
+        Text("Page three.", metadata=ElementMetadata(page_number=3)),
+        Text("Page four.", metadata=ElementMetadata(page_number=4)),
+    ]
+
+    chunks = chunk_by_title(elements, max_page=2, combine_text_under_n_chars=0)
+
+    # Section A: pages 1 only → 1 chunk.
+    # Section B: pages 2-3 (2 pages) → 1 chunk, then page 4 triggers a new chunk.
+    assert len(chunks) == 3
+    assert chunks[0] == CompositeElement("Section A\n\nPage one.")
+    assert chunks[1] == CompositeElement("Section B\n\nPage two.\n\nPage three.")
+    assert chunks[2] == CompositeElement("Page four.")
+
+
+def test_chunk_by_title_max_page_1_breaks_on_every_page():
+    """max_page=1 produces one chunk per page-group, breaking on every page change."""
+    elements: list[Element] = [
+        Title("Intro", metadata=ElementMetadata(page_number=1)),
+        Text("Page one.", metadata=ElementMetadata(page_number=1)),
+        Text("Page two.", metadata=ElementMetadata(page_number=2)),
+        Text("Page three.", metadata=ElementMetadata(page_number=3)),
+    ]
+
+    chunks = chunk_by_title(elements, max_page=1, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 3
+    assert chunks[0] == CompositeElement("Intro\n\nPage one.")
+    assert chunks[1] == CompositeElement("Page two.")
+    assert chunks[2] == CompositeElement("Page three.")
+
+
+def test_chunk_by_title_max_page_not_undone_by_combiner():
+    """PreChunkCombiner must not re-merge pre-chunks that were split by max_page.
+
+    By default combine_text_under_n_chars == max_characters (500). Without the page-span
+    guard in PreChunk.can_combine(), the combiner would merge small pre-chunks back
+    together, silently violating the max_page limit.
+    """
+    elements: list[Element] = [
+        Title("Section", metadata=ElementMetadata(page_number=1)),
+        Text("short", metadata=ElementMetadata(page_number=1)),
+        Text("short", metadata=ElementMetadata(page_number=2)),
+        Text("short", metadata=ElementMetadata(page_number=3)),
+        Text("short", metadata=ElementMetadata(page_number=4)),
+    ]
+
+    # Do NOT pass combine_text_under_n_chars=0 — that's the whole point: the combiner
+    # must be blocked by the max_page guard, not suppressed manually by the caller.
+    chunks = chunk_by_title(elements, max_page=2)
+
+    assert len(chunks) == 2
+    assert chunks[0] == CompositeElement("Section\n\nshort\n\nshort")
+    assert chunks[1] == CompositeElement("short\n\nshort")
+
+
+def test_chunk_by_title_max_page_none_does_not_add_page_boundary():
+    """Omitting max_page leaves all existing by-title behavior unchanged."""
+    elements: list[Element] = [
+        Title("Section", metadata=ElementMetadata(page_number=1)),
+        Text("Page one.", metadata=ElementMetadata(page_number=1)),
+        Text("Page five.", metadata=ElementMetadata(page_number=5)),
+    ]
+
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+
+    assert len(chunks) == 1
+    assert chunks[0] == CompositeElement("Section\n\nPage one.\n\nPage five.")
 
 
 def test_add_chunking_strategy_on_partition_html():
@@ -691,15 +812,45 @@ class Describe_ByTitleChunkingOptions:
 
         assert opts.soft_max == 200
 
+    def it_translates_multipage_sections_false_to_max_page_1(self):
+        """multipage_sections=False is internally translated to max_page=1."""
+        opts = _ByTitleChunkingOptions(multipage_sections=False)
+        assert opts.max_page == 1
+
+    def it_leaves_max_page_none_when_multipage_sections_is_true(self):
+        opts = _ByTitleChunkingOptions(multipage_sections=True)
+        assert opts.max_page is None
+
+    def it_prefers_max_page_over_multipage_sections_when_both_are_set(self):
+        """max_page takes priority; multipage_sections is ignored without error."""
+        opts = _ByTitleChunkingOptions(multipage_sections=False, max_page=3)
+        assert opts.max_page == 3
+
+    def it_emits_deprecation_warning_when_multipage_sections_is_used(self):
+        with pytest.warns(DeprecationWarning, match="multipage_sections.*deprecated"):
+            chunk_by_title([], multipage_sections=False)
+
+    def it_does_not_warn_when_multipage_sections_is_not_passed(self):
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            chunk_by_title([])  # should not raise
+
     @pytest.mark.parametrize(
-        ("multipage_sections", "expected_value"),
-        [(True, True), (False, False), (None, CHUNK_MULTI_PAGE_DEFAULT)],
+        ("max_page", "expected_value"),
+        [(1, 1), (3, 3), (None, None)],
     )
-    def it_knows_whether_to_break_chunks_on_page_boundaries(
-        self, multipage_sections: bool, expected_value: bool
+    def it_accepts_valid_max_page_values(
+        self, max_page: Optional[int], expected_value: Optional[int]
     ):
-        opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
-        assert opts.multipage_sections is expected_value
+        opts = _ByTitleChunkingOptions(max_page=max_page)
+        assert opts.max_page == expected_value
+
+    @pytest.mark.parametrize("max_page", [0, -1, -10])
+    def it_rejects_max_page_less_than_one(self, max_page: int):
+        with pytest.raises(ValueError, match=f"'max_page' argument must be >= 1, got {max_page}"):
+            _ByTitleChunkingOptions.new(max_page=max_page)
 
 
 # ================================================================================================
