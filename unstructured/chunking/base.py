@@ -1874,6 +1874,54 @@ def is_on_next_page() -> BoundaryPredicate:
     return page_number_incremented
 
 
+def is_on_page_exceeding_max(max_page: int) -> BoundaryPredicate:
+    """Returns a predicate that fires when a chunk would span more than `max_page` pages.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (chunk-start page and current page) that is particular to that stream.
+
+    The returned predicate tracks the page where the current chunk began. It fires (returns True)
+    when the current element's page number is more than `max_page - 1` pages past the chunk-start
+    page, i.e. when adding the element would make the chunk span more than `max_page` pages.
+
+    When it fires, it resets the chunk-start page to the current element's page so that the next
+    chunk begins fresh from that page.
+
+    A `Title` element resets the chunk-start page without firing, because the `is_title` predicate
+    already handles the boundary there; this keeps the two predicates consistent.
+    """
+    chunk_start_page: int = 1
+    current_page: int = 1
+    is_first: bool = True
+
+    def page_count_exceeded(element: Element) -> bool:
+        nonlocal chunk_start_page, current_page, is_first
+
+        page_number = element.metadata.page_number
+
+        if is_first:
+            current_page = page_number or 1
+            chunk_start_page = current_page
+            is_first = False
+            return False
+
+        if page_number is not None:
+            current_page = page_number
+
+        # A Title element resets the chunk-start page (is_title handles the actual boundary).
+        if isinstance(element, Title):
+            chunk_start_page = current_page
+            return False
+
+        if current_page - chunk_start_page >= max_page:
+            chunk_start_page = current_page
+            return True
+
+        return False
+
+    return page_count_exceeded
+
+
 def is_title(element: Element) -> bool:
     """True when `element` is a `Title` element, False otherwise."""
     return isinstance(element, Title)

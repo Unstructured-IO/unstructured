@@ -1,3 +1,9 @@
+## 0.23.4
+
+### Enhancements
+
+- **Add `max_page` parameter to `chunk_by_title` for page-count-bounded chunking**: `chunk_by_title()` now accepts an optional `max_page: int` argument. When set, a chunk is closed and a new one started whenever an element's page number is more than `max_page - 1` pages past the page where the current chunk began. This gives callers a hard upper bound on how many pages a single chunk may span, independent of character or token limits. A `Title` element always resets the page counter (it already starts a new chunk via the existing boundary logic), so each section's page span is counted independently. The constraint is additive — it combines with all other `by_title` boundaries. Must be `>= 1`; raises `ValueError` otherwise.
+
 ## 0.23.3
 
 ### Fixes

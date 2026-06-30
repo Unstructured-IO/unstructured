@@ -15,6 +15,7 @@ from unstructured.chunking.base import (
     PreChunkCombiner,
     PreChunker,
     is_on_next_page,
+    is_on_page_exceeding_max,
     is_title,
 )
 from unstructured.documents.elements import Element
@@ -26,6 +27,7 @@ def chunk_by_title(
     combine_text_under_n_chars: Optional[int] = None,
     include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
+    max_page: Optional[int] = None,
     max_tokens: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
     new_after_n_chars: Optional[int] = None,
@@ -61,6 +63,11 @@ def chunk_by_title(
     max_characters
         Chunks elements text and text_as_html (if present) into chunks of length
         n characters (hard max). Mutually exclusive with `max_tokens`.
+    max_page
+        Maximum number of pages a single chunk may span. When set, a new chunk is started whenever
+        an element's page number is more than `max_page - 1` pages past the page where the current
+        chunk began. Elements without a page number are assumed to continue the current page.
+        Must be >= 1 when specified.
     max_tokens
         Chunks elements into chunks of n tokens (hard max). Requires `tokenizer` to be specified.
         Mutually exclusive with `max_characters`.
@@ -102,6 +109,7 @@ def chunk_by_title(
         combine_text_under_n_chars=combine_text_under_n_chars,
         include_orig_elements=include_orig_elements,
         max_characters=max_characters,
+        max_page=max_page,
         max_tokens=max_tokens,
         multipage_sections=multipage_sections,
         new_after_n_chars=new_after_n_chars,
@@ -154,6 +162,8 @@ class _ByTitleChunkingOptions(ChunkingOptions):
             yield is_title
             if not self.multipage_sections:
                 yield is_on_next_page()
+            if self.max_page is not None:
+                yield is_on_page_exceeding_max(self.max_page)
 
         return tuple(iter_boundary_predicates())
 
@@ -168,6 +178,11 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
         arg_value = self._kwargs.get("combine_text_under_n_chars")
         return self.hard_max if arg_value is None else arg_value
+
+    @cached_property
+    def max_page(self) -> Optional[int]:
+        """Maximum number of pages a single chunk may span, or None for no page-count limit."""
+        return self._kwargs.get("max_page")
 
     @cached_property
     def multipage_sections(self) -> bool:
@@ -197,3 +212,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
                 f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
                 f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
             )
+
+        if self.max_page is not None and self.max_page < 1:
+            raise ValueError(f"'max_page' argument must be >= 1, got {self.max_page}")
