@@ -5,16 +5,15 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
+import warnings
 from functools import cached_property
 from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
-    CHUNK_MULTI_PAGE_DEFAULT,
     BoundaryPredicate,
     ChunkingOptions,
     PreChunkCombiner,
     PreChunker,
-    is_on_next_page,
     is_on_page_exceeding_max,
     is_title,
 )
@@ -67,12 +66,15 @@ def chunk_by_title(
         Maximum number of pages a single chunk may span. When set, a new chunk is started whenever
         an element's page number is more than `max_page - 1` pages past the page where the current
         chunk began. Elements without a page number are assumed to continue the current page.
-        Must be >= 1 when specified.
+        Subsumes `multipage_sections`: `max_page=None` is equivalent to `multipage_sections=True`
+        and `max_page=1` is equivalent to `multipage_sections=False`. Must be >= 1 when specified.
     max_tokens
         Chunks elements into chunks of n tokens (hard max). Requires `tokenizer` to be specified.
         Mutually exclusive with `max_characters`.
     multipage_sections
-        If True, sections can span multiple pages. Defaults to True.
+        Deprecated. Use `max_page` instead. `multipage_sections=False` is equivalent to
+        `max_page=1`; `multipage_sections=True` (the default) is equivalent to `max_page=None`.
+        Cannot be used together with `max_page`.
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max). Defaults to
         `max_characters` when not specified, which effectively disables any soft window.
@@ -105,6 +107,14 @@ def chunk_by_title(
         `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
         behavior).
     """
+    if multipage_sections is not None:
+        warnings.warn(
+            "'multipage_sections' is deprecated and will be removed in a future version. "
+            "Use 'max_page=1' instead of 'multipage_sections=False'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
         include_orig_elements=include_orig_elements,
@@ -144,24 +154,23 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         A remedy to over-chunking caused by elements mis-identified as Title elements.
         Every Title element would start a new chunk and this setting mitigates that, at the
         expense of sometimes violating legitimate semantic boundaries.
-    multipage_sections
-        Indicates that page-boundaries should not be respected while chunking, i.e. elements
-        appearing on two different pages can appear in the same chunk.
+    max_page
+        Hard upper bound on pages per chunk. `max_page=1` replicates the legacy
+        `multipage_sections=False` behaviour. `multipage_sections` is deprecated in favour of
+        this option.
     """
 
     @cached_property
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks.
 
-        For the `by_title` strategy these are sections indicated by a title (section-heading), an
-        explicit section metadata item (only present for certain document types), and optionally
-        page boundaries.
+        For the `by_title` strategy these are sections indicated by a title (section-heading) and,
+        when `max_page` is set, page-count boundaries. `max_page=1` subsumes the legacy
+        `multipage_sections=False` behaviour (break on every page change).
         """
 
         def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
             yield is_title
-            if not self.multipage_sections:
-                yield is_on_next_page()
             if self.max_page is not None:
                 yield is_on_page_exceeding_max(self.max_page)
 
@@ -181,15 +190,27 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
     @cached_property
     def max_page(self) -> Optional[int]:
-        """Maximum number of pages a single chunk may span, or None for no page-count limit."""
-        # -- overrides ChunkingOptions.max_page (which returns None) to read the caller's kwarg --
-        return self._kwargs.get("max_page")
+        """Maximum number of pages a single chunk may span, or None for no page-count limit.
+
+        `multipage_sections=False` (deprecated) is translated to `max_page=1` here so that
+        `boundary_predicates` and `PreChunk.can_combine()` have a single value to consult.
+        """
+        max_page_arg = self._kwargs.get("max_page")
+        if max_page_arg is not None:
+            return max_page_arg
+        # -- backward compat: multipage_sections=False → max_page=1 --
+        if self._kwargs.get("multipage_sections") is False:
+            return 1
+        return None
 
     @cached_property
     def multipage_sections(self) -> bool:
-        """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._kwargs.get("multipage_sections")
-        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
+        """Deprecated. Kept for backward compatibility; consult `max_page` instead.
+
+        Returns `False` only when `max_page == 1` (every page change starts a new chunk),
+        `True` in all other cases.
+        """
+        return self.max_page != 1
 
     def _validate(self) -> None:
         """Raise ValueError if request option-set is invalid."""
@@ -212,6 +233,17 @@ class _ByTitleChunkingOptions(ChunkingOptions):
             raise ValueError(
                 f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
                 f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
+            )
+
+        # -- `multipage_sections` and `max_page` are mutually exclusive --
+        if (
+            self._kwargs.get("multipage_sections") is not None
+            and self._kwargs.get("max_page") is not None
+        ):
+            raise ValueError(
+                "'multipage_sections' and 'max_page' cannot both be specified. "
+                "'multipage_sections' is deprecated — use 'max_page=1' instead of "
+                "'multipage_sections=False'."
             )
 
         if self.max_page is not None and self.max_page < 1:

@@ -275,7 +275,8 @@ def test_chunk_by_title_separates_by_page_number():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=False, combine_text_under_n_chars=0)
 
     assert len(chunks) == 5
     assert chunks[0] == CompositeElement("A Great Day")
@@ -304,7 +305,8 @@ def test_chuck_by_title_respects_multipage():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
     assert len(chunks) == 4
     assert chunks[0] == CompositeElement(
         "A Great Day\n\nToday is a great day.\n\nIt is sunny outside."
@@ -333,7 +335,8 @@ def test_chunk_by_title_groups_across_pages():
         Text("It is storming outside."),
         CheckBox(),
     ]
-    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning, match="multipage_sections"):
+        chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
 
     assert len(chunks) == 4
     assert chunks[0] == CompositeElement(
@@ -347,6 +350,25 @@ def test_chunk_by_title_groups_across_pages():
     assert chunks[3] == CompositeElement(
         "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside."
     )
+
+
+def test_max_page_1_is_equivalent_to_multipage_sections_false():
+    """max_page=1 produces identical output to the deprecated multipage_sections=False."""
+    elements: list[Element] = [
+        Title("A Great Day", metadata=ElementMetadata(page_number=1)),
+        Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
+        Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+    ]
+
+    chunks_new = chunk_by_title(elements, max_page=1, combine_text_under_n_chars=0)
+    with pytest.warns(DeprecationWarning):
+        chunks_old = chunk_by_title(
+            elements, multipage_sections=False, combine_text_under_n_chars=0
+        )
+
+    assert chunks_new == chunks_old
 
 
 def test_chunk_by_title_respects_max_page():
@@ -790,15 +812,29 @@ class Describe_ByTitleChunkingOptions:
 
         assert opts.soft_max == 200
 
-    @pytest.mark.parametrize(
-        ("multipage_sections", "expected_value"),
-        [(True, True), (False, False), (None, CHUNK_MULTI_PAGE_DEFAULT)],
-    )
-    def it_knows_whether_to_break_chunks_on_page_boundaries(
-        self, multipage_sections: bool, expected_value: bool
-    ):
-        opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
-        assert opts.multipage_sections is expected_value
+    def it_translates_multipage_sections_false_to_max_page_1(self):
+        """multipage_sections=False is internally translated to max_page=1."""
+        opts = _ByTitleChunkingOptions(multipage_sections=False)
+        assert opts.max_page == 1
+
+    def it_leaves_max_page_none_when_multipage_sections_is_true(self):
+        opts = _ByTitleChunkingOptions(multipage_sections=True)
+        assert opts.max_page is None
+
+    def it_raises_when_multipage_sections_and_max_page_are_both_set(self):
+        with pytest.raises(ValueError, match="cannot both be specified"):
+            _ByTitleChunkingOptions.new(multipage_sections=False, max_page=2)
+
+    def it_emits_deprecation_warning_when_multipage_sections_is_used(self):
+        with pytest.warns(DeprecationWarning, match="multipage_sections.*deprecated"):
+            chunk_by_title([], multipage_sections=False)
+
+    def it_does_not_warn_when_multipage_sections_is_not_passed(self):
+        import warnings
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            chunk_by_title([])  # should not raise
 
     @pytest.mark.parametrize(
         ("max_page", "expected_value"),
