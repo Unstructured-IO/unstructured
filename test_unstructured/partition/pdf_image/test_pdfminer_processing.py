@@ -30,6 +30,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     get_widget_text_from_annots,
     process_file_with_pdfminer,
     remove_duplicate_elements,
+    text_contains_invisible_text,
     text_is_embedded,
 )
 from unstructured.partition.utils.constants import Source
@@ -590,6 +591,24 @@ def test_text_is_embedded():
 
     assert text_is_embedded(container, threshold=0.5)
     assert not text_is_embedded(container, threshold=0.3)
+
+
+def test_text_contains_invisible_text():
+    visible_container = create_mock_ltcontainer(
+        [
+            create_mock_ltchar("H"),
+            create_mock_ltchar("i", rotated=True),
+        ],
+    )
+    invisible_container = create_mock_ltcontainer(
+        [
+            create_mock_ltchar("H"),
+            create_mock_ltchar("i", invisible=True),
+        ],
+    )
+
+    assert not text_contains_invisible_text(visible_container)
+    assert text_contains_invisible_text(invisible_container)
 
 
 # -- Tests for _deduplicate_ltchars (fake bold fix) --
