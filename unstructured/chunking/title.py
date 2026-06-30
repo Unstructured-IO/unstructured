@@ -110,7 +110,8 @@ def chunk_by_title(
     if multipage_sections is not None:
         warnings.warn(
             "'multipage_sections' is deprecated and will be removed in a future version. "
-            "Use 'max_page=1' instead of 'multipage_sections=False'.",
+            "Use 'max_page=1' instead of 'multipage_sections=False', "
+            "or omit 'max_page' entirely instead of 'multipage_sections=True'.",
             DeprecationWarning,
             stacklevel=2,
         )
