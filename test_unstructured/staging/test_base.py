@@ -592,6 +592,19 @@ def test_elements_to_md_conversion(json_filename: str, expected_md_filename: str
     ("element", "expected_markdown", "exclude_binary"),
     [
         (Title("Test Title"), "# Test Title", False),
+        (
+            Title("Second Level", metadata=ElementMetadata(category_depth=2)),
+            "## Second Level",
+            False,
+        ),
+        (
+            Title("Third Level", metadata=ElementMetadata(category_depth=3)),
+            "### Third Level",
+            False,
+        ),
+        (Title("No Depth"), "# No Depth", False),
+        (ListItem("Buy milk"), "- Buy milk", False),
+        (ListItem("Another item"), "- Another item", False),
         (NarrativeText("This is some narrative text."), "This is some narrative text.", False),
         (Formula(r"\int_a^b x^2 dx"), "$$\n\\int_a^b x^2 dx\n$$", False),
         (

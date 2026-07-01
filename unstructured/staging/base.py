@@ -18,6 +18,7 @@ from unstructured.documents.elements import (
     ElementMetadata,
     Formula,
     Image,
+    ListItem,
     Table,
     Title,
 )
@@ -278,8 +279,16 @@ def element_to_md(
     formula_markdown_style: str = FORMULA_MARKDOWN_AUTO,
 ) -> str:
     match element:
-        case Title(text=text):
-            return f"# {text}"
+        case Title(text=text, metadata=metadata):
+            depth = metadata.category_depth if metadata.category_depth else 1
+            if not isinstance(depth, int):
+                try:
+                    depth = int(depth) if isinstance(depth, (str, float)) else 1
+                except (TypeError, ValueError):
+                    depth = 1
+            return f"{'#' * depth} {text}"
+        case ListItem(text=text):
+            return f"- {text}"
         case Formula(text=text):
             return _emit_formula_markdown(
                 text,
