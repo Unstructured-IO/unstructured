@@ -528,16 +528,19 @@ def _process_pdfminer_pages(
 
             if hasattr(obj, "get_text"):
                 # Use deduplication to handle fake bold text (characters rendered twice)
-                _text_snippets: list[str] = [
-                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
+                _text_snippets: list[tuple[str, bool]] = [
+                    (
+                        get_text_with_deduplication(
+                            obj,
+                            env_config.PDF_CHAR_DUPLICATE_THRESHOLD,
+                        ),
+                        text_contains_invisible_text(obj),
+                    )
                 ]
-                contains_invisible_text = text_contains_invisible_text(obj)
             else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
-                contains_invisible_text = text_contains_invisible_text(obj)
+                _text_snippets = _split_pdfminer_text_by_paragraph(obj)
 
-            for _text in _text_snippets:
+            for _text, contains_invisible_text in _text_snippets:
                 _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
                 if _text.strip():
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
@@ -1266,6 +1269,69 @@ def _extract_text(item: LTItem) -> str:
         # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
         return "\n"
     return "\n"
+
+
+def _split_pdfminer_text_by_paragraph(item: LTItem) -> list[tuple[str, bool]]:
+    """Extract text snippets and keep invisible-text metadata scoped to each snippet."""
+
+    text_parts = _extract_text_parts(item)
+    if not text_parts:
+        return []
+
+    text = "".join(part_text for part_text, _ in text_parts)
+    split_spans = [(match.start(), match.end()) for match in re.finditer(PARAGRAPH_PATTERN, text)]
+    if not split_spans:
+        return [(text, any(invisible for _, invisible in text_parts))]
+
+    snippets: list[tuple[str, bool]] = []
+    cursor = 0
+    for split_start, split_end in split_spans:
+        snippets.append(
+            (
+                text[cursor:split_start],
+                _parts_have_invisible_text(text_parts, start=cursor, end=split_start),
+            )
+        )
+        cursor = split_end
+    snippets.append(
+        (
+            text[cursor:],
+            _parts_have_invisible_text(text_parts, start=cursor, end=len(text)),
+        )
+    )
+    return snippets
+
+
+def _extract_text_parts(item: LTItem) -> list[tuple[str, bool]]:
+    """Recursively extract text with its invisible-text flag from PDFMiner objects."""
+
+    if hasattr(item, "get_text"):
+        return [(item.get_text(), text_contains_invisible_text(item))]
+
+    if isinstance(item, LTContainer):
+        text_parts: list[tuple[str, bool]] = []
+        for child in item:
+            text_parts.extend(_extract_text_parts(child))
+        return text_parts
+
+    return [("\n", False)]
+
+
+def _parts_have_invisible_text(
+    text_parts: list[tuple[str, bool]],
+    *,
+    start: int,
+    end: int,
+) -> bool:
+    """Return True when any invisible text part overlaps the selected text span."""
+
+    part_start = 0
+    for part_text, invisible in text_parts:
+        part_end = part_start + len(part_text)
+        if invisible and part_start < end and part_end > start:
+            return True
+        part_start = part_end
+    return False
 
 
 # Some pages with a ICC color space do not follow the pdf spec
