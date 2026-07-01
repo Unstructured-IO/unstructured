@@ -461,7 +461,7 @@ def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_R
     """Check if text object contains too many low_fidelity text: invisible or rotated
 
     Low fidelity text means that even though the text is extracted from pdf data but its
-    representation in the partitioned elements may require post processing to make senmatic sense.
+    representation in the partitioned elements may require post processing to make semantic sense.
     This includes:
       - invisible text: text not rendered on the pdf are not present visually when reading the page
         so those texts may not be high quality information for understanding the page

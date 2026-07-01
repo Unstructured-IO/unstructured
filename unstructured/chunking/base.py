@@ -924,7 +924,8 @@ class _Chunker:
                                     seen.append(record)
                     yield field_name, merged
                 elif strategy is CS.ANY:
-                    yield field_name, any(values)
+                    known_values = [value for value in values if value is not None]
+                    yield field_name, any(known_values) if known_values else None
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover
