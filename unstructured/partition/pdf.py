@@ -11,7 +11,7 @@ from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
+from pdfminer.layout import LTContainer, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
@@ -1250,25 +1250,6 @@ def _process_uncategorized_text_elements(elements: list[Element]):
         out_elements.append(new_el)
 
     return out_elements
-
-
-def _extract_text(item: LTItem) -> str:
-    """Recursively extracts text from PDFMiner objects to account
-    for scenarios where the text is in a sub-container."""
-    if hasattr(item, "get_text"):
-        return item.get_text()
-
-    elif isinstance(item, LTContainer):
-        text = ""
-        for child in item:
-            text += _extract_text(child) or ""
-        return text
-
-    elif isinstance(item, (LTTextBox, LTImage)):
-        # TODO(robinson) - Support pulling text out of images
-        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
-        return "\n"
-    return "\n"
 
 
 def _split_pdfminer_text_by_paragraph(item: LTItem) -> list[tuple[str, bool]]:
