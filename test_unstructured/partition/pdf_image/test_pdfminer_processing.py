@@ -19,6 +19,7 @@ from unstructured_inference.inference.layoutelement import LayoutElements
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
+from unstructured.partition.pdf import _split_pdfminer_text_by_paragraph
 from unstructured.partition.pdf_image.pdfminer_processing import (
     _deduplicate_ltchars,
     _rotate_bboxes,
@@ -609,6 +610,37 @@ def test_text_contains_invisible_text():
 
     assert not text_contains_invisible_text(visible_container)
     assert text_contains_invisible_text(invisible_container)
+
+
+def test_split_pdfminer_text_by_paragraph_keeps_invisible_text_scoped_to_snippet():
+    visible_paragraph = create_mock_ltcontainer(
+        [
+            create_mock_ltchar("V"),
+            create_mock_ltchar("i"),
+            create_mock_ltchar("s"),
+            create_mock_ltchar("i"),
+            create_mock_ltchar("b"),
+            create_mock_ltchar("l"),
+            create_mock_ltchar("e"),
+            create_mock_ltchar("\n"),
+        ],
+    )
+    hidden_paragraph = create_mock_ltcontainer(
+        [
+            create_mock_ltchar("H", invisible=True),
+            create_mock_ltchar("i", invisible=True),
+            create_mock_ltchar("d", invisible=True),
+            create_mock_ltchar("d", invisible=True),
+            create_mock_ltchar("e", invisible=True),
+            create_mock_ltchar("n", invisible=True),
+        ],
+    )
+    container = create_mock_ltcontainer([visible_paragraph, hidden_paragraph])
+
+    assert _split_pdfminer_text_by_paragraph(container) == [
+        ("Visible", False),
+        ("Hidden", True),
+    ]
 
 
 # -- Tests for _deduplicate_ltchars (fake bold fix) --
