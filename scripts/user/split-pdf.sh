@@ -17,7 +17,20 @@ fi
 DEFAULT_DIR="$HOME/tmp/pdf-splits"
 PDF_SPLITS_DIR="${PDF_SPLITS_DIR:-$DEFAULT_DIR}"
 PDF_NAME=$(basename "$PDF_FILE" .pdf)
-MD5_SUM=$(md5sum "$PDF_FILE" | awk '{ print $1 }')
+
+checksum_file() {
+  local file="$1"
+  if command -v md5sum >/dev/null 2>&1; then
+    md5sum "$file" | awk '{ print $1 }'
+  elif command -v md5 >/dev/null 2>&1; then
+    md5 -q "$file"
+  else
+    echo "Error: neither md5sum nor md5 is available." >&2
+    exit 1
+  fi
+}
+
+MD5_SUM=$(checksum_file "$PDF_FILE")
 PDF_DIR="$PDF_SPLITS_DIR/$PDF_NAME-${MD5_SUM}_split-${SPLIT_SIZE}"
 
 # Create directory if it does not exist
