@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Usage: ./process-pdf-parallel-through-api.sh filename.pdf
-
 set -eu -o pipefail
 
 if [ $# -ne 1 ]; then
@@ -10,36 +8,48 @@ if [ $# -ne 1 ]; then
   echo "Usage: $0 <pdf_filename>"
   echo "Please provide a PDF filename as the first argument."
   echo
-  echo "Optionally, set the following env vars: "
+  echo "Required env vars:"
   echo
+  echo "* UNST_API_KEY"
+  echo
+  echo "Optionally, set the following env vars:"
+  echo
+  echo "* UNST_API_ENDPOINT (default https://api.unstructuredapp.io/general/v0/general)"
   echo "* STRATEGY (default hi_res)"
   echo "* BATCH_SIZE (default 30) as the number of parts (AKA splits) to process in parallel"
   echo "* PDF_SPLIT_PAGE_SIZE (default 10) as the number of pages per split"
+  echo "* PDF_SPLITS_DIR (default \$HOME/tmp/pdf-splits)"
   echo
-  echo "BATCH_SIZE=20 PDF_SPLIT_PAGE_SIZE=6 STRATEGY=hi_res ./process-pdf-parallel-through-api.sh example-docs/pdf/layout-parser-paper.pdf"
+  echo "UNST_API_KEY=<your-api-key> BATCH_SIZE=20 PDF_SPLIT_PAGE_SIZE=6 STRATEGY=hi_res ./process-pdf-parallel-through-api.sh example-docs/pdf/layout-parser-paper.pdf"
   exit 1
 fi
 
 ALLOWED_STRATEGIES=("hi_res" "fast" "auto")
+API_ENDPOINT=${UNST_API_ENDPOINT:-"https://api.unstructuredapp.io/general/v0/general"}
+STRATEGY=${STRATEGY:-hi_res}
+BATCH_SIZE=${BATCH_SIZE:-30}
+DEFAULT_SPLIT_SIZE=10
+SPLIT_SIZE=${PDF_SPLIT_PAGE_SIZE:-$DEFAULT_SPLIT_SIZE}
+DEFAULT_DIR="$HOME/tmp/pdf-splits"
+PDF_SPLITS_DIR="${PDF_SPLITS_DIR:-$DEFAULT_DIR}"
 
 # Validate STRATEGY environment variable if it's set
-if [ -n "${STRATEGY:-}" ] && [[ ! " ${ALLOWED_STRATEGIES[*]} " =~ ${STRATEGY} ]]; then
-  echo "Error: STRATEGY must be one of ${ALLOWED_STRATEGIES[*]}" >&2
-  exit 1
-fi
+case " ${ALLOWED_STRATEGIES[*]} " in
+  *" ${STRATEGY} "*) ;;
+  *)
+    echo "Error: STRATEGY must be one of ${ALLOWED_STRATEGIES[*]}" >&2
+    exit 1
+    ;;
+esac
 
 # Check if UNST_API_KEY is set
-if [ -z "${UNST_API_KEY}" ]; then
+if [ -z "${UNST_API_KEY:-}" ]; then
   echo "Error: UNST_API_KEY is not set or is empty" >&2
   exit 1
 fi
 
 PDF_FILE="$1"
-DEFAULT_SPLIT_SIZE=10
-SPLIT_SIZE=${PDF_SPLIT_PAGE_SIZE:-$DEFAULT_SPLIT_SIZE}
 PDF_NAME=$(basename "$PDF_FILE" .pdf)
-DEFAULT_DIR="$HOME/tmp/pdf-splits"
-PDF_SPLITS_DIR="${PDF_SPLITS_DIR:-$DEFAULT_DIR}"
 MD5_SUM=$(md5sum "$PDF_FILE" | awk '{ print $1 }')
 PDF_DIR="$PDF_SPLITS_DIR/$PDF_NAME-${MD5_SUM}_split-${SPLIT_SIZE}"
 PDF_OUTPUT_DIR="$PDF_SPLITS_DIR/${PDF_NAME}-output-${MD5_SUM}_split-${SPLIT_SIZE}_strat-${STRATEGY}"
@@ -67,11 +77,11 @@ process_file_part() {
     return
   fi
 
-  curl -q -X POST https://api.unstructuredapp.io/general/v0/general \
+  curl -q -X POST "$API_ENDPOINT" \
     -H "unstructured-api-key: $UNST_API_KEY" \
     -H 'accept: application/json' \
     -H 'Content-Type: multipart/form-data' \
-    -F strategy="${STRATEGY:-hi_res}" \
+    -F strategy="${STRATEGY}" \
     -F 'skip_infer_table_types="[]"' \
     -F starting_page_number="$STARTING_PAGE_NUMBER" \
     -F files=@"$file;filename=$PDF_FILE" \
@@ -101,11 +111,15 @@ process_batch() {
   wait
 }
 
-# Read PDF parts into an array
-mapfile -t pdf_parts < <(find "$PDF_DIR" -name '*.pdf' -print)
+# Read PDF parts into an array. Avoid mapfile so the script works with the
+# default Bash 3.2 shipped on macOS.
+pdf_parts=()
+while IFS= read -r -d '' pdf_part; do
+  pdf_parts+=("$pdf_part")
+done < <(find "$PDF_DIR" -name '*.pdf' -print0)
 
 # Process PDF parts in batches of 30, by default
-batch_size=${BATCH_SIZE:-30}
+batch_size=${BATCH_SIZE}
 for ((i = 0; i < ${#pdf_parts[@]}; i += batch_size)); do
   process_batch "${pdf_parts[@]:i:batch_size}"
 done
