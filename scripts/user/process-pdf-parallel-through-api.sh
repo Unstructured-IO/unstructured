@@ -42,6 +42,16 @@ case " ${ALLOWED_STRATEGIES[*]} " in
     ;;
 esac
 
+if ! [[ "$BATCH_SIZE" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: BATCH_SIZE must be a positive integer." >&2
+  exit 1
+fi
+
+if ! [[ "$SPLIT_SIZE" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: PDF_SPLIT_PAGE_SIZE must be a positive integer." >&2
+  exit 1
+fi
+
 # Check if UNST_API_KEY is set
 if [ -z "${UNST_API_KEY:-}" ]; then
   echo "Error: UNST_API_KEY is not set or is empty" >&2
@@ -64,6 +74,10 @@ checksum_file() {
 }
 
 MD5_SUM=$(checksum_file "$PDF_FILE")
+if [ -z "$MD5_SUM" ]; then
+  echo "Error: could not compute checksum for $PDF_FILE." >&2
+  exit 1
+fi
 PDF_DIR="$PDF_SPLITS_DIR/$PDF_NAME-${MD5_SUM}_split-${SPLIT_SIZE}"
 PDF_OUTPUT_DIR="$PDF_SPLITS_DIR/${PDF_NAME}-output-${MD5_SUM}_split-${SPLIT_SIZE}_strat-${STRATEGY}"
 

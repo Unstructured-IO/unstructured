@@ -8,9 +8,9 @@ PDF_FILE="$1"
 DEFAULT_SPLIT_SIZE=5
 SPLIT_SIZE=${PDF_SPLIT_PAGE_SIZE:-$DEFAULT_SPLIT_SIZE}
 
-# Validate that SPLIT_SIZE is an integer
-if ! [[ "$SPLIT_SIZE" =~ ^[0-9]+$ ]]; then
-  echo "Error: PDF_SPLIT_PAGE_SIZE must be an integer."
+# Validate that SPLIT_SIZE is a positive integer.
+if ! [[ "$SPLIT_SIZE" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: PDF_SPLIT_PAGE_SIZE must be a positive integer."
   exit 1
 fi
 
@@ -31,6 +31,10 @@ checksum_file() {
 }
 
 MD5_SUM=$(checksum_file "$PDF_FILE")
+if [ -z "$MD5_SUM" ]; then
+  echo "Error: could not compute checksum for $PDF_FILE." >&2
+  exit 1
+fi
 PDF_DIR="$PDF_SPLITS_DIR/$PDF_NAME-${MD5_SUM}_split-${SPLIT_SIZE}"
 
 # Create directory if it does not exist
