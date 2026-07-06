@@ -140,7 +140,11 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
     if allow_private or _env_allows_private():
         return
 
-    parsed = urlparse(url)
+    try:
+        parsed = urlparse(url)
+        _ = parsed.port  # out-of-range ports raise ValueError here, not later
+    except ValueError as exc:
+        raise UnsafeURLError("URL could not be parsed") from exc
 
     if parsed.scheme not in ("http", "https"):
         raise UnsafeURLError(
@@ -168,7 +172,7 @@ def _validate_url(url: str, allow_private: bool = False) -> None:
     # _SafeHTTPConnection — this one just avoids a wasted TCP handshake.
     try:
         results = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
-    except socket.gaierror as exc:
+    except (socket.gaierror, UnicodeError, ValueError) as exc:
         raise UnsafeURLError("Failed to resolve hostname") from exc
 
     for _family, _socktype, _proto, _canonname, sockaddr in results:
@@ -307,6 +311,41 @@ class _SafeHTTPAdapter(HTTPAdapter):
 
 
 # ---------------------------------------------------------------------------
+# Cross-origin redirect handling
+# ---------------------------------------------------------------------------
+
+
+# Credential-bearing headers that must not carry to a new origin on redirect.
+_REDIRECT_SENSITIVE_HEADERS = frozenset({"authorization", "cookie", "proxy-authorization"})
+
+# Stateless holder for requests' own redirect-auth logic; issues no requests.
+_REDIRECT_AUTH_PROBE = requests.Session()
+
+
+def _is_cross_origin(old_url: str, new_url: str) -> bool:
+    """Return True when credential material must not carry from *old_url* to *new_url*.
+
+    Delegates to :meth:`requests.Session.should_strip_auth`; fails safe (strip)
+    on unparseable input.
+    """
+    try:
+        return _REDIRECT_AUTH_PROBE.should_strip_auth(old_url, new_url)
+    except ValueError:
+        return True
+
+
+def _strip_sensitive_headers(kwargs: dict) -> None:
+    """Drop credential headers and the ``auth``/``cookies`` kwargs before a cross-origin hop."""
+    headers = kwargs.get("headers")
+    if headers:
+        kwargs["headers"] = {
+            k: v for k, v in headers.items() if k.lower() not in _REDIRECT_SENSITIVE_HEADERS
+        }
+    kwargs.pop("auth", None)
+    kwargs.pop("cookies", None)
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
 
@@ -368,6 +407,9 @@ def safe_get(
 
             new_url = urljoin(response.url, location)
             _validate_url(new_url, allow_private=allow_private)
+            # Drop credential material on cross-origin hops (matches requests).
+            if _is_cross_origin(url, new_url):
+                _strip_sensitive_headers(kwargs)
             url = new_url
         raise UnsafeURLError(f"Too many redirects (>{_MAX_REDIRECTS})")
     finally:

@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-- **Centralize outbound URL fetching**: `partition`, `partition_html`, and `partition_md` now route `url=` fetches through a single shared helper (`unstructured/safe_http.py`) instead of ad-hoc `requests.get` calls. The helper applies an `http`/`https` scheme allowlist, a hostname denylist with IDNA normalization, address validation performed at connect time, manual redirect handling with per-hop re-validation, refusal of proxied requests, and a default `(connect, read)` timeout. **Behavior change:** fetches that resolve to non-routable, loopback, or link-local addresses are now rejected by default. Set `UNSTRUCTURED_ALLOW_PRIVATE_URL=1` (or pass `allow_private=True`) to opt out for controlled local usage.
+- **Centralize outbound URL fetching**: `partition`, `partition_html`, and `partition_md` now route `url=` fetches through a single shared helper (`unstructured/safe_http.py`) instead of ad-hoc `requests.get` calls. The helper applies an `http`/`https` scheme allowlist, a hostname denylist with IDNA normalization, address validation performed at connect time, manual redirect handling with per-hop re-validation (dropping credential material on cross-origin hops), refusal of proxied requests, and a default `(connect, read)` timeout. **Behavior change:** fetches that resolve to non-routable, loopback, or link-local addresses are now rejected by default. Set `UNSTRUCTURED_ALLOW_PRIVATE_URL=1` (or pass `allow_private=True`) to opt out for controlled local usage.
 
 ## 0.23.3
 

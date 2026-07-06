@@ -9,10 +9,12 @@ import requests
 
 from unstructured.safe_http import (
     UnsafeURLError,
+    _is_cross_origin,
     _is_ip_blocked,
     _normalize_hostname,
     _safe_create_connection,
     _SafeHTTPAdapter,
+    _strip_sensitive_headers,
     _validate_url,
     safe_get,
 )
@@ -134,6 +136,16 @@ class Describe_validate_url:
     def test_rejects_missing_hostname(self):
         with pytest.raises(UnsafeURLError, match="hostname"):
             _validate_url("http://")
+
+    @pytest.mark.parametrize(
+        "url",
+        ["http://example.com:65536/", "http://example.com:99999/"],
+        ids=["over_max", "way_over"],
+    )
+    def test_rejects_out_of_range_port(self, url: str):
+        # Out-of-range ports must fail closed as UnsafeURLError, not leak later.
+        with pytest.raises(UnsafeURLError):
+            _validate_url(url)
 
     @pytest.mark.parametrize(
         "hostname",
@@ -409,3 +421,74 @@ class Describe_SafeHTTPAdapter:
         adapter = _SafeHTTPAdapter()
         with pytest.raises(UnsafeURLError, match="Proxied requests"):
             adapter.proxy_manager_for("http://proxy:8080")
+
+
+# ---------------------------------------------------------------------------
+# _is_cross_origin / _strip_sensitive_headers (redirect credential handling)
+# ---------------------------------------------------------------------------
+
+
+class Describe_is_cross_origin:
+    def test_same_origin_not_cross(self):
+        assert _is_cross_origin("https://example.com/a", "https://example.com/b") is False
+
+    def test_different_host_is_cross(self):
+        assert _is_cross_origin("https://a.com/", "https://b.com/") is True
+
+    def test_http_to_https_upgrade_is_not_cross(self):
+        assert _is_cross_origin("http://example.com/", "https://example.com/") is False
+
+    def test_downgrade_on_same_nondefault_port_is_cross(self):
+        assert _is_cross_origin("https://host:9000/a", "http://host:9000/b") is True
+
+    def test_explicit_default_port_same_origin_not_cross(self):
+        assert _is_cross_origin("https://example.com:443/a", "https://example.com/b") is False
+
+    def test_unparseable_port_fails_safe(self):
+        assert _is_cross_origin("http://a.com:abc/", "http://a.com/") is True
+
+
+class Describe_strip_sensitive_headers:
+    def test_removes_credential_headers(self):
+        kwargs = {
+            "headers": {
+                "Authorization": "Bearer x",
+                "Cookie": "s=y",
+                "Proxy-Authorization": "Basic z",
+                "User-Agent": "tests",
+            }
+        }
+        _strip_sensitive_headers(kwargs)
+        assert kwargs["headers"] == {"User-Agent": "tests"}
+
+    def test_removes_auth_and_cookies_kwargs(self):
+        kwargs = {"auth": ("u", "p"), "cookies": {"s": "y"}, "timeout": 5}
+        _strip_sensitive_headers(kwargs)
+        assert "auth" not in kwargs
+        assert "cookies" not in kwargs
+        assert kwargs["timeout"] == 5
+
+    def test_no_headers_is_noop(self):
+        kwargs: dict = {}
+        _strip_sensitive_headers(kwargs)
+        assert kwargs == {}
+
+
+class Describe_safe_get_redirect_auth_strip:
+    @patch("unstructured.safe_http.socket.getaddrinfo")
+    @patch("unstructured.safe_http.requests.Session")
+    def test_strips_credentials_on_cross_origin_redirect(self, MockSession, mock_getaddrinfo):
+        mock_getaddrinfo.return_value = [(2, 1, 6, "", ("93.184.216.34", 0))]
+        redirect_response = MagicMock(spec=requests.Response)
+        redirect_response.is_redirect = True
+        redirect_response.headers = {"Location": "https://evil.com/x"}
+        redirect_response.url = "https://trusted.com/doc"
+        final_response = MagicMock(spec=requests.Response)
+        final_response.is_redirect = False
+        session_instance = MockSession.return_value
+        session_instance.get.side_effect = [redirect_response, final_response]
+
+        safe_get("https://trusted.com/doc", headers={"Authorization": "Bearer secret"})
+
+        second_call_headers = session_instance.get.call_args_list[1][1].get("headers", {})
+        assert "Authorization" not in second_call_headers
