@@ -7,7 +7,6 @@ import importlib
 import io
 from typing import IO, Any, Callable, Optional
 
-import requests
 from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
@@ -22,6 +21,7 @@ from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.safe_http import safe_get
 from unstructured.utils import dependency_exists
 
 Partitioner: TypeAlias = Callable[..., list[Element]]
@@ -307,7 +307,7 @@ def file_and_type_from_url(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
 ) -> tuple[io.BytesIO, FileType]:
-    response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
+    response = safe_get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
     if content_type := content_type or response.headers.get("Content-Type", None):
