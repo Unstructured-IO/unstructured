@@ -108,8 +108,8 @@ def test_partition_html_accepts_an_html_str():
     assert len(elements) > 0
 
 
-def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_html_accepts_a_url_to_an_HTML_document(safe_get_: Mock):
+    safe_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),
         status_code=200,
         headers={"Content-Type": "text/html"},
@@ -117,7 +117,7 @@ def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
 
     elements = partition_html(url="https://fake.url")
 
-    requests_get_.assert_called_once_with("https://fake.url", headers={}, verify=True)
+    safe_get_.assert_called_once_with("https://fake.url", headers={}, verify=True)
     assert len(elements) > 0
 
 
@@ -212,8 +212,8 @@ def test_emoji_appears_with_emoji_utf8_code():
 # -- partition_html() from URL -------------------------------------------------------------------
 
 
-def test_partition_html_from_url_raises_on_failure_response_status_code(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_html_from_url_raises_on_failure_response_status_code(safe_get_: Mock):
+    safe_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),
         status_code=500,
         headers={"Content-Type": "text/html"},
@@ -223,8 +223,8 @@ def test_partition_html_from_url_raises_on_failure_response_status_code(requests
         partition_html(url="https://fake.url")
 
 
-def test_partition_html_from_url_raises_on_response_of_wrong_content_type(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_html_from_url_raises_on_response_of_wrong_content_type(safe_get_: Mock):
+    safe_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),
         status_code=200,
         headers={"Content-Type": "application/json"},
@@ -234,8 +234,8 @@ def test_partition_html_from_url_raises_on_response_of_wrong_content_type(reques
         partition_html(url="https://fake.url")
 
 
-def test_partition_from_url_includes_provided_headers_in_request(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_from_url_includes_provided_headers_in_request(safe_get_: Mock):
+    safe_get_.return_value = FakeResponse(
         text="<html><head></head><body><p>What do I know? Who needs to know it?</p></body></html>",
         status_code=200,
         headers={"Content-Type": "text/html"},
@@ -243,7 +243,7 @@ def test_partition_from_url_includes_provided_headers_in_request(requests_get_: 
 
     partition_html(url="https://example.com", headers={"User-Agent": "test"})
 
-    requests_get_.assert_called_once_with(
+    safe_get_.assert_called_once_with(
         "https://example.com", headers={"User-Agent": "test"}, verify=True
     )
 
@@ -1211,8 +1211,8 @@ def test_partition_html_applies_text_as_html_metadata_for_tables(
 # -- .metadata.url -------------------------------------------------------------------------------
 
 
-def test_partition_html_from_url_adds_url_to_metadata(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_html_from_url_adds_url_to_metadata(safe_get_: Mock):
+    safe_get_.return_value = FakeResponse(
         text=example_doc_text("example-10k-1p.html"),
         status_code=200,
         headers={"Content-Type": "text/html"},
@@ -1220,7 +1220,7 @@ def test_partition_html_from_url_adds_url_to_metadata(requests_get_: Mock):
 
     elements = partition_html(url="https://trusttheforceluke.com")
 
-    requests_get_.assert_called_once_with("https://trusttheforceluke.com", headers={}, verify=True)
+    safe_get_.assert_called_once_with("https://trusttheforceluke.com", headers={}, verify=True)
     assert len(elements) > 0
     assert all(e.metadata.url == "https://trusttheforceluke.com" for e in elements)
 
@@ -1273,8 +1273,8 @@ def opts_args() -> dict[str, Any]:
 
 
 @pytest.fixture
-def requests_get_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.partition.html.partition.requests.get")
+def safe_get_(request: pytest.FixtureRequest):
+    return function_mock(request, "unstructured.partition.html.partition.safe_get")
 
 
 # ================================================================================================
@@ -1334,9 +1334,9 @@ class DescribeHtmlPartitionerOptions:
         assert opts.html_text == "<html><body><p>Hello World!</p></body></html>"
 
     def and_it_gets_the_HTML_from_the_url_when_one_is_provided(
-        self, requests_get_: Mock, opts_args: dict[str, Any]
+        self, safe_get_: Mock, opts_args: dict[str, Any]
     ):
-        requests_get_.return_value = FakeResponse(
+        safe_get_.return_value = FakeResponse(
             text="<html><body><p>I just flew over the internet!</p></body></html>",
             status_code=200,
             headers={"Content-Type": "text/html"},

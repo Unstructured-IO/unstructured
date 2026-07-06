@@ -1,3 +1,9 @@
+## 0.24.0
+
+### Fixes
+
+- **Validate outbound URLs against SSRF (`partition(url=...)`, `partition_html`, `partition_md`)**: the `url=` fetch paths previously called `requests.get` directly with no host validation — and, for two of the three, no timeout — letting a caller-supplied URL reach loopback/private/link-local/cloud-metadata addresses and return the response body (a full-read server-side request forgery). Fetches now route through a shared `unstructured.safe_http.safe_get`, which enforces an `http`/`https` scheme allowlist, blocks non-routable/internal targets using the *resolved* IP checked at TCP-connect time (closing the DNS-rebinding window), follows redirects manually with per-hop re-validation and credential-header stripping on cross-origin hops, and applies a default `(connect, read)` timeout. **Behavior change (hence the minor bump):** fetches resolving to non-routable, loopback, or link-local addresses are now rejected by default; set `UNSTRUCTURED_ALLOW_PRIVATE_URL=1` (or pass `allow_private=True`) to opt out for controlled internal usage.
+
 ## 0.23.3
 
 ### Fixes
