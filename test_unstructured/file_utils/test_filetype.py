@@ -644,6 +644,14 @@ def and_it_classifies_a_single_line_array_as_JSON():
     assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
 
 
+def and_it_falls_back_to_JSON_when_multiple_lines_are_not_all_JSON_values():
+    # -- an asserted-JSON payload that neither whole-parses nor line-parses exercises the
+    # -- per-line except fallback: not valid JSON, not valid NDJSON -> FileType.JSON --
+    payload = b'not json at all\n{"sku": "GRD-8842"}\n'
+    filetype = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+    assert filetype == FileType.JSON
+
+
 def it_classifies_multiple_json_object_lines_as_NDJSON():
     payload = b'{"sku": "GRD-8842"}\n{"sku": "GRD-1290"}\n{"sku": "GRD-3317"}\n'
     assert detect_filetype(file=io.BytesIO(payload)) == FileType.NDJSON

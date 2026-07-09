@@ -199,6 +199,11 @@ def test_partition_json_works_with_empty_string():
     assert partition_json(text="") == []
 
 
+def test_partition_json_works_with_a_whitespace_only_file():
+    # -- the file= route reaches the in-body empty-document guard (text="" is caught earlier) --
+    assert partition_json(file=io.BytesIO(b"  \n ")) == []
+
+
 def test_partition_json_works_with_empty_object():
     # -- an empty object yields no elements, mirroring the empty-list behavior --
     assert partition_json(text="{}") == []

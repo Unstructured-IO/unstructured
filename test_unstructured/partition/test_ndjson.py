@@ -191,6 +191,11 @@ def test_partition_ndjson_works_with_empty_string():
     assert partition_ndjson(text="") == []
 
 
+def test_partition_ndjson_works_with_a_blank_lines_only_file():
+    # -- the file= route reaches the no-parsed-values guard (text="" is caught earlier) --
+    assert partition_ndjson(file=io.BytesIO(b"\n  \n")) == []
+
+
 def test_partition_ndjson_emits_Text_element_for_an_empty_object_line():
     # -- arbitrary NDJSON yields one `Text` element per line, even when the line is `{}` --
     assert partition_ndjson(text="{}") == [Text(text="{}")]
