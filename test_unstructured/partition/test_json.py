@@ -10,7 +10,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.documents.elements import CompositeElement
+from unstructured.documents.elements import CompositeElement, Text, Title
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -187,9 +187,9 @@ def test_partition_json_works_with_empty_string():
     assert partition_json(text="") == []
 
 
-def test_partition_json_fails_with_empty_item():
-    with pytest.raises(ValueError):
-        partition_json(text="{}")
+def test_partition_json_works_with_empty_object():
+    # -- an empty object yields no elements, mirroring the empty-list behavior --
+    assert partition_json(text="{}") == []
 
 
 def test_partition_json_works_with_empty_list():
@@ -293,21 +293,102 @@ def test_partition_json_from_text_prefers_metadata_last_modified():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_partition_json_raises_with_unprocessable_json_array():
+def test_partition_json_emits_Text_elements_for_non_element_json_array():
+    # -- an array that does not conform to the Unstructured element schema partitions as
+    # -- arbitrary JSON, one `Text` element per object --
     text = '[{"invalid": "schema"}]'
-    with pytest.raises(ValueError):
-        partition_json(text=text)
+
+    elements = partition_json(text=text)
+
+    assert elements == [Text(text='{\n  "invalid": "schema"\n}')]
 
 
-def test_partition_json_raises_with_unprocessable_json():
-    # NOTE(robinson) - This is unprocessable because it is not a list of dicts,
-    # per the Unstructured ISD format
+def test_partition_json_emits_Text_element_for_non_element_json_object():
+    # -- an object is not a list of element-dicts, so it partitions as arbitrary JSON --
     text = '{"hi": "there"}'
-    with pytest.raises(ValueError):
-        partition_json(text=text)
+
+    elements = partition_json(text=text)
+
+    assert elements == [Text(text='{\n  "hi": "there"\n}')]
 
 
 def test_partition_json_raises_with_invalid_json():
     text = '[{"hi": "there"}]]'
     with pytest.raises(ValueError):
         partition_json(text=text)
+
+
+# -- arbitrary (non-element-schema) JSON ---------------------------------------------------------
+
+
+def it_partitions_an_arbitrary_json_object_into_a_single_Text_element():
+    elements = partition_json(text='{"make": "Fabrikam", "model": "F-100"}')
+
+    assert elements == [Text(text='{\n  "make": "Fabrikam",\n  "model": "F-100"\n}')]
+
+
+def and_it_preserves_deeply_nested_values_in_the_pretty_printed_text():
+    text = '{"site": {"address": {"city": "Springfield"}}}'
+
+    elements = partition_json(text=text)
+
+    assert len(elements) == 1
+    assert "Springfield" in elements[0].text
+
+
+def it_partitions_an_array_of_objects_into_one_Text_element_per_object_in_order():
+    text = '[{"sku": "A-100"}, {"sku": "B-200"}]'
+
+    elements = partition_json(text=text)
+
+    assert elements == [Text(text='{\n  "sku": "A-100"\n}'), Text(text='{\n  "sku": "B-200"\n}')]
+
+
+def and_it_partitions_an_arbitrary_json_array_file_from_disk():
+    elements = partition_json(example_doc_path("arbitrary-records.json"))
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert "Watering Can" in elements[1].text
+
+
+def it_partitions_an_array_of_scalars_into_a_single_Text_element():
+    elements = partition_json(text="[1, 2, 3]")
+
+    assert elements == [Text(text="[\n  1,\n  2,\n  3\n]")]
+
+
+def and_it_partitions_a_mixed_type_array_into_a_single_Text_element():
+    elements = partition_json(text='[{"a": 1}, 2]')
+
+    assert elements == [Text(text='[\n  {\n    "a": 1\n  },\n  2\n]')]
+
+
+def it_partitions_a_top_level_scalar_into_a_single_Text_element():
+    elements = partition_json(text='"hello"')
+
+    assert elements == [Text(text='"hello"')]
+
+
+def it_rehydrates_an_element_shaped_array_instead_of_treating_it_as_arbitrary_json():
+    # -- documented v1 limitation: an array of customer records that happens to match the
+    # -- serialized-element schema is indistinguishable from Unstructured output, so it
+    # -- rehydrates as elements rather than partitioning as arbitrary JSON --
+    elements = partition_json(text='[{"type": "Title", "text": "x"}]')
+
+    assert elements == [Title(text="x")]
+
+
+def but_it_partitions_an_element_typed_object_with_no_text_field_as_arbitrary_json():
+    # -- the other side of the limitation: a recognized element "type" without a "text" field
+    # -- cannot rehydrate, so the payload falls through and partitions as arbitrary JSON --
+    elements = partition_json(text='[{"type": "Title"}]')
+
+    assert elements == [Text(text='{\n  "type": "Title"\n}')]
+
+
+def it_chunks_arbitrary_json_when_a_chunking_strategy_is_specified():
+    chunks = partition_json(text='{"hi": "there"}', chunking_strategy="basic")
+
+    assert len(chunks) == 1
+    assert all(isinstance(chunk, CompositeElement) for chunk in chunks)

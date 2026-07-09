@@ -411,17 +411,54 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
-def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
+def test_auto_partition_routes_single_line_json_object_to_json_not_ndjson(tmp_path: pathlib.Path):
+    # -- a compact single-line object is one JSON value, so it routes to JSON even though it is
+    # -- also valid one-record NDJSON. It is not an array of element-dicts, so it partitions as
+    # -- arbitrary JSON rather than rehydrating. --
     text = '{"text": "hello", "type": "NarrativeText"}'
 
-    file_path = str(tmp_path / "unprocessable.json")
+    file_path = str(tmp_path / "single-line-object.json")
     with open(file_path, "w") as f:
         f.write(text)
 
     result = partition(filename=file_path)
-    assert len(result) == 1
-    assert isinstance(result[0], NarrativeText)
-    assert "hello" in result[0].text
+
+    assert result == [Text(text='{\n  "text": "hello",\n  "type": "NarrativeText"\n}')]
+    assert result[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_arbitrary_json_object_to_partition_json():
+    elements = partition(example_doc_path("not-unstructured-payload.json"))
+
+    expected_text = json.dumps(
+        {"id": "Sample-1", "name": "Sample 1", "description": "This is sample data #1"},
+        indent=2,
+        sort_keys=True,
+    )
+    assert elements == [Text(text=expected_text)]
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_compact_single_line_json_object_fixture_to_json():
+    file_path = example_doc_path("single-line-object.json")
+
+    assert detect_filetype(file_path) == FileType.JSON
+
+    elements = partition(file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].metadata.filetype == "application/json"
+    assert "Garden Trowel" in elements[0].text
+
+
+def test_auto_partition_routes_arbitrary_ndjson_to_partition_ndjson():
+    elements = partition(example_doc_path("arbitrary-records.ndjson"))
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+    assert "Watering Can" in elements[1].text
 
 
 # ================================================================================================

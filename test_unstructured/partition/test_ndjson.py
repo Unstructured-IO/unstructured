@@ -10,7 +10,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.documents.elements import CompositeElement
+from unstructured.documents.elements import CompositeElement, Text, Title
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -189,14 +189,13 @@ def test_partition_ndjson_works_with_empty_string():
     assert partition_ndjson(text="") == []
 
 
-def test_partition_ndjson_fails_with_empty_item():
-    with pytest.raises(ValueError):
-        partition_ndjson(text="{}")
+def test_partition_ndjson_emits_Text_element_for_an_empty_object_line():
+    # -- arbitrary NDJSON yields one `Text` element per line, even when the line is `{}` --
+    assert partition_ndjson(text="{}") == [Text(text="{}")]
 
 
-def test_partition_ndjson_fails_with_empty_list():
-    with pytest.raises(ValueError):
-        partition_ndjson(text="[]")
+def test_partition_ndjson_emits_Text_element_for_an_empty_array_line():
+    assert partition_ndjson(text="[]") == [Text(text="[]")]
 
 
 def test_partition_ndjson_raises_with_too_many_specified():
@@ -299,13 +298,64 @@ def test_partition_ndjson_from_text_prefers_metadata_last_modified():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_partition_json_raises_with_unprocessable_json():
+def test_partition_ndjson_emits_Text_element_for_non_element_json_object_line():
+    # -- a line that does not conform to the Unstructured element schema partitions as
+    # -- arbitrary NDJSON --
     text = '{"invalid": "schema"}'
-    with pytest.raises(ValueError):
-        partition_ndjson(text=text)
+
+    elements = partition_ndjson(text=text)
+
+    assert elements == [Text(text='{\n  "invalid": "schema"\n}')]
 
 
 def test_partition_json_raises_with_invalid_json():
     text = '[{"hi": "there"}]]'
     with pytest.raises(ValueError):
         partition_ndjson(text=text)
+
+
+# -- arbitrary (non-element-schema) NDJSON -------------------------------------------------------
+
+
+def it_partitions_arbitrary_ndjson_into_one_Text_element_per_line_in_line_order():
+    text = '{"sku": "A-100", "qty": 3}\n{"sku": "B-200", "qty": 1}\n{"sku": "C-300", "qty": 7}\n'
+
+    elements = partition_ndjson(text=text)
+
+    assert elements == [
+        Text(text='{\n  "qty": 3,\n  "sku": "A-100"\n}'),
+        Text(text='{\n  "qty": 1,\n  "sku": "B-200"\n}'),
+        Text(text='{\n  "qty": 7,\n  "sku": "C-300"\n}'),
+    ]
+
+
+def and_it_skips_blank_lines():
+    text = '{"sku": "A-100"}\n\n   \n{"sku": "B-200"}\n'
+
+    elements = partition_ndjson(text=text)
+
+    assert elements == [
+        Text(text='{\n  "sku": "A-100"\n}'),
+        Text(text='{\n  "sku": "B-200"\n}'),
+    ]
+
+
+def and_it_partitions_an_arbitrary_ndjson_file_from_disk():
+    elements = partition_ndjson(example_doc_path("arbitrary-records.ndjson"))
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert "Watering Can" in elements[1].text
+
+
+def it_still_raises_when_the_file_contains_a_malformed_line():
+    text = '{"sku": "A-100"}\nnot-json\n{"sku": "B-200"}\n'
+
+    with pytest.raises(ValueError):
+        partition_ndjson(text=text)
+
+
+def it_still_rehydrates_serialized_element_ndjson_rather_than_partitioning_it():
+    elements = partition_ndjson(example_doc_path("simple.ndjson"))
+
+    assert elements[0] == Title(text="These are a few of my favorite things:")

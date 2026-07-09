@@ -260,18 +260,39 @@ class _FileTypeDetector:
     def _disambiguate_json_file_type(self) -> FileType:
         """Disambiguate JSON/NDJSON file-type based on file contents.
 
-        NDJSON is detected first because it has the strictest signature (multiple JSON values
-        separated by newlines, with the first line independently parsable). Anything else that
-        libmagic flagged as JSON is classified as `FileType.JSON`; the JSON partitioner has its
-        own `is_json_processable` schema check and will reject non-conforming payloads with a
-        clear error.
+        A payload that parses in full as a single JSON value is `FileType.JSON`, even when it
+        occupies a single line (a one-line object is also valid one-record NDJSON, but JSON is
+        the more useful classification; note a one-line serialized-element object previously
+        rehydrated via the NDJSON route and now partitions as arbitrary JSON, since rehydration
+        applies only to arrays). Otherwise, two or more newline-delimited JSON values indicate
+        `FileType.NDJSON`. Anything else that libmagic flagged as JSON falls back to
+        `FileType.JSON`.
         """
-        file_text, allow_truncated_single_line = self._ctx.json_disambiguation_text
-        if is_ndjson_processable(
-            file_text=file_text,
-            allow_truncated_single_line=allow_truncated_single_line,
-        ):
-            return FileType.NDJSON
+        with self._ctx.open() as file:
+            content = file.read()
+        file_text = (
+            content
+            if isinstance(content, str)
+            else content.decode(encoding=self._ctx.encoding, errors="ignore")
+        )
+
+        # -- a payload that parses whole as one JSON value is JSON, not NDJSON --
+        try:
+            json.loads(file_text)
+            return FileType.JSON
+        except json.JSONDecodeError:
+            pass
+
+        # -- two or more newline-delimited JSON values indicate NDJSON --
+        lines = [line for line in file_text.splitlines() if line.strip()]
+        if len(lines) >= 2:
+            try:
+                for line in lines:
+                    json.loads(line)
+                return FileType.NDJSON
+            except json.JSONDecodeError:
+                pass
+
         return FileType.JSON
 
     @property

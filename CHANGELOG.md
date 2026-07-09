@@ -1,3 +1,9 @@
+## 0.25.0
+
+### Enhancements
+
+- **Partition arbitrary JSON and NDJSON**: `partition_json()` and `partition_ndjson()` now handle any valid JSON/NDJSON payload, not just serialized Unstructured output. Serialized-element payloads keep rehydrating exactly as before; any other valid payload (bare objects, arrays of records, NDJSON lines, scalars) becomes `Text` elements containing the pretty-printed JSON instead of raising. The schema pre-gates in `partition()` are removed accordingly, a compact single-line JSON object now detects as `FileType.JSON` rather than NDJSON, and malformed input still raises `ValueError`.
+
 ## 0.24.2
 
 ### Fixes

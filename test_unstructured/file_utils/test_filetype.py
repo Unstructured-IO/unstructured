@@ -604,12 +604,13 @@ def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype
     assert file_type == FileType.JSON
 
 
-def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
-    """NDJSON whose first record is longer than the 4096-char text_head prefix.
+def it_classifies_json_and_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
+    """JSON/NDJSON whose first record is longer than the 4096-char text_head prefix.
 
     `_disambiguate_json_file_type` reads past `text_head` to find the first newline, so the
-    heuristic must not rely on the first record fitting in the prefix. Both single-record and
-    multi-record cases are exercised — both must round-trip as `FileType.NDJSON`.
+    heuristic must not rely on the first record fitting in the prefix. A single-record payload
+    is one JSON value and classifies as `FileType.JSON`; only the multi-record payload is
+    `FileType.NDJSON`.
     """
     big_value = "x" * 5000
     payload_one_record = json.dumps({"text": big_value, "type": "NarrativeText"}).encode()
@@ -617,7 +618,7 @@ def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
         payload_one_record + b"\n" + json.dumps({"text": "tiny", "type": "Title"}).encode()
     )
 
-    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.NDJSON
+    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.JSON
     assert detect_filetype(file=io.BytesIO(payload_many_records)) == FileType.NDJSON
     assert is_ndjson_processable(file=io.BytesIO(payload_one_record)) is True
 
@@ -627,6 +628,40 @@ def it_classifies_multiline_json_as_json_when_first_newline_exceeds_text_head_pr
     payload = ('{"text": "' + big_value + '",\n "type": "NarrativeText"\n}').encode()
 
     assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+# ================================================================================================
+# Describe JSON/NDJSON disambiguation in `detect_filetype()`
+# ================================================================================================
+
+
+def it_classifies_a_compact_single_line_object_as_JSON():
+    # -- a single JSON value is JSON, not NDJSON, even though it is also valid 1-line NDJSON --
+    assert detect_filetype(example_doc_path("single-line-object.json")) == FileType.JSON
+
+
+def and_it_classifies_a_compact_single_line_object_as_JSON_without_an_extension():
+    payload = b'{"sku": "GRD-8842", "name": "Garden Trowel", "price": 12.5}'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def and_it_classifies_a_pretty_printed_multi_line_object_as_JSON():
+    payload = b'{\n  "sku": "GRD-8842",\n  "name": "Garden Trowel"\n}'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def and_it_classifies_a_single_line_array_as_JSON():
+    payload = b'[{"sku": "GRD-8842"}, {"sku": "GRD-1290"}]'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def it_classifies_multiple_json_object_lines_as_NDJSON():
+    payload = b'{"sku": "GRD-8842"}\n{"sku": "GRD-1290"}\n{"sku": "GRD-3317"}\n'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.NDJSON
+
+
+def and_it_classifies_an_arbitrary_ndjson_file_as_NDJSON():
+    assert detect_filetype(example_doc_path("arbitrary-records.ndjson")) == FileType.NDJSON
 
 
 # ================================================================================================

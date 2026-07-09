@@ -1,10 +1,12 @@
 """Provides `partition_json()`.
 
-Note this does not partition arbitrary JSON. Its only use-case is to "rehydrate" unstructured
-document elements serialized to JSON, essentially the same function as `elements_from_json()`, but
-this allows a document of already-partitioned elements to be combined transparently with other
-documents in a partitioning run. It also allows multiple (low-cost) chunking runs to be performed on
-a document while only incurring partitioning cost once.
+Partitions any valid JSON document. Serialized Unstructured output (a JSON array of
+element-dicts) is "rehydrated" back into its constituent elements, essentially the same function
+as `elements_from_json()`; this allows a document of already-partitioned elements to be combined
+transparently with other documents in a partitioning run and allows multiple (low-cost) chunking
+runs to be performed on a document while only incurring partitioning cost once. Any other valid
+JSON (arbitrary customer schemas) is converted to `Text` elements containing the pretty-printed
+JSON.
 """
 
 from __future__ import annotations
@@ -13,12 +15,8 @@ import json
 from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-    is_json_processable,
-)
+from unstructured.documents.elements import Element, Text, process_metadata
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.staging.base import elements_from_dicts
@@ -34,7 +32,22 @@ def partition_json(
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
-    """Partitions serialized Unstructured output into its constituent elements.
+    """Partitions a JSON document into its constituent elements.
+
+    Operates in two modes:
+
+    - Rehydration: a JSON array of serialized Unstructured elements is converted back into those
+      elements, exactly as before.
+    - Arbitrary JSON: any other valid JSON value is converted to `Text` elements containing the
+      pretty-printed JSON. An object or a top-level scalar yields one `Text`; an array of objects
+      yields one `Text` per object; any other array (scalars or mixed types) yields a single
+      `Text` containing the whole array. An empty object or array yields no elements.
+
+    The mode is chosen by whether `elements_from_dicts()` yields at least one element for a list
+    payload. Known v1 limitations: a customer array whose items happen to look like serialized
+    elements (e.g. `{"type": "Title", "text": ...}`) rehydrates instead of being treated as
+    arbitrary JSON, and an array mixing element-shaped and arbitrary items may partially
+    rehydrate, dropping the arbitrary items.
 
     Parameters
     ----------
@@ -66,23 +79,48 @@ def partition_json(
     elif text is not None:
         file_text = str(text)
 
-    if not is_json_processable(file_text=file_text):
-        raise ValueError(
-            "JSON cannot be partitioned. Schema does not match the Unstructured schema.",
-        )
+    if not file_text.strip():
+        return []
 
     try:
-        element_dicts = json.loads(file_text)
-        elements = elements_from_dicts(element_dicts)
-        # if we found at least one json element, but no unstructured elements were found, throw 422
-        if len(element_dicts) > 0 and len(elements) == 0:
-            raise ValueError(
-                "JSON cannot be partitioned. Schema does not match the Unstructured schema.",
-            )
+        value = json.loads(file_text)
     except json.JSONDecodeError:
         raise ValueError("Not a valid json")
+
+    elements: list[Element] = []
+    if isinstance(value, list) and value:
+        try:
+            # -- Branch A: rehydrate serialized Unstructured elements --
+            elements = elements_from_dicts(value)
+        except (KeyError, AttributeError, TypeError):
+            # -- arbitrary JSON that only superficially resembles serialized elements --
+            elements = []
+    if not elements:
+        # -- Branch B: arbitrary JSON --
+        elements = _elements_from_arbitrary_json(value)
 
     for element in elements:
         element.metadata.last_modified = metadata_last_modified or last_modified
 
     return elements
+
+
+def _elements_from_arbitrary_json(value: Any) -> list[Element]:
+    """Convert an arbitrary (non element-schema) JSON value to `Text` elements.
+
+    v1 flat contract: each element's text is the pretty-printed JSON of the whole value, or of
+    each object when the value is an all-object array. No per-field metadata and no JSONPath
+    addressing. This function is the single swap-point for a future structure-aware walker.
+    """
+    # NOTE(json-partitioning): sort_keys=True per PRD for stable output; alphabetizes customer
+    # field order — revisit if source-order fidelity is required.
+    if isinstance(value, dict):
+        return [Text(text=json.dumps(value, indent=2, sort_keys=True))] if value else []
+    if isinstance(value, list):
+        if not value:
+            return []
+        if all(isinstance(item, dict) for item in value):
+            return [Text(text=json.dumps(item, indent=2, sort_keys=True)) for item in value]
+        return [Text(text=json.dumps(value, indent=2, sort_keys=True))]
+    # -- scalar (str / number / bool / null) --
+    return [Text(text=json.dumps(value))]
