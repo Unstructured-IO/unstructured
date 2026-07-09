@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import pathlib
 import tempfile
@@ -359,3 +360,40 @@ def it_still_rehydrates_serialized_element_ndjson_rather_than_partitioning_it():
     elements = partition_ndjson(example_doc_path("simple.ndjson"))
 
     assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+# -- element-shaped line discrimination ----------------------------------------------------------
+
+
+def it_raises_ValueError_when_an_element_shaped_line_has_corrupt_metadata():
+    # -- an element-shaped line that cannot rehydrate raises loudly, never leaking low-level
+    # -- exceptions like `zlib.error` --
+    line = json.dumps({"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}})
+
+    with pytest.raises(ValueError, match="could not be rehydrated"):
+        partition_ndjson(text=line + "\n")
+
+
+def it_partitions_mixed_element_and_arbitrary_lines_all_as_Text_one_per_line():
+    # -- a file mixing element-shaped and arbitrary lines partitions whole as arbitrary NDJSON;
+    # -- no partial rehydration that silently drops the arbitrary lines --
+    text = '{"type": "Title", "text": "x"}\n{"foo": "bar"}\n'
+
+    elements = partition_ndjson(text=text)
+
+    assert elements == [
+        Text(text='{\n  "text": "x",\n  "type": "Title"\n}'),
+        Text(text='{\n  "foo": "bar"\n}'),
+    ]
+
+
+def and_it_partitions_a_line_with_an_unhashable_type_value_as_arbitrary_ndjson():
+    # -- `type` holding a non-str (here unhashable) value must not crash the shape predicate --
+    elements = partition_ndjson(text='{"type": ["Title"], "text": "x"}\n')
+
+    assert elements == [Text(text='{\n  "text": "x",\n  "type": [\n    "Title"\n  ]\n}')]
+
+
+def it_raises_ValueError_on_a_deeply_nested_line_rather_than_RecursionError():
+    with pytest.raises(ValueError, match="Not a valid ndjson"):
+        partition_ndjson(text="[" * 200000)

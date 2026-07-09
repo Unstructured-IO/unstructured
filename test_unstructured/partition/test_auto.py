@@ -461,6 +461,20 @@ def test_auto_partition_routes_arbitrary_ndjson_to_partition_ndjson():
     assert "Watering Can" in elements[1].text
 
 
+def test_auto_partition_surfaces_ValueError_for_corrupt_element_shaped_json(
+    tmp_path: pathlib.Path,
+):
+    # -- an element-shaped payload whose metadata cannot be rehydrated raises the wrapped
+    # -- ValueError through partition(), not a low-level error like zlib.error --
+    text = json.dumps([{"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}}])
+    file_path = str(tmp_path / "corrupt-elements.json")
+    with open(file_path, "w") as f:
+        f.write(text)
+
+    with pytest.raises(ValueError, match="could not be rehydrated"):
+        partition(filename=file_path)
+
+
 # ================================================================================================
 # MD
 # ================================================================================================

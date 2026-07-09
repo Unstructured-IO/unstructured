@@ -2,7 +2,11 @@
 
 ### Enhancements
 
-- **Partition arbitrary JSON and NDJSON**: `partition_json()` and `partition_ndjson()` now handle any valid JSON/NDJSON payload, not just serialized Unstructured output. Serialized-element payloads keep rehydrating exactly as before; any other valid payload (bare objects, arrays of records, NDJSON lines, scalars) becomes `Text` elements containing the pretty-printed JSON instead of raising. The schema pre-gates in `partition()` are removed accordingly, a compact single-line JSON object now detects as `FileType.JSON` rather than NDJSON, and malformed input still raises `ValueError`.
+- **Partition arbitrary JSON and NDJSON**: `partition_json()` and `partition_ndjson()` now handle any valid JSON/NDJSON payload, not just serialized Unstructured output. Serialized-element payloads keep rehydrating exactly as before; any other valid payload (bare objects, arrays of records, NDJSON lines, scalars) becomes `Text` elements containing the pretty-printed JSON instead of raising. The schema pre-gates in `partition()` are removed accordingly, a compact single-line JSON object now detects as `FileType.JSON` rather than NDJSON, and malformed input still raises `ValueError`. Rehydration is chosen by an explicit shape predicate, with these consequences: an element-shaped payload whose contents cannot be rehydrated (e.g. corrupt `metadata`) raises `ValueError` with the underlying error chained, and an array (or NDJSON file) mixing element-shaped and arbitrary items partitions whole as arbitrary JSON — no partial rehydration that silently drops the arbitrary items. Two asymmetries are intended and documented: `partition_json(text="{}")` yields `[]` while `partition_ndjson(text="{}")` yields `[Text("{}")]` (an NDJSON line is a record; an empty JSON object is an empty document), and a one-record serialized-element file (a single object, not an array) now emits pretty-printed `Text` with alphabetized keys instead of rehydrating, since rehydration applies only to arrays.
+
+### Deprecations
+
+- **`is_json_processable()` and `is_ndjson_processable()` are deprecated**: partitioning and file-type detection no longer route through these prefix-sniffing helpers. They keep working unchanged for downstream callers — now emitting a `DeprecationWarning` — and will be removed in a future release.
 
 ## 0.24.2
 

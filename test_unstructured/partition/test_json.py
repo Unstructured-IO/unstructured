@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import pathlib
 import tempfile
@@ -392,3 +393,74 @@ def it_chunks_arbitrary_json_when_a_chunking_strategy_is_specified():
 
     assert len(chunks) == 1
     assert all(isinstance(chunk, CompositeElement) for chunk in chunks)
+
+
+# -- element-shaped payload discrimination -------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        # -- coordinates points without a coordinate-system --
+        {"coordinates": {"points": [[0, 0], [1, 1]]}},
+        # -- orig_elements that is not valid base64 --
+        {"orig_elements": "not-base64!!"},
+        # -- orig_elements that is valid base64 but not gzip-compressed element JSON --
+        {"orig_elements": "aGVsbG8="},
+    ],
+)
+def it_raises_ValueError_when_an_element_shaped_payload_has_corrupt_metadata(metadata: dict):
+    # -- an element-shaped payload that cannot rehydrate raises loudly, never leaking low-level
+    # -- exceptions like `zlib.error` or `binascii.Error` --
+    text = json.dumps([{"type": "Title", "text": "x", "metadata": metadata}])
+
+    with pytest.raises(ValueError, match="could not be rehydrated"):
+        partition_json(text=text)
+
+
+def it_partitions_a_non_element_dict_with_a_metadata_key_as_arbitrary_json():
+    # -- a "metadata" key on a non-element-shaped object must not trigger metadata parsing --
+    value = {"id": 1, "metadata": {"coordinates": {"points": [[0, 0], [1, 1]]}}}
+
+    elements = partition_json(text=json.dumps([value]))
+
+    assert elements == [Text(text=json.dumps(value, indent=2, sort_keys=True))]
+
+
+def it_partitions_a_mixed_array_whole_as_arbitrary_json():
+    # -- an array mixing element-shaped and arbitrary items partitions whole as arbitrary JSON;
+    # -- no partial rehydration that silently drops the arbitrary items --
+    text = '[{"type": "Title", "text": "x"}, {"foo": "bar"}]'
+
+    elements = partition_json(text=text)
+
+    assert elements == [
+        Text(text='{\n  "text": "x",\n  "type": "Title"\n}'),
+        Text(text='{\n  "foo": "bar"\n}'),
+    ]
+
+
+def it_partitions_an_element_typed_object_with_non_str_text_as_arbitrary_json():
+    elements = partition_json(text='[{"type": "Title", "text": 42}]')
+
+    assert elements == [Text(text='{\n  "text": 42,\n  "type": "Title"\n}')]
+
+
+def it_partitions_an_element_shaped_object_with_non_dict_metadata_as_arbitrary_json():
+    elements = partition_json(text='[{"type": "Title", "text": "x", "metadata": "weird"}]')
+
+    assert elements == [
+        Text(text='{\n  "metadata": "weird",\n  "text": "x",\n  "type": "Title"\n}'),
+    ]
+
+
+def and_it_partitions_an_object_with_an_unhashable_type_value_as_arbitrary_json():
+    # -- `type` holding a non-str (here unhashable) value must not crash the shape predicate --
+    elements = partition_json(text='[{"type": ["Title"], "text": "x"}]')
+
+    assert elements == [Text(text='{\n  "text": "x",\n  "type": [\n    "Title"\n  ]\n}')]
+
+
+def it_raises_ValueError_on_a_deeply_nested_payload_rather_than_RecursionError():
+    with pytest.raises(ValueError, match="Not a valid json"):
+        partition_json(text="[" * 200000)
