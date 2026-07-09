@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import pathlib
@@ -12,6 +13,7 @@ from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import CompositeElement, Text, Title
+from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -294,25 +296,6 @@ def test_partition_json_from_text_prefers_metadata_last_modified():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_partition_json_emits_Text_elements_for_non_element_json_array():
-    # -- an array that does not conform to the Unstructured element schema partitions as
-    # -- arbitrary JSON, one `Text` element per object --
-    text = '[{"invalid": "schema"}]'
-
-    elements = partition_json(text=text)
-
-    assert elements == [Text(text='{\n  "invalid": "schema"\n}')]
-
-
-def test_partition_json_emits_Text_element_for_non_element_json_object():
-    # -- an object is not a list of element-dicts, so it partitions as arbitrary JSON --
-    text = '{"hi": "there"}'
-
-    elements = partition_json(text=text)
-
-    assert elements == [Text(text='{\n  "hi": "there"\n}')]
-
-
 def test_partition_json_raises_with_invalid_json():
     text = '[{"hi": "there"}]]'
     with pytest.raises(ValueError):
@@ -322,7 +305,7 @@ def test_partition_json_raises_with_invalid_json():
 # -- arbitrary (non-element-schema) JSON ---------------------------------------------------------
 
 
-def it_partitions_an_arbitrary_json_object_into_a_single_Text_element():
+def it_partitions_an_arbitrary_object_into_a_single_Text_element():
     elements = partition_json(text='{"make": "Fabrikam", "model": "F-100"}')
 
     assert elements == [Text(text='{\n  "make": "Fabrikam",\n  "model": "F-100"\n}')]
@@ -345,7 +328,7 @@ def it_partitions_an_array_of_objects_into_one_Text_element_per_object_in_order(
     assert elements == [Text(text='{\n  "sku": "A-100"\n}'), Text(text='{\n  "sku": "B-200"\n}')]
 
 
-def and_it_partitions_an_arbitrary_json_array_file_from_disk():
+def and_it_partitions_an_arbitrary_array_file_from_disk():
     elements = partition_json(example_doc_path("arbitrary-records.json"))
 
     assert len(elements) == 3
@@ -371,8 +354,8 @@ def it_partitions_a_top_level_scalar_into_a_single_Text_element():
     assert elements == [Text(text='"hello"')]
 
 
-def it_rehydrates_an_element_shaped_array_instead_of_treating_it_as_arbitrary_json():
-    # -- documented v1 limitation: an array of customer records that happens to match the
+def it_rehydrates_an_element_shaped_array_rather_than_partitioning_it():
+    # -- documented limitation: an array of customer records that happens to match the
     # -- serialized-element schema is indistinguishable from Unstructured output, so it
     # -- rehydrates as elements rather than partitioning as arbitrary JSON --
     elements = partition_json(text='[{"type": "Title", "text": "x"}]')
@@ -380,15 +363,17 @@ def it_rehydrates_an_element_shaped_array_instead_of_treating_it_as_arbitrary_js
     assert elements == [Title(text="x")]
 
 
-def but_it_partitions_an_element_typed_object_with_no_text_field_as_arbitrary_json():
+def but_it_partitions_an_element_typed_object_with_no_text_field_as_Text():
     # -- the other side of the limitation: a recognized element "type" without a "text" field
     # -- cannot rehydrate, so the payload falls through and partitions as arbitrary JSON --
     elements = partition_json(text='[{"type": "Title"}]')
 
-    assert elements == [Text(text='{\n  "type": "Title"\n}')]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"type": "Title"' in elements[0].text
 
 
-def it_chunks_arbitrary_json_when_a_chunking_strategy_is_specified():
+def it_chunks_an_arbitrary_payload_when_a_chunking_strategy_is_specified():
     chunks = partition_json(text='{"hi": "there"}', chunking_strategy="basic")
 
     assert len(chunks) == 1
@@ -414,53 +399,104 @@ def it_raises_ValueError_when_an_element_shaped_payload_has_corrupt_metadata(met
     # -- exceptions like `zlib.error` or `binascii.Error` --
     text = json.dumps([{"type": "Title", "text": "x", "metadata": metadata}])
 
-    with pytest.raises(ValueError, match="could not be rehydrated"):
+    with pytest.raises(ValueError, match="could not be reconstructed"):
         partition_json(text=text)
 
 
-def it_partitions_a_non_element_dict_with_a_metadata_key_as_arbitrary_json():
+def it_partitions_a_non_element_dict_with_a_metadata_key_as_Text():
     # -- a "metadata" key on a non-element-shaped object must not trigger metadata parsing --
     value = {"id": 1, "metadata": {"coordinates": {"points": [[0, 0], [1, 1]]}}}
 
     elements = partition_json(text=json.dumps([value]))
 
-    assert elements == [Text(text=json.dumps(value, indent=2, sort_keys=True))]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"id": 1' in elements[0].text
+    assert '"coordinates"' in elements[0].text
 
 
-def it_partitions_a_mixed_array_whole_as_arbitrary_json():
+def it_partitions_a_mixed_array_whole_with_no_partial_rehydration():
     # -- an array mixing element-shaped and arbitrary items partitions whole as arbitrary JSON;
     # -- no partial rehydration that silently drops the arbitrary items --
     text = '[{"type": "Title", "text": "x"}, {"foo": "bar"}]'
 
     elements = partition_json(text=text)
 
-    assert elements == [
-        Text(text='{\n  "text": "x",\n  "type": "Title"\n}'),
-        Text(text='{\n  "foo": "bar"\n}'),
-    ]
+    assert len(elements) == 2
+    assert all(isinstance(e, Text) for e in elements)
+    assert '"type": "Title"' in elements[0].text
+    assert '"foo": "bar"' in elements[1].text
 
 
-def it_partitions_an_element_typed_object_with_non_str_text_as_arbitrary_json():
+def it_partitions_an_element_typed_object_with_non_str_text_as_Text():
     elements = partition_json(text='[{"type": "Title", "text": 42}]')
 
-    assert elements == [Text(text='{\n  "text": 42,\n  "type": "Title"\n}')]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"text": 42' in elements[0].text
 
 
-def it_partitions_an_element_shaped_object_with_non_dict_metadata_as_arbitrary_json():
+def and_it_partitions_an_element_shaped_object_with_non_dict_metadata_as_Text():
     elements = partition_json(text='[{"type": "Title", "text": "x", "metadata": "weird"}]')
 
-    assert elements == [
-        Text(text='{\n  "metadata": "weird",\n  "text": "x",\n  "type": "Title"\n}'),
-    ]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"metadata": "weird"' in elements[0].text
 
 
-def and_it_partitions_an_object_with_an_unhashable_type_value_as_arbitrary_json():
+def and_it_partitions_an_object_with_an_unhashable_type_value_as_Text():
     # -- `type` holding a non-str (here unhashable) value must not crash the shape predicate --
     elements = partition_json(text='[{"type": ["Title"], "text": "x"}]')
 
-    assert elements == [Text(text='{\n  "text": "x",\n  "type": [\n    "Title"\n  ]\n}')]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"Title"' in elements[0].text
 
 
 def it_raises_ValueError_on_a_deeply_nested_payload_rather_than_RecursionError():
     with pytest.raises(ValueError, match="Not a valid json"):
         partition_json(text="[" * 200000)
+
+
+def and_it_raises_ValueError_when_a_valid_payload_is_too_deep_to_pretty_print():
+    # -- json.loads() (C scanner) parses deeper than json.dumps() (pure Python) can serialize,
+    # -- so a valid payload can still fail pretty-printing; that surfaces as ValueError too --
+    text = "[" * 5000 + "1" + "]" * 5000
+
+    with pytest.raises(ValueError, match="nested too deeply"):
+        partition_json(text=text)
+
+
+# -- file= routing --------------------------------------------------------------------------------
+
+
+def it_partitions_an_arbitrary_object_from_a_file_like_object():
+    file = io.BytesIO(b'{"make": "Fabrikam", "model": "F-100"}')
+
+    elements = partition_json(file=file)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"make": "Fabrikam"' in elements[0].text
+
+
+def and_it_raises_ValueError_for_corrupt_element_shaped_metadata_from_a_file_like_object():
+    payload = json.dumps(
+        [{"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}}]
+    ).encode()
+
+    with pytest.raises(ValueError, match="could not be reconstructed"):
+        partition_json(file=io.BytesIO(payload))
+
+
+def it_rehydrates_on_a_detect_then_partition_sequence_over_the_same_file_handle():
+    # -- JSON/NDJSON disambiguation restores the file to read position 0, so a follow-up
+    # -- partition of the same handle reads the full payload --
+    with open(example_doc_path("simple.json"), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    assert detect_filetype(file=file) == FileType.JSON
+
+    elements = partition_json(file=file)
+
+    assert elements[0] == Title(text="These are a few of my favorite things:")

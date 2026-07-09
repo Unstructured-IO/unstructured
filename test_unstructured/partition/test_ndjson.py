@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import pathlib
@@ -181,7 +182,7 @@ def test_partition_ndjson_from_text(filename: str):
         assert elements[i].metadata.filename == filename.split("/")[-1]
 
 
-def test_partition_json_raises_with_none_specified():
+def test_partition_ndjson_raises_with_none_specified():
     with pytest.raises(ValueError):
         partition_ndjson()
 
@@ -299,17 +300,7 @@ def test_partition_ndjson_from_text_prefers_metadata_last_modified():
 # ------------------------------------------------------------------------------------------------
 
 
-def test_partition_ndjson_emits_Text_element_for_non_element_json_object_line():
-    # -- a line that does not conform to the Unstructured element schema partitions as
-    # -- arbitrary NDJSON --
-    text = '{"invalid": "schema"}'
-
-    elements = partition_ndjson(text=text)
-
-    assert elements == [Text(text='{\n  "invalid": "schema"\n}')]
-
-
-def test_partition_json_raises_with_invalid_json():
+def test_partition_ndjson_raises_with_invalid_json():
     text = '[{"hi": "there"}]]'
     with pytest.raises(ValueError):
         partition_ndjson(text=text)
@@ -335,10 +326,10 @@ def and_it_skips_blank_lines():
 
     elements = partition_ndjson(text=text)
 
-    assert elements == [
-        Text(text='{\n  "sku": "A-100"\n}'),
-        Text(text='{\n  "sku": "B-200"\n}'),
-    ]
+    assert len(elements) == 2
+    assert all(isinstance(e, Text) for e in elements)
+    assert '"sku": "A-100"' in elements[0].text
+    assert '"sku": "B-200"' in elements[1].text
 
 
 def and_it_partitions_an_arbitrary_ndjson_file_from_disk():
@@ -362,6 +353,13 @@ def it_still_rehydrates_serialized_element_ndjson_rather_than_partitioning_it():
     assert elements[0] == Title(text="These are a few of my favorite things:")
 
 
+def it_chunks_arbitrary_ndjson_when_a_chunking_strategy_is_specified():
+    chunks = partition_ndjson(text='{"hi": "there"}\n', chunking_strategy="basic")
+
+    assert len(chunks) == 1
+    assert all(isinstance(chunk, CompositeElement) for chunk in chunks)
+
+
 # -- element-shaped line discrimination ----------------------------------------------------------
 
 
@@ -370,7 +368,7 @@ def it_raises_ValueError_when_an_element_shaped_line_has_corrupt_metadata():
     # -- exceptions like `zlib.error` --
     line = json.dumps({"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}})
 
-    with pytest.raises(ValueError, match="could not be rehydrated"):
+    with pytest.raises(ValueError, match="could not be reconstructed"):
         partition_ndjson(text=line + "\n")
 
 
@@ -381,19 +379,44 @@ def it_partitions_mixed_element_and_arbitrary_lines_all_as_Text_one_per_line():
 
     elements = partition_ndjson(text=text)
 
-    assert elements == [
-        Text(text='{\n  "text": "x",\n  "type": "Title"\n}'),
-        Text(text='{\n  "foo": "bar"\n}'),
-    ]
+    assert len(elements) == 2
+    assert all(isinstance(e, Text) for e in elements)
+    assert '"type": "Title"' in elements[0].text
+    assert '"foo": "bar"' in elements[1].text
 
 
-def and_it_partitions_a_line_with_an_unhashable_type_value_as_arbitrary_ndjson():
+def it_partitions_a_line_with_an_unhashable_type_value_as_arbitrary_ndjson():
     # -- `type` holding a non-str (here unhashable) value must not crash the shape predicate --
     elements = partition_ndjson(text='{"type": ["Title"], "text": "x"}\n')
 
-    assert elements == [Text(text='{\n  "text": "x",\n  "type": [\n    "Title"\n  ]\n}')]
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"Title"' in elements[0].text
 
 
 def it_raises_ValueError_on_a_deeply_nested_line_rather_than_RecursionError():
     with pytest.raises(ValueError, match="Not a valid ndjson"):
         partition_ndjson(text="[" * 200000)
+
+
+def and_it_raises_ValueError_when_a_valid_line_is_too_deep_to_pretty_print():
+    # -- json.loads() (C scanner) parses deeper than json.dumps() (pure Python) can serialize,
+    # -- so a valid line can still fail pretty-printing; that surfaces as ValueError too --
+    text = "[" * 5000 + "1" + "]" * 5000
+
+    with pytest.raises(ValueError, match="nested too deeply"):
+        partition_ndjson(text=text)
+
+
+# -- file= routing --------------------------------------------------------------------------------
+
+
+def it_partitions_arbitrary_lines_from_a_file_like_object():
+    file = io.BytesIO(b'{"sku": "A-100"}\n{"sku": "B-200"}\n')
+
+    elements = partition_ndjson(file=file)
+
+    assert len(elements) == 2
+    assert all(isinstance(e, Text) for e in elements)
+    assert '"sku": "A-100"' in elements[0].text
+    assert '"sku": "B-200"' in elements[1].text

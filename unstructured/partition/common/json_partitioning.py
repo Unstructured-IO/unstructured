@@ -2,7 +2,7 @@
 
 Both `partition_json()` and `partition_ndjson()` choose between two modes -- "rehydrating"
 serialized Unstructured elements and partitioning arbitrary customer JSON -- using
-`is_serialized_element_dict()` as the discriminator.
+`is_element_shaped_dict()` as the discriminator.
 
 A dict counts as element-shaped only when its `type` is recognized AND the type-specific required
 field is present with the right type AND `metadata` (when present) is a dict. This mirrors what
@@ -10,7 +10,7 @@ field is present with the right type AND `metadata` (when present) is a dict. Th
 `item["metadata"]` before checking `type`, requires `item["text"]` for text types and
 `item["checked"]` for CheckBox, and silently skips unrecognized types.
 
-`elements_from_arbitrary_json()` is the swap-point for JSON-mode structure (a future
+`elements_from_arbitrary_value()` is the swap-point for JSON-mode structure (a future
 structure-aware walker would replace it). `pretty_json_text()` is the shared formatter used by
 BOTH partitioners; NDJSON keeps its own strict one-`Text`-per-line loop in `partition_ndjson()`
 because its `{}` -> `Text("{}")` contract deliberately differs from JSON's `{}` -> no elements.
@@ -25,7 +25,7 @@ from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP, Element, T
 from unstructured.staging.base import elements_from_dicts
 
 
-def is_serialized_element_dict(item: Any) -> bool:
+def is_element_shaped_dict(item: Any) -> bool:
     """True when `item` plausibly represents one serialized Unstructured element."""
     if not isinstance(item, dict):
         return False
@@ -39,14 +39,14 @@ def is_serialized_element_dict(item: Any) -> bool:
     if item_type in TYPE_TO_TEXT_ELEMENT_MAP:
         return isinstance(item.get("text"), str)
     if item_type == "CheckBox":
-        return "checked" in item
+        return isinstance(item.get("checked"), bool)
     return False
 
 
-def rehydrate_elements(values: list[Any]) -> list[Element]:
+def rehydrate_elements(values: list[dict[str, Any]]) -> list[Element]:
     """`elements_from_dicts()` with corrupt-payload failures wrapped as `ValueError`.
 
-    A payload that passes `is_serialized_element_dict()` can still fail rehydration on corrupt
+    A payload that passes `is_element_shaped_dict()` can still fail rehydration on corrupt
     field contents (e.g. malformed `metadata.coordinates` or a non-gzip `metadata.orig_elements`).
     Those failures raise loudly as `ValueError` with the underlying exception chained, rather
     than leaking low-level errors like `zlib.error` or `binascii.Error`.
@@ -55,23 +55,26 @@ def rehydrate_elements(values: list[Any]) -> list[Element]:
         return elements_from_dicts(values)
     except Exception as e:
         raise ValueError(
-            "JSON payload is element-shaped but could not be rehydrated as serialized"
-            f" Unstructured elements: {e}"
+            "Payload resembles serialized Unstructured elements but could not be"
+            f" reconstructed: {e}"
         ) from e
 
 
 def pretty_json_text(value: Any) -> str:
     """The pretty-printed JSON text used for arbitrary-JSON `Text` elements."""
-    # NOTE(json-partitioning): sort_keys=True per PRD for stable output; alphabetizes customer
-    # field order — revisit if source-order fidelity is required.
-    return json.dumps(value, indent=2, sort_keys=True)
+    # NOTE(simon): sort_keys=True gives deterministic, diffable output; it alphabetizes
+    # customer field order -- revisit if source-order fidelity is required.
+    try:
+        return json.dumps(value, indent=2, sort_keys=True)
+    except RecursionError:
+        raise ValueError("JSON value is nested too deeply to partition")
 
 
-def elements_from_arbitrary_json(value: Any) -> list[Element]:
-    """Convert an arbitrary (non element-schema) JSON value to `Text` elements.
+def elements_from_arbitrary_value(value: Any) -> list[Element]:
+    """Convert an arbitrary (non element-shaped) JSON value to `Text` elements.
 
-    v1 flat contract: each element's text is the pretty-printed JSON of the whole value, or of
-    each object when the value is an all-object array. No per-field metadata and no JSONPath
+    Current flat contract: each element's text is the pretty-printed JSON of the whole value, or
+    of each object when the value is an all-object array. No per-field metadata and no JSONPath
     addressing. This function is the swap-point for a future structure-aware walker.
     """
     if isinstance(value, dict):

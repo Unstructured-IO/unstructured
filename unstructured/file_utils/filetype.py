@@ -75,7 +75,8 @@ def detect_filetype(
     """Determine file-type of specified file using libmagic and/or fallback methods.
 
     One of `file_path` or `file` must be specified. A `file_path` that does not
-    correspond to a file on the filesystem raises `ValueError`.
+    correspond to a file on the filesystem raises `ValueError`. JSON/NDJSON
+    disambiguation examines at most the first 1 MiB of the file.
 
     Args:
         content_type: MIME-type of document-source, when already known. Providing
@@ -130,7 +131,9 @@ def is_json_processable(
     """
     warnings.warn(
         "is_json_processable() is deprecated and no longer used for partitioning or file-type"
-        " detection routing; it will be removed in a future release.",
+        " detection routing; it will be removed in a future release. Pre-checking is no longer"
+        " needed: partition_json()/partition_ndjson() accept any valid payload and raise"
+        " ValueError for malformed input.",
         DeprecationWarning,
         stacklevel=2,
     )
@@ -161,7 +164,9 @@ def is_ndjson_processable(
     """
     warnings.warn(
         "is_ndjson_processable() is deprecated and no longer used for partitioning or file-type"
-        " detection routing; it will be removed in a future release.",
+        " detection routing; it will be removed in a future release. Pre-checking is no longer"
+        " needed: partition_json()/partition_ndjson() accept any valid payload and raise"
+        " ValueError for malformed input.",
         DeprecationWarning,
         stacklevel=2,
     )
@@ -277,24 +282,29 @@ class _FileTypeDetector:
     def _disambiguate_json_file_type(self) -> FileType:
         """Disambiguate JSON/NDJSON file-type based on file contents.
 
-        Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, to detect truncation) and restores a
-        caller-owned file-like object to read position 0. A payload that parses in full as a
-        single JSON value is `FileType.JSON`, even when it occupies a single line (a one-line
-        object is also valid one-record NDJSON, but JSON is the more useful classification; note
-        a one-line serialized-element object previously rehydrated via the NDJSON route and now
-        partitions as arbitrary JSON, since rehydration applies only to arrays). Otherwise, two
-        or more newline-delimited JSON values indicate `FileType.NDJSON`. When the payload
-        exceeds the read bound, classification uses only the complete lines within the bound, so
-        an NDJSON file whose first record alone exceeds the bound classifies as JSON. Anything
-        else that libmagic flagged as JSON falls back to `FileType.JSON`.
+        Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, plus one probe past that to
+        distinguish an exact-size payload from a truncated one) and restores a caller-owned
+        file-like object to read position 0. A payload that parses in full as a single JSON
+        value is `FileType.JSON`, even when it occupies a single line (a one-line object is also
+        valid one-record NDJSON, but JSON is the more useful classification; note a one-line
+        serialized-element object previously rehydrated via the NDJSON route and now partitions
+        as arbitrary JSON, since rehydration applies only to arrays). Otherwise, two or more
+        newline-delimited JSON values indicate `FileType.NDJSON`. When the payload exceeds the
+        read bound, one or more complete lines within the bound that each parse as a JSON value
+        indicate `FileType.NDJSON`; the residual degradation is an NDJSON file whose first
+        record has no newline inside the bound, which classifies as JSON (and `partition_json()`
+        will then raise "Not a valid json"). Anything else that libmagic flagged as JSON falls
+        back to `FileType.JSON`.
         """
         with self._ctx.open() as file:
             head = file.read(_JSON_DISAMBIGUATION_MAX_CHARS + 1)
+            # -- an exact-MAX+1 payload is fully in hand; only a further successful read means
+            # -- the payload was actually truncated --
+            truncated = len(head) > _JSON_DISAMBIGUATION_MAX_CHARS and bool(file.read(1))
             # -- leave a caller-owned file-like object positioned for a follow-up read, e.g.
             # -- detect-then-partition --
             file.seek(0)
 
-        truncated = len(head) > _JSON_DISAMBIGUATION_MAX_CHARS
         file_text = (
             head
             if isinstance(head, str)
@@ -303,15 +313,27 @@ class _FileTypeDetector:
 
         if truncated:
             # -- a whole-payload parse is impossible on a truncated read; drop the trailing
-            # -- partial line and classify on the complete lines within the bound --
+            # -- partial line and classify on the complete lines within the bound. One or more
+            # -- complete lines that all parse as JSON values indicate NDJSON (a truncated
+            # -- pretty-printed JSON still classifies JSON -- its first line `{` or `[` does not
+            # -- parse) --
             file_text = file_text.rpartition("\n")[0]
-        else:
-            # -- a payload that parses whole as one JSON value is JSON, not NDJSON --
-            try:
-                json.loads(file_text)
-                return FileType.JSON
-            except (json.JSONDecodeError, RecursionError):
-                pass
+            lines = [line for line in file_text.splitlines() if line.strip()]
+            if lines:
+                try:
+                    for line in lines:
+                        json.loads(line)
+                    return FileType.NDJSON
+                except (json.JSONDecodeError, RecursionError):
+                    pass
+            return FileType.JSON
+
+        # -- a payload that parses whole as one JSON value is JSON, not NDJSON --
+        try:
+            json.loads(file_text)
+            return FileType.JSON
+        except (json.JSONDecodeError, RecursionError):
+            pass
 
         # -- two or more newline-delimited JSON values indicate NDJSON --
         lines = [line for line in file_text.splitlines() if line.strip()]
@@ -649,7 +671,12 @@ class _FileTypeDetectionContext:
 
     @cached_property
     def json_disambiguation_text(self) -> tuple[str, bool]:
-        """Text prefix for JSON/NDJSON disambiguation and whether the first line was truncated."""
+        """Supports only the deprecated `is_ndjson_processable()`; remove together with it.
+
+        Live JSON/NDJSON disambiguation reads via `_disambiguate_json_file_type`.
+
+        Text prefix for JSON/NDJSON disambiguation and whether the first line was truncated.
+        """
 
         if file := self._file_arg:
             file.seek(0)
@@ -683,7 +710,12 @@ class _FileTypeDetectionContext:
 
     @staticmethod
     def _read_until_newline_or_limit(file: IO) -> tuple[str | bytes, bool]:
-        """Read through the first newline, stopping at a bounded prefix if none is found."""
+        """Supports only the deprecated `is_ndjson_processable()`; remove together with it.
+
+        Live JSON/NDJSON disambiguation reads via `_disambiguate_json_file_type`.
+
+        Read through the first newline, stopping at a bounded prefix if none is found.
+        """
         chunks: list[str | bytes] = []
         chars_read = 0
 
@@ -709,7 +741,12 @@ class _FileTypeDetectionContext:
 
     @staticmethod
     def _join_text_chunks(chunks: list[str | bytes]) -> str | bytes:
-        """Join chunks without mixing text and bytes types."""
+        """Supports only the deprecated `is_ndjson_processable()`; remove together with it.
+
+        Live JSON/NDJSON disambiguation reads via `_disambiguate_json_file_type`.
+
+        Join chunks without mixing text and bytes types.
+        """
         if chunks and isinstance(chunks[0], bytes):
             return b"".join(cast(list[bytes], chunks))
         return "".join(cast(list[str], chunks))

@@ -17,12 +17,12 @@ from typing import IO, Any, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, Text, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common.arbitrary_json import (
-    is_serialized_element_dict,
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.json_partitioning import (
+    is_element_shaped_dict,
     pretty_json_text,
     rehydrate_elements,
 )
-from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 
 
@@ -41,7 +41,7 @@ def partition_ndjson(
     Operates in two modes:
 
     - Rehydration: lines of serialized Unstructured elements are converted back into those
-      elements, exactly as before.
+      elements.
     - Arbitrary NDJSON: any other valid NDJSON becomes one `Text` element per line, containing
       the pretty-printed JSON of that line's value.
 
@@ -50,8 +50,8 @@ def partition_ndjson(
     (recognized `type` with its required field of the right type, and a dict `metadata` when
     present) the lines rehydrate; anything else partitions as arbitrary NDJSON, including a file
     mixing element-shaped and arbitrary lines (no partial rehydration). Element-shaped lines
-    whose contents cannot be rehydrated (e.g. corrupt `metadata`) raise `ValueError`. Known v1
-    limitation: customer lines that all happen to look like serialized elements (e.g.
+    whose contents cannot be rehydrated (e.g. corrupt `metadata`) raise `ValueError`.
+    Limitation: customer lines that all happen to look like serialized elements (e.g.
     `{"type": "Title", "text": ...}`) rehydrate instead of being treated as arbitrary NDJSON.
 
     Parameters
@@ -96,7 +96,7 @@ def partition_ndjson(
     if not values:
         return []
 
-    if all(is_serialized_element_dict(value) for value in values):
+    if all(is_element_shaped_dict(value) for value in values):
         # -- Branch A: rehydrate serialized Unstructured elements --
         elements = rehydrate_elements(values)
     else:

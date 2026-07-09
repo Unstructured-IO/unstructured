@@ -17,12 +17,12 @@ from typing import IO, Any, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common.arbitrary_json import (
-    elements_from_arbitrary_json,
-    is_serialized_element_dict,
+from unstructured.partition.common.common import exactly_one
+from unstructured.partition.common.json_partitioning import (
+    elements_from_arbitrary_value,
+    is_element_shaped_dict,
     rehydrate_elements,
 )
-from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 
 
@@ -41,19 +41,20 @@ def partition_json(
     Operates in two modes:
 
     - Rehydration: a JSON array of serialized Unstructured elements is converted back into those
-      elements, exactly as before.
+      elements.
     - Arbitrary JSON: any other valid JSON value is converted to `Text` elements containing the
       pretty-printed JSON. An object or a top-level scalar yields one `Text`; an array of objects
       yields one `Text` per object; any other array (scalars or mixed types) yields a single
       `Text` containing the whole array. An empty object or array yields no elements.
 
-    The mode is chosen by a shape predicate: a non-empty array whose every item looks like a
-    serialized element (recognized `type` with its required field of the right type, and a dict
-    `metadata` when present) rehydrates; anything else partitions as arbitrary JSON, including an
-    array mixing element-shaped and arbitrary items (no partial rehydration). An element-shaped
-    payload whose contents cannot be rehydrated (e.g. corrupt `metadata`) raises `ValueError`.
-    Known v1 limitation: a customer array whose items all happen to look like serialized elements
-    (e.g. `{"type": "Title", "text": ...}`) rehydrates instead of being treated as arbitrary JSON.
+    An empty or whitespace-only document yields no elements. The mode is chosen by a shape
+    predicate: a non-empty array whose every item looks like a serialized element (recognized
+    `type` with its required field of the right type, and a dict `metadata` when present)
+    rehydrates; anything else partitions as arbitrary JSON, including an array mixing
+    element-shaped and arbitrary items (no partial rehydration). An element-shaped payload whose
+    contents cannot be rehydrated (e.g. corrupt `metadata`) raises `ValueError`. Limitation: a
+    customer array whose items all happen to look like serialized elements (e.g.
+    `{"type": "Title", "text": ...}`) rehydrates instead of being treated as arbitrary JSON.
 
     Parameters
     ----------
@@ -93,12 +94,12 @@ def partition_json(
     except (json.JSONDecodeError, RecursionError):
         raise ValueError("Not a valid json")
 
-    if isinstance(value, list) and value and all(is_serialized_element_dict(i) for i in value):
+    if isinstance(value, list) and value and all(is_element_shaped_dict(i) for i in value):
         # -- Branch A: rehydrate serialized Unstructured elements --
         elements = rehydrate_elements(value)
     else:
         # -- Branch B: arbitrary JSON --
-        elements = elements_from_arbitrary_json(value)
+        elements = elements_from_arbitrary_value(value)
 
     for element in elements:
         element.metadata.last_modified = metadata_last_modified or last_modified
