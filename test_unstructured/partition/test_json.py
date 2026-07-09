@@ -12,7 +12,16 @@ import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.documents.elements import CompositeElement, Text, Title
+from unstructured.chunking.dispatch import reconstruct_table_from_chunks
+from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import (
+    CompositeElement,
+    ElementMetadata,
+    Table,
+    TableChunk,
+    Text,
+    Title,
+)
 from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
@@ -378,6 +387,45 @@ def it_chunks_an_arbitrary_payload_when_a_chunking_strategy_is_specified():
 
     assert len(chunks) == 1
     assert all(isinstance(chunk, CompositeElement) for chunk in chunks)
+
+
+# -- serialized chunked-table output (TableChunk) round-trip -------------------------------------
+
+
+def it_round_trips_serialized_chunked_table_output_including_TableChunks():
+    # -- completes PR #4291: `reconstruct_table_from_chunks()` expects deserialized chunks, so
+    # -- serialized chunker output must round-trip its TableChunk elements rather than silently
+    # -- drop them --
+    rows = [(f"Item {i}", f"Description of item number {i}") for i in range(1, 25)]
+    table_text = "\n".join(f"{name} {desc}" for name, desc in rows)
+    table_html = (
+        "<table>"
+        + "".join(f"<tr><td>{name}</td><td>{desc}</td></tr>" for name, desc in rows)
+        + "</table>"
+    )
+    chunks = chunk_by_title(
+        [Title("Inventory"), Table(table_text, metadata=ElementMetadata(text_as_html=table_html))],
+        max_characters=500,
+        include_orig_elements=True,
+    )
+    assert sum(isinstance(c, TableChunk) for c in chunks) >= 2
+    # -- serialized chunker output in the wild carries `filetype` from its partition run; stamp
+    # -- the value partition_json() itself stamps so re-serialization compares byte-for-byte --
+    for chunk in chunks:
+        chunk.metadata.filetype = "application/json"
+    json_text = elements_to_json(chunks)
+    assert json_text is not None
+
+    # -- unique_element_ids=True keeps the chunker-assigned ids; hash-id reassignment (#3365)
+    # -- is orthogonal to what this test pins --
+    elements = partition_json(text=json_text, unique_element_ids=True)
+
+    assert [type(e) for e in elements] == [type(c) for c in chunks]
+    assert elements == chunks
+    assert elements_to_json(elements) == json_text
+    # -- and the rehydrated chunks feed the PR #4291 reconstruction helper --
+    [table] = reconstruct_table_from_chunks(elements)
+    assert table.text.split() == table_text.split()
 
 
 # -- element-shaped payload discrimination -------------------------------------------------------

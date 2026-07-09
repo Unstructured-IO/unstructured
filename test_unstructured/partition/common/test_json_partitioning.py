@@ -27,12 +27,29 @@ def and_it_rejects_a_CheckBox_with_a_non_bool_checked_field():
     assert is_element_shaped_dict({"type": "CheckBox", "checked": "yes"}) is False
 
 
+def it_affirms_a_TableChunk_with_a_str_text_field():
+    assert is_element_shaped_dict({"type": "TableChunk", "text": "x"}) is True
+
+
+def but_it_rejects_a_TableChunk_with_no_text_field():
+    assert is_element_shaped_dict({"type": "TableChunk"}) is False
+
+
+def and_it_rejects_a_TableChunk_with_a_non_str_text_field():
+    assert is_element_shaped_dict({"type": "TableChunk", "text": 42}) is False
+
+
 def it_affirms_an_element_shaped_dict_with_an_explicit_None_metadata():
     assert is_element_shaped_dict({"type": "Title", "text": "x", "metadata": None}) is True
 
 
 def but_it_rejects_a_dict_with_a_non_dict_metadata():
     assert is_element_shaped_dict({"type": "Title", "text": "x", "metadata": "weird"}) is False
+
+
+def it_rejects_a_dict_with_an_unrecognized_type():
+    # -- a recognizable "text" field is not enough; the type vocabulary is closed --
+    assert is_element_shaped_dict({"type": "Widget", "text": "x"}) is False
 
 
 def it_rejects_a_dict_with_a_non_str_type():

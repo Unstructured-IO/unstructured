@@ -12,7 +12,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import example_doc_path
-from unstructured.documents.elements import CompositeElement, Text, Title
+from unstructured.documents.elements import CompositeElement, TableChunk, Text, Title
 from unstructured.file_utils.model import FileType
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -321,6 +321,14 @@ def it_partitions_arbitrary_ndjson_into_one_Text_element_per_line_in_line_order(
     ]
 
 
+def and_it_keeps_an_array_valued_line_as_a_single_Text_element():
+    # -- one `Text` per line even when the line is an array; NDJSON mode never explodes a line
+    # -- into one element per array item the way JSON mode does for an all-object array --
+    elements = partition_ndjson(text='[{"a": 1}, {"b": 2}]\n')
+
+    assert elements == [Text(text='[\n  {\n    "a": 1\n  },\n  {\n    "b": 2\n  }\n]')]
+
+
 def and_it_skips_blank_lines():
     text = '{"sku": "A-100"}\n\n   \n{"sku": "B-200"}\n'
 
@@ -351,6 +359,23 @@ def it_still_rehydrates_serialized_element_ndjson_rather_than_partitioning_it():
     elements = partition_ndjson(example_doc_path("simple.ndjson"))
 
     assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+def and_it_rehydrates_element_shaped_lines_including_a_TableChunk_line():
+    # -- TableChunk is special-cased (like CheckBox) in both the shape predicate and
+    # -- `elements_from_dicts()`, so serialized chunker output rehydrates with classes
+    # -- preserved rather than the TableChunk line being silently dropped --
+    text = (
+        '{"type": "Title", "text": "Regional Sales"}\n'
+        '{"type": "TableChunk", "text": "Region Total",'
+        ' "metadata": {"table_id": "t-1", "chunk_index": 0}}\n'
+    )
+
+    elements = partition_ndjson(text=text)
+
+    assert [type(e) for e in elements] == [Title, TableChunk]
+    assert elements[1].text == "Region Total"
+    assert elements[1].metadata.table_id == "t-1"
 
 
 def it_chunks_arbitrary_ndjson_when_a_chunking_strategy_is_specified():

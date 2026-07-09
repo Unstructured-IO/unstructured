@@ -5,15 +5,18 @@ serialized Unstructured elements and partitioning arbitrary customer JSON -- usi
 `is_element_shaped_dict()` as the discriminator.
 
 A dict counts as element-shaped only when its `type` is recognized AND the type-specific required
-field is present with the right type AND `metadata` (when present) is a dict. This mirrors what
-`elements_from_dicts()` (unstructured/staging/base.py) actually requires: it parses
-`item["metadata"]` before checking `type`, requires `item["text"]` for text types and
-`item["checked"]` for CheckBox, and silently skips unrecognized types.
+field is present with the right type AND `metadata` (when present) is a dict. This mirrors the
+shapes `elements_from_dicts()` (unstructured/staging/base.py) actually accepts -- the
+`TYPE_TO_TEXT_ELEMENT_MAP` types plus the CheckBox and TableChunk special cases: it parses
+`item["metadata"]` before checking `type`, requires `item["text"]` for text types (TableChunk
+included) and `item["checked"]` for CheckBox, and silently skips unrecognized types.
 
 `elements_from_arbitrary_value()` is the swap-point for JSON-mode structure (a future
 structure-aware walker would replace it). `pretty_json_text()` is the shared formatter used by
 BOTH partitioners; NDJSON keeps its own strict one-`Text`-per-line loop in `partition_ndjson()`
-because its `{}` -> `Text("{}")` contract deliberately differs from JSON's `{}` -> no elements.
+because its contract deliberately differs from JSON mode in two ways: empty containers still
+yield an element (`{}` -> `Text("{}")` where JSON mode yields no elements), and an array-valued
+line stays one `Text` per line rather than exploding into one element per array item.
 """
 
 from __future__ import annotations
@@ -40,6 +43,8 @@ def is_element_shaped_dict(item: Any) -> bool:
         return isinstance(item.get("text"), str)
     if item_type == "CheckBox":
         return isinstance(item.get("checked"), bool)
+    if item_type == "TableChunk":
+        return isinstance(item.get("text"), str)
     return False
 
 

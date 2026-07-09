@@ -196,7 +196,7 @@ def is_ndjson_processable(
 
     # Multi-line input. NDJSON requires each record to be on its own line, so the first line
     # must independently parse as a JSON object. A pretty-printed single JSON object has its
-    # first line be just `{` (or similar fragment) which won't parse alone — that's how we
+    # first line be just `{` (or similar fragment) which won't parse alone -- that's how we
     # distinguish it from real NDJSON.
     first_line = text[:newline_idx].rstrip()
     if not first_line:

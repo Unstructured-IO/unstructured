@@ -602,7 +602,7 @@ def it_rejects_garbage_text():
 
 
 def it_rejects_a_jupyter_notebook_payload():
-    """Jupyter notebooks are a single multi-line JSON object — must not route to NDJSON."""
+    """Jupyter notebooks are a single multi-line JSON object -- must not route to NDJSON."""
     notebook_text = (
         "{\n"
         ' "cells": [],\n'
@@ -744,6 +744,24 @@ def and_it_classifies_two_record_ndjson_of_exactly_the_bound_plus_one_as_NDJSON(
     file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
 
     assert file_type == FileType.NDJSON
+
+
+def and_it_classifies_a_single_record_of_exactly_the_bound_plus_one_ending_in_newline_as_JSON(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- pins the two-step truncation probe: a lone MAX+1-char record ending in a newline is
+    # -- fully in hand, so the whole-payload parse wins and classifies JSON. A length-only probe
+    # -- (`truncated = len(head) > MAX`) would falsely flag truncation, classify on the complete
+    # -- first line, and flip this payload to NDJSON --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    pad_len = 129 - len(b'{"note": ""}\n')
+    payload = b'{"note": "' + b"A" * pad_len + b'"}\n'
+    assert len(payload) == 129
+    assert payload.endswith(b"\n")
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.JSON
 
 
 def and_it_classifies_oversized_compact_single_line_json_as_JSON_from_its_bounded_prefix(
