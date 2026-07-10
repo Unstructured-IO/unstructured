@@ -21,6 +21,7 @@ from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.json_partitioning import (
     elements_from_arbitrary_value,
     is_element_shaped_dict,
+    loads_strict_json,
     rehydrate_elements,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -91,7 +92,7 @@ def partition_json(
         return []
 
     try:
-        value = json.loads(file_text)
+        value = loads_strict_json(file_text)
     except (json.JSONDecodeError, RecursionError):
         raise ValueError("Not a valid json")
 

@@ -511,6 +511,16 @@ def it_raises_ValueError_on_a_deeply_nested_payload_rather_than_RecursionError()
         partition_json(text="[" * 200000)
 
 
+@pytest.mark.parametrize(
+    "payload",
+    ["NaN", "Infinity", "-Infinity", '{"x": NaN}', "[1, Infinity, 3]"],
+)
+def it_rejects_non_standard_json_constants(payload: str):
+    # -- NaN/Infinity are accepted by json.loads by default but are not valid JSON --
+    with pytest.raises(ValueError, match="Not a valid json"):
+        partition_json(text=payload)
+
+
 def and_it_raises_ValueError_when_a_valid_payload_is_too_deep_to_pretty_print():
     # -- json.loads() (C scanner) parses deeper than json.dumps() (pure Python) can serialize,
     # -- so a valid payload can still fail pretty-printing; that surfaces as ValueError too --

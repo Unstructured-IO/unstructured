@@ -14,9 +14,14 @@ included) and `item["checked"]` for CheckBox, and silently skips unrecognized ty
 `elements_from_arbitrary_value()` is the swap-point for JSON-mode structure (a future
 structure-aware walker would replace it). `pretty_json_text()` is the shared formatter used by
 BOTH partitioners; NDJSON keeps its own strict one-`Text`-per-line loop in `partition_ndjson()`
-because its contract deliberately differs from JSON mode in two ways: empty containers still
-yield an element (`{}` -> `Text("{}")` where JSON mode yields no elements), and an array-valued
-line stays one `Text` per line rather than exploding into one element per array item.
+because its contract deliberately differs from JSON mode for empty arrays: an `[]` NDJSON line
+yields `Text("[]")` whereas an `[]` JSON document yields no elements (both modes emit `Text("{}")`
+for an empty object). An NDJSON line that is itself an array also stays one `Text` per line
+rather than exploding into one element per array item.
+
+`loads_strict_json()` is the shared parser both partitioners use so that non-standard JSON
+constants (`NaN`, `Infinity`, `-Infinity`), which `json.loads` accepts by default, are rejected
+as malformed rather than partitioned.
 """
 
 from __future__ import annotations
@@ -26,6 +31,20 @@ from typing import Any
 
 from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP, Element, Text
 from unstructured.staging.base import elements_from_dicts
+
+
+def _reject_json_constant(constant: str) -> None:
+    """Raise so `NaN`/`Infinity`/`-Infinity` are treated as malformed JSON.
+
+    Raised as `JSONDecodeError` so it flows through the callers' existing decode-error handling
+    and surfaces as the canonical "Not a valid json"/"Not a valid ndjson" ValueError.
+    """
+    raise json.JSONDecodeError(f"Non-standard JSON constant: {constant}", constant, 0)
+
+
+def loads_strict_json(text: str) -> Any:
+    """`json.loads` that rejects the non-standard constants Python accepts by default."""
+    return json.loads(text, parse_constant=_reject_json_constant)
 
 
 def is_element_shaped_dict(item: Any) -> bool:

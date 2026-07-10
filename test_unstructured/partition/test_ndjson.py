@@ -429,6 +429,13 @@ def it_raises_ValueError_on_a_deeply_nested_line_rather_than_RecursionError():
         partition_ndjson(text="[" * 200000)
 
 
+@pytest.mark.parametrize("payload", ["NaN", "Infinity", "-Infinity", '{"x": NaN}'])
+def it_rejects_non_standard_json_constants_on_a_line(payload: str):
+    # -- a line with NaN/Infinity is not valid JSON, even though json.loads accepts it --
+    with pytest.raises(ValueError, match="Not a valid ndjson"):
+        partition_ndjson(text=payload + "\n")
+
+
 def and_it_raises_ValueError_when_a_valid_line_is_too_deep_to_pretty_print():
     # -- json.loads() (C scanner) parses deeper than json.dumps() (pure Python) can serialize,
     # -- so a valid line can still fail pretty-printing; that surfaces as ValueError too --

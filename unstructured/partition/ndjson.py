@@ -20,6 +20,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.json_partitioning import (
     is_element_shaped_dict,
+    loads_strict_json,
     pretty_json_text,
     rehydrate_elements,
 )
@@ -89,7 +90,7 @@ def partition_ndjson(
         for line in file_text.splitlines():
             if not line.strip():
                 continue
-            values.append(json.loads(line))
+            values.append(loads_strict_json(line))
     except (json.JSONDecodeError, RecursionError):
         raise ValueError("Not a valid ndjson")
 
