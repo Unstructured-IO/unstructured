@@ -124,6 +124,7 @@ URL_ATTRIBUTES: frozenset[str] = frozenset(
 # -- contexts. --
 ALLOWED_DATA_IMAGE_MIME_TYPES: frozenset[str] = frozenset(
     {
+        "image/avif",
         "image/bmp",
         "image/gif",
         "image/jpeg",
@@ -197,6 +198,14 @@ _ATTRIBUTE_NAME_RE = re.compile(r"^[a-zA-Z_:][-a-zA-Z0-9_:.]*$")
 _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
 
 _REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "noreferrer"})
+
+# -- Match an anchor start tag and detect `target="_blank"` / an existing `rel`
+# -- so we can add reverse-tabnabbing protection to new-tab links only. nh3's
+# -- output is well-formed (attribute values are escaped, so `>` never appears
+# -- inside one), which makes matching whole start tags with a regex safe. --
+_ANCHOR_START_TAG_RE = re.compile(r"<a\b[^>]*>", flags=re.IGNORECASE)
+_BLANK_TARGET_RE = re.compile(r"""\btarget\s*=\s*["']?_blank\b""", flags=re.IGNORECASE)
+_REL_ATTRIBUTE_RE = re.compile(r"""\brel\s*=""", flags=re.IGNORECASE)
 
 _CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", flags=re.DOTALL)
 _CSS_UNSAFE_VALUE_RE = re.compile(
@@ -371,6 +380,25 @@ def _nh3_attribute_filter(tag: str, attribute: str, value: str) -> str | None:
     return value
 
 
+def _add_rel_to_blank_target_links(html_fragment: str) -> str:
+    """Add reverse-tabnabbing ``rel`` tokens to ``target="_blank"`` anchors only.
+
+    nh3's ``link_rel`` would stamp ``rel`` onto *every* link, stripping the
+    ``Referer`` header from ordinary same-tab navigation. Reverse tabnabbing is
+    only a concern for new-tab links, so we scope the tokens to anchors that
+    actually open a new browsing context and leave same-tab links untouched.
+    """
+
+    def add_rel(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        if not _BLANK_TARGET_RE.search(tag) or _REL_ATTRIBUTE_RE.search(tag):
+            return tag
+        rel = " ".join(sorted(_REQUIRED_BLANK_TARGET_REL_VALUES))
+        return f'{tag[:-1].rstrip()} rel="{rel}">'
+
+    return _ANCHOR_START_TAG_RE.sub(add_rel, html_fragment)
+
+
 def sanitize_html_fragment(html_fragment: str) -> str:
     """Sanitize an assembled HTML fragment with ``nh3`` (defense-in-depth).
 
@@ -382,12 +410,7 @@ def sanitize_html_fragment(html_fragment: str) -> str:
     attributes: dict[str, set[str]] = {"*": set(_GLOBAL_ATTRIBUTES)}
     for tag, attrs in _TAG_ATTRIBUTES.items():
         attributes[tag] = set(attrs)
-    # -- When `link_rel` is configured, nh3 owns the `rel` attribute and rejects
-    # -- configs that also allow callers to pass `rel` through directly. The
-    # -- ontology emitter still handles direct `text_as_html` rel normalization
-    # -- in `sanitize_attributes`.
-    attributes["a"].discard("rel")
-    return nh3.clean(
+    cleaned = nh3.clean(
         html_fragment,
         tags=set(ALLOWED_TAGS),
         attributes=attributes,
@@ -395,6 +418,10 @@ def sanitize_html_fragment(html_fragment: str) -> str:
         generic_attribute_prefixes=set(_GENERIC_ATTRIBUTE_PREFIXES),
         filter_style_properties=set(ALLOWED_CSS_PROPERTIES),
         attribute_filter=_nh3_attribute_filter,
-        link_rel="noopener noreferrer",
+        # -- Scope reverse-tabnabbing `rel` tokens to `_blank` anchors ourselves
+        # -- rather than letting nh3 add them to every link (which would strip
+        # -- the Referer header from same-tab navigation). --
+        link_rel=None,
         strip_comments=True,
     )
+    return _add_rel_to_blank_target_links(cleaned)

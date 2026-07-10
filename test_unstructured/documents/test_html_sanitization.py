@@ -224,6 +224,10 @@ class DescribeSanitizeHtmlFragment:
         cleaned = sanitize_html_fragment('<img src="data:image/png;base64,iVBORw0KGgo=" alt="ok">')
         assert "data:image/png" in cleaned
 
+    def it_preserves_avif_base64_image_sources(self):
+        cleaned = sanitize_html_fragment('<img src="data:image/avif;base64,AAAAAA==" alt="ok">')
+        assert "data:image/avif" in cleaned
+
     def it_drops_svg_data_image_sources(self):
         cleaned = sanitize_html_fragment(
             '<img src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=" alt="bad">'
@@ -243,6 +247,18 @@ class DescribeSanitizeHtmlFragment:
         cleaned = sanitize_html_fragment('<a href="https://example.com" target="_blank">x</a>')
         assert "noopener" in cleaned
         assert "noreferrer" in cleaned
+
+    def it_does_not_add_rel_to_same_tab_links(self):
+        # -- same-tab links must keep their Referer header (no unconditional rel) --
+        cleaned = sanitize_html_fragment('<a href="https://example.com">x</a>')
+        assert "rel=" not in cleaned
+        assert "noreferrer" not in cleaned
+
+    def it_does_not_duplicate_rel_on_blank_target_links(self):
+        cleaned = sanitize_html_fragment(
+            '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'
+        )
+        assert cleaned.count("rel=") == 1
 
     def it_filters_inline_styles(self):
         cleaned = sanitize_html_fragment(
