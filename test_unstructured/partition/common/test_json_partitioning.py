@@ -2,8 +2,15 @@
 
 from __future__ import annotations
 
+import json
+
+import pytest
+
 from unstructured.documents.elements import CheckBox
-from unstructured.partition.common.json_partitioning import is_element_shaped_dict
+from unstructured.partition.common.json_partitioning import (
+    is_element_shaped_dict,
+    loads_strict_json,
+)
 from unstructured.partition.json import partition_json
 
 # ================================================================================================
@@ -75,3 +82,19 @@ def it_rehydrates_a_CheckBox_through_partition_json():
     assert len(elements) == 1
     assert isinstance(elements[0], CheckBox)
     assert elements[0].checked is True
+
+
+# ================================================================================================
+# Describe `loads_strict_json()`
+# ================================================================================================
+
+
+def it_parses_valid_json_like_json_loads():
+    assert loads_strict_json('{"a": 1, "b": [2, 3.5, "x"]}') == {"a": 1, "b": [2, 3.5, "x"]}
+
+
+@pytest.mark.parametrize("payload", ["NaN", "Infinity", "-Infinity", '{"x": NaN}', "[Infinity]"])
+def it_rejects_non_standard_json_constants(payload: str):
+    # -- json.loads accepts these by default; loads_strict_json must reject them as malformed --
+    with pytest.raises(json.JSONDecodeError):
+        loads_strict_json(payload)
