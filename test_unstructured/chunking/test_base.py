@@ -456,6 +456,41 @@ class DescribeTextSplitterTokenMode:
         assert fragment2 == "seven eight nine ten eleven twelve"
         assert remainder2 == ""
 
+    def it_makes_progress_on_a_long_whitespace_free_token_with_overlap(
+        self, _tiktoken_installed: None
+    ):
+        """Regression: overlap must not spin the split loop forever on a long unbroken token.
+
+        A whitespace-free run longer than `max_tokens` (a long URL, hash, base64 blob, etc.)
+        combined with token-mode overlap used to regrow the remainder back to the full input,
+        so `PreChunk._iter_text_splits` (`while remainder: split(remainder)`) never terminated.
+        Each split must strictly shrink the remainder.
+        """
+        opts = ChunkingOptions(max_tokens=10, tokenizer="cl100k_base", overlap=5)
+        split = _TextSplitter(opts)
+
+        # -- 2000 chars, no whitespace, far more than 10 tokens --
+        text = "xyzq" * 500
+
+        # -- drive the same loop `_iter_text_splits` uses; this spins forever on the pre-fix
+        # -- splitter (there is deliberately no internal iteration cap here) --
+        fragment, remainder = split(text)
+        fragments = [fragment]
+        remainder_lengths = [len(remainder)]
+        while remainder:
+            fragment, remainder = split(remainder)
+            fragments.append(fragment)
+            remainder_lengths.append(len(remainder))
+
+        # -- the loop terminated and split into multiple fragments --
+        assert remainder == ""
+        assert len(fragments) > 1
+        # -- every split strictly shrank the remainder, which is what guarantees termination --
+        assert all(b < a for a, b in zip(remainder_lengths, remainder_lengths[1:]))
+        # -- no fragment exceeds the token limit and no original character is lost --
+        assert all(opts.measure(f) <= 10 for f in fragments if f)
+        assert "xyzq" * 3 in "".join(fragments)
+
 
 # ================================================================================================
 # PRE-CHUNKER
