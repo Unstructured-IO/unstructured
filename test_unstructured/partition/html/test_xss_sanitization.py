@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import re
 
+from bs4 import BeautifulSoup
+
 from unstructured.documents.elements import ElementMetadata, Text
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.convert import elements_to_html
@@ -33,6 +35,13 @@ def _partition_v2(html_text: str):
 
 def _all_text_as_html(elements) -> str:
     return " ".join(e.metadata.text_as_html or "" for e in elements)
+
+
+def _href_values(html: str) -> list[str]:
+    return [
+        str(anchor["href"])
+        for anchor in BeautifulSoup(html, "html.parser").find_all("a", href=True)
+    ]
 
 
 class DescribeElementsToHtmlIsInert:
@@ -195,7 +204,7 @@ class DescribeLinkUrlInjectionViaMetadata:
         )
         el.category = "Link"  # type: ignore[assignment]
         out = elements_to_html([el], no_group_by_page=True)
-        assert 'href="https://example.com"' in out
+        assert "https://example.com" in _href_values(out)
 
 
 class DescribeLegitimateFormattingPreserved:
@@ -221,7 +230,7 @@ class DescribeLegitimateFormattingPreserved:
             "</body>"
         )
         out = elements_to_html(_partition_v2(doc), no_group_by_page=True)
-        assert 'href="https://example.com/page"' in out
+        assert "https://example.com/page" in _href_values(out)
         assert "Heading" in out
 
     def it_preserves_mailto_scheme_in_text_as_html(self):
