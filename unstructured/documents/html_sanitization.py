@@ -134,6 +134,31 @@ ALLOWED_DATA_IMAGE_MIME_TYPES: frozenset[str] = frozenset(
     }
 )
 
+# -- Inline CSS is untrusted too. Keep only inert presentation properties that
+# -- preserve existing table/background formatting and reject layout/overlay
+# -- controls like position/inset/z-index.
+ALLOWED_CSS_PROPERTIES: frozenset[str] = frozenset(
+    {
+        "background-color",
+        "border",
+        "border-bottom",
+        "border-collapse",
+        "border-color",
+        "border-left",
+        "border-right",
+        "border-style",
+        "border-top",
+        "border-width",
+        "color",
+        "font-style",
+        "font-weight",
+        "text-align",
+        "text-decoration",
+        "vertical-align",
+        "white-space",
+    }
+)
+
 # -- Attributes allowed on every tag. --
 _GLOBAL_ATTRIBUTES: frozenset[str] = frozenset(
     {"class", "id", "style", "title", "dir", "lang", "role", "name", "align"}
@@ -172,6 +197,12 @@ _ATTRIBUTE_NAME_RE = re.compile(r"^[a-zA-Z_:][-a-zA-Z0-9_:.]*$")
 _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
 
 _REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "noreferrer"})
+
+_CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", flags=re.DOTALL)
+_CSS_UNSAFE_VALUE_RE = re.compile(
+    r"(@import|expression\s*\(|url\s*\(|javascript:|vbscript:|data:|-moz-binding|behavior\s*:)",
+    flags=re.IGNORECASE,
+)
 
 
 def _normalize_url(value: str) -> str:
@@ -258,6 +289,24 @@ def _link_rel_with_required_values(value: object | None) -> str:
     return " ".join([*existing_values, *missing_values]).strip()
 
 
+def sanitize_style_attribute(value: object) -> str:
+    """Return a style attribute containing only safe presentation declarations."""
+    style = _CSS_COMMENT_RE.sub("", str(value))
+    safe_declarations: list[str] = []
+    for declaration in style.split(";"):
+        if ":" not in declaration:
+            continue
+        raw_property, raw_value = declaration.split(":", 1)
+        property_name = raw_property.strip().lower()
+        property_value = " ".join(raw_value.strip().split())
+        if property_name not in ALLOWED_CSS_PROPERTIES:
+            continue
+        if not property_value or _CSS_UNSAFE_VALUE_RE.search(property_value):
+            continue
+        safe_declarations.append(f"{property_name}: {property_value}")
+    return "; ".join(safe_declarations)
+
+
 def sanitize_attributes(
     attributes: dict[str, object],
     tag_name: str | None = None,
@@ -279,6 +328,12 @@ def sanitize_attributes(
         if not _ATTRIBUTE_NAME_RE.match(name):
             continue
         if not _is_allowed_attribute_for_tag(name, tag_name):
+            continue
+        if lowered == "style":
+            sanitized_style = sanitize_style_attribute(value)
+            if not sanitized_style:
+                continue
+            safe[name] = sanitized_style
             continue
         if lowered in URL_ATTRIBUTES and value is not None:
             candidate = value[0] if isinstance(value, list) and value else value
@@ -305,6 +360,8 @@ def _nh3_attribute_filter(tag: str, attribute: str, value: str) -> str | None:
     """nh3 per-attribute hook: drop event handlers and unsafe URL values."""
     if is_event_handler_attribute(attribute):
         return None
+    if attribute.lower() == "style":
+        return sanitize_style_attribute(value) or None
     if attribute.lower() in URL_ATTRIBUTES and not is_safe_url(
         value,
         tag_name=tag,
@@ -336,6 +393,7 @@ def sanitize_html_fragment(html_fragment: str) -> str:
         attributes=attributes,
         url_schemes=set(ALLOWED_URL_SCHEMES),
         generic_attribute_prefixes=set(_GENERIC_ATTRIBUTE_PREFIXES),
+        filter_style_properties=set(ALLOWED_CSS_PROPERTIES),
         attribute_filter=_nh3_attribute_filter,
         link_rel="noopener noreferrer",
         strip_comments=True,

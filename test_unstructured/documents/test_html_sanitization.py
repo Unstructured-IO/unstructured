@@ -9,6 +9,7 @@ from unstructured.documents.html_sanitization import (
     is_safe_url,
     sanitize_attributes,
     sanitize_html_fragment,
+    sanitize_style_attribute,
 )
 
 
@@ -159,6 +160,18 @@ class DescribeSanitizeAttributes:
         )
         assert result == {"colspan": "2", "rowspan": "3", "headers": "h1", "scope": "col"}
 
+    def it_filters_inline_style_values(self):
+        result = sanitize_attributes(
+            {
+                "style": (
+                    "background-color: lightblue; position: fixed; inset: 0; "
+                    "z-index: 9999; border: 1px solid black"
+                )
+            },
+            tag_name="p",
+        )
+        assert result == {"style": "background-color: lightblue; border: 1px solid black"}
+
     def it_adds_noopener_noreferrer_for_blank_targets(self):
         result = sanitize_attributes(
             {"href": "https://example.com", "target": "_blank"},
@@ -178,6 +191,20 @@ class DescribeSanitizeAttributes:
     def it_scheme_filters_list_valued_url_attributes(self):
         result = sanitize_attributes({"href": ["javascript:alert(1)"]}, tag_name="a")
         assert result == {}
+
+
+class DescribeSanitizeStyleAttribute:
+    def it_keeps_safe_presentation_declarations(self):
+        style = "background-color: lightblue; text-align: right; border-collapse: collapse"
+        assert sanitize_style_attribute(style) == style
+
+    def it_drops_layout_overlay_declarations(self):
+        style = "position: fixed; inset: 0; z-index: 9999; color: red"
+        assert sanitize_style_attribute(style) == "color: red"
+
+    def it_drops_url_and_expression_values(self):
+        style = "background-color: url(javascript:alert(1)); color: expression(alert(1))"
+        assert sanitize_style_attribute(style) == ""
 
 
 class DescribeSanitizeHtmlFragment:
@@ -216,6 +243,15 @@ class DescribeSanitizeHtmlFragment:
         cleaned = sanitize_html_fragment('<a href="https://example.com" target="_blank">x</a>')
         assert "noopener" in cleaned
         assert "noreferrer" in cleaned
+
+    def it_filters_inline_styles(self):
+        cleaned = sanitize_html_fragment(
+            '<p style="position:fixed;inset:0;z-index:9999;color:red">x</p>'
+        )
+        assert "position" not in cleaned
+        assert "inset" not in cleaned
+        assert "z-index" not in cleaned
+        assert "color:red" in cleaned
 
     def it_preserves_legitimate_table_formatting(self):
         cleaned = sanitize_html_fragment(

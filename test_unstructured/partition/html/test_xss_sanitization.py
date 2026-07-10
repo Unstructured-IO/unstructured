@@ -71,6 +71,18 @@ class DescribeElementsToHtmlIsInert:
         assert "noopener" in out
         assert "noreferrer" in out
 
+    def it_filters_overlay_styles(self):
+        styled = (
+            '<body class="Document">'
+            '<p class="Paragraph" style="position:fixed;inset:0;z-index:9999;color:red">x</p>'
+            "</body>"
+        )
+        out = elements_to_html(_partition_v2(styled), no_group_by_page=True)
+        assert "position" not in out
+        assert "inset" not in out
+        assert "z-index" not in out
+        assert "color:red" in out
+
 
 class DescribeTextAsHtmlIsInert:
     """`text_as_html` is a value some callers return to clients directly."""
@@ -150,6 +162,18 @@ class DescribeTextAsHtmlIsInert:
         assert "noopener" in tah
         assert "noreferrer" in tah
 
+    def it_filters_overlay_styles_in_text_as_html(self):
+        styled = (
+            '<body class="Document">'
+            '<p class="Paragraph" style="position:fixed;inset:0;z-index:9999;color:red">x</p>'
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(styled))
+        assert "position" not in tah
+        assert "inset" not in tah
+        assert "z-index" not in tah
+        assert "color: red" in tah
+
 
 class DescribeLinkUrlInjectionViaMetadata:
     """`elements_to_html` builds `href` from `metadata.url` outside the ontology
@@ -171,7 +195,7 @@ class DescribeLinkUrlInjectionViaMetadata:
         )
         el.category = "Link"  # type: ignore[assignment]
         out = elements_to_html([el], no_group_by_page=True)
-        assert "https://example.com" in out
+        assert 'href="https://example.com"' in out
 
 
 class DescribeLegitimateFormattingPreserved:
@@ -197,7 +221,7 @@ class DescribeLegitimateFormattingPreserved:
             "</body>"
         )
         out = elements_to_html(_partition_v2(doc), no_group_by_page=True)
-        assert "https://example.com/page" in out
+        assert 'href="https://example.com/page"' in out
         assert "Heading" in out
 
     def it_preserves_mailto_scheme_in_text_as_html(self):
