@@ -60,6 +60,17 @@ class DescribeElementsToHtmlIsInert:
         assert not re.search(r"<svg", out)
         assert "&lt;svg" in out
 
+    def it_adds_safe_rel_for_blank_targets(self):
+        blank_target = (
+            '<body class="Document">'
+            '<a class="Hyperlink" href="https://example.com" target="_blank">x</a>'
+            "</body>"
+        )
+        out = elements_to_html(_partition_v2(blank_target), no_group_by_page=True)
+        assert 'target="_blank"' in out
+        assert "noopener" in out
+        assert "noreferrer" in out
+
 
 class DescribeTextAsHtmlIsInert:
     """`text_as_html` is a value some callers return to clients directly."""
@@ -84,6 +95,60 @@ class DescribeTextAsHtmlIsInert:
         assert "&quot;" in tah
         assert "&lt;svg" in tah
         assert not re.search(r"<svg", tah)
+
+    def it_drops_meta_refresh_attributes_from_text_as_html(self):
+        meta_refresh = (
+            '<body class="Document">'
+            '<meta class="Keywords" http-equiv="refresh" content="0;url=javascript:alert(1)">'
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(meta_refresh))
+        assert "http-equiv" not in tah
+        assert "refresh" not in tah
+
+    def it_drops_form_navigation_attributes_from_text_as_html(self):
+        form_payload = (
+            '<body class="Document">'
+            '<form class="Form" action="javascript:alert(1)">'
+            '<input class="FormFieldValue" value="x" formaction="javascript:alert(2)">'
+            "</form>"
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(form_payload))
+        assert "action=" not in tah
+        assert "formaction" not in tah
+        assert "javascript:" not in tah.lower()
+
+    def it_drops_srcset_from_text_as_html(self):
+        srcset_payload = (
+            '<body class="Document">'
+            '<img class="Image" src="https://example.com/ok.png" '
+            'srcset="javascript:alert(1) 1x">'
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(srcset_payload))
+        assert "srcset" not in tah
+        assert "javascript:" not in tah.lower()
+
+    def it_rejects_svg_data_images_in_text_as_html(self):
+        svg_payload = (
+            '<body class="Document">'
+            '<img class="Image" src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=">'
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(svg_payload))
+        assert "data:image/svg" not in tah
+
+    def it_adds_safe_rel_for_blank_targets_in_text_as_html(self):
+        blank_target = (
+            '<body class="Document">'
+            '<a class="Hyperlink" href="https://example.com" target="_blank">x</a>'
+            "</body>"
+        )
+        tah = _all_text_as_html(_partition_v2(blank_target))
+        assert 'target="_blank"' in tah
+        assert "noopener" in tah
+        assert "noreferrer" in tah
 
 
 class DescribeLinkUrlInjectionViaMetadata:

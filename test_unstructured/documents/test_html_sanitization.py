@@ -24,8 +24,6 @@ class DescribeIsSafeUrl:
             "relative/path",
             "#anchor",
             "?query=only",
-            "data:image/png;base64,iVBORw0KGgo=",
-            "data:image/svg+xml;base64,PHN2Zz4=",
         ],
     )
     def it_allows_safe_urls(self, url: str):
@@ -48,12 +46,42 @@ class DescribeIsSafeUrl:
     def it_rejects_dangerous_urls(self, url: str):
         assert is_safe_url(url) is False
 
-    def it_only_permits_image_data_uris(self):
-        # -- data: is in the scheme allowlist but narrowed to images so base64
-        # -- images survive while script-executable data URIs do not --
+    def it_only_permits_raster_image_data_uris_on_img_src(self):
+        # -- data: is in the scheme allowlist but narrowed to raster img[src] so
+        # -- base64 images survive while script-executable data URIs do not --
         assert "data" in ALLOWED_URL_SCHEMES
-        assert is_safe_url("data:image/gif;base64,R0lGOD") is True
-        assert is_safe_url("data:text/html;base64,PHNjcmlwdD4=") is False
+        assert (
+            is_safe_url(
+                "data:image/gif;base64,R0lGOD",
+                tag_name="img",
+                attribute_name="src",
+            )
+            is True
+        )
+        assert (
+            is_safe_url(
+                "data:image/svg+xml;base64,PHN2Zz4=",
+                tag_name="img",
+                attribute_name="src",
+            )
+            is False
+        )
+        assert (
+            is_safe_url(
+                "data:image/png;base64,iVBORw0KGgo=",
+                tag_name="a",
+                attribute_name="href",
+            )
+            is False
+        )
+        assert (
+            is_safe_url(
+                "data:text/html;base64,PHNjcmlwdD4=",
+                tag_name="img",
+                attribute_name="src",
+            )
+            is False
+        )
 
 
 class DescribeIsEventHandlerAttribute:
@@ -78,33 +106,77 @@ class DescribeIsSafeTag:
 
 class DescribeSanitizeAttributes:
     def it_drops_event_handler_attributes(self):
-        result = sanitize_attributes({"onerror": "alert(1)", "onmouseover": "x", "class": "Foo"})
+        result = sanitize_attributes(
+            {"onerror": "alert(1)", "onmouseover": "x", "class": "Foo"},
+            tag_name="p",
+        )
         assert result == {"class": "Foo"}
 
     def it_drops_url_attributes_with_unsafe_schemes(self):
-        result = sanitize_attributes({"href": "javascript:alert(1)", "id": "x"})
+        result = sanitize_attributes({"href": "javascript:alert(1)", "id": "x"}, tag_name="a")
         assert result == {"id": "x"}
 
     def it_keeps_url_attributes_with_safe_schemes(self):
-        result = sanitize_attributes({"href": "https://example.com", "src": "/img.png"})
-        assert result == {"href": "https://example.com", "src": "/img.png"}
+        link_result = sanitize_attributes({"href": "https://example.com"}, tag_name="a")
+        image_result = sanitize_attributes({"src": "/img.png"}, tag_name="img")
+        assert link_result == {"href": "https://example.com"}
+        assert image_result == {"src": "/img.png"}
 
-    def it_keeps_data_image_uris(self):
-        result = sanitize_attributes({"src": "data:image/png;base64,AAAA"})
+    def it_keeps_raster_data_image_uris_on_img_src(self):
+        result = sanitize_attributes({"src": "data:image/png;base64,AAAA"}, tag_name="img")
         assert result == {"src": "data:image/png;base64,AAAA"}
+
+    def it_drops_data_image_uris_outside_img_src(self):
+        result = sanitize_attributes({"href": "data:image/png;base64,AAAA"}, tag_name="a")
+        assert result == {}
+
+    def it_drops_svg_data_image_uris(self):
+        result = sanitize_attributes({"src": "data:image/svg+xml;base64,PHN2Zz4="}, tag_name="img")
+        assert result == {}
 
     def it_drops_malformed_attribute_names(self):
         # -- a name that isn't a valid HTML attribute name can't be emitted safely --
-        result = sanitize_attributes({'x"><svg onload=alert(1)>': "y", "id": "ok"})
+        result = sanitize_attributes({'x"><svg onload=alert(1)>': "y", "id": "ok"}, tag_name="p")
         assert result == {"id": "ok"}
+
+    def it_drops_attributes_not_allowed_on_the_tag(self):
+        result = sanitize_attributes(
+            {
+                "action": "https://example.com/submit",
+                "class": "Form",
+                "formaction": "https://example.com/button",
+                "http-equiv": "refresh",
+                "srcset": "https://example.com/a.png 1x",
+            },
+            tag_name="form",
+        )
+        assert result == {"class": "Form"}
+
+    def it_allows_tag_specific_attributes(self):
+        result = sanitize_attributes(
+            {"colspan": "2", "rowspan": "3", "headers": "h1", "scope": "col"},
+            tag_name="td",
+        )
+        assert result == {"colspan": "2", "rowspan": "3", "headers": "h1", "scope": "col"}
+
+    def it_adds_noopener_noreferrer_for_blank_targets(self):
+        result = sanitize_attributes(
+            {"href": "https://example.com", "target": "_blank"},
+            tag_name="a",
+        )
+        assert result == {
+            "href": "https://example.com",
+            "target": "_blank",
+            "rel": "noopener noreferrer",
+        }
 
     def it_does_not_html_escape_values(self):
         # -- escaping happens once, at emit time; values pass through untouched here --
-        result = sanitize_attributes({"title": 'a & b < c "d"'})
+        result = sanitize_attributes({"title": 'a & b < c "d"'}, tag_name="p")
         assert result == {"title": 'a & b < c "d"'}
 
     def it_scheme_filters_list_valued_url_attributes(self):
-        result = sanitize_attributes({"href": ["javascript:alert(1)"]})
+        result = sanitize_attributes({"href": ["javascript:alert(1)"]}, tag_name="a")
         assert result == {}
 
 
@@ -125,10 +197,25 @@ class DescribeSanitizeHtmlFragment:
         cleaned = sanitize_html_fragment('<img src="data:image/png;base64,iVBORw0KGgo=" alt="ok">')
         assert "data:image/png" in cleaned
 
+    def it_drops_svg_data_image_sources(self):
+        cleaned = sanitize_html_fragment(
+            '<img src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=" alt="bad">'
+        )
+        assert "data:image/svg" not in cleaned
+
+    def it_drops_data_image_links(self):
+        cleaned = sanitize_html_fragment('<a href="data:image/png;base64,AAAA">x</a>')
+        assert "data:image/png" not in cleaned
+
     def it_drops_non_image_data_uris(self):
         cleaned = sanitize_html_fragment('<img src="data:text/html,<script>alert(1)</script>">')
         assert "data:text/html" not in cleaned
         assert "<script" not in cleaned
+
+    def it_adds_noopener_noreferrer_to_links(self):
+        cleaned = sanitize_html_fragment('<a href="https://example.com" target="_blank">x</a>')
+        assert "noopener" in cleaned
+        assert "noreferrer" in cleaned
 
     def it_preserves_legitimate_table_formatting(self):
         cleaned = sanitize_html_fragment(

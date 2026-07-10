@@ -17,8 +17,8 @@ sanitization policy shared by both paths:
 * an allowlist of attribute names (event-handler ``on*`` attributes are never
   allowed, killing ``onerror``/``onload``/``onmouseover``),
 * a URL-scheme allowlist for URL-bearing attributes (``href``/``src``/...),
-  which drops ``javascript:`` / ``vbscript:`` and every ``data:`` URI except
-  ``data:image/*`` (needed for legitimately embedded base64 images).
+  which drops ``javascript:`` / ``vbscript:`` and permits ``data:`` only for
+  raster image MIME types on ``img[src]``.
 
 The emitter (``ontology.py``) uses the lightweight filters here plus
 ``html.escape`` to make ``text_as_html`` safe on its own; ``elements_to_html``
@@ -102,8 +102,37 @@ ALLOWED_TAGS: frozenset[str] = frozenset(
     }
 )
 
-# -- Attribute names carrying a URL; their values are scheme-filtered. --
-URL_ATTRIBUTES: frozenset[str] = frozenset({"href", "src", "xlink:href", "data-src", "poster"})
+# -- Attribute names carrying a URL; their values are scheme-filtered. Keep this
+# -- list broader than the attributes we currently allow so newly-allowed URL
+# -- attributes are scheme-checked by default. --
+URL_ATTRIBUTES: frozenset[str] = frozenset(
+    {
+        "action",
+        "cite",
+        "data-src",
+        "formaction",
+        "href",
+        "poster",
+        "src",
+        "srcset",
+        "xlink:href",
+    }
+)
+
+# -- Data URLs are only needed for embedded image bytes. SVG is intentionally
+# -- excluded because SVG documents can carry active content in some render
+# -- contexts. --
+ALLOWED_DATA_IMAGE_MIME_TYPES: frozenset[str] = frozenset(
+    {
+        "image/bmp",
+        "image/gif",
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+        "image/x-icon",
+    }
+)
 
 # -- Attributes allowed on every tag. --
 _GLOBAL_ATTRIBUTES: frozenset[str] = frozenset(
@@ -130,8 +159,9 @@ _TAG_ATTRIBUTES: dict[str, frozenset[str]] = {
 _GENERIC_ATTRIBUTE_PREFIXES: frozenset[str] = frozenset({"data-", "aria-"})
 
 # -- URL schemes permitted on URL-bearing attributes. ``data`` is permitted here
-# -- but further restricted to ``data:image/*`` by :func:`is_safe_url` / the nh3
-# -- attribute filter; relative URLs (no scheme) are always allowed. --
+# -- but further restricted to raster image MIME types on ``img[src]`` by
+# -- :func:`is_safe_url` / the nh3 attribute filter; relative URLs (no scheme)
+# -- are always allowed. --
 ALLOWED_URL_SCHEMES: frozenset[str] = frozenset({"http", "https", "mailto", "tel", "data"})
 
 # -- Valid HTML/XML attribute name (prevents attribute-name breakout on emit). --
@@ -141,19 +171,50 @@ _ATTRIBUTE_NAME_RE = re.compile(r"^[a-zA-Z_:][-a-zA-Z0-9_:.]*$")
 # -- control chars that browsers strip (e.g. ``java\tscript:``). --
 _SCHEME_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9+.\-]*):")
 
+_REQUIRED_BLANK_TARGET_REL_VALUES: frozenset[str] = frozenset({"noopener", "noreferrer"})
+
 
 def _normalize_url(value: str) -> str:
     """Lower-case and strip whitespace/control chars a browser would ignore."""
     return re.sub(r"[\x00-\x20]+", "", value).lower()
 
 
-def is_safe_url(value: str) -> bool:
+def _normalized_tag_and_attribute(
+    tag_name: str | None = None,
+    attribute_name: str | None = None,
+) -> tuple[str | None, str | None]:
+    tag = tag_name.strip().lower() if tag_name else None
+    attribute = attribute_name.strip().lower() if attribute_name else None
+    return tag, attribute
+
+
+def _is_allowed_data_image_url(
+    normalized_value: str,
+    *,
+    tag_name: str | None = None,
+    attribute_name: str | None = None,
+) -> bool:
+    tag, attribute = _normalized_tag_and_attribute(tag_name, attribute_name)
+    if tag != "img" or attribute != "src":
+        return False
+    if not normalized_value.startswith("data:") or "," not in normalized_value:
+        return False
+    media_type = normalized_value[5:].split(",", 1)[0].split(";", 1)[0]
+    return media_type in ALLOWED_DATA_IMAGE_MIME_TYPES
+
+
+def is_safe_url(
+    value: str,
+    *,
+    tag_name: str | None = None,
+    attribute_name: str | None = None,
+) -> bool:
     """True if ``value`` is safe to keep in a URL-bearing attribute.
 
     Relative URLs (no scheme) are allowed. Absolute URLs are allowed only for
-    :data:`ALLOWED_URL_SCHEMES`, and ``data:`` is further narrowed to
-    ``data:image/*`` so embedded base64 images survive while ``data:text/html``
-    (script-executable in some contexts) is rejected.
+    :data:`ALLOWED_URL_SCHEMES`, and ``data:`` is further narrowed to raster
+    image MIME types on ``img[src]`` so embedded base64 images survive while
+    SVG / HTML / JavaScript data documents are rejected.
     """
     normalized = _normalize_url(value)
     match = _SCHEME_RE.match(normalized)
@@ -164,7 +225,11 @@ def is_safe_url(value: str) -> bool:
     if scheme not in ALLOWED_URL_SCHEMES:
         return False
     if scheme == "data":
-        return normalized.startswith("data:image/")
+        return _is_allowed_data_image_url(
+            normalized,
+            tag_name=tag_name,
+            attribute_name=attribute_name,
+        )
     return True
 
 
@@ -173,15 +238,37 @@ def is_event_handler_attribute(name: str) -> bool:
     return name.strip().lower().startswith("on")
 
 
+def _is_allowed_attribute_for_tag(name: str, tag_name: str | None) -> bool:
+    lowered = name.lower()
+    if any(lowered.startswith(prefix) for prefix in _GENERIC_ATTRIBUTE_PREFIXES):
+        return True
+
+    allowed_attributes = set(_GLOBAL_ATTRIBUTES)
+    if tag_name:
+        allowed_attributes.update(_TAG_ATTRIBUTES.get(tag_name.strip().lower(), frozenset()))
+    return lowered in allowed_attributes
+
+
+def _link_rel_with_required_values(value: object | None) -> str:
+    existing_values = str(value or "").split()
+    existing_lowered = {rel.lower() for rel in existing_values}
+    missing_values = [
+        rel for rel in sorted(_REQUIRED_BLANK_TARGET_REL_VALUES) if rel not in existing_lowered
+    ]
+    return " ".join([*existing_values, *missing_values]).strip()
+
+
 def sanitize_attributes(
     attributes: dict[str, object],
+    tag_name: str | None = None,
 ) -> dict[str, object]:
     """Filter an attribute mapping for safe emission (does NOT html-escape).
 
     Drops event-handler (``on*``) attributes, attribute names that aren't valid
-    HTML attribute names, and URL-bearing attributes whose value uses an unsafe
-    scheme. Values are returned unchanged; the emitter is responsible for
-    ``html.escape``-ing them so escaping happens exactly once.
+    HTML attribute names, attributes not allowed for ``tag_name``, and URL-bearing
+    attributes whose value uses an unsafe scheme. Values are returned unchanged;
+    the emitter is responsible for ``html.escape``-ing them so escaping happens
+    exactly once.
     """
     safe: dict[str, object] = {}
     for key, value in attributes.items():
@@ -191,11 +278,21 @@ def sanitize_attributes(
             continue
         if not _ATTRIBUTE_NAME_RE.match(name):
             continue
+        if not _is_allowed_attribute_for_tag(name, tag_name):
+            continue
         if lowered in URL_ATTRIBUTES and value is not None:
             candidate = value[0] if isinstance(value, list) and value else value
-            if isinstance(candidate, str) and not is_safe_url(candidate):
+            if isinstance(candidate, str) and not is_safe_url(
+                candidate,
+                tag_name=tag_name,
+                attribute_name=lowered,
+            ):
                 continue
-        safe[key] = value
+        safe[name] = value
+
+    if (tag_name or "").strip().lower() == "a" and str(safe.get("target", "")).lower() == "_blank":
+        safe["rel"] = _link_rel_with_required_values(safe.get("rel"))
+
     return safe
 
 
@@ -208,7 +305,11 @@ def _nh3_attribute_filter(tag: str, attribute: str, value: str) -> str | None:
     """nh3 per-attribute hook: drop event handlers and unsafe URL values."""
     if is_event_handler_attribute(attribute):
         return None
-    if attribute.lower() in URL_ATTRIBUTES and not is_safe_url(value):
+    if attribute.lower() in URL_ATTRIBUTES and not is_safe_url(
+        value,
+        tag_name=tag,
+        attribute_name=attribute,
+    ):
         return None
     return value
 
@@ -224,6 +325,11 @@ def sanitize_html_fragment(html_fragment: str) -> str:
     attributes: dict[str, set[str]] = {"*": set(_GLOBAL_ATTRIBUTES)}
     for tag, attrs in _TAG_ATTRIBUTES.items():
         attributes[tag] = set(attrs)
+    # -- When `link_rel` is configured, nh3 owns the `rel` attribute and rejects
+    # -- configs that also allow callers to pass `rel` through directly. The
+    # -- ontology emitter still handles direct `text_as_html` rel normalization
+    # -- in `sanitize_attributes`.
+    attributes["a"].discard("rel")
     return nh3.clean(
         html_fragment,
         tags=set(ALLOWED_TAGS),
@@ -231,6 +337,6 @@ def sanitize_html_fragment(html_fragment: str) -> str:
         url_schemes=set(ALLOWED_URL_SCHEMES),
         generic_attribute_prefixes=set(_GENERIC_ATTRIBUTE_PREFIXES),
         attribute_filter=_nh3_attribute_filter,
-        link_rel=None,
+        link_rel="noopener noreferrer",
         strip_comments=True,
     )

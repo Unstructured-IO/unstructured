@@ -453,7 +453,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> ontol
         OntologyElement: The converted OntologyElement object.
     """
     ontology_html_tag, ontology_class = extract_tag_and_ontology_class_from_tag(soup)
-    escaped_attrs = get_sanitized_attributes(soup)
+    escaped_attrs = get_sanitized_attributes(soup, tag_name=ontology_html_tag)
 
     if soup.name == "br":  # Note(Pluto) should it be <br class="UncategorizedText">?
         return ontology.Paragraph(
@@ -562,7 +562,7 @@ def extract_tag_and_ontology_class_from_tag(
     return html_tag, element_class
 
 
-def get_sanitized_attributes(soup: Tag) -> dict[str, str | list[str]]:
+def get_sanitized_attributes(soup: Tag, tag_name: str | None = None) -> dict[str, str | list[str]]:
     """
     Sanitizes the attributes of a BeautifulSoup Tag object for the ontology.
 
@@ -577,11 +577,12 @@ def get_sanitized_attributes(soup: Tag) -> dict[str, str | list[str]]:
 
     Args:
         soup (Tag): The BeautifulSoup Tag object whose attributes to sanitize.
+        tag_name: The ontology tag that will be emitted for this element.
 
     Returns:
         dict: A dictionary with the safe subset of attributes.
     """
-    return sanitize_attributes(dict(soup.attrs))  # type: ignore[return-value]
+    return sanitize_attributes(dict(soup.attrs), tag_name=tag_name)  # type: ignore[return-value]
 
 
 # -- Backwards-compatible alias; the previous name implied it html-escaped, which

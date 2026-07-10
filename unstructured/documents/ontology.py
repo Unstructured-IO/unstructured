@@ -82,7 +82,8 @@ class OntologyElement(BaseModel):
         additional_attrs.pop("class", None)
         additional_attrs.pop("id", None)
 
-        attr_str = self._construct_attribute_string(additional_attrs)
+        tag_name = self.html_tag_name if is_safe_tag(self.html_tag_name) else "span"
+        attr_str = self._construct_attribute_string(additional_attrs, tag_name)
         class_attr = (
             f'class="{html.escape(self.css_class_name, quote=True)}"' if self.css_class_name else ""
         )
@@ -91,7 +92,7 @@ class OntologyElement(BaseModel):
 
         children_html = self._generate_children_html(add_children)
 
-        result_html = self._generate_final_html(combined_attr_str, children_html)
+        result_html = self._generate_final_html(combined_attr_str, children_html, tag_name)
 
         return result_html
 
@@ -128,12 +129,12 @@ class OntologyElement(BaseModel):
 
         return text.strip()
 
-    def _construct_attribute_string(self, attributes: dict[str, str]) -> str:
+    def _construct_attribute_string(self, attributes: dict[str, str], tag_name: str) -> str:
         # -- Drop event-handler (on*) and unsafe-scheme attributes, then HTML-escape
         # -- each value (quote=True) so an attacker cannot break out of the quoted
         # -- value with `">`. Escaping happens here, at emit time, so callers must
         # -- pass raw (un-escaped) values -- see html_sanitization.sanitize_attributes. --
-        safe_attributes = sanitize_attributes(attributes)
+        safe_attributes = sanitize_attributes(attributes, tag_name=tag_name)
         return " ".join(
             f'{key}="{html.escape(str(value), quote=True)}"' if value else f"{key}"
             for key, value in safe_attributes.items()
@@ -144,12 +145,7 @@ class OntologyElement(BaseModel):
             return ""
         return "".join(child.to_html() for child in self.children)
 
-    def _generate_final_html(self, attr_str: str, children_html: str) -> str:
-        # -- Validate the tag name against the emit allowlist so a tag like
-        # -- `<script>` (or any non-allowlisted tag) can never be produced; fall
-        # -- back to an inert `span` while preserving the (escaped) content. --
-        tag_name = self.html_tag_name if is_safe_tag(self.html_tag_name) else "span"
-
+    def _generate_final_html(self, attr_str: str, children_html: str, tag_name: str) -> str:
         # -- Escape element text; `children_html` is already-sanitized HTML from
         # -- recursive `to_html` calls, so it must NOT be re-escaped. --
         text = html.escape(self.text) if self.text else ""
