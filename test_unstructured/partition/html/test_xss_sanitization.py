@@ -12,6 +12,7 @@ vector is neutralized, while legitimate formatting is preserved.
 from __future__ import annotations
 
 import re
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
@@ -204,7 +205,11 @@ class DescribeLinkUrlInjectionViaMetadata:
         )
         el.category = "Link"  # type: ignore[assignment]
         out = elements_to_html([el], no_group_by_page=True)
-        assert "https://example.com" in _href_values(out)
+        hrefs = _href_values(out)
+        assert any(
+            (p := urlparse(href)).scheme == "https" and p.hostname == "example.com"
+            for href in hrefs
+        )
 
 
 class DescribeLegitimateFormattingPreserved:
