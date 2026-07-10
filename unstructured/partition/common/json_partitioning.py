@@ -83,7 +83,8 @@ def elements_from_arbitrary_value(value: Any) -> list[Element]:
     addressing. This function is the swap-point for a future structure-aware walker.
     """
     if isinstance(value, dict):
-        return [Text(text=pretty_json_text(value))] if value else []
+        # -- an empty object yields one Text containing "{}" (an empty array yields nothing) --
+        return [Text(text=pretty_json_text(value))]
     if isinstance(value, list):
         if not value:
             return []

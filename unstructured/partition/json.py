@@ -45,7 +45,8 @@ def partition_json(
     - Arbitrary JSON: any other valid JSON value is converted to `Text` elements containing the
       pretty-printed JSON. An object or a top-level scalar yields one `Text`; an array of objects
       yields one `Text` per object; any other array (scalars or mixed types) yields a single
-      `Text` containing the whole array. An empty object or array yields no elements.
+      `Text` containing the whole array. An empty object yields one `Text` containing "{}";
+      an empty array yields no elements.
 
     An empty or whitespace-only document yields no elements. The mode is chosen by a shape
     predicate: a non-empty array whose every item looks like a serialized element (recognized
