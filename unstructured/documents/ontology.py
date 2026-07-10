@@ -15,6 +15,7 @@ TODO (Pluto): OntologyElement is the only needed class. It could contains data a
 
 from __future__ import annotations
 
+import html
 import uuid
 from copy import copy
 from enum import Enum
@@ -22,6 +23,8 @@ from typing import Any, List, Optional
 
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
+
+from unstructured.documents.html_sanitization import is_safe_tag, sanitize_attributes
 
 
 class ElementTypeEnum(str, Enum):
@@ -80,7 +83,9 @@ class OntologyElement(BaseModel):
         additional_attrs.pop("id", None)
 
         attr_str = self._construct_attribute_string(additional_attrs)
-        class_attr = f'class="{self.css_class_name}"' if self.css_class_name else ""
+        class_attr = (
+            f'class="{html.escape(self.css_class_name, quote=True)}"' if self.css_class_name else ""
+        )
 
         combined_attr_str = f"{class_attr} {attr_str}".strip()
 
@@ -105,7 +110,18 @@ class OntologyElement(BaseModel):
             )
             return children_text
 
-        text = BeautifulSoup(self.to_html(), "html.parser").get_text().strip()
+        # -- Derive the plain text from the raw `text`. When it holds markup
+        # -- (e.g. the collapsed subtree stored when the recursion limit is hit)
+        # -- strip the tags with BeautifulSoup; otherwise use it as-is (which also
+        # -- avoids BeautifulSoup's MarkupResemblesLocatorWarning on plain strings).
+        # -- This is deliberately NOT taken from `to_html()`, whose output is now
+        # -- HTML-escaped for safety -- reparsing that escaped output would surface
+        # -- the markup as literal text instead of stripping it. --
+        raw_text = self.text or ""
+        if "<" in raw_text:
+            text = BeautifulSoup(raw_text, "html.parser").get_text().strip()
+        else:
+            text = raw_text.strip()
 
         if add_img_alt_text and self.html_tag_name == "img" and "alt" in self.additional_attributes:
             text += f" {self.additional_attributes.get('alt', '')}"
@@ -113,8 +129,14 @@ class OntologyElement(BaseModel):
         return text.strip()
 
     def _construct_attribute_string(self, attributes: dict[str, str]) -> str:
+        # -- Drop event-handler (on*) and unsafe-scheme attributes, then HTML-escape
+        # -- each value (quote=True) so an attacker cannot break out of the quoted
+        # -- value with `">`. Escaping happens here, at emit time, so callers must
+        # -- pass raw (un-escaped) values -- see html_sanitization.sanitize_attributes. --
+        safe_attributes = sanitize_attributes(attributes)
         return " ".join(
-            f'{key}="{value}"' if value else f"{key}" for key, value in attributes.items()
+            f'{key}="{html.escape(str(value), quote=True)}"' if value else f"{key}"
+            for key, value in safe_attributes.items()
         )
 
     def _generate_children_html(self, add_children: bool) -> str:
@@ -123,13 +145,20 @@ class OntologyElement(BaseModel):
         return "".join(child.to_html() for child in self.children)
 
     def _generate_final_html(self, attr_str: str, children_html: str) -> str:
-        text = self.text or ""
+        # -- Validate the tag name against the emit allowlist so a tag like
+        # -- `<script>` (or any non-allowlisted tag) can never be produced; fall
+        # -- back to an inert `span` while preserving the (escaped) content. --
+        tag_name = self.html_tag_name if is_safe_tag(self.html_tag_name) else "span"
+
+        # -- Escape element text; `children_html` is already-sanitized HTML from
+        # -- recursive `to_html` calls, so it must NOT be re-escaped. --
+        text = html.escape(self.text) if self.text else ""
 
         if text or children_html:
             inside_tag_text = f"{text} {children_html}".strip()
-            return f"<{self.html_tag_name} {attr_str}>{inside_tag_text}</{self.html_tag_name}>"
+            return f"<{tag_name} {attr_str}>{inside_tag_text}</{tag_name}>"
         else:
-            return f"<{self.html_tag_name} {attr_str} />"
+            return f"<{tag_name} {attr_str} />"
 
     @property
     def id(self) -> str | None:

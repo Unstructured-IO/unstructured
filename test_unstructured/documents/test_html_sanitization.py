@@ -1,0 +1,139 @@
+"""Unit tests for the shared HTML output-sanitization policy (GHSA-v5mq-3xhg-98m9)."""
+
+import pytest
+
+from unstructured.documents.html_sanitization import (
+    ALLOWED_URL_SCHEMES,
+    is_event_handler_attribute,
+    is_safe_tag,
+    is_safe_url,
+    sanitize_attributes,
+    sanitize_html_fragment,
+)
+
+
+class DescribeIsSafeUrl:
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "http://example.com",
+            "https://example.com/path?q=1",
+            "mailto:user@example.com",
+            "tel:+15551234",
+            "/relative/path",
+            "relative/path",
+            "#anchor",
+            "?query=only",
+            "data:image/png;base64,iVBORw0KGgo=",
+            "data:image/svg+xml;base64,PHN2Zz4=",
+        ],
+    )
+    def it_allows_safe_urls(self, url: str):
+        assert is_safe_url(url) is True
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "javascript:alert(1)",
+            "JaVaScRiPt:alert(1)",
+            "  javascript:alert(1)",
+            "java\tscript:alert(1)",
+            "java\nscript:alert(1)",
+            "vbscript:msgbox(1)",
+            "data:text/html,<script>alert(1)</script>",
+            "data:application/javascript,alert(1)",
+            "file:///etc/passwd",
+        ],
+    )
+    def it_rejects_dangerous_urls(self, url: str):
+        assert is_safe_url(url) is False
+
+    def it_only_permits_image_data_uris(self):
+        # -- data: is in the scheme allowlist but narrowed to images so base64
+        # -- images survive while script-executable data URIs do not --
+        assert "data" in ALLOWED_URL_SCHEMES
+        assert is_safe_url("data:image/gif;base64,R0lGOD") is True
+        assert is_safe_url("data:text/html;base64,PHNjcmlwdD4=") is False
+
+
+class DescribeIsEventHandlerAttribute:
+    @pytest.mark.parametrize("name", ["onerror", "onload", "onmouseover", "ONCLICK", " onfocus"])
+    def it_detects_event_handlers(self, name: str):
+        assert is_event_handler_attribute(name) is True
+
+    @pytest.mark.parametrize("name", ["class", "href", "id", "data-src", "title"])
+    def it_ignores_non_event_handlers(self, name: str):
+        assert is_event_handler_attribute(name) is False
+
+
+class DescribeIsSafeTag:
+    @pytest.mark.parametrize("tag", ["div", "p", "a", "img", "table", "TD", "svg"])
+    def it_allows_known_tags(self, tag: str):
+        assert is_safe_tag(tag) is True
+
+    @pytest.mark.parametrize("tag", ["script", "iframe", "object", "embed", "", None])
+    def it_rejects_unknown_tags(self, tag):
+        assert is_safe_tag(tag) is False
+
+
+class DescribeSanitizeAttributes:
+    def it_drops_event_handler_attributes(self):
+        result = sanitize_attributes({"onerror": "alert(1)", "onmouseover": "x", "class": "Foo"})
+        assert result == {"class": "Foo"}
+
+    def it_drops_url_attributes_with_unsafe_schemes(self):
+        result = sanitize_attributes({"href": "javascript:alert(1)", "id": "x"})
+        assert result == {"id": "x"}
+
+    def it_keeps_url_attributes_with_safe_schemes(self):
+        result = sanitize_attributes({"href": "https://example.com", "src": "/img.png"})
+        assert result == {"href": "https://example.com", "src": "/img.png"}
+
+    def it_keeps_data_image_uris(self):
+        result = sanitize_attributes({"src": "data:image/png;base64,AAAA"})
+        assert result == {"src": "data:image/png;base64,AAAA"}
+
+    def it_drops_malformed_attribute_names(self):
+        # -- a name that isn't a valid HTML attribute name can't be emitted safely --
+        result = sanitize_attributes({'x"><svg onload=alert(1)>': "y", "id": "ok"})
+        assert result == {"id": "ok"}
+
+    def it_does_not_html_escape_values(self):
+        # -- escaping happens once, at emit time; values pass through untouched here --
+        result = sanitize_attributes({"title": 'a & b < c "d"'})
+        assert result == {"title": 'a & b < c "d"'}
+
+    def it_scheme_filters_list_valued_url_attributes(self):
+        result = sanitize_attributes({"href": ["javascript:alert(1)"]})
+        assert result == {}
+
+
+class DescribeSanitizeHtmlFragment:
+    def it_strips_event_handlers(self):
+        assert "onerror" not in sanitize_html_fragment('<img src="x" onerror="alert(1)">')
+        assert "onmouseover" not in sanitize_html_fragment('<p onmouseover="alert(1)">hi</p>')
+
+    def it_strips_javascript_hrefs(self):
+        assert "javascript:" not in sanitize_html_fragment('<a href="javascript:alert(1)">x</a>')
+
+    def it_removes_disallowed_tags(self):
+        cleaned = sanitize_html_fragment("<script>alert(1)</script><p>ok</p>")
+        assert "<script" not in cleaned
+        assert "<p>" in cleaned or "ok" in cleaned
+
+    def it_preserves_base64_image_sources(self):
+        cleaned = sanitize_html_fragment('<img src="data:image/png;base64,iVBORw0KGgo=" alt="ok">')
+        assert "data:image/png" in cleaned
+
+    def it_drops_non_image_data_uris(self):
+        cleaned = sanitize_html_fragment('<img src="data:text/html,<script>alert(1)</script>">')
+        assert "data:text/html" not in cleaned
+        assert "<script" not in cleaned
+
+    def it_preserves_legitimate_table_formatting(self):
+        cleaned = sanitize_html_fragment(
+            '<table><tr><td colspan="2" style="border: 1px solid black;">A</td></tr></table>'
+        )
+        assert "<table" in cleaned
+        assert 'colspan="2"' in cleaned
+        assert "border" in cleaned
