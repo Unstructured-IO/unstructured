@@ -1,3 +1,9 @@
+## 0.24.1
+
+### Fixes
+
+- **Update README.md**: readme-only changes; Added Unstructured Transform MCP into readme. no library behavior changes.
+
 ## 0.24.0
 
 ### Enhancements
