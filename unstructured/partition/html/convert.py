@@ -105,6 +105,22 @@ class ImageElementHtml(ElementHtml):
 class TableElementHtml(ElementHtml):
     _html_tag = "table"
 
+    def _inject_html_element_content(self, element_html: Tag, **kwargs: Any) -> None:
+        # -- A table with no `text_as_html` carries only raw text. Wrap it in a
+        # -- proper row/cell so the markup is valid; loose text placed directly in
+        # -- a `<table>` is otherwise foster-parented out of the table by HTML5
+        # -- parsers (e.g. the nh3 sanitization pass), leaving the table empty. --
+        if not self.element.text:
+            return
+        soup = BeautifulSoup("", HTML_PARSER)
+        tbody = soup.new_tag(name="tbody")
+        row = soup.new_tag(name="tr")
+        cell = soup.new_tag(name="td")
+        cell.string = self.element.text
+        row.append(cell)
+        tbody.append(row)
+        element_html.append(tbody)
+
     def _inject_html_element_attrs(self, element_html: Tag) -> None:
         element_html["style"] = f"{TABLE_BORDER_STYLE} {TABLE_BORDER_COLLAPSE_STYLE}"
         for tag in element_html.find_all(["tr", "th", "td"]):
