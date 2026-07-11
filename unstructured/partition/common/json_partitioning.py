@@ -21,7 +21,9 @@ rather than exploding into one element per array item.
 
 `loads_strict_json()` is the shared parser both partitioners use so that non-standard JSON
 constants (`NaN`, `Infinity`, `-Infinity`), which `json.loads` accepts by default, are rejected
-as malformed rather than partitioned.
+as malformed rather than partitioned. It lives in the low-level `unstructured.utils` module (so
+`file_utils.filetype` can share it without an import cycle) and is re-exported here for the
+callers that already import it from this module.
 """
 
 from __future__ import annotations
@@ -31,20 +33,7 @@ from typing import Any
 
 from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP, Element, Text
 from unstructured.staging.base import elements_from_dicts
-
-
-def _reject_json_constant(constant: str) -> None:
-    """Raise so `NaN`/`Infinity`/`-Infinity` are treated as malformed JSON.
-
-    Raised as `JSONDecodeError` so it flows through the callers' existing decode-error handling
-    and surfaces as the canonical "Not a valid json"/"Not a valid ndjson" ValueError.
-    """
-    raise json.JSONDecodeError(f"Non-standard JSON constant: {constant}", constant, 0)
-
-
-def loads_strict_json(text: str) -> Any:
-    """`json.loads` that rejects the non-standard constants Python accepts by default."""
-    return json.loads(text, parse_constant=_reject_json_constant)
+from unstructured.utils import loads_strict_json as loads_strict_json
 
 
 def is_element_shaped_dict(item: Any) -> bool:

@@ -77,6 +77,24 @@ def read_from_jsonl(filename: str) -> list[dict[str, Any]]:
         return [json.loads(line) for line in input_file]
 
 
+def _reject_json_constant(constant: str) -> None:
+    """Raise so `NaN`/`Infinity`/`-Infinity` are treated as malformed JSON.
+
+    Raised as `JSONDecodeError` so it flows through callers' existing decode-error handling and
+    surfaces as the canonical "Not a valid json"/"Not a valid ndjson" ValueError.
+    """
+    raise json.JSONDecodeError(f"Non-standard JSON constant: {constant}", constant, 0)
+
+
+def loads_strict_json(text: str) -> Any:
+    """`json.loads` that rejects the non-standard constants Python accepts by default.
+
+    Lives here (a low-level module) so both `file_utils.filetype` and
+    `partition.common.json_partitioning` can share it without an import cycle.
+    """
+    return json.loads(text, parse_constant=_reject_json_constant)
+
+
 def requires_dependencies(
     dependencies: str | list[str],
     extras: Optional[str] = None,

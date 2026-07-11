@@ -796,6 +796,73 @@ def and_it_classifies_oversized_pretty_printed_json_as_JSON_from_its_bounded_pre
     assert file_type == FileType.JSON
 
 
+def it_ties_a_one_record_ndjson_source_to_NDJSON_over_a_whole_json_parse():
+    # -- a one-record ".ndjson" is also valid one-value JSON, but the explicit ".ndjson" signal
+    # -- (here paired with an asserted "application/json" content-type) wins the tie-break --
+    payload = b'{"type": "Title", "text": "hello"}\n'
+
+    file_type = detect_filetype(
+        file=io.BytesIO(payload),
+        metadata_file_path="one-record.ndjson",
+        content_type="application/json",
+    )
+
+    assert file_type == FileType.NDJSON
+
+
+def and_a_multi_record_ndjson_source_stays_NDJSON():
+    payload = b'{"type": "Title", "text": "a"}\n{"type": "Title", "text": "b"}\n'
+
+    file_type = detect_filetype(
+        file=io.BytesIO(payload),
+        metadata_file_path="records.ndjson",
+        content_type="application/json",
+    )
+
+    assert file_type == FileType.NDJSON
+
+
+def but_a_compact_single_line_json_object_still_classifies_as_JSON():
+    # -- the NDJSON tie-break must not touch ".json" or extension-less sources: the SAP
+    # -- compact-object path stays JSON --
+    payload = b'{"type": "Title", "text": "hello"}'
+
+    assert (
+        detect_filetype(file=io.BytesIO(payload), metadata_file_path="one-record.json")
+        == FileType.JSON
+    )
+
+
+def it_classifies_a_scalar_json_source_as_JSON():
+    # -- a bare scalar is valid JSON; a ".json" source must reach JSON, not fall through to TXT --
+    file_type = detect_filetype(file=io.BytesIO(b"123"), metadata_file_path="scalar.json")
+
+    assert file_type == FileType.JSON
+
+
+def it_classifies_a_scalar_per_line_ndjson_source_as_NDJSON():
+    file_type = detect_filetype(file=io.BytesIO(b'1\n2\n"x"\n'), metadata_file_path="scalar.ndjson")
+
+    assert file_type == FileType.NDJSON
+
+
+def but_a_genuinely_textual_txt_source_stays_TXT():
+    # -- the scalar allowance is scoped to JSON/NDJSON sources; plain prose in a ".txt" is TXT --
+    payload = b"just some prose\nwith another line\n"
+
+    assert detect_filetype(file=io.BytesIO(payload), metadata_file_path="notes.txt") == FileType.TXT
+
+
+def it_does_not_classify_a_json_source_containing_NaN_as_parseable_ndjson():
+    # -- the detector uses the partitioners' strict parser, so `NaN` lines (which json.loads
+    # -- accepts by default) are not treated as valid JSON values and do not flip to NDJSON --
+    payload = b"NaN\nNaN\n"
+
+    assert (
+        detect_filetype(file=io.BytesIO(payload), content_type="application/json") == FileType.JSON
+    )
+
+
 # ================================================================================================
 # MODULE-LEVEL FIXTURES
 # ================================================================================================

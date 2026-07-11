@@ -53,7 +53,7 @@ from unstructured.logger import logger
 from unstructured.nlp.patterns import EMAIL_HEAD_RE, LIST_OF_DICTS_PATTERN
 from unstructured.partition.common.common import add_element_metadata, exactly_one
 from unstructured.partition.common.metadata import set_element_hierarchy
-from unstructured.utils import get_call_args_applying_defaults
+from unstructured.utils import get_call_args_applying_defaults, loads_strict_json
 
 _JSON_DISAMBIGUATION_CHUNK_SIZE = 8192
 _JSON_DISAMBIGUATION_MAX_CHARS = 1024 * 1024
@@ -284,17 +284,23 @@ class _FileTypeDetector:
 
         Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, plus one probe past that to
         distinguish an exact-size payload from a truncated one) and restores a caller-owned
-        file-like object to read position 0. A payload that parses in full as a single JSON
-        value is `FileType.JSON`, even when it occupies a single line (a one-line object is also
-        valid one-record NDJSON, but JSON is the more useful classification; note a one-line
-        serialized-element object previously rehydrated via the NDJSON route and now partitions
-        as arbitrary JSON, since rehydration applies only to arrays). Otherwise, two or more
-        newline-delimited JSON values indicate `FileType.NDJSON`. When the payload exceeds the
-        read bound, one or more complete lines within the bound that each parse as a JSON value
-        indicate `FileType.NDJSON`; the residual degradation is an NDJSON file whose first
-        record has no newline inside the bound, which classifies as JSON (and `partition_json()`
-        will then raise "Not a valid json"). Anything else that libmagic flagged as JSON falls
-        back to `FileType.JSON`.
+        file-like object to read position 0. An explicit NDJSON signal from the caller (a
+        ".ndjson" source extension or an asserted "application/x-ndjson" content-type) wins over
+        a whole-payload JSON parse: a one-record ".ndjson" is also valid one-value JSON, but the
+        caller told us it is NDJSON, so it classifies as `FileType.NDJSON` whenever the content is
+        NDJSON-shaped (each non-blank line a valid JSON value). Absent that signal, a payload that
+        parses in full as a single JSON value is `FileType.JSON`, even when it occupies a single
+        line (a one-line object is also valid one-record NDJSON, but JSON is the more useful
+        classification; note a one-line serialized-element object previously rehydrated via the
+        NDJSON route and now partitions as arbitrary JSON, since rehydration applies only to
+        arrays). Otherwise, two or more newline-delimited JSON values indicate `FileType.NDJSON`.
+        When the payload exceeds the read bound, one or more complete lines within the bound that
+        each parse as a JSON value indicate `FileType.NDJSON`; the residual degradation is an
+        NDJSON file whose first record has no newline inside the bound, which classifies as JSON
+        (and `partition_json()` will then raise "Not a valid json"). Anything else that libmagic
+        flagged as JSON falls back to `FileType.JSON`. Parsing uses `loads_strict_json()`, the
+        same strict parser the partitioners use, so a payload the partitioner would reject (e.g.
+        `NaN`) is never classified as parseable JSON/NDJSON.
         """
         with self._ctx.open() as file:
             head = file.read(_JSON_DISAMBIGUATION_MAX_CHARS + 1)
@@ -311,6 +317,12 @@ class _FileTypeDetector:
             else head.decode(encoding=self._ctx.encoding, errors="ignore")
         )
 
+        # -- an explicit NDJSON signal wins over a whole-payload JSON parse, but only when the
+        # -- content is actually NDJSON-shaped. A truncated read has a partial trailing line that
+        # -- will not parse, so this check fails and the truncated branch below handles it --
+        if self._signals_ndjson and self._is_ndjson_shaped(file_text):
+            return FileType.NDJSON
+
         if truncated:
             # -- a whole-payload parse is impossible on a truncated read; drop the trailing
             # -- partial line and classify on the complete lines within the bound. One or more
@@ -319,33 +331,49 @@ class _FileTypeDetector:
             # -- parse) --
             file_text = file_text.rpartition("\n")[0]
             lines = [line for line in file_text.splitlines() if line.strip()]
-            if lines:
-                try:
-                    for line in lines:
-                        json.loads(line)
-                    return FileType.NDJSON
-                except (json.JSONDecodeError, RecursionError):
-                    pass
+            if lines and self._all_lines_are_json_values(lines):
+                return FileType.NDJSON
             return FileType.JSON
 
         # -- a payload that parses whole as one JSON value is JSON, not NDJSON --
         try:
-            json.loads(file_text)
+            loads_strict_json(file_text)
             return FileType.JSON
         except (json.JSONDecodeError, RecursionError):
             pass
 
         # -- two or more newline-delimited JSON values indicate NDJSON --
         lines = [line for line in file_text.splitlines() if line.strip()]
-        if len(lines) >= 2:
-            try:
-                for line in lines:
-                    json.loads(line)
-                return FileType.NDJSON
-            except (json.JSONDecodeError, RecursionError):
-                pass
+        if len(lines) >= 2 and self._all_lines_are_json_values(lines):
+            return FileType.NDJSON
 
         return FileType.JSON
+
+    @property
+    def _signals_ndjson(self) -> bool:
+        """True when the caller explicitly indicated NDJSON via extension or content-type.
+
+        A ".ndjson" source extension or an asserted "application/x-ndjson" content-type is a
+        deliberate NDJSON signal that outranks a whole-payload JSON parse in disambiguation.
+        """
+        return (
+            self._ctx.extension == ".ndjson" or self._ctx.content_type == FileType.NDJSON.mime_type
+        )
+
+    def _is_ndjson_shaped(self, file_text: str) -> bool:
+        """True when `file_text` is at least one non-blank line, each a valid JSON value."""
+        lines = [line for line in file_text.splitlines() if line.strip()]
+        return bool(lines) and self._all_lines_are_json_values(lines)
+
+    @staticmethod
+    def _all_lines_are_json_values(lines: list[str]) -> bool:
+        """True when every line strictly parses as a JSON value."""
+        try:
+            for line in lines:
+                loads_strict_json(line)
+            return True
+        except (json.JSONDecodeError, RecursionError):
+            return False
 
     @property
     def _file_type_from_guessed_mime_type(self) -> FileType | None:
@@ -845,6 +873,7 @@ class _TextFileDifferentiator:
             ".json",
             ".markdown",
             ".md",
+            ".ndjson",
             ".org",
             ".p7s",
             ".rst",
@@ -852,6 +881,10 @@ class _TextFileDifferentiator:
             ".tab",
             ".tsv",
         ]:
+            # -- a ".json"/".ndjson" source is trusted by extension here (as the other textual
+            # -- formats are), so a valid scalar or scalar-per-line payload -- which the
+            # -- content-shape checks below would reject -- still routes to the JSON/NDJSON
+            # -- partitioner rather than being misclassified as TXT --
             return FileType.from_extension(extension) or FileType.TXT
 
         # NOTE(crag): for older versions of the OS libmagic package, such as is currently

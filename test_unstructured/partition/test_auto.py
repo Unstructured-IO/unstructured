@@ -478,6 +478,64 @@ def test_auto_partition_surfaces_ValueError_for_corrupt_element_shaped_json(
         partition(filename=file_path)
 
 
+def test_auto_partition_ties_one_record_ndjson_to_ndjson_and_rehydrates(tmp_path: pathlib.Path):
+    # -- a one-record ".ndjson" asserted as "application/json" is also valid one-value JSON, but
+    # -- the ".ndjson" extension wins the tie-break so it routes to partition_ndjson and
+    # -- rehydrates rather than becoming an arbitrary-JSON Text --
+    file_path = str(tmp_path / "one-record.ndjson")
+    with open(file_path, "w") as f:
+        f.write('{"type": "Title", "text": "Hello"}\n')
+
+    with open(file_path, "rb") as f:
+        elements = partition(file=f, content_type="application/json")
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Title)
+    assert elements[0].text == "Hello"
+
+
+def test_auto_partition_routes_scalar_json_to_partition_json(tmp_path: pathlib.Path):
+    # -- a bare JSON scalar in a ".json" source reaches partition_json (not TXT) and becomes one
+    # -- Text of the pretty-printed value --
+    file_path = str(tmp_path / "scalar.json")
+    with open(file_path, "w") as f:
+        f.write("123")
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].text == "123"
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_scalar_ndjson_to_partition_ndjson(tmp_path: pathlib.Path):
+    # -- scalar-per-line NDJSON in a ".ndjson" source reaches partition_ndjson (not TXT) and
+    # -- becomes one Text per line --
+    file_path = str(tmp_path / "scalar.ndjson")
+    with open(file_path, "w") as f:
+        f.write('1\n2\n"x"\n')
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert [e.text for e in elements] == ["1", "2", '"x"']
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+
+
+def test_auto_partition_raises_ValueError_for_json_with_NaN(tmp_path: pathlib.Path):
+    # -- the detector shares the partitioners' strict JSON parse, so a payload containing the
+    # -- non-standard `NaN` constant is never silently detected/partitioned; partition() surfaces
+    # -- the ValueError --
+    file_path = str(tmp_path / "with-nan.json")
+    with open(file_path, "w") as f:
+        f.write('{"value": NaN}')
+
+    with pytest.raises(ValueError, match="Not a valid json"):
+        partition(filename=file_path)
+
+
 # ================================================================================================
 # MD
 # ================================================================================================
