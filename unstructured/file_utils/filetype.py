@@ -284,11 +284,12 @@ class _FileTypeDetector:
 
         Reads at most `_JSON_DISAMBIGUATION_MAX_CHARS` (+1, plus one probe past that to
         distinguish an exact-size payload from a truncated one) and restores a caller-owned
-        file-like object to read position 0. An explicit NDJSON signal from the caller (a
-        ".ndjson" source extension or an asserted "application/x-ndjson" content-type) wins over
-        a whole-payload JSON parse: a one-record ".ndjson" is also valid one-value JSON, but the
-        caller told us it is NDJSON, so it classifies as `FileType.NDJSON` whenever the content is
-        NDJSON-shaped (each non-blank line a valid JSON value). Absent that signal, a payload that
+        file-like object to read position 0. A ".ndjson" source extension wins over a
+        whole-payload JSON parse: a one-record ".ndjson" is also valid one-value JSON, but the
+        extension says it is NDJSON, so it classifies as `FileType.NDJSON` whenever the content is
+        NDJSON-shaped (each non-blank line a valid JSON value). (An asserted "application/x-ndjson"
+        content-type is already resolved to `FileType.NDJSON` upstream and never reaches here.)
+        Absent that signal, a payload that
         parses in full as a single JSON value is `FileType.JSON`, even when it occupies a single
         line (a one-line object is also valid one-record NDJSON, but JSON is the more useful
         classification; note a one-line serialized-element object previously rehydrated via the
@@ -351,14 +352,14 @@ class _FileTypeDetector:
 
     @property
     def _signals_ndjson(self) -> bool:
-        """True when the caller explicitly indicated NDJSON via extension or content-type.
+        """True when a ".ndjson" source extension deliberately signals NDJSON.
 
-        A ".ndjson" source extension or an asserted "application/x-ndjson" content-type is a
-        deliberate NDJSON signal that outranks a whole-payload JSON parse in disambiguation.
+        This extension tie-break outranks a whole-payload JSON parse in disambiguation. An
+        asserted "application/x-ndjson" content-type needs no handling here: it is mapped to
+        `FileType.NDJSON` by the content-type strategy before disambiguation (which runs only
+        for a `FileType.JSON` result) is ever reached.
         """
-        return (
-            self._ctx.extension == ".ndjson" or self._ctx.content_type == FileType.NDJSON.mime_type
-        )
+        return self._ctx.extension == ".ndjson"
 
     def _is_ndjson_shaped(self, file_text: str) -> bool:
         """True when `file_text` is at least one non-blank line, each a valid JSON value."""
