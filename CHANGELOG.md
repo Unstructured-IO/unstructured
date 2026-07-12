@@ -1,8 +1,14 @@
+## 0.24.2
+
+### Fixes
+
+- **Update README.md**: readme-only changes; added the Unstructured Transform MCP to the README. No library behavior changes.
+
 ## 0.24.1
 
 ### Fixes
 
-- **Update README.md**: readme-only changes; Added Unstructured Transform MCP into readme. no library behavior changes.
+- **Fix stored XSS in v2 (ontology) HTML output** (GHSA-v5mq-3xhg-98m9): `partition_html(html_parser_version="v2")`, `elements_to_html()`, and `metadata.text_as_html` previously emitted untrusted document markup without output encoding, allowing attacker-controlled content (`on*` handlers, `javascript:` links, tag/attribute breakout) to execute when the HTML was viewed. Output is now sanitized — text and attribute values are HTML-escaped, event-handler attributes are dropped, tags/attributes are allowlisted, and URL schemes are filtered (`http`/`https`/`mailto`/`tel`/relative preserved; `data:` limited to raster image MIME types on `img[src]`). Legitimate formatting is unaffected.
 
 ## 0.24.0
 

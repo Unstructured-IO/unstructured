@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import html
 from itertools import chain
 from typing import Sequence, Type
 
 from bs4 import BeautifulSoup, Tag
 
 from unstructured.documents import elements, ontology
+from unstructured.documents.html_sanitization import sanitize_attributes
 from unstructured.documents.mappings import (
     CSS_CLASS_TO_ELEMENT_TYPE_MAP,
     HTML_TAG_AND_CSS_NAME_TO_ELEMENT_TYPE_MAP,
@@ -453,7 +453,7 @@ def parse_html_to_ontology_element(soup: Tag, recursion_depth: int = 1) -> ontol
         OntologyElement: The converted OntologyElement object.
     """
     ontology_html_tag, ontology_class = extract_tag_and_ontology_class_from_tag(soup)
-    escaped_attrs = get_escaped_attributes(soup)
+    escaped_attrs = get_sanitized_attributes(soup, tag_name=ontology_html_tag)
 
     if soup.name == "br":  # Note(Pluto) should it be <br class="UncategorizedText">?
         return ontology.Paragraph(
@@ -562,24 +562,29 @@ def extract_tag_and_ontology_class_from_tag(
     return html_tag, element_class
 
 
-def get_escaped_attributes(soup: Tag) -> dict[str, str | list[str]]:
+def get_sanitized_attributes(soup: Tag, tag_name: str | None = None) -> dict[str, str | list[str]]:
     """
-    Escapes the attributes of a BeautifulSoup Tag object.
+    Sanitizes the attributes of a BeautifulSoup Tag object for the ontology.
+
+    Drops event-handler (``on*``) attributes and URL attributes with unsafe
+    schemes (``javascript:`` / ``vbscript:`` / non-image ``data:``) so an
+    ontology element never carries a dangerous attribute in the first place.
+
+    Values are intentionally left un-escaped: HTML-escaping is done exactly once,
+    at emit time, in ``OntologyElement.to_html`` (see
+    ``unstructured.documents.html_sanitization``). Escaping here as well would
+    double-encode entities (e.g. ``&`` -> ``&amp;amp;``).
 
     Args:
-        soup (Tag): The BeautifulSoup Tag object whose attributes need to be escaped.
+        soup (Tag): The BeautifulSoup Tag object whose attributes to sanitize.
+        tag_name: The ontology tag that will be emitted for this element.
 
     Returns:
-        dict: A dictionary with escaped attribute names and values.
+        dict: A dictionary with the safe subset of attributes.
     """
-    escaped_attrs: dict[str, str | list[str]] = {}
-    for key, value in soup.attrs.items():
-        escaped_key = html.escape(key)
-        escaped_value = None
-        if value:
-            if isinstance(value, list):
-                escaped_value = [html.escape(v) for v in value]
-            else:
-                escaped_value = html.escape(value)
-        escaped_attrs[escaped_key] = escaped_value
-    return escaped_attrs
+    return sanitize_attributes(dict(soup.attrs), tag_name=tag_name)  # type: ignore[return-value]
+
+
+# -- Backwards-compatible alias; the previous name implied it html-escaped, which
+# -- it no longer does (escaping moved to emit time). --
+get_escaped_attributes = get_sanitized_attributes
