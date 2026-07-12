@@ -8,7 +8,7 @@ The following is a set of guidelines for contributing to the open source ecosyst
 
 This is meant to help the review process go smoothly, save the reviewer(s) time in catching common issues, and avoid submitting PRs that will be rejected by the CI.
 
-In some cases it's convenient to put up a PR that's not ready for final review. This is fine (and under those circumstances it's not necessary to go through this checklist), but the PR should be put in draft mode so everyone knows it's not ready for review. 
+In some cases it's convenient to put up a PR that's not ready for final review. This is fine (and under those circumstances it's not necessary to go through this checklist), but the PR should be put in draft mode so everyone knows it's not ready for review.
 
 ### How to Contribute?
 
@@ -32,21 +32,21 @@ The following is a list of tasks to be completed before submitting a pull reques
     1. [ ] If dependencies have changed, recompile dependencies with `make pip-compile`.
     1. [ ] Make sure local virtual environment matches what CI will see - reinstall internal/external dependencies as needed.\
 <sub>Follow the [virtualenv install instructions](https://github.com/Unstructured-IO/community#mac--homebrew) if you are unsure about working with virtual environments.
-<br/><br/>    
+<br/><br/>
 1. Run tests and checks locally
     1. [ ] Run tests locally with `make test`. Some repositories have supplemental tests with targets like `make test-integration` or `make test-sample-docs`. If applicable, run these as well. Try to make sure all tests are passing before submitting the PR, unless you are submitting in draft mode.
     1. [ ] Run typing, linting, and formatting checks with `make check`. Some repositories have supplemental checks with targets like `make check-scripts` or `make check-notebooks`. If applicable, run these as well. Try to make sure all checks are passing before submitting the PR, unless you are submitting in draft mode.
-<br/><br/>    
+<br/><br/>
 1. Ensure code is clean
     1. [ ] Remove all debugging artifacts.
-    1. [ ] Remove commented out code. 
+    1. [ ] Remove commented out code.
     1. [ ] For actual comments, note that our typical format is `# NOTE(<username>): <comment>`
     1. [ ] Double check everything has been committed and pushed, recommended that local feature branch is clean.
-    
+
 ### PR Guidelines:
 
 1. [ ] PR title should follow [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) standards.
-      
+
 1. [ ] PR description should give enough detail that the reviewer knows what they reviewing - sometimes a copy-paste of the added `CHANGELOG.md` items is enough, sometimes more detail is needed.
 
 1. [ ] If applicable, add a testing section to the PR description that recommends steps a reviewer can take to verify the changes, e.g. a snippet of code they can run locally.
@@ -62,19 +62,19 @@ Include a license at the top of new `setup.py` files:
 
 ## Conventions
 
-For pull requests, our convention is to squash and merge. For PR titles, we use [conventional commit](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#conventional-commits) messages. The format should look like 
+For pull requests, our convention is to squash and merge. For PR titles, we use [conventional commit](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#conventional-commits) messages. The format should look like
 
 - `<type>: <description>`.
 
-For example, if the PR addresses a new feature, the PR title should look like: 
+For example, if the PR addresses a new feature, the PR title should look like:
 
-- `feat: Implements exciting new feature`. 
+- `feat: Implements exciting new feature`.
 
 For feature branches, the naming convention is:
 
-- `<username>/<description>`. 
+- `<username>/<description>`.
 
-For the commit above, coming from the user called `contributor` the branch name would look like: 
+For the commit above, coming from the user called `contributor` the branch name would look like:
 
 - `contributor/exciting-new-feature`.
 
@@ -88,7 +88,7 @@ Here is a list of some of the most common possible commit types:
 
 ### Why should you write better commit messages?
 
-By writing good commits, you are simply future-proofing yourself. You could save yourself and/or coworkers hours of digging around while troubleshooting by providing that helpful description 🙂. 
+By writing good commits, you are simply future-proofing yourself. You could save yourself and/or coworkers hours of digging around while troubleshooting by providing that helpful description 🙂.
 
 The extra time it takes to write a thoughtful commit message as a letter to your potential future self is extremely worthwhile. On large scale projects, documentation is imperative for maintenance.
 
