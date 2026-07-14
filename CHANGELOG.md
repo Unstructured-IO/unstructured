@@ -3,6 +3,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **Fix crash on non-UTF-8 bracket-prefixed text with no extension**: `detect_filetype()` called `json.load()` directly on the raw file bytes when probing whether `text/plain`-guessed content is actually JSON. If the content started with `[`/`{` but contained non-UTF-8 bytes, `json.load()` raised an uncaught `UnicodeDecodeError` (not the `json.JSONDecodeError` the code caught), crashing detection instead of falling back to `FileType.TXT`. Both exception types are now caught.
 
 ## 0.25.0
 
