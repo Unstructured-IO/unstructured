@@ -3,6 +3,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **`UNSTRUCTURED_INCLUDE_DEBUG_METADATA` now parses its env var value as a boolean**: previously `os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)` treated any explicitly-set string value (including `"false"` or `"0"`) as truthy, so setting the variable to explicitly disable debug metadata actually enabled it. Now parses the value the same way `ENVConfig._get_bool` already does elsewhere in the codebase (`"true"`/`"1"`/`"t"`, case-insensitive, is `True`; everything else, including unset, is `False`).
 
 ## 0.25.0
 
