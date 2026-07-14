@@ -3,6 +3,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **`_get_indexed_match` raises `ValueError` instead of `UnboundLocalError` on zero matches**: `extract_text_before()`/`extract_text_after()`'s underlying helper looped `for i, result in enumerate(re.finditer(pattern, text))` and referenced `i` in its "not found" error message; when the pattern matched zero times, the loop body never ran, so `i` was never bound, raising `UnboundLocalError` instead of the intended `ValueError`. `i` is now initialized to `-1` before the loop.
 
 ## 0.25.0
 
