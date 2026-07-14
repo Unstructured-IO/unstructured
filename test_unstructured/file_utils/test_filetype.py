@@ -1346,7 +1346,7 @@ def test_it_does_not_crash_on_non_utf8_bracket_prefixed_text_with_no_extension()
     non_utf8_bytes = b"{not json at all just braces \xe9 text} and more padding to fill the head"
 
     file_buffer = io.BytesIO(non_utf8_bytes)
-    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    predicted_type = detect_filetype(file=file_buffer)
 
     assert predicted_type == FileType.TXT
 
