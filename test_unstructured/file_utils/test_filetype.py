@@ -1342,6 +1342,18 @@ def test_json_content_type_is_disambiguated_for_ndjson():
     assert predicted_type == FileType.NDJSON
 
 
+def test_it_identifies_json_with_a_leading_utf8_bom_and_no_extension():
+    json_bytes = b"\xef\xbb\xbf" + json.dumps([{"example": "data"}]).encode("utf-8")
+
+    file_buffer = io.BytesIO(json_bytes)
+    predicted_type = detect_filetype(file=file_buffer, metadata_file_path="filename.pdf")
+    assert predicted_type == FileType.JSON
+
+    file_buffer.name = "filename.pdf"
+    predicted_type = detect_filetype(file=file_buffer)
+    assert predicted_type == FileType.JSON
+
+
 def test_office_files_when_document_archive_has_non_standard_prefix():
     predicted_type = detect_filetype(
         file_path=input_path("file_type/test_document_from_office365.docx")
