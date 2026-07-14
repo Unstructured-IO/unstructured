@@ -1147,6 +1147,15 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 188
         assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
 
+    def it_strips_only_the_leading_utf8_bom_and_not_a_later_literal_ufeff_char(self):
+        """Only one BOM can ever be produced by decoding; a 2nd U+FEFF is real content."""
+        file = io.BytesIO(b"\xef\xbb\xbf\xef\xbb\xbf{}")
+        ctx = _FileTypeDetectionContext(file=file)
+
+        text_head = ctx.text_head
+
+        assert text_head == "﻿{}"
+
     # TODO: this fails because `.text_head` ignores decoding errors on a file open for binary
     # reading. Probably better if it used chardet in that case as it does for a file-path.
     @pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)

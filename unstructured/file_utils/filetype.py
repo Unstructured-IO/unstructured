@@ -700,8 +700,10 @@ class _FileTypeDetectionContext:
 
         # -- a leading UTF-8 BOM survives a plain "utf-8" decode as a literal U+FEFF character,
         # -- which defeats content-shape checks (e.g. JSON's leading "[" or "{" test) that assume
-        # -- the text starts with actual content --
-        return text.lstrip("\ufeff")
+        # -- the text starts with actual content. Only one BOM can ever be produced by decoding,
+        # -- so remove at most one; `.lstrip()` would also strip a legitimate U+FEFF appearing in
+        # -- the actual content immediately after it. --
+        return text.removeprefix("\ufeff")
 
     @cached_property
     def json_disambiguation_text(self) -> tuple[str, bool]:
