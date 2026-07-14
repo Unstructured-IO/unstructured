@@ -945,7 +945,7 @@ class _Chunker:
                     continue
                 # -- make copy of any element we're going to mutate because these elements don't
                 # -- belong to us (the user may have downstream purposes for them).
-                orig_element = copy.copy(e)
+                orig_element = copy.deepcopy(e)
                 # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
                 # -- its own)
                 orig_element.metadata.orig_elements = None
