@@ -263,6 +263,21 @@ def test_aggregate_only_partially_fill_target():
     assert extracted.value == "partial"
 
 
+def test_aggregate_overlapping_regions_do_not_overstate_target_coverage():
+    embedded_regions = TextRegions.from_list(
+        [
+            TextRegion.from_coords(0, 0, 20, 100, "Inside region1"),
+            TextRegion.from_coords(0, 0, 20, 100, "Inside region2"),
+        ]
+    )
+    embedded_regions.is_extracted_array = np.array([IsExtracted.TRUE, IsExtracted.TRUE])
+    target_region = TextRegions.from_list([TextRegion.from_coords(0, 0, 100, 100)])
+
+    text, extracted = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == "Inside region1 Inside region2"
+    assert extracted is IsExtracted.PARTIAL
+
+
 def test_aggregate_not_filling_target():
     embedded_regions = TextRegions.from_list(
         [

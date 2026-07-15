@@ -598,18 +598,43 @@ def remove_duplicate_elements(
 
 
 def _aggregated_iou(box1s, box2):
-    intersection = 0.0
-    sum_areas = calculate_bbox_area(box2)
-
-    for i in range(box1s.shape[0]):
-        intersection += calculate_intersection_area(box1s[i, :], box2)
-        sum_areas += calculate_bbox_area(box1s[i, :])
-
-    union = sum_areas - intersection
+    intersection = _clipped_boxes_union_area(box1s, box2)
+    union = calculate_bbox_area(box2)
 
     if union == 0:
         return 1.0
     return intersection / union
+
+
+def _clipped_boxes_union_area(boxes, clip_box) -> float:
+    clipped_boxes = []
+    for box in boxes:
+        x1 = max(float(box[0]), float(clip_box[0]))
+        y1 = max(float(box[1]), float(clip_box[1]))
+        x2 = min(float(box[2]), float(clip_box[2]))
+        y2 = min(float(box[3]), float(clip_box[3]))
+        if x1 < x2 and y1 < y2:
+            clipped_boxes.append((x1, y1, x2, y2))
+
+    if not clipped_boxes:
+        return 0.0
+
+    xs = sorted({x1 for x1, _, x2, _ in clipped_boxes} | {x2 for x1, _, x2, _ in clipped_boxes})
+    ys = sorted({y1 for _, y1, _, y2 in clipped_boxes} | {y2 for _, y1, _, y2 in clipped_boxes})
+
+    area = 0.0
+    for x_left, x_right in zip(xs, xs[1:]):
+        if x_left == x_right:
+            continue
+        for y_top, y_bottom in zip(ys, ys[1:]):
+            if y_top == y_bottom:
+                continue
+            if any(
+                x1 <= x_left and x_right <= x2 and y1 <= y_top and y_bottom <= y2
+                for x1, y1, x2, y2 in clipped_boxes
+            ):
+                area += (x_right - x_left) * (y_bottom - y_top)
+    return area
 
 
 def aggregate_embedded_text_by_block(
