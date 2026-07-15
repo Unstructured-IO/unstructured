@@ -539,11 +539,13 @@ def _get_core_pdf_line_links(
         linked_words = [
             word
             for word in words
-            if link.overlaps_page_bbox(word["bbox"], page_height, threshold=0.0)
+            if link.overlaps_page_bbox(word["bbox"], page_height, threshold=0.1)
         ]
         if not linked_words:
             continue
-        urls_metadata.append(link.text_metadata(linked_words, page_height))
+        link_metadata = link.text_metadata(linked_words, page_height)
+        link_metadata["_line_text"] = line["text"]
+        urls_metadata.append(link_metadata)
     return urls_metadata
 
 
@@ -676,6 +678,7 @@ def _process_data_with_core_pdf(
                     )[0].tolist()
                 links.append(
                     {
+                        "_line_text": metadata.get("_line_text"),
                         "bbox": bbox,
                         "text": metadata["text"],
                         "url": metadata["uri"],
@@ -1350,13 +1353,23 @@ def _combine_list_elements(
     for element in elements:
         if isinstance(element, ListItem):
             tmp_element = element
-            tmp_text = element.text
             tmp_coords = element.metadata.coordinates
         elif tmp_element and check_coords_within_boundary(
             coordinates=element.metadata.coordinates,
             boundary=tmp_coords,
         ):
-            tmp_element.text = f"{tmp_text} {element.text}"
+            base_text = tmp_element.text
+            tmp_element.text = f"{base_text} {element.text}"
+            tmp_links = tmp_element.metadata.links or []
+            continuation_links = []
+            for link in element.metadata.links or []:
+                continuation_links.append(
+                    {
+                        **link,
+                        "start_index": len(base_text) + 1 + link["start_index"],
+                    }
+                )
+            tmp_element.metadata.links = tmp_links + continuation_links
             # replace "element" with the corrected element
             element = _combine_coordinates_into_element1(
                 element1=tmp_element,
@@ -1365,6 +1378,8 @@ def _combine_list_elements(
             )
             # remove previously added ListItem element with incomplete text
             updated_elements.pop()
+            tmp_element = element
+            tmp_coords = element.metadata.coordinates
         updated_elements.append(element)
     return updated_elements
 
@@ -1387,6 +1402,26 @@ def _get_links_from_urls_metadata(
                 },
             )
     return links
+
+
+def _normalize_link_start_indexes(links: list[dict[str, Any]], text: str) -> list[Link]:
+    """Adjust link offsets to the final element text when links came from subregions."""
+
+    normalized_links = []
+    for link in links:
+        normalized_link = {
+            "text": link["text"],
+            "url": link["url"],
+            "start_index": link["start_index"],
+        }
+        line_text = link.get("_line_text")
+        start_index = text.find(line_text) if line_text else -1
+        if start_index >= 0:
+            normalized_link["start_index"] = start_index + link["start_index"]
+        normalized_links.append(
+            normalized_link,
+        )
+    return normalized_links
 
 
 def _combine_coordinates_into_element1(
@@ -1535,8 +1570,10 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
-                element.metadata.links = (
-                    get_links_in_element(links, layout_element.bbox) if links else []
+                element_links = get_links_in_element(links, layout_element.bbox) if links else []
+                element.metadata.links = _normalize_link_start_indexes(
+                    element_links,
+                    element.text,
                 )
 
                 if last_modification_date:

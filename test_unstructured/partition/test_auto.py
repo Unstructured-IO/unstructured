@@ -1527,7 +1527,7 @@ def test_auto_partition_that_requires_extras_raises_when_dependencies_are_not_in
     with pytest.raises(ImportError, match=match):
         partition(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
 
-    dependency_exists_.assert_called_once_with("pdf2image")
+    dependency_exists_.assert_called_once_with("core_pdf")
 
 
 # ================================================================================================

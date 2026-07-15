@@ -532,9 +532,8 @@ def test_partition_pdf_with_fast_neg_coordinates():
         "excellent",
         "analysis meets the principles of good scientific practice.",
         "Berlin, March 21, 2022",
-        "Karsten Schischke - - Marina Proske - Fraunhofer IZM Fraunhofer IZM",
-        "Dept. Environmental and Dept. Environmental and",
-        "Reliability Engineering Reliability Engineering",
+        "Karsten Schischke - - Marina Proske - Fraunhofer IZM Fraunhofer IZM Dept. "
+        "Environmental and Dept. Environmental and Reliability Engineering Reliability Engineering",
         "Reviewer Credentials and Qualification",
         "Karsten Schischke: Experience and background in the field of Life Cycle Assessments "
         "include",
@@ -1116,32 +1115,82 @@ def test_combine_numbered_list(filename):
 
 
 @pytest.mark.parametrize(
-    ("filename", "strategy"),
+    ("filename", "strategy", "expected_texts_and_links"),
     [
-        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "fast"),
-        (example_doc_path("pdf/layout-parser-paper-fast.pdf"), "hi_res"),
+        (
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            "fast",
+            [
+                (
+                    "reusability in other disciplines like natural language processing [8, 34] "
+                    "and com-",
+                    [
+                        {
+                            "text": "8",
+                            "url": "cite.gardner2018allennlp",
+                            "start_index": 67,
+                        },
+                        {
+                            "text": "34",
+                            "url": "cite.wolf2019huggingface",
+                            "start_index": 70,
+                        },
+                    ],
+                ),
+                (
+                    "puter vision [35], but with a focus on unique challenges in DIA. We show",
+                    [
+                        {
+                            "text": "35",
+                            "url": "cite.wu2019detectron2",
+                            "start_index": 14,
+                        },
+                    ],
+                ),
+            ],
+        ),
+        (
+            example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+            "hi_res",
+            [
+                (
+                    "Layout Parser is well aligned with recent eﬀorts for improving DL model "
+                    "reusability in other disciplines like natural language processing [8, 34] "
+                    "and com- puter vision [35], but with a focus on unique challenges in DIA. "
+                    "We show Layout Parser can be applied in sophisticated and large-scale "
+                    "digitization projects",
+                    [
+                        {
+                            "text": "8",
+                            "url": "cite.gardner2018allennlp",
+                            "start_index": 139,
+                        },
+                        {
+                            "text": "34",
+                            "url": "cite.wolf2019huggingface",
+                            "start_index": 142,
+                        },
+                        {
+                            "text": "35",
+                            "url": "cite.wu2019detectron2",
+                            "start_index": 169,
+                        },
+                    ],
+                ),
+            ],
+        ),
     ],
 )
-def test_partition_pdf_hyperlinks(filename, strategy):
+def test_partition_pdf_hyperlinks(filename, strategy, expected_texts_and_links):
     elements = pdf.partition_pdf(filename=filename, strategy=strategy)
-    links = [
-        {
-            "text": "8",
-            "url": "cite.gardner2018allennlp",
-            "start_index": 138,
-        },
-        {
-            "text": "34",
-            "url": "cite.wolf2019huggingface",
-            "start_index": 141,
-        },
-        {
-            "text": "35",
-            "url": "cite.wu2019detectron2",
-            "start_index": 168,
-        },
+
+    linked_elements = [
+        (element.text, element.metadata.links)
+        for element in elements
+        if element.metadata.links
+        and any(link["url"].startswith("cite.") for link in element.metadata.links)
     ]
-    assert elements[-1].metadata.links == links
+    assert linked_elements[-len(expected_texts_and_links) :] == expected_texts_and_links
 
 
 @pytest.mark.parametrize(
@@ -1153,8 +1202,18 @@ def test_partition_pdf_hyperlinks(filename, strategy):
 )
 def test_partition_pdf_hyperlinks_multiple_lines(filename, strategy):
     elements = pdf.partition_pdf(filename=filename, strategy=strategy)
-    assert elements[-1].metadata.links[-1]["text"] == "capturing"
-    assert len(elements[-1].metadata.links) == 2
+    assert elements[-1].metadata.links == [
+        {
+            "text": "broken list item group",
+            "url": "http://www.apple.com",
+            "start_index": 71,
+        },
+        {
+            "text": "capturing",
+            "url": "http://www.apple.com",
+            "start_index": 94 if strategy == "fast" else 95,
+        },
+    ]
 
 
 def test_partition_pdf_uses_model_name():
@@ -1195,7 +1254,56 @@ def test_partition_pdf_word_bbox_not_char():
         elements = pdf.partition_pdf(filename=filename, strategy="fast")
     except Exception as e:
         raise ("Partitioning fail: %s" % e)
-    assert len(elements) == 17
+    assert [element.text for element in elements] == [
+        "Interface Configuration Guide Release 23.7.R1 Port Cross-Connect",
+        "}",
+        "Example: Multiple PXCs on the same underlying cross-connect configuration (classic CLI)",
+        "A:node-2>config>port-xc# info",
+        "pxc 1 create",
+        "port 1/x1/1/c1/1",
+        "no shutdown",
+        "exit",
+        "pxc 2 create",
+        "shutdown",
+        "port 1/x1/1/c1/1",
+        "exit",
+        "pxc 3 create",
+        "shutdown",
+        "port 1/x1/1/c1/1",
+        "exit",
+        "exit",
+        "A faceplate port that has been placed in the loopback mode for PXC use, supports "
+        "only hybrid mode",
+        "of operation and dot1q encapsulation. The recommendation is that the MTU value be "
+        "configured to the",
+        "maximum value. dot1x tunneling is enabled and cannot be changed.",
+        "The pre-set dot1q Ethernet encapsulation on the faceplate port is irrelevant from "
+        "the operator’s perspective",
+        "and there is no need to change it. The relevant encapsulation carrying service tags "
+        "defined on PXC",
+        "subports and that encapsulation is configurable. For more information, see PXC sub-ports.",
+        "The following guidelines apply to a PXC configuration based on faceplate ports:",
+        "Only unused faceplate ports (not associated with an interface or SAP) can be "
+        "referenced within a PXC ID configuration.",
+        "When the faceplate port is allocated to a PXC, it cannot be used outside of the PXC "
+        "context. For example, an IP interface cannot use the faceplate port directly, or a "
+        "SAP under a such port cannot be associated with an Epipe or VPLS service.",
+        "6.4 Internal PXC",
+        "With internal (or MAC-based) PXC, the egress path is cross-connected to the ingress "
+        "path in the MAC",
+        "chip, without the need to consume a faceplate port, as shown in Figure 21: Internal "
+        "cross-connect",
+        "(loopback) in a MAC chip. The number of the MAC chips on a line card varies with the "
+        "line card type. The",
+        "show datapath command shows the MAC chip related connectivity information in the "
+        "datapath (forwarding",
+        "complex). This information is essential for the correct configuration of the "
+        "cross-connect.",
+        "© 2023 Nokia.",
+        "3HE 19220 AAAB TQZZA 01 93",
+        "Use subject to Terms available at: www.nokia.com/terms.",
+        "SPACER TEXT",
+    ]
 
 
 def test_partition_pdf_fast_no_mapping_errors():
@@ -1366,7 +1474,7 @@ def test_partition_pdf_with_fast_finds_headers_footers():
     assert [element.text for element in elements] == [
         "I Am A Header",
         "Title",
-        "Here is a lovely sentences.",
+        "H e r e is a lo v e ly s e n te n c e s.",
         "I Am A Footer",
     ]
 
@@ -1501,14 +1609,16 @@ def expected_element_ids_for_fast_strategy():
     return [
         "27a6cb3e5a4ad399b2f865729bbd3840",
         "a90a54baba0093296a013d26b7acbc17",
-        "9be424e2d151dac4b5f36a85e9bbfe65",
-        "4631da875fb4996c63b2d80cea6b588e",
-        "6264f4eda97a049f4710f9bea0c01cbd",
+        "660d142f1a47f4c99f61aba0cebd260d",
+        "1271a3d169d2c78714b3a09f9649151c",
+        "ca20d954ad2f9deab2e0da950678095e",
+        "db381421511e106a43ca1347e9a58d79",
         "abded7b2ff3a5542c88b4a831755ec24",
         "b781ea5123cb31e0571391b7b42cac75",
-        "033f27d2618ba4cda9068b267b5a731e",
-        "8982a12fcced30dd12ccbf61d14f30bf",
-        "41af2fd5df0cf47aa7e8ecca200d3ac6",
+        "bbd744a3e40c79690f824aaa41537948",
+        "97d264beec69daa37c9079484fc408cf",
+        "911062f309efaccb5bede3b8e2c794f0",
+        "5334eba0cd371770af74e525d1140514",
     ]
 
 

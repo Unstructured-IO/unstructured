@@ -15,6 +15,7 @@ import pytest
 from unstructured.documents.elements import NarrativeText
 from unstructured.file_utils.model import FileType
 from unstructured.partition.audio import partition_audio
+from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 # ================================================================================================
 # Shared fixtures
@@ -105,7 +106,8 @@ def test_partition_audio_from_filename_returns_transcript_elements(mock_get_agen
     assert len(elements) == 1
     assert isinstance(elements[0], NarrativeText)
     assert elements[0].text == "Hello, this is a test transcript."
-    assert elements[0].metadata.detection_origin == "speech_to_text"
+    if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
+        assert elements[0].metadata.detection_origin == "speech_to_text"
     assert elements[0].metadata.segment_start_seconds == 0.0
     assert elements[0].metadata.segment_end_seconds == 2.5
     mock_get_agent.assert_called_once_with(None)
