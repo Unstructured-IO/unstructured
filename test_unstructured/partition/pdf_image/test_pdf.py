@@ -1770,6 +1770,50 @@ def test_pdf_hi_res_max_pages_argument(filename, pdf_hi_res_max_pages, expected_
             )
 
 
+class MockCorePdfDocument:
+    def __init__(self, page_count: int):
+        self._page_count = page_count
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return None
+
+    def page_count(self) -> int:
+        return self._page_count
+
+
+def test_get_pdf_page_number_uses_core_pdf_for_filename():
+    with mock.patch("core_pdf.PdfDocument.open", return_value=MockCorePdfDocument(3)) as open_:
+        assert pdf._get_pdf_page_number(filename="example.pdf", password="pw") == 3
+
+    open_.assert_called_once_with("example.pdf", password="pw")
+
+
+def test_get_pdf_page_number_uses_core_pdf_for_file_and_restores_cursor():
+    file = io.BytesIO(b"%PDF-1.7")
+    file.seek(4)
+
+    with mock.patch("core_pdf.PdfDocument.open", return_value=MockCorePdfDocument(2)) as open_:
+        assert pdf._get_pdf_page_number(file=file) == 2
+
+    open_.assert_called_once_with(file, password="")
+    assert file.tell() == 4
+
+
+def test_check_pdf_hi_res_max_pages_exceeded_uses_core_pdf_page_count():
+    with mock.patch.object(pdf, "_get_pdf_page_number", return_value=4) as get_page_number_:
+        with pytest.raises(PageCountExceededError):
+            pdf.check_pdf_hi_res_max_pages_exceeded(
+                filename="example.pdf",
+                pdf_hi_res_max_pages=3,
+                password="pw",
+            )
+
+    get_page_number_.assert_called_once_with(filename="example.pdf", file=None, password="pw")
+
+
 def test_is_pdf_too_complex_skips_small_file_size():
     assert not pdf.is_pdf_too_complex(file=b"tiny", min_file_size_bytes=10)
 

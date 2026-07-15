@@ -699,12 +699,24 @@ def _process_data_with_core_pdf(
 def _get_pdf_page_number(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
+    password: Optional[str] = None,
 ) -> int:
+    from core_pdf import PdfDocument
+
     if file:
-        number_of_pages = PdfReader(file).get_num_pages()
-        file.seek(0)
+        original_pos = None
+        if not isinstance(file, bytes) and hasattr(file, "tell"):
+            original_pos = file.tell()
+            file.seek(0)
+        try:
+            with PdfDocument.open(file, password=password or "") as document:
+                number_of_pages = document.page_count()
+        finally:
+            if original_pos is not None:
+                file.seek(original_pos)
     elif filename:
-        number_of_pages = PdfReader(filename).get_num_pages()
+        with PdfDocument.open(filename, password=password or "") as document:
+            number_of_pages = document.page_count()
     else:
         raise ValueError("Either 'file' or 'filename' must be provided.")
     return number_of_pages
@@ -714,10 +726,11 @@ def check_pdf_hi_res_max_pages_exceeded(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
     pdf_hi_res_max_pages: int = None,
+    password: Optional[str] = None,
 ) -> None:
     """Checks whether PDF exceeds pdf_hi_res_max_pages limit."""
     if pdf_hi_res_max_pages:
-        document_pages = _get_pdf_page_number(filename=filename, file=file)
+        document_pages = _get_pdf_page_number(filename=filename, file=file, password=password)
         if document_pages > pdf_hi_res_max_pages:
             raise PageCountExceededError(
                 document_pages=document_pages, pdf_hi_res_max_pages=pdf_hi_res_max_pages
@@ -939,7 +952,10 @@ def _partition_pdf_or_image_local(
 
     if not is_image:
         check_pdf_hi_res_max_pages_exceeded(
-            filename=filename, file=file, pdf_hi_res_max_pages=pdf_hi_res_max_pages
+            filename=filename,
+            file=file,
+            pdf_hi_res_max_pages=pdf_hi_res_max_pages,
+            password=password,
         )
 
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
