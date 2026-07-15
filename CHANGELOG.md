@@ -1,3 +1,9 @@
+## 0.25.1
+
+### Fixes
+
+- **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+
 ## 0.25.0
 
 ### Enhancements
