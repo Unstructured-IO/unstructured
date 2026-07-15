@@ -631,26 +631,6 @@ def aggregate_embedded_text_by_block(
     return text, is_extracted
 
 
-def get_links_in_element(page_links: list, region: Rectangle) -> list:
-    links_bboxes = [Rectangle(*link.get("bbox")) for link in page_links]
-    results = bboxes1_is_almost_subregion_of_bboxes2(links_bboxes, [region])
-
-    links = []
-    for idx, result in enumerate(results):
-        if not any(result):
-            continue
-        link = {
-            "text": page_links[idx].get("text"),
-            "url": page_links[idx].get("url"),
-            "start_index": page_links[idx].get("start_index"),
-        }
-        if (line_text := page_links[idx].get("_line_text")) is not None:
-            link["_line_text"] = line_text
-        links.append(link)
-
-    return links
-
-
 def calculate_intersection_area(
     bbox1: tuple[float, float, float, float],
     bbox2: tuple[float, float, float, float],

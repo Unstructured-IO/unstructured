@@ -522,30 +522,13 @@ def _get_core_pdf_line_links(
 ) -> list[dict[str, Any]]:
     """Map core-pdf page links to the extracted line words they overlap."""
 
-    words = []
-    for word in line.get("words", []):
-        bbox = word.get("page_bbox")
-        if bbox is None:
-            continue
-        words.append({**word, "bbox": bbox})
-
-    if not words:
-        return []
-
     urls_metadata = []
     for link in links:
         if not getattr(link, "url", None):
             continue
-        linked_words = [
-            word
-            for word in words
-            if link.overlaps_page_bbox(word["bbox"], page_height, threshold=0.1)
-        ]
-        if not linked_words:
-            continue
-        link_metadata = link.text_metadata(linked_words, page_height)
-        link_metadata["_line_text"] = line["text"]
-        urls_metadata.append(link_metadata)
+        link_metadata = link.text_metadata_for_line(line, page_height, threshold=0.1)
+        if link_metadata is not None:
+            urls_metadata.append(link_metadata)
     return urls_metadata
 
 
@@ -678,7 +661,7 @@ def _process_data_with_core_pdf(
                     )[0].tolist()
                 links.append(
                     {
-                        "_line_text": metadata.get("_line_text"),
+                        "source_text": metadata.get("source_text"),
                         "bbox": bbox,
                         "text": metadata["text"],
                         "url": metadata["uri"],
@@ -1404,26 +1387,6 @@ def _get_links_from_urls_metadata(
     return links
 
 
-def _normalize_link_start_indexes(links: list[dict[str, Any]], text: str) -> list[Link]:
-    """Adjust link offsets to the final element text when links came from subregions."""
-
-    normalized_links = []
-    for link in links:
-        normalized_link = {
-            "text": link["text"],
-            "url": link["url"],
-            "start_index": link["start_index"],
-        }
-        line_text = link.get("_line_text")
-        start_index = text.find(line_text) if line_text else -1
-        if start_index >= 0:
-            normalized_link["start_index"] = start_index + link["start_index"]
-        normalized_links.append(
-            normalized_link,
-        )
-    return normalized_links
-
-
 def _combine_coordinates_into_element1(
     element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
 ) -> Element:
@@ -1511,8 +1474,6 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    from unstructured.partition.pdf_image.layout_processing import get_links_in_element
-
     elements: list[Element] = []
 
     num_pages = len(document.pages)
@@ -1570,11 +1531,39 @@ def document_to_element_list(
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
-                element_links = get_links_in_element(links, layout_element.bbox) if links else []
-                element.metadata.links = _normalize_link_start_indexes(
-                    element_links,
-                    element.text,
-                )
+                element_links = []
+                if links:
+                    region = layout_element.bbox
+                    region_area = (region.x2 - region.x1 + 1) * (region.y2 - region.y1 + 1)
+                    for link in links:
+                        link_x1, link_y1, link_x2, link_y2 = link["bbox"]
+                        intersection_area = max(
+                            min(link_x2, region.x2) - max(link_x1, region.x1) + 1,
+                            0,
+                        ) * max(
+                            min(link_y2, region.y2) - max(link_y1, region.y1) + 1,
+                            0,
+                        )
+                        link_area = (link_x2 - link_x1 + 1) * (link_y2 - link_y1 + 1)
+                        if (
+                            intersection_area / max(link_area, 0.01) <= 0.5
+                            or link_area > region_area
+                        ):
+                            continue
+
+                        start_index = link["start_index"]
+                        if (line_text := link.get("source_text")) is not None:
+                            line_start_index = element.text.find(line_text)
+                            if line_start_index >= 0:
+                                start_index = line_start_index + start_index
+                        element_links.append(
+                            {
+                                "text": link["text"],
+                                "url": link["url"],
+                                "start_index": start_index,
+                            }
+                        )
+                element.metadata.links = element_links
 
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
