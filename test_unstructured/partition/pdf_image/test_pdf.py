@@ -1204,16 +1204,25 @@ def test_partition_pdf_hyperlinks_multiple_lines(filename, strategy):
     elements = pdf.partition_pdf(filename=filename, strategy=strategy)
     assert elements[-1].metadata.links == [
         {
-            "text": "broken list item group",
-            "url": "http://www.apple.com",
-            "start_index": 71,
-        },
-        {
             "text": "capturing",
             "url": "http://www.apple.com",
             "start_index": 94 if strategy == "fast" else 95,
         },
     ]
+
+
+def test_core_pdf_line_links_use_core_pdf_threshold_default():
+    line = {"text": "capturing"}
+    expected_metadata = {
+        "text": "capturing",
+        "uri": "http://www.apple.com",
+        "start_index": 0,
+    }
+    link = mock.Mock(url="http://www.apple.com")
+    link.text_metadata_for_line.return_value = expected_metadata
+
+    assert pdf._get_core_pdf_line_links(line, [link], page_height=792.0) == [expected_metadata]
+    link.text_metadata_for_line.assert_called_once_with(line, 792.0)
 
 
 def test_partition_pdf_uses_model_name():

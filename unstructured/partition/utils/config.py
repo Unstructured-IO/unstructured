@@ -213,14 +213,6 @@ class ENVConfig:
         return self._get_float("EMBEDDED_TEXT_SAME_REGION_THRESHOLD", 0.9)
 
     @property
-    def PDF_ANNOTATION_THRESHOLD(self) -> float:
-        """The threshold value (between 0.0 and 1.0) that determines the minimum overlap required
-        for an annotation to be considered within the element.
-        """
-
-        return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
-
-    @property
     def PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO(self) -> float:
         """maximum ratio of low fidelity charcaters for a text to be considered embedded text"""
         return self._get_float("PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO", 0.1)

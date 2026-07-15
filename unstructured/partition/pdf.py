@@ -377,7 +377,6 @@ def _process_core_pdf_pages(
     filename: str,
     metadata_last_modified: Optional[str],
     languages: Optional[list[str]] = None,
-    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     password: Optional[str] = None,
     **kwargs,
@@ -487,7 +486,7 @@ def _get_core_pdf_line_links(
     for link in links:
         if not getattr(link, "url", None):
             continue
-        link_metadata = link.text_metadata_for_line(line, page_height, threshold=0.1)
+        link_metadata = link.text_metadata_for_line(line, page_height)
         if link_metadata is not None:
             urls_metadata.append(link_metadata)
     return urls_metadata
