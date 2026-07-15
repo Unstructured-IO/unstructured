@@ -129,14 +129,14 @@ def test_valid_bbox(bbox, is_valid):
 
 
 @pytest.mark.parametrize(
-    ("elements", "length_extra_info", "expected_document_length"),
+    ("elements", "expected_document_length"),
     [
-        (deletable_elements_inside_table, 1, 1),
-        (no_deletable_elements_inside_table, 0, 3),
-        (mix_elements_inside_table, 2, 5),
+        (deletable_elements_inside_table, 1),
+        (no_deletable_elements_inside_table, 3),
+        (mix_elements_inside_table, 5),
     ],
 )
-def test_clean_pdf_extracted_inner_elements(elements, length_extra_info, expected_document_length):
+def test_clean_pdf_extracted_inner_elements(elements, expected_document_length):
     # create a sample document with extracted PDF elements inside tables
     page = PageLayout(number=1, image=Image.new("1", (1, 1)))
     page.elements_array = LayoutElements.from_list(elements)
@@ -146,7 +146,7 @@ def test_clean_pdf_extracted_inner_elements(elements, length_extra_info, expecte
     # call the function to clean the extracted PDF inner elements
     cleaned_doc = clean_pdf_extracted_inner_elements(document)
 
-    # check that the extracted PDF elements were stored in the extra_info dictionary
+    # verify extracted PDF elements inside table bounding boxes are removed
     assert len(cleaned_doc.pages[0].elements_array) == expected_document_length
 
 
