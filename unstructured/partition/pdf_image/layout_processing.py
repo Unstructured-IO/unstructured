@@ -88,14 +88,13 @@ def _inferred_is_elementtype(
 
 def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
     """return a boolean array masking for each element if it is non-image type (True) or image like
-    type (False); image types are ElementType.FIGURE/IMAGE/PAGE_BREAK/TABLE"""
+    type (False); image types are ElementType.FIGURE/IMAGE/PICTURE/PAGE_BREAK/TABLE"""
     return ~_inferred_is_elementtype(
         inferred_layout,
         etypes=(
             ElementType.FIGURE,
             ElementType.IMAGE,
-            # NOTE (yao): PICTURE is not in the loop version of the logic in inference library
-            # ElementType.PICTURE,
+            ElementType.PICTURE,
             ElementType.PAGE_BREAK,
             ElementType.TABLE,
         ),

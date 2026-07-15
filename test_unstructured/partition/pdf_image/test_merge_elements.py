@@ -82,3 +82,27 @@ def test_single_extracted_region_at_index_zero_removes_inferred_subregion():
     # The inferred subregion is removed; only the extracted region remains.
     assert len(merged) == 1
     assert list(merged.texts) == ["Extracted text"]
+
+
+def test_extracted_text_inside_picture_region_remains_standalone():
+    inferred = LayoutElements(
+        element_coords=np.array([[0.0, 0.0, 100.0, 100.0]]),
+        texts=np.array([None], dtype=object),
+        element_class_ids=np.array([0]),
+        element_class_id_map={0: "Picture"},
+    )
+    extracted = LayoutElements(
+        element_coords=np.array([[20.0, 20.0, 80.0, 40.0]]),
+        texts=np.array(["Extracted text"], dtype=object),
+        element_class_ids=np.array([0]),
+        element_class_id_map={0: "UncategorizedText"},
+    )
+
+    merged = array_merge_inferred_layout_with_extracted_layout(
+        inferred_layout=inferred,
+        extracted_layout=extracted,
+        page_image_size=(200, 200),
+    )
+
+    assert len(merged) == 1
+    assert list(merged.texts) == ["Extracted text"]
