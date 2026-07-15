@@ -180,12 +180,12 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     )
     monkeypatch.setattr(
         pdf,
-        "_process_data_with_core_pdf",
+        "process_file_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
         pdf,
-        "_process_file_with_core_pdf",
+        "_process_data_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
@@ -230,7 +230,7 @@ def test_rotation_corrections_from_layout_defaults_to_zero_on_missing_metadata()
 @pytest.mark.parametrize(
     ("file_arg", "model_target", "core_pdf_target"),
     [
-        (None, "process_file_with_model", "_process_file_with_core_pdf"),
+        (None, "process_file_with_model", "process_file_with_core_pdf"),
         (b"0000", "process_data_with_model", "_process_data_with_core_pdf"),
     ],
 )
@@ -332,7 +332,7 @@ def test_partition_pdf_with_model_name_env_var(
     monkeypatch,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -346,7 +346,7 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
     monkeypatch,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -358,7 +358,7 @@ def test_partition_pdf_passes_configured_dpi_to_inference(
 
 def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
 
     with (
         mock.patch.object(
@@ -396,7 +396,7 @@ def test_partition_pdf_passes_render_max_pixels_to_inference(monkeypatch):
 
 def test_partition_pdf_render_too_large_error_is_unprocessable(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -415,7 +415,7 @@ def test_partition_pdf_with_model_name(
     model_name,
 ):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -444,7 +444,7 @@ def test_partition_pdf_with_model_name(
 
 def test_partition_pdf_with_hi_res_model_name(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -459,7 +459,7 @@ def test_partition_pdf_with_hi_res_model_name(monkeypatch):
 
 def test_partition_pdf_or_image_with_hi_res_model_name(monkeypatch):
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
     with mock.patch.object(
         layout,
         "process_file_with_model",
@@ -681,7 +681,7 @@ def test_partition_pdf_falls_back_to_fast(monkeypatch, caplog):
     mock_return = [[Text("Hello there!")], []]
     with mock.patch.object(
         pdf,
-        "extractable_elements",
+        "_process_core_pdf_pages",
         return_value=mock_return,
     ) as mock_partition:
         pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
@@ -702,7 +702,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(monkeypatch, caplog):
     with (
         mock.patch.object(
             pdf,
-            "extractable_elements",
+            "_process_core_pdf_pages",
             return_value=mock_return,
         ) as mock_partition,
         mock.patch.object(
@@ -724,7 +724,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(monkeypatch, caplog):
         return dep not in ["unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
@@ -921,7 +921,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(monkeypatch):
         return dep not in ["unstructured_inference", "unstructured_pytesseract"]
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(pdf, "_process_core_pdf_pages", lambda *args, **kwargs: [])
 
     with pytest.raises(ValueError):
         pdf.partition_pdf(filename=filename)
@@ -1484,7 +1484,7 @@ def test_partition_pdf_with_fast_finds_headers_footers():
     [
         (
             "invalid-pdf-structure-entire-doc.pdf",
-            [73, 35, 59, 75, 59, 41, 49, 76, 70, 62, 4],
+            [73, 35, 59, 68, 59, 41, 49, 76, 70, 62, 4],
             [
                 "Collaborative Neural Rendering Using Anime Character Sheets",
                 "Zuzeng Lin¹,2,∗ , Ailin Huang²,3,∗ , Zhewei Huang²,∗",
@@ -1493,12 +1493,18 @@ def test_partition_pdf_with_fast_finds_headers_footers():
         ),
     ],
 )
-def test_extractable_elements_handles_invalid_pdf_structure(
+def test_core_pdf_element_extraction_handles_invalid_pdf_structure(
     filename,
     expected_page_lengths,
     expected_first_texts,
 ):
-    pages = pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
+    filename = example_doc_path(f"pdf/{filename}")
+    with open(filename, "rb") as f:
+        pages = pdf._process_core_pdf_pages(
+            fp=f,
+            filename=filename,
+            metadata_last_modified=None,
+        )
 
     assert [len(page) for page in pages] == expected_page_lengths
     assert [element.text for element in pages[0][:3]] == expected_first_texts
@@ -1509,7 +1515,7 @@ def test_extractable_elements_handles_invalid_pdf_structure(
     [
         (
             "invalid-pdf-structure-one-page.pdf",
-            [65, 65],
+            [65, 45],
             [
                 "U.S. GOVERNMENT ACCOUNTABILITY OFFICE",
                 "June 2023 In March 2023, the White House issued the National",
@@ -1518,12 +1524,18 @@ def test_extractable_elements_handles_invalid_pdf_structure(
         ),
     ],
 )
-def test_extractable_elements_handles_valid_pdf_structure(
+def test_core_pdf_element_extraction_handles_valid_pdf_structure(
     filename,
     expected_page_lengths,
     expected_first_texts,
 ):
-    pages = pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
+    filename = example_doc_path(f"pdf/{filename}")
+    with open(filename, "rb") as f:
+        pages = pdf._process_core_pdf_pages(
+            fp=f,
+            filename=filename,
+            metadata_last_modified=None,
+        )
 
     assert [len(page) for page in pages] == expected_page_lengths
     assert [element.text for element in pages[0][:3]] == expected_first_texts

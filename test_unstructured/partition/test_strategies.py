@@ -46,9 +46,18 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
 
     if from_file:
         with open(filename, "rb") as f:
-            extracted_elements = pdf.extractable_elements(file=f)
+            extracted_elements = pdf._process_core_pdf_pages(
+                fp=f,
+                filename=filename,
+                metadata_last_modified=None,
+            )
     else:
-        extracted_elements = pdf.extractable_elements(filename=filename)
+        with open(filename, "rb") as f:
+            extracted_elements = pdf._process_core_pdf_pages(
+                fp=f,
+                filename=filename,
+                metadata_last_modified=None,
+            )
 
     pdf_text_extractable = any(
         isinstance(el, Text) and el.text.strip()

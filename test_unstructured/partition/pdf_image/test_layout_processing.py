@@ -17,7 +17,7 @@ from unstructured_inference.inference.layoutelement import LayoutElements
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
-from unstructured.partition.pdf import _process_file_with_core_pdf
+from unstructured.partition.pdf import process_file_with_core_pdf
 from unstructured.partition.pdf_image.layout_processing import (
     _rotate_bboxes,
     _validate_bbox,
@@ -329,7 +329,7 @@ def test_remove_duplicate_elements_dense_page_is_not_decimated():
 
 
 def test_process_file_with_core_pdf():
-    layout, links = _process_file_with_core_pdf(
+    layout, links = process_file_with_core_pdf(
         example_doc_path("pdf/layout-parser-paper-fast.pdf"),
     )
     assert len(layout)
@@ -338,7 +338,7 @@ def test_process_file_with_core_pdf():
 
 
 def test_process_file_with_core_pdf_is_extracted_array():
-    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -350,7 +350,7 @@ def test_process_file_with_core_pdf_is_extracted_array():
 
 def test_process_file_hidden_ocr_text():
     """Test processing a PDF that contains hidden OCR text layer."""
-    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -366,7 +366,7 @@ def test_process_file_recovers_figure_overlay_text():
     to drop. The fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a
     form XObject.
     """
-    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/figure-overlay-text.pdf"))
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/figure-overlay-text.pdf"))
     texts = " ".join(str(t) for page in layout for t in page.texts if t)
     assert "Printed Name:" in texts  # main content stream
     assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
@@ -426,7 +426,7 @@ def test_process_file_with_core_pdf_recovers_form_field_text():
     with tempfile.TemporaryDirectory() as tmp_dir:
         pdf_path = os.path.join(tmp_dir, "form.pdf")
         _build_synthetic_form_pdf(pdf_path)
-        layout, _ = _process_file_with_core_pdf(pdf_path)
+        layout, _ = process_file_with_core_pdf(pdf_path)
 
     texts = [str(t) for t in layout[0].texts if t]
     assert "Jane Doe" in texts

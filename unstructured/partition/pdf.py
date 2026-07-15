@@ -256,15 +256,27 @@ def partition_pdf_or_image(
                 )
 
             else:
-                extracted_elements = extractable_elements(
-                    filename=filename,
-                    file=spooled_to_bytes_io_if_needed(file),
-                    languages=languages,
-                    metadata_last_modified=metadata_last_modified or last_modified,
-                    starting_page_number=starting_page_number,
-                    password=password,
-                    **kwargs,
-                )
+                if filename:
+                    with open(filename, "rb") as fp:
+                        extracted_elements = _process_core_pdf_pages(
+                            fp=fp,
+                            filename=filename,
+                            languages=languages,
+                            metadata_last_modified=metadata_last_modified or last_modified,
+                            starting_page_number=starting_page_number,
+                            password=password,
+                            **kwargs,
+                        )
+                elif file is not None:
+                    extracted_elements = _process_core_pdf_pages(
+                        fp=spooled_to_bytes_io_if_needed(file),
+                        filename=filename,
+                        languages=languages,
+                        metadata_last_modified=metadata_last_modified or last_modified,
+                        starting_page_number=starting_page_number,
+                        password=password,
+                        **kwargs,
+                    )
                 pdf_text_extractable = any(
                     isinstance(el, Text) and el.text.strip()
                     for page_elements in extracted_elements
@@ -283,7 +295,7 @@ def partition_pdf_or_image(
         extract_image_block_types=extract_image_block_types,
     )
 
-    if file is not None:
+    if file is not None and hasattr(file, "seek"):
         file.seek(0)
 
     if languages is None:
@@ -323,11 +335,21 @@ def partition_pdf_or_image(
             # are likely not Titles and should not be identified as such.
 
     elif strategy == PartitionStrategy.FAST:
-        return _partition_pdf_with_pdfparser(
-            extracted_elements=extracted_elements,
-            include_page_breaks=include_page_breaks,
-            **kwargs,
-        )
+        elements = []
+        sort_mode = kwargs.get("sort_mode", SORT_MODE_XY_CUT)
+        for page_elements in extracted_elements:
+            # NOTE(crag, christine): always do the basic sort first for deterministic order across
+            # python versions.
+            sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
+            if sort_mode != SORT_MODE_BASIC:
+                sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+
+            elements += sorted_page_elements
+
+            if include_page_breaks:
+                elements.append(PageBreak(text=""))
+
+        return elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -349,70 +371,9 @@ def partition_pdf_or_image(
     raise ValueError(f"Unsupported partitioning strategy: {strategy}")
 
 
-def extractable_elements(
-    filename: str = "",
-    file: Optional[bytes | IO[bytes]] = None,
-    languages: Optional[list[str]] = None,
-    metadata_last_modified: Optional[str] = None,
-    starting_page_number: int = 1,
-    password: Optional[str] = None,
-    **kwargs: Any,
-) -> list[list[Element]]:
-    if isinstance(file, bytes):
-        file = io.BytesIO(file)
-    return _partition_pdf_with_core_pdf(
-        filename=filename,
-        file=file,
-        languages=languages,
-        metadata_last_modified=metadata_last_modified,
-        starting_page_number=starting_page_number,
-        password=password,
-        **kwargs,
-    )
-
-
-def _partition_pdf_with_core_pdf(
-    filename: str,
-    file: Optional[IO[bytes]],
-    metadata_last_modified: Optional[str],
-    languages: Optional[list[str]] = None,
-    starting_page_number: int = 1,
-    password: Optional[str] = None,
-    **kwargs: Any,
-) -> list[list[Element]]:
-    """Partitions a PDF using core-pdf instead of using a layout model."""
-
-    exactly_one(filename=filename, file=file)
-    if filename:
-        with open(filename, "rb") as fp:
-            fp = cast(IO[bytes], fp)
-            elements = _process_core_pdf_pages(
-                fp=fp,
-                filename=filename,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified,
-                starting_page_number=starting_page_number,
-                password=password,
-                **kwargs,
-            )
-
-    elif file:
-        elements = _process_core_pdf_pages(
-            fp=file,
-            filename=filename,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified,
-            starting_page_number=starting_page_number,
-            password=password,
-            **kwargs,
-        )
-
-    return elements
-
-
 @requires_dependencies("core_pdf")
 def _process_core_pdf_pages(
-    fp: IO[bytes],
+    fp: bytes | IO[bytes],
     filename: str,
     metadata_last_modified: Optional[str],
     languages: Optional[list[str]] = None,
@@ -532,14 +493,13 @@ def _get_core_pdf_line_links(
     return urls_metadata
 
 
-def _process_file_with_core_pdf(
+def process_file_with_core_pdf(
     filename: str = "",
     dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
     rotation_corrections: Optional[list[int]] = None,
 ) -> tuple[list["LayoutElements"], list[list]]:
     with open(filename, "rb") as fp:
-        fp = cast(IO[bytes], fp)
         return _process_data_with_core_pdf(
             file=fp,
             dpi=dpi,
@@ -982,7 +942,7 @@ def _partition_pdf_or_image_local(
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
 
         extracted_layout, layouts_links = (
-            _process_file_with_core_pdf(
+            process_file_with_core_pdf(
                 filename=filename,
                 dpi=pdf_image_dpi,
                 password=password,
@@ -1201,31 +1161,6 @@ def _partition_pdf_or_image_local(
         )
 
     return out_elements
-
-
-def _partition_pdf_with_pdfparser(
-    extracted_elements: list[list[Element]],
-    include_page_breaks: bool = False,
-    sort_mode: str = SORT_MODE_XY_CUT,
-    **kwargs,
-):
-    """Partitions a PDF using pdfparser."""
-
-    elements = []
-
-    for page_elements in extracted_elements:
-        # NOTE(crag, christine): always do the basic sort first for deterministic order across
-        # python versions.
-        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
-        if sort_mode != SORT_MODE_BASIC:
-            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
-
-        elements += sorted_page_elements
-
-        if include_page_breaks:
-            elements.append(PageBreak(text=""))
-
-    return elements
 
 
 def _partition_pdf_or_image_with_ocr(
