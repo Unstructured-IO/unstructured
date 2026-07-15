@@ -1,10 +1,10 @@
 import os
 import tempfile
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams, LTChar, LTContainer
+from pdfminer.layout import LTChar, LTContainer
 from PIL import Image
 from unstructured_inference.constants import IsExtracted
 from unstructured_inference.constants import Source as InferenceSource
@@ -336,22 +336,30 @@ def test_remove_duplicate_elements_dense_page_is_not_decimated():
 def test_process_file_with_pdfminer():
     layout, links = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     assert len(layout)
-    assert "LayoutParser: A Uniﬁed Toolkit for Deep\n" in layout[0].texts
+    assert "Layout Parser: A Uniﬁed Toolkit for Deep" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"
 
 
 def test_process_file_with_pdfminer_is_extracted_array():
     layout, _ = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
-    # first page contains rotated text that are considered low fidelity, i.e., is_extracted=partial
-    assert layout[0].is_extracted_array[0] is None
+    text_flags = [
+        is_extracted
+        for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
+        if text is not None
+    ]
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in text_flags)
     assert all(is_extracted is IsExtracted.TRUE for is_extracted in layout[1].is_extracted_array)
 
 
 def test_process_file_hidden_ocr_text():
     """Test processing a PDF that contains hidden OCR text layer."""
     layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
-    assert all(is_extracted is None for is_extracted in layout[0].is_extracted_array[:-1])
-    assert layout[0].is_extracted_array[-1] == IsExtracted.TRUE
+    text_flags = [
+        is_extracted
+        for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
+        if text is not None
+    ]
+    assert all(is_extracted is IsExtracted.TRUE for is_extracted in text_flags)
 
 
 def test_process_file_recovers_figure_overlay_text():
@@ -524,20 +532,28 @@ def test_partition_pdf_fast_recovers_form_field_text():
     assert "123 Main Street" in blob
 
 
-@patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())
-def test_laprams_are_passed_from_partition_to_pdfminer(pdfminer_mock):
-    partition(
+def test_pdfminer_layout_params_do_not_block_core_pdf_extraction():
+    elements = partition(
         filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
         pdfminer_line_margin=1.123,
         pdfminer_char_margin=None,
         pdfminer_line_overlap=0.0123,
         pdfminer_word_margin=3.21,
     )
-    assert pdfminer_mock.call_args.kwargs == {
-        "line_margin": 1.123,
-        "line_overlap": 0.0123,
-        "word_margin": 3.21,
-    }
+    assert [element.text for element in elements[:12]] == [
+        "arXiv:2103.15348v2 [cs.CV] 21 Jun 2021",
+        "Layout Parser: A Uniﬁed Toolkit for Deep",
+        "Learning Based Document Image Analysis",
+        "Zejiang Shen¹ (a0), Ruochen Zhang², Melissa Dell³, Benjamin Charles Germain",
+        "Lee⁴, Jacob Carlson³, and Weining Li⁵",
+        "1 Allen Institute for AI",
+        "shannons@allenai.org",
+        "2 Brown University",
+        "ruochen zhang@brown.edu",
+        "3 Harvard University",
+        "{melissadell,jacob carlson}@fas.harvard.edu",
+        "4 University of Washington",
+    ]
 
 
 def create_mock_ltchar(text, invisible=False, rotated=False):

@@ -406,7 +406,7 @@ class FileType(enum.Enum):
     PDF = (
         "pdf",
         "pdf",
-        ["pdf2image", "pdfminer", "PIL"],
+        ["core_pdf", "pdf2image", "PIL"],
         "pdf",
         [".pdf"],
         "application/pdf",

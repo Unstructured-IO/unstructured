@@ -476,7 +476,7 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
-@requires_dependencies("pdfminer")
+@requires_dependencies("core_pdf")
 def _process_pdfminer_pages(
     fp: IO[bytes],
     filename: str,
@@ -488,103 +488,150 @@ def _process_pdfminer_pages(
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs,
 ) -> list[list[Element]]:
-    """Uses PDFMiner to split a document into pages and process them."""
+    """Uses core-pdf to split a document into pages and process extracted text lines."""
 
     elements = []
+    original_pos: int | None = None
+    if hasattr(fp, "tell") and hasattr(fp, "seek"):
+        original_pos = fp.tell()
+        fp.seek(0)
 
-    for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp, password=password, pdfminer_config=pdfminer_config),
-        start=starting_page_number,
-    ):
-        width, height = page_layout.width, page_layout.height
+    try:
+        from core_pdf import PdfDocument
 
-        page_elements: list[Element] = []
-        annotation_list = []
+        pdf_document = PdfDocument.open(fp, password=password or "")
+        pages = pdf_document.pages
+    except Exception:
+        if original_pos is not None:
+            fp.seek(original_pos)
+        raise
 
-        coordinate_system = PixelSpace(
-            width=width,
-            height=height,
-        )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+    with pdf_document:
+        for page_index, page in enumerate(pages):
+            page_number = starting_page_number + page_index
+            width, height = page.width, page.height
 
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            bbox = (x1, y1, x2, y2)
+            page_elements: list[Element] = []
+            coordinate_system = PixelSpace(
+                width=width,
+                height=height,
+            )
 
-            urls_metadata: list[dict[str, Any]] = []
+            links = page.get_links()
 
-            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
-                annotations_within_element = check_annotations_within_element(
-                    annotation_list,
-                    bbox,
-                    page_number,
-                    annotation_threshold,
+            for line in page.extract_lines(include_words=True):
+                line_bbox = line.get("bbox")
+                if line_bbox is None:
+                    continue
+                x1, y1, x2, y2 = rect_to_bbox(line_bbox, height)
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                text, moved_indices = clean_extra_whitespace_with_index_run(str(line["text"]))
+                if not text.strip():
+                    continue
+
+                urls_metadata = _get_core_pdf_line_links(line, links, height)
+                element = element_from_text(
+                    text,
+                    coordinates=points,
+                    coordinate_system=coordinate_system,
                 )
-                _, words = get_words_from_obj(obj, height)
-                for annot in annotations_within_element:
-                    urls_metadata.append(map_bbox_and_index(words, annot))
+                coordinates_metadata = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                element.metadata = ElementMetadata(
+                    filename=filename,
+                    page_number=page_number,
+                    coordinates=coordinates_metadata,
+                    last_modified=metadata_last_modified,
+                    links=_get_links_from_urls_metadata(urls_metadata, moved_indices),
+                    languages=languages,
+                )
+                element.metadata.detection_origin = "core_pdf"
+                page_elements.append(element)
 
-            if hasattr(obj, "get_text"):
-                # Use deduplication to handle fake bold text (characters rendered twice)
-                _text_snippets: list[str] = [
-                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
-                ]
-            else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+            for field in page.get_fields():
+                if not field.rect or not field.value_text.strip():
+                    continue
+                wx1, wy1, wx2, wy2 = rect_to_bbox(field.rect, height)
+                points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
+                element = element_from_text(
+                    field.value_text,
+                    coordinates=points,
+                    coordinate_system=coordinate_system,
+                )
+                element.metadata = ElementMetadata(
+                    filename=filename,
+                    page_number=page_number,
+                    coordinates=CoordinatesMetadata(points=points, system=coordinate_system),
+                    last_modified=metadata_last_modified,
+                    languages=languages,
+                )
+                element.metadata.detection_origin = "core_pdf"
+                page_elements.append(element)
 
-            for _text in _text_snippets:
-                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
-                if _text.strip():
-                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element = element_from_text(
-                        _text,
-                        coordinates=points,
-                        coordinate_system=coordinate_system,
-                    )
-                    coordinates_metadata = CoordinatesMetadata(
-                        points=points,
-                        system=coordinate_system,
-                    )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
+            page_elements = _combine_list_elements(page_elements, coordinate_system)
+            elements.append(page_elements)
 
-                    element.metadata = ElementMetadata(
-                        filename=filename,
-                        page_number=page_number,
-                        coordinates=coordinates_metadata,
-                        last_modified=metadata_last_modified,
-                        links=links,
-                        languages=languages,
-                    )
-                    element.metadata.detection_origin = "pdfminer"
-                    page_elements.append(element)
-
-        # Filled AcroForm field values live in widget annotations rather than the page
-        # content stream, so pdfminer's layout pass misses them; recover them here.
-        widget_list = get_widget_text_from_annots(page.annots, height) if page.annots else []
-        for widget in widget_list:
-            wx1, wy1, wx2, wy2 = widget["bbox"]
-            points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
-            element = element_from_text(
-                widget["text"],
-                coordinates=points,
-                coordinate_system=coordinate_system,
-            )
-            element.metadata = ElementMetadata(
-                filename=filename,
-                page_number=page_number,
-                coordinates=CoordinatesMetadata(points=points, system=coordinate_system),
-                last_modified=metadata_last_modified,
-                languages=languages,
-            )
-            element.metadata.detection_origin = "pdfminer"
-            page_elements.append(element)
-
-        page_elements = _combine_list_elements(page_elements, coordinate_system)
-        elements.append(page_elements)
+    if original_pos is not None:
+        fp.seek(original_pos)
 
     return elements
+
+
+def _get_core_pdf_line_links(
+    line: dict[str, Any],
+    links: list[Any],
+    page_height: float,
+) -> list[dict[str, Any]]:
+    """Map core-pdf page links to the extracted line words they overlap."""
+
+    words = []
+    for word in line.get("words", []):
+        bbox = word.get("bbox")
+        if bbox is None:
+            continue
+        words.append({**word, "bbox": rect_to_bbox(bbox, page_height)})
+
+    if not words:
+        return []
+
+    urls_metadata = []
+    for link in links:
+        if not getattr(link, "url", None):
+            continue
+        link_page_bbox = link.page_bbox(page_height)
+        link_bbox = (
+            link_page_bbox.x0,
+            link_page_bbox.y0,
+            link_page_bbox.x1,
+            link_page_bbox.y1,
+        )
+        linked_words = [
+            word for word in words if _bbox_intersection_area(word["bbox"], link_bbox) > 0
+        ]
+        if not linked_words:
+            continue
+        urls_metadata.append(
+            {
+                "bbox": link_bbox,
+                "text": " ".join(str(word["text"]) for word in linked_words).strip(),
+                "uri": link.url,
+                "start_index": linked_words[0].get("start_index", 0),
+            }
+        )
+    return urls_metadata
+
+
+def _bbox_intersection_area(
+    bbox1: tuple[float, float, float, float],
+    bbox2: tuple[float, float, float, float],
+) -> float:
+    x1 = max(bbox1[0], bbox2[0])
+    y1 = max(bbox1[1], bbox2[1])
+    x2 = min(bbox1[2], bbox2[2])
+    y2 = min(bbox1[3], bbox2[3])
+    return max(0.0, x2 - x1) * max(0.0, y2 - y1)
 
 
 def _get_pdf_page_number(

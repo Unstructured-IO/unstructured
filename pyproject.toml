@@ -63,6 +63,7 @@ epub = [
     "pypandoc-binary>=1.16.2, <2.0.0; platform_system == 'Windows' and python_version < '3.13'",
 ]
 image = [
+    "core-pdf",
     "google-cloud-vision>=3.12.1, <4.0.0",
     "pdf2image>=1.17.0, <2.0.0",
     "pdfminer.six>=20251230, <20270000",
@@ -211,6 +212,10 @@ constraint-dependencies = [
     "urllib3>=2.0.0",
     "weaviate-client>=4.20.1",
 ]
+
+[tool.uv.sources]
+core-jpeg = { path = "../../core/core-JPEG" }
+core-pdf = { path = "../../Core/core-pdf" }
 
 [tool.pyright]
 pythonPlatform = "Linux"

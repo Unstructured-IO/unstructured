@@ -5,6 +5,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
+from core_pdf import PdfDocument
 from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import decode_text, open_filename
@@ -564,7 +565,7 @@ def process_page_layout_from_pdfminer(
     )
 
 
-@requires_dependencies("unstructured_inference")
+@requires_dependencies(["unstructured_inference", "core_pdf"])
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = env_config.PDF_RENDER_DPI,
@@ -572,13 +573,12 @@ def process_data_with_pdfminer(
     pdfminer_config: Optional[PDFMinerConfig] = None,
     rotation_corrections: Optional[List[int]] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
-    """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
-    pdf pages using pdf2image
+    """Loads extracted page text, image, and link objects from a PDF using core-pdf.
 
     ``rotation_corrections`` is an optional per-page list of extra rotations (degrees,
     counter-clockwise) that unstructured-inference applied to the rendered page images to
     make their text upright. Mirroring those rotations onto the extracted coordinates keeps
-    the pdfminer layer aligned with the object-detection layer.
+    the extracted layer aligned with the object-detection layer.
     """
 
     from unstructured_inference.inference.layoutelement import LayoutElements
@@ -587,79 +587,185 @@ def process_data_with_pdfminer(
     layouts_links = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(file, password=password, pdfminer_config=pdfminer_config)
-    ):
-        width, height = page_layout.width, page_layout.height
 
-        annotation_list = []
-        widget_list = []
-        coordinate_system = PixelSpace(
-            width=width,
-            height=height,
-        )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
-            widget_list = get_widget_text_from_annots(page.annots, height)
+    original_pos: int | None = None
+    if file is not None and hasattr(file, "tell") and hasattr(file, "seek"):
+        original_pos = file.tell()
+        file.seek(0)
 
-        layout, urls_metadata = process_page_layout_from_pdfminer(
-            annotation_list, page_layout, height, page_number, coef, pdfminer_config, widget_list
-        )
+    try:
+        pdf_document = PdfDocument.open(file, password=password or "")
+    except Exception:
+        if original_pos is not None:
+            file.seek(original_pos)
+        raise
 
-        # Mirror any image rotation unstructured-inference applied for this page so the
-        # extracted coordinates share the object-detection layer's frame (see _rotate_bboxes).
-        angle = (
-            rotation_corrections[page_number]
-            if rotation_corrections is not None and page_number < len(rotation_corrections)
-            else 0
-        )
-        if angle:
-            layout.element_coords = _rotate_bboxes(
-                layout.element_coords, angle, width * coef, height * coef
+    with pdf_document:
+        for page_number, page in enumerate(pdf_document.pages):
+            width, height = page.width, page.height
+            element_coords = []
+            texts = []
+            element_class = []
+            is_extracted = []
+            sources = []
+            urls_metadata = []
+
+            links = page.get_links()
+            for line in page.extract_lines(include_words=True):
+                bbox = line.get("bbox")
+                if bbox is None:
+                    continue
+                inner_bbox = rect_to_bbox(bbox, height)
+                if not _validate_bbox(inner_bbox):
+                    continue
+                texts.append(line["text"])
+                element_coords.append(inner_bbox)
+                element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE)
+                sources.append(Source.CORE_PDF)
+                urls_metadata.extend(_get_core_pdf_line_links(line, links, height))
+
+            for field in page.get_fields():
+                if not field.rect or not field.value_text.strip():
+                    continue
+                field_bbox = rect_to_bbox(field.rect, height)
+                if not _validate_bbox(field_bbox):
+                    continue
+                texts.append(field.value_text)
+                element_coords.append(field_bbox)
+                element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE)
+                sources.append(Source.CORE_PDF)
+
+            for image in page.extract_images():
+                bbox = image.get("bbox")
+                if bbox is None:
+                    continue
+                image_bbox = rect_to_bbox(bbox, height)
+                if not _validate_bbox(image_bbox):
+                    continue
+                texts.append(None)
+                element_coords.append(image_bbox)
+                element_class.append(1)
+                is_extracted.append(None)
+                sources.append(Source.CORE_PDF)
+
+            layout = LayoutElements(
+                element_coords=coef * np.array(element_coords),
+                texts=np.array(texts).astype(object),
+                element_class_ids=np.array(element_class),
+                element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
+                sources=np.array(sources),
+                is_extracted_array=np.array(is_extracted),
             )
 
-        links = []
-        for metadata in urls_metadata:
-            bbox = [x * coef for x in metadata["bbox"]]
+            # Mirror any image rotation unstructured-inference applied for this page so the
+            # extracted coordinates share the object-detection layer's frame (see _rotate_bboxes).
+            angle = (
+                rotation_corrections[page_number]
+                if rotation_corrections is not None and page_number < len(rotation_corrections)
+                else 0
+            )
             if angle:
-                bbox = _rotate_bboxes(
-                    np.array([bbox], dtype=float), angle, width * coef, height * coef
-                )[0].tolist()
-            links.append(
-                {
-                    "bbox": bbox,
-                    "text": metadata["text"],
-                    "url": metadata["uri"],
-                    "start_index": metadata["start_index"],
-                }
-            )
+                layout.element_coords = _rotate_bboxes(
+                    layout.element_coords, angle, width * coef, height * coef
+                )
 
-        clean_layouts = []
-        for threshold, element_class in zip(
-            (
-                env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD,
-                env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD,
-            ),
-            (0, 1),
-        ):
-            elements_to_sort = layout.slice(layout.element_class_ids == element_class)
-            clean_layouts.append(
-                remove_duplicate_elements(elements_to_sort, threshold)
-                if len(elements_to_sort)
-                else elements_to_sort
-            )
+            links = []
+            for metadata in urls_metadata:
+                bbox = [x * coef for x in metadata["bbox"]]
+                if angle:
+                    bbox = _rotate_bboxes(
+                        np.array([bbox], dtype=float), angle, width * coef, height * coef
+                    )[0].tolist()
+                links.append(
+                    {
+                        "bbox": bbox,
+                        "text": metadata["text"],
+                        "url": metadata["uri"],
+                        "start_index": metadata["start_index"],
+                    }
+                )
 
-        layout = LayoutElements.concatenate(clean_layouts)
-        # NOTE(christine): always do the basic sort first for deterministic order across
-        # python versions.
-        layout = sort_text_regions(layout, SORT_MODE_BASIC)
+            clean_layouts = []
+            for threshold, element_class_id in zip(
+                (
+                    env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD,
+                    env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD,
+                ),
+                (0, 1),
+            ):
+                elements_to_sort = layout.slice(layout.element_class_ids == element_class_id)
+                clean_layouts.append(
+                    remove_duplicate_elements(elements_to_sort, threshold)
+                    if len(elements_to_sort)
+                    else elements_to_sort
+                )
 
-        # apply the current default sorting to the layout elements extracted by pdfminer
-        layout = sort_text_regions(layout)
+            layout = LayoutElements.concatenate(clean_layouts)
+            # NOTE(christine): always do the basic sort first for deterministic order across
+            # python versions.
+            layout = sort_text_regions(layout, SORT_MODE_BASIC)
 
-        layouts.append(layout)
-        layouts_links.append(links)
+            # apply the current default sorting to the layout elements extracted by core-pdf
+            layout = sort_text_regions(layout)
+
+            layouts.append(layout)
+            layouts_links.append(links)
+
+    if original_pos is not None:
+        file.seek(original_pos)
     return layouts, layouts_links
+
+
+def _get_core_pdf_line_links(
+    line: dict[str, Any],
+    links: list[Any],
+    page_height: float,
+) -> list[dict[str, Any]]:
+    words = []
+    for word in line.get("words", []):
+        bbox = word.get("bbox")
+        if bbox is None:
+            continue
+        words.append({**word, "bbox": rect_to_bbox(bbox, page_height)})
+
+    urls_metadata = []
+    for link in links:
+        if not getattr(link, "url", None):
+            continue
+        link_page_bbox = link.page_bbox(page_height)
+        link_bbox = (
+            link_page_bbox.x0,
+            link_page_bbox.y0,
+            link_page_bbox.x1,
+            link_page_bbox.y1,
+        )
+        linked_words = [
+            word for word in words if _bbox_intersection_area(word["bbox"], link_bbox) > 0
+        ]
+        if not linked_words:
+            continue
+        urls_metadata.append(
+            {
+                "bbox": link_bbox,
+                "text": " ".join(str(word["text"]) for word in linked_words).strip(),
+                "uri": link.url,
+                "start_index": linked_words[0].get("start_index", 0),
+            }
+        )
+    return urls_metadata
+
+
+def _bbox_intersection_area(
+    bbox1: tuple[float, float, float, float],
+    bbox2: tuple[float, float, float, float],
+) -> float:
+    x1 = max(bbox1[0], bbox2[0])
+    y1 = max(bbox1[1], bbox2[1])
+    x2 = min(bbox1[2], bbox2[2])
+    y2 = min(bbox1[3], bbox2[3])
+    return max(0.0, x2 - x1) * max(0.0, y2 - y1)
 
 
 def _create_text_region(x1, y1, x2, y2, coef, text, source, region_class):
@@ -762,7 +868,7 @@ def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[T
             region_class.from_coords(
                 *layout_elements.element_coords[i],
                 text=layout_elements.texts[i],
-                source=Source.PDFMINER,
+                source=layout_elements.sources[i],
             )
         )
     return regions
@@ -835,7 +941,10 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     """
 
     for page in document.pages:
-        pdfminer_mask = page.elements_array.sources == Source.PDFMINER
+        pdfminer_mask = np.isin(
+            page.elements_array.sources,
+            [Source.PDFMINER, Source.CORE_PDF],
+        )
         non_pdfminer_element_boxes = page.elements_array.slice(~pdfminer_mask).element_coords
         pdfminer_element_boxes = page.elements_array.slice(pdfminer_mask).element_coords
 
