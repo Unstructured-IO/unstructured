@@ -1057,42 +1057,22 @@ wheels = [
 [[package]]
 name = "core-jpeg"
 version = "0.0.0"
-source = { directory = "../../core/core-JPEG" }
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=9.1.1" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
-    { name = "ty", specifier = ">=0.0.57" },
-]
-lint = [
-    { name = "mypy", specifier = ">=1.16.0,<2.0.0" },
-    { name = "ruff", specifier = ">=0.11.13,<1.0.0" },
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/85/2c/f3cc256a07c5df4d6ed7d85e9ef27b80a634ad532b0c70f360fd7286ac81/core_jpeg-0.0.0.tar.gz", hash = "sha256:3d595b78c4e7a42b30578adf1b2d5bd07004f704b561c649f2e748b9337e537b", size = 66691, upload-time = "2026-07-15T17:01:09.183Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c9/9a/daab128685c1b29924728fe26933a59cffc1967363eaeebe7eafe4d90373/core_jpeg-0.0.0-py3-none-any.whl", hash = "sha256:de591e6a8c1136ce2b5692fc365aaa3dd0517b794bc04875d3b1d266d9d006b1", size = 83380, upload-time = "2026-07-15T17:01:07.896Z" },
 ]
 
 [[package]]
 name = "core-pdf"
 version = "0.0.2"
-source = { directory = "../../Core/core-pdf" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "core-jpeg" },
 ]
-
-[package.metadata]
-requires-dist = [{ name = "core-jpeg", directory = "../../core/core-JPEG" }]
-
-[package.metadata.requires-dev]
-benchmark = [{ name = "rich", specifier = ">=15.0.0" }]
-lint = [
-    { name = "mypy", specifier = ">=1.16.0,<2.0.0" },
-    { name = "ruff", specifier = ">=0.11.13,<1.0.0" },
-    { name = "ty", specifier = ">=0.0.59,<1.0.0" },
-]
-test = [
-    { name = "pdfminer-six" },
-    { name = "pytest", specifier = ">=8.4.0,<9.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/96/c9/5401da4ebe82cd91937cd814b1085411e038a2dcd0f8543087265d33dcd6/core_pdf-0.0.2.tar.gz", hash = "sha256:1fe16324e32bcd45dc7bb4964536e901570fa09badd9cbe83f00b28733f8e11c", size = 7177839, upload-time = "2026-07-15T17:49:20.594Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/31/2c/3c5b852879cd3a08dee49ce0cdd885f78f771cfad34d713724e8fd399394/core_pdf-0.0.2-py3-none-any.whl", hash = "sha256:77e479fb8bfbca7e6a0275fd31f43ed672c55417bec3584069c3168286458fe4", size = 7694940, upload-time = "2026-07-15T17:49:16.603Z" },
 ]
 
 [[package]]
@@ -7260,6 +7240,7 @@ source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "charset-normalizer" },
+    { name = "core-pdf" },
     { name = "emoji" },
     { name = "filelock" },
     { name = "filetype" },
@@ -7285,7 +7266,6 @@ dependencies = [
 
 [package.optional-dependencies]
 all-docs = [
-    { name = "core-pdf" },
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
@@ -7328,7 +7308,6 @@ huggingface = [
     { name = "transformers" },
 ]
 image = [
-    { name = "core-pdf" },
     { name = "google-cloud-vision" },
     { name = "pdf2image" },
     { name = "pi-heif" },
@@ -7341,7 +7320,6 @@ ingest = [
     { name = "unstructured-ingest", extra = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
 ]
 local-inference = [
-    { name = "core-pdf" },
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
@@ -7375,7 +7353,6 @@ paddleocr = [
     { name = "unstructured-paddleocr" },
 ]
 pdf = [
-    { name = "core-pdf" },
     { name = "google-cloud-vision" },
     { name = "pdf2image" },
     { name = "pi-heif" },
@@ -7441,10 +7418,7 @@ test = [
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.14.3,<5.0.0" },
     { name = "charset-normalizer", specifier = ">=3.4.4,<4.0.0" },
-    { name = "core-pdf", marker = "extra == 'all-docs'", directory = "../../Core/core-pdf" },
-    { name = "core-pdf", marker = "extra == 'image'", directory = "../../Core/core-pdf" },
-    { name = "core-pdf", marker = "extra == 'local-inference'", directory = "../../Core/core-pdf" },
-    { name = "core-pdf", marker = "extra == 'pdf'", directory = "../../Core/core-pdf" },
+    { name = "core-pdf", specifier = ">=0.0.2" },
     { name = "emoji", specifier = ">=2.15.0,<3.0.0" },
     { name = "filelock", specifier = ">=3.12.0,<4.0.0" },
     { name = "filetype", specifier = ">=1.2.0,<2.0.0" },
