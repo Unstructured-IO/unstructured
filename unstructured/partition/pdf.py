@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
-import wrapt
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
@@ -49,10 +48,6 @@ from unstructured.partition.common.common import (
 )
 from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.pdf_image.pdfminer_utils import (
-    PDFMinerConfig,
-    rect_to_bbox,
-)
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
@@ -63,21 +58,18 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
+    Source,
 )
-from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import patch_psparser
+from unstructured.partition.utils.sorting import (
+    coord_has_valid_points,
+    sort_page_elements,
+    sort_text_regions,
+)
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
-    from unstructured_inference.inference.layoutelement import LayoutElement
-
-
-# Correct a bug that was introduced by a previous patch to
-# pdfminer.six, causing needless and unsuccessful repairing of PDFs
-# which were not actually broken.
-patch_psparser()
-
+    from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 # Regex patterns for counting graphics and text operators in PDF content streams.
@@ -132,10 +124,6 @@ def partition_pdf(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     password: Optional[str] = None,
-    pdfminer_line_margin: Optional[float] = None,
-    pdfminer_char_margin: Optional[float] = None,
-    pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = 0.185,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -194,19 +182,6 @@ def partition_pdf(
         (results in adding FormKeysValues elements to output).
     form_extraction_skip_tables
         Whether the form extraction logic should ignore regions designated as Tables.
-    pdfminer_line_margin
-        If two lines are close together they are considered to be part of the same paragraph.
-        The margin is specified relative to the height of a line.
-    pdfminer_char_margin
-        If two characters are closer together than this margin they are considered part of
-        the same line. The margin is specified relative to the width of the character.
-    pdfminer_line_overlap
-        If two characters have more overlap than this they are considered to be on the same line.
-        The overlap is specified relative to the minimum height of both characters.
-    pdfminer_word_margin
-        If two characters on the same line are further apart than this margin then they are
-        considered to be two separate words, and an intermediate space will be added for
-        readability. The margin is specified relative to the width of the character.
     """
 
     exactly_one(filename=filename, file=file)
@@ -230,10 +205,6 @@ def partition_pdf(
         extract_forms=extract_forms,
         form_extraction_skip_tables=form_extraction_skip_tables,
         password=password,
-        pdfminer_line_margin=pdfminer_line_margin,
-        pdfminer_char_margin=pdfminer_char_margin,
-        pdfminer_line_overlap=pdfminer_line_overlap,
-        pdfminer_word_margin=pdfminer_word_margin,
         **kwargs,
     )
 
@@ -257,10 +228,6 @@ def partition_pdf_or_image(
     extract_forms: bool = False,
     form_extraction_skip_tables: bool = True,
     password: Optional[str] = None,
-    pdfminer_line_margin: Optional[float] = None,
-    pdfminer_char_margin: Optional[float] = None,
-    pdfminer_line_overlap: Optional[float] = None,
-    pdfminer_word_margin: Optional[float] = 0.185,
     ocr_agent: str = OCR_AGENT_TESSERACT,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
@@ -277,13 +244,6 @@ def partition_pdf_or_image(
     validate_strategy(strategy, is_image)
 
     last_modified = get_last_modified_date(filename) if filename else None
-    pdfminer_config = PDFMinerConfig(
-        line_margin=pdfminer_line_margin,
-        char_margin=pdfminer_char_margin,
-        line_overlap=pdfminer_line_overlap,
-        word_margin=pdfminer_word_margin,
-    )
-
     extracted_elements: list[list[Element]] = []
     pdf_text_extractable = False
 
@@ -303,7 +263,6 @@ def partition_pdf_or_image(
                     metadata_last_modified=metadata_last_modified or last_modified,
                     starting_page_number=starting_page_number,
                     password=password,
-                    pdfminer_config=pdfminer_config,
                     **kwargs,
                 )
                 pdf_text_extractable = any(
@@ -355,7 +314,6 @@ def partition_pdf_or_image(
                 extract_forms=extract_forms,
                 form_extraction_skip_tables=form_extraction_skip_tables,
                 password=password,
-                pdfminer_config=pdfminer_config,
                 ocr_agent=ocr_agent,
                 table_ocr_agent=table_ocr_agent,
                 **kwargs,
@@ -398,7 +356,6 @@ def extractable_elements(
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
-    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     if isinstance(file, bytes):
@@ -410,7 +367,6 @@ def extractable_elements(
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
         password=password,
-        pdfminer_config=pdfminer_config,
         **kwargs,
     )
 
@@ -422,7 +378,6 @@ def _partition_pdf_with_core_pdf(
     languages: Optional[list[str]] = None,
     starting_page_number: int = 1,
     password: Optional[str] = None,
-    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
     """Partitions a PDF using core-pdf instead of using a layout model."""
@@ -438,7 +393,6 @@ def _partition_pdf_with_core_pdf(
                 metadata_last_modified=metadata_last_modified,
                 starting_page_number=starting_page_number,
                 password=password,
-                pdfminer_config=pdfminer_config,
                 **kwargs,
             )
 
@@ -450,7 +404,6 @@ def _partition_pdf_with_core_pdf(
             metadata_last_modified=metadata_last_modified,
             starting_page_number=starting_page_number,
             password=password,
-            pdfminer_config=pdfminer_config,
             **kwargs,
         )
 
@@ -466,7 +419,6 @@ def _process_core_pdf_pages(
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     password: Optional[str] = None,
-    pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs,
 ) -> list[list[Element]]:
     """Uses core-pdf to split a document into pages and process extracted text lines."""
@@ -501,10 +453,10 @@ def _process_core_pdf_pages(
             links = page.get_links()
 
             for line in page.extract_lines(include_words=True):
-                line_bbox = line.get("bbox")
+                line_bbox = line.get("page_bbox")
                 if line_bbox is None:
                     continue
-                x1, y1, x2, y2 = rect_to_bbox(line_bbox, height)
+                x1, y1, x2, y2 = line_bbox
                 points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
                 text, moved_indices = clean_extra_whitespace_with_index_run(str(line["text"]))
                 if not text.strip():
@@ -534,7 +486,10 @@ def _process_core_pdf_pages(
             for field in page.get_fields():
                 if not field.rect or not field.value_text.strip():
                     continue
-                wx1, wy1, wx2, wy2 = rect_to_bbox(field.rect, height)
+                field_bbox = field.page_bbox(height)
+                if field_bbox is None:
+                    continue
+                wx1, wy1, wx2, wy2 = field_bbox
                 points = ((wx1, wy1), (wx1, wy2), (wx2, wy2), (wx2, wy1))
                 element = element_from_text(
                     field.value_text,
@@ -569,10 +524,10 @@ def _get_core_pdf_line_links(
 
     words = []
     for word in line.get("words", []):
-        bbox = word.get("bbox")
+        bbox = word.get("page_bbox")
         if bbox is None:
             continue
-        words.append({**word, "bbox": rect_to_bbox(bbox, page_height)})
+        words.append({**word, "bbox": bbox})
 
     if not words:
         return []
@@ -581,38 +536,178 @@ def _get_core_pdf_line_links(
     for link in links:
         if not getattr(link, "url", None):
             continue
-        link_page_bbox = link.page_bbox(page_height)
-        link_bbox = (
-            link_page_bbox.x0,
-            link_page_bbox.y0,
-            link_page_bbox.x1,
-            link_page_bbox.y1,
-        )
         linked_words = [
-            word for word in words if _bbox_intersection_area(word["bbox"], link_bbox) > 0
+            word
+            for word in words
+            if link.overlaps_page_bbox(word["bbox"], page_height, threshold=0.0)
         ]
         if not linked_words:
             continue
-        urls_metadata.append(
-            {
-                "bbox": link_bbox,
-                "text": " ".join(str(word["text"]) for word in linked_words).strip(),
-                "uri": link.url,
-                "start_index": linked_words[0].get("start_index", 0),
-            }
-        )
+        urls_metadata.append(link.text_metadata(linked_words, page_height))
     return urls_metadata
 
 
-def _bbox_intersection_area(
-    bbox1: tuple[float, float, float, float],
-    bbox2: tuple[float, float, float, float],
-) -> float:
-    x1 = max(bbox1[0], bbox2[0])
-    y1 = max(bbox1[1], bbox2[1])
-    x2 = min(bbox1[2], bbox2[2])
-    y2 = min(bbox1[3], bbox2[3])
-    return max(0.0, x2 - x1) * max(0.0, y2 - y1)
+def _process_file_with_core_pdf(
+    filename: str = "",
+    dpi: int = env_config.PDF_RENDER_DPI,
+    password: Optional[str] = None,
+    rotation_corrections: Optional[list[int]] = None,
+) -> tuple[list["LayoutElements"], list[list]]:
+    with open(filename, "rb") as fp:
+        fp = cast(IO[bytes], fp)
+        return _process_data_with_core_pdf(
+            file=fp,
+            dpi=dpi,
+            password=password,
+            rotation_corrections=rotation_corrections,
+        )
+
+
+@requires_dependencies(["unstructured_inference", "core_pdf"])
+def _process_data_with_core_pdf(
+    file: Optional[bytes | IO[bytes]] = None,
+    dpi: int = env_config.PDF_RENDER_DPI,
+    password: Optional[str] = None,
+    rotation_corrections: Optional[list[int]] = None,
+) -> tuple[list["LayoutElements"], list[list]]:
+    """Loads extracted page text, image, and link objects from a PDF using core-pdf."""
+
+    from core_pdf import PdfDocument
+    from unstructured_inference.constants import IsExtracted
+    from unstructured_inference.inference.layoutelement import LayoutElements
+
+    from unstructured.partition.pdf_image.layout_processing import (
+        _rotate_bboxes,
+        _validate_bbox,
+        remove_duplicate_elements,
+    )
+
+    layouts = []
+    layouts_links = []
+    coef = dpi / 72
+
+    original_pos: int | None = None
+    if file is not None and hasattr(file, "tell") and hasattr(file, "seek"):
+        original_pos = file.tell()
+        file.seek(0)
+
+    try:
+        pdf_document = PdfDocument.open(file, password=password or "")
+    except Exception:
+        if original_pos is not None:
+            file.seek(original_pos)
+        raise
+
+    with pdf_document:
+        for page_number, page in enumerate(pdf_document.pages):
+            width, height = page.width, page.height
+            element_coords = []
+            texts = []
+            element_class = []
+            is_extracted = []
+            sources = []
+            urls_metadata = []
+
+            links = page.get_links()
+            for line in page.extract_lines(include_words=True):
+                bbox = line.get("page_bbox")
+                if bbox is None:
+                    continue
+                if not _validate_bbox(bbox):
+                    continue
+                texts.append(line["text"])
+                element_coords.append(bbox)
+                element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE)
+                sources.append(Source.CORE_PDF)
+                urls_metadata.extend(_get_core_pdf_line_links(line, links, height))
+
+            for field in page.get_fields():
+                if not field.rect or not field.value_text.strip():
+                    continue
+                field_bbox = field.page_bbox(height)
+                if field_bbox is None:
+                    continue
+                if not _validate_bbox(field_bbox):
+                    continue
+                texts.append(field.value_text)
+                element_coords.append(field_bbox)
+                element_class.append(0)
+                is_extracted.append(IsExtracted.TRUE)
+                sources.append(Source.CORE_PDF)
+
+            for image in page.extract_images():
+                bbox = image.get("page_bbox")
+                if bbox is None:
+                    continue
+                if not _validate_bbox(bbox):
+                    continue
+                texts.append(None)
+                element_coords.append(bbox)
+                element_class.append(1)
+                is_extracted.append(None)
+                sources.append(Source.CORE_PDF)
+
+            layout = LayoutElements(
+                element_coords=coef * np.array(element_coords),
+                texts=np.array(texts).astype(object),
+                element_class_ids=np.array(element_class),
+                element_class_id_map={0: ElementType.UNCATEGORIZED_TEXT, 1: ElementType.IMAGE},
+                sources=np.array(sources),
+                is_extracted_array=np.array(is_extracted),
+            )
+
+            angle = (
+                rotation_corrections[page_number]
+                if rotation_corrections is not None and page_number < len(rotation_corrections)
+                else 0
+            )
+            if angle:
+                layout.element_coords = _rotate_bboxes(
+                    layout.element_coords, angle, width * coef, height * coef
+                )
+
+            links = []
+            for metadata in urls_metadata:
+                bbox = [x * coef for x in metadata["bbox"]]
+                if angle:
+                    bbox = _rotate_bboxes(
+                        np.array([bbox], dtype=float), angle, width * coef, height * coef
+                    )[0].tolist()
+                links.append(
+                    {
+                        "bbox": bbox,
+                        "text": metadata["text"],
+                        "url": metadata["uri"],
+                        "start_index": metadata["start_index"],
+                    }
+                )
+
+            clean_layouts = []
+            for threshold, element_class_id in zip(
+                (
+                    env_config.EMBEDDED_TEXT_SAME_REGION_THRESHOLD,
+                    env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD,
+                ),
+                (0, 1),
+            ):
+                elements_to_sort = layout.slice(layout.element_class_ids == element_class_id)
+                clean_layouts.append(
+                    remove_duplicate_elements(elements_to_sort, threshold)
+                    if len(elements_to_sort)
+                    else elements_to_sort
+                )
+
+            layout = LayoutElements.concatenate(clean_layouts)
+            layout = sort_text_regions(layout, SORT_MODE_BASIC)
+            layout = sort_text_regions(layout)
+
+            layouts.append(layout)
+            layouts_links.append(links)
+
+    if original_pos is not None:
+        file.seek(original_pos)
+    return layouts, layouts_links
 
 
 def _get_pdf_page_number(
@@ -652,7 +747,7 @@ def is_pdf_too_complex(
     min_raw_stream_bytes: int = DEFAULT_MIN_RAW_STREAM_BYTES,
 ) -> bool:
     """Check if a PDF is likely a complex vector drawing (e.g., CAD/engineering docs)
-    that would be extremely slow or produce garbage results with PDFMiner text extraction.
+    that would be extremely slow or produce garbage results with text extraction.
 
     Try to minimize overhead with early exits:
     1. Avoid overhead by skipping files smaller than min_file_size_bytes.
@@ -782,21 +877,9 @@ def is_pdf_too_complex(
     return False
 
 
-def _enable_detect_vertical_if_rotated(
-    inferred_document_layout,
-    pdfminer_config: Optional["PDFMinerConfig"],
-) -> Optional["PDFMinerConfig"]:
-    """Enable detect_vertical in pdfminer when the PDF has rotated pages."""
-    if any((p.image_metadata or {}).get("pdf_rotation", 0) for p in inferred_document_layout.pages):
-        pdfminer_config = pdfminer_config or PDFMinerConfig()
-        pdfminer_config.detect_vertical = True
-
-    return pdfminer_config
-
-
 def _rotation_corrections_from_layout(inferred_document_layout) -> list[int]:
     """Per-page rotations unstructured-inference applied to the page images to make their
-    text upright. Mirrored onto the pdfminer coordinates so both layers share one frame."""
+    text upright. Mirrored onto the extracted coordinates so both layers share one frame."""
     return [
         int((p.image_metadata or {}).get("pdf_rotation_correction", 0))
         for p in inferred_document_layout.pages
@@ -829,7 +912,6 @@ def _partition_pdf_or_image_local(
     form_extraction_skip_tables: bool = True,
     pdf_hi_res_max_pages: Optional[int] = None,
     password: Optional[str] = None,
-    pdfminer_config: Optional[PDFMinerConfig] = None,
     ocr_agent: str = OCR_AGENT_TESSERACT,
     table_ocr_agent: str = OCR_AGENT_TESSERACT,
     **kwargs: Any,
@@ -850,16 +932,14 @@ def _partition_pdf_or_image_local(
     )
     from unstructured.partition.pdf_image.analysis.tools import save_analysis_artifiacts
     from unstructured.partition.pdf_image.form_extraction import run_form_extraction
+    from unstructured.partition.pdf_image.layout_processing import (
+        clean_pdf_extracted_inner_elements,
+        merge_inferred_with_extracted_layout,
+    )
     from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdf_image_utils import (
         check_element_types_to_extract,
         save_elements,
-    )
-    from unstructured.partition.pdf_image.pdfminer_processing import (
-        clean_core_pdf_inner_elements,
-        merge_inferred_with_extracted_layout,
-        process_data_with_core_pdf,
-        process_file_with_core_pdf,
     )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
@@ -899,17 +979,11 @@ def _partition_pdf_or_image_local(
     if file is None:
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
 
-        pdfminer_config = _enable_detect_vertical_if_rotated(
-            inferred_document_layout,
-            pdfminer_config,
-        )
-
         extracted_layout, layouts_links = (
-            process_file_with_core_pdf(
+            _process_file_with_core_pdf(
                 filename=filename,
                 dpi=pdf_image_dpi,
                 password=password,
-                pdfminer_config=pdfminer_config,
                 rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
@@ -961,17 +1035,11 @@ def _partition_pdf_or_image_local(
         if hasattr(file, "seek"):
             file.seek(0)
 
-        pdfminer_config = _enable_detect_vertical_if_rotated(
-            inferred_document_layout,
-            pdfminer_config,
-        )
-
         extracted_layout, layouts_links = (
-            process_data_with_core_pdf(
+            _process_data_with_core_pdf(
                 file=file,
                 dpi=pdf_image_dpi,
                 password=password,
-                pdfminer_config=pdfminer_config,
                 rotation_corrections=_rotation_corrections_from_layout(inferred_document_layout),
             )
             if pdf_text_extractable
@@ -1021,7 +1089,7 @@ def _partition_pdf_or_image_local(
         )
 
     # vectorization of the data structure ends here
-    final_document_layout = clean_core_pdf_inner_elements(final_document_layout)
+    final_document_layout = clean_pdf_extracted_inner_elements(final_document_layout)
 
     elements = document_to_element_list(
         final_document_layout,
@@ -1273,19 +1341,6 @@ def _process_uncategorized_text_elements(elements: list[Element]):
     return out_elements
 
 
-# Some pages with a ICC color space do not follow the pdf spec
-# They throw an error when we call interpreter.process_page
-# Since we don't need color info, we can just drop it in the pdfminer code
-# See #2059
-@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
-def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
-    resources = args[0]
-    if "ColorSpace" in resources:
-        del resources["ColorSpace"]
-
-    return wrapped(resources)
-
-
 def _combine_list_elements(
     elements: list[Element], coordinate_system: PixelSpace | PointSpace
 ) -> list[Element]:
@@ -1421,7 +1476,7 @@ def document_to_element_list(
     **kwargs: Any,
 ) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    from unstructured.partition.pdf_image.pdfminer_processing import get_links_in_element
+    from unstructured.partition.pdf_image.layout_processing import get_links_in_element
 
     elements: list[Element] = []
 

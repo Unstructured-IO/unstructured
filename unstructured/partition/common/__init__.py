@@ -11,7 +11,7 @@ class UnsupportedFileFormatError(Exception):
 
 # Exceptions that email/msg partitioners treat as "unsupported attachment" and skip with a
 # warning (no data loss). Intentionally narrow: we do not catch RuntimeError (OOM, broken pipe,
-# parser failures in e.g. pdfminer would otherwise be silently skipped).
+# parser failures, etc. would otherwise be silently skipped).
 EXPECTED_ATTACHMENT_ERRORS: Final[tuple[type[BaseException], ...]] = (
     UnsupportedFileFormatError,
     ImportError,

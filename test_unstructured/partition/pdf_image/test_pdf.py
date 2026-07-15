@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import base64
 import io
-import logging
 import math
 import os
 import tempfile
@@ -24,7 +23,6 @@ from unstructured_inference.inference.layoutelement import LayoutElement
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
@@ -38,8 +36,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.partition import pdf, strategies
-from unstructured.partition.pdf_image import ocr, pdfminer_processing
-from unstructured.partition.pdf_image.pdfminer_processing import get_uris_from_annots
+from unstructured.partition.pdf_image import layout_processing, ocr
 from unstructured.partition.utils import config as partition_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
@@ -182,13 +179,13 @@ def test_partition_pdf_local(monkeypatch, filename, file):
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
-        pdfminer_processing,
-        "process_data_with_core_pdf",
+        pdf,
+        "_process_data_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
-        pdfminer_processing,
-        "process_file_with_core_pdf",
+        pdf,
+        "_process_file_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
@@ -233,8 +230,8 @@ def test_rotation_corrections_from_layout_defaults_to_zero_on_missing_metadata()
 @pytest.mark.parametrize(
     ("file_arg", "model_target", "core_pdf_target"),
     [
-        (None, "process_file_with_model", "process_file_with_core_pdf"),
-        (b"0000", "process_data_with_model", "process_data_with_core_pdf"),
+        (None, "process_file_with_model", "_process_file_with_core_pdf"),
+        (b"0000", "process_data_with_model", "_process_data_with_core_pdf"),
     ],
 )
 def test_partition_pdf_local_threads_rotation_corrections_into_core_pdf(
@@ -254,9 +251,9 @@ def test_partition_pdf_local_threads_rotation_corrections_into_core_pdf(
         captured["rotation_corrections"] = kwargs.get("rotation_corrections")
         return ([], [])
 
-    monkeypatch.setattr(pdfminer_processing, core_pdf_target, _capture_core_pdf)
+    monkeypatch.setattr(pdf, core_pdf_target, _capture_core_pdf)
     monkeypatch.setattr(
-        pdfminer_processing, "merge_inferred_with_extracted_layout", lambda **k: rotated_layout
+        layout_processing, "merge_inferred_with_extracted_layout", lambda **k: rotated_layout
     )
     monkeypatch.setattr(ocr, "process_file_with_ocr", lambda *a, **k: MockDocumentLayout())
     monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
@@ -276,9 +273,9 @@ def test_partition_pdf_local_threads_rotation_corrections_into_core_pdf(
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
-        (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
-        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer", "ocr_tesseract"}),
+        (PartitionStrategy.FAST, 1, {1, 4}, {"core_pdf"}),
+        (PartitionStrategy.FAST, 3, {3, 6}, {"core_pdf"}),
+        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "core_pdf", "ocr_tesseract"}),
         (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
@@ -635,12 +632,11 @@ def test_partition_pdf_with_fast_strategy_extracts_embedded_cmap_text():
     """Test that fast strategy extracts text from CIDFonts with embedded CMap streams.
 
     Some PDF generators (e.g. Prince XML) embed custom Encoding CMaps as PDF streams
-    rather than using predefined CMap names. Without handling this, pdfminer.six silently
-    falls back to an empty CMap and all text using those fonts is lost.
+    rather than using predefined CMap names. Without handling this, text using those
+    fonts can be lost.
 
-    The test fixture has two fonts: a simple Type1 font (Helvetica) that pdfminer handles
-    fine, and a Type0/CIDFont with an embedded CMap named "Test-Identity-H" that triggers
-    the bug.
+    The test fixture has two fonts: a simple Type1 font (Helvetica) and a Type0/CIDFont
+    with an embedded CMap named "Test-Identity-H" that triggers the bug.
     """
     filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
     elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
@@ -659,7 +655,7 @@ def test_partition_pdf_with_fast_strategy_extracts_embedded_cmap_text():
 
 
 def test_partition_pdf_with_hi_res_strategy_extracts_embedded_cmap_text():
-    """Same as the fast strategy test but through hi_res, since both strategies use pdfminer."""
+    """Same as the fast strategy test but through hi_res."""
     filename = example_doc_path("pdf/embedded-cmap-cidfont.pdf")
     elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
 
@@ -1216,27 +1212,6 @@ def test_partition_pdf_raises_TypeError_for_invalid_languages():
 
 
 @pytest.mark.parametrize(
-    ("threshold", "expected"),
-    [
-        (0.4, [True, False, False, False, False]),
-        (0.1, [True, True, False, False, False]),
-    ],
-)
-def test_check_annotations_within_element(threshold, expected):
-    annotations = [
-        {"bbox": [0, 0, 1, 1], "page_number": 1},
-        {"bbox": [0, 0, 3, 1], "page_number": 1},
-        {"bbox": [0, 0, 1, 1], "page_number": 2},
-        {"bbox": [0, 0, 0, 1], "page_number": 1},
-        {"bbox": [3, 0, 4, 1], "page_number": 1},
-    ]
-    element_bbox = (0, 0, 1, 1)
-    filtered = pdf.check_annotations_within_element(annotations, element_bbox, 1, threshold)
-    results = [annotation in filtered for annotation in annotations]
-    assert results == expected
-
-
-@pytest.mark.parametrize(
     ("env", "expected"),
     [
         (None, "yolox"),
@@ -1310,83 +1285,6 @@ def test_ocr_language_passes_through(strategy, ocr_func):
     assert kwargs["lang"] == "kor"
 
 
-@pytest.mark.parametrize(
-    ("annots", "height", "coordinate_system", "page_number", "expected"),
-    [
-        (["BS", "BE"], 300, PixelSpace(300, 300), 1, 0),
-        (
-            [
-                {
-                    "Type": "/'Annot'",
-                    "Subtype": "/'Link'",
-                    "A": {
-                        "Type": "/'Action'",
-                        "S": "/'URI'",
-                        "URI": "b'https://layout-parser.github.io'",
-                    },
-                    "BS": {"S": "/'S'", "W": 1},
-                    "Border": [0, 0, 1],
-                    "C": [0, 1, 1],
-                    "H": "/'I'",
-                    "Rect": [304.055, 224.156, 452.472, 234.368],
-                },
-                {
-                    "Type": "/'Annot'",
-                    "Subtype": "/'Link'",
-                    "A": {"S": "/'GoTo'", "D": "b'cite.harley2015evaluation'"},
-                    "BS": {"S": "/'S'", "W": 1},
-                    "Border": [0, 0, 1],
-                    "C": [0, 1, 0],
-                    "H": "/'I'",
-                    "Rect": (468.305, 128.081, 480.26, 136.494),
-                },
-            ],
-            792,
-            PixelSpace(612, 792),
-            1,
-            2,
-        ),
-        (
-            [
-                {
-                    "Type": "/'Annot'",
-                    "Subtype": "/'Link'",
-                    "A": {
-                        "Type": "/'Action'",
-                        "S": "/'URI'",
-                        "URI": "b'https://layout-parser.github.io'",
-                    },
-                    "BS": {"S": "/'S'", "W": 1},
-                    "Border": [0, 0, 1],
-                    "C": [0, 1, 1],
-                    "H": "/'I'",
-                    "Rect": "I am not a tuple or list!",
-                },
-                {
-                    "Type": "/'Annot'",
-                    "Subtype": "/'Link'",
-                    "A": {"S": "/'GoTo'", "D": "b'cite.harley2015evaluation'"},
-                    "BS": {"S": "/'S'", "W": 1},
-                    "Border": [0, 0, 1],
-                    "C": [0, 1, 0],
-                    "H": "/'I'",
-                    "Rect": (468.305, 128.081, 480.26),
-                },
-            ],
-            792,
-            PixelSpace(612, 792),
-            1,
-            0,
-        ),
-    ],
-)
-def test_get_uris_from_annots_string_annotation(
-    annots, height, coordinate_system, page_number, expected
-):
-    annotation_list = get_uris_from_annots(annots, height, coordinate_system, page_number)
-    assert len(annotation_list) == expected
-
-
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
     ("filename", "is_image"),
@@ -1454,9 +1352,8 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
     assert pdf.partition_pdf(filename, strategy=PartitionStrategy.OCR_ONLY)
 
 
-# As of pdfminer 221105, this pdf throws an error and requires a workaround
-# See #2059
 def test_partition_pdf_with_bad_color_profile():
+    """PDFs with bad color-space metadata should still partition."""
     filename = example_doc_path("pdf/pdf-bad-color-space.pdf")
     assert pdf.partition_pdf(filename, strategy="fast")
 
@@ -1475,30 +1372,53 @@ def test_partition_pdf_with_fast_finds_headers_footers():
 
 
 @pytest.mark.parametrize(
-    ("filename", "expected_log"),
+    ("filename", "expected_page_lengths", "expected_first_texts"),
     [
-        # This one is *actually* an invalid PDF document
-        ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
+        (
+            "invalid-pdf-structure-entire-doc.pdf",
+            [73, 35, 59, 75, 59, 41, 49, 76, 70, 62, 4],
+            [
+                "Collaborative Neural Rendering Using Anime Character Sheets",
+                "Zuzeng Lin¹,2,∗ , Ailin Huang²,3,∗ , Zhewei Huang²,∗",
+                "¹Tianjin University²Megvii Technology³Wuhan University",
+            ],
+        ),
     ],
 )
-def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
-    caplog.set_level(logging.INFO)
-    assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
-    assert expected_log in caplog.text
+def test_extractable_elements_handles_invalid_pdf_structure(
+    filename,
+    expected_page_lengths,
+    expected_first_texts,
+):
+    pages = pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
+
+    assert [len(page) for page in pages] == expected_page_lengths
+    assert [element.text for element in pages[0][:3]] == expected_first_texts
 
 
 @pytest.mark.parametrize(
-    ("filename", "expected_log"),
+    ("filename", "expected_page_lengths", "expected_first_texts"),
     [
-        # This one is *not* an invalid PDF document, make sure we
-        # don't try to "repair" it unnecessarily
-        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
+        (
+            "invalid-pdf-structure-one-page.pdf",
+            [65, 65],
+            [
+                "U.S. GOVERNMENT ACCOUNTABILITY OFFICE",
+                "June 2023 In March 2023, the White House issued the National",
+                "Cybersecurity Strategy to coordinate efforts to secure",
+            ],
+        ),
     ],
 )
-def test_properly_patch_pdfminer(filename, expected_log, caplog):
-    caplog.set_level(logging.INFO)
-    assert pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
-    assert expected_log not in caplog.text
+def test_extractable_elements_handles_valid_pdf_structure(
+    filename,
+    expected_page_lengths,
+    expected_first_texts,
+):
+    pages = pdf.extractable_elements(filename=example_doc_path(f"pdf/{filename}"))
+
+    assert [len(page) for page in pages] == expected_page_lengths
+    assert [element.text for element in pages[0][:3]] == expected_first_texts
 
 
 def assert_element_extraction(

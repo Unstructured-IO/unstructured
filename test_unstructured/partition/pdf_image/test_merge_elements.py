@@ -5,7 +5,7 @@ from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement, LayoutElements
 
-from unstructured.partition.pdf_image.pdfminer_processing import (
+from unstructured.partition.pdf_image.layout_processing import (
     array_merge_inferred_layout_with_extracted_layout,
     merge_inferred_with_extracted_layout,
 )

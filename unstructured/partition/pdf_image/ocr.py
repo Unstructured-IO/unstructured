@@ -15,11 +15,11 @@ from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.common.lang import tesseract_to_paddle_language
 from unstructured.partition.pdf_image.analysis.layout_dump import OCRLayoutDumper
-from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
-from unstructured.partition.pdf_image.pdfminer_processing import (
+from unstructured.partition.pdf_image.layout_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
 )
+from unstructured.partition.pdf_image.pdf_image_utils import convert_pdf_to_image, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT, OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
@@ -125,7 +125,7 @@ def process_file_with_ocr(
 
     - out_layout (DocumentLayout): The output layout from unstructured-inference.
 
-    - extracted_layout (List[TextRegions]): a list of text regions extracted by pdfminer, one for
+    - extracted_layout (List[TextRegions]): a list of text regions extracted from the PDF, one for
       each page
 
     - is_image (bool, optional): Indicates if the input data is an image (True) or not (False).

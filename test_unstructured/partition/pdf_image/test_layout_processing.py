@@ -1,10 +1,8 @@
 import os
 import tempfile
-from unittest.mock import Mock
 
 import numpy as np
 import pytest
-from pdfminer.layout import LTChar, LTContainer
 from PIL import Image
 from unstructured_inference.constants import IsExtracted
 from unstructured_inference.constants import Source as InferenceSource
@@ -19,34 +17,31 @@ from unstructured_inference.inference.layoutelement import LayoutElements
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
-from unstructured.partition.pdf_image.pdfminer_processing import (
-    _deduplicate_ltchars,
+from unstructured.partition.pdf import _process_file_with_core_pdf
+from unstructured.partition.pdf_image.layout_processing import (
     _rotate_bboxes,
     _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
-    clean_core_pdf_inner_elements,
-    get_widget_text_from_annots,
-    process_file_with_core_pdf,
+    clean_pdf_extracted_inner_elements,
     remove_duplicate_elements,
-    text_is_embedded,
 )
 from unstructured.partition.utils.constants import Source
 
-# A set of elements with pdfminer elements inside tables
+# A set of elements with core-pdf elements inside tables
 deletable_elements_inside_table = [
     LayoutElement(
         bbox=Rectangle(0, 0, 100, 100),
         text="Table with inner elements",
         type="Table",
     ),
-    LayoutElement(bbox=Rectangle(50, 50, 70, 70), text="text1", source=Source.PDFMINER),
-    LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="text2", source=Source.PDFMINER),
+    LayoutElement(bbox=Rectangle(50, 50, 70, 70), text="text1", source=Source.CORE_PDF),
+    LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="text2", source=Source.CORE_PDF),
 ]
 
-# A set of elements without pdfminer elements inside
-# tables (no elements with source=Source.PDFMINER)
+# A set of elements without core-pdf elements inside
+# tables (no elements with source=Source.CORE_PDF)
 no_deletable_elements_inside_table = [
     LayoutElement(
         bbox=Rectangle(0, 0, 100, 100),
@@ -57,9 +52,9 @@ no_deletable_elements_inside_table = [
     LayoutElement(bbox=Rectangle(50, 50, 70, 70), text="text1", source=InferenceSource.YOLOX),
     LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="text2", source=InferenceSource.YOLOX),
 ]
-# A set of elements with pdfminer elements inside tables and other
-# elements with source=Source.PDFMINER
-# Note: there is some elements with source=Source.PDFMINER are not inside tables
+# A set of elements with core-pdf elements inside tables and other
+# elements with source=Source.CORE_PDF
+# Note: some elements with source=Source.CORE_PDF are not inside tables
 mix_elements_inside_table = [
     LayoutElement(
         bbox=Rectangle(0, 0, 100, 100),
@@ -68,16 +63,16 @@ mix_elements_inside_table = [
         source=InferenceSource.YOLOX,
     ),
     LayoutElement(bbox=Rectangle(50, 50, 70, 70), text="Inside table1"),
-    LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="Inside table1", source=Source.PDFMINER),
+    LayoutElement(bbox=Rectangle(70, 70, 80, 80), text="Inside table1", source=Source.CORE_PDF),
     LayoutElement(
         bbox=Rectangle(150, 150, 170, 170),
         text="Outside tables",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(
         bbox=Rectangle(180, 180, 200, 200),
         text="Outside tables",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(
         bbox=Rectangle(0, 500, 100, 700),
@@ -85,8 +80,8 @@ mix_elements_inside_table = [
         type="Table",
         source=InferenceSource.YOLOX,
     ),
-    LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.PDFMINER),
-    LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.PDFMINER),
+    LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.CORE_PDF),
+    LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.CORE_PDF),
 ]
 
 
@@ -141,7 +136,7 @@ def test_valid_bbox(bbox, is_valid):
         (mix_elements_inside_table, 2, 5),
     ],
 )
-def test_clean_core_pdf_inner_elements(elements, length_extra_info, expected_document_length):
+def test_clean_pdf_extracted_inner_elements(elements, length_extra_info, expected_document_length):
     # create a sample document with extracted PDF elements inside tables
     page = PageLayout(number=1, image=Image.new("1", (1, 1)))
     page.elements_array = LayoutElements.from_list(elements)
@@ -149,7 +144,7 @@ def test_clean_core_pdf_inner_elements(elements, length_extra_info, expected_doc
     document = document_with_table
 
     # call the function to clean the extracted PDF inner elements
-    cleaned_doc = clean_core_pdf_inner_elements(document)
+    cleaned_doc = clean_pdf_extracted_inner_elements(document)
 
     # check that the extracted PDF elements were stored in the extra_info dictionary
     assert len(cleaned_doc.pages[0].elements_array) == expected_document_length
@@ -160,10 +155,10 @@ elements_with_duplicate_images = [
         bbox=Rectangle(0, 0, 100, 100),
         text="Image1",
         type="Image",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(
-        bbox=Rectangle(10, 10, 110, 110), text="Image1", type="Image", source=Source.PDFMINER
+        bbox=Rectangle(10, 10, 110, 110), text="Image1", type="Image", source=Source.CORE_PDF
     ),
     LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
 ]
@@ -173,19 +168,19 @@ elements_without_duplicate_images = [
         bbox=Rectangle(0, 0, 100, 100),
         text="Sample image",
         type="Image",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(
         bbox=Rectangle(10, 10, 110, 110),
         text="Sample image with similar bbox",
         type="Image",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(
         bbox=Rectangle(200, 200, 250, 250),
         text="Sample image",
         type="Image",
-        source=Source.PDFMINER,
+        source=Source.CORE_PDF,
     ),
     LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
 ]
@@ -334,14 +329,16 @@ def test_remove_duplicate_elements_dense_page_is_not_decimated():
 
 
 def test_process_file_with_core_pdf():
-    layout, links = process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    layout, links = _process_file_with_core_pdf(
+        example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+    )
     assert len(layout)
     assert "Layout Parser: A Uniﬁed Toolkit for Deep" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"
 
 
 def test_process_file_with_core_pdf_is_extracted_array():
-    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -353,7 +350,7 @@ def test_process_file_with_core_pdf_is_extracted_array():
 
 def test_process_file_hidden_ocr_text():
     """Test processing a PDF that contains hidden OCR text layer."""
-    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
+    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -365,11 +362,11 @@ def test_process_file_hidden_ocr_text():
 def test_process_file_recovers_figure_overlay_text():
     """Text inside a Form XObject (LTFigure overlay) is recovered, not dropped.
 
-    Regression test: such text is real, embedded text held as loose LTChars that pdfminer does not
-    group into LTTextLine objects, so extract_text_objects (LTTextLine only) used to drop it. The
-    fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a form XObject.
+    Regression test: such text is real, embedded text in a form XObject that older extraction used
+    to drop. The fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a
+    form XObject.
     """
-    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/figure-overlay-text.pdf"))
+    layout, _ = _process_file_with_core_pdf(example_doc_path("pdf/figure-overlay-text.pdf"))
     texts = " ".join(str(t) for page in layout for t in page.texts if t)
     assert "Printed Name:" in texts  # main content stream
     assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
@@ -388,7 +385,7 @@ SYNTHETIC_FORM_FIELDS = [
 def _build_synthetic_form_pdf(path: str) -> None:
     """Write a 1-page PDF whose only text lives in AcroForm text-field (/Tx) widgets.
 
-    The page content stream is empty, so pdfminer's normal text pass yields nothing; the
+    The page content stream is empty, so normal content-stream text extraction yields nothing; the
     values are reachable only through the widget annotations in ``page.annots``.
     """
     from pypdf import PdfWriter
@@ -424,90 +421,12 @@ def _build_synthetic_form_pdf(path: str) -> None:
         writer.write(f)
 
 
-def test_get_widget_text_from_annots_extracts_filled_text_fields():
-    """The widget helper recovers filled /Tx field values and skips empty ones."""
-    from pdfminer.pdfpage import PDFPage
-
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        pdf_path = os.path.join(tmp_dir, "form.pdf")
-        _build_synthetic_form_pdf(pdf_path)
-        with open(pdf_path, "rb") as fp:
-            page = next(PDFPage.get_pages(fp))
-            widgets = get_widget_text_from_annots(page.annots, height=792)
-
-    texts = [w["text"] for w in widgets]
-    assert texts == ["Jane Doe", "1990-01-01", "123 Main Street"]  # empty "phone" skipped
-    # Every widget carries a valid bounding box.
-    assert all(_validate_bbox(w["bbox"]) for w in widgets)
-
-
-def test_get_widget_text_from_annots_decodes_utf16_text_without_bom():
-    from pdfminer.psparser import PSLiteral
-
-    widgets = get_widget_text_from_annots(
-        [
-            {
-                "Subtype": PSLiteral("Widget"),
-                "FT": PSLiteral("Tx"),
-                "V": b"\xfe\xff\x00J\x00a\x00n\x00e",
-                "Rect": (10, 80, 90, 95),
-            }
-        ],
-        height=100,
-    )
-
-    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
-
-
-def test_get_widget_text_from_annots_decodes_choice_field_value_arrays():
-    from pdfminer.psparser import PSLiteral
-
-    widgets = get_widget_text_from_annots(
-        [
-            {
-                "Subtype": PSLiteral("Widget"),
-                "FT": PSLiteral("Ch"),
-                "V": [PSLiteral("ChoiceA"), b"\xfe\xff\x00C\x00h\x00o\x00i\x00c\x00e\x00B"],
-                "Rect": (10, 70, 90, 95),
-            }
-        ],
-        height=100,
-    )
-
-    assert widgets == [{"text": "ChoiceA\nChoiceB", "bbox": (10.0, 5.0, 90.0, 30.0)}]
-
-
-def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent():
-    """FT/V absent on the widget are inherited by walking up the /Parent chain.
-
-    The intermediate parent is a direct dict (the case PDFObjRef-only traversal missed) and
-    the root parent carries the inherited /FT, exercising multi-level inheritance.
-    """
-    from pdfminer.psparser import PSLiteral
-
-    root_parent = {"FT": PSLiteral("Tx")}  # field type lives at the top of the hierarchy
-    mid_parent = {"V": b"\xfe\xff\x00J\x00a\x00n\x00e", "Parent": root_parent}  # value mid-chain
-
-    widgets = get_widget_text_from_annots(
-        [
-            {
-                "Subtype": PSLiteral("Widget"),
-                "Parent": mid_parent,  # neither FT nor V on the widget itself
-                "Rect": (10, 80, 90, 95),
-            }
-        ],
-        height=100,
-    )
-
-    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
-
-
 def test_process_file_with_core_pdf_recovers_form_field_text():
     """The extracted (hi_res) layer includes AcroForm field values as text regions."""
     with tempfile.TemporaryDirectory() as tmp_dir:
         pdf_path = os.path.join(tmp_dir, "form.pdf")
         _build_synthetic_form_pdf(pdf_path)
-        layout, _ = process_file_with_core_pdf(pdf_path)
+        layout, _ = _process_file_with_core_pdf(pdf_path)
 
     texts = [str(t) for t in layout[0].texts if t]
     assert "Jane Doe" in texts
@@ -532,13 +451,9 @@ def test_partition_pdf_fast_recovers_form_field_text():
     assert "123 Main Street" in blob
 
 
-def test_pdfminer_layout_params_do_not_block_core_pdf_extraction():
+def test_partition_uses_core_pdf_extraction():
     elements = partition(
         filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
-        pdfminer_line_margin=1.123,
-        pdfminer_char_margin=None,
-        pdfminer_line_overlap=0.0123,
-        pdfminer_word_margin=3.21,
     )
     assert [element.text for element in elements[:12]] == [
         "arXiv:2103.15348v2 [cs.CV] 21 Jun 2021",
@@ -554,145 +469,3 @@ def test_pdfminer_layout_params_do_not_block_core_pdf_extraction():
         "{melissadell,jacob carlson}@fas.harvard.edu",
         "4 University of Washington",
     ]
-
-
-def create_mock_ltchar(text, invisible=False, rotated=False):
-    """Create a mock LTChar object"""
-
-    graphicstate = Mock()
-    matrix = (1, 0.5, 0, 1, 0, 0) if rotated else (1, 0, 0, 1, 0, 0)
-
-    char = LTChar(
-        matrix=matrix,  # transformation matrix
-        font=Mock(),  # you'd need to mock PDFFont
-        fontsize=12,
-        scaling=1,
-        rise=0,
-        text=text,
-        textwidth=10,
-        textdisp=(0, 1),
-        ncs=Mock(),
-        graphicstate=graphicstate,
-    )
-    if invisible:
-        char.rendermode = 3
-    else:
-        char.rendermode = 0
-
-    return char
-
-
-def create_mock_ltcontainer(chars):
-    """Create a mock LTContainer with LTChar objects"""
-    container = LTContainer(bbox=(0, 0, 1, 1))
-
-    # The container should be iterable
-    container.extend(chars)
-
-    return container
-
-
-# Now you can use it in tests
-def test_text_is_embedded():
-    chars = [
-        create_mock_ltchar("H"),
-        create_mock_ltchar("e"),
-        create_mock_ltchar("l"),
-        create_mock_ltchar("l", rotated=True),
-        create_mock_ltchar("o", invisible=True),
-    ]
-
-    container = create_mock_ltcontainer(chars)
-
-    assert text_is_embedded(container, threshold=0.5)
-    assert not text_is_embedded(container, threshold=0.3)
-
-
-# -- Tests for _deduplicate_ltchars (fake bold fix) --
-
-
-def _create_positioned_ltchar(text: str, x0: float, y0: float) -> LTChar:
-    """Create an LTChar with a specific position for deduplication testing."""
-    graphicstate = Mock()
-    # Matrix format: (a, b, c, d, e, f) where e=x, f=y for translation
-    matrix = (1, 0, 0, 1, x0, y0)
-
-    char = LTChar(
-        matrix=matrix,
-        font=Mock(),
-        fontsize=12,
-        scaling=1,
-        rise=0,
-        text=text,
-        textwidth=10,
-        textdisp=(0, 1),
-        ncs=Mock(),
-        graphicstate=graphicstate,
-    )
-    return char
-
-
-class TestDeduplicateLtchars:
-    """Tests for _deduplicate_ltchars function."""
-
-    def test_empty_list_returns_empty(self):
-        """Empty character list should return empty list."""
-        result = _deduplicate_ltchars([], threshold=3.0)
-        assert result == []
-
-    def test_threshold_zero_disables_deduplication(self):
-        """Threshold of 0 should disable deduplication and return original list."""
-        chars = [
-            _create_positioned_ltchar("A", 10.0, 20.0),
-            _create_positioned_ltchar("A", 10.5, 20.0),  # Would be duplicate
-        ]
-        result = _deduplicate_ltchars(chars, threshold=0)
-        assert len(result) == 2
-
-    def test_fake_bold_duplicates_removed(self):
-        """Fake bold (double-rendered) characters should be deduplicated."""
-        # Simulate "AB" rendered as "AABB" with fake bold
-        chars = [
-            _create_positioned_ltchar("A", 10.0, 20.0),
-            _create_positioned_ltchar("A", 10.5, 20.0),  # Duplicate - close position
-            _create_positioned_ltchar("B", 25.0, 20.0),
-            _create_positioned_ltchar("B", 25.5, 20.0),  # Duplicate - close position
-        ]
-        result = _deduplicate_ltchars(chars, threshold=3.0)
-        assert len(result) == 2
-        assert result[0].get_text() == "A"
-        assert result[1].get_text() == "B"
-
-    def test_legitimate_repeated_chars_preserved(self):
-        """Legitimate repeated characters at different positions should be preserved."""
-        # "AA" where both A's are at legitimately different positions
-        chars = [
-            _create_positioned_ltchar("A", 10.0, 20.0),
-            _create_positioned_ltchar("A", 25.0, 20.0),  # Far enough - not duplicate
-        ]
-        result = _deduplicate_ltchars(chars, threshold=3.0)
-        assert len(result) == 2
-
-    def test_single_char_returns_single(self):
-        """Single character should return single character."""
-        chars = [_create_positioned_ltchar("X", 10.0, 20.0)]
-        result = _deduplicate_ltchars(chars, threshold=3.0)
-        assert len(result) == 1
-        assert result[0].get_text() == "X"
-
-    def test_mixed_duplicates_and_normal(self):
-        """Mix of duplicated and normal characters should be handled correctly."""
-        # "HELLO" where only H and L are fake-bold
-        chars = [
-            _create_positioned_ltchar("H", 10.0, 20.0),
-            _create_positioned_ltchar("H", 10.5, 20.0),  # Duplicate
-            _create_positioned_ltchar("E", 20.0, 20.0),  # Normal
-            _create_positioned_ltchar("L", 30.0, 20.0),
-            _create_positioned_ltchar("L", 30.5, 20.0),  # Duplicate
-            _create_positioned_ltchar("L", 40.0, 20.0),  # Second L (normal, different position)
-            _create_positioned_ltchar("O", 50.0, 20.0),  # Normal
-        ]
-        result = _deduplicate_ltchars(chars, threshold=3.0)
-        assert len(result) == 5
-        text = "".join(c.get_text() for c in result)
-        assert text == "HELLO"
