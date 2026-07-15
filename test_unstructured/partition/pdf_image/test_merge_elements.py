@@ -106,3 +106,33 @@ def test_extracted_text_inside_picture_region_remains_standalone():
 
     assert len(merged) == 1
     assert list(merged.texts) == ["Extracted text"]
+
+
+def test_full_page_extracted_image_is_removed_without_inferred_regions():
+    inferred = LayoutElements(
+        element_coords=np.empty((0, 4)),
+        texts=np.array([], dtype=object),
+        element_class_ids=np.array([], dtype=int),
+        element_class_id_map={0: "UncategorizedText", 1: "Image"},
+    )
+    extracted = LayoutElements(
+        element_coords=np.array(
+            [
+                [0.0, 0.0, 200.0, 200.0],
+                [10.0, 10.0, 50.0, 50.0],
+                [20.0, 20.0, 80.0, 40.0],
+            ],
+        ),
+        texts=np.array(["Full page image", "Inline image", "Extracted text"], dtype=object),
+        element_class_ids=np.array([1, 1, 0]),
+        element_class_id_map={0: "UncategorizedText", 1: "Image"},
+    )
+
+    merged = array_merge_inferred_layout_with_extracted_layout(
+        inferred_layout=inferred,
+        extracted_layout=extracted,
+        page_image_size=(200, 200),
+    )
+
+    assert len(merged) == 2
+    assert list(merged.texts) == ["Inline image", "Extracted text"]

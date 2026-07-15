@@ -212,6 +212,28 @@ def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
     return inferred_to_keep
 
 
+def _get_full_page_image_indices(
+    extracted_layout: LayoutElements,
+    page_image_size: tuple,
+) -> np.ndarray:
+    image_indices = np.where(extracted_layout.element_class_ids == 1)[0]
+    if not len(image_indices):
+        return np.array([], dtype=int)
+
+    w, h = page_image_size
+    full_page_region = Rectangle(0, 0, w, h)
+    full_page_image_mask = (
+        boxes_iou(
+            extracted_layout.slice(image_indices).element_coords,
+            [full_page_region],
+            threshold=FULL_PAGE_REGION_THRESHOLD,
+        )
+        .sum(axis=1)
+        .astype(bool)
+    )
+    return image_indices[full_page_image_mask]
+
+
 @requires_dependencies("unstructured_inference")
 def array_merge_inferred_layout_with_extracted_layout(
     inferred_layout: LayoutElements,
@@ -227,27 +249,22 @@ def array_merge_inferred_layout_with_extracted_layout(
 
     if len(extracted_layout) == 0:
         return inferred_layout
+    full_page_image_indices = _get_full_page_image_indices(extracted_layout, page_image_size)
     if len(inferred_layout) == 0:
-        return extracted_layout
+        extracted_to_keep = np.ones((len(extracted_layout),), dtype=bool)
+        extracted_to_keep[full_page_image_indices] = False
+        return extracted_layout.slice(extracted_to_keep)
 
-    w, h = page_image_size
-    full_page_region = Rectangle(0, 0, w, h)
     # ==== RULE 0: Full page extracted images are ignored
     # non full page extracted image regions are kept, except when they match a non-text inferred
     # region then we use the common bounding boxes and keep just one of the two sets (see rules
     # below)
     image_indices_to_keep = np.where(extracted_layout.element_class_ids == 1)[0]
-    if len(image_indices_to_keep):
-        full_page_image_mask = (
-            boxes_iou(
-                extracted_layout.slice(image_indices_to_keep).element_coords,
-                [full_page_region],
-                threshold=FULL_PAGE_REGION_THRESHOLD,
-            )
-            .sum(axis=1)
-            .astype(bool)
-        )
-        image_indices_to_keep = image_indices_to_keep[~full_page_image_mask]
+    image_indices_to_keep = np.setdiff1d(
+        image_indices_to_keep,
+        full_page_image_indices,
+        assume_unique=True,
+    )
 
     # ==== RULE 1: any inferred box that is almost the same as an extracted image box, inferred is
     # removed
