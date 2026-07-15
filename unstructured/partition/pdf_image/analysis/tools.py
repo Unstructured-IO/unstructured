@@ -6,11 +6,11 @@ from typing import Optional
 
 from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
     AnalysisDrawer,
+    CorePdfLayoutDrawer,
     FinalLayoutDrawer,
     LayoutDrawer,
     OCRLayoutDrawer,
     ODModelLayoutDrawer,
-    PdfminerLayoutDrawer,
 )
 from unstructured.partition.pdf_image.analysis.layout_dump import (
     ExtractedLayoutDumper,
@@ -35,7 +35,7 @@ def _get_drawer_for_dumper(dumper: LayoutDumper) -> Optional[LayoutDrawer]:
     if isinstance(dumper, ObjectDetectionLayoutDumper):
         return ODModelLayoutDrawer(layout_dump=dumper.dump())
     elif isinstance(dumper, ExtractedLayoutDumper):
-        return PdfminerLayoutDrawer(layout_dump=dumper.dump())
+        return CorePdfLayoutDrawer(layout_dump=dumper.dump())
     elif isinstance(dumper, OCRLayoutDumper):
         return OCRLayoutDrawer(layout_dump=dumper.dump())
     elif isinstance(dumper, FinalLayoutDumper):
@@ -164,8 +164,8 @@ def render_bboxes_for_file(
             layout_drawers.append(ODModelLayoutDrawer(layout_dump=layout_dump))
         if analysis_dump_filename.stem == "ocr":
             layout_drawers.append(OCRLayoutDrawer(layout_dump=layout_dump))
-        if analysis_dump_filename.stem == "pdfminer":
-            layout_drawers.append(PdfminerLayoutDrawer(layout_dump=layout_dump))
+        if analysis_dump_filename.stem == "core_pdf":
+            layout_drawers.append(CorePdfLayoutDrawer(layout_dump=layout_dump))
 
     if layout_drawers:
         if not renders_output_dir_path:

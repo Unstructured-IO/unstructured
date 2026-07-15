@@ -104,7 +104,7 @@ def extract_text_regions_info(layout: List[List[TextRegion]]) -> dict:
 
 
 class ExtractedLayoutDumper(LayoutDumper):
-    layout_source = "pdfminer"
+    layout_source = "core_pdf"
 
     def __init__(self, layout: List[List[TextRegion]]):
         self.layout = extract_text_regions_info(layout)

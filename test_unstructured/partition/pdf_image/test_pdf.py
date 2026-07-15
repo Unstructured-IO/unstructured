@@ -28,7 +28,6 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     Element,
-    ElementMetadata,
     ElementType,
     Footer,
     Header,
@@ -184,12 +183,12 @@ def test_partition_pdf_local(monkeypatch, filename, file):
     )
     monkeypatch.setattr(
         pdfminer_processing,
-        "process_data_with_pdfminer",
+        "process_data_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
         pdfminer_processing,
-        "process_file_with_pdfminer",
+        "process_file_with_core_pdf",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
@@ -232,17 +231,17 @@ def test_rotation_corrections_from_layout_defaults_to_zero_on_missing_metadata()
 
 
 @pytest.mark.parametrize(
-    ("file_arg", "model_target", "pdfminer_target"),
+    ("file_arg", "model_target", "core_pdf_target"),
     [
-        (None, "process_file_with_model", "process_file_with_pdfminer"),
-        (b"0000", "process_data_with_model", "process_data_with_pdfminer"),
+        (None, "process_file_with_model", "process_file_with_core_pdf"),
+        (b"0000", "process_data_with_model", "process_data_with_core_pdf"),
     ],
 )
-def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
-    monkeypatch, file_arg, model_target, pdfminer_target
+def test_partition_pdf_local_threads_rotation_corrections_into_core_pdf(
+    monkeypatch, file_arg, model_target, core_pdf_target
 ):
     """Both branches of `_partition_pdf_or_image_local` forward the page rotation
-    corrections derived from the inferred layout into the pdfminer extraction call."""
+    corrections derived from the inferred layout into the core-pdf extraction call."""
 
     rotated_layout = _layout_with_rotation_corrections(
         [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
@@ -251,11 +250,11 @@ def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
 
     captured = {}
 
-    def _capture_pdfminer(*args, **kwargs):
+    def _capture_core_pdf(*args, **kwargs):
         captured["rotation_corrections"] = kwargs.get("rotation_corrections")
         return ([], [])
 
-    monkeypatch.setattr(pdfminer_processing, pdfminer_target, _capture_pdfminer)
+    monkeypatch.setattr(pdfminer_processing, core_pdf_target, _capture_core_pdf)
     monkeypatch.setattr(
         pdfminer_processing, "merge_inferred_with_extracted_layout", lambda **k: rotated_layout
     )
@@ -516,7 +515,8 @@ def test_partition_pdf_with_fast_neg_coordinates():
     filename = example_doc_path("pdf/negative-coords.pdf")
     elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
     assert [element.text for element in elements] == [
-        "Introduction Climate Change Resources Smarter Chemistry Engagement Appendix 2022 Environmental Progress Report 104",
+        "Introduction Climate Change Resources Smarter Chemistry Engagement Appendix 2022 "
+        "Environmental Progress Report 104",
         "AirPort Extreme, Apple TV, AirPods and Beats products) underwent no or only minor",
         "design changes compared to those which went through a full LCA review in former years.",
         "All reviewed LCA studies up to now cover in total 67.3% of the total scope 3 carbon",
@@ -531,19 +531,25 @@ def test_partition_pdf_with_fast_neg_coordinates():
         "case approach has been followed and results have been calculated with rather conservative",
         "estimates.",
         "The review has not found assumptions or calculation errors on the carbon footprint data",
-        "level that indicate the scope 3 carbon footprint has been materially misstated. The excellent",
+        "level that indicate the scope 3 carbon footprint has been materially misstated. The "
+        "excellent",
         "analysis meets the principles of good scientific practice.",
         "Berlin, March 21, 2022",
         "Karsten Schischke - - Marina Proske - Fraunhofer IZM Fraunhofer IZM",
         "Dept. Environmental and Dept. Environmental and",
         "Reliability Engineering Reliability Engineering",
         "Reviewer Credentials and Qualification",
-        "Karsten Schischke: Experience and background in the field of Life Cycle Assessments include",
-        "Life Cycle Assessment course and exam as part of the Environmental Engineering studies (Dipl.-Ing.",
+        "Karsten Schischke: Experience and background in the field of Life Cycle Assessments "
+        "include",
+        "Life Cycle Assessment course and exam as part of the Environmental Engineering studies "
+        "(Dipl.-Ing.",
         "Technischer Umweltschutz, Technische Universität Berlin, 1999)",
-        "more than 130 Critical Reviews of LCA studies since 2005 (batteries, displays, mobile devices,",
-        "networked ICT equipment, home automation devices, servers, desktop computers, inverters, digital",
-        "advertising solutions, smart cards) for 8 different industry clients and of the EPEAT Environmental",
+        "more than 130 Critical Reviews of LCA studies since 2005 (batteries, displays, mobile "
+        "devices,",
+        "networked ICT equipment, home automation devices, servers, desktop computers, inverters, "
+        "digital",
+        "advertising solutions, smart cards) for 8 different industry clients and of the EPEAT "
+        "Environmental",
         "Benefits Calculator",
         "Comprehensive Carbon Footprint Letter of Assurance 4",
         "Client: Apple Inc.",
@@ -944,9 +950,12 @@ def test_partition_pdf_fast_groups_text_in_text_box():
     ]
     assert [element.text for element in elements] == [
         "eastern mediterranean",
-        "We’re investing to grow in the Eastern Mediterranean, offshore Israel and Egypt. Natural gas production in the",
-        "region is helping to reduce Israel’s greenhouse gas emissions and improve air quality. In addition to supplying Israel,",
-        "Chevron-operated Tamar and Leviathan fields are exporting natural gas to neighboring Jordan and Egypt.",
+        "We’re investing to grow in the Eastern Mediterranean, offshore Israel and Egypt. Natural "
+        "gas production in the",
+        "region is helping to reduce Israel’s greenhouse gas emissions and improve air quality. "
+        "In addition to supplying Israel,",
+        "Chevron-operated Tamar and Leviathan fields are exporting natural gas to neighboring "
+        "Jordan and Egypt.",
         "2.5 1st ~70%",
         "kilograms CO₂e/boe woman electricity",
         "carbon intensity from offshore platform engineer production in Israel is powered",
@@ -1679,7 +1688,7 @@ def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: in
         assert layout_dump_dir.exists()
         layout_dump_files = list(layout_dump_dir.iterdir())
 
-        expected_layout_dumps = ["object_detection", "ocr", "pdfminer", "final"]
+        expected_layout_dumps = ["object_detection", "ocr", "core_pdf", "final"]
         assert len(layout_dump_files) == len(expected_layout_dumps)
 
         for expected_layout_dump in expected_layout_dumps:
@@ -1689,7 +1698,7 @@ def test_analysis_artifacts_saved(is_path: bool, example_doc: str, doc_pages: in
         assert bboxes_dir.exists()
         bboxes_files = list(bboxes_dir.iterdir())
 
-        expected_renders = ["od_model", "ocr", "pdfminer", "final"]
+        expected_renders = ["od_model", "ocr", "core_pdf", "final"]
         assert len(bboxes_files) == doc_pages * len(expected_renders)
 
         expected_pages = range(1, doc_pages + 1)

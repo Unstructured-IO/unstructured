@@ -26,9 +26,9 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
-    clean_pdfminer_inner_elements,
+    clean_core_pdf_inner_elements,
     get_widget_text_from_annots,
-    process_file_with_pdfminer,
+    process_file_with_core_pdf,
     remove_duplicate_elements,
     text_is_embedded,
 )
@@ -141,17 +141,17 @@ def test_valid_bbox(bbox, is_valid):
         (mix_elements_inside_table, 2, 5),
     ],
 )
-def test_clean_pdfminer_inner_elements(elements, length_extra_info, expected_document_length):
-    # create a sample document with pdfminer elements inside tables
+def test_clean_core_pdf_inner_elements(elements, length_extra_info, expected_document_length):
+    # create a sample document with extracted PDF elements inside tables
     page = PageLayout(number=1, image=Image.new("1", (1, 1)))
     page.elements_array = LayoutElements.from_list(elements)
     document_with_table = DocumentLayout(pages=[page])
     document = document_with_table
 
-    # call the function to clean the pdfminer inner elements
-    cleaned_doc = clean_pdfminer_inner_elements(document)
+    # call the function to clean the extracted PDF inner elements
+    cleaned_doc = clean_core_pdf_inner_elements(document)
 
-    # check that the pdfminer elements were stored in the extra_info dictionary
+    # check that the extracted PDF elements were stored in the extra_info dictionary
     assert len(cleaned_doc.pages[0].elements_array) == expected_document_length
 
 
@@ -333,15 +333,15 @@ def test_remove_duplicate_elements_dense_page_is_not_decimated():
     assert "Text 0" not in result.texts.tolist()
 
 
-def test_process_file_with_pdfminer():
-    layout, links = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+def test_process_file_with_core_pdf():
+    layout, links = process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     assert len(layout)
     assert "Layout Parser: A Uniﬁed Toolkit for Deep" in layout[0].texts
     assert links[0][0]["url"] == "https://layout-parser.github.io"
 
 
-def test_process_file_with_pdfminer_is_extracted_array():
-    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
+def test_process_file_with_core_pdf_is_extracted_array():
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -353,7 +353,7 @@ def test_process_file_with_pdfminer_is_extracted_array():
 
 def test_process_file_hidden_ocr_text():
     """Test processing a PDF that contains hidden OCR text layer."""
-    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
     text_flags = [
         is_extracted
         for text, is_extracted in zip(layout[0].texts, layout[0].is_extracted_array)
@@ -369,7 +369,7 @@ def test_process_file_recovers_figure_overlay_text():
     group into LTTextLine objects, so extract_text_objects (LTTextLine only) used to drop it. The
     fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a form XObject.
     """
-    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/figure-overlay-text.pdf"))
+    layout, _ = process_file_with_core_pdf(example_doc_path("pdf/figure-overlay-text.pdf"))
     texts = " ".join(str(t) for page in layout for t in page.texts if t)
     assert "Printed Name:" in texts  # main content stream
     assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
@@ -502,12 +502,12 @@ def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent()
     assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
 
 
-def test_process_file_with_pdfminer_recovers_form_field_text():
+def test_process_file_with_core_pdf_recovers_form_field_text():
     """The extracted (hi_res) layer includes AcroForm field values as text regions."""
     with tempfile.TemporaryDirectory() as tmp_dir:
         pdf_path = os.path.join(tmp_dir, "form.pdf")
         _build_synthetic_form_pdf(pdf_path)
-        layout, _ = process_file_with_pdfminer(pdf_path)
+        layout, _ = process_file_with_core_pdf(pdf_path)
 
     texts = [str(t) for t in layout[0].texts if t]
     assert "Jane Doe" in texts

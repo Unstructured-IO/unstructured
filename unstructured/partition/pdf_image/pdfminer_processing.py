@@ -22,7 +22,6 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     extract_image_objects,
     extract_text_objects,
     get_text_with_deduplication,
-    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.utils.config import env_config
@@ -41,7 +40,7 @@ EPSILON_AREA = 0.01
 DEFAULT_ROUND = 15
 
 
-def process_file_with_pdfminer(
+def process_file_with_core_pdf(
     filename: str = "",
     dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
@@ -50,7 +49,7 @@ def process_file_with_pdfminer(
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
-        extracted_layout, layouts_links = process_data_with_pdfminer(
+        extracted_layout, layouts_links = process_data_with_core_pdf(
             file=fp,
             dpi=dpi,
             password=password,
@@ -66,7 +65,7 @@ def _rotate_bboxes(coords: np.ndarray, angle: int, width: float, height: float) 
 
     ``width``/``height`` are the page-image dimensions in the un-rotated (display) frame.
     unstructured-inference may rotate a page image to make its dominant text upright;
-    applying the same rotation here keeps the pdfminer layer aligned with the
+    applying the same rotation here keeps the extracted layer aligned with the
     object-detection layer so the two merge correctly.
     """
     angle %= 360
@@ -566,7 +565,7 @@ def process_page_layout_from_pdfminer(
 
 
 @requires_dependencies(["unstructured_inference", "core_pdf"])
-def process_data_with_pdfminer(
+def process_data_with_core_pdf(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
@@ -852,7 +851,7 @@ def boxes_iou(
 
 
 @requires_dependencies("unstructured_inference")
-def pdfminer_elements_to_text_regions(layout_elements: LayoutElements) -> list[TextRegions]:
+def core_pdf_elements_to_text_regions(layout_elements: LayoutElements) -> list[TextRegions]:
     """a temporary solution to convert layout elements to a list of either EmbeddedTextRegion or
     ImageTextRegion; this should be made obsolete after we refactor the merging logic in inference
     library"""
@@ -934,35 +933,36 @@ def merge_inferred_with_extracted_layout(
     return inferred_document_layout
 
 
-def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
-    """Clean pdfminer elements from inside tables.
+def clean_core_pdf_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
+    """Clean extracted PDF elements from inside tables.
 
-    This function removes elements sourced from PDFMiner that are subregions within table elements.
+    This function removes elements sourced from PDF extraction that are subregions within table
+    elements.
     """
 
     for page in document.pages:
-        pdfminer_mask = np.isin(
+        extracted_mask = np.isin(
             page.elements_array.sources,
             [Source.PDFMINER, Source.CORE_PDF],
         )
-        non_pdfminer_element_boxes = page.elements_array.slice(~pdfminer_mask).element_coords
-        pdfminer_element_boxes = page.elements_array.slice(pdfminer_mask).element_coords
+        non_extracted_element_boxes = page.elements_array.slice(~extracted_mask).element_coords
+        extracted_element_boxes = page.elements_array.slice(extracted_mask).element_coords
 
-        if len(pdfminer_element_boxes) == 0 or len(non_pdfminer_element_boxes) == 0:
+        if len(extracted_element_boxes) == 0 or len(non_extracted_element_boxes) == 0:
             continue
 
         is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
-                pdfminer_element_boxes,
-                non_pdfminer_element_boxes,
+                extracted_element_boxes,
+                non_extracted_element_boxes,
                 env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
             ).sum(axis=1)
             == 1
         )
 
-        pdfminer_to_keep = np.where(pdfminer_mask)[0][~is_element_subregion_of_other_elements]
+        extracted_to_keep = np.where(extracted_mask)[0][~is_element_subregion_of_other_elements]
         page.elements_array = page.elements_array.slice(
-            np.sort(np.concatenate((np.where(~pdfminer_mask)[0], pdfminer_to_keep)))
+            np.sort(np.concatenate((np.where(~extracted_mask)[0], extracted_to_keep)))
         )
 
     return document

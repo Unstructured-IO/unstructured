@@ -450,8 +450,8 @@ class SimpleLayoutDrawer(LayoutDrawer, ABC):
         draw_bbox_on_image(image_draw, bbox, color=self.color)
 
 
-class PdfminerLayoutDrawer(SimpleLayoutDrawer):
-    layout_source = "pdfminer"
+class CorePdfLayoutDrawer(SimpleLayoutDrawer):
+    layout_source = "core_pdf"
 
     def __init__(self, layout_dump: dict, color: str = "red"):
         self.layout_dump = layout_dump

@@ -11,8 +11,6 @@ from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
-from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
@@ -41,7 +39,6 @@ from unstructured.documents.elements import (
 from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
-from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common.common import (
     add_element_metadata,
     exactly_one,
@@ -52,17 +49,8 @@ from unstructured.partition.common.common import (
 )
 from unstructured.partition.common.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
-from unstructured.partition.pdf_image.pdfminer_processing import (
-    check_annotations_within_element,
-    get_uris,
-    get_widget_text_from_annots,
-    get_words_from_obj,
-    map_bbox_and_index,
-)
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
-    get_text_with_deduplication,
-    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -415,7 +403,7 @@ def extractable_elements(
 ) -> list[list[Element]]:
     if isinstance(file, bytes):
         file = io.BytesIO(file)
-    return _partition_pdf_with_pdfminer(
+    return _partition_pdf_with_core_pdf(
         filename=filename,
         file=file,
         languages=languages,
@@ -427,7 +415,7 @@ def extractable_elements(
     )
 
 
-def _partition_pdf_with_pdfminer(
+def _partition_pdf_with_core_pdf(
     filename: str,
     file: Optional[IO[bytes]],
     metadata_last_modified: Optional[str],
@@ -437,20 +425,13 @@ def _partition_pdf_with_pdfminer(
     pdfminer_config: Optional[PDFMinerConfig] = None,
     **kwargs: Any,
 ) -> list[list[Element]]:
-    """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
-    processing or detectron2 is not available.
-
-    Implementation is based on the `extract_text` implementation in pdfminer.six, but
-    modified to support tracking page numbers and working with file-like objects.
-
-    ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
-    """
+    """Partitions a PDF using core-pdf instead of using a layout model."""
 
     exactly_one(filename=filename, file=file)
     if filename:
-        with open_filename(filename, "rb") as fp:
+        with open(filename, "rb") as fp:
             fp = cast(IO[bytes], fp)
-            elements = _process_pdfminer_pages(
+            elements = _process_core_pdf_pages(
                 fp=fp,
                 filename=filename,
                 languages=languages,
@@ -462,7 +443,7 @@ def _partition_pdf_with_pdfminer(
             )
 
     elif file:
-        elements = _process_pdfminer_pages(
+        elements = _process_core_pdf_pages(
             fp=file,
             filename=filename,
             languages=languages,
@@ -477,7 +458,7 @@ def _partition_pdf_with_pdfminer(
 
 
 @requires_dependencies("core_pdf")
-def _process_pdfminer_pages(
+def _process_core_pdf_pages(
     fp: IO[bytes],
     filename: str,
     metadata_last_modified: Optional[str],
@@ -875,10 +856,10 @@ def _partition_pdf_or_image_local(
         save_elements,
     )
     from unstructured.partition.pdf_image.pdfminer_processing import (
-        clean_pdfminer_inner_elements,
+        clean_core_pdf_inner_elements,
         merge_inferred_with_extracted_layout,
-        process_data_with_pdfminer,
-        process_file_with_pdfminer,
+        process_data_with_core_pdf,
+        process_file_with_core_pdf,
     )
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
@@ -924,7 +905,7 @@ def _partition_pdf_or_image_local(
         )
 
         extracted_layout, layouts_links = (
-            process_file_with_pdfminer(
+            process_file_with_core_pdf(
                 filename=filename,
                 dpi=pdf_image_dpi,
                 password=password,
@@ -986,7 +967,7 @@ def _partition_pdf_or_image_local(
         )
 
         extracted_layout, layouts_links = (
-            process_data_with_pdfminer(
+            process_data_with_core_pdf(
                 file=file,
                 dpi=pdf_image_dpi,
                 password=password,
@@ -1040,7 +1021,7 @@ def _partition_pdf_or_image_local(
         )
 
     # vectorization of the data structure ends here
-    final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
+    final_document_layout = clean_core_pdf_inner_elements(final_document_layout)
 
     elements = document_to_element_list(
         final_document_layout,
@@ -1290,25 +1271,6 @@ def _process_uncategorized_text_elements(elements: list[Element]):
         out_elements.append(new_el)
 
     return out_elements
-
-
-def _extract_text(item: LTItem) -> str:
-    """Recursively extracts text from PDFMiner objects to account
-    for scenarios where the text is in a sub-container."""
-    if hasattr(item, "get_text"):
-        return item.get_text()
-
-    elif isinstance(item, LTContainer):
-        text = ""
-        for child in item:
-            text += _extract_text(child) or ""
-        return text
-
-    elif isinstance(item, (LTTextBox, LTImage)):
-        # TODO(robinson) - Support pulling text out of images
-        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
-        return "\n"
-    return "\n"
 
 
 # Some pages with a ICC color space do not follow the pdf spec
