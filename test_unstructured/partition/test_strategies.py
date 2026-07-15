@@ -46,23 +46,19 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
 
     if from_file:
         with open(filename, "rb") as f:
-            extracted_elements = pdf._process_core_pdf_pages(
-                fp=f,
-                filename=filename,
-                metadata_last_modified=None,
+            elements = pdf.partition_pdf_or_image(
+                file=f,
+                strategy=PartitionStrategy.FAST,
             )
     else:
-        with open(filename, "rb") as f:
-            extracted_elements = pdf._process_core_pdf_pages(
-                fp=f,
-                filename=filename,
-                metadata_last_modified=None,
-            )
+        elements = pdf.partition_pdf_or_image(
+            filename=filename,
+            strategy=PartitionStrategy.FAST,
+        )
 
     pdf_text_extractable = any(
         isinstance(el, Text) and el.text.strip()
-        for page_elements in extracted_elements
-        for el in page_elements
+        for el in elements
     )
 
     assert pdf_text_extractable is expected
