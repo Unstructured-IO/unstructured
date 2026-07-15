@@ -391,9 +391,26 @@ def test_process_file_with_core_pdf():
     layout, links = process_file_with_core_pdf(
         example_doc_path("pdf/layout-parser-paper-fast.pdf"),
     )
-    assert len(layout)
-    assert "Layout Parser: A Uniﬁed Toolkit for Deep" in layout[0].texts
-    assert links[0][0]["url"] == "https://layout-parser.github.io"
+    assert len(layout) == 2
+    assert layout[0].texts[0] == "arXiv:2103.15348v2 [cs.CV] 21 Jun 2021"
+    assert [[link["url"] for link in page_links] for page_links in links] == [
+        ["cite.harley2015evaluation"],
+        [
+            "cite.xu2019layoutlm",
+            "cite.zhong2019publaynet",
+            "cite.oliveira2018dhsegment",
+            "cite.prasad2020cascadetabnet",
+            "cite.baek2019character",
+            "cite.tensorflow2015-whitepaper",
+            "cite.paszke2019pytorch",
+            "cite.gardner2018allennlp",
+            "section.1.3",
+            "section.1.4",
+            "cite.gardner2018allennlp",
+            "cite.wolf2019huggingface",
+            "cite.wu2019detectron2",
+        ],
+    ]
 
 
 def test_process_file_with_core_pdf_is_extracted_array():
