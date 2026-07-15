@@ -63,7 +63,7 @@ Unstructured Transform brings production-grade document processing to your agent
 
 ## Unstructured Pipelines
 
-Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Platform](https://unstructured.io/enterprise). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichment generation, all from a low code UI or an API. [Request a demo](https://unstructured.io/contact) from our sales team to learn more about how to get started.
+Ready to move your data processing pipeline to production, and take advantage of advanced features? Check out [Unstructured Pipelines](https://docs.unstructured.io/pipelines/overview). In addition to better processing performance, take advantage of chunking, embedding, and image and table enrichment generation, all from a low code UI or an API. [Request a demo](https://unstructured.io/?modal=contact-sales) from our sales team to learn more about how to get started.
 
 ## :eight_pointed_black_star: Quick Start
 
