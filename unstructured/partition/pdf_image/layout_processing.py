@@ -537,16 +537,22 @@ def clean_pdf_extracted_inner_elements(document: "DocumentLayout") -> "DocumentL
             page.elements_array.sources,
             [Source.CORE_PDF],
         )
-        non_extracted_element_boxes = page.elements_array.slice(~extracted_mask).element_coords
+        table_mask = np.array(
+            [
+                page.elements_array.element_class_id_map[class_id] == ElementType.TABLE
+                for class_id in page.elements_array.element_class_ids
+            ],
+        )
+        table_element_boxes = page.elements_array.slice(~extracted_mask & table_mask).element_coords
         extracted_element_boxes = page.elements_array.slice(extracted_mask).element_coords
 
-        if len(extracted_element_boxes) == 0 or len(non_extracted_element_boxes) == 0:
+        if len(extracted_element_boxes) == 0 or len(table_element_boxes) == 0:
             continue
 
         is_element_subregion_of_other_elements = (
             bboxes1_is_almost_subregion_of_bboxes2(
                 extracted_element_boxes,
-                non_extracted_element_boxes,
+                table_element_boxes,
                 env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD,
             ).sum(axis=1)
             == 1

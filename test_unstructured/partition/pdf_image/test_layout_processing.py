@@ -150,6 +150,50 @@ def test_clean_pdf_extracted_inner_elements(elements, expected_document_length):
     assert len(cleaned_doc.pages[0].elements_array) == expected_document_length
 
 
+def test_clean_pdf_extracted_inner_elements_keeps_text_inside_non_table_blocks():
+    elements = [
+        LayoutElement(
+            bbox=Rectangle(0, 0, 100, 100),
+            text="Title block",
+            type="Title",
+            source=InferenceSource.YOLOX,
+        ),
+        LayoutElement(
+            bbox=Rectangle(10, 10, 40, 40),
+            text="Inside title",
+            source=Source.CORE_PDF,
+        ),
+        LayoutElement(
+            bbox=Rectangle(200, 200, 300, 300),
+            text="Table block",
+            type="Table",
+            source=InferenceSource.YOLOX,
+        ),
+        LayoutElement(
+            bbox=Rectangle(210, 210, 240, 240),
+            text="Inside table",
+            source=Source.CORE_PDF,
+        ),
+        LayoutElement(
+            bbox=Rectangle(400, 400, 440, 440),
+            text="Outside table",
+            source=Source.CORE_PDF,
+        ),
+    ]
+    page = PageLayout(number=1, image=Image.new("1", (1, 1)))
+    page.elements_array = LayoutElements.from_list(elements)
+    document = DocumentLayout(pages=[page])
+
+    cleaned_doc = clean_pdf_extracted_inner_elements(document)
+
+    assert list(cleaned_doc.pages[0].elements_array.texts) == [
+        "Title block",
+        "Inside title",
+        "Table block",
+        "Outside table",
+    ]
+
+
 elements_with_duplicate_images = [
     LayoutElement(
         bbox=Rectangle(0, 0, 100, 100),
