@@ -72,7 +72,7 @@ def _minimum_containing_coords(*regions: TextRegions) -> np.ndarray:
 
 def _inferred_is_elementtype(
     inferred_layout: LayoutElements, etypes: Iterable[ElementType]
-) -> np.ndarry:
+) -> np.ndarray:
     inferred_text_idx = [
         idx
         for idx, class_name in inferred_layout.element_class_id_map.items()
@@ -86,7 +86,7 @@ def _inferred_is_elementtype(
     return inferred_is_etypes
 
 
-def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarry:
+def _inferred_is_text(inferred_layout: LayoutElements) -> np.ndarray:
     """return a boolean array masking for each element if it is non-image type (True) or image like
     type (False); image types are ElementType.FIGURE/IMAGE/PICTURE/PAGE_BREAK/TABLE"""
     return ~_inferred_is_elementtype(
@@ -181,7 +181,7 @@ def _mark_non_table_inferred_for_removal_if_has_subregion_relationship(
     inferred_layout: LayoutElements,
     inferred_to_keep: np.ndarray,
     subregion_threshold: float,
-) -> np.ndaray:
+) -> np.ndarray:
     """
     Marking elements in inferred layout to remove after merging when:
     - if the inferred element is subregion of an extracted element
