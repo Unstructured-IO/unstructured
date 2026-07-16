@@ -1200,6 +1200,51 @@ class Describe_Chunker:
             "languages": ["lat", "eng"],
         }
 
+    def it_flags_invisible_text_when_any_element_contains_it(self):
+        elements = [
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(filename="foo.pdf"),
+            ),
+            Text(
+                "Hidden instruction",
+                metadata=ElementMetadata(filename="foo.pdf", contains_invisible_text=True),
+            ),
+        ]
+        text = "Lorem Ipsum\n\nHidden instruction"
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
+
+        assert chunker._meta_kwargs["contains_invisible_text"] is True
+        assert chunker._consolidated_metadata.contains_invisible_text is True
+
+    def it_omits_invisible_text_when_no_element_reports_it(self):
+        elements = [
+            Title("Lorem Ipsum", metadata=ElementMetadata(filename="foo.pdf")),
+            Text("Visible text", metadata=ElementMetadata(filename="foo.pdf")),
+        ]
+        text = "Lorem Ipsum\n\nVisible text"
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
+
+        assert "contains_invisible_text" not in chunker._meta_kwargs
+        assert chunker._consolidated_metadata.contains_invisible_text is None
+
+    def it_keeps_invisible_text_false_when_all_reporting_elements_clear_it(self):
+        elements = [
+            Title(
+                "Lorem Ipsum",
+                metadata=ElementMetadata(filename="foo.pdf", contains_invisible_text=False),
+            ),
+            Text(
+                "Visible text",
+                metadata=ElementMetadata(filename="foo.pdf", contains_invisible_text=False),
+            ),
+        ]
+        text = "Lorem Ipsum\n\nVisible text"
+        chunker = _Chunker(elements, text=text, opts=ChunkingOptions())
+
+        assert chunker._meta_kwargs["contains_invisible_text"] is False
+        assert chunker._consolidated_metadata.contains_invisible_text is False
+
     def and_it_merges_and_dedupes_enrichment_origins_across_elements(self):
         """enrichment_origins has DICT_LIST_UNIQUE: union keys, concat+dedupe per-key records."""
         shared = {"type": "enrichment_shared", "provider": "a", "model": "m"}

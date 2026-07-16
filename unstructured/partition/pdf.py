@@ -11,7 +11,7 @@ from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
+from pdfminer.layout import LTContainer, LTItem, LTTextBox
 from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
@@ -58,6 +58,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     get_widget_text_from_annots,
     get_words_from_obj,
     map_bbox_and_index,
+    text_contains_invisible_text,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     PDFMinerConfig,
@@ -527,14 +528,19 @@ def _process_pdfminer_pages(
 
             if hasattr(obj, "get_text"):
                 # Use deduplication to handle fake bold text (characters rendered twice)
-                _text_snippets: list[str] = [
-                    get_text_with_deduplication(obj, env_config.PDF_CHAR_DUPLICATE_THRESHOLD)
+                _text_snippets: list[tuple[str, bool]] = [
+                    (
+                        get_text_with_deduplication(
+                            obj,
+                            env_config.PDF_CHAR_DUPLICATE_THRESHOLD,
+                        ),
+                        text_contains_invisible_text(obj),
+                    )
                 ]
             else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+                _text_snippets = _split_pdfminer_text_by_paragraph(obj)
 
-            for _text in _text_snippets:
+            for _text, contains_invisible_text in _text_snippets:
                 _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
                 if _text.strip():
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
@@ -553,6 +559,7 @@ def _process_pdfminer_pages(
                         filename=filename,
                         page_number=page_number,
                         coordinates=coordinates_metadata,
+                        contains_invisible_text=contains_invisible_text or None,
                         last_modified=metadata_last_modified,
                         links=links,
                         languages=languages,
@@ -1245,23 +1252,67 @@ def _process_uncategorized_text_elements(elements: list[Element]):
     return out_elements
 
 
-def _extract_text(item: LTItem) -> str:
-    """Recursively extracts text from PDFMiner objects to account
-    for scenarios where the text is in a sub-container."""
+def _split_pdfminer_text_by_paragraph(item: LTItem) -> list[tuple[str, bool]]:
+    """Extract text snippets and keep invisible-text metadata scoped to each snippet."""
+
+    text_parts = _extract_text_parts(item)
+    if not text_parts:
+        return []
+
+    text = "".join(part_text for part_text, _ in text_parts)
+    split_spans = [(match.start(), match.end()) for match in re.finditer(PARAGRAPH_PATTERN, text)]
+    if not split_spans:
+        return [(text, any(invisible for _, invisible in text_parts))]
+
+    snippets: list[tuple[str, bool]] = []
+    cursor = 0
+    for split_start, split_end in split_spans:
+        snippets.append(
+            (
+                text[cursor:split_start],
+                _parts_have_invisible_text(text_parts, start=cursor, end=split_start),
+            )
+        )
+        cursor = split_end
+    snippets.append(
+        (
+            text[cursor:],
+            _parts_have_invisible_text(text_parts, start=cursor, end=len(text)),
+        )
+    )
+    return snippets
+
+
+def _extract_text_parts(item: LTItem) -> list[tuple[str, bool]]:
+    """Recursively extract text with its invisible-text flag from PDFMiner objects."""
+
     if hasattr(item, "get_text"):
-        return item.get_text()
+        return [(item.get_text(), text_contains_invisible_text(item))]
 
-    elif isinstance(item, LTContainer):
-        text = ""
+    if isinstance(item, LTContainer):
+        text_parts: list[tuple[str, bool]] = []
         for child in item:
-            text += _extract_text(child) or ""
-        return text
+            text_parts.extend(_extract_text_parts(child))
+        return text_parts
 
-    elif isinstance(item, (LTTextBox, LTImage)):
-        # TODO(robinson) - Support pulling text out of images
-        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
-        return "\n"
-    return "\n"
+    return [("\n", False)]
+
+
+def _parts_have_invisible_text(
+    text_parts: list[tuple[str, bool]],
+    *,
+    start: int,
+    end: int,
+) -> bool:
+    """Return True when any invisible text part overlaps the selected text span."""
+
+    part_start = 0
+    for part_text, invisible in text_parts:
+        part_end = part_start + len(part_text)
+        if invisible and part_start < end and part_end > start:
+            return True
+        part_start = part_end
+    return False
 
 
 # Some pages with a ICC color space do not follow the pdf spec
@@ -1292,6 +1343,10 @@ def _combine_list_elements(
             coordinates=element.metadata.coordinates,
             boundary=tmp_coords,
         ):
+            contains_invisible_text = (
+                tmp_element.metadata.contains_invisible_text
+                or element.metadata.contains_invisible_text
+            )
             tmp_element.text = f"{tmp_text} {element.text}"
             # replace "element" with the corrected element
             element = _combine_coordinates_into_element1(
@@ -1299,6 +1354,7 @@ def _combine_list_elements(
                 element2=element,
                 coordinate_system=coordinate_system,
             )
+            element.metadata.contains_invisible_text = contains_invisible_text or None
             # remove previously added ListItem element with incomplete text
             updated_elements.pop()
         updated_elements.append(element)
