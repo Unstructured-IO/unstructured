@@ -100,6 +100,9 @@ def test_extract_us_phone_number(text, expected):
         ("1..2.3 four", (None, None, None)),
         ("Fig. 2: The relationship", (None, None, None)),
         ("23 is everywhere", (None, None, None)),
+        ("", (None, None, None)),
+        ("   ", (None, None, None)),
+        ("\n\t", (None, None, None)),
     ],
 )
 def test_extract_ordered_bullets(text, expected):

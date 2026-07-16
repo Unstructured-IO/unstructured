@@ -59,6 +59,8 @@ def clean_ordered_bullets(text) -> str:
     a.b This is a very important point -> This is a very important point
     """
     text_sp = text.split()
+    if not text_sp:
+        return text
     text_cl = " ".join(text_sp[1:])
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return text

@@ -118,6 +118,8 @@ def extract_ordered_bullets(text) -> tuple:
     """
     a, b, c, temp = None, None, None, None
     text_sp = text.split()
+    if not text_sp:
+        return a, b, c
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return a, b, c
 
