@@ -1,3 +1,9 @@
+## 0.26.0
+
+### Enhancements
+
+- **Expose invisible PDF text in element metadata**: PDF text extracted from content streams now sets `contains_invisible_text` when it includes render-mode-3 characters. The optional signal remains scoped to the affected text snippet and is preserved when list items are combined or elements are chunked, allowing downstream consumers to filter or audit hidden text without changing extracted content.
+
 ## 0.25.1
 
 ### Fixes
