@@ -1,5 +1,9 @@
 ## 0.25.1
 
+### Enhancements
+
+- **Adopt `core-pdfminer.six` for PDF extraction**: migrate the PDF extraction path to the performance-oriented `core-pdfminer.six` fork while preserving upstream parsing and extraction semantics. The original `pdfminer.six` image-extra dependency remains available for compatibility.
+
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
