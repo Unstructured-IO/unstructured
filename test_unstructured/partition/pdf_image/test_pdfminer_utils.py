@@ -1,8 +1,8 @@
 from importlib import reload
 from unittest.mock import MagicMock, patch
 
-from pdfminer.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
-from pdfminer.pdftypes import PDFStream
+from core_pdfminer_six.layout import LTChar, LTContainer, LTFigure, LTLayoutContainer, LTTextLine
+from core_pdfminer_six.pdftypes import PDFStream
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.pdf import partition_pdf
@@ -525,7 +525,7 @@ class TestBoundedStreamDecode:
         without fully materializing the output, and the stream should not be mutated."""
         import zlib
 
-        from pdfminer.psparser import LIT
+        from core_pdfminer_six.psparser import LIT
 
         from unstructured.partition.pdf_image.pdfminer_utils import (
             _decode_pdfstream_with_limit,
@@ -544,7 +544,7 @@ class TestBoundedStreamDecode:
         """A stream that fits within the limit should decode successfully."""
         import zlib
 
-        from pdfminer.psparser import LIT
+        from core_pdfminer_six.psparser import LIT
 
         from unstructured.partition.pdf_image.pdfminer_utils import (
             _decode_pdfstream_with_limit,
@@ -593,8 +593,8 @@ class TestCustomPDFCIDFont:
         font.default_disp != 0 at construction time, not just on the CMap."""
         import zlib
 
-        from pdfminer.pdfinterp import PDFResourceManager
-        from pdfminer.psparser import LIT
+        from core_pdfminer_six.pdfinterp import PDFResourceManager
+        from core_pdfminer_six.psparser import LIT
 
         from unstructured.partition.pdf_image.pdfminer_utils import CustomPDFCIDFont
 
@@ -684,7 +684,7 @@ class TestCustomPDFResourceManager:
 
     def test_returns_custom_cidfont_for_cid_subtypes(self):
         """CIDFontType2 fonts should be constructed as CustomPDFCIDFont."""
-        from pdfminer.psparser import LIT
+        from core_pdfminer_six.psparser import LIT
 
         from unstructured.partition.pdf_image.pdfminer_utils import (
             CustomPDFCIDFont,
@@ -738,7 +738,7 @@ endcmap"""
 
     def test_caches_font_on_repeated_calls(self):
         """Repeated get_font calls with the same objid should return the cached instance."""
-        from pdfminer.psparser import LIT
+        from core_pdfminer_six.psparser import LIT
 
         from unstructured.partition.pdf_image.pdfminer_utils import (
             CustomPDFResourceManager,

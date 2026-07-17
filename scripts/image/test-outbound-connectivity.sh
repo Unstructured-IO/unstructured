@@ -149,7 +149,7 @@ logging.getLogger("urllib").setLevel(logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.DEBUG)
 logging.getLogger("httpx").setLevel(logging.DEBUG)
 logging.getLogger("httpcore").setLevel(logging.DEBUG)
-logging.getLogger("pdfminer.pdfpage").setLevel(logging.CRITICAL)
+logging.getLogger("core_pdfminer_six.pdfpage").setLevel(logging.CRITICAL)
 
 for test_file in [
  "/app/example-docs/ideas-page.html",

@@ -4,22 +4,22 @@ import tempfile
 import zlib
 from typing import BinaryIO, List, Mapping, Optional, Tuple, Union
 
-from pdfminer import settings as pdfminer_settings
-from pdfminer.cmapdb import CMap, CMapDB
-from pdfminer.converter import PDFPageAggregator
-from pdfminer.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
-from pdfminer.pdffont import PDFCIDFont, PDFFontError
-from pdfminer.pdfinterp import LITERAL_FONT, PDFPageInterpreter, PDFResourceManager
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdftypes import (
+from core_pdfminer_six import settings as pdfminer_settings
+from core_pdfminer_six.cmapdb import CMap, CMapDB
+from core_pdfminer_six.converter import PDFPageAggregator
+from core_pdfminer_six.layout import LAParams, LTChar, LTContainer, LTImage, LTItem, LTTextLine
+from core_pdfminer_six.pdffont import PDFCIDFont, PDFFontError
+from core_pdfminer_six.pdfinterp import LITERAL_FONT, PDFPageInterpreter, PDFResourceManager
+from core_pdfminer_six.pdfpage import PDFPage
+from core_pdfminer_six.pdftypes import (
     LITERALS_ASCII85_DECODE,
     LITERALS_ASCIIHEX_DECODE,
     LITERALS_FLATE_DECODE,
     PDFStream,
     resolve1,
 )
-from pdfminer.psexceptions import PSSyntaxError
-from pdfminer.psparser import literal_name
+from core_pdfminer_six.psexceptions import PSSyntaxError
+from core_pdfminer_six.psparser import literal_name
 from pydantic import BaseModel
 
 from unstructured.logger import logger
@@ -185,11 +185,11 @@ def _decode_pdfstream_with_limit(stream: PDFStream, max_decoded_bytes: int) -> O
                 return None
             data = result
         elif filt in LITERALS_ASCII85_DECODE:
-            from pdfminer.ascii85 import ascii85decode
+            from core_pdfminer_six.ascii85 import ascii85decode
 
             data = ascii85decode(data)
         elif filt in LITERALS_ASCIIHEX_DECODE:
-            from pdfminer.ascii85 import asciihexdecode
+            from core_pdfminer_six.ascii85 import asciihexdecode
 
             data = asciihexdecode(data)
         else:

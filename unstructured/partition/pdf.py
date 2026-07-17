@@ -11,8 +11,8 @@ from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
 
 import numpy as np
 import wrapt
-from pdfminer.layout import LTContainer, LTImage, LTItem, LTTextBox
-from pdfminer.utils import open_filename
+from core_pdfminer_six.layout import LTContainer, LTImage, LTItem, LTTextBox
+from core_pdfminer_six.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
@@ -77,18 +77,11 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
-from unstructured.patches.pdfminer import patch_psparser
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
-
-
-# Correct a bug that was introduced by a previous patch to
-# pdfminer.six, causing needless and unsuccessful repairing of PDFs
-# which were not actually broken.
-patch_psparser()
 
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
@@ -476,7 +469,7 @@ def _partition_pdf_with_pdfminer(
     return elements
 
 
-@requires_dependencies("pdfminer")
+@requires_dependencies("core_pdfminer_six")
 def _process_pdfminer_pages(
     fp: IO[bytes],
     filename: str,
@@ -1268,7 +1261,10 @@ def _extract_text(item: LTItem) -> str:
 # They throw an error when we call interpreter.process_page
 # Since we don't need color info, we can just drop it in the pdfminer code
 # See #2059
-@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+@wrapt.patch_function_wrapper(
+    "core_pdfminer_six.pdfinterp",
+    "PDFPageInterpreter.init_resources",
+)
 def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     resources = args[0]
     if "ColorSpace" in resources:
