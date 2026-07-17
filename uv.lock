@@ -7232,7 +7232,6 @@ source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "charset-normalizer" },
-    { name = "core-pdfminer-six" },
     { name = "emoji" },
     { name = "filelock" },
     { name = "filetype" },
@@ -7259,6 +7258,7 @@ dependencies = [
 
 [package.optional-dependencies]
 all-docs = [
+    { name = "core-pdfminer-six" },
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
@@ -7302,6 +7302,7 @@ huggingface = [
     { name = "transformers" },
 ]
 image = [
+    { name = "core-pdfminer-six" },
     { name = "google-cloud-vision" },
     { name = "pdf2image" },
     { name = "pdfminer-six" },
@@ -7315,6 +7316,7 @@ ingest = [
     { name = "unstructured-ingest", extra = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "python_full_version < '3.13' or sys_platform != 'win32'" },
 ]
 local-inference = [
+    { name = "core-pdfminer-six" },
     { name = "google-cloud-vision" },
     { name = "markdown" },
     { name = "msoffcrypto-tool" },
@@ -7349,6 +7351,7 @@ paddleocr = [
     { name = "unstructured-paddleocr" },
 ]
 pdf = [
+    { name = "core-pdfminer-six" },
     { name = "google-cloud-vision" },
     { name = "pdf2image" },
     { name = "pdfminer-six" },
@@ -7415,7 +7418,10 @@ test = [
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.14.3,<5.0.0" },
     { name = "charset-normalizer", specifier = ">=3.4.4,<4.0.0" },
-    { name = "core-pdfminer-six", specifier = ">=0.0.0" },
+    { name = "core-pdfminer-six", marker = "extra == 'all-docs'", specifier = ">=0.0.0" },
+    { name = "core-pdfminer-six", marker = "extra == 'image'", specifier = ">=0.0.0" },
+    { name = "core-pdfminer-six", marker = "extra == 'local-inference'", specifier = ">=0.0.0" },
+    { name = "core-pdfminer-six", marker = "extra == 'pdf'", specifier = ">=0.0.0" },
     { name = "emoji", specifier = ">=2.15.0,<3.0.0" },
     { name = "filelock", specifier = ">=3.12.0,<4.0.0" },
     { name = "filetype", specifier = ">=1.2.0,<2.0.0" },
