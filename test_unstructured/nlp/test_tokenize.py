@@ -18,6 +18,24 @@ def test_word_tokenize_caches():
     assert tokenize.word_tokenize.cache_info().hits == 1
 
 
+def test_word_tokenize_does_not_run_statistical_pipeline(monkeypatch):
+    class _Token:
+        text = "token"
+
+    class _TokenizerOnlyNlp:
+        def make_doc(self, text):
+            assert text == "input"
+            return [_Token()]
+
+        def __call__(self, text):
+            raise AssertionError("word_tokenize should not run the statistical pipeline")
+
+    tokenize.word_tokenize.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _TokenizerOnlyNlp())
+
+    assert tokenize.word_tokenize("input") == ["token"]
+
+
 def test_sent_tokenize_caches():
     tokenize._tokenize_for_cache.cache_clear()
     assert tokenize._tokenize_for_cache.cache_info().currsize == 0

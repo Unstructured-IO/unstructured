@@ -176,7 +176,10 @@ def sent_tokenize(text: str) -> List[str]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the spaCy word tokenizer with LRU caching enabled."""
-    return [token.text for token in _process(text)]
+    # Word tokenization does not require the tagger or dependency parser. ``make_doc`` runs only
+    # the tokenizer, avoiding the substantially more expensive statistical pipeline while
+    # producing the same tokens as ``nlp(text)``.
+    return [token.text for token in _get_nlp().make_doc(str(text))]
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
