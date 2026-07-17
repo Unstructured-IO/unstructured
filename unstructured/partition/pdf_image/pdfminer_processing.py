@@ -5,9 +5,9 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
-from pdfminer.pdftypes import PDFObjRef
-from pdfminer.utils import decode_text, open_filename
+from core_pdfminer_six.layout import LAParams, LTChar, LTContainer, LTTextBox
+from core_pdfminer_six.pdftypes import PDFObjRef
+from core_pdfminer_six.utils import decode_text, open_filename
 from unstructured_inference.config import inference_config
 from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle

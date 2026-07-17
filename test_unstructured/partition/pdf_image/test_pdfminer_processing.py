@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-from pdfminer.layout import LAParams, LTChar, LTContainer
+from core_pdfminer_six.layout import LAParams, LTChar, LTContainer
 from PIL import Image
 from unstructured_inference.constants import IsExtracted
 from unstructured_inference.constants import Source as InferenceSource
@@ -418,7 +418,7 @@ def _build_synthetic_form_pdf(path: str) -> None:
 
 def test_get_widget_text_from_annots_extracts_filled_text_fields():
     """The widget helper recovers filled /Tx field values and skips empty ones."""
-    from pdfminer.pdfpage import PDFPage
+    from core_pdfminer_six.pdfpage import PDFPage
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         pdf_path = os.path.join(tmp_dir, "form.pdf")
@@ -434,7 +434,7 @@ def test_get_widget_text_from_annots_extracts_filled_text_fields():
 
 
 def test_get_widget_text_from_annots_decodes_utf16_text_without_bom():
-    from pdfminer.psparser import PSLiteral
+    from core_pdfminer_six.psparser import PSLiteral
 
     widgets = get_widget_text_from_annots(
         [
@@ -452,7 +452,7 @@ def test_get_widget_text_from_annots_decodes_utf16_text_without_bom():
 
 
 def test_get_widget_text_from_annots_decodes_choice_field_value_arrays():
-    from pdfminer.psparser import PSLiteral
+    from core_pdfminer_six.psparser import PSLiteral
 
     widgets = get_widget_text_from_annots(
         [
@@ -475,7 +475,7 @@ def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent()
     The intermediate parent is a direct dict (the case PDFObjRef-only traversal missed) and
     the root parent carries the inherited /FT, exercising multi-level inheritance.
     """
-    from pdfminer.psparser import PSLiteral
+    from core_pdfminer_six.psparser import PSLiteral
 
     root_parent = {"FT": PSLiteral("Tx")}  # field type lives at the top of the hierarchy
     mid_parent = {"V": b"\xfe\xff\x00J\x00a\x00n\x00e", "Parent": root_parent}  # value mid-chain
