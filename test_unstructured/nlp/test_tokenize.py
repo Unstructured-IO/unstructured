@@ -99,6 +99,43 @@ def test_pos_tag_caches():
     assert tokenize.pos_tag.cache_info().hits == 1
 
 
+def test_pos_tag_does_not_run_dependency_parser(monkeypatch):
+    class _Token:
+        text = "runs"
+        tag_ = "VBZ"
+
+    class _Nlp:
+        max_length = 100
+
+        def __call__(self, text, *, disable=()):
+            assert text == "runs"
+            assert tuple(disable) == ("parser",)
+            return [_Token()]
+
+    tokenize.pos_tag.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _Nlp())
+
+    assert tokenize.pos_tag("runs") == [("runs", "VBZ")]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "ITEM 2A. PROPERTIES",
+        "The striped bats are hanging on their feet.",
+        "I can't attend at 3:30 p.m.",
+        "What? What? How dare you?",
+        "naïve café — déjà vu",
+        "First line.\nSecond line!",
+    ],
+)
+def test_pos_tag_matches_pipeline_with_dependency_parser(text):
+    expected = [(token.text, token.tag_) for token in tokenize._process(text)]
+    tokenize.pos_tag.cache_clear()
+
+    assert tokenize.pos_tag(text) == expected
+
+
 def test_tokenizers_functions_run():
     sentence = "I am a big brown bear. What are you?"
     tokenize.sent_tokenize(sentence)
