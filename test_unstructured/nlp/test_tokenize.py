@@ -1,3 +1,5 @@
+import pytest
+
 from unstructured.nlp import tokenize
 
 
@@ -23,6 +25,8 @@ def test_word_tokenize_does_not_run_statistical_pipeline(monkeypatch):
         text = "token"
 
     class _TokenizerOnlyNlp:
+        max_length = 1_000_000
+
         def make_doc(self, text):
             assert text == "input"
             return [_Token()]
@@ -34,6 +38,47 @@ def test_word_tokenize_does_not_run_statistical_pipeline(monkeypatch):
     monkeypatch.setattr(tokenize, "_get_nlp", lambda: _TokenizerOnlyNlp())
 
     assert tokenize.word_tokenize("input") == ["token"]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "",
+        "Hello, world!",
+        "I can't attend at 3:30 p.m.",
+        "Visit https://example.com/a-b?q=1.",
+        "naïve café — “déjà vu” 😊",
+        "U.S.A.\nSecond\tline",
+    ],
+)
+def test_word_tokenize_matches_full_pipeline(text):
+    expected = [token.text for token in tokenize._get_nlp()(text)]
+    tokenize.word_tokenize.cache_clear()
+
+    assert tokenize.word_tokenize(text) == expected
+
+
+def test_word_tokenize_preserves_long_input_truncation(monkeypatch, caplog):
+    processed_texts = []
+
+    class _TokenizerOnlyNlp:
+        max_length = 12
+
+        def make_doc(self, text):
+            processed_texts.append(text)
+            return []
+
+        def __call__(self, text):
+            raise AssertionError("word_tokenize should not run the statistical pipeline")
+
+    tokenize.word_tokenize.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _TokenizerOnlyNlp())
+
+    with caplog.at_level("WARNING", logger=tokenize.logger.name):
+        tokenize.word_tokenize("123456789 123456789")
+
+    assert processed_texts == ["123456789"]
+    assert any("exceeds spaCy max_length" in record.message for record in caplog.records)
 
 
 def test_sent_tokenize_caches():
