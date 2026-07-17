@@ -59,6 +59,16 @@ def test_partition_email_from_file_can_partition_an_email():
         assert partition_email(file=f) == EXPECTED_OUTPUT
 
 
+def test_partition_email_does_not_crash_on_a_malformed_address_header():
+    elements = partition_email(
+        file=io.BytesIO(
+            b'To: "\r\nFrom: sender@example.com\r\nSubject: Greeting\r\n\r\nHello there.\r\n'
+        )
+    )
+    assert [e.text for e in elements] == ["Hello there."]
+    assert elements[0].metadata.sent_from == ["sender@example.com"]
+
+
 def test_partition_email_from_spooled_temp_file_can_partition_an_email():
     with tempfile.SpooledTemporaryFile() as file:
         with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
@@ -432,6 +442,12 @@ class DescribeEmailPartitionerOptions:
         ctx = EmailPartitioningContext(example_doc_path("eml/simple-rfc-822.eml"))
         assert ctx.bcc_addresses is None
 
+    def and_it_degrades_to_the_recoverable_Bcc_addresses_when_the_header_is_malformed(self):
+        ctx = EmailPartitioningContext(
+            file=io.BytesIO(b'Bcc: Ann <ann@example.com>, "\r\nSubject: x\r\n\r\nbody\r\n')
+        )
+        assert ctx.bcc_addresses == ["Ann <ann@example.com>"]
+
     # -- .body_part ------------------------------
 
     def it_returns_the_html_body_part_when_there_is_one_by_default(self):
@@ -470,6 +486,12 @@ class DescribeEmailPartitionerOptions:
         ctx = EmailPartitioningContext(example_doc_path("eml/simple-rfc-822.eml"))
         assert ctx.cc_addresses is None
 
+    def and_it_degrades_to_the_recoverable_Cc_addresses_when_the_header_is_malformed(self):
+        ctx = EmailPartitioningContext(
+            file=io.BytesIO(b'Cc: Amy <amy@example.com>, "\r\nSubject: x\r\n\r\nbody\r\n')
+        )
+        assert ctx.cc_addresses == ["Amy <amy@example.com>"]
+
     # -- .content_type_preference ----------------
 
     @pytest.mark.parametrize(
@@ -494,6 +516,10 @@ class DescribeEmailPartitionerOptions:
     def it_knows_the_From_address_of_the_email(self):
         ctx = EmailPartitioningContext(example_doc_path("eml/mime-simple.eml"))
         assert ctx.from_address == "sender@example.com"
+
+    def and_it_returns_None_when_the_From_header_is_malformed(self):
+        ctx = EmailPartitioningContext(file=io.BytesIO(b'From: "\r\nSubject: x\r\n\r\nbody\r\n'))
+        assert ctx.from_address is None
 
     # -- .message_id -----------------------------
 
@@ -615,6 +641,16 @@ class DescribeEmailPartitionerOptions:
 
     def but_it_returns_None_when_there_are_no_To_addresses(self):
         ctx = EmailPartitioningContext(example_doc_path("eml/mime-no-to.eml"))
+        assert ctx.to_addresses is None
+
+    def and_it_degrades_to_the_recoverable_To_addresses_when_the_header_is_malformed(self):
+        ctx = EmailPartitioningContext(
+            file=io.BytesIO(b'To: Bob <bob@example.com>, "\r\nSubject: x\r\n\r\nbody\r\n')
+        )
+        assert ctx.to_addresses == ["Bob <bob@example.com>"]
+
+    def and_it_returns_None_when_the_To_header_is_wholly_malformed(self):
+        ctx = EmailPartitioningContext(file=io.BytesIO(b'To: "\r\nSubject: x\r\n\r\nbody\r\n'))
         assert ctx.to_addresses is None
 
     # -- fixtures --------------------------------------------------------------------------------

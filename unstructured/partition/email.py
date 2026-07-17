@@ -12,6 +12,7 @@ import email.utils
 import io
 import os
 from email.message import EmailMessage, MIMEPart
+from email.parser import BytesHeaderParser
 from functools import cached_property
 from typing import IO, Any, Final, Iterator, cast
 
@@ -119,14 +120,26 @@ class EmailPartitioningContext:
             kwargs=kwargs,
         )._validate()
 
+    def _addresses(self, header_name: str) -> list[str] | None:
+        """Best-effort address list for an address header (To/From/Cc/Bcc).
+
+        `policy.default`'s structured address parser raises (e.g. IndexError from CPython
+        email._header_value_parser) on some malformed headers, so fall back to a lenient raw
+        parse and degrade instead of crashing the whole partition.
+        """
+        try:
+            values = self.msg.get_all(header_name)
+        except (IndexError, AttributeError, TypeError, UnboundLocalError):
+            values = BytesHeaderParser().parsebytes(self._source_bytes).get_all(header_name)
+        if not values:
+            return None
+        addrs = [a for a in email.utils.getaddresses([str(v) for v in values]) if a != ("", "")]
+        return [email.utils.formataddr(addr) for addr in addrs] or None
+
     @cached_property
     def bcc_addresses(self) -> list[str] | None:
         """The "blind carbon-copy" Bcc: addresses of the message."""
-        bccs = self.msg.get_all("Bcc")
-        if not bccs:
-            return None
-        addrs = email.utils.getaddresses(bccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return self._addresses("Bcc")
 
     @cached_property
     def body_part(self) -> MIMEPart | None:
@@ -140,11 +153,7 @@ class EmailPartitioningContext:
     @cached_property
     def cc_addresses(self) -> list[str] | None:
         """The "carbon-copy" Cc: addresses of the message."""
-        ccs = self.msg.get_all("Cc")
-        if not ccs:
-            return None
-        addrs = email.utils.getaddresses(ccs)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return self._addresses("Cc")
 
     @cached_property
     def content_type_preference(self) -> tuple[str, ...]:
@@ -174,13 +183,8 @@ class EmailPartitioningContext:
     @cached_property
     def from_address(self) -> str | None:
         """The address of the message sender."""
-        froms = self.msg.get_all("From")
-        if not froms:
-            # -- this should never occur because the From: header is mandatory per RFC 5322 --
-            return None
-        addrs = email.utils.getaddresses(froms)
-        formatted_addrs = [email.utils.formataddr(addr) for addr in addrs]
-        return formatted_addrs[0]
+        addrs = self._addresses("From")
+        return addrs[0] if addrs else None
 
     @cached_property
     def message_id(self) -> str | None:
@@ -222,19 +226,20 @@ class EmailPartitioningContext:
         return self._metadata_last_modified or self._sent_date or self._filesystem_last_modified
 
     @cached_property
-    def msg(self) -> EmailMessage:
-        """The Python stdlib `email.message.EmailMessage` object parsed from the EML file."""
+    def _source_bytes(self) -> bytes:
+        """Raw bytes of the EML, read once and reused for the lenient address re-parse."""
         if self._file_path is not None:
             with open(self._file_path, "rb") as f:
-                return cast(
-                    EmailMessage, email.message_from_binary_file(f, policy=email.policy.default)
-                )
-
+                return f.read()
         assert self._file is not None
+        return self._file.read()
 
-        file_bytes = self._file.read()
-
-        return cast(EmailMessage, email.message_from_bytes(file_bytes, policy=email.policy.default))
+    @cached_property
+    def msg(self) -> EmailMessage:
+        """The Python stdlib `email.message.EmailMessage` object parsed from the EML file."""
+        return cast(
+            EmailMessage, email.message_from_bytes(self._source_bytes, policy=email.policy.default)
+        )
 
     @cached_property
     def partitioning_kwargs(self) -> dict[str, Any]:
@@ -265,11 +270,7 @@ class EmailPartitioningContext:
     @cached_property
     def to_addresses(self) -> list[str] | None:
         """The To: addresses of the message."""
-        tos = self.msg.get_all("To")
-        if not tos:
-            return None
-        addrs = email.utils.getaddresses(tos)
-        return [email.utils.formataddr(addr) for addr in addrs]
+        return self._addresses("To")
 
     @cached_property
     def _filesystem_last_modified(self) -> str | None:
