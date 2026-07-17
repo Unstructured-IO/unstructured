@@ -1,3 +1,5 @@
+import pytest
+
 from unstructured.nlp import tokenize
 
 
@@ -18,6 +20,67 @@ def test_word_tokenize_caches():
     assert tokenize.word_tokenize.cache_info().hits == 1
 
 
+def test_word_tokenize_does_not_run_statistical_pipeline(monkeypatch):
+    class _Token:
+        text = "token"
+
+    class _TokenizerOnlyNlp:
+        max_length = 1_000_000
+
+        def make_doc(self, text):
+            assert text == "input"
+            return [_Token()]
+
+        def __call__(self, text):
+            raise AssertionError("word_tokenize should not run the statistical pipeline")
+
+    tokenize.word_tokenize.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _TokenizerOnlyNlp())
+
+    assert tokenize.word_tokenize("input") == ["token"]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "",
+        "Hello, world!",
+        "I can't attend at 3:30 p.m.",
+        "Visit https://example.com/a-b?q=1.",
+        "naïve café — “déjà vu” 😊",
+        "U.S.A.\nSecond\tline",
+    ],
+)
+def test_word_tokenize_matches_full_pipeline(text):
+    expected = [token.text for token in tokenize._get_nlp()(text)]
+    tokenize.word_tokenize.cache_clear()
+
+    assert tokenize.word_tokenize(text) == expected
+
+
+def test_word_tokenize_preserves_long_input_truncation(monkeypatch, caplog):
+    processed_texts = []
+
+    class _TokenizerOnlyNlp:
+        max_length = 12
+
+        def make_doc(self, text):
+            processed_texts.append(text)
+            return []
+
+        def __call__(self, text):
+            raise AssertionError("word_tokenize should not run the statistical pipeline")
+
+    tokenize.word_tokenize.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _TokenizerOnlyNlp())
+
+    with caplog.at_level("WARNING", logger=tokenize.logger.name):
+        tokenize.word_tokenize("123456789 123456789")
+
+    assert processed_texts == ["123456789"]
+    assert any("exceeds spaCy max_length" in record.message for record in caplog.records)
+
+
 def test_sent_tokenize_caches():
     tokenize._tokenize_for_cache.cache_clear()
     assert tokenize._tokenize_for_cache.cache_info().currsize == 0
@@ -34,6 +97,43 @@ def test_pos_tag_caches():
     assert tokenize.pos_tag.cache_info().currsize == 1
     tokenize.pos_tag("Greetings! I am from outer space.")
     assert tokenize.pos_tag.cache_info().hits == 1
+
+
+def test_pos_tag_does_not_run_dependency_parser(monkeypatch):
+    class _Token:
+        text = "runs"
+        tag_ = "VBZ"
+
+    class _Nlp:
+        max_length = 100
+
+        def __call__(self, text, *, disable=()):
+            assert text == "runs"
+            assert tuple(disable) == ("parser",)
+            return [_Token()]
+
+    tokenize.pos_tag.cache_clear()
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: _Nlp())
+
+    assert tokenize.pos_tag("runs") == [("runs", "VBZ")]
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "ITEM 2A. PROPERTIES",
+        "The striped bats are hanging on their feet.",
+        "I can't attend at 3:30 p.m.",
+        "What? What? How dare you?",
+        "naïve café — déjà vu",
+        "First line.\nSecond line!",
+    ],
+)
+def test_pos_tag_matches_pipeline_with_dependency_parser(text):
+    expected = [(token.text, token.tag_) for token in tokenize._process(text)]
+    tokenize.pos_tag.cache_clear()
+
+    assert tokenize.pos_tag(text) == expected
 
 
 def test_tokenizers_functions_run():

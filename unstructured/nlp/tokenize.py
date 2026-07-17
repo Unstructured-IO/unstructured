@@ -11,7 +11,7 @@ import tempfile
 import urllib.error
 import urllib.request
 from functools import lru_cache
-from typing import Final, List, Tuple
+from typing import Final, Iterable, List, Tuple
 
 import spacy
 from filelock import FileLock
@@ -148,11 +148,10 @@ def _get_nlp() -> spacy.language.Language:
     return _load_spacy_model()
 
 
-def _process(text: str) -> spacy.tokens.Doc:
-    """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
+def prepare_text(text: str, nlp: spacy.language.Language) -> str:
+    """Coerce and truncate text to the maximum length accepted by the spaCy model."""
     # -- str() handles numpy.str_ from OCR pipelines --
     text = str(text)
-    nlp = _get_nlp()
     if len(text) > nlp.max_length:
         logger.warning(
             "Input text of length %d exceeds spaCy max_length=%d; "
@@ -162,9 +161,14 @@ def _process(text: str) -> spacy.tokens.Doc:
         )
         # Prefer to cut at the last whitespace within the budget so we don't split a token.
         cut = text.rfind(" ", max(0, nlp.max_length - 256), nlp.max_length)
-        truncated = text[: cut if cut != -1 else nlp.max_length]
-        return nlp(truncated)
-    return nlp(text)
+        return text[: cut if cut != -1 else nlp.max_length]
+    return text
+
+
+def _process(text: str, *, disable: Iterable[str] = ()) -> spacy.tokens.Doc:
+    """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
+    nlp = _get_nlp()
+    return nlp(prepare_text(text, nlp), disable=disable)
 
 
 def sent_tokenize(text: str) -> List[str]:
@@ -176,13 +180,19 @@ def sent_tokenize(text: str) -> List[str]:
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the spaCy word tokenizer with LRU caching enabled."""
-    return [token.text for token in _process(text)]
+    # Word tokenization does not require the tagger or dependency parser. ``make_doc`` runs only
+    # the tokenizer, avoiding the substantially more expensive statistical pipeline while
+    # producing the same tokens as ``nlp(text)``.
+    nlp = _get_nlp()
+    return [token.text for token in nlp.make_doc(prepare_text(text, nlp))]
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def pos_tag(text: str) -> List[Tuple[str, str]]:
     """A wrapper around the spaCy POS tagger with LRU caching enabled."""
-    doc = _process(text)
+    # The dependency parser runs after the tagger and does not affect POS tags. Skipping it avoids
+    # statistical work whose output this function immediately discards.
+    doc = _process(text, disable=("parser",))
     return [(token.text, token.tag_) for token in doc]
 
 

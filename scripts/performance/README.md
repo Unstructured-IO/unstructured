@@ -26,6 +26,21 @@ Export / assign desired environment variable settings:
 -
 Usage: `./scripts/performance/benchmark.sh`
 
+For text-classification and tokenization changes, use the representative text-path benchmark. It
+warms the spaCy model, clears per-text NLP result caches between iterations, and fingerprints
+element types and text so candidate results can be checked for exact output parity:
+
+```bash
+# First run on upstream/main, then switch to the candidate branch for the second command.
+uv run --no-sync python scripts/performance/benchmark_text_partition.py /tmp/main.json
+uv run --no-sync python scripts/performance/benchmark_text_partition.py \
+  /tmp/candidate.json --compare /tmp/main.json
+```
+
+The default matrix covers large TXT, HTML, DOCX, and PPTX documents. Set `NUM_ITERATIONS` or pass
+`--iterations` to change the default of three measured runs. Repeat `--input PATH` to benchmark a
+custom document set instead.
+
 ### Profile
 
 Export / assign desired environment variable settings:
