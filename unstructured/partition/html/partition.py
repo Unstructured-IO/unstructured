@@ -259,6 +259,10 @@ class _HtmlPartitioner:
         except ValueError:
             root = etree.fromstring(html_text.encode("utf-8"), html_parser)
 
+        # HTMLParser returns None for declaration-only docs (e.g. "<!DOCTYPE html>")
+        if root is None:
+            root = etree.fromstring("<html></html>", html_parser)
+
         # -- remove a variety of HTML element types like <script> and <style> that we prefer not
         # -- to encounter while parsing.
         etree.strip_elements(

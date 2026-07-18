@@ -717,6 +717,19 @@ def test_partition_html_from_text_works_with_empty_string():
     assert partition_html(text="") == []
 
 
+@pytest.mark.parametrize(
+    "html_text",
+    [
+        "<?xml version=\"1.0\"?>",
+        "<!DOCTYPE html>",
+        "<?xml",
+    ],
+)
+def test_partition_html_declaration_only_document_returns_empty(html_text: str):
+    # HTMLParser returns None for these; must not TypeError in strip_elements.
+    assert partition_html(text=html_text) == []
+
+
 def test_partition_html_accommodates_block_item_nested_inside_phrasing_element():
     html_text = """
     <div>
