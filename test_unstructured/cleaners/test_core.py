@@ -303,3 +303,13 @@ def test_clean(text, extra_whitespace, dashes, bullets, lowercase, trailing_punc
 def test_bytes_string_to_string():
     text = "\xe6\xaf\x8f\xe6\x97\xa5\xe6\x96\xb0\xe9\x97\xbb"
     assert core.bytes_string_to_string(text, "utf-8") == "每日新闻"
+
+
+def test_index_adjustment_maps_cleaned_index_back_to_original():
+    text = "ITEM 1.     BUSINESS"
+    cleaned, moved_indices = core.clean_extra_whitespace_with_index_run(text)
+    assert cleaned == "ITEM 1. BUSINESS"
+    cleaned_index = cleaned.index("B")
+    original_index = core.index_adjustment_after_clean_extra_whitespace(cleaned_index, moved_indices)
+    assert text[original_index] == cleaned[cleaned_index] == "B"
+    assert original_index == 12
