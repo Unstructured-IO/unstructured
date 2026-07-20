@@ -1133,11 +1133,10 @@ def test_auto_partition_from_url_routes_timeout_to_HTTP_request(request: Fixture
 
 
 def test_file_and_type_from_url_rejects_an_error_response(request: FixtureRequest):
-    response = MagicMock(ok=False, status_code=404)
     function_mock(
         request,
         "unstructured.partition.auto.safe_get",
-        return_value=response,
+        return_value=MagicMock(ok=False, status_code=404),
     )
 
     with pytest.raises(ValueError, match="URL returned an error: 404"):
