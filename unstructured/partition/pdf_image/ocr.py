@@ -254,7 +254,7 @@ def supplement_page_layout_with_ocr(
                 ),
             )
             # Note(yuming): instead of getting OCR layout, we just need
-            # the text extraced from OCR for individual elements
+            # the text extracted from OCR for individual elements
             text_from_ocr = _ocr_agent.get_text_from_image(cropped_image)
             page_layout.elements_array.texts[i] = text_from_ocr
     else:
