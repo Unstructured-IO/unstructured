@@ -289,6 +289,9 @@ def file_and_type_from_url(
     request_timeout: Optional[int] = None,
 ) -> tuple[io.BytesIO, FileType]:
     response = safe_get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
+    if not response.ok:
+        raise ValueError(f"URL returned an error: {response.status_code}")
+
     file = io.BytesIO(response.content)
 
     if content_type := content_type or response.headers.get("Content-Type", None):

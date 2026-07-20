@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
+from filelock import FileLock
 
 from unstructured.metrics.evaluate import (
     ElementTypeMetricsCalculator,
@@ -107,8 +108,8 @@ def mock_dependencies():
 
 
 @pytest.fixture()
-def _cleanup_after_test():
-    """Fixture for removing side-effects of running tests in this file."""
+def _cleanup_after_test(tmp_path_factory: pytest.TempPathFactory):
+    """Serialize tests that write to shared evaluation-result directories."""
 
     def remove_generated_directories():
         """Remove directories created from running tests."""
@@ -125,9 +126,12 @@ def _cleanup_after_test():
             if d.name in target_dir_names:
                 shutil.rmtree(d.path)
 
-    # Run test as normal
-    yield
-    remove_generated_directories()
+    # These tests use fixed paths under example-docs, so separate xdist workers can otherwise
+    # remove one another's outputs during teardown.
+    lock_path = tmp_path_factory.getbasetemp().parent / "test-evaluate-results.lock"
+    with FileLock(lock_path):
+        yield
+        remove_generated_directories()
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")

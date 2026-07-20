@@ -46,7 +46,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
-from unstructured.partition.auto import _PartitionerLoader, partition
+from unstructured.partition.auto import _PartitionerLoader, file_and_type_from_url, partition
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
@@ -1130,6 +1130,17 @@ def test_auto_partition_from_url_routes_timeout_to_HTTP_request(request: Fixture
     file_and_type_from_url_.assert_called_once_with(
         url="http://eie.io", content_type=None, headers={}, ssl_verify=True, request_timeout=326
     )
+
+
+def test_file_and_type_from_url_rejects_an_error_response(request: FixtureRequest):
+    function_mock(
+        request,
+        "unstructured.partition.auto.safe_get",
+        return_value=MagicMock(ok=False, status_code=404),
+    )
+
+    with pytest.raises(ValueError, match="URL returned an error: 404"):
+        file_and_type_from_url("https://example.com/missing")
 
 
 # ================================================================================================

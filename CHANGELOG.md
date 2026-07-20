@@ -1,3 +1,9 @@
+## 0.25.2
+
+### Fixes
+
+- **Reject unsuccessful URL responses before partitioning**: the general `partition(url=...)` path now raises for HTTP error responses before attempting to classify and partition the response body, preventing 4xx/5xx error pages from being returned as document content.
+
 ## 0.25.1
 
 ### Fixes
