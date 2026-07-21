@@ -16,6 +16,7 @@ from docx.document import Document
 from docx.enum.section import WD_SECTION_START
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.xmlchemy import BaseOxmlElement
 from docx.section import Section, _Footer, _Header
 from docx.table import Table as DocxTable
 from docx.table import _Cell, _Row
@@ -95,6 +96,13 @@ BlockElement: TypeAlias = "CT_P | CT_Tbl"
 _MC_NAMESPACE = "http://schemas.openxmlformats.org/markup-compatibility/2006"
 _MC_CHOICE_TAG = f"{{{_MC_NAMESPACE}}}Choice"
 _MC_FALLBACK_TAG = f"{{{_MC_NAMESPACE}}}Fallback"
+_WORDPROCESSINGML_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+_WORDPROCESSING_SHAPE_NAMESPACE = (
+    "http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+)
+_SUPPORTED_MC_CHOICE_NAMESPACES = frozenset(
+    {_WORDPROCESSINGML_NAMESPACE, _WORDPROCESSING_SHAPE_NAMESPACE}
+)
 
 
 def register_picture_partitioner(picture_partitioner: PicturePartitionerT) -> None:
@@ -436,26 +444,47 @@ class _DocxPartitioner:
                 yield from self._iter_table_element(block_item)
 
     @staticmethod
+    def _is_supported_alternate_content_choice(choice: BaseOxmlElement) -> bool:
+        """True when every namespace required by `choice` is supported here."""
+        requires = choice.get("Requires")
+        if not requires:
+            return False
+
+        return all(
+            choice.nsmap.get(prefix) in _SUPPORTED_MC_CHOICE_NAMESPACES
+            for prefix in requires.split()
+        )
+
+    @staticmethod
     def _is_active_alternate_content_branch(block: BlockElement) -> bool:
         """True when `block` is in the selected branch of any enclosing AlternateContent.
 
         Pages exports text boxes in both `mc:Choice` and `mc:Fallback`, representing the same
-        visible content twice. Prefer the first choice and use the fallback only when no choice is
-        present so those equivalent representations do not produce duplicate elements.
+        visible content twice. Select the first Choice whose required namespaces are supported,
+        otherwise select the Fallback, so equivalent representations do not produce duplicates.
         """
         for ancestor in block.iterancestors():
-            if ancestor.tag == _MC_CHOICE_TAG:
-                alternate_content = ancestor.getparent()
-                first_choice = next(
-                    (child for child in alternate_content if child.tag == _MC_CHOICE_TAG),
+            if ancestor.tag not in {_MC_CHOICE_TAG, _MC_FALLBACK_TAG}:
+                continue
+
+            alternate_content = ancestor.getparent()
+            selected_branch = next(
+                (
+                    child
+                    for child in alternate_content
+                    if child.tag == _MC_CHOICE_TAG
+                    and _DocxPartitioner._is_supported_alternate_content_choice(child)
+                ),
+                None,
+            )
+            if selected_branch is None:
+                selected_branch = next(
+                    (child for child in alternate_content if child.tag == _MC_FALLBACK_TAG),
                     None,
                 )
-                if ancestor is not first_choice:
-                    return False
-            elif ancestor.tag == _MC_FALLBACK_TAG:
-                alternate_content = ancestor.getparent()
-                if any(child.tag == _MC_CHOICE_TAG for child in alternate_content):
-                    return False
+
+            if ancestor is not selected_branch:
+                return False
 
         return True
 

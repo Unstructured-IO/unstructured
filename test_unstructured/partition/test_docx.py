@@ -191,6 +191,48 @@ def test_partition_docx_processes_table_in_textbox_once():
     )
 
 
+def test_partition_docx_uses_textbox_table_fallback_for_unsupported_choice():
+    """An unsupported AlternateContent Choice does not hide its compatible Fallback."""
+    document = docx.Document()
+    choice_table = document.add_table(rows=1, cols=1)
+    choice_table.cell(0, 0).text = "Unsupported choice"
+    fallback_table = document.add_table(rows=1, cols=1)
+    fallback_table.cell(0, 0).text = "Compatible fallback"
+
+    choice_table_element = choice_table._tbl
+    choice_table_element.getparent().remove(choice_table_element)
+    fallback_table_element = fallback_table._tbl
+    fallback_table_element.getparent().remove(fallback_table_element)
+
+    mc_namespace = "http://schemas.openxmlformats.org/markup-compatibility/2006"
+    w_namespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    unsupported_namespace = "urn:example:unsupported-word-feature"
+    alternate_content = etree.Element(
+        f"{{{mc_namespace}}}AlternateContent",
+        nsmap={"mc": mc_namespace, "w": w_namespace, "unsupported": unsupported_namespace},
+    )
+    choice = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Choice")
+    choice.set("Requires", "unsupported")
+    choice_textbox = etree.SubElement(choice, f"{{{w_namespace}}}txbxContent")
+    choice_textbox.append(choice_table_element)
+    fallback = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Fallback")
+    fallback_textbox = etree.SubElement(fallback, f"{{{w_namespace}}}txbxContent")
+    fallback_textbox.append(fallback_table_element)
+
+    document.add_paragraph().add_run()._r.append(alternate_content)
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    elements = partition_docx(file=file, infer_table_structure=True)
+
+    assert [type(element) for element in elements] == [Table]
+    assert elements[0].text == "Compatible fallback"
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>Compatible fallback</td></tr></table>"
+    )
+
+
 def test_partition_docx_grabs_header_and_footer():
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
 
