@@ -9,12 +9,14 @@ import io
 import pathlib
 import re
 import tempfile
+from copy import deepcopy
 from typing import Any, Iterator
 
 import docx
 import pytest
 from docx.document import Document
 from docx.text.paragraph import Paragraph
+from lxml import etree
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import (
@@ -147,6 +149,46 @@ def test_partition_docx_processes_table():
         "</table>"
     )
     assert elements[0].metadata.filename == "fake_table.docx"
+
+
+def test_partition_docx_processes_table_in_textbox_once():
+    """Tables in equivalent AlternateContent branches produce one Table element."""
+    document = docx.Document()
+    table = document.add_table(rows=2, cols=2)
+    table.cell(0, 0).text = "Name"
+    table.cell(0, 1).text = "Role"
+    table.cell(1, 0).text = "Alice"
+    table.cell(1, 1).text = "Engineer"
+
+    table_element = table._tbl
+    table_element.getparent().remove(table_element)
+
+    mc_namespace = "http://schemas.openxmlformats.org/markup-compatibility/2006"
+    w_namespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    wps_namespace = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+    alternate_content = etree.Element(
+        f"{{{mc_namespace}}}AlternateContent",
+        nsmap={"mc": mc_namespace, "w": w_namespace, "wps": wps_namespace},
+    )
+    choice = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Choice")
+    choice.set("Requires", "wps")
+    fallback = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Fallback")
+    for branch in (choice, fallback):
+        textbox_content = etree.SubElement(branch, f"{{{w_namespace}}}txbxContent")
+        textbox_content.append(deepcopy(table_element))
+
+    document.add_paragraph().add_run()._r.append(alternate_content)
+    file = io.BytesIO()
+    document.save(file)
+    file.seek(0)
+
+    elements = partition_docx(file=file, infer_table_structure=True)
+
+    assert [type(element) for element in elements] == [Table]
+    assert elements[0].text == "Name Role Alice Engineer"
+    assert elements[0].metadata.text_as_html == (
+        "<table><tr><td>Name</td><td>Role</td></tr><tr><td>Alice</td><td>Engineer</td></tr></table>"
+    )
 
 
 def test_partition_docx_grabs_header_and_footer():

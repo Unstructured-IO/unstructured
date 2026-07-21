@@ -91,7 +91,10 @@ STYLE_TO_ELEMENT_MAPPING = {
 DETECTION_ORIGIN: str = "docx"
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
-BlockItem: TypeAlias = "Paragraph | DocxTable"
+
+_MC_NAMESPACE = "http://schemas.openxmlformats.org/markup-compatibility/2006"
+_MC_CHOICE_TAG = f"{{{_MC_NAMESPACE}}}Choice"
+_MC_FALLBACK_TAG = f"{{{_MC_NAMESPACE}}}Fallback"
 
 
 def register_picture_partitioner(picture_partitioner: PicturePartitionerT) -> None:
@@ -432,6 +435,39 @@ class _DocxPartitioner:
             elif isinstance(block_item, DocxTable):  # pyright: ignore[reportUnnecessaryIsInstance]
                 yield from self._iter_table_element(block_item)
 
+    @staticmethod
+    def _is_active_alternate_content_branch(block: BlockElement) -> bool:
+        """True when `block` is in the selected branch of any enclosing AlternateContent.
+
+        Pages exports text boxes in both `mc:Choice` and `mc:Fallback`, representing the same
+        visible content twice. Prefer the first choice and use the fallback only when no choice is
+        present so those equivalent representations do not produce duplicate elements.
+        """
+        for ancestor in block.iterancestors():
+            if ancestor.tag == _MC_CHOICE_TAG:
+                alternate_content = ancestor.getparent()
+                first_choice = next(
+                    (child for child in alternate_content if child.tag == _MC_CHOICE_TAG),
+                    None,
+                )
+                if ancestor is not first_choice:
+                    return False
+            elif ancestor.tag == _MC_FALLBACK_TAG:
+                alternate_content = ancestor.getparent()
+                if any(child.tag == _MC_CHOICE_TAG for child in alternate_content):
+                    return False
+
+        return True
+
+    def _iter_textbox_tables(self, paragraph: Paragraph) -> Iterator[DocxTable]:
+        """Generate tables nested in text boxes in `paragraph`."""
+        tables: list[CT_Tbl] = paragraph._p.xpath(".//w:txbxContent/w:tbl")
+
+        for table in tables:
+            if not self._is_active_alternate_content_branch(table):
+                continue
+            yield DocxTable(table, paragraph)
+
     def _classify_paragraph_to_element(self, paragraph: Paragraph) -> Iterator[Element]:
         """Generate zero-or-one document element for `paragraph`.
 
@@ -639,6 +675,11 @@ class _DocxPartitioner:
                 yield from self._iter_paragraph_images(item)
             else:
                 yield from self._opts.increment_page_number()
+
+        # -- Text-box tables are nested in a paragraph's drawing XML and are not returned by
+        # -- python-docx's body/section iterators. Shape text remains intentionally ignored.
+        for table in self._iter_textbox_tables(paragraph):
+            yield from self._iter_table_element(table)
 
     def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""

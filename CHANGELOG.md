@@ -1,3 +1,9 @@
+## 0.25.2
+
+### Fixes
+
+- **Extract tables nested in DOCX text boxes**: `partition_docx()` now finds tables stored inside `w:txbxContent`, as produced when Pages exports a spreadsheet table to Word. Equivalent `mc:Choice` and `mc:Fallback` representations are treated as alternatives so the visible table is emitted once rather than duplicated; ordinary shape text remains ignored as before.
+
 ## 0.25.1
 
 ### Fixes
