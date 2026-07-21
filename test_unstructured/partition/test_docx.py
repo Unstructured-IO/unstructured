@@ -191,8 +191,11 @@ def test_partition_docx_processes_table_in_textbox_once():
     )
 
 
-def test_partition_docx_uses_textbox_table_fallback_for_unsupported_choice():
-    """An unsupported AlternateContent Choice does not hide its compatible Fallback."""
+@pytest.mark.parametrize("choice_requires", ["unsupported", None, ""])
+def test_partition_docx_uses_textbox_table_fallback_for_unsupported_choice(
+    choice_requires: str | None,
+):
+    """An unsupported or invalid AlternateContent Choice does not hide its Fallback."""
     document = docx.Document()
     choice_table = document.add_table(rows=1, cols=1)
     choice_table.cell(0, 0).text = "Unsupported choice"
@@ -212,7 +215,8 @@ def test_partition_docx_uses_textbox_table_fallback_for_unsupported_choice():
         nsmap={"mc": mc_namespace, "w": w_namespace, "unsupported": unsupported_namespace},
     )
     choice = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Choice")
-    choice.set("Requires", "unsupported")
+    if choice_requires is not None:
+        choice.set("Requires", choice_requires)
     choice_textbox = etree.SubElement(choice, f"{{{w_namespace}}}txbxContent")
     choice_textbox.append(choice_table_element)
     fallback = etree.SubElement(alternate_content, f"{{{mc_namespace}}}Fallback")

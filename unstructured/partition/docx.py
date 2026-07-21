@@ -445,7 +445,11 @@ class _DocxPartitioner:
 
     @staticmethod
     def _is_supported_alternate_content_choice(choice: BaseOxmlElement) -> bool:
-        """True when every namespace required by `choice` is supported here."""
+        """True when `choice` has a valid `Requires` list and all its namespaces are supported.
+
+        ECMA-376 Part 3 section 7.6 requires one or more namespace prefixes. Treat a missing or
+        empty attribute as unsupported so a conforming Fallback can be selected instead.
+        """
         requires = choice.get("Requires")
         if not requires:
             return False
