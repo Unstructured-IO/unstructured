@@ -1,3 +1,9 @@
+## Unreleased
+
+### Enhancements
+
+- **Avoid repeated HTML fragment parsing during inline merging**: the HTML ontology conversion now carries parsed fragments forward while combining adjacent elements.
+
 ## 0.25.1
 
 ### Fixes
