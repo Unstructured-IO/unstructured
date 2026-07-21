@@ -217,11 +217,15 @@ def combine_inline_elements(
 
         current_element, current_depth, current_ontology_elements = current
         next_element, next_depth, next_ontology_elements = nxt
-        if _can_ontology_elements_be_merged(
-            current_ontology_elements,
-            next_ontology_elements,
-            current_depth=current_depth,
-            next_depth=next_depth,
+        if (
+            current_ontology_elements
+            and next_ontology_elements
+            and _can_ontology_elements_be_merged(
+                current_ontology_elements,
+                next_ontology_elements,
+                current_depth=current_depth,
+                next_depth=next_depth,
+            )
         ):
             current_element.text += " " + next_element.text
             current_element.metadata.text_as_html += next_element.metadata.text_as_html
@@ -283,7 +287,7 @@ def _can_ontology_elements_be_merged(
     next_depth: int,
 ) -> bool:
     """Check mergeability using ontology fragments that have already been parsed."""
-    if current_depth != next_depth or not current_ontology_elements or not next_ontology_elements:
+    if current_depth != next_depth:
         return False
 
     for ontology_element in chain(current_ontology_elements, next_ontology_elements):
