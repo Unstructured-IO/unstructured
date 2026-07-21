@@ -125,15 +125,9 @@ def _ontology_to_unstructured_elements(
                     filename=filename,
                 ),
             )
-            # -- pair the container with its DOM-nesting depth and parsed ontology fragments.
-            # -- The fragments let the merge check reject layout containers without reparsing.
-            parsed_container_tags = BeautifulSoup(container_html, "html.parser").find_all(
-                recursive=False
-            )
-            parsed_container_elements = [
-                parse_html_to_ontology_element(html_tag) for html_tag in parsed_container_tags
-            ]
-            elements_to_return += [(container_element, depth, parsed_container_elements)]
+            # -- Containers are never candidates for inline merging, so they carry no parsed
+            # -- fragments and avoid an unnecessary BeautifulSoup parse.
+            elements_to_return += [(container_element, depth, [])]
         children: list[tuple[elements.Element, int, list[ontology.OntologyElement]]] = []
         for child in ontology_element.children:
             child = _ontology_to_unstructured_elements(
@@ -289,7 +283,7 @@ def _can_ontology_elements_be_merged(
     next_depth: int,
 ) -> bool:
     """Check mergeability using ontology fragments that have already been parsed."""
-    if current_depth != next_depth:
+    if current_depth != next_depth or not current_ontology_elements or not next_ontology_elements:
         return False
 
     for ontology_element in chain(current_ontology_elements, next_ontology_elements):
