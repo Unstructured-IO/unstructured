@@ -41,6 +41,30 @@ def test_run_benchmark_measures_each_document_without_nlp_result_cache_hits(monk
     assert results["documents"][str(inputs[0])]["output"]["element_count"] == 1
 
 
+def test_run_benchmark_uses_median_of_total_iteration_times(monkeypatch, tmp_path):
+    warmup = tmp_path / "warmup.txt"
+    inputs = [tmp_path / "first.txt", tmp_path / "second.txt"]
+    document_results = iter(
+        [
+            {"seconds": {"samples": [1.0, 100.0, 3.0]}, "output": {}},
+            {"seconds": {"samples": [10.0, 20.0, 30.0]}, "output": {}},
+        ]
+    )
+
+    monkeypatch.setattr(benchmark, "partition", lambda **kwargs: [])
+    monkeypatch.setattr(benchmark, "clear_nlp_result_caches", lambda: None)
+    monkeypatch.setattr(benchmark, "run_document", lambda *args: next(document_results))
+
+    results = benchmark.run_benchmark(inputs, warmup, iterations=3)
+
+    # Per-iteration totals are [11, 120, 33], whose median is 33. Summing
+    # document medians would incorrectly produce 53.
+    assert results["summary"] == {
+        "median_total_seconds": 33.0,
+        "total_samples": [11.0, 120.0, 33.0],
+    }
+
+
 def test_compare_results_checks_each_document_output(tmp_path, capsys):
     output = {"sha256": "same", "element_count": 1, "type_counts": {"Text": 1}}
     baseline = {

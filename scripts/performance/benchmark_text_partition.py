@@ -112,11 +112,17 @@ def run_benchmark(
     documents = {
         display_path(input_path): run_document(input_path, iterations) for input_path in input_paths
     }
-    median_total = sum(document["seconds"]["median"] for document in documents.values())
+    total_samples = [
+        sum(document["seconds"]["samples"][iteration] for document in documents.values())
+        for iteration in range(iterations)
+    ]
     return {
         "iterations": iterations,
         "documents": documents,
-        "summary": {"median_total_seconds": round(median_total, 6)},
+        "summary": {
+            "median_total_seconds": round(statistics.median(total_samples), 6),
+            "total_samples": [round(sample, 6) for sample in total_samples],
+        },
     }
 
 
