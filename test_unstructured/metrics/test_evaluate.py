@@ -132,10 +132,12 @@ def _cleanup_after_test():
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
-def test_text_extraction_evaluation():
+def test_text_extraction_evaluation(tmp_path):
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    # Keep generated output isolated so parallel pytest workers cannot remove it via
+    # another test's cleanup fixture while this test is writing its reports.
+    export_dir = tmp_path / "test_evaluate_results_cct"
 
     TextExtractionMetricsCalculator(
         documents_dir=output_dir, ground_truths_dir=source_dir

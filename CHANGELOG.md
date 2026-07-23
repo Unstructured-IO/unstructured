@@ -1,3 +1,9 @@
+## 0.25.2-dev0
+
+### Enhancements
+
+- **Speed up word tokenization**: `word_tokenize()` now uses spaCy's tokenizer-only path instead of running the statistical tagger and dependency parser when only token text is needed. This preserves token and element output while reducing representative text-heavy partition time by 14.6% across TXT, HTML, DOCX, and PPTX benchmarks.
+
 ## 0.25.1
 
 ### Fixes
