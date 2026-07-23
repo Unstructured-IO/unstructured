@@ -6,7 +6,6 @@ unlike the `.ppt` format which was binary and proprietary.
 
 from __future__ import annotations
 
-import io
 from functools import cached_property
 from tempfile import SpooledTemporaryFile
 from typing import IO, Any, Iterator, Protocol, Sequence
@@ -447,14 +446,9 @@ class PptxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The pptx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
         if self._file:
+            if isinstance(self._file, SpooledTemporaryFile):
+                self._file.seek(0)
             return self._file
 
         raise ValueError(

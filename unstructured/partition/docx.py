@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import itertools
 import logging
 import os
@@ -341,12 +340,8 @@ class DocxPartitionerOptions:
         if self._file_path:
             return self._file_path
 
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
-        # -- to work around that bug here.
         if isinstance(self._file, tempfile.SpooledTemporaryFile):
             self._file.seek(0)
-            return io.BytesIO(self._file.read())
 
         assert self._file is not None  # -- assured by `._validate()` --
         return self._file
