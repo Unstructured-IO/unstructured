@@ -1,5 +1,6 @@
 import pathlib
 from multiprocessing import Pool
+from tempfile import SpooledTemporaryFile
 
 import numpy as np
 import pytest
@@ -27,6 +28,17 @@ from unstructured.documents.elements import (
     Image as ImageElement,
 )
 from unstructured.partition.common import common
+
+
+def test_spooled_to_bytes_io_if_needed_rewinds_without_copying():
+    with SpooledTemporaryFile(max_size=1, mode="w+b") as spooled_file:
+        spooled_file.write(b"sample content")
+
+        result = common.spooled_to_bytes_io_if_needed(spooled_file)
+
+        assert result is spooled_file
+        assert result.tell() == 0
+        assert result.read() == b"sample content"
 
 
 class MockPageLayout(layout.PageLayout):

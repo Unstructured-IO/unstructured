@@ -700,9 +700,7 @@ class DescribePptxPartitionerOptions:
 
         assert opts.pptx_file == "l/m/n.pptx"
 
-    def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
-        self, opts_args: dict[str, Any]
-    ):
+    def and_it_uses_a_SpooledTemporaryFile_directly(self, opts_args: dict[str, Any]):
         with tempfile.SpooledTemporaryFile() as spooled_temp_file:
             spooled_temp_file.write(b"abcdefg")
             opts_args["file"] = spooled_temp_file
@@ -710,9 +708,8 @@ class DescribePptxPartitionerOptions:
 
             pptx_file = opts.pptx_file
 
-            assert pptx_file is not spooled_temp_file
-            assert isinstance(pptx_file, io.BytesIO)
-            assert pptx_file.getvalue() == b"abcdefg"
+            assert pptx_file is spooled_temp_file
+            assert pptx_file.read() == b"abcdefg"
 
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
         self, opts_args: dict[str, Any]

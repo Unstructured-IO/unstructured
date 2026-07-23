@@ -6,7 +6,7 @@ from enum import Enum
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
 from time import sleep
-from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
+from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar
 
 import emoji
 import psutil
@@ -350,19 +350,20 @@ def exactly_one(**kwargs: Any) -> None:
 _T = TypeVar("_T")
 
 
-def spooled_to_bytes_io_if_needed(file: _T | SpooledTemporaryFile[bytes]) -> _T | BytesIO:
-    """Convert `file` to `BytesIO` when it is a `SpooledTemporaryFile`.
+def spooled_to_bytes_io_if_needed(file: _T) -> _T:
+    """Rewind and return a `SpooledTemporaryFile` without copying its contents.
 
     Note that `file` does not need to be IO[bytes]. It can be `None` or `bytes` and this function
     will not complain.
 
-    In Python <3.11, `SpooledTemporaryFile` does not implement `.readable()` or `.seekable()` which
-    triggers an exception when the file is loaded by certain packages. In particular, the stdlib
-    `zipfile.Zipfile` raises on opening a `SpooledTemporaryFile` as does `Pandas.read_csv()`.
+    Python 3.11 and newer provide the complete buffered-I/O interface required by consumers such
+    as `zipfile.ZipFile` and `pandas.read_csv()`. Since those are the only Python versions this
+    package supports, converting the spool to `BytesIO` only adds a document-sized allocation.
+
+    The function name is retained for compatibility with existing call sites.
     """
     if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
-        return BytesIO(cast(bytes, file.read()))
 
     # -- return `file` unchanged otherwise --
     return file
