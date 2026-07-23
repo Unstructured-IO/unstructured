@@ -1,3 +1,9 @@
+## 0.25.2
+
+### Fixes
+
+- **Avoid copying spooled uploads into memory**: DOCX, PPTX, and shared partitioning paths now reuse `SpooledTemporaryFile` inputs directly on supported Python versions instead of copying their complete contents into `BytesIO`. Large uploads remain disk-backed, avoiding an additional document-sized heap allocation without changing the partition API.
+
 ## 0.25.1
 
 ### Fixes
