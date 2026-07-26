@@ -1490,7 +1490,15 @@ class _TextSplitter:
                         # -- token-based overlap: find tail with ~overlap tokens --
                         tail = self._get_token_overlap_tail(fragment, overlap)
                         overlapped_remainder = tail + " " + raw_remainder
-                        return fragment, overlapped_remainder
+                        # -- NOTE(otiscuilei): only apply the overlap when the remainder still
+                        # -- shrinks. Prepending the overlap tail (plus a synthetic separator
+                        # -- space) can regrow the remainder back to `s`; the next split then
+                        # -- lands on that inserted space and reproduces `s` verbatim, spinning
+                        # -- `_iter_text_splits` forever on a whitespace-free run longer than
+                        # -- `maxlen`. `raw_remainder` is always strictly shorter than `s`, so
+                        # -- fall back to it to guarantee forward progress.
+                        if len(overlapped_remainder) < len(s):
+                            return fragment, overlapped_remainder
                     return fragment, raw_remainder
 
         # -- fallback: split on whitespace boundary using binary search to find token limit --
@@ -1525,7 +1533,9 @@ class _TextSplitter:
         if overlap > 0 and fragment:
             tail = self._get_token_overlap_tail(fragment, overlap)
             overlapped_remainder = tail + " " + raw_remainder
-            return fragment, overlapped_remainder
+            # -- only overlap when it makes forward progress (see note in the separator branch) --
+            if len(overlapped_remainder) < len(s):
+                return fragment, overlapped_remainder
 
         return fragment, raw_remainder
 
