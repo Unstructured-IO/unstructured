@@ -1,3 +1,9 @@
+## 0.25.2-dev0
+
+### Enhancements
+
+- **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
 ## 0.25.1
 
 ### Fixes
