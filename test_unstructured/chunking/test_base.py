@@ -876,6 +876,50 @@ class DescribePreChunk:
         )
         assert pre_chunk.overlap_tail == expected_value
 
+    def it_measures_its_overlap_tail_in_tokens_under_token_chunking(self):
+        """Under token chunking `overlap` is a token count, so the tail is too.
+
+        A character slice would carry far fewer tokens than requested.
+        """
+        pytest.importorskip("tiktoken")
+        import tiktoken
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        text = (
+            "In rhoncus ipsum sed lectus porta volutpat morbi tincidunt augue"
+            " interdum velit euismod in pellentesque massa placerat."
+        )
+        pre_chunk = PreChunk(
+            [Text(text)],
+            overlap_prefix="",
+            opts=ChunkingOptions(
+                max_tokens=100, tokenizer="cl100k_base", overlap=10, overlap_all=True
+            ),
+        )
+
+        tail = pre_chunk.overlap_tail
+
+        # -- the tail is a real suffix of the chunk text --
+        assert text.endswith(tail)
+        tail_tokens = len(enc.encode(tail))
+        # -- it carries ~10 tokens (never more), not the ~3 that a 10-character slice
+        # -- of this text would yield --
+        assert 8 <= tail_tokens <= 10
+
+    def it_returns_the_whole_text_when_shorter_than_the_token_overlap(self):
+        """When the chunk has fewer tokens than the overlap, the tail is the whole text."""
+        pytest.importorskip("tiktoken")
+
+        pre_chunk = PreChunk(
+            [Text("Hello world")],
+            overlap_prefix="",
+            opts=ChunkingOptions(
+                max_tokens=100, tokenizer="cl100k_base", overlap=50, overlap_all=True
+            ),
+        )
+
+        assert pre_chunk.overlap_tail == "Hello world"
+
     @pytest.mark.parametrize(
         ("elements", "overlap_prefix", "expected_value"),
         [
