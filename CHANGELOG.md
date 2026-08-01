@@ -1,8 +1,10 @@
-## 0.25.2-dev0
+## 0.25.2
 
 ### Enhancements
 
 - **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
+- **Add lazy chunking entry points**: `iter_chunk_elements()` and `iter_chunks_by_title()` yield each chunk as it is formed, alongside the existing `chunk_elements()` and `chunk_by_title()` which return a list. Same options, same chunks, same order — chunking was already lazy internally and this exposes that pipeline rather than adding a second one, with the list forms now defined in terms of it. A caller that also reads elements lazily can keep peak memory proportional to the largest pre-chunk instead of the whole document, which matters when elements carry large `metadata.image_base64` payloads. Options are validated when the function is called, not when the returned iterator is first advanced.
 
 ## 0.25.1
 

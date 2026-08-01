@@ -15,7 +15,7 @@ started.
 
 from __future__ import annotations
 
-from typing import Iterable, Optional
+from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import ChunkingOptions, PreChunker
 from unstructured.documents.elements import Element
@@ -109,15 +109,64 @@ def chunk_elements(
     return _chunk_elements(elements, opts)
 
 
+def iter_chunk_elements(
+    elements: Iterable[Element],
+    *,
+    include_orig_elements: Optional[bool] = None,
+    max_characters: Optional[int] = None,
+    max_tokens: Optional[int] = None,
+    new_after_n_chars: Optional[int] = None,
+    new_after_n_tokens: Optional[int] = None,
+    overlap: Optional[int] = None,
+    overlap_all: Optional[bool] = None,
+    tokenizer: Optional[str] = None,
+    repeat_table_headers: Optional[bool] = None,
+    skip_table_chunking: Optional[bool] = None,
+    isolate_table: Optional[bool] = None,
+) -> Iterator[Element]:
+    """Lazy `chunk_elements`: yields each chunk as it is formed instead of returning a list.
+
+    Accepts the same options and produces the same chunks in the same order; see
+    `chunk_elements` for the parameter documentation. Prefer this form when `elements` is
+    itself lazy and the chunks are consumed one at a time, e.g. written straight to a file.
+    Peak memory is then bounded by the largest pre-chunk rather than by the whole document,
+    which matters when elements carry large `metadata.image_base64` payloads.
+
+    Chunking has always been lazy internally; this exposes that pipeline rather than adding
+    a second one. Options are still validated eagerly, when this function is called, not
+    when the returned iterator is first advanced, so an invalid combination raises here.
+    """
+    # -- raises ValueError on invalid parameters --
+    opts = _BasicChunkingOptions.new(
+        include_orig_elements=include_orig_elements,
+        max_characters=max_characters,
+        max_tokens=max_tokens,
+        new_after_n_chars=new_after_n_chars,
+        new_after_n_tokens=new_after_n_tokens,
+        overlap=overlap,
+        overlap_all=overlap_all,
+        tokenizer=tokenizer,
+        repeat_table_headers=repeat_table_headers,
+        skip_table_chunking=skip_table_chunking,
+        isolate_table=isolate_table,
+    )
+
+    return _iter_chunk_elements(elements, opts)
+
+
 def _chunk_elements(elements: Iterable[Element], opts: _BasicChunkingOptions) -> list[Element]:
     """Implementation of actual basic chunking."""
     # -- Note(scanny): it might seem like over-abstraction for this to be a separate function but
     # -- it eases overriding or adding individual chunking options when customizing a stock chunker.
-    return [
-        chunk
-        for pre_chunk in PreChunker.iter_pre_chunks(elements, opts)
-        for chunk in pre_chunk.iter_chunks()
-    ]
+    return list(_iter_chunk_elements(elements, opts))
+
+
+def _iter_chunk_elements(
+    elements: Iterable[Element], opts: _BasicChunkingOptions
+) -> Iterator[Element]:
+    """Lazy implementation of actual basic chunking, shared with `_chunk_elements`."""
+    for pre_chunk in PreChunker.iter_pre_chunks(elements, opts):
+        yield from pre_chunk.iter_chunks()
 
 
 class _BasicChunkingOptions(ChunkingOptions):
