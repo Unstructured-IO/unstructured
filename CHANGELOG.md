@@ -1,8 +1,12 @@
-## 0.25.2-dev0
+## 0.25.2-dev1
 
 ### Enhancements
 
 - **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
+### Fixes
+
+- **Fix `IndexError` on empty text in the ordered-bullet cleaners**: `clean_ordered_bullets()` and `extract_ordered_bullets()` indexed the first token of `text.split()` without checking that a token existed, so empty or whitespace-only text raised `IndexError`. Applying either to a document containing an empty element (e.g. `element.apply(clean_ordered_bullets)`) aborted the run. They now return the text unchanged and `(None, None, None)` respectively, matching the other cleaners in the module.
 
 ## 0.25.1
 
