@@ -17,6 +17,7 @@
 ### Fixes
 
 - **Reject an empty `tokenizer` when chunking by `max_tokens`**: `""` is not `None`, so it slipped past the "tokenizer is required" check while still leaving the chunkers without a token counter — the window was then silently measured in characters, making `max_tokens=20` mean 20 characters. It now raises the same `ValueError` as omitting `tokenizer` altogether.
+- **`partition_email()` no longer crashes on a `multipart/*` attachment**: a multipart sub-part surfaced as an "attachment" (e.g. a PGP/MIME-signed forwarded message) previously raised an uncaught `KeyError` from `email.contentmanager`, which has no `get_content()` handler for any `multipart/*` content-type. `_AttachmentPartitioner._file_bytes` now falls back to the part's raw serialized bytes for this case instead.
 
 ## 0.25.1
 

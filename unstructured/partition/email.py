@@ -432,6 +432,16 @@ class _AttachmentPartitioner:
     @cached_property
     def _file_bytes(self) -> bytes:
         """The bytes of the attached file."""
+        # -- `email.contentmanager` has no `get_content()` handler registered for any
+        # -- `multipart/*` content-type (handlers exist for text/*, application/*, image/*,
+        # -- message/rfc822, etc., but multipart sub-parts are normally consumed via
+        # -- `.iter_parts()`, not `.get_content()`). A multipart sub-part can still appear as an
+        # -- "attachment" though, e.g. a PGP/MIME-signed forwarded message (`multipart/signed`)
+        # -- nested inside a `multipart/mixed` envelope. Fall back to the part's raw serialized
+        # -- bytes in that case rather than letting `get_content()` raise `KeyError`.
+        if self._attachment.get_content_type().startswith("multipart/"):
+            return self._attachment.as_bytes()
+
         content = self._attachment.get_content()
 
         if isinstance(content, str):
