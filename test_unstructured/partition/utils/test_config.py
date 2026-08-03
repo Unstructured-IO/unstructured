@@ -1,8 +1,44 @@
+import importlib
 import shutil
 import tempfile
 from pathlib import Path
 
 import pytest
+
+
+@pytest.mark.parametrize(
+    ("env_value", "expected"),
+    [
+        ("true", True),
+        ("1", True),
+        ("t", True),
+        ("false", False),
+        ("0", False),
+        ("no", False),
+    ],
+)
+def test_include_debug_metadata_parses_bool_string(monkeypatch, env_value, expected):
+    from unstructured.partition.utils import constants
+
+    monkeypatch.setenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", env_value)
+    try:
+        importlib.reload(constants)
+        assert constants.UNSTRUCTURED_INCLUDE_DEBUG_METADATA is expected
+    finally:
+        monkeypatch.undo()
+        importlib.reload(constants)
+
+
+def test_include_debug_metadata_defaults_to_false_when_unset(monkeypatch):
+    from unstructured.partition.utils import constants
+
+    monkeypatch.delenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", raising=False)
+    try:
+        importlib.reload(constants)
+        assert constants.UNSTRUCTURED_INCLUDE_DEBUG_METADATA is False
+    finally:
+        monkeypatch.undo()
+        importlib.reload(constants)
 
 
 def test_default_config():
