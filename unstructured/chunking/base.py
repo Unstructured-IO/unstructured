@@ -76,6 +76,16 @@ class TokenCounter:
         """Return the number of tokens in `text`."""
         return len(self._encoder.encode(text))
 
+    def validate(self) -> None:
+        """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
+
+        The encoder is otherwise resolved on the first `count()`. The list-form chunkers drive
+        the whole pipeline during the call, so they hit that immediately, but the `iter_*` forms
+        return before anything is counted. Forcing resolution during option validation keeps
+        both forms raising at the same call site.
+        """
+        _ = self._encoder
+
 
 # ================================================================================================
 # CHUNKING OPTIONS
@@ -383,6 +393,14 @@ class ChunkingOptions:
                 f"'overlap' argument must be less than `max_characters`,"
                 f" got {self.overlap} >= {hard_max}"
             )
+
+        # -- an unknown tokenizer is an invalid option, so surface it here with the rest rather
+        # -- than on the first token count. Otherwise `chunk_*()` raises during the call (it
+        # -- counts immediately) while `iter_chunk*()` raises whenever the caller first advances
+        # -- the generator it returned. Only checked when token counting is actually in use,
+        # -- matching `measure()`; a `tokenizer` passed without `max_tokens` goes unused.
+        if self.use_token_counting and self.token_counter is not None:
+            self.token_counter.validate()
 
 
 # ================================================================================================

@@ -138,12 +138,25 @@ def iter_chunks_by_title(
     Accepts the same options and produces the same chunks in the same order; see
     `chunk_by_title` for the parameter documentation. Prefer this form when `elements` is
     itself lazy and the chunks are consumed one at a time, e.g. written straight to a file.
-    Peak memory is then bounded by the largest pre-chunk rather than by the whole document,
-    which matters when elements carry large `metadata.image_base64` payloads.
+    The formed chunks are then never accumulated in a list.
+
+    The bound on elements held at once is looser here than in `iter_chunk_elements()`. This
+    strategy recombines undersized pre-chunks, and it cannot know a pre-chunk is finished until
+    it has read the following one and found it does not fit, so it holds about two pre-chunks
+    rather than one. When the whole document fits in one or two chunking windows that lookahead
+    reaches the end of `elements`, meaning the first chunk costs the entire source; this is
+    inherent to combining and is not avoided by `combine_text_under_n_chars=0`.
+
+    Whatever that bound, it covers the elements this function holds, not the payload each chunk
+    carries. Under the default `include_orig_elements=True` every chunk embeds copies of the
+    elements it was formed from, `metadata.image_base64` included, so streaming alone gives
+    little relief when those payloads are the bottleneck -- pass `include_orig_elements=False`
+    as well.
 
     Chunking has always been lazy internally; this exposes that pipeline rather than adding
     a second one. Options are still validated eagerly, when this function is called, not
-    when the returned iterator is first advanced, so an invalid combination raises here.
+    when the returned iterator is first advanced, so an invalid combination -- or an unknown
+    `tokenizer` -- raises here.
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,

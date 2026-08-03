@@ -299,6 +299,26 @@ def test_lazy_chunking_validates_its_options_eagerly(iter_fn: Callable[..., Iter
 
 
 @pytest.mark.parametrize(("chunk_fn", "iter_fn"), _PAIRS)
+def test_lazy_chunking_validates_its_tokenizer_eagerly(
+    chunk_fn: Callable[..., list[Element]], iter_fn: Callable[..., Iterator[Element]]
+):
+    """An unknown tokenizer must also raise at the call, in both forms.
+
+    The encoder is resolved on first use, which for the list form happens during the call but
+    for the generator form would happen on first advance -- exactly the deferred error the
+    eager-validation contract promises not to produce.
+    """
+    pytest.importorskip("tiktoken")
+    kwargs = {"max_tokens": 64, "tokenizer": "not-a-real-tokenizer"}
+
+    with pytest.raises(ValueError, match="not-a-real-tokenizer"):
+        chunk_fn(_document(), **kwargs)
+
+    with pytest.raises(ValueError, match="not-a-real-tokenizer"):
+        iter_fn(iter(_document()), **kwargs)
+
+
+@pytest.mark.parametrize(("chunk_fn", "iter_fn"), _PAIRS)
 def test_lazy_chunking_accepts_the_same_options(
     chunk_fn: Callable[..., list[Element]], iter_fn: Callable[..., Iterator[Element]]
 ):
