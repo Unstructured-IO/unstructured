@@ -8,7 +8,9 @@ caller only reaches for them to avoid materializing the document.
 
 from __future__ import annotations
 
+import gc
 import inspect
+import weakref
 from typing import Any, Callable, Iterator
 
 import pytest
@@ -283,6 +285,45 @@ def test_lazy_chunking_does_not_drain_its_source_to_yield_the_first_chunk(
     next(chunks)
     assert consumed - first <= 8, (
         f"second chunk cost {consumed - first} elements against the first chunk's {first}"
+    )
+
+
+@pytest.mark.parametrize(
+    ("iter_fn", "pre_chunks_held"),
+    [
+        (iter_chunk_elements, 1),
+        # -- by-title reads one pre-chunk ahead to combine undersized ones --
+        (iter_chunks_by_title, 2),
+    ],
+)
+def test_lazy_chunking_releases_each_pre_chunk_before_forming_the_next(
+    iter_fn: Callable[..., Iterator[Element]], pre_chunks_held: int
+):
+    """Elements held at once must stay flat, not creep up as the document is consumed.
+
+    Yielding chunks lazily is not enough on its own: the emitted pre-chunk stays bound to the
+    generator's loop variable while the next one fills, so without an explicit release a
+    streaming caller holds one pre-chunk more than the strategy needs.
+    """
+    elements_per_pre_chunk = 4  # -- four ~70-character elements fill a 250-character window --
+    refs: list[weakref.ReferenceType[Element]] = []
+    live: list[int] = []
+
+    def source() -> Iterator[Element]:
+        for i in range(200):
+            element = NarrativeText(f"element {i:03d} " * 5)
+            refs.append(weakref.ref(element))
+            yield element
+            gc.collect()
+            live.append(sum(1 for ref in refs if ref() is not None))
+
+    chunks = iter_fn(source(), max_characters=250, include_orig_elements=False)
+    for _ in range(6):
+        next(chunks)
+
+    assert max(live) <= elements_per_pre_chunk * pre_chunks_held, (
+        f"held {max(live)} source elements at once, more than the"
+        f" {pre_chunks_held} pre-chunk(s) this strategy needs"
     )
 
 

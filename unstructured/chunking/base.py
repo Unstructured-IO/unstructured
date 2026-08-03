@@ -346,8 +346,11 @@ class ChunkingOptions:
                 " specify one or the other, not both"
             )
 
-        # -- max_tokens requires tokenizer --
-        if max_tokens is not None and tokenizer is None:
+        # -- max_tokens requires tokenizer. An empty string is rejected along with `None`: it is
+        # -- not `None` so it would pass this check, but `token_counter` is `None` for any falsey
+        # -- tokenizer, which silently sends `measure()` down the character-counting path and
+        # -- enforces `max_tokens` as a count of characters.
+        if max_tokens is not None and not tokenizer:
             raise ValueError("'tokenizer' is required when using 'max_tokens'")
 
         # -- max_tokens must be positive --
@@ -398,7 +401,8 @@ class ChunkingOptions:
         # -- than on the first token count. Otherwise `chunk_*()` raises during the call (it
         # -- counts immediately) while `iter_chunk*()` raises whenever the caller first advances
         # -- the generator it returned. Only checked when token counting is actually in use,
-        # -- matching `measure()`; a `tokenizer` passed without `max_tokens` goes unused.
+        # -- matching `measure()`; a `tokenizer` passed without `max_tokens` goes unused. The
+        # -- check above guarantees a counter exists whenever token counting is in use.
         if self.use_token_counting and self.token_counter is not None:
             self.token_counter.validate()
 
