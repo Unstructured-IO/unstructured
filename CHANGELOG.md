@@ -1,8 +1,14 @@
-## 0.25.2-dev0
+## 0.25.2
 
 ### Enhancements
 
 - **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
+- **Add lazy chunking entry points**: `iter_chunk_elements()` and `iter_chunks_by_title()` yield each chunk as it is formed, alongside the list-returning `chunk_elements()` and `chunk_by_title()`, which are now defined in terms of them. Same options, same chunks, same order — chunking was already lazy internally and this exposes that pipeline rather than adding a second one. Chunks are no longer accumulated in a list, so a caller that also reads elements lazily holds only the pre-chunk being formed; see the docstrings for two limits on that — `iter_chunks_by_title()` reads one pre-chunk ahead in order to combine undersized ones, and the default `include_orig_elements=True` retains source elements (`image_base64` payloads included) in every chunk. Options are validated at the call rather than on first advance, and an unknown `tokenizer` used with `max_tokens` now raises there too, in both forms.
+
+### Fixes
+
+- **Reject an empty `tokenizer` when chunking by `max_tokens`**: `""` is not `None`, so it slipped past the "tokenizer is required" check while still leaving the chunkers without a token counter — the window was then silently measured in characters, making `max_tokens=20` mean 20 characters. It now raises the same `ValueError` as omitting `tokenizer` altogether.
 
 ## 0.25.1
 

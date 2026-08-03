@@ -232,6 +232,18 @@ class DescribeChunkingOptions:
         ):
             ChunkingOptions(max_tokens=100)._validate()
 
+    def it_rejects_max_tokens_with_an_empty_tokenizer(self):
+        """An empty tokenizer is not `None`, so it would otherwise slip past that check.
+
+        `token_counter` is `None` for any falsey tokenizer, which sends `measure()` down the
+        character-counting path -- silently enforcing `max_tokens` as a count of characters.
+        """
+        with pytest.raises(
+            ValueError,
+            match="'tokenizer' is required when using 'max_tokens'",
+        ):
+            ChunkingOptions(max_tokens=100, tokenizer="")._validate()
+
     @pytest.mark.parametrize("max_tokens", [0, -1, -42])
     def it_rejects_max_tokens_not_greater_than_zero(self, max_tokens: int):
         with pytest.raises(
