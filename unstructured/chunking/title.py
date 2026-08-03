@@ -148,11 +148,11 @@ def iter_chunks_by_title(
     inherent to combining and is not avoided by `combine_text_under_n_chars=0`.
 
     Whatever that bound, it covers the elements this function holds, not what each chunk carries.
-    Under the default `include_orig_elements=True` a chunk retains the elements it was formed
-    from in `metadata.orig_elements` -- text elements by reference, a table as a copy -- so their
-    `metadata.image_base64` payloads live as long as the chunk does. Streaming alone therefore
-    gives little relief when those payloads are the bottleneck; pass
-    `include_orig_elements=False` as well.
+    Under the default `include_orig_elements=True` a chunk keeps the elements it was formed from
+    in `metadata.orig_elements`, so their `metadata.image_base64` payloads live as long as the
+    chunk does -- shared with the source element for text, duplicated for a table, which is
+    deep-copied. Streaming alone therefore gives little relief when those payloads are the
+    bottleneck; pass `include_orig_elements=False` as well.
 
     Chunking has always been lazy internally; this exposes that pipeline rather than adding
     a second one. Options are still validated eagerly, when this function is called, not
