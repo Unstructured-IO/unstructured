@@ -1,3 +1,9 @@
+## 0.25.3-dev0
+
+### Fixes
+
+- **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
+
 ## 0.25.2
 
 ### Enhancements
