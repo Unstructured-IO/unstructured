@@ -1,12 +1,20 @@
-## 0.25.2-dev1
+## 0.25.3-dev0
+
+### Fixes
+
+- **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
+
+## 0.25.2
 
 ### Enhancements
 
 - **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
 
+- **Add lazy chunking entry points**: `iter_chunk_elements()` and `iter_chunks_by_title()` yield each chunk as it is formed, alongside the list-returning `chunk_elements()` and `chunk_by_title()`, which are now defined in terms of them. Same options, same chunks, same order — chunking was already lazy internally and this exposes that pipeline rather than adding a second one. Chunks are no longer accumulated in a list, so a caller that also reads elements lazily holds only the pre-chunk being formed; see the docstrings for two limits on that — `iter_chunks_by_title()` reads one pre-chunk ahead in order to combine undersized ones, and the default `include_orig_elements=True` retains source elements (`image_base64` payloads included) in every chunk. Options are validated at the call rather than on first advance, and an unknown `tokenizer` used with `max_tokens` now raises there too, in both forms.
+
 ### Fixes
 
-- **Fix `IndexError` on empty text in the ordered-bullet cleaners**: `clean_ordered_bullets()` and `extract_ordered_bullets()` indexed the first token of `text.split()` without checking that a token existed, so empty or whitespace-only text raised `IndexError`. Applying either to a document containing an empty element (e.g. `element.apply(clean_ordered_bullets)`) aborted the run. They now return the text unchanged and `(None, None, None)` respectively, matching the other cleaners in the module.
+- **Reject an empty `tokenizer` when chunking by `max_tokens`**: `""` is not `None`, so it slipped past the "tokenizer is required" check while still leaving the chunkers without a token counter — the window was then silently measured in characters, making `max_tokens=20` mean 20 characters. It now raises the same `ValueError` as omitting `tokenizer` altogether.
 
 ## 0.25.1
 
