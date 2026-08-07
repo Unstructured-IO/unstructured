@@ -5,6 +5,7 @@ Suitable for use with `.eml` files, which can be exported from many email client
 
 from __future__ import annotations
 
+import copy
 import datetime as dt
 import email
 import email.policy
@@ -440,7 +441,7 @@ class _AttachmentPartitioner:
         # -- nested inside a `multipart/mixed` envelope. Fall back to the part's raw serialized
         # -- bytes in that case rather than letting `get_content()` raise `KeyError`.
         if self._attachment.get_content_type().startswith("multipart/"):
-            return self._attachment.as_bytes()
+            return self._serialized_multipart_bytes
 
         content = self._attachment.get_content()
 
@@ -449,3 +450,19 @@ class _AttachmentPartitioner:
 
         assert isinstance(content, bytes)
         return content
+
+    @cached_property
+    def _serialized_multipart_bytes(self) -> bytes:
+        """Raw serialized bytes of a `multipart/*` attachment, re-parseable as a document.
+
+        `EmailMessage.get_body()` skips any candidate part -- including a `multipart/*` root
+        message -- whose own `Content-Disposition` is "attachment". This MIME part carries
+        exactly that header (that's how it surfaced as an attachment via `iter_attachments()`
+        in the first place), so serializing it verbatim and re-parsing it as the root of a new
+        message would make `partition_email()` find no body at all. Strip that header on a
+        *copy* before serializing -- `self._attachment` itself is left untouched since
+        `_attachment_file_name` still needs its original `Content-Disposition` filename param.
+        """
+        part = copy.deepcopy(self._attachment)
+        del part["Content-Disposition"]
+        return part.as_bytes()

@@ -11,20 +11,26 @@ Content-Transfer-Encoding: 7bit
 This is the main email body.
 
 --===============6075316962646898834==
-Content-Type: multipart/signed
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="pgp-sha256"; boundary="===============3567714482309737971=="
 Content-Disposition: attachment; filename="signed-message.eml"
 MIME-Version: 1.0
 
-TUlNRS1WZXJzaW9uOiAxLjAKQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvc2lnbmVkOyBwcm90b2Nv
-bD0iYXBwbGljYXRpb24vcGdwLXNpZ25hdHVyZSI7CiBtaWNhbGc9InBncC1zaGEyNTYiOyBib3Vu
-ZGFyeT0iPT09PT09PT09PT09PT09MzU2NzcxNDQ4MjMwOTczNzk3MT09IgoKLS09PT09PT09PT09
-PT09PT0zNTY3NzE0NDgyMzA5NzM3OTcxPT0KQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFy
-c2V0PSJ1dGYtOCIKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogN2JpdApNSU1FLVZlcnNpb246
-IDEuMAoKVGhpcyBpcyB0aGUgUEdQLXNpZ25lZCBmb3J3YXJkZWQgbWVzc2FnZSBib2R5LgoKLS09
-PT09PT09PT09PT09PT0zNTY3NzE0NDgyMzA5NzM3OTcxPT0KTUlNRS1WZXJzaW9uOiAxLjAKQ29u
-dGVudC1UeXBlOiBhcHBsaWNhdGlvbi9wZ3Atc2lnbmF0dXJlCgotLS0tLUJFR0lOIFBHUCBTSUdO
-QVRVUkUtLS0tLQpmYWtlZmFrZWZha2UKLS0tLS1FTkQgUEdQIFNJR05BVFVSRS0tLS0tCgotLT09
-PT09PT09PT09PT09PTM1Njc3MTQ0ODIzMDk3Mzc5NzE9PS0tCg==
+--===============3567714482309737971==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+This is the signed forwarded message body.
+
+--===============3567714482309737971==
+MIME-Version: 1.0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+fakefakefake
+-----END PGP SIGNATURE-----
+
+--===============3567714482309737971==--
 
 --===============6075316962646898834==--
