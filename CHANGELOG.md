@@ -1,3 +1,9 @@
+## 0.26.0-dev0
+
+### Fixes
+
+- **Restore default-on library-load telemetry**: The lightweight library-load ping once again runs by default when `unstructured` is imported. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (after trimming whitespace) before import to disable it; empty and whitespace-only values retain the default behavior. This removes the `UNSTRUCTURED_TELEMETRY_ENABLED` explicit opt-in gate introduced by #4281 without changing the existing endpoint, payload, timeout, GPU probing, or failure-suppression behavior.
+
 ## 0.25.3-dev0
 
 ### Fixes

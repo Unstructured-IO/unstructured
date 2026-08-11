@@ -188,21 +188,12 @@ def _telemetry_opt_out() -> bool:
     )
 
 
-def _telemetry_opt_in() -> bool:
-    """True if telemetry is explicitly enabled via env. Only 'true' and '1' opt in."""
-    return (os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED") or "").strip().lower() in (
-        "true",
-        "1",
-    )
-
-
 def scarf_analytics():
-    """Send a lightweight analytics ping. Off by default.
+    """Send a lightweight library-load analytics ping unless it is opted out.
 
-    Set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
     Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS): any non-empty value opts out.
     """
-    if _telemetry_opt_out() or not _telemetry_opt_in():
+    if _telemetry_opt_out():
         return
 
     try:

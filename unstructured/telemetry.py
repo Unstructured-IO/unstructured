@@ -4,5 +4,5 @@ from unstructured.utils import scarf_analytics
 
 
 def init_telemetry() -> None:
-    """Run the analytics ping if enabled by env. Best-effort and non-fatal."""
+    """Run the library-load analytics ping unless opted out. Best-effort and non-fatal."""
     scarf_analytics()

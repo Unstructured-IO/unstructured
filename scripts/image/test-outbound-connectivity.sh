@@ -61,14 +61,12 @@ fi
 
 # ---------- scenario‑specific settings --------------------------------
 DO_NOT_TRACK=""
-UNSTRUCTURED_TELEMETRY_ENABLED=""
 HF_HUB_OFFLINE=""
 REMOVE_CACHE=0
 case "$SCENARIO" in
 baseline) ;;
 missing-models) REMOVE_CACHE=1 ;;
 analytics-online-only)
-  UNSTRUCTURED_TELEMETRY_ENABLED=1
   HF_HUB_OFFLINE=1
   ;;
 offline)
@@ -93,7 +91,6 @@ CID=$(docker run -d --rm --name "sut_${SCENARIO}" \
   --network "$NET" \
   --cap-add NET_RAW --cap-add NET_ADMIN \
   -e DO_NOT_TRACK="$DO_NOT_TRACK" \
-  -e UNSTRUCTURED_TELEMETRY_ENABLED="$UNSTRUCTURED_TELEMETRY_ENABLED" \
   -e HF_HUB_OFFLINE="$HF_HUB_OFFLINE" \
   --entrypoint /bin/sh "$IMAGE" -c "sleep infinity")
 echo "Container: $CID  (scenario $SCENARIO)"
@@ -132,7 +129,7 @@ fi
 
 docker exec -i -e PYTHONUNBUFFERED=1 "$CID" python - <<PY |& tee "${PY_LOG_DIR}/${SCENARIO}.log"
 import logging
-# Telemetry runs at package init when UNSTRUCTURED_TELEMETRY_ENABLED is set (see analytics-online-only scenario).
+# Telemetry runs at package init unless the scenario sets DO_NOT_TRACK.
 from unstructured.partition.auto import partition
 import urllib.request, time, os, sys
 
