@@ -573,7 +573,7 @@ def process_data_with_pdfminer(
     rotation_corrections: Optional[List[int]] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
-    pdf pages using pdf2image
+    pdf pages using PyPDFium2
 
     ``rotation_corrections`` is an optional per-page list of extra rotations (degrees,
     counter-clockwise) that unstructured-inference applied to the rendered page images to

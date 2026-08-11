@@ -12,8 +12,8 @@ from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple,
 
 import cv2
 import numpy as np
-import pdf2image
 from PIL import Image
+from pypdf import PdfReader
 from unstructured_inference.inference.layout import convert_pdf_to_image as render_pdf_to_image
 from unstructured_inference.inference.pdf_image import PdfRenderTooLargeError
 
@@ -403,12 +403,11 @@ def convert_pdf_to_images(
     exactly_one(filename=filename, file=file)
     if file is not None:
         f_bytes = convert_to_bytes(file)
-        info = pdf2image.pdfinfo_from_bytes(f_bytes, userpw=password)
+        total_pages = PdfReader(BytesIO(f_bytes), password=password).get_num_pages()
     else:
         f_bytes = None
-        info = pdf2image.pdfinfo_from_path(filename, userpw=password)
+        total_pages = PdfReader(filename, password=password).get_num_pages()
 
-    total_pages = info["Pages"]
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
         try:

@@ -77,10 +77,6 @@ EOF
 #### OpenCV dependencies
 $sudo $pac install -y mesa-libGL
 
-#### Poppler
-# Install poppler
-$sudo $pac install -y poppler-utils
-
 #### Tesseract
 # Install dependencies for image and pdf manipulation
 $sudo $pac install -y opencv opencv-devel opencv-python perl-core clang libpng-devel libtiff-devel libwebp-devel libjpeg-turbo-devel git-core libtool pkgconfig xz

@@ -1,5 +1,9 @@
 ## 0.25.3-dev0
 
+### Enhancements
+
+- **Remove poppler / pdf2image dependency**: PDF page counting for chunked rendering now uses `pypdf` instead of `pdf2image`, so the system `poppler` package is no longer required. PDF rendering continues to use PyPDFium2 via `unstructured-inference`.
+
 ### Fixes
 
 - **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.

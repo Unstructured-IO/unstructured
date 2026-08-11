@@ -61,7 +61,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+          sudo apt-get install -y libmagic-dev libreoffice
           sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
           sudo apt-get update
           sudo apt-get install -y tesseract-ocr tesseract-ocr-kor

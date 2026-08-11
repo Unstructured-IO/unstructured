@@ -14,9 +14,9 @@ from types import SimpleNamespace
 from unittest import mock
 
 import pytest
-from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pytest_mock import MockFixture
+from pypdfium2 import PdfiumError
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
@@ -208,7 +208,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
+    with pytest.raises((FileNotFoundError, PdfiumError, TypeError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 

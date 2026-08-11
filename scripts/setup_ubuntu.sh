@@ -79,10 +79,6 @@ EOF
 #### OpenCV dependencies
 $sudo $pac install -y libgl1
 
-#### Poppler
-# Install poppler
-$sudo $pac install -y poppler-utils
-
 #### OpenOffice / MSOffice doc conversion capabilities
 $sudo $pac install -y libreoffice pandoc
 
