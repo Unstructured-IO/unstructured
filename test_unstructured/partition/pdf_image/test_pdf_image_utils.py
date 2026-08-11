@@ -75,8 +75,8 @@ def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
 
 
 def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     with (
-        patch.object(pdf_image_utils, "PdfReader"),
         patch.object(pdf_image_utils, "_pdf_page_count", return_value=1),
         patch.object(
             pdf_image_utils,
@@ -85,7 +85,7 @@ def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
         ),
     ):
         with pytest.raises(UnprocessableEntityError, match="too many pixels"):
-            list(pdf_image_utils.convert_pdf_to_images(filename="example.pdf"))
+            list(pdf_image_utils.convert_pdf_to_images(filename=filename))
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])

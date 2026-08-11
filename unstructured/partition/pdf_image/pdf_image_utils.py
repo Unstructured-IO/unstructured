@@ -414,7 +414,8 @@ def convert_pdf_to_images(
         total_pages = _pdf_page_count(PdfReader(BytesIO(f_bytes), password=password))
     else:
         f_bytes = None
-        total_pages = _pdf_page_count(PdfReader(filename, password=password))
+        with open(filename, "rb") as f:
+            total_pages = _pdf_page_count(PdfReader(f, password=password))
 
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
