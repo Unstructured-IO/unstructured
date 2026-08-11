@@ -393,6 +393,14 @@ def annotate_layout_elements(
             raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
+def _pdf_page_count(reader: PdfReader) -> int:
+    """Return the catalog page count without flattening the page tree.
+
+    Matches poppler ``pdfinfo`` / former ``pdf2image.pdfinfo_*`` ``Pages`` behavior.
+    """
+    return int(reader.root_object["/Pages"]["/Count"])
+
+
 def convert_pdf_to_images(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -403,10 +411,10 @@ def convert_pdf_to_images(
     exactly_one(filename=filename, file=file)
     if file is not None:
         f_bytes = convert_to_bytes(file)
-        total_pages = PdfReader(BytesIO(f_bytes), password=password).get_num_pages()
+        total_pages = _pdf_page_count(PdfReader(BytesIO(f_bytes), password=password))
     else:
         f_bytes = None
-        total_pages = PdfReader(filename, password=password).get_num_pages()
+        total_pages = _pdf_page_count(PdfReader(filename, password=password))
 
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)

@@ -76,7 +76,8 @@ def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
 
 def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
     with (
-        patch.object(pdf_image_utils, "PdfReader", return_value=MagicMock(get_num_pages=lambda: 1)),
+        patch.object(pdf_image_utils, "PdfReader"),
+        patch.object(pdf_image_utils, "_pdf_page_count", return_value=1),
         patch.object(
             pdf_image_utils,
             "render_pdf_to_image",
