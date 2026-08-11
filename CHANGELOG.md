@@ -1,12 +1,8 @@
-## 0.26.0-dev0
+## 0.26.0
 
 ### Fixes
 
 - **Restore default-on library-load telemetry**: The lightweight library-load ping once again runs by default when `unstructured` is imported. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (after trimming whitespace) before import to disable it; empty and whitespace-only values retain the default behavior. This removes the `UNSTRUCTURED_TELEMETRY_ENABLED` explicit opt-in gate introduced by #4281 without changing the existing endpoint, payload, timeout, GPU probing, or failure-suppression behavior.
-
-## 0.25.3-dev0
-
-### Fixes
 
 - **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
 
