@@ -2,6 +2,8 @@
 
 ### Fixes
 
+- **Raise a clear error instead of silently returning no elements when `strategy="fast"` can't be honored**: `partition_pdf()` skips pdfminer text extraction for PDFs flagged by `is_pdf_too_complex()` as mostly vector graphics, since pdfminer is slow and unreliable on them. For `strategy="auto"` this correctly falls back to another strategy, but an explicitly-requested `strategy="fast"` had no fallback available and silently returned `[]` with no indication anything went wrong. It now raises a `ValueError` explaining why and suggesting `"hi_res"` or `"auto"` instead. `strategy="auto"` is unaffected and continues to fall back gracefully.
+
 - **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
 
 ## 0.25.2

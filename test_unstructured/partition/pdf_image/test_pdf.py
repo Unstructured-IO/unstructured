@@ -1767,6 +1767,28 @@ def test_is_pdf_too_complex_returns_false_for_normal_pdf():
     assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
 
 
+def test_partition_pdf_raises_for_explicit_fast_strategy_on_complex_pdf():
+    """strategy="fast" cannot honor a PDF flagged as too complex for pdfminer text
+    extraction (see is_pdf_too_complex). Previously this silently returned an empty
+    element list; it should now raise a clear, actionable error instead. See #4260."""
+    filename = example_doc_path("pdf/layout-parser-paper.pdf")
+
+    with mock.patch.object(pdf, "is_pdf_too_complex", return_value=True):
+        with pytest.raises(ValueError, match="too complex"):
+            pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+
+
+def test_partition_pdf_auto_strategy_still_falls_back_on_complex_pdf():
+    """strategy="auto" should keep degrading gracefully (no exception) when a PDF is
+    flagged as too complex -- only an explicitly-requested "fast" strategy should raise."""
+    filename = example_doc_path("pdf/layout-parser-paper.pdf")
+
+    with mock.patch.object(pdf, "is_pdf_too_complex", return_value=True):
+        elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
+
+    assert len(elements) > 0
+
+
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
     # TODO (yao): investigate why we need this test. The LayoutElement definition suggests bbox
     # can't be None and it has to be a Rectangle object that has x1, y1, x2, y2 attributes.
