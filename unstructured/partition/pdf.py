@@ -65,6 +65,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
+from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
@@ -591,14 +592,16 @@ def _get_pdf_page_number(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
 ) -> int:
-    if file:
-        number_of_pages = PdfReader(file).get_num_pages()
+    if file is not None:
+        if isinstance(file, (bytes, bytearray)):
+            return pdf_page_count(PdfReader(io.BytesIO(file)))
+        number_of_pages = pdf_page_count(PdfReader(file))
         file.seek(0)
-    elif filename:
-        number_of_pages = PdfReader(filename).get_num_pages()
-    else:
-        raise ValueError("Either 'file' or 'filename' must be provided.")
-    return number_of_pages
+        return number_of_pages
+    if filename:
+        with open(filename, "rb") as f:
+            return pdf_page_count(PdfReader(f))
+    raise ValueError("Either 'file' or 'filename' must be provided.")
 
 
 def check_pdf_hi_res_max_pages_exceeded(

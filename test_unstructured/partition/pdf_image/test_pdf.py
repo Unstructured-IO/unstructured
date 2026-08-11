@@ -15,8 +15,8 @@ from unittest import mock
 
 import pytest
 from PIL import Image
-from pytest_mock import MockFixture
 from pypdfium2 import PdfiumError
+from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout

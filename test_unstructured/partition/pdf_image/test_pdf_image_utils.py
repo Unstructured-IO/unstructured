@@ -74,15 +74,31 @@ def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
             pdf_image_utils.convert_pdf_to_image(filename="example.pdf")
 
 
+def test_pdf_page_count_reads_catalog_count():
+    from pypdf import PdfReader
+
+    from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with open(filename, "rb") as f:
+        assert pdf_page_count(PdfReader(f)) == 2
+
+
+def test_pdf_page_count_does_not_flatten_page_tree():
+    from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
+
+    reader = MagicMock()
+    reader.root_object = {"/Pages": {"/Count": 3}}
+    assert pdf_page_count(reader) == 3
+    reader.get_num_pages.assert_not_called()
+
+
 def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
-    with (
-        patch.object(pdf_image_utils, "_pdf_page_count", return_value=1),
-        patch.object(
-            pdf_image_utils,
-            "render_pdf_to_image",
-            side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
-        ),
+    with patch.object(
+        pdf_image_utils,
+        "render_pdf_to_image",
+        side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
     ):
         with pytest.raises(UnprocessableEntityError, match="too many pixels"):
             list(pdf_image_utils.convert_pdf_to_images(filename=filename))

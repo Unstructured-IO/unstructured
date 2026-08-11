@@ -21,6 +21,7 @@ from unstructured.documents.elements import ElementType
 from unstructured.errors import UnprocessableEntityError
 from unstructured.logger import logger
 from unstructured.partition.common.common import convert_to_bytes, exactly_one
+from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
@@ -393,14 +394,6 @@ def annotate_layout_elements(
             raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
-def _pdf_page_count(reader: PdfReader) -> int:
-    """Return the catalog page count without flattening the page tree.
-
-    Matches poppler ``pdfinfo`` / former ``pdf2image.pdfinfo_*`` ``Pages`` behavior.
-    """
-    return int(reader.root_object["/Pages"]["/Count"])
-
-
 def convert_pdf_to_images(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -411,11 +404,11 @@ def convert_pdf_to_images(
     exactly_one(filename=filename, file=file)
     if file is not None:
         f_bytes = convert_to_bytes(file)
-        total_pages = _pdf_page_count(PdfReader(BytesIO(f_bytes), password=password))
+        total_pages = pdf_page_count(PdfReader(BytesIO(f_bytes), password=password))
     else:
         f_bytes = None
         with open(filename, "rb") as f:
-            total_pages = _pdf_page_count(PdfReader(f, password=password))
+            total_pages = pdf_page_count(PdfReader(f, password=password))
 
     for start_page in range(1, total_pages + 1, chunk_size):
         end_page = min(start_page + chunk_size - 1, total_pages)
