@@ -177,6 +177,9 @@ def only(it: Iterable[Any]) -> Any:
     return out
 
 
+_NVIDIA_SMI_TIMEOUT_SECONDS = 1.0
+
+
 def _telemetry_opt_out() -> bool:
     """True if telemetry should be disabled via env.
 
@@ -197,9 +200,16 @@ def scarf_analytics():
         return
 
     try:
-        subprocess.check_output(["nvidia-smi"], stderr=subprocess.DEVNULL)
+        subprocess.run(
+            ["nvidia-smi"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+            timeout=_NVIDIA_SMI_TIMEOUT_SECONDS,
+        )
         gpu_present = True
-    except (OSError, subprocess.CalledProcessError):
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         gpu_present = False
 
     python_version = ".".join(platform.python_version().split(".")[:2])
