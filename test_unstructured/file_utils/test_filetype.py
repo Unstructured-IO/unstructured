@@ -1105,15 +1105,16 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 4096
         assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
 
-    def but_not_to_correct_a_wrong_encoding_arg_for_a_file_like_object_open_in_binary_mode(self):
-        """Fails silently in this case, returning empty string."""
+    def and_it_uses_character_detection_to_correct_a_wrong_encoding_arg_for_a_file_like_object_open_in_binary_mode(self):
         with open(example_doc_path("norwich-city.txt"), "rb") as f:
             file = io.BytesIO(f.read())
         ctx = _FileTypeDetectionContext(file=file, encoding="utf_32_be")
 
         text_head = ctx.text_head
 
-        assert text_head == ""
+        assert isinstance(text_head, str)
+        assert len(text_head) == 4096
+        assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
 
     def and_it_grabs_the_first_4k_chars_from_binary_file_for_textual_type_differentiation(self):
         with open(example_doc_path("norwich-city.txt"), "rb") as f:
@@ -1147,9 +1148,6 @@ class Describe_FileTypeDetectionContext:
         assert len(text_head) == 188
         assert text_head.startswith("This is a test document to use for unit tests.\n\n    Doyle")
 
-    # TODO: this fails because `.text_head` ignores decoding errors on a file open for binary
-    # reading. Probably better if it used chardet in that case as it does for a file-path.
-    @pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
     def and_it_accommodates_a_utf_32_encoded_file_like_object(self):
         with open(example_doc_path("fake-text-utf-32.txt"), "rb") as f:
             file = io.BytesIO(f.read())
