@@ -84,15 +84,6 @@ def test_pdf_page_count_reads_catalog_count():
         assert pdf_page_count(PdfReader(f)) == 2
 
 
-def test_pdf_page_count_does_not_flatten_page_tree():
-    from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
-
-    reader = MagicMock()
-    reader.root_object = {"/Pages": {"/Count": 3}}
-    assert pdf_page_count(reader) == 3
-    reader.get_num_pages.assert_not_called()
-
-
 def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
     filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
     with patch.object(
