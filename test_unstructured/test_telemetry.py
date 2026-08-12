@@ -310,8 +310,12 @@ class DescribeTelemetryTestHermeticity:
         inherited_value,
     ):
         project_root = Path(__file__).resolve().parent.parent
+        conftest_path = project_root / "conftest.py"
+        if not conftest_path.is_file():
+            pytest.skip("root conftest is not included in this test distribution")
+
         monkeypatch.setenv("DO_NOT_TRACK", inherited_value)
 
-        runpy.run_path(str(project_root / "conftest.py"))
+        runpy.run_path(str(conftest_path))
 
         assert os.environ["DO_NOT_TRACK"] == "1"
