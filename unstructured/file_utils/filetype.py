@@ -685,11 +685,8 @@ class _FileTypeDetectionContext:
             try:
                 return content.decode(encoding=self.encoding)
             except UnicodeDecodeError:
-                try:
-                    encoding, _ = detect_file_encoding(file=content)
-                    return content.decode(encoding=encoding)
-                except Exception:
-                    return content.decode(encoding=self.encoding, errors="ignore")
+                encoding, _ = detect_file_encoding(file=content)
+                return content.decode(encoding=encoding, errors="ignore")
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --

@@ -1113,7 +1113,7 @@ class Describe_FileTypeDetectionContext:
         text_head = ctx.text_head
 
         assert isinstance(text_head, str)
-        assert len(text_head) == 4096
+        assert len(text_head) == 4063
         assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
 
     def and_it_grabs_the_first_4k_chars_from_binary_file_for_textual_type_differentiation(self):
