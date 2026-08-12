@@ -300,14 +300,21 @@ def partition_pdf_or_image(
     pdf_text_extractable = False
 
     if not is_image:
-        try:
-            if is_pdf_too_complex(filename=filename, file=file):
-                logger.info(
-                    "PDF is too complex for text extraction based on heuristic checks. "
-                    "Falling back to hi_res strategy without text extraction."
+        if is_pdf_too_complex(filename=filename, file=file):
+            if strategy == PartitionStrategy.FAST:
+                raise ValueError(
+                    "PDF is too complex for text extraction based on heuristic checks "
+                    "(high ratio of vector graphics to text), so the fast strategy "
+                    "cannot reliably extract text from it. Use strategy='hi_res' or "
+                    "strategy='auto' instead."
                 )
+            logger.info(
+                "PDF is too complex for text extraction based on heuristic checks. "
+                "Falling back to hi_res strategy without text extraction."
+            )
 
-            else:
+        else:
+            try:
                 extracted_elements = extractable_elements(
                     filename=filename,
                     file=spooled_to_bytes_io_if_needed(file),
@@ -323,9 +330,9 @@ def partition_pdf_or_image(
                     for page_elements in extracted_elements
                     for el in page_elements
                 )
-        except Exception as e:
-            logger.debug(e)
-            logger.info("PDF text extraction failed, skip text extraction...")
+            except Exception as e:
+                logger.debug(e)
+                logger.info("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
