@@ -74,17 +74,25 @@ def test_convert_pdf_to_image_raises_unprocessable_when_render_too_large():
             pdf_image_utils.convert_pdf_to_image(filename="example.pdf")
 
 
+def test_pdf_page_count_reads_catalog_count():
+    from pypdf import PdfReader
+
+    from unstructured.partition.pdf_image.pypdf_utils import pdf_page_count
+
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with open(filename, "rb") as f:
+        assert pdf_page_count(PdfReader(f)) == 2
+
+
 def test_convert_pdf_to_images_raises_unprocessable_when_render_too_large():
-    with (
-        patch.object(pdf_image_utils.pdf2image, "pdfinfo_from_path", return_value={"Pages": 1}),
-        patch.object(
-            pdf_image_utils,
-            "render_pdf_to_image",
-            side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
-        ),
+    filename = example_doc_path("pdf/layout-parser-paper-fast.pdf")
+    with patch.object(
+        pdf_image_utils,
+        "render_pdf_to_image",
+        side_effect=pdf_image.PdfRenderTooLargeError("too many pixels"),
     ):
         with pytest.raises(UnprocessableEntityError, match="too many pixels"):
-            list(pdf_image_utils.convert_pdf_to_images(filename="example.pdf"))
+            list(pdf_image_utils.convert_pdf_to_images(filename=filename))
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
@@ -425,7 +433,7 @@ def test_annotate_layout_elements(filename, is_image):
         patch(
             "unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image",
             return_value=["/path/to/image1.jpg", "/path/to/image2.jpg"],
-        ) as mock_pdf2image,
+        ) as mock_convert_pdf_to_image,
         patch(
             "unstructured.partition.pdf_image.pdf_image_utils.annotate_layout_elements_with_image"
         ) as mock_annotate_layout_elements_with_image,
@@ -442,7 +450,7 @@ def test_annotate_layout_elements(filename, is_image):
             mock_annotate_layout_elements_with_image.assert_called_once()
         else:
             assert mock_annotate_layout_elements_with_image.call_count == len(
-                mock_pdf2image.return_value
+                mock_convert_pdf_to_image.return_value
             )
 
 

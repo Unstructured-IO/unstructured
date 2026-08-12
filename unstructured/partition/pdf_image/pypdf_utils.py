@@ -2,6 +2,15 @@ import io
 from typing import BinaryIO
 
 import pypdf
+from pypdf import PdfReader
+
+
+def pdf_page_count(reader: PdfReader) -> int:
+    """Return the catalog page count without flattening the page tree.
+
+    Matches poppler ``pdfinfo`` ``Pages`` (PDF catalog ``/Pages`` ``/Count``).
+    """
+    return int(reader.root_object["/Pages"]["/Count"])
 
 
 def get_page_data(fp: BinaryIO, page_number: int):

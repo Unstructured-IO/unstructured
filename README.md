@@ -134,7 +134,6 @@ installation.
 - Install the following system dependencies if they are not already available on your system.
   Depending on what document types you're parsing, you may not need all of these.
     - `libmagic-dev` (filetype detection)
-    - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs, install `tesseract-lang` for additional language support)
     - `libreoffice` (MS Office docs)
     - `pandoc` is bundled automatically via the `pypandoc-binary` Python package (no system install needed)
@@ -187,8 +186,7 @@ make lock
 
 * Optional:
   * To install extras for processing images and PDFs locally, run `uv sync --extra pdf --extra image`.
-  * For processing image files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
-  * For processing PDF files, `tesseract` and `poppler` are required. The [pdf2image docs](https://pdf2image.readthedocs.io/en/latest/installation.html) have instructions on installing `poppler` across various platforms.
+  * For processing image and PDF files, `tesseract` is required. See [here](https://tesseract-ocr.github.io/tessdoc/Installation.html) for installation instructions.
 
 Additionally, if you're planning to contribute to `unstructured`, we provide you an optional `pre-commit` configuration
 file to ensure your code matches the formatting and linting standards used in `unstructured`.

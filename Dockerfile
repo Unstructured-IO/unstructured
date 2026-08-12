@@ -16,7 +16,7 @@ RUN apk_ok=false; \
       apk update && \
       apk add libxml2 python-3.12 python-3.12-base glib \
         mesa-gl mesa-libgallium cmake bash libmagic wget git openjpeg \
-        poppler poppler-utils poppler-glib libreoffice tesseract && \
+        libreoffice tesseract && \
       apk_ok=true && break; \
       echo "apk install failed (attempt $attempt/3), retrying in 5s..."; sleep 5; \
     done; $apk_ok && \
