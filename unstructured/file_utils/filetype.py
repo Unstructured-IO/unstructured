@@ -673,6 +673,7 @@ class _FileTypeDetectionContext:
 
         Raises:
             UnicodeDecodeError if file cannot be read as text.
+            UnprocessableEntityError if file encoding cannot be determined.
         """
         if file := self._file_arg:
             file.seek(0)
