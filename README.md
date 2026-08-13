@@ -118,7 +118,7 @@ Once in the running container, you can try things directly in Python interpreter
 python3
 
 >>> from unstructured.partition.pdf import partition_pdf
->>> elements = partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf")
+>>> elements = partition_pdf(filename="example-docs/pdf/layout-parser-paper-fast.pdf")
 
 >>> from unstructured.partition.text import partition_text
 >>> elements = partition_text(filename="example-docs/fake-text.txt")
