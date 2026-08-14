@@ -10,6 +10,9 @@ import sysconfig
 import tempfile
 import urllib.error
 import urllib.request
+from collections.abc import Iterable, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from functools import lru_cache
 from typing import Final, List, Tuple
 
@@ -22,6 +25,12 @@ CACHE_MAX_SIZE: Final[int] = 128
 # -- Characters, not bytes: `Doc` size tracks token count, which tracks characters rather
 # -- than UTF-8 width. Element text is a paragraph or a table cell, so 8,192 covers it. --
 MAX_CACHEABLE_CHARS: Final[int] = 8192
+BATCH_SIZE: Final[int] = 256
+
+_BATCH_DOCS: ContextVar[Mapping[str, spacy.tokens.Doc] | None] = ContextVar(
+    "unstructured_batch_docs",
+    default=None,
+)
 
 _SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
 _SPACY_MODEL_VERSION: Final[str] = "3.8.0"
@@ -162,22 +171,14 @@ def _process_cached(text: str) -> spacy.tokens.Doc:
     return _run_pipeline(text)
 
 
-def _process(text: str) -> spacy.tokens.Doc:
-    """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
-    # -- str() handles numpy.str_ from OCR pipelines --
-    text = str(text)
-    # -- Docs are far heavier than the token lists the other caches hold, and this accepts text
-    # -- up to spaCy's 1M-character limit. Cache the element-sized strings this is actually
-    # -- called with; stream anything longer, where a repeat hit is unlikely to pay for the
-    # -- residency.
-    if len(text) > MAX_CACHEABLE_CHARS:
-        return _run_pipeline(text)
-    return _process_cached(text)
-
-
 def _run_pipeline(text: str) -> spacy.tokens.Doc:
     """Feed `text` through spaCy, truncating to the model's limit if needed."""
     nlp = _get_nlp()
+    return nlp(_prepare_text(text, nlp))
+
+
+def _prepare_text(text: str, nlp: spacy.language.Language) -> str:
+    """Bound text to the model's limit before sending it through spaCy."""
     if len(text) > nlp.max_length:
         logger.warning(
             "Input text of length %d exceeds spaCy max_length=%d; "
@@ -187,9 +188,64 @@ def _run_pipeline(text: str) -> spacy.tokens.Doc:
         )
         # Prefer to cut at the last whitespace within the budget so we don't split a token.
         cut = text.rfind(" ", max(0, nlp.max_length - 256), nlp.max_length)
-        truncated = text[: cut if cut != -1 else nlp.max_length]
-        return nlp(truncated)
-    return nlp(text)
+        return text[: cut if cut != -1 else nlp.max_length]
+    return text
+
+
+@contextmanager
+def batch_process_texts(
+    texts: Iterable[str],
+    *,
+    batch_size: int = BATCH_SIZE,
+) -> Iterator[None]:
+    """Preprocess unique texts with ``nlp.pipe`` for reuse by tokenizer helpers.
+
+    Documents are stored only for the lifetime of this context. ``batch_size`` controls
+    spaCy's pipeline execution batch; callers with large inputs should use multiple
+    bounded contexts to release returned documents between chunks. Existing sentence,
+    word, and POS tokenization functions keep their normal behavior while avoiding
+    repeated spaCy pipeline execution for texts included in the batch.
+    """
+    unique_texts = tuple(dict.fromkeys(str(text) for text in texts))
+    lowercase_variants = tuple(text.lower() for text in unique_texts if text.isupper())
+    pipeline_inputs = tuple(dict.fromkeys((*unique_texts, *lowercase_variants)))
+    if not pipeline_inputs:
+        yield
+        return
+
+    nlp = _get_nlp()
+    prepared_inputs = tuple(_prepare_text(text, nlp) for text in pipeline_inputs)
+    docs = dict(
+        zip(
+            pipeline_inputs,
+            nlp.pipe(prepared_inputs, batch_size=max(1, batch_size)),
+            strict=True,
+        )
+    )
+    token = _BATCH_DOCS.set(docs)
+    try:
+        yield
+    finally:
+        _BATCH_DOCS.reset(token)
+
+
+def _process(text: str) -> spacy.tokens.Doc:
+    """Run the spaCy pipeline once. All public functions extract what they need from the Doc.
+
+    Inside `batch_process_texts`, the batched document is returned without another pipeline run.
+    """
+    # -- str() handles numpy.str_ from OCR pipelines --
+    text = str(text)
+    batch_docs = _BATCH_DOCS.get()
+    if batch_docs is not None and text in batch_docs:
+        return batch_docs[text]
+    # -- Docs are far heavier than the token lists the other caches hold, and this accepts text
+    # -- up to spaCy's 1M-character limit. Cache the element-sized strings this is actually
+    # -- called with; stream anything longer, where a repeat hit is unlikely to pay for the
+    # -- residency.
+    if len(text) > MAX_CACHEABLE_CHARS:
+        return _run_pipeline(text)
+    return _process_cached(text)
 
 
 def sent_tokenize(text: str) -> List[str]:
