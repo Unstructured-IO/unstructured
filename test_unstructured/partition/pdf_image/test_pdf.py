@@ -1785,6 +1785,11 @@ def _pdf_with_content_stream_array(
     shape that CVE-2026-33123 abuses (small file, enormous decoded output). When
     ``indirect_array`` is set, ``/Contents`` points at the array through an indirect
     reference rather than holding it directly.
+
+    Uses pypdf private API (``PdfWriter._add_object``, ``StreamObject._data``) because
+    there is no public way to write an already-compressed stream; storing raw compressed
+    bytes plus ``/Filter FlateDecode`` is what keeps the fixture file small while the
+    round-trip through ``PdfReader`` still decodes to the full payload.
     """
     writer = PdfWriter()
     writer.add_blank_page(width=200, height=200)
@@ -1948,6 +1953,77 @@ def test_is_pdf_too_complex_bounds_total_bytes_across_pages():
         max_raw_stream_bytes=1_000_000,
         max_total_stream_bytes=250_000,
     )
+
+
+def test_is_pdf_too_complex_document_budget_survives_decode_errors():
+    """The document budget is charged as each stream decodes, not once per fully-decoded
+    page, so a stream that raises mid-page cannot discard the bytes already decoded. A
+    page whose array is `[valid stream, stream that raises]` used to skip budget
+    accounting entirely (inner `except: continue`), letting a tiny file force unbounded
+    cross-page work; each page's valid stream must still count toward the bound."""
+
+    good = DecodedStreamObject()
+    good[NameObject("/Filter")] = NameObject("/FlateDecode")
+    good._data = zlib.compress(b"\x00" * 90_000)  # decodes to 90 KB
+
+    bad = DecodedStreamObject()
+    bad[NameObject("/Filter")] = NameObject("/UnknownBogusFilter")  # get_data() raises
+    bad._data = b"garbage"
+
+    writer = PdfWriter()
+    good_ref = writer._add_object(good)
+    bad_ref = writer._add_object(bad)
+    shared_ref = writer._add_object(ArrayObject([good_ref, bad_ref]))
+    for _ in range(10):
+        writer.add_blank_page(width=200, height=200)
+        writer.pages[-1][NameObject("/Contents")] = shared_ref
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    data = buffer.getvalue()
+
+    # Two pages of valid 90 KB streams already exceed the 150 KB document budget, so the
+    # PDF fails closed even though every page's second stream raises before the page
+    # finishes decoding.
+    assert pdf.is_pdf_too_complex(
+        file=data,
+        min_file_size_bytes=1,
+        min_raw_stream_bytes=1,
+        max_raw_stream_bytes=100_000,
+        max_total_stream_bytes=150_000,
+    )
+
+
+def test_is_pdf_too_complex_bounds_total_entries_across_pages():
+    """Empty/tiny streams never advance the byte budget yet still cost a decode each, so
+    a byte-only document bound leaves `page_count x entries` unbounded. The document
+    entry budget bounds the total number of streams decoded regardless of their size."""
+
+    get_data_calls = 0
+
+    class EmptyStream:
+        def get_data(self):
+            nonlocal get_data_calls
+            get_data_calls += 1
+            return b""
+
+    # One 1,000-entry array (under the 10,000 per-page cap) shared by every page.
+    shared = ArrayObject([EmptyStream() for _ in range(1_000)])
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": shared} for _ in range(100)]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=10_000,  # per-page cap NOT hit (1,000 < 10,000)
+            max_total_array_entries=5_000,
+        )
+
+    assert result is True  # fail closed once the document entry budget is exhausted
+    # Bounded by the entry budget (5,000), not by page count -- a byte-only budget would
+    # have let all 100 x 1,000 = 100,000 empty streams decode.
+    assert get_data_calls == 5_000
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():
