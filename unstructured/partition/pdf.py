@@ -105,7 +105,9 @@ TEXT_OPS_PATTERN = re.compile(
     rb"(?:^|(?<=\s))" rb"(?:Tj|TJ|'|\"|Tf|Td|TD|Tm|T\*|BT|ET)" rb"(?=\s|$)",
     re.MULTILINE,
 )
-DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
+# 0 -> inspect every file. A small compressed file can still declare huge decoded
+# content (CVE-2026-33123), so skipping small files is opt-in, not the default.
+DEFAULT_MIN_FILE_SIZE_BYTES = 0
 DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
 # Per-page defense-in-depth caps against crafted content streams (CVE-2026-33123):
 # a page exceeding either is treated as too complex (fail closed) instead of scanned.
@@ -662,7 +664,9 @@ def is_pdf_too_complex(
         Minimum ratio of graphics ops to text ops required (in conjunction with
         `max_graphics_ops`) to flag a page as too complex.
     min_file_size_bytes
-        Skip the complexity check entirely for files smaller than this (default 1 MB).
+        Skip the check entirely for files smaller than this. Default 0 (inspect every
+        file); raising it trades safety for speed, since a small compressed file can
+        still declare huge decoded content.
     min_raw_stream_bytes
         Skip operator counting for pages whose decoded content stream is smaller than
         this (default 100 KB). Small streams can't have enough operators to trigger
@@ -724,63 +728,56 @@ def is_pdf_too_complex(
             if contents is None:
                 continue
 
-            # Decode raw stream bytes (cheap relative to full ContentStream parsing).
-            raw_data: Union[bytes, bytearray] = b""
+            # DictionaryObject.get (unlike __getitem__) does not dereference, so an
+            # indirect /Contents array would otherwise skip the array branch below.
             try:
-                # DictionaryObject.get (unlike __getitem__) does not dereference, so an
-                # indirect /Contents array would otherwise skip the array branch below.
                 if hasattr(contents, "get_object"):
                     contents = contents.get_object()
+            except Exception:
+                continue
 
-                if isinstance(contents, ArrayObject):
-                    # An array of many small streams is the crafted DoS shape
-                    # (CVE-2026-33123); bound both entry count and decoded bytes.
-                    if len(contents) > max_content_stream_array_entries:
-                        logger.info(
-                            f"Page {page_index + 1} /Contents array has {len(contents)} "
-                            f"entries, exceeding the limit of "
-                            f"{max_content_stream_array_entries}. "
-                            "Flagging PDF as too complex for text extraction."
-                        )
-                        return True
-                    # Charge every slot up front (non-stream entries are traversed too),
-                    # so a shared non-stream array can't scale traversal with page count.
-                    total_array_entries += len(contents)
-                    if total_array_entries > max_total_array_entries:
-                        logger.warning(
-                            f"Content-stream array entries exceed {max_total_array_entries} "
-                            f"by page {page_index + 1}. "
-                            "Flagging PDF as too complex for text extraction."
-                        )
-                        return True
-                    # bytearray append is amortized O(1); `bytes +=` was O(n^2).
-                    accumulated = bytearray()
-                    for item in contents:
+            # Decode raw stream bytes (cheap relative to full ContentStream parsing).
+            raw_data: Union[bytes, bytearray] = b""
+            if isinstance(contents, ArrayObject):
+                # An array of many small streams is the crafted DoS shape
+                # (CVE-2026-33123); bound both entry count and decoded bytes.
+                if len(contents) > max_content_stream_array_entries:
+                    logger.info(
+                        f"Page {page_index + 1} /Contents array has {len(contents)} "
+                        f"entries, exceeding the limit of "
+                        f"{max_content_stream_array_entries}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # Charge every slot up front (non-stream entries are traversed too),
+                # so a shared non-stream array can't scale traversal with page count.
+                total_array_entries += len(contents)
+                if total_array_entries > max_total_array_entries:
+                    logger.warning(
+                        f"Content-stream array entries exceed {max_total_array_entries} "
+                        f"by page {page_index + 1}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # bytearray append is amortized O(1); `bytes +=` was O(n^2).
+                accumulated = bytearray()
+                for item in contents:
+                    # Decode each stream in its own try: a bomb fails closed, but an
+                    # otherwise-unreadable stream only skips itself, so the remaining
+                    # streams on the page are still inspected and charged.
+                    try:
                         obj = item.get_object() if isinstance(item, IndirectObject) else item
                         if not hasattr(obj, "get_data"):
                             continue
                         chunk = obj.get_data()
-                        total_raw_bytes += len(chunk)
-                        if total_raw_bytes > max_total_stream_bytes:
-                            logger.warning(
-                                f"Decoded content streams exceed {max_total_stream_bytes} "
-                                f"bytes by page {page_index + 1}. "
-                                "Flagging PDF as too complex for text extraction."
-                            )
-                            return True
-                        # Check before copying so an oversized stream is never
-                        # accumulated into the buffer or regex-scanned.
-                        if len(accumulated) + len(chunk) > max_raw_stream_bytes:
-                            logger.info(
-                                f"Page {page_index + 1} content stream exceeds "
-                                f"{max_raw_stream_bytes} bytes. "
-                                "Flagging PDF as too complex for text extraction."
-                            )
-                            return True
-                        accumulated.extend(chunk)
-                    raw_data = accumulated
-                elif hasattr(contents, "get_data"):
-                    chunk = contents.get_data()
+                    except LimitReachedError:
+                        logger.warning(
+                            f"Page {page_index + 1} content stream exceeds pypdf's decode "
+                            "limit. Flagging PDF as too complex for text extraction."
+                        )
+                        return True
+                    except Exception:
+                        continue
                     total_raw_bytes += len(chunk)
                     if total_raw_bytes > max_total_stream_bytes:
                         logger.warning(
@@ -789,25 +786,45 @@ def is_pdf_too_complex(
                             "Flagging PDF as too complex for text extraction."
                         )
                         return True
-                    if len(chunk) > max_raw_stream_bytes:
+                    # Check before copying so an oversized stream is never
+                    # accumulated into the buffer or regex-scanned.
+                    if len(accumulated) + len(chunk) > max_raw_stream_bytes:
                         logger.info(
                             f"Page {page_index + 1} content stream exceeds "
                             f"{max_raw_stream_bytes} bytes. "
                             "Flagging PDF as too complex for text extraction."
                         )
                         return True
-                    # No copy: the regexes accept bytes and this is not mutated.
-                    raw_data = chunk
-            except LimitReachedError:
-                # pypdf refused to decode a stream over its own filter limit (e.g. a
-                # compression bomb); that is pathological, so fail closed, don't skip.
-                logger.warning(
-                    f"Page {page_index + 1} content stream exceeds pypdf's decode limit. "
-                    "Flagging PDF as too complex for text extraction."
-                )
-                return True
-            except Exception:
-                continue
+                    accumulated.extend(chunk)
+                raw_data = accumulated
+            elif hasattr(contents, "get_data"):
+                try:
+                    chunk = contents.get_data()
+                except LimitReachedError:
+                    logger.warning(
+                        f"Page {page_index + 1} content stream exceeds pypdf's decode "
+                        "limit. Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                except Exception:
+                    continue
+                total_raw_bytes += len(chunk)
+                if total_raw_bytes > max_total_stream_bytes:
+                    logger.warning(
+                        f"Decoded content streams exceed {max_total_stream_bytes} "
+                        f"bytes by page {page_index + 1}. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                if len(chunk) > max_raw_stream_bytes:
+                    logger.info(
+                        f"Page {page_index + 1} content stream exceeds "
+                        f"{max_raw_stream_bytes} bytes. "
+                        "Flagging PDF as too complex for text extraction."
+                    )
+                    return True
+                # No copy: the regexes accept bytes and this is not mutated.
+                raw_data = chunk
 
             # Skip pages with small content streams
             if len(raw_data) < min_raw_stream_bytes:

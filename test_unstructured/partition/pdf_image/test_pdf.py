@@ -1703,6 +1703,26 @@ def test_is_pdf_too_complex_skips_small_file_size():
     assert not pdf.is_pdf_too_complex(file=b"tiny", min_file_size_bytes=10)
 
 
+def test_is_pdf_too_complex_inspects_small_files_by_default():
+    """A small compressed file can still declare huge decoded content, so the default
+    (min_file_size_bytes=0) must inspect it rather than skip on file size."""
+
+    # One 100 KB stream referenced 9,000 times: a ~55 KB file, ~900 MB nominal decoded.
+    stream = DecodedStreamObject()
+    stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+    stream._data = zlib.compress(b"\x00" * 100_000)
+    writer = PdfWriter()
+    writer.add_blank_page(width=200, height=200)
+    ref = writer._add_object(stream)
+    writer.pages[0][NameObject("/Contents")] = ArrayObject([ref for _ in range(9_000)])
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    data = buffer.getvalue()
+
+    assert len(data) < 1024 * 1024  # under the old 1 MB skip threshold
+    assert pdf.is_pdf_too_complex(file=data)  # defaults; no min_file_size_bytes override
+
+
 def test_is_pdf_too_complex_detects_vector_heavy_page():
     class MockStream:
         def get_data(self):
@@ -1974,6 +1994,31 @@ def test_is_pdf_too_complex_fails_closed_on_decoder_limit(array_contents):
             file=b"x" * 20,
             min_file_size_bytes=1,
             min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_unreadable_stream_does_not_skip_rest_of_page():
+    """One stream that fails to decode skips only itself; the remaining streams on the
+    page are still inspected, so a bad sibling can't mask an over-cap stream."""
+
+    class BadStream:
+        def get_data(self):
+            raise NotImplementedError("unsupported filter")
+
+    class ValidStream:
+        def get_data(self):
+            return b"a" * 20_000  # over the 10 KB cap below
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": ArrayObject([BadStream(), ValidStream()])}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        # Old behavior skipped the whole page on the bad stream and returned False.
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_raw_stream_bytes=10_000,
         )
 
 
