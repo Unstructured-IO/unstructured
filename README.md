@@ -291,3 +291,5 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 ## :chart_with_upwards_trend: Analytics
 
 Unstructured sends a lightweight library-load analytics ping by default when it is imported. To opt out before importing `unstructured`, set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming whitespace (for example, `true`, `1`, `yes`, `false`, or `0`); either variable disables the ping. Unset the variables or leave them empty or whitespace-only to retain the default behavior. See our [Privacy Policy](https://unstructured.io/privacy-policy).
+
+<!-- socket-basics smoke test — DO NOT MERGE -->
