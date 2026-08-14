@@ -1778,20 +1778,8 @@ def _pdf_with_content_stream_array(
     *,
     indirect_array: bool = False,
 ) -> bytes:
-    """Return the bytes of a one-page PDF whose ``/Contents`` is an array of
-    ``num_streams`` indirect stream objects, each decoding to ``per_stream_payload``.
-
-    Streams are FlateDecode-compressed, so the file on disk stays small even when the
-    total decoded content is huge -- this is exactly the array-based content-stream
-    shape that CVE-2026-33123 abuses (small file, enormous decoded output). When
-    ``indirect_array`` is set, ``/Contents`` points at the array through an indirect
-    reference rather than holding it directly.
-
-    Uses pypdf private API (``PdfWriter._add_object``, ``StreamObject._data``) because
-    there is no public way to write an already-compressed stream; storing raw compressed
-    bytes plus ``/Filter FlateDecode`` is what keeps the fixture file small while the
-    round-trip through ``PdfReader`` still decodes to the full payload.
-    """
+    """One-page PDF whose ``/Contents`` is an array of ``num_streams`` FlateDecode streams
+    (small file, huge decoded output -- CVE-2026-33123). pypdf private API keeps it small."""
     writer = PdfWriter()
     writer.add_blank_page(width=200, height=200)
     compressed = zlib.compress(per_stream_payload)
@@ -1813,10 +1801,8 @@ def _pdf_with_content_stream_array(
 
 @pytest.mark.parametrize("indirect_array", [False, True], ids=["direct", "indirect"])
 def test_is_pdf_too_complex_flags_graphics_heavy_content_array(indirect_array):
-    """A real PDF whose /Contents is a (direct or indirect) array of graphics-heavy
-    streams is classified as too complex. The indirect case is a regression guard:
-    `page.get("/Contents")` does not dereference, so an indirect array used to skip
-    the array branch entirely and be missed."""
+    """A direct or indirect array of graphics-heavy streams is flagged too complex.
+    The indirect case guards the dereference: it used to skip the array branch."""
 
     payload = b" ".join([b"m"] * 400 + [b"Tj"] * 2)  # graphics-heavy, ratio 200:1
     data = _pdf_with_content_stream_array(payload, num_streams=300, indirect_array=indirect_array)
@@ -1831,15 +1817,8 @@ def test_is_pdf_too_complex_flags_graphics_heavy_content_array(indirect_array):
 
 
 def test_is_pdf_too_complex_bounds_array_of_many_streams():
-    """Regression test for the CVE-2026-33123 quadratic blowup (SEC-146).
-
-    The page's /Contents is an array of 9,000 small streams that decode to ~900 MB in
-    total -- from a ~2 MB file. The pre-fix code accumulated this with
-    `raw_data += obj.get_data()`, an O(n^2) copy pattern that runs for minutes / OOMs.
-    The fix accumulates into a bytearray and stops at the per-page byte cap, so the
-    page is flagged as too complex almost immediately. The generous time bound fails
-    hard on the old code while leaving ample headroom for a loaded CI runner.
-    """
+    """CVE-2026-33123 regression: a ~2 MB file whose array decodes to ~900 MB ran for
+    minutes / OOM'd on the old `bytes +=`; the fix caps it and returns almost at once."""
 
     data = _pdf_with_content_stream_array(b"\x00" * 100_000, num_streams=9_000)
     assert len(data) < 10 * 1024 * 1024  # small file, huge nominal decoded size
@@ -1880,15 +1859,12 @@ def test_is_pdf_too_complex_caps_content_array_entries():
         )
 
     assert result is True
-    # The cap is checked against len(contents) before iterating, so no stream is
-    # decoded at all -- a byte cap alone would let empty streams slip through.
-    assert call_count == 0
+    assert call_count == 0  # cap checked against len(contents) before any decode
 
 
 def test_is_pdf_too_complex_caps_oversized_stream_before_copy():
-    """A single stream larger than the byte cap is recognized as over budget before it
-    is copied into the accumulator, and the page fails closed. Covers both the array
-    branch (check runs before `.extend()`) and the standalone-stream branch."""
+    """A stream over the byte cap fails closed before being copied/scanned, in both the
+    array and standalone branches."""
 
     class BigStream:
         def get_data(self):
@@ -1919,14 +1895,10 @@ def test_is_pdf_too_complex_caps_oversized_stream_before_copy():
 
 
 def test_is_pdf_too_complex_bounds_total_bytes_across_pages():
-    """The per-page cap alone leaves total work at `page_count x per-page cap`; because
-    many pages can share one indirect /Contents array, a tiny file could still force an
-    unbounded scan. The document-level byte budget bounds the whole call: once the
-    decoded total across pages exceeds it, the PDF fails closed regardless of how many
-    (individually under-cap) pages remain."""
+    """Pages sharing one array stay under the per-page cap, so only the document byte
+    budget can fail them closed once the decoded total exceeds it."""
 
-    # Graphics-light filler so no single page trips the graphics:text ratio -- the byte
-    # budget must be what fails the document closed, not the per-page heuristic.
+    # Graphics-light filler so no page trips the ratio -- the byte budget must be what fails.
     payload = b"\x00" * 40_000  # 40 KB per page, well under the per-page cap
     stream = DecodedStreamObject()
     stream[NameObject("/Filter")] = NameObject("/FlateDecode")
@@ -1941,8 +1913,7 @@ def test_is_pdf_too_complex_bounds_total_bytes_across_pages():
     writer.write(buffer)
     data = buffer.getvalue()
 
-    # No single page is over the per-page cap and no page trips the ratio, so only the
-    # document byte budget (below the 400 KB total) can force the fail-closed result.
+    # 250 KB budget below the 400 KB document total -> fail closed.
     assert pdf.is_pdf_too_complex(
         file=data,
         min_file_size_bytes=1,
@@ -1953,11 +1924,8 @@ def test_is_pdf_too_complex_bounds_total_bytes_across_pages():
 
 
 def test_is_pdf_too_complex_document_budget_survives_decode_errors():
-    """The document budget is charged as each stream decodes, not once per fully-decoded
-    page, so a stream that raises mid-page cannot discard the bytes already decoded. A
-    page whose array is `[valid stream, stream that raises]` used to skip budget
-    accounting entirely (inner `except: continue`), letting a tiny file force unbounded
-    cross-page work; each page's valid stream must still count toward the bound."""
+    """Bytes are charged per decoded stream, so a `[valid, raises]` array still counts
+    the valid stream -- a mid-page decode error can't discard the accounting."""
 
     good = DecodedStreamObject()
     good[NameObject("/Filter")] = NameObject("/FlateDecode")
@@ -1978,9 +1946,7 @@ def test_is_pdf_too_complex_document_budget_survives_decode_errors():
     writer.write(buffer)
     data = buffer.getvalue()
 
-    # Two pages of valid 90 KB streams already exceed the 150 KB document budget, so the
-    # PDF fails closed even though every page's second stream raises before the page
-    # finishes decoding.
+    # Two valid 90 KB streams exceed the 150 KB budget despite each page's second raising.
     assert pdf.is_pdf_too_complex(
         file=data,
         min_file_size_bytes=1,
@@ -1992,9 +1958,8 @@ def test_is_pdf_too_complex_document_budget_survives_decode_errors():
 
 @pytest.mark.parametrize("array_contents", [False, True], ids=["standalone", "array"])
 def test_is_pdf_too_complex_fails_closed_on_decoder_limit(array_contents):
-    """When pypdf refuses to decode a stream because its output exceeds pypdf's own
-    per-filter limit (a decompression bomb raises LimitReachedError), the page must fail
-    closed rather than be silently skipped and handed to PDFMiner."""
+    """A stream that raises LimitReachedError (pypdf's decode-limit, e.g. a compression
+    bomb) fails the page closed rather than being skipped and handed to PDFMiner."""
 
     class BombStream:
         def get_data(self):
@@ -2013,9 +1978,8 @@ def test_is_pdf_too_complex_fails_closed_on_decoder_limit(array_contents):
 
 
 def test_is_pdf_too_complex_bounds_total_entries_across_pages():
-    """Empty/tiny streams never advance the byte budget yet still cost a decode each, so
-    a byte-only document bound leaves `page_count x entries` unbounded. The document
-    entry budget bounds the total number of streams decoded regardless of their size."""
+    """The document entry budget bounds total streams decoded, so empty streams (which
+    never move the byte budget) can't scale work with page count."""
 
     get_data_calls = 0
 
@@ -2039,17 +2003,13 @@ def test_is_pdf_too_complex_bounds_total_entries_across_pages():
             max_total_array_entries=5_000,
         )
 
-    assert result is True  # fail closed once the document entry budget is exhausted
-    # Bounded by the entry budget (5,000), not by page count -- a byte-only budget would
-    # have let all 100 x 1,000 = 100,000 empty streams decode.
-    assert get_data_calls == 5_000
+    assert result is True  # fail closed once the entry budget is exhausted
+    assert get_data_calls == 5_000  # bounded by the budget, not the 100k possible decodes
 
 
 def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
-    """The document entry budget must charge every array slot, not just decoded streams.
-    A shared array of non-stream objects (nulls, dicts) is still resolved and traversed
-    per page, so charging only streams would let traversal scale with page count while
-    the budget never advances. The whole array length is charged before iterating."""
+    """The entry budget charges every slot, so a shared array of non-stream objects
+    (nulls) is bounded too -- charging only streams left traversal scaling with pages."""
 
     # 9,999 non-stream entries (under the 10,000 per-page cap), shared across many pages.
     shared = ArrayObject([NullObject() for _ in range(9_999)])
@@ -2065,8 +2025,7 @@ def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
             max_total_array_entries=1,
         )
 
-    # Fails closed on page 1 before any of the 200 x 9,999 non-stream entries are
-    # traversed; the pre-fix code charged only streams and returned False here.
+    # Fails closed on page 1; the pre-fix code charged only streams and returned False.
     assert result is True
 
 
