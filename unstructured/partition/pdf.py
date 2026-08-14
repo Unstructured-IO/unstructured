@@ -106,6 +106,11 @@ TEXT_OPS_PATTERN = re.compile(
 )
 DEFAULT_MIN_FILE_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB
 DEFAULT_MIN_RAW_STREAM_BYTES = 100_000  # 100 KB
+# Defense-in-depth cap on the total decoded bytes accumulated per page from an
+# array-based /Contents stream, mirroring pypdf's fix for CVE-2026-33123
+# (GHSA-qpxp-75px-xjcp). Bounds worst-case work for a page whose /Contents is a
+# crafted array of many small stream objects.
+MAX_RAW_STREAM_BYTES = 50 * 1024 * 1024  # 50 MB
 
 # increase the max pixels so high dpi values like 300 can still be under the PIL limit
 PILImage.MAX_IMAGE_PIXELS = 5e8
@@ -697,13 +702,22 @@ def is_pdf_too_complex(
                 continue
 
             # Decode raw stream bytes (cheap relative to full ContentStream parsing)
-            raw_data = b""
+            raw_data: Union[bytes, bytearray] = b""
             try:
                 if isinstance(contents, ArrayObject):
+                    # Accumulate into a bytearray (amortized O(1) append) rather than
+                    # repeatedly rebinding a bytes object, which is O(n) per append and
+                    # O(n^2) overall for many small streams. Also cap total accumulated
+                    # length so a crafted array of many small streams can't force
+                    # unbounded work.
+                    array_data = bytearray()
                     for item in contents:
                         obj = item.get_object() if isinstance(item, IndirectObject) else item
                         if hasattr(obj, "get_data"):
-                            raw_data += obj.get_data()
+                            array_data.extend(obj.get_data())
+                            if len(array_data) > MAX_RAW_STREAM_BYTES:
+                                break
+                    raw_data = array_data
                 else:
                     obj = (
                         contents.get_object() if isinstance(contents, IndirectObject) else contents

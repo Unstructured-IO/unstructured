@@ -6,6 +6,7 @@ import logging
 import math
 import os
 import tempfile
+import time
 from dataclasses import dataclass
 from importlib import reload
 from pathlib import Path
@@ -16,6 +17,7 @@ from unittest import mock
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
+from pypdf.generic import ArrayObject
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
@@ -1765,6 +1767,75 @@ def test_is_pdf_too_complex_restores_file_cursor_position():
 
 def test_is_pdf_too_complex_returns_false_for_normal_pdf():
     assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
+
+
+def test_is_pdf_too_complex_array_contents_completes_in_bounded_time():
+    """Regression test for CVE-2026-33123-style quadratic blowup (SEC-146).
+
+    A page whose /Contents is an array of many small stream objects used to be
+    accumulated with `raw_data += obj.get_data()` in a loop -- an O(n^2) copy
+    pattern. With ~15k small streams that old pattern takes on the order of
+    seconds; the bytearray-based fix stays well under a second.
+    """
+
+    class MockStream:
+        def get_data(self):
+            return b"m " * 500  # 1000 bytes of graphics ops per stream
+
+    num_streams = 15_000
+    contents = ArrayObject([MockStream() for _ in range(num_streams)])
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        start = time.perf_counter()
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            max_graphics_ops=100,
+            min_graphics_to_text_ratio=1.0,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+        elapsed = time.perf_counter() - start
+
+    assert result is True
+    assert elapsed < 1.0, f"is_pdf_too_complex took {elapsed:.2f}s -- accumulation is not linear"
+
+
+def test_is_pdf_too_complex_caps_array_stream_accumulation():
+    """The array-stream accumulation stops once MAX_RAW_STREAM_BYTES is exceeded,
+    bounding worst-case work regardless of how many stream items a crafted PDF
+    declares in an array-based /Contents entry."""
+
+    call_count = 0
+
+    class MockStream:
+        def get_data(self):
+            nonlocal call_count
+            call_count += 1
+            return b"a" * 1000
+
+    num_streams = 1_000
+    contents = ArrayObject([MockStream() for _ in range(num_streams)])
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents}]
+
+    with (
+        mock.patch.object(pdf, "PdfReader", return_value=reader),
+        mock.patch.object(pdf, "MAX_RAW_STREAM_BYTES", 10_000),
+    ):
+        pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+    # Cap is 10_000 bytes at 1_000 bytes/call -> loop should break at 11 calls,
+    # far short of processing all 1_000 declared streams.
+    assert call_count <= 11
+    assert call_count < num_streams
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():

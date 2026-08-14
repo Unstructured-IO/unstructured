@@ -1,3 +1,9 @@
+## 0.26.1-dev0
+
+### Fixes
+
+- **Bound array-stream decoding in `is_pdf_too_complex` (SEC-146)**: The complexity check re-implemented pypdf's array-based `/Contents` decoding using the same quadratic `bytes +=` accumulation pattern patched upstream under CVE-2026-33123 (GHSA-qpxp-75px-xjcp) — a PDF whose page `/Contents` is an array of many small stream objects could force excessive CPU/memory on this untrusted-input path. Accumulation now uses a `bytearray` with `.extend()` and is capped at `MAX_RAW_STREAM_BYTES` (50 MB) per page as defense-in-depth. The pinned `pypdf` dependency is bumped to `>=6.9.1` so the library's own code path is patched too.
+
 ## 0.26.0
 
 ### Fixes
