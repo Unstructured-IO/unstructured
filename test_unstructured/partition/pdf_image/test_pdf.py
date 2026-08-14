@@ -19,6 +19,7 @@ import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pypdf import PdfWriter
+from pypdf.errors import LimitReachedError
 from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
@@ -1890,11 +1891,7 @@ def test_is_pdf_too_complex_caps_oversized_stream_before_copy():
     branch (check runs before `.extend()`) and the standalone-stream branch."""
 
     class BigStream:
-        def __init__(self):
-            self.calls = 0
-
         def get_data(self):
-            self.calls += 1
             return b"a" * 25_000
 
     # Array branch: oversized entry trips the cap on the first item.
@@ -1991,6 +1988,28 @@ def test_is_pdf_too_complex_document_budget_survives_decode_errors():
         max_raw_stream_bytes=100_000,
         max_total_stream_bytes=150_000,
     )
+
+
+@pytest.mark.parametrize("array_contents", [False, True], ids=["standalone", "array"])
+def test_is_pdf_too_complex_fails_closed_on_decoder_limit(array_contents):
+    """When pypdf refuses to decode a stream because its output exceeds pypdf's own
+    per-filter limit (a decompression bomb raises LimitReachedError), the page must fail
+    closed rather than be silently skipped and handed to PDFMiner."""
+
+    class BombStream:
+        def get_data(self):
+            raise LimitReachedError("Limit reached while decompressing.")
+
+    contents = ArrayObject([BombStream()]) if array_contents else BombStream()
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
 
 
 def test_is_pdf_too_complex_bounds_total_entries_across_pages():

@@ -16,6 +16,7 @@ from pdfminer.utils import open_filename
 from pi_heif import register_heif_opener
 from PIL import Image as PILImage
 from pypdf import PdfReader
+from pypdf.errors import LimitReachedError
 from pypdf.generic import ArrayObject, IndirectObject
 
 from unstructured.chunking import add_chunking_strategy
@@ -827,6 +828,18 @@ def is_pdf_too_complex(
                     # No copy: the regexes accept bytes, and the single stream is not
                     # mutated the way the array accumulator is.
                     raw_data = chunk
+            except LimitReachedError:
+                # pypdf refused to decode a stream because its output exceeded pypdf's
+                # own per-filter limit (e.g. a FlateDecode compression bomb, capped at
+                # ZLIB_MAX_OUTPUT_LENGTH). That is pathological content, so fail closed
+                # rather than skip the page and hand the bomb to PDFMiner. (The declared
+                # /Length can't gate this earlier -- it is the compressed size, which is
+                # tiny for a bomb -- and pypdf already bounds the decode itself.)
+                logger.warning(
+                    f"Page {page_index + 1} content stream exceeds pypdf's decode limit. "
+                    "Flagging PDF as too complex for text extraction."
+                )
+                return True
             except Exception:
                 continue
 
