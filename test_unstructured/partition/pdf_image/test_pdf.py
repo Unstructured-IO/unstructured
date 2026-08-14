@@ -20,7 +20,7 @@ from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from pypdf import PdfWriter
 from pypdf.errors import LimitReachedError
-from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject
+from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject, NullObject
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
@@ -2043,6 +2043,31 @@ def test_is_pdf_too_complex_bounds_total_entries_across_pages():
     # Bounded by the entry budget (5,000), not by page count -- a byte-only budget would
     # have let all 100 x 1,000 = 100,000 empty streams decode.
     assert get_data_calls == 5_000
+
+
+def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
+    """The document entry budget must charge every array slot, not just decoded streams.
+    A shared array of non-stream objects (nulls, dicts) is still resolved and traversed
+    per page, so charging only streams would let traversal scale with page count while
+    the budget never advances. The whole array length is charged before iterating."""
+
+    # 9,999 non-stream entries (under the 10,000 per-page cap), shared across many pages.
+    shared = ArrayObject([NullObject() for _ in range(9_999)])
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": shared} for _ in range(200)]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=10_000,  # per-page cap NOT hit (9,999 < 10,000)
+            max_total_array_entries=1,
+        )
+
+    # Fails closed on page 1 before any of the 200 x 9,999 non-stream entries are
+    # traversed; the pre-fix code charged only streams and returned False here.
+    assert result is True
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():

@@ -767,6 +767,19 @@ def is_pdf_too_complex(
                             "Flagging PDF as too complex for text extraction."
                         )
                         return True
+                    # Charge every array slot against the document entry budget up front,
+                    # before resolving or decoding any of them. Non-stream entries (nulls,
+                    # dicts) are still resolved and traversed, so they must count too --
+                    # charging only decoded streams would let a shared array of non-stream
+                    # objects scale traversal with page count while the budget never moves.
+                    total_array_entries += len(contents)
+                    if total_array_entries > max_total_array_entries:
+                        logger.warning(
+                            f"Content-stream array entries exceed {max_total_array_entries} "
+                            f"by page {page_index + 1}. "
+                            "Flagging PDF as too complex for text extraction."
+                        )
+                        return True
                     # Accumulate into a bytearray (amortized O(1) append) rather than
                     # rebinding a bytes object (O(n) per append, O(n^2) overall).
                     accumulated = bytearray()
@@ -774,20 +787,6 @@ def is_pdf_too_complex(
                         obj = item.get_object() if isinstance(item, IndirectObject) else item
                         if not hasattr(obj, "get_data"):
                             continue
-                        # Charge the document budgets as each entry is handled -- before
-                        # the decode/copy and before a later sibling stream can raise --
-                        # so partial-page work still counts toward the cross-page bound
-                        # and a decode error can't discard it. Entries are counted
-                        # separately from bytes because an empty stream costs a decode
-                        # but adds no bytes.
-                        total_array_entries += 1
-                        if total_array_entries > max_total_array_entries:
-                            logger.warning(
-                                f"Decoded content-stream entries exceed "
-                                f"{max_total_array_entries} by page {page_index + 1}. "
-                                "Flagging PDF as too complex for text extraction."
-                            )
-                            return True
                         chunk = obj.get_data()
                         total_raw_bytes += len(chunk)
                         if total_raw_bytes > max_total_stream_bytes:
