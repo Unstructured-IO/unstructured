@@ -42,6 +42,7 @@ from unstructured.errors import PageCountExceededError, UnprocessableEntityError
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
+from unstructured.nlp.tokenize import BATCH_SIZE, batch_process_texts
 from unstructured.partition.common.common import (
     add_element_metadata,
     exactly_one,
@@ -66,7 +67,11 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
-from unstructured.partition.text import element_from_text
+from unstructured.partition.text import (
+    _element_from_text_with_nlp,
+    _element_from_text_without_nlp,
+    element_from_text,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -499,6 +504,14 @@ def _process_pdfminer_pages(
         width, height = page_layout.width, page_layout.height
 
         page_elements: list[Element] = []
+        text_records: list[
+            tuple[
+                str,
+                tuple[tuple[float, float], ...],
+                list[dict[str, Any]],
+                np.ndarray,
+            ]
+        ] = []
         annotation_list = []
 
         coordinate_system = PixelSpace(
@@ -538,27 +551,55 @@ def _process_pdfminer_pages(
                 _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
                 if _text.strip():
                     points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element = element_from_text(
+                    text_records.append((_text, points, urls_metadata, moved_indices))
+
+        # Resolve conclusive non-NLP categories before batching so headers, footers, lists,
+        # addresses, emails, and numeric text never enter the spaCy pipeline.
+        classified_elements = [
+            _element_from_text_without_nlp(
+                text,
+                coordinates=points,
+                coordinate_system=coordinate_system,
+            )
+            for text, points, _, _ in text_records
+        ]
+        nlp_record_indices = [
+            index for index, element in enumerate(classified_elements) if element is None
+        ]
+
+        # Keep contexts page-scoped and bounded so returned spaCy Docs are released on dense pages.
+        for batch_start in range(0, len(nlp_record_indices), BATCH_SIZE):
+            batch_indices = nlp_record_indices[batch_start : batch_start + BATCH_SIZE]
+            with batch_process_texts(text_records[index][0] for index in batch_indices):
+                for index in batch_indices:
+                    _text, points, _, _ = text_records[index]
+                    classified_elements[index] = _element_from_text_with_nlp(
                         _text,
                         coordinates=points,
                         coordinate_system=coordinate_system,
                     )
-                    coordinates_metadata = CoordinatesMetadata(
-                        points=points,
-                        system=coordinate_system,
-                    )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
-                    element.metadata = ElementMetadata(
-                        filename=filename,
-                        page_number=page_number,
-                        coordinates=coordinates_metadata,
-                        last_modified=metadata_last_modified,
-                        links=links,
-                        languages=languages,
-                    )
-                    element.metadata.detection_origin = "pdfminer"
-                    page_elements.append(element)
+        # Attach metadata in original PDFMiner order after every record has been classified.
+        for text_record, element in zip(text_records, classified_elements, strict=True):
+            if element is None:
+                raise AssertionError("PDFMiner text record was not classified")
+            _, points, urls_metadata, moved_indices = text_record
+            coordinates_metadata = CoordinatesMetadata(
+                points=points,
+                system=coordinate_system,
+            )
+            links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
+
+            element.metadata = ElementMetadata(
+                filename=filename,
+                page_number=page_number,
+                coordinates=coordinates_metadata,
+                last_modified=metadata_last_modified,
+                links=links,
+                languages=languages,
+            )
+            element.metadata.detection_origin = "pdfminer"
+            page_elements.append(element)
 
         # Filled AcroForm field values live in widget annotations rather than the page
         # content stream, so pdfminer's layout pass misses them; recover them here.
