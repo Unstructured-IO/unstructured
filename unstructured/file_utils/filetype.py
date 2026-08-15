@@ -28,6 +28,7 @@ MIME-types. Additional differentiators are planned, one for `application/x-ole-s
 
 from __future__ import annotations
 
+import codecs
 import contextlib
 import functools
 import importlib.util
@@ -688,12 +689,23 @@ class _FileTypeDetectionContext:
             try:
                 return content.decode(encoding=self.encoding)
             except (UnicodeDecodeError, UnicodeError):
-                # Use the same fallback character-set detection as the file-path
-                # branch. Decoding with errors="ignore" silently stripped
-                # undecodable characters and corrupted the text head for
-                # non-UTF-8 streams (S3/GCS objects, API uploads) — issue #4434.
-                _, file_text = detect_file_encoding(file=content)
-                return file_text[:4096]
+                # A multi-byte character split at the 4096-byte read boundary
+                # raises UnicodeDecodeError even though the content is validly
+                # encoded. Decode incrementally with final=False so an
+                # incomplete trailing sequence is buffered instead of being
+                # misdiagnosed as a wrong-encoding case; genuine mid-stream
+                # errors still raise.
+                decoder = codecs.getincrementaldecoder(self.encoding)()
+                try:
+                    return decoder.decode(content, final=False)
+                except (UnicodeDecodeError, UnicodeError):
+                    # Use the same fallback character-set detection as the
+                    # file-path branch. Decoding with errors="ignore" silently
+                    # stripped undecodable characters and corrupted the text
+                    # head for non-UTF-8 streams (S3/GCS objects, API uploads)
+                    # — issue #4434.
+                    _, file_text = detect_file_encoding(file=content)
+                    return file_text[:4096]
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
