@@ -1,3 +1,9 @@
+## 0.26.1
+
+### Fixes
+
+- **Use fallback character-set detection for file-like objects**: `FileTypeDetectionContext.text_head()` now applies the same `detect_file_encoding()` fallback to file-like objects as it does to file paths when the declared encoding cannot decode the content. Previously it decoded with `errors="ignore"`, silently stripping characters and corrupting the text head for non-UTF-8 streams such as S3/GCS objects and API uploads.
+
 ## 0.26.0
 
 ### Fixes

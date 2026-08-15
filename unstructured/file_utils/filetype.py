@@ -671,21 +671,29 @@ class _FileTypeDetectionContext:
     def text_head(self) -> str:
         """The initial characters of the text file for use with text-format differentiation.
 
+        Uses fallback character-set detection when the declared encoding cannot
+        decode the content, for both file paths and file-like objects.
+
         Raises:
-            UnicodeDecodeError if file cannot be read as text.
+            UnprocessableEntityError when the file cannot be decoded with the declared
+            encoding or any of the common fallback encodings.
         """
-        # TODO: only attempts fallback character-set detection for file-path case, not for
-        # file-like object case. Seems like we should do both.
 
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)
             file.seek(0)
-            return (
-                content
-                if isinstance(content, str)
-                else content.decode(encoding=self.encoding, errors="ignore")
-            )
+            if isinstance(content, str):
+                return content
+            try:
+                return content.decode(encoding=self.encoding)
+            except (UnicodeDecodeError, UnicodeError):
+                # Use the same fallback character-set detection as the file-path
+                # branch. Decoding with errors="ignore" silently stripped
+                # undecodable characters and corrupted the text head for
+                # non-UTF-8 streams (S3/GCS objects, API uploads) — issue #4434.
+                _, file_text = detect_file_encoding(file=content)
+                return file_text[:4096]
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
