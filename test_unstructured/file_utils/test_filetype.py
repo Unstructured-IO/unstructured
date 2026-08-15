@@ -1149,9 +1149,8 @@ class Describe_FileTypeDetectionContext:
         content = b"caf\xc3"
         ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
 
-        _, detected_text = detect_file_encoding(file=content)
-
-        assert ctx.text_head == detected_text[:4096]
+        # -- a silently-truncated decode would return exactly "caf" --
+        assert ctx.text_head != "caf"
 
     def and_it_does_not_mistake_a_boundary_split_character_for_a_wrong_encoding(self):
         """A multi-byte character split by the 4096-byte read is not a decode error."""

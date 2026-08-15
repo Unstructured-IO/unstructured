@@ -683,7 +683,8 @@ class _FileTypeDetectionContext:
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)
-            eof_reached = len(file.read(1)) == 0
+            if not isinstance(content, str):
+                eof_reached = len(file.read(1)) == 0
             file.seek(0)
             if isinstance(content, str):
                 return content
