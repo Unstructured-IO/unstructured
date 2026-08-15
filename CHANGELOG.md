@@ -1,3 +1,9 @@
+## 0.26.1
+
+### Fixes
+
+- **Bound array-stream decoding in `is_pdf_too_complex` (SEC-146)**: fixes a quadratic `bytes +=` accumulation over array-based `/Contents` (CVE-2026-33123) that let a crafted PDF spike CPU/memory. Accumulation now uses a `bytearray`, with per-page and document-wide caps on decoded bytes and array entries that fail closed on crafted content, and every file is inspected by default (small files are no longer skipped, since a small compressed file can declare huge content). Indirect `/Contents` arrays are now dereferenced (they were being skipped), a single unreadable stream no longer skips the rest of its page, and operator counting no longer allocates a full match list. Bumps `pypdf` to `>=6.9.1` so its own patched code path is used.
+
 ## 0.26.0
 
 ### Fixes
