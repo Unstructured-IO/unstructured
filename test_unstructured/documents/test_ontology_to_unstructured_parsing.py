@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import pytest
@@ -24,6 +25,7 @@ from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEnco
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.transformations import (
     can_unstructured_elements_be_merged,
+    combine_inline_elements,
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
@@ -511,3 +513,24 @@ def test_inline_elements_at_different_nesting_depths_are_not_merged():
     assert (
         can_unstructured_elements_be_merged(first, second, current_depth=1, next_depth=2) is False
     )
+
+
+def test_combine_inline_elements_merges_a_long_run_in_bounded_time():
+    """Regression for ML-1713: merging a long run of inline elements used to re-parse the
+    growing run on every step (O(n^2)) -- ~seconds at n=500. The run must now merge into one
+    element in linear time, with the same text/text_as_html as appending would produce."""
+    n = 1500
+    elements_with_depth = [(_inline_element(f"w{i}"), 2) for i in range(n)]
+
+    start = time.perf_counter()
+    combined = combine_inline_elements(elements_with_depth)
+    elapsed = time.perf_counter() - start
+
+    assert len(combined) == 1
+    merged = combined[0][0]
+    assert merged.text == " ".join(f"w{i}" for i in range(n))
+    assert merged.metadata.text_as_html == "".join(
+        f'<a class="Hyperlink">w{i}</a>' for i in range(n)
+    )
+    # Pre-fix this took ~20 s; linear behavior clears a generous bound with wide margin.
+    assert elapsed < 5.0, f"combine_inline_elements took {elapsed:.2f}s -- merging is not linear"

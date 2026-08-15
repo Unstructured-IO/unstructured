@@ -1,3 +1,9 @@
+## 0.26.2
+
+### Fixes
+
+- **Linear-time inline element merging in HTML partitioning (ML-1713)**: `combine_inline_elements` re-parsed the growing merged run on every step and appended text via attribute `+=`, making a long run of mergeable inline elements O(n²) — seconds for a few hundred elements. Each element's mergeability is now computed once from its own HTML and the run's text is joined once when it closes, so merging is linear with identical output.
+
 ## 0.26.1
 
 ### Fixes
