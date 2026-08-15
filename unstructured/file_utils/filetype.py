@@ -683,6 +683,7 @@ class _FileTypeDetectionContext:
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)
+            eof_reached = len(file.read(1)) == 0
             file.seek(0)
             if isinstance(content, str):
                 return content
@@ -691,13 +692,13 @@ class _FileTypeDetectionContext:
             except (UnicodeDecodeError, UnicodeError):
                 # A multi-byte character split at the 4096-byte read boundary
                 # raises UnicodeDecodeError even though the content is validly
-                # encoded. Decode incrementally with final=False so an
-                # incomplete trailing sequence is buffered instead of being
-                # misdiagnosed as a wrong-encoding case; genuine mid-stream
-                # errors still raise.
+                # encoded. Decode incrementally with final=eof_reached so an
+                # incomplete trailing sequence is buffered when more content
+                # follows, while a genuinely truncated stream still falls
+                # through to character-set detection.
                 decoder = codecs.getincrementaldecoder(self.encoding)()
                 try:
-                    return decoder.decode(content, final=False)
+                    return decoder.decode(content, final=eof_reached)
                 except (UnicodeDecodeError, UnicodeError):
                     # Use the same fallback character-set detection as the
                     # file-path branch. Decoding with errors="ignore" silently

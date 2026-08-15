@@ -19,6 +19,7 @@ from test_unstructured.unit_utils import (
     patch,
     property_mock,
 )
+from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
     _OleFileDetector,
@@ -1142,6 +1143,15 @@ class Describe_FileTypeDetectionContext:
             # -- some characters consume multiple bytes, so shorter than 4096 --
             assert len(text_head) == 4063
             assert text_head.startswith("Iwan Roberts\nRoberts celebrating after")
+
+    def and_it_runs_character_detection_for_a_truncated_utf8_tail(self):
+        """A truncated stream must fall through to detection, not silently drop the tail."""
+        content = b"caf\xc3"
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content))
+
+        _, detected_text = detect_file_encoding(file=content)
+
+        assert ctx.text_head == detected_text[:4096]
 
     def and_it_does_not_mistake_a_boundary_split_character_for_a_wrong_encoding(self):
         """A multi-byte character split by the 4096-byte read is not a decode error."""
