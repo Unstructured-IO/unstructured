@@ -19,7 +19,6 @@ from test_unstructured.unit_utils import (
     patch,
     property_mock,
 )
-from unstructured.file_utils.encoding import detect_file_encoding
 from unstructured.file_utils.filetype import (
     _FileTypeDetectionContext,
     _OleFileDetector,
