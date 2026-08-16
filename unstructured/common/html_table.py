@@ -104,9 +104,19 @@ class HtmlTable:
             if e.text:
                 e.text = " ".join(e.text.split())
 
-            # -- remove all tails, those are newline + indent if anything --
+            # -- normalize tails. A tail is the text between an element's closing tag and the
+            # -- start of the next sibling. Pure-whitespace tails are pretty-printing noise and
+            # -- can be dropped, but tails can also carry real content (e.g. mixed inline
+            # -- markup like `<b>foo</b> bar <b>baz</b>` or text between `<br/>` tags), which
+            # -- must be preserved.
             if e.tail:
-                e.tail = None
+                parts = e.tail.split()
+                if not parts:
+                    e.tail = None
+                else:
+                    prefix = " " if e.tail[0].isspace() else ""
+                    suffix = " " if e.tail[-1].isspace() else ""
+                    e.tail = prefix + " ".join(parts) + suffix
 
         return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
 

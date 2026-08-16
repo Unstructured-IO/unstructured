@@ -41,3 +41,26 @@ def test_tokenizers_functions_run():
     tokenize.sent_tokenize(sentence)
     tokenize.word_tokenize(sentence)
     tokenize.pos_tag(sentence)
+
+
+def test_process_truncates_text_exceeding_spacy_max_length(caplog):
+    # Build text well above spaCy's default 1,000,000-char limit, like the prod trace.
+    nlp = tokenize._get_nlp()
+    long_text = "This is a sentence. " * ((nlp.max_length // 20) + 10_000)
+    assert len(long_text) > nlp.max_length
+
+    with caplog.at_level("WARNING", logger=tokenize.logger.name):
+        # Must not raise spacy ValueError E088.
+        sents = tokenize.sent_tokenize(long_text)
+
+    assert len(sents) > 0
+    assert any("exceeds spaCy max_length" in rec.message for rec in caplog.records)
+
+
+def test_process_does_not_truncate_text_within_limit():
+    nlp = tokenize._get_nlp()
+    text = "Greetings! I am from outer space."
+    assert len(text) <= nlp.max_length
+    doc = tokenize._process(text)
+    # When no truncation occurs the full text round-trips through spaCy.
+    assert doc.text == text

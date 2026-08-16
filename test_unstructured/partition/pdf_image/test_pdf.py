@@ -6,15 +6,21 @@ import logging
 import math
 import os
 import tempfile
+import time
+import zlib
 from dataclasses import dataclass
 from importlib import reload
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
+from pypdf import PdfWriter
+from pypdf.errors import LimitReachedError
+from pypdf.generic import ArrayObject, DecodedStreamObject, NameObject, NullObject
 from pytest_mock import MockFixture
 from unstructured_inference.inference import layout, pdf_image
 from unstructured_inference.inference.elements import Rectangle
@@ -209,6 +215,65 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 def test_partition_pdf_local_raises_with_no_filename():
     with pytest.raises((FileNotFoundError, PDFPageCountError, TypeError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
+
+
+def _layout_with_rotation_corrections(corrections):
+    """Build a minimal document-layout stub whose pages carry ``pdf_rotation_correction``."""
+    return SimpleNamespace(pages=[SimpleNamespace(image_metadata=meta) for meta in corrections])
+
+
+def test_rotation_corrections_from_layout_reads_metadata():
+    """The main path: per-page corrections recorded by unstructured-inference are surfaced."""
+    document_layout = _layout_with_rotation_corrections(
+        [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 270}]
+    )
+    assert pdf._rotation_corrections_from_layout(document_layout) == [90, 270]
+
+
+def test_rotation_corrections_from_layout_defaults_to_zero_on_missing_metadata():
+    """The default path: missing or empty image metadata yields a 0 (no-op) correction."""
+    document_layout = _layout_with_rotation_corrections([None, {}, {"width": 10, "height": 10}])
+    assert pdf._rotation_corrections_from_layout(document_layout) == [0, 0, 0]
+
+
+@pytest.mark.parametrize(
+    ("file_arg", "model_target", "pdfminer_target"),
+    [
+        (None, "process_file_with_model", "process_file_with_pdfminer"),
+        (b"0000", "process_data_with_model", "process_data_with_pdfminer"),
+    ],
+)
+def test_partition_pdf_local_threads_rotation_corrections_into_pdfminer(
+    monkeypatch, file_arg, model_target, pdfminer_target
+):
+    """Both branches of `_partition_pdf_or_image_local` forward the page rotation
+    corrections derived from the inferred layout into the pdfminer extraction call."""
+
+    rotated_layout = _layout_with_rotation_corrections(
+        [{"pdf_rotation_correction": 90}, {"pdf_rotation_correction": 0}]
+    )
+    monkeypatch.setattr(layout, model_target, lambda *a, **k: rotated_layout)
+
+    captured = {}
+
+    def _capture_pdfminer(*args, **kwargs):
+        captured["rotation_corrections"] = kwargs.get("rotation_corrections")
+        return ([], [])
+
+    monkeypatch.setattr(pdfminer_processing, pdfminer_target, _capture_pdfminer)
+    monkeypatch.setattr(
+        pdfminer_processing, "merge_inferred_with_extracted_layout", lambda **k: rotated_layout
+    )
+    monkeypatch.setattr(ocr, "process_file_with_ocr", lambda *a, **k: MockDocumentLayout())
+    monkeypatch.setattr(ocr, "process_data_with_ocr", lambda *a, **k: MockDocumentLayout())
+
+    pdf._partition_pdf_or_image_local(
+        filename=example_doc_path("pdf/layout-parser-paper-fast.pdf"),
+        file=file_arg,
+        pdf_text_extractable=True,
+    )
+
+    assert captured["rotation_corrections"] == [90, 0]
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
@@ -1638,6 +1703,26 @@ def test_is_pdf_too_complex_skips_small_file_size():
     assert not pdf.is_pdf_too_complex(file=b"tiny", min_file_size_bytes=10)
 
 
+def test_is_pdf_too_complex_inspects_small_files_by_default():
+    """A small compressed file can still declare huge decoded content, so the default
+    (min_file_size_bytes=0) must inspect it rather than skip on file size."""
+
+    # One 100 KB stream referenced 9,000 times: a ~55 KB file, ~900 MB nominal decoded.
+    stream = DecodedStreamObject()
+    stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+    stream._data = zlib.compress(b"\x00" * 100_000)
+    writer = PdfWriter()
+    writer.add_blank_page(width=200, height=200)
+    ref = writer._add_object(stream)
+    writer.pages[0][NameObject("/Contents")] = ArrayObject([ref for _ in range(9_000)])
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    data = buffer.getvalue()
+
+    assert len(data) < 1024 * 1024  # under the old 1 MB skip threshold
+    assert pdf.is_pdf_too_complex(file=data)  # defaults; no min_file_size_bytes override
+
+
 def test_is_pdf_too_complex_detects_vector_heavy_page():
     class MockStream:
         def get_data(self):
@@ -1705,6 +1790,288 @@ def test_is_pdf_too_complex_restores_file_cursor_position():
 
 def test_is_pdf_too_complex_returns_false_for_normal_pdf():
     assert not pdf.is_pdf_too_complex(filename=example_doc_path("pdf/layout-parser-paper.pdf"))
+
+
+def _pdf_with_content_stream_array(
+    per_stream_payload: bytes,
+    num_streams: int,
+    *,
+    indirect_array: bool = False,
+) -> bytes:
+    """One-page PDF whose ``/Contents`` is an array of ``num_streams`` FlateDecode streams
+    (small file, huge decoded output -- CVE-2026-33123). pypdf private API keeps it small."""
+    writer = PdfWriter()
+    writer.add_blank_page(width=200, height=200)
+    compressed = zlib.compress(per_stream_payload)
+
+    refs = ArrayObject()
+    for _ in range(num_streams):
+        stream = DecodedStreamObject()
+        stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+        stream._data = compressed
+        refs.append(writer._add_object(stream))
+
+    contents = writer._add_object(refs) if indirect_array else refs
+    writer.pages[0][NameObject("/Contents")] = contents
+
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()
+
+
+@pytest.mark.parametrize("indirect_array", [False, True], ids=["direct", "indirect"])
+def test_is_pdf_too_complex_flags_graphics_heavy_content_array(indirect_array):
+    """A direct or indirect array of graphics-heavy streams is flagged too complex.
+    The indirect case guards the dereference: it used to skip the array branch."""
+
+    payload = b" ".join([b"m"] * 400 + [b"Tj"] * 2)  # graphics-heavy, ratio 200:1
+    data = _pdf_with_content_stream_array(payload, num_streams=300, indirect_array=indirect_array)
+
+    assert pdf.is_pdf_too_complex(
+        file=data,
+        max_graphics_ops=100,
+        min_graphics_to_text_ratio=20.0,
+        min_file_size_bytes=1,
+        min_raw_stream_bytes=1,
+    )
+
+
+def test_is_pdf_too_complex_bounds_array_of_many_streams():
+    """CVE-2026-33123 regression: a ~2 MB file whose array decodes to ~900 MB ran for
+    minutes / OOM'd on the old `bytes +=`; the fix caps it and returns almost at once."""
+
+    data = _pdf_with_content_stream_array(b"\x00" * 100_000, num_streams=9_000)
+    assert len(data) < 10 * 1024 * 1024  # small file, huge nominal decoded size
+
+    start = time.perf_counter()
+    result = pdf.is_pdf_too_complex(file=data, min_file_size_bytes=1, min_raw_stream_bytes=1)
+    elapsed = time.perf_counter() - start
+
+    # Decoded content blows past the 50 MB per-page cap, so the page fails closed.
+    assert result is True
+    assert elapsed < 10.0, f"is_pdf_too_complex took {elapsed:.2f}s -- accumulation is not bounded"
+
+
+def test_is_pdf_too_complex_caps_content_array_entries():
+    """An array of many empty/tiny streams cannot force unbounded work: the entry-count
+    cap short-circuits before any stream is decoded, and the page fails closed."""
+
+    call_count = 0
+
+    class EmptyStream:
+        def get_data(self):
+            nonlocal call_count
+            call_count += 1
+            return b""
+
+    num_streams = 50_000
+    contents = ArrayObject([EmptyStream() for _ in range(num_streams)])
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=10_000,
+        )
+
+    assert result is True
+    assert call_count == 0  # cap checked against len(contents) before any decode
+
+
+def test_is_pdf_too_complex_caps_oversized_stream_before_copy():
+    """A stream over the byte cap fails closed before being copied/scanned, in both the
+    array and standalone branches."""
+
+    class BigStream:
+        def get_data(self):
+            return b"a" * 25_000
+
+    # Array branch: oversized entry trips the cap on the first item.
+    array_stream = BigStream()
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": ArrayObject([array_stream, BigStream(), BigStream()])}]
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_raw_stream_bytes=10_000,
+        )
+
+    # Standalone (non-array) branch: oversized single stream also fails closed.
+    single_stream = BigStream()
+    reader.pages = [{"/Contents": single_stream}]
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_raw_stream_bytes=10_000,
+        )
+
+
+def test_is_pdf_too_complex_bounds_total_bytes_across_pages():
+    """Pages sharing one array stay under the per-page cap, so only the document byte
+    budget can fail them closed once the decoded total exceeds it."""
+
+    # Graphics-light filler so no page trips the ratio -- the byte budget must be what fails.
+    payload = b"\x00" * 40_000  # 40 KB per page, well under the per-page cap
+    stream = DecodedStreamObject()
+    stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+    stream._data = zlib.compress(payload)
+
+    writer = PdfWriter()
+    shared_ref = writer._add_object(stream)  # one stream, referenced by every page
+    for _ in range(10):
+        writer.add_blank_page(width=200, height=200)
+        writer.pages[-1][NameObject("/Contents")] = ArrayObject([shared_ref])
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    data = buffer.getvalue()
+
+    # 250 KB budget below the 400 KB document total -> fail closed.
+    assert pdf.is_pdf_too_complex(
+        file=data,
+        min_file_size_bytes=1,
+        min_raw_stream_bytes=1,
+        max_raw_stream_bytes=1_000_000,
+        max_total_stream_bytes=250_000,
+    )
+
+
+def test_is_pdf_too_complex_document_budget_survives_decode_errors():
+    """Bytes are charged per decoded stream, so a `[valid, raises]` array still counts
+    the valid stream -- a mid-page decode error can't discard the accounting."""
+
+    good = DecodedStreamObject()
+    good[NameObject("/Filter")] = NameObject("/FlateDecode")
+    good._data = zlib.compress(b"\x00" * 90_000)  # decodes to 90 KB
+
+    bad = DecodedStreamObject()
+    bad[NameObject("/Filter")] = NameObject("/UnknownBogusFilter")  # get_data() raises
+    bad._data = b"garbage"
+
+    writer = PdfWriter()
+    good_ref = writer._add_object(good)
+    bad_ref = writer._add_object(bad)
+    shared_ref = writer._add_object(ArrayObject([good_ref, bad_ref]))
+    for _ in range(10):
+        writer.add_blank_page(width=200, height=200)
+        writer.pages[-1][NameObject("/Contents")] = shared_ref
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    data = buffer.getvalue()
+
+    # Two valid 90 KB streams exceed the 150 KB budget despite each page's second raising.
+    assert pdf.is_pdf_too_complex(
+        file=data,
+        min_file_size_bytes=1,
+        min_raw_stream_bytes=1,
+        max_raw_stream_bytes=100_000,
+        max_total_stream_bytes=150_000,
+    )
+
+
+@pytest.mark.parametrize("array_contents", [False, True], ids=["standalone", "array"])
+def test_is_pdf_too_complex_fails_closed_on_decoder_limit(array_contents):
+    """A stream that raises LimitReachedError (pypdf's decode-limit, e.g. a compression
+    bomb) fails the page closed rather than being skipped and handed to PDFMiner."""
+
+    class BombStream:
+        def get_data(self):
+            raise LimitReachedError("Limit reached while decompressing.")
+
+    contents = ArrayObject([BombStream()]) if array_contents else BombStream()
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": contents}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+        )
+
+
+def test_is_pdf_too_complex_unreadable_stream_does_not_skip_rest_of_page():
+    """One stream that fails to decode skips only itself; the remaining streams on the
+    page are still inspected, so a bad sibling can't mask an over-cap stream."""
+
+    class BadStream:
+        def get_data(self):
+            raise NotImplementedError("unsupported filter")
+
+    class ValidStream:
+        def get_data(self):
+            return b"a" * 20_000  # over the 10 KB cap below
+
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": ArrayObject([BadStream(), ValidStream()])}]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        # Old behavior skipped the whole page on the bad stream and returned False.
+        assert pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_raw_stream_bytes=10_000,
+        )
+
+
+def test_is_pdf_too_complex_bounds_total_entries_across_pages():
+    """The document entry budget bounds total streams decoded, so empty streams (which
+    never move the byte budget) can't scale work with page count."""
+
+    get_data_calls = 0
+
+    class EmptyStream:
+        def get_data(self):
+            nonlocal get_data_calls
+            get_data_calls += 1
+            return b""
+
+    # One 1,000-entry array (under the 10,000 per-page cap) shared by every page.
+    shared = ArrayObject([EmptyStream() for _ in range(1_000)])
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": shared} for _ in range(100)]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=10_000,  # per-page cap NOT hit (1,000 < 10,000)
+            max_total_array_entries=5_000,
+        )
+
+    assert result is True  # fail closed once the entry budget is exhausted
+    assert get_data_calls == 5_000  # bounded by the budget, not the 100k possible decodes
+
+
+def test_is_pdf_too_complex_charges_non_stream_entries_to_budget():
+    """The entry budget charges every slot, so a shared array of non-stream objects
+    (nulls) is bounded too -- charging only streams left traversal scaling with pages."""
+
+    # 9,999 non-stream entries (under the 10,000 per-page cap), shared across many pages.
+    shared = ArrayObject([NullObject() for _ in range(9_999)])
+    reader = mock.Mock()
+    reader.pages = [{"/Contents": shared} for _ in range(200)]
+
+    with mock.patch.object(pdf, "PdfReader", return_value=reader):
+        result = pdf.is_pdf_too_complex(
+            file=b"x" * 20,
+            min_file_size_bytes=1,
+            min_raw_stream_bytes=1,
+            max_content_stream_array_entries=10_000,  # per-page cap NOT hit (9,999 < 10,000)
+            max_total_array_entries=1,
+        )
+
+    # Fails closed on page 1; the pre-fix code charged only streams and returned False.
+    assert result is True
 
 
 def test_document_to_element_list_omits_coord_system_when_coord_points_absent():

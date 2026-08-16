@@ -388,6 +388,23 @@ class DescribeElementMetadata:
             "page_number": 2,
         }
 
+    def and_it_round_trips_an_enrichment_origins_dict_of_lists_through_a_dict(self):
+        enrichment_origins = {
+            "text": [
+                {"type": "enrichment_foo", "provider": "provider_a", "model": "model_x"},
+                {"type": "enrichment_bar", "provider": "provider_a", "model": "model_x"},
+            ],
+            "embeddings": [
+                {"type": "enrichment_baz", "provider": "provider_b", "model": "model_y"},
+            ],
+        }
+        meta = ElementMetadata(enrichment_origins=enrichment_origins)
+
+        # -- it serializes verbatim (no special-casing needed) --
+        assert meta.to_dict()["enrichment_origins"] == enrichment_origins
+        # -- and rehydrates to an equal value --
+        assert ElementMetadata.from_dict(meta.to_dict()).enrichment_origins == enrichment_origins
+
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
         elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
         meta = ElementMetadata(

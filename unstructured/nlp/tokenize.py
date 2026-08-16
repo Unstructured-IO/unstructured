@@ -151,7 +151,20 @@ def _get_nlp() -> spacy.language.Language:
 def _process(text: str) -> spacy.tokens.Doc:
     """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
     # -- str() handles numpy.str_ from OCR pipelines --
-    return _get_nlp()(str(text))
+    text = str(text)
+    nlp = _get_nlp()
+    if len(text) > nlp.max_length:
+        logger.warning(
+            "Input text of length %d exceeds spaCy max_length=%d; "
+            "truncating for partition heuristics.",
+            len(text),
+            nlp.max_length,
+        )
+        # Prefer to cut at the last whitespace within the budget so we don't split a token.
+        cut = text.rfind(" ", max(0, nlp.max_length - 256), nlp.max_length)
+        truncated = text[: cut if cut != -1 else nlp.max_length]
+        return nlp(truncated)
+    return nlp(text)
 
 
 def sent_tokenize(text: str) -> List[str]:

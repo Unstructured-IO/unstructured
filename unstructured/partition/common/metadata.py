@@ -10,7 +10,7 @@ from typing import Any, Callable, Iterator, Sequence
 
 from typing_extensions import ParamSpec
 
-from unstructured.documents.elements import Element, ElementMetadata
+from unstructured.documents.elements import Element, ElementMetadata, ListItem, Title
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.lang import apply_lang_metadata
 from unstructured.utils import get_call_args_applying_defaults
@@ -58,6 +58,42 @@ HIERARCHY_RULE_SET = {
         "Table",
     ],
 }
+
+
+# Canonical HTML heading levels -> zero-indexed category_depth. The HTML spec
+# defines exactly six heading levels (there is no h7), so this closed mapping is
+# the single source of truth for both the depth value and the heading-tag set
+# (HEADING_TAGS is derived from it, not a second copy).
+_HEADING_DEPTH = {"h1": 0, "h2": 1, "h3": 2, "h4": 3, "h5": 4, "h6": 5}
+HEADING_TAGS = tuple(_HEADING_DEPTH)
+
+
+def category_depth_from_html_tag(
+    ElementCls: type[Element], tag: str | None, list_ancestor_count: int = 0
+) -> int | None:
+    """Compute `category_depth` from an element's HTML heading level (not DOM-nesting depth).
+
+    This is the canonical mapping used by both the v1 HTML parser and the v2 (ontology) HTML
+    converter so the two paths agree on what `category_depth` means:
+
+    - `Title` (which includes ontology Title/Subtitle/Heading, i.e. ``<h1>``-``<h6>``): the heading
+      level, zero-indexed -- ``h1`` -> 0, ``h2`` -> 1, ... ``h6`` -> 5. A `Title` whose tag is not a
+      heading (e.g. a styled paragraph) is treated as a top-level heading (0).
+    - `ListItem`: the number of enclosing list containers (``ol``/``ul``/``dl``), passed in by the
+      caller (the v1 HTML parser, which computes it from list nesting). The v2 converter serializes
+      a whole ``ol``/``ul``/``dl`` as one element and never emits a standalone ``ListItem``, so it
+      does not use this.
+    - Everything else: ``None`` (no meaningful depth).
+
+    `tag` is the element's HTML tag name (e.g. ``"h2"``); it may be ``None`` for derived elements.
+    """
+    if ElementCls is ListItem:
+        return list_ancestor_count
+
+    if ElementCls is Title:
+        return _HEADING_DEPTH.get(tag, 0)
+
+    return None
 
 
 def set_element_hierarchy(

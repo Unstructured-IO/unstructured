@@ -1,0 +1,20 @@
+[
+  {
+    "sku": "GRD-8842",
+    "name": "Garden Trowel",
+    "price": 12.5,
+    "in_stock": true
+  },
+  {
+    "sku": "GRD-1290",
+    "name": "Watering Can",
+    "price": 18.0,
+    "in_stock": false
+  },
+  {
+    "sku": "GRD-3317",
+    "name": "Pruning Shears",
+    "price": 24.99,
+    "in_stock": true
+  }
+]

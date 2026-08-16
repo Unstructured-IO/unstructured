@@ -411,17 +411,129 @@ def test_auto_partition_json_from_file_preserves_original_elements():
     assert elements_to_dicts(partitioned_elements) == elements_to_dicts(original_elements)
 
 
-def test_auto_partition_processes_simple_ndjson(tmp_path: pathlib.Path):
+def test_auto_partition_routes_single_line_json_object_to_json_not_ndjson(tmp_path: pathlib.Path):
+    # -- a compact single-line object is one JSON value, so it routes to JSON even though it is
+    # -- also valid one-record NDJSON. It is not an array of element-dicts, so it partitions as
+    # -- arbitrary JSON rather than rehydrating. --
     text = '{"text": "hello", "type": "NarrativeText"}'
 
-    file_path = str(tmp_path / "unprocessable.json")
+    file_path = str(tmp_path / "one-line-element-object.json")
     with open(file_path, "w") as f:
         f.write(text)
 
     result = partition(filename=file_path)
+
     assert len(result) == 1
-    assert isinstance(result[0], NarrativeText)
-    assert "hello" in result[0].text
+    assert isinstance(result[0], Text)
+    assert '"text": "hello"' in result[0].text
+    assert result[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_non_element_json_object_to_partition_json():
+    elements = partition(example_doc_path("not-unstructured-payload.json"))
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert '"id": "Sample-1"' in elements[0].text
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_compact_single_line_json_object_fixture_to_json():
+    file_path = example_doc_path("single-line-object.json")
+
+    elements = partition(file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].metadata.filetype == "application/json"
+    assert "Garden Trowel" in elements[0].text
+
+
+def test_auto_partition_routes_arbitrary_ndjson_to_partition_ndjson():
+    elements = partition(example_doc_path("arbitrary-records.ndjson"))
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+    assert "Watering Can" in elements[1].text
+
+
+def test_auto_partition_rehydrates_serialized_element_ndjson():
+    elements = partition(example_doc_path("simple.ndjson"))
+
+    assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+def test_auto_partition_surfaces_ValueError_for_corrupt_element_shaped_json(
+    tmp_path: pathlib.Path,
+):
+    # -- an element-shaped payload whose metadata cannot be rehydrated raises the wrapped
+    # -- ValueError through partition(), not a low-level error like zlib.error --
+    text = json.dumps([{"type": "Title", "text": "x", "metadata": {"orig_elements": "aGVsbG8="}}])
+    file_path = str(tmp_path / "corrupt-elements.json")
+    with open(file_path, "w") as f:
+        f.write(text)
+
+    with pytest.raises(ValueError, match="could not be reconstructed"):
+        partition(filename=file_path)
+
+
+def test_auto_partition_ties_one_record_ndjson_to_ndjson_and_rehydrates(tmp_path: pathlib.Path):
+    # -- a one-record ".ndjson" asserted as "application/json" is also valid one-value JSON, but
+    # -- the ".ndjson" extension wins the tie-break so it routes to partition_ndjson and
+    # -- rehydrates rather than becoming an arbitrary-JSON Text --
+    file_path = str(tmp_path / "one-record.ndjson")
+    with open(file_path, "w") as f:
+        f.write('{"type": "Title", "text": "Hello"}\n')
+
+    with open(file_path, "rb") as f:
+        elements = partition(file=f, content_type="application/json")
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Title)
+    assert elements[0].text == "Hello"
+
+
+def test_auto_partition_routes_scalar_json_to_partition_json(tmp_path: pathlib.Path):
+    # -- a bare JSON scalar in a ".json" source reaches partition_json (not TXT) and becomes one
+    # -- Text of the pretty-printed value --
+    file_path = str(tmp_path / "scalar.json")
+    with open(file_path, "w") as f:
+        f.write("123")
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 1
+    assert isinstance(elements[0], Text)
+    assert elements[0].text == "123"
+    assert elements[0].metadata.filetype == "application/json"
+
+
+def test_auto_partition_routes_scalar_ndjson_to_partition_ndjson(tmp_path: pathlib.Path):
+    # -- scalar-per-line NDJSON in a ".ndjson" source reaches partition_ndjson (not TXT) and
+    # -- becomes one Text per line --
+    file_path = str(tmp_path / "scalar.ndjson")
+    with open(file_path, "w") as f:
+        f.write('1\n2\n"x"\n')
+
+    elements = partition(filename=file_path)
+
+    assert len(elements) == 3
+    assert all(isinstance(e, Text) for e in elements)
+    assert [e.text for e in elements] == ["1", "2", '"x"']
+    assert elements[0].metadata.filetype == "application/x-ndjson"
+
+
+def test_auto_partition_raises_ValueError_for_json_with_NaN(tmp_path: pathlib.Path):
+    # -- the detector shares the partitioners' strict JSON parse, so a payload containing the
+    # -- non-standard `NaN` constant is never silently detected/partitioned; partition() surfaces
+    # -- the ValueError --
+    file_path = str(tmp_path / "with-nan.json")
+    with open(file_path, "w") as f:
+        f.write('{"value": NaN}')
+
+    with pytest.raises(ValueError, match="Not a valid json"):
+        partition(filename=file_path)
 
 
 # ================================================================================================

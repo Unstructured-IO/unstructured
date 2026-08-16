@@ -1,3 +1,5 @@
+import os
+import tempfile
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -19,11 +21,13 @@ from test_unstructured.unit_utils import example_doc_path
 from unstructured.partition.auto import partition
 from unstructured.partition.pdf_image.pdfminer_processing import (
     _deduplicate_ltchars,
+    _rotate_bboxes,
     _validate_bbox,
     aggregate_embedded_text_by_block,
     bboxes1_is_almost_subregion_of_bboxes2,
     boxes_self_iou,
     clean_pdfminer_inner_elements,
+    get_widget_text_from_annots,
     process_file_with_pdfminer,
     remove_duplicate_elements,
     text_is_embedded,
@@ -84,6 +88,34 @@ mix_elements_inside_table = [
     LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.PDFMINER),
     LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.PDFMINER),
 ]
+
+
+def test_rotate_bboxes_matches_pil_rotation_directions():
+    """_rotate_bboxes mirrors PIL.Image.rotate(angle, expand=True) (counter-clockwise)."""
+    W, H = 100.0, 200.0  # portrait display-frame canvas
+    coords = np.array([[10.0, 20.0, 30.0, 60.0]])
+
+    # 0 / 360 are no-ops
+    assert np.array_equal(_rotate_bboxes(coords, 0, W, H), coords)
+    assert np.array_equal(_rotate_bboxes(coords, 360, W, H), coords)
+
+    # 90 CCW (expand): x' = y, y' = W - x
+    r90 = _rotate_bboxes(coords, 90, W, H)
+    assert np.allclose(r90, [[20.0, W - 30.0, 60.0, W - 10.0]])
+    # 180
+    r180 = _rotate_bboxes(coords, 180, W, H)
+    assert np.allclose(r180, [[W - 30.0, H - 60.0, W - 10.0, H - 20.0]])
+    # 270 CCW
+    assert np.allclose(_rotate_bboxes(coords, 270, W, H), [[H - 60.0, 10.0, H - 20.0, 30.0]])
+
+    # rotating 90 then 270 (about the post-rotation H x W canvas) restores the original box
+    assert np.allclose(_rotate_bboxes(r90, 270, H, W), coords)
+
+    # outputs remain valid bboxes (x1 < x2, y1 < y2)
+    for angle in (90, 180, 270):
+        r = _rotate_bboxes(coords, angle, W, H)
+        assert r[0, 0] < r[0, 2]
+        assert r[0, 1] < r[0, 3]
 
 
 @pytest.mark.parametrize(
@@ -276,6 +308,31 @@ def test_remove_duplicate_elements():
     assert result.element_coords.tolist() == [[0, 0, 10, 10], [20, 20, 30, 30]]
 
 
+def test_remove_duplicate_elements_dense_page_is_not_decimated():
+    """Pages with more than ~2000 elements are chunked internally; the dedup mask for each
+    chunk must be offset by the chunk's global index. Otherwise rows in later chunks match
+    themselves and are wrongly dropped, decimating dense pages."""
+    # 2500 unique, non-overlapping boxes on a 50x50 grid (zero IoU between any two)
+    unique = [
+        EmbeddedTextRegion(
+            bbox=Rectangle((i % 50) * 20, (i // 50) * 20, (i % 50) * 20 + 10, (i // 50) * 20 + 10),
+            text=f"Text {i}",
+        )
+        for i in range(2500)
+    ]
+    # one exact duplicate of the first box, appended last so the pair spans two chunks
+    duplicate = EmbeddedTextRegion(bbox=Rectangle(0, 0, 10, 10), text="Text 0 dup")
+    sample_elements = TextRegions.from_list([*unique, duplicate])
+
+    result = remove_duplicate_elements(sample_elements)
+
+    # only the single cross-chunk duplicate pair collapses; every unique box is kept
+    assert len(result) == 2500
+    # the later element of the duplicate pair is the one retained
+    assert "Text 0 dup" in result.texts.tolist()
+    assert "Text 0" not in result.texts.tolist()
+
+
 def test_process_file_with_pdfminer():
     layout, links = process_file_with_pdfminer(example_doc_path("pdf/layout-parser-paper-fast.pdf"))
     assert len(layout)
@@ -295,6 +352,176 @@ def test_process_file_hidden_ocr_text():
     layout, _ = process_file_with_pdfminer(example_doc_path("pdf/pdf-with-ocr-text.pdf"))
     assert all(is_extracted is None for is_extracted in layout[0].is_extracted_array[:-1])
     assert layout[0].is_extracted_array[-1] == IsExtracted.TRUE
+
+
+def test_process_file_recovers_figure_overlay_text():
+    """Text inside a Form XObject (LTFigure overlay) is recovered, not dropped.
+
+    Regression test: such text is real, embedded text held as loose LTChars that pdfminer does not
+    group into LTTextLine objects, so extract_text_objects (LTTextLine only) used to drop it. The
+    fixture has "Printed Name:" in the main content stream and "Jane Doe" inside a form XObject.
+    """
+    layout, _ = process_file_with_pdfminer(example_doc_path("pdf/figure-overlay-text.pdf"))
+    texts = " ".join(str(t) for page in layout for t in page.texts if t)
+    assert "Printed Name:" in texts  # main content stream
+    assert "Jane Doe" in texts  # figure-overlay text (dropped before the fix)
+
+
+# A synthetic AcroForm: filled text fields whose values live only in widget annotations
+# (the page content stream is empty), plus one empty field that must be skipped.
+SYNTHETIC_FORM_FIELDS = [
+    ("name", "Jane Doe", (40, 700, 300, 720)),
+    ("date of birth", "1990-01-01", (40, 650, 300, 670)),
+    ("address", "123 Main Street", (40, 600, 300, 620)),
+    ("phone", "", (40, 550, 300, 570)),  # empty -> should be skipped
+]
+
+
+def _build_synthetic_form_pdf(path: str) -> None:
+    """Write a 1-page PDF whose only text lives in AcroForm text-field (/Tx) widgets.
+
+    The page content stream is empty, so pdfminer's normal text pass yields nothing; the
+    values are reachable only through the widget annotations in ``page.annots``.
+    """
+    from pypdf import PdfWriter
+    from pypdf.generic import (
+        ArrayObject,
+        DictionaryObject,
+        NameObject,
+        NumberObject,
+        TextStringObject,
+    )
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    page = writer.pages[0]
+
+    refs = []
+    for field_name, value, rect in SYNTHETIC_FORM_FIELDS:
+        widget = DictionaryObject()
+        widget[NameObject("/Type")] = NameObject("/Annot")
+        widget[NameObject("/Subtype")] = NameObject("/Widget")
+        widget[NameObject("/FT")] = NameObject("/Tx")
+        widget[NameObject("/T")] = TextStringObject(field_name)
+        widget[NameObject("/V")] = TextStringObject(value)
+        widget[NameObject("/Rect")] = ArrayObject([NumberObject(c) for c in rect])
+        refs.append(writer._add_object(widget))
+
+    page[NameObject("/Annots")] = ArrayObject(refs)
+    acro_form = DictionaryObject()
+    acro_form[NameObject("/Fields")] = ArrayObject(refs)
+    writer._root_object[NameObject("/AcroForm")] = writer._add_object(acro_form)
+
+    with open(path, "wb") as f:
+        writer.write(f)
+
+
+def test_get_widget_text_from_annots_extracts_filled_text_fields():
+    """The widget helper recovers filled /Tx field values and skips empty ones."""
+    from pdfminer.pdfpage import PDFPage
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        with open(pdf_path, "rb") as fp:
+            page = next(PDFPage.get_pages(fp))
+            widgets = get_widget_text_from_annots(page.annots, height=792)
+
+    texts = [w["text"] for w in widgets]
+    assert texts == ["Jane Doe", "1990-01-01", "123 Main Street"]  # empty "phone" skipped
+    # Every widget carries a valid bounding box.
+    assert all(_validate_bbox(w["bbox"]) for w in widgets)
+
+
+def test_get_widget_text_from_annots_decodes_utf16_text_without_bom():
+    from pdfminer.psparser import PSLiteral
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "FT": PSLiteral("Tx"),
+                "V": b"\xfe\xff\x00J\x00a\x00n\x00e",
+                "Rect": (10, 80, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
+
+
+def test_get_widget_text_from_annots_decodes_choice_field_value_arrays():
+    from pdfminer.psparser import PSLiteral
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "FT": PSLiteral("Ch"),
+                "V": [PSLiteral("ChoiceA"), b"\xfe\xff\x00C\x00h\x00o\x00i\x00c\x00e\x00B"],
+                "Rect": (10, 70, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "ChoiceA\nChoiceB", "bbox": (10.0, 5.0, 90.0, 30.0)}]
+
+
+def test_get_widget_text_from_annots_inherits_field_type_and_value_from_parent():
+    """FT/V absent on the widget are inherited by walking up the /Parent chain.
+
+    The intermediate parent is a direct dict (the case PDFObjRef-only traversal missed) and
+    the root parent carries the inherited /FT, exercising multi-level inheritance.
+    """
+    from pdfminer.psparser import PSLiteral
+
+    root_parent = {"FT": PSLiteral("Tx")}  # field type lives at the top of the hierarchy
+    mid_parent = {"V": b"\xfe\xff\x00J\x00a\x00n\x00e", "Parent": root_parent}  # value mid-chain
+
+    widgets = get_widget_text_from_annots(
+        [
+            {
+                "Subtype": PSLiteral("Widget"),
+                "Parent": mid_parent,  # neither FT nor V on the widget itself
+                "Rect": (10, 80, 90, 95),
+            }
+        ],
+        height=100,
+    )
+
+    assert widgets == [{"text": "Jane", "bbox": (10.0, 5.0, 90.0, 20.0)}]
+
+
+def test_process_file_with_pdfminer_recovers_form_field_text():
+    """The extracted (hi_res) layer includes AcroForm field values as text regions."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        layout, _ = process_file_with_pdfminer(pdf_path)
+
+    texts = [str(t) for t in layout[0].texts if t]
+    assert "Jane Doe" in texts
+    assert "1990-01-01" in texts
+    assert "123 Main Street" in texts
+    # Widget-sourced regions are marked as extracted text.
+    assert IsExtracted.TRUE in list(layout[0].is_extracted_array)
+
+
+def test_partition_pdf_fast_recovers_form_field_text():
+    """End-to-end: the fast strategy emits elements for filled form fields."""
+    from unstructured.partition.pdf import partition_pdf
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pdf_path = os.path.join(tmp_dir, "form.pdf")
+        _build_synthetic_form_pdf(pdf_path)
+        elements = partition_pdf(filename=pdf_path, strategy="fast")
+
+    blob = "\n".join(el.text for el in elements)
+    assert "Jane Doe" in blob
+    assert "1990-01-01" in blob
+    assert "123 Main Street" in blob
 
 
 @patch("unstructured.partition.pdf_image.pdfminer_utils.LAParams", return_value=LAParams())

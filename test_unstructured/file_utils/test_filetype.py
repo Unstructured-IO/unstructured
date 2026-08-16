@@ -509,6 +509,11 @@ def test_it_detects_correct_file_type_for_custom_types(tmp_path):
 # ================================================================================================
 
 
+def it_warns_that_is_json_processable_is_deprecated():
+    with pytest.warns(DeprecationWarning, match="is_json_processable\\(\\) is deprecated"):
+        is_json_processable(file_text='[{"a": 1}]')
+
+
 def it_affirms_JSON_is_array_of_objects_from_a_file_path():
     assert is_json_processable(example_doc_path("simple.json")) is True
 
@@ -542,6 +547,23 @@ def and_it_affirms_JSON_is_NOT_an_array_of_objects_from_text():
 # ================================================================================================
 # Describe `is_ndjson_processable()`
 # ================================================================================================
+
+
+def it_warns_that_is_ndjson_processable_is_deprecated():
+    with pytest.warns(DeprecationWarning, match="is_ndjson_processable\\(\\) is deprecated"):
+        is_ndjson_processable(file_text='{"a": 1}\n{"b": 2}\n')
+
+
+def it_still_reports_a_long_single_line_object_as_ndjson_processable_for_legacy_callers():
+    # -- `is_ndjson_processable()` is deprecated and frozen: it still affirms a single-line
+    # -- object as 1-record NDJSON even though `detect_filetype()` classifies the same payload
+    # -- as `FileType.JSON` (see
+    # -- `it_classifies_json_and_ndjson_correctly_when_first_record_exceeds_text_head_prefix`).
+    # -- Kept only for backward compatibility; do not "fix" this divergence. --
+    big_value = "x" * 5000
+    payload_one_record = json.dumps({"text": big_value, "type": "NarrativeText"}).encode()
+
+    assert is_ndjson_processable(file=io.BytesIO(payload_one_record)) is True
 
 
 def it_recognizes_real_ndjson_with_multiple_object_lines():
@@ -580,7 +602,7 @@ def it_rejects_garbage_text():
 
 
 def it_rejects_a_jupyter_notebook_payload():
-    """Jupyter notebooks are a single multi-line JSON object — must not route to NDJSON."""
+    """Jupyter notebooks are a single multi-line JSON object -- must not route to NDJSON."""
     notebook_text = (
         "{\n"
         ' "cells": [],\n'
@@ -597,19 +619,62 @@ def it_rejects_ndjson_first_line_is_a_bare_value_not_an_object():
     assert is_ndjson_processable(file_text="1\n2\n3\n") is False
 
 
+# ================================================================================================
+# Describe JSON/NDJSON disambiguation in `detect_filetype()`
+# ================================================================================================
+
+
+def it_classifies_a_compact_single_line_object_as_JSON():
+    # -- a single JSON value is JSON, not NDJSON, even though it is also valid 1-line NDJSON --
+    assert detect_filetype(example_doc_path("single-line-object.json")) == FileType.JSON
+
+
+def and_it_classifies_a_compact_single_line_object_as_JSON_without_an_extension():
+    payload = b'{"sku": "GRD-8842", "name": "Garden Trowel", "price": 12.5}'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def and_it_classifies_a_pretty_printed_multi_line_object_as_JSON():
+    payload = b'{\n  "sku": "GRD-8842",\n  "name": "Garden Trowel"\n}'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def and_it_classifies_a_single_line_array_as_JSON():
+    payload = b'[{"sku": "GRD-8842"}, {"sku": "GRD-1290"}]'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def and_it_falls_back_to_JSON_when_multiple_lines_are_not_all_JSON_values():
+    # -- an asserted-JSON payload that neither whole-parses nor line-parses exercises the
+    # -- per-line except fallback: not valid JSON, not valid NDJSON -> FileType.JSON --
+    payload = b'not json at all\n{"sku": "GRD-8842"}\n'
+    filetype = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+    assert filetype == FileType.JSON
+
+
+def it_classifies_multiple_json_object_lines_as_NDJSON():
+    payload = b'{"sku": "GRD-8842"}\n{"sku": "GRD-1290"}\n{"sku": "GRD-3317"}\n'
+    assert detect_filetype(file=io.BytesIO(payload)) == FileType.NDJSON
+
+
+def and_it_classifies_an_arbitrary_ndjson_file_as_NDJSON():
+    assert detect_filetype(example_doc_path("arbitrary-records.ndjson")) == FileType.NDJSON
+
+
 def it_routes_not_unstructured_payload_json_away_from_ndjson_via_detect_filetype():
     file_type = detect_filetype(example_doc_path("not-unstructured-payload.json"))
     # A multi-line single-object JSON file used to get classified as NDJSON. It should now end up
-    # as JSON (and partition_json will reject it with the existing schema-mismatch error).
+    # as JSON (and partition_json now partitions it as arbitrary JSON).
     assert file_type == FileType.JSON
 
 
-def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
-    """NDJSON whose first record is longer than the 4096-char text_head prefix.
+def it_classifies_json_and_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
+    """JSON/NDJSON whose first record is longer than the 4096-char text_head prefix.
 
     `_disambiguate_json_file_type` reads past `text_head` to find the first newline, so the
-    heuristic must not rely on the first record fitting in the prefix. Both single-record and
-    multi-record cases are exercised — both must round-trip as `FileType.NDJSON`.
+    heuristic must not rely on the first record fitting in the prefix. A single-record payload
+    is one JSON value and classifies as `FileType.JSON`; only the multi-record payload is
+    `FileType.NDJSON`.
     """
     big_value = "x" * 5000
     payload_one_record = json.dumps({"text": big_value, "type": "NarrativeText"}).encode()
@@ -617,9 +682,8 @@ def it_classifies_ndjson_correctly_when_first_record_exceeds_text_head_prefix():
         payload_one_record + b"\n" + json.dumps({"text": "tiny", "type": "Title"}).encode()
     )
 
-    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.NDJSON
+    assert detect_filetype(file=io.BytesIO(payload_one_record)) == FileType.JSON
     assert detect_filetype(file=io.BytesIO(payload_many_records)) == FileType.NDJSON
-    assert is_ndjson_processable(file=io.BytesIO(payload_one_record)) is True
 
 
 def it_classifies_multiline_json_as_json_when_first_newline_exceeds_text_head_prefix():
@@ -627,6 +691,176 @@ def it_classifies_multiline_json_as_json_when_first_newline_exceeds_text_head_pr
     payload = ('{"text": "' + big_value + '",\n "type": "NarrativeText"\n}').encode()
 
     assert detect_filetype(file=io.BytesIO(payload)) == FileType.JSON
+
+
+def it_leaves_a_caller_owned_file_at_position_zero_after_json_disambiguation():
+    # -- regression: disambiguation used to leave the file at EOF, so a detect-then-partition
+    # -- sequence on the same handle read an empty payload --
+    with open(example_doc_path("simple.json"), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    file_type = detect_filetype(file=file)
+
+    assert file_type == FileType.JSON
+    assert file.tell() == 0
+
+
+def it_detects_a_file_type_for_a_deeply_nested_payload_without_RecursionError():
+    # -- the whole-payload parse raises RecursionError (not JSONDecodeError) on deep nesting;
+    # -- classification must swallow it and fall back to JSON rather than letting it escape --
+    file_type = detect_filetype(file=io.BytesIO(b"[" * 200000), content_type="application/json")
+
+    assert file_type == FileType.JSON
+
+
+def it_reads_only_a_bounded_prefix_and_classifies_oversized_ndjson_as_NDJSON(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    payload = b'{"sku": "GRD-8842", "qty": 3}\n' * 100
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_classifies_ndjson_whose_second_record_spans_the_bound_as_NDJSON(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- a single complete line within the bound is enough to classify NDJSON, even when the
+    # -- next record runs past the read bound --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    payload = b'{"sku": "GRD-8842", "qty": 3}\n' + json.dumps({"description": "x" * 500}).encode()
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.NDJSON
+
+
+@pytest.mark.parametrize("trailing_newline", [True, False])
+def and_it_classifies_two_record_ndjson_of_exactly_the_bound_plus_one_as_NDJSON(
+    monkeypatch: pytest.MonkeyPatch, trailing_newline: bool
+):
+    # -- a payload of exactly MAX+1 chars is fully in hand, not truncated, so it classifies on
+    # -- its whole content rather than dropping the (complete) final line as a partial tail --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    second_record = b'{"sku": "B-200"}' + (b"\n" if trailing_newline else b"")
+    pad_len = 129 - len(second_record) - len(b'{"sku": ""}\n')
+    payload = b'{"sku": "' + b"A" * pad_len + b'"}\n' + second_record
+    assert len(payload) == 129
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.NDJSON
+
+
+def and_it_classifies_a_single_record_of_exactly_the_bound_plus_one_ending_in_newline_as_JSON(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- pins the two-step truncation probe: a lone MAX+1-char record ending in a newline is
+    # -- fully in hand, so the whole-payload parse wins and classifies JSON. A length-only probe
+    # -- (`truncated = len(head) > MAX`) would falsely flag truncation, classify on the complete
+    # -- first line, and flip this payload to NDJSON --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    pad_len = 129 - len(b'{"note": ""}\n')
+    payload = b'{"note": "' + b"A" * pad_len + b'"}\n'
+    assert len(payload) == 129
+    assert payload.endswith(b"\n")
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.JSON
+
+
+def and_it_classifies_oversized_compact_single_line_json_as_JSON_from_its_bounded_prefix(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- no complete line fits within the bound, so classification falls back to JSON --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    payload = json.dumps({"description": "x" * 500}).encode()
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.JSON
+
+
+def and_it_classifies_oversized_pretty_printed_json_as_JSON_from_its_bounded_prefix(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # -- complete lines fit within the bound but do not individually parse, so JSON --
+    monkeypatch.setattr("unstructured.file_utils.filetype._JSON_DISAMBIGUATION_MAX_CHARS", 128)
+    payload = json.dumps({f"key-{i}": i for i in range(100)}, indent=2).encode()
+
+    file_type = detect_filetype(file=io.BytesIO(payload), content_type="application/json")
+
+    assert file_type == FileType.JSON
+
+
+def it_ties_a_one_record_ndjson_source_to_NDJSON_over_a_whole_json_parse():
+    # -- a one-record ".ndjson" is also valid one-value JSON, but the explicit ".ndjson" signal
+    # -- (here paired with an asserted "application/json" content-type) wins the tie-break --
+    payload = b'{"type": "Title", "text": "hello"}\n'
+
+    file_type = detect_filetype(
+        file=io.BytesIO(payload),
+        metadata_file_path="one-record.ndjson",
+        content_type="application/json",
+    )
+
+    assert file_type == FileType.NDJSON
+
+
+def and_a_multi_record_ndjson_source_stays_NDJSON():
+    payload = b'{"type": "Title", "text": "a"}\n{"type": "Title", "text": "b"}\n'
+
+    file_type = detect_filetype(
+        file=io.BytesIO(payload),
+        metadata_file_path="records.ndjson",
+        content_type="application/json",
+    )
+
+    assert file_type == FileType.NDJSON
+
+
+def but_a_compact_single_line_json_object_still_classifies_as_JSON():
+    # -- the NDJSON tie-break must not touch ".json" or extension-less sources: the SAP
+    # -- compact-object path stays JSON --
+    payload = b'{"type": "Title", "text": "hello"}'
+
+    assert (
+        detect_filetype(file=io.BytesIO(payload), metadata_file_path="one-record.json")
+        == FileType.JSON
+    )
+
+
+def it_classifies_a_scalar_json_source_as_JSON():
+    # -- a bare scalar is valid JSON; a ".json" source must reach JSON, not fall through to TXT --
+    file_type = detect_filetype(file=io.BytesIO(b"123"), metadata_file_path="scalar.json")
+
+    assert file_type == FileType.JSON
+
+
+def it_classifies_a_scalar_per_line_ndjson_source_as_NDJSON():
+    file_type = detect_filetype(file=io.BytesIO(b'1\n2\n"x"\n'), metadata_file_path="scalar.ndjson")
+
+    assert file_type == FileType.NDJSON
+
+
+def but_a_genuinely_textual_txt_source_stays_TXT():
+    # -- the scalar allowance is scoped to JSON/NDJSON sources; plain prose in a ".txt" is TXT --
+    payload = b"just some prose\nwith another line\n"
+
+    assert detect_filetype(file=io.BytesIO(payload), metadata_file_path="notes.txt") == FileType.TXT
+
+
+def it_does_not_classify_a_json_source_containing_NaN_as_parseable_ndjson():
+    # -- the detector uses the partitioners' strict parser, so `NaN` lines (which json.loads
+    # -- accepts by default) are not treated as valid JSON values and do not flip to NDJSON --
+    payload = b"NaN\nNaN\n"
+
+    assert (
+        detect_filetype(file=io.BytesIO(payload), content_type="application/json") == FileType.JSON
+    )
 
 
 # ================================================================================================

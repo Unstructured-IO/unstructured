@@ -160,6 +160,7 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured:/home/notebook-user/test_unstructured \
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
+	--env DO_NOT_TRACK=1 \
 	$(DOCKER_IMAGE) \
 	bash -c "uv sync --locked --all-extras --group test --no-install-project && \
 	CI=$(CI) \

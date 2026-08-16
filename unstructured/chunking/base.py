@@ -76,6 +76,16 @@ class TokenCounter:
         """Return the number of tokens in `text`."""
         return len(self._encoder.encode(text))
 
+    def validate(self) -> None:
+        """Resolve the tokenizer now, raising if it is unknown or tiktoken is not installed.
+
+        The encoder is otherwise resolved on the first `count()`. The list-form chunkers drive
+        the whole pipeline during the call, so they hit that immediately, but the `iter_*` forms
+        return before anything is counted. Forcing resolution during option validation keeps
+        both forms raising at the same call site.
+        """
+        _ = self._encoder
+
 
 # ================================================================================================
 # CHUNKING OPTIONS
@@ -125,6 +135,12 @@ class ChunkingOptions:
     repeat_table_headers
         Default: `True`. When `True`, repeated table-header behavior is enabled for chunked table
         continuations. Specify `False` to opt out and preserve legacy table-chunk behavior.
+    isolate_table
+        Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
+        their own pre-chunk and never combined with adjacent non-table elements. Specify
+        `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
+        behavior), which is sometimes useful when downstream consumers expect mixed-content
+        composite chunks.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -207,6 +223,17 @@ class ChunkingOptions:
         """
         arg_value = self._kwargs.get("skip_table_chunking")
         return False if arg_value is None else bool(arg_value)
+
+    @cached_property
+    def isolate_table(self) -> bool:
+        """When True, `Table`/`TableChunk` elements are staged in their own pre-chunk.
+
+        Default value is `True`. When `False`, table-family elements are allowed to share a
+        pre-chunk with adjacent non-table elements (and may be merged by `PreChunkCombiner`),
+        restoring the pre-#4307 behavior.
+        """
+        arg_value = self._kwargs.get("isolate_table")
+        return True if arg_value is None else bool(arg_value)
 
     @cached_property
     def inter_chunk_overlap(self) -> int:
@@ -319,8 +346,11 @@ class ChunkingOptions:
                 " specify one or the other, not both"
             )
 
-        # -- max_tokens requires tokenizer --
-        if max_tokens is not None and tokenizer is None:
+        # -- max_tokens requires tokenizer. An empty string is rejected along with `None`: it is
+        # -- not `None` so it would pass this check, but `token_counter` is `None` for any falsey
+        # -- tokenizer, which silently sends `measure()` down the character-counting path and
+        # -- enforces `max_tokens` as a count of characters.
+        if max_tokens is not None and not tokenizer:
             raise ValueError("'tokenizer' is required when using 'max_tokens'")
 
         # -- max_tokens must be positive --
@@ -349,12 +379,32 @@ class ChunkingOptions:
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
 
+        # -- `skip_table_chunking` requires `isolate_table` because the pass-through path only
+        # -- fires when the pre-chunk contains a single `Table` element. With isolation disabled,
+        # -- tables can fold into `CompositeElement` alongside neighbors and the skip would be
+        # -- silently ignored, breaking the contract.
+        if self.skip_table_chunking and not self.isolate_table:
+            raise ValueError(
+                "'skip_table_chunking=True' requires 'isolate_table=True' (the default);"
+                " tables cannot be passed through unchanged while also sharing a pre-chunk with"
+                " adjacent elements"
+            )
+
         # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= hard_max:
             raise ValueError(
                 f"'overlap' argument must be less than `max_characters`,"
                 f" got {self.overlap} >= {hard_max}"
             )
+
+        # -- an unknown tokenizer is an invalid option, so surface it here with the rest rather
+        # -- than on the first token count. Otherwise `chunk_*()` raises during the call (it
+        # -- counts immediately) while `iter_chunk*()` raises whenever the caller first advances
+        # -- the generator it returned. Only checked when token counting is actually in use,
+        # -- matching `measure()`; a `tokenizer` passed without `max_tokens` goes unused. The
+        # -- check above guarantees a counter exists whenever token counting is in use.
+        if self.use_token_counting and self.token_counter is not None:
+            self.token_counter.validate()
 
 
 # ================================================================================================
@@ -502,7 +552,11 @@ class PreChunkBuilder:
     def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
         # -- do not prefix a table-only pre-chunk with narrative overlap from the prior chunk --
-        if len(self._elements) == 0 and _element_is_table_family(element):
+        if (
+            self._opts.isolate_table
+            and len(self._elements) == 0
+            and _element_is_table_family(element)
+        ):
             self._overlap_prefix = ""
             self._text_segments = []
             self._text_len = 0
@@ -531,7 +585,11 @@ class PreChunkBuilder:
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
         overlap_for_next = pre_chunk.overlap_tail
         # -- table tails must not prefix the following narrative pre-chunk (overlap_all) --
-        if len(elements) == 1 and _element_is_table_family(elements[0]):
+        if (
+            self._opts.isolate_table
+            and len(elements) == 1
+            and _element_is_table_family(elements[0])
+        ):
             overlap_for_next = ""
         self._reset_state(overlap_for_next)
         yield pre_chunk
@@ -548,13 +606,15 @@ class PreChunkBuilder:
         - A text-element will not fit when together with the elements already present it would
           exceed the hard-max (aka. max_characters/max_tokens).
         """
-        # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty pre-chunk --
-        if _element_is_table_family(element):
-            return len(self._elements) == 0
+        if self._opts.isolate_table:
+            # -- a `Table` can only start a pre-chunk; it is never appended to a non-empty
+            # -- pre-chunk --
+            if _element_is_table_family(element):
+                return len(self._elements) == 0
 
-        # -- no non-table element may share a pre-chunk with a `Table` --
-        if _elements_contain_table_family(self._elements):
-            return False
+            # -- no non-table element may share a pre-chunk with a `Table` --
+            if _elements_contain_table_family(self._elements):
+                return False
 
         # -- an empty pre-chunk will accept any element (including an oversized-element) --
         if len(self._elements) == 0:
@@ -637,7 +697,9 @@ class PreChunk:
 
     def can_combine(self, pre_chunk: PreChunk) -> bool:
         """True when `pre_chunk` can be combined with this one without exceeding size limits."""
-        if _table_isolation_forbids_side_by_side_merge(self._elements, pre_chunk._elements):
+        if self._opts.isolate_table and _table_isolation_forbids_side_by_side_merge(
+            self._elements, pre_chunk._elements
+        ):
             return False
         if len(self._text) >= self._opts.combine_text_under_n_chars:
             return False
@@ -758,13 +820,13 @@ class _Chunker:
 
         # -- emit first chunk --
         s, remainder = split(self._text)
-        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
+        yield CompositeElement(text=s, metadata=self._chunk_metadata())
 
         # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
         # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=self._continuation_metadata)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata())
 
     @cached_property
     def _all_metadata_values(self) -> dict[str, list[Any]]:
@@ -817,19 +879,31 @@ class _Chunker:
             consolidated_metadata.orig_elements = self._orig_elements
         return consolidated_metadata
 
-    @cached_property
     def _continuation_metadata(self) -> ElementMetadata:
-        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+        """Fresh metadata for one second-or-later text-split chunk of the pre-chunk.
 
         The same metadata as the first text-split chunk but includes `.is_continuation = True`.
         Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+
+        A new object is produced on each call (not cached) because each continuation chunk needs
+        its own copy: `enrichment_origins` is a mutable dict-of-lists that a downstream additive
+        enrichment may mutate in place, and a shared object would let one chunk's mutation leak
+        into its siblings.
         """
-        # -- we need to make a copy, otherwise adding a field would also change metadata value
-        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
-        # -- required though since we're not changing any collection fields.
-        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata = self._chunk_metadata()
         continuation_metadata.is_continuation = True
         return continuation_metadata
+
+    def _chunk_metadata(self) -> ElementMetadata:
+        """Fresh metadata for one text-split chunk of the pre-chunk."""
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk. A shallow copy suffices for scalar fields, but
+        # -- `enrichment_origins` is mutable, so deep-copy it. (Deep-copying the whole metadata is
+        # -- avoided because it may carry the full `orig_elements`.)
+        metadata = copy.copy(self._consolidated_metadata)
+        if metadata.enrichment_origins is not None:
+            metadata.enrichment_origins = copy.deepcopy(metadata.enrichment_origins)
+        return metadata
 
     @cached_property
     def _meta_kwargs(self) -> dict[str, Any]:
@@ -857,6 +931,20 @@ class _Chunker:
                     yield field_name, list(ordered_unique_keys.keys())
                 elif strategy is CS.STRING_CONCATENATE:
                     yield field_name, " ".join(val.strip() for val in values)
+                # -- merge dict-of-list values: union keys, per key concatenate then dedupe
+                # -- records, preserving first-seen order --
+                elif strategy is CS.DICT_LIST_UNIQUE:
+                    merged: dict[str, list[Any]] = {}
+                    for value in values:
+                        for key, records in value.items():
+                            seen = merged.setdefault(key, [])
+                            seen_ids = {tuple(sorted(r.items())) for r in seen}
+                            for record in records:
+                                record_id = tuple(sorted(record.items()))
+                                if record_id not in seen_ids:
+                                    seen_ids.add(record_id)
+                                    seen.append(record)
+                    yield field_name, merged
                 elif strategy is CS.DROP:
                     continue
                 else:  # pragma: no cover

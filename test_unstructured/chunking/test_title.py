@@ -609,6 +609,23 @@ class Describe_chunk_by_title:
         _, opts = _chunk_by_title_.call_args.args
         assert opts.skip_table_chunking is expected_value
 
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"isolate_table": True}, True),
+            ({"isolate_table": False}, False),
+            ({"isolate_table": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_isolate_table_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+    ):
+        chunk_by_title([], **kwargs)
+
+        _, opts = _chunk_by_title_.call_args.args
+        assert opts.isolate_table is expected_value
+
     # -- fixtures --------------------------------------------------------------------------------
 
     @pytest.fixture()

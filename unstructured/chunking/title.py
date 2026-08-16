@@ -35,6 +35,7 @@ def chunk_by_title(
     tokenizer: Optional[str] = None,
     repeat_table_headers: Optional[bool] = None,
     skip_table_chunking: Optional[bool] = None,
+    isolate_table: Optional[bool] = None,
 ) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
@@ -91,6 +92,11 @@ def chunk_by_title(
     skip_table_chunking
         Default: `False`. When `True`, `Table` elements are passed through unchanged without
         being split into `TableChunk` elements, regardless of their size.
+    isolate_table
+        Default: `True`. When `True`, `Table` and `TableChunk` elements are always staged in
+        their own pre-chunk and never combined with adjacent non-table elements. Specify
+        `False` to allow tables to share pre-chunks with adjacent elements (the pre-#4307
+        behavior).
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
@@ -105,19 +111,92 @@ def chunk_by_title(
         tokenizer=tokenizer,
         repeat_table_headers=repeat_table_headers,
         skip_table_chunking=skip_table_chunking,
+        isolate_table=isolate_table,
     )
     return _chunk_by_title(elements, opts)
+
+
+def iter_chunks_by_title(
+    elements: Iterable[Element],
+    *,
+    combine_text_under_n_chars: Optional[int] = None,
+    include_orig_elements: Optional[bool] = None,
+    max_characters: Optional[int] = None,
+    max_tokens: Optional[int] = None,
+    multipage_sections: Optional[bool] = None,
+    new_after_n_chars: Optional[int] = None,
+    new_after_n_tokens: Optional[int] = None,
+    overlap: Optional[int] = None,
+    overlap_all: Optional[bool] = None,
+    tokenizer: Optional[str] = None,
+    repeat_table_headers: Optional[bool] = None,
+    skip_table_chunking: Optional[bool] = None,
+    isolate_table: Optional[bool] = None,
+) -> Iterator[Element]:
+    """Lazy `chunk_by_title`: yields each chunk as it is formed instead of returning a list.
+
+    Accepts the same options and produces the same chunks in the same order; see
+    `chunk_by_title` for the parameter documentation. Prefer this form when `elements` is
+    itself lazy and the chunks are consumed one at a time, e.g. written straight to a file.
+    The formed chunks are then never accumulated in a list.
+
+    The bound on elements held at once is looser here than in `iter_chunk_elements()`. This
+    strategy recombines undersized pre-chunks, and it cannot know a pre-chunk is finished until
+    it has read the following one and found it does not fit, so it holds about two pre-chunks
+    rather than one. When the whole document fits in one or two chunking windows that lookahead
+    reaches the end of `elements`, meaning the first chunk costs the entire source; this is
+    inherent to combining and is not avoided by `combine_text_under_n_chars=0`.
+
+    Whatever that bound, it covers the elements this function holds, not what each chunk carries.
+    Under the default `include_orig_elements=True` a chunk keeps the elements it was formed from
+    in `metadata.orig_elements`, so their `metadata.image_base64` payloads live as long as the
+    chunk does -- shared with the source element for text, duplicated for a table, which is
+    deep-copied. Streaming alone therefore gives little relief when those payloads are the
+    bottleneck; pass `include_orig_elements=False` as well.
+
+    Chunking has always been lazy internally; this exposes that pipeline rather than adding
+    a second one. Options are still validated eagerly, when this function is called, not
+    when the returned iterator is first advanced, so an invalid combination -- or an unknown
+    `tokenizer`, when chunking by `max_tokens` -- raises here.
+    """
+    opts = _ByTitleChunkingOptions.new(
+        combine_text_under_n_chars=combine_text_under_n_chars,
+        include_orig_elements=include_orig_elements,
+        max_characters=max_characters,
+        max_tokens=max_tokens,
+        multipage_sections=multipage_sections,
+        new_after_n_chars=new_after_n_chars,
+        new_after_n_tokens=new_after_n_tokens,
+        overlap=overlap,
+        overlap_all=overlap_all,
+        tokenizer=tokenizer,
+        repeat_table_headers=repeat_table_headers,
+        skip_table_chunking=skip_table_chunking,
+        isolate_table=isolate_table,
+    )
+    return _iter_chunks_by_title(elements, opts)
 
 
 def _chunk_by_title(elements: Iterable[Element], opts: _ByTitleChunkingOptions) -> list[Element]:
     """Implementation of actual "by-title" chunking."""
     # -- Note(scanny): it might seem like over-abstraction for this to be a separate function but
     # -- it eases overriding or adding individual chunking options when customizing a stock chunker.
+    return list(_iter_chunks_by_title(elements, opts))
+
+
+def _iter_chunks_by_title(
+    elements: Iterable[Element], opts: _ByTitleChunkingOptions
+) -> Iterator[Element]:
+    """Lazy implementation of actual "by-title" chunking, shared with `_chunk_by_title`."""
     pre_chunks = PreChunkCombiner(
         PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
-    return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
+    for pre_chunk in pre_chunks:
+        yield from pre_chunk.iter_chunks()
+        # -- release the emitted pre-chunk before advancing, as basic chunking does, so the
+        # -- elements held at a transition are the combiner's inherent two pre-chunks, not three
+        del pre_chunk
 
 
 class _ByTitleChunkingOptions(ChunkingOptions):

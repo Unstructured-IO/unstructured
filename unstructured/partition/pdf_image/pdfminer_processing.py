@@ -5,9 +5,9 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LTChar, LTContainer, LTTextBox
+from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
-from pdfminer.utils import open_filename
+from pdfminer.utils import decode_text, open_filename
 from unstructured_inference.config import inference_config
 from unstructured_inference.constants import FULL_PAGE_REGION_THRESHOLD, IsExtracted
 from unstructured_inference.inference.elements import Rectangle
@@ -45,13 +45,40 @@ def process_file_with_pdfminer(
     dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    rotation_corrections: Optional[List[int]] = None,
 ) -> tuple[List[List["TextRegion"]], List[List]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout, layouts_links = process_data_with_pdfminer(
-            file=fp, dpi=dpi, password=password, pdfminer_config=pdfminer_config
+            file=fp,
+            dpi=dpi,
+            password=password,
+            pdfminer_config=pdfminer_config,
+            rotation_corrections=rotation_corrections,
         )
         return extracted_layout, layouts_links
+
+
+def _rotate_bboxes(coords: np.ndarray, angle: int, width: float, height: float) -> np.ndarray:
+    """Rotate bounding boxes to mirror a rendered page image that was rotated ``angle``
+    degrees counter-clockwise (PIL convention) with ``expand=True``.
+
+    ``width``/``height`` are the page-image dimensions in the un-rotated (display) frame.
+    unstructured-inference may rotate a page image to make its dominant text upright;
+    applying the same rotation here keeps the pdfminer layer aligned with the
+    object-detection layer so the two merge correctly.
+    """
+    angle %= 360
+    if angle == 0 or coords.size == 0:
+        return coords
+    x1, y1, x2, y2 = coords[:, 0], coords[:, 1], coords[:, 2], coords[:, 3]
+    if angle == 90:
+        return np.column_stack((y1, width - x2, y2, width - x1))
+    if angle == 180:
+        return np.column_stack((width - x2, height - y2, width - x1, height - y1))
+    if angle == 270:
+        return np.column_stack((height - y2, x1, height - y1, x2))
+    return coords
 
 
 def _validate_bbox(bbox: list[int | float]) -> bool:
@@ -349,7 +376,7 @@ def array_merge_inferred_layout_with_extracted_layout(
     extracted_to_keep = np.concatenate(
         (image_indices_to_keep, text_element_indices[extracted_to_proc])
     )
-    if any(extracted_to_keep):
+    if extracted_to_keep.size:
         inferred_to_proc = np.logical_or(
             inferred_to_proc,
             _inferred_is_elementtype(
@@ -443,6 +470,8 @@ def process_page_layout_from_pdfminer(
     page_height: int | float,
     page_number: int,
     coord_coef: float,
+    pdfminer_config: Optional[PDFMinerConfig] = None,
+    widget_list: Optional[list[dict[str, Any]]] = None,
 ) -> tuple[LayoutElements, list]:
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -488,6 +517,39 @@ def process_page_layout_from_pdfminer(
                 element_coords.append(inner_bbox)
                 element_class.append(1)
                 is_extracted.append(None)
+            # A container without a `get_text` method (e.g. an `LTFigure` overlay) can still hold
+            # real, rendered text as loose `LTChar`s -- for example text drawn into a figure/XObject
+            # overlay rather than the main content stream -- which `extract_text_objects`
+            # (LTTextLine only) misses. Re-run pdfminer layout analysis on the container, reusing
+            # the same LAParams settings as the main pass plus `all_texts=True`, so those characters
+            # are grouped into `LTTextLine`s, then extract them through the same path as the main
+            # text branch above.
+            if isinstance(obj, LTContainer):
+                laparams_kwargs = (
+                    pdfminer_config.model_dump(exclude_none=True) if pdfminer_config else {}
+                )
+                laparams_kwargs["all_texts"] = True
+                obj.analyze(LAParams(**laparams_kwargs))
+                char_dedup_threshold = env_config.PDF_CHAR_DUPLICATE_THRESHOLD
+                for inner_obj in extract_text_objects(obj):
+                    inner_bbox = rect_to_bbox(inner_obj.bbox, page_height)
+                    if not _validate_bbox(inner_bbox):
+                        continue
+                    texts.append(get_text_with_deduplication(inner_obj, char_dedup_threshold))
+                    element_coords.append(inner_bbox)
+                    element_class.append(0)
+                    is_extracted.append(IsExtracted.TRUE if text_is_embedded(inner_obj) else None)
+
+    # Filled AcroForm field values live in widget annotations rather than the content
+    # stream, so add them here as extracted text regions (see get_widget_text_from_annots).
+    for widget in widget_list or []:
+        widget_bbox = widget["bbox"]
+        if not _validate_bbox(widget_bbox):
+            continue
+        texts.append(widget["text"])
+        element_coords.append(widget_bbox)
+        element_class.append(0)
+        is_extracted.append(IsExtracted.TRUE)
 
     return (
         LayoutElements(
@@ -508,9 +570,16 @@ def process_data_with_pdfminer(
     dpi: int = env_config.PDF_RENDER_DPI,
     password: Optional[str] = None,
     pdfminer_config: Optional[PDFMinerConfig] = None,
+    rotation_corrections: Optional[List[int]] = None,
 ) -> tuple[List[LayoutElements], List[List]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
-    pdf pages using pdf2image"""
+    pdf pages using pdf2image
+
+    ``rotation_corrections`` is an optional per-page list of extra rotations (degrees,
+    counter-clockwise) that unstructured-inference applied to the rendered page images to
+    make their text upright. Mirroring those rotations onto the extracted coordinates keeps
+    the pdfminer layer aligned with the object-detection layer.
+    """
 
     from unstructured_inference.inference.layoutelement import LayoutElements
 
@@ -524,26 +593,46 @@ def process_data_with_pdfminer(
         width, height = page_layout.width, page_layout.height
 
         annotation_list = []
+        widget_list = []
         coordinate_system = PixelSpace(
             width=width,
             height=height,
         )
         if page.annots:
             annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+            widget_list = get_widget_text_from_annots(page.annots, height)
 
         layout, urls_metadata = process_page_layout_from_pdfminer(
-            annotation_list, page_layout, height, page_number, coef
+            annotation_list, page_layout, height, page_number, coef, pdfminer_config, widget_list
         )
 
-        links = [
-            {
-                "bbox": [x * coef for x in metadata["bbox"]],
-                "text": metadata["text"],
-                "url": metadata["uri"],
-                "start_index": metadata["start_index"],
-            }
-            for metadata in urls_metadata
-        ]
+        # Mirror any image rotation unstructured-inference applied for this page so the
+        # extracted coordinates share the object-detection layer's frame (see _rotate_bboxes).
+        angle = (
+            rotation_corrections[page_number]
+            if rotation_corrections is not None and page_number < len(rotation_corrections)
+            else 0
+        )
+        if angle:
+            layout.element_coords = _rotate_bboxes(
+                layout.element_coords, angle, width * coef, height * coef
+            )
+
+        links = []
+        for metadata in urls_metadata:
+            bbox = [x * coef for x in metadata["bbox"]]
+            if angle:
+                bbox = _rotate_bboxes(
+                    np.array([bbox], dtype=float), angle, width * coef, height * coef
+                )[0].tolist()
+            links.append(
+                {
+                    "bbox": bbox,
+                    "text": metadata["text"],
+                    "url": metadata["uri"],
+                    "start_index": metadata["start_index"],
+                }
+            )
 
         clean_layouts = []
         for threshold, element_class in zip(
@@ -781,12 +870,24 @@ def remove_duplicate_elements(
     # experiments show 2e3 is the block size that constrains the peak memory around 1Gb for this
     # function; that accounts for all the intermediate matricies allocated and memory for storing
     # final results
-    memory_cap_in_gb = os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1)
+    memory_cap_in_gb = float(os.getenv("UNST_MATMUL_MEMORY_CAP_IN_GB", 1))
+    if memory_cap_in_gb <= 0:
+        raise ValueError("UNST_MATMUL_MEMORY_CAP_IN_GB must be > 0")
     n_split = np.ceil(coords.shape[0] / 2e3 / memory_cap_in_gb)
     splits = np.array_split(coords, n_split, axis=0)
 
-    ious = [~np.triu(boxes_iou(split, coords, threshold), k=1).any(axis=1) for split in splits]
-    return elements.slice(np.concatenate(ious))
+    # A box is dropped only when it near-duplicates a *later* box (higher global index) -- the
+    # strict upper triangle of the full IoU matrix. Each split is a contiguous block of rows
+    # compared against all coords, so the triangle's diagonal must be offset by the split's
+    # global start index; otherwise rows in later splits match themselves (and earlier boxes)
+    # and get wrongly removed, decimating dense pages (> 2000 elements).
+    keep_masks = []
+    offset = 0
+    for split in splits:
+        iou = boxes_iou(split, coords, threshold)
+        keep_masks.append(~np.triu(iou, k=1 + offset).any(axis=1))
+        offset += split.shape[0]
+    return elements.slice(np.concatenate(keep_masks))
 
 
 def _aggregated_iou(box1s, box2):
@@ -972,6 +1073,99 @@ def try_resolve(annot: PDFObjRef):
         return annot.resolve()
     except Exception:
         return annot
+
+
+def _decode_scalar_field_value(value: Any) -> Optional[str]:
+    """Decode a single AcroForm field value into text.
+
+    PDF text strings may be UTF-16 or PDFDocEncoded; choice-field export values can
+    arrive as name objects (PSLiteral).
+    """
+    if isinstance(value, bytes):
+        return decode_text(value)
+    if isinstance(value, str):
+        return value
+    name = getattr(value, "name", None)  # PSLiteral (e.g. choice export value)
+    if isinstance(name, bytes):
+        return name.decode("utf-8", "replace")
+    if isinstance(name, str):
+        return name
+    return None
+
+
+def _decode_field_value(value: Any) -> Optional[str]:
+    """Decode an AcroForm field value into text."""
+    value = try_resolve(value)
+    if isinstance(value, (list, tuple)):
+        decoded_values = [
+            text.strip()
+            for item in value
+            if (text := _decode_scalar_field_value(try_resolve(item))) and text.strip()
+        ]
+        return "\n".join(decoded_values) if decoded_values else None
+    return _decode_scalar_field_value(value)
+
+
+def get_widget_text_from_annots(
+    annots: PDFObjRef | list[PDFObjRef],
+    height: float,
+) -> list[dict[str, Any]]:
+    """Extract text from filled AcroForm widget annotations (fillable form fields).
+
+    pdfminer's page layout only covers the page content stream, so values typed into
+    fillable form fields are invisible to the normal text pass -- they live in widget
+    annotation objects (``/Annots``), not in the content stream. This recovers the value
+    text and bounding box for text (``/Tx``) and choice (``/Ch``) fields so they can be
+    emitted as elements alongside the content-stream text.
+
+    Returns a list of ``{"text", "bbox"}`` dicts, where ``bbox`` is ``(x1, y1, x2, y2)``
+    in the top-left page coordinate frame (same as ``rect_to_bbox``).
+    """
+    resolved = annots if isinstance(annots, list) else try_resolve(annots)
+    if not isinstance(resolved, list):
+        return []
+
+    results: list[dict[str, Any]] = []
+    for annotation in resolved:
+        annotation_dict = try_resolve(annotation)
+        if not isinstance(annotation_dict, dict):
+            continue
+        if getattr(annotation_dict.get("Subtype"), "name", None) != "Widget":
+            continue
+
+        # Field type (FT) and value (V) may be inherited from a parent field node, so walk
+        # up the hierarchy until both are found (bounded to avoid cycles).
+        field_type = annotation_dict.get("FT")
+        value = annotation_dict.get("V")
+        parent = annotation_dict.get("Parent")
+        seen = 0
+        while (field_type is None or value is None) and parent is not None and seen < 32:
+            parent_dict = try_resolve(parent)
+            seen += 1
+            if not isinstance(parent_dict, dict):
+                break
+            field_type = field_type or parent_dict.get("FT")
+            value = value or parent_dict.get("V")
+            parent = parent_dict.get("Parent")
+
+        if getattr(field_type, "name", None) not in ("Tx", "Ch"):
+            continue
+
+        text = _decode_field_value(value)
+        if not text or not text.strip():
+            continue
+
+        rect = annotation_dict.get("Rect")
+        if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
+            continue
+        try:
+            bbox = rect_to_bbox(tuple(float(v) for v in rect), height)
+        except (TypeError, ValueError):
+            continue
+
+        results.append({"text": text.strip(), "bbox": bbox})
+
+    return results
 
 
 def check_annotations_within_element(

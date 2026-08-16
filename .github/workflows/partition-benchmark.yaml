@@ -1,9 +1,16 @@
 name: Partition Benchmark
 
-# Runs on every PR targeting main to detect regressions.
-# Can also be triggered manually to establish or inspect a new baseline.
+# PRs are gated against a rolling median baseline; pushes to main record a new
+# baseline sample. A manual run (workflow_dispatch) on main is a read-only
+# inspection; a manual run on any OTHER branch is a self-test that records +
+# uploads to a throwaway `-selftest` prefix -- so the write path can be validated
+# on a branch, before merge, without touching the real baseline. (Keying on the
+# ref rather than an input is deliberate: dispatch inputs are validated against
+# the default-branch workflow, so a branch-only input can't be passed pre-merge.)
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -15,13 +22,19 @@ env:
   PYTHON_VERSION: "3.12"
   # Number of times to run the full benchmark suite.
   NUM_ITERATIONS: "3"
-  # 20% threshold for now and tune later
-  REGRESSION_THRESHOLD: "0.20"
+  # Allowance over the rolling median baseline. Sized to absorb runner-speed
+  # variance on shared ubuntu-latest runners (observed ~1.6x), not just a code delta.
+  REGRESSION_THRESHOLD: "0.30"
+  # How many recent main-run samples the baseline median is taken over.
+  BASELINE_WINDOW: "20"
+  # Below this many samples, the gate is in warm-up (records, does not fail).
+  BASELINE_MIN_SAMPLES: "5"
   # Increment to change cache key when benchmark-affecting dependencies are updated, to ensure clean slate runs.
   CACHE_VERSION: "v2"
   # S3 location for metrics – matches core-product convention.
   S3_METRICS_BUCKET_KEY: utic-metrics/ci-metrics
-  S3_BENCHMARK_PATH: open-source/partition-benchmark/benchmark_best.json
+  # Prefix holding one immutable JSON record per main run (the rolling history).
+  S3_HISTORY_PREFIX: open-source/partition-benchmark/history
 
 jobs:
   setup:
@@ -78,35 +91,74 @@ jobs:
           key: hf-models-${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ github.sha }}
 
 
-      - name: Download previous best from S3
+      # Decide, in one place, which baseline mode this run is in:
+      #   push:main                          -> record + upload to the real prefix
+      #   workflow_dispatch on a non-main ref -> record + upload to a throwaway -selftest prefix
+      #   pull_request / dispatch on main     -> read-only, real prefix (gate only, never write)
+      - name: Resolve baseline mode
+        id: mode
+        run: |
+          prefix="${{ env.S3_HISTORY_PREFIX }}"
+          record=""
+          upload="false"
+          if [ "${{ github.event_name }}" = "push" ]; then
+            record="--record"; upload="true"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && \
+               [ "${{ github.ref_name }}" != "main" ]; then
+            prefix="${prefix}-selftest"; record="--record"; upload="true"
+          fi
+          {
+            echo "prefix=$prefix"
+            echo "record=$record"
+            echo "upload=$upload"
+          } >> "$GITHUB_OUTPUT"
+          echo "mode: prefix=$prefix record='$record' upload=$upload"
+
+
+      # Pull the whole history prefix (one object per past run). On fork PRs the S3
+      # secrets are absent, so this no-ops -> empty dir -> warm-up/pass.
+      - name: Download benchmark history from S3
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
         run: |
-          aws s3 cp \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}" \
-            benchmark_best.json
+          mkdir -p bench_history
+          aws s3 cp --recursive \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ steps.mode.outputs.prefix }}/" \
+            bench_history/
 
 
-      - name: Compare results against stored best
+      # Gate against the rolling median. When recording (push, or dispatch self-test),
+      # --record also writes this run's record into bench_history/ for the upload below.
+      - name: Compare against rolling baseline
         id: compare
         run: |
           uv run --no-sync python scripts/performance/compare_benchmark.py \
             benchmark_results.json \
-            benchmark_best.json \
-            ${{ env.REGRESSION_THRESHOLD }}
+            bench_history \
+            --threshold ${{ env.REGRESSION_THRESHOLD }} \
+            --window ${{ env.BASELINE_WINDOW }} \
+            --min-samples ${{ env.BASELINE_MIN_SAMPLES }} \
+            ${{ steps.mode.outputs.record }}
 
 
-      - name: Upload best result to S3
+      # Extend the baseline. `sync` (no --delete) uploads the one new record written
+      # above; existing objects are unchanged. PR/read-only runs skip this entirely.
+      # `!cancelled()` (instead of the implicit success() &&) so the record still
+      # persists when the compare step fails the gate on a regression -- otherwise a
+      # red run never reaches S3 and the baseline can't track the new reality. The
+      # record is written before the gate check, so the local file exists either way.
+      - name: Upload new baseline record to S3
+        if: ${{ !cancelled() && steps.mode.outputs.upload == 'true' }}
         continue-on-error: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_EVAL_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_EVAL_SECRET_KEY }}
         run: |
-          aws s3 cp \
-            benchmark_best.json \
-            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ env.S3_BENCHMARK_PATH }}"
+          aws s3 sync \
+            bench_history/ \
+            "s3://${{ env.S3_METRICS_BUCKET_KEY }}/${{ steps.mode.outputs.prefix }}/"
 
 
       - name: Upload benchmark artifacts
@@ -116,5 +168,5 @@ jobs:
           name: benchmark-results-${{ github.sha }}
           path: |
             benchmark_results.json
-            benchmark_best.json
+            bench_history/
           retention-days: 30

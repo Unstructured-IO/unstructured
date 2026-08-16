@@ -7,7 +7,6 @@ from __future__ import annotations
 from functools import cached_property
 from typing import IO, Any, Callable, Iterator, List, Literal, Optional, cast
 
-import requests
 from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
@@ -20,6 +19,7 @@ from unstructured.partition.html.transformations import (
     ontology_to_unstructured_elements,
     parse_html_to_ontology,
 )
+from unstructured.safe_http import safe_get
 from unstructured.utils import is_temp_file_path
 
 
@@ -158,7 +158,7 @@ class HtmlPartitionerOptions:
             return str(self._text)
 
         if self._url:
-            response = requests.get(self._url, headers=self._headers, verify=self._ssl_verify)
+            response = safe_get(self._url, headers=self._headers, verify=self._ssl_verify)
             if not response.ok:
                 raise ValueError(
                     f"Error status code on GET of provided URL: {response.status_code}"

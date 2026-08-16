@@ -125,6 +125,28 @@ class DescribeHtmlTable:
         )
         assert html_table.html == "<table><tr><td>abc def ghi</td></tr></table>"
 
+    def it_preserves_tail_text_in_mixed_content_cells(self):
+        """Tail text (between inline children) carries real content and must not be dropped."""
+        html_table = HtmlTable.from_html_text(
+            "<table><tr>"
+            "<td><b>foo</b> bar <b>baz</b></td>"
+            "<td><b>x</b><br/>y<br/>z</td>"
+            "</tr></table>"
+        )
+        assert html_table.html == (
+            "<table><tr>"
+            "<td><b>foo</b> bar <b>baz</b></td>"
+            "<td><b>x</b><br/>y<br/>z</td>"
+            "</tr></table>"
+        )
+
+    def and_it_normalizes_whitespace_within_tail_text(self):
+        """Tail whitespace runs are collapsed, but leading/trailing spaces are kept."""
+        html_table = HtmlTable.from_html_text(
+            "<table><tr><td><b>a</b>   b\n  c  <b>d</b></td></tr></table>"
+        )
+        assert html_table.html == "<table><tr><td><b>a</b> b c <b>d</b></td></tr></table>"
+
     def it_can_serialize_the_table_element_to_str_html_text(self):
         table = fragment_fromstring("<table><tr><td>foobar</td></tr></table>")
         html_table = HtmlTable(table)

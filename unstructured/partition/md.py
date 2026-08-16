@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import IO, Any, Optional
 
 import markdown
-import requests
 from markdown.extensions import Extension
 
 from unstructured.documents.elements import Element
@@ -12,6 +11,7 @@ from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
+from unstructured.safe_http import safe_get
 
 
 def optional_decode(contents: str | bytes) -> str:
@@ -94,7 +94,7 @@ def partition_md(
         _, text = read_txt_file(file=file)
 
     elif url is not None:
-        response = requests.get(url)
+        response = safe_get(url)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
 

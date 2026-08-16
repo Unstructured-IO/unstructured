@@ -7,21 +7,17 @@ import importlib
 import io
 from typing import IO, Any, Callable, Optional
 
-import requests
 from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import DataSourceMetadata, Element
-from unstructured.file_utils.filetype import (
-    detect_filetype,
-    is_json_processable,
-    is_ndjson_processable,
-)
+from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.safe_http import safe_get
 from unstructured.utils import dependency_exists
 
 Partitioner: TypeAlias = Callable[..., list[Element]]
@@ -253,26 +249,11 @@ def partition(
         )
         return augment_metadata(elements)
 
-    # -- JSON is a special case because it's not a document format per se and is insensitive to
-    # -- most of the parameters that apply to other file types.
-    if file_type == FileType.JSON:
-        if not is_json_processable(filename=filename, file=file):
-            raise ValueError(
-                "Detected a JSON file that does not conform to the Unstructured schema. "
-                "partition_json currently only processes serialized Unstructured output.",
-            )
-        partition_json = partitioner_loader.get(file_type)
-        elements = partition_json(filename=filename, file=file, **kwargs)
-        return augment_metadata(elements)
-
-    if file_type == FileType.NDJSON:
-        if not is_ndjson_processable(filename=filename, file=file):
-            raise ValueError(
-                "Detected an NDJSON file that does not conform to the Unstructured schema. "
-                "partition_json currently only processes serialized Unstructured output.",
-            )
-        partition_ndjson = partitioner_loader.get(file_type)
-        elements = partition_ndjson(filename=filename, file=file, **kwargs)
+    # -- JSON/NDJSON are special cases: not document formats per se and insensitive to most
+    # -- parameters that apply to other file types.
+    if file_type in (FileType.JSON, FileType.NDJSON):
+        partitioner = partitioner_loader.get(file_type)
+        elements = partitioner(filename=filename, file=file, **kwargs)
         return augment_metadata(elements)
 
     # -- EMPTY is also a special case because while we can't determine the file type, we can be
@@ -307,7 +288,7 @@ def file_and_type_from_url(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
 ) -> tuple[io.BytesIO, FileType]:
-    response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
+    response = safe_get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
     if content_type := content_type or response.headers.get("Content-Type", None):
