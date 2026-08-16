@@ -211,27 +211,34 @@ def combine_inline_elements(
         result_elements.append(run)
 
     current: tuple[elements.Element, int] | None = None
-    current_mergeable = False
+    # Mergeability depends only on an element's own HTML, so it is parsed at most once and
+    # cached. `None` means "not yet computed" -- HTML is only parsed for a same-depth adjacency,
+    # so mismatched-depth (and lone) elements never touch BeautifulSoup, as before ML-1713.
+    current_mergeable: bool | None = None
     text_parts: list[str] = []
     html_parts: list[str] = []
     for nxt in elements_with_depth:
         next_element, next_depth = nxt
-        # Each element's mergeability depends only on its own HTML, so compute it once here
-        # rather than re-parsing the whole accumulated run on every step.
-        next_mergeable = _element_html_is_inline_mergeable(next_element)
 
         if current is None:
-            current, current_mergeable = nxt, next_mergeable
+            current, current_mergeable = nxt, None
             text_parts, html_parts = [next_element.text], [next_element.metadata.text_as_html]
             continue
 
         _, current_depth = current
-        if current_depth == next_depth and current_mergeable and next_mergeable:
-            text_parts.append(next_element.text)
-            html_parts.append(next_element.metadata.text_as_html)
-            continue
+        next_mergeable: bool | None = None
+        if current_depth == next_depth:
+            if current_mergeable is None:
+                current_mergeable = _element_html_is_inline_mergeable(current[0])
+            if current_mergeable:
+                next_mergeable = _element_html_is_inline_mergeable(next_element)
+                if next_mergeable:
+                    text_parts.append(next_element.text)
+                    html_parts.append(next_element.metadata.text_as_html)
+                    continue
 
         _close_run(current, text_parts, html_parts)
+        # Carry next's known mergeability so it is never re-parsed as the new current.
         current, current_mergeable = nxt, next_mergeable
         text_parts, html_parts = [next_element.text], [next_element.metadata.text_as_html]
 
