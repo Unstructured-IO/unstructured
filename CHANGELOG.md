@@ -1,3 +1,13 @@
+## 0.26.2-dev0
+
+### Enhancements
+
+### Features
+
+- Add support for VoyageAI voyage-4 family models: `voyage-4`, `voyage-4-lite`, `voyage-4-large`
+
+### Fixes
+
 ## 0.26.1
 
 ### Fixes
