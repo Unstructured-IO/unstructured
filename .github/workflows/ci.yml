@@ -12,6 +12,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  DO_NOT_TRACK: "1"
+
 jobs:
   setup:
     strategy:
