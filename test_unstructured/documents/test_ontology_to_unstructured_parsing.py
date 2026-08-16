@@ -534,3 +534,18 @@ def test_combine_inline_elements_merges_a_long_run_in_bounded_time():
     )
     # Pre-fix this took ~20 s; linear behavior clears a generous bound with wide margin.
     assert elapsed < 5.0, f"combine_inline_elements took {elapsed:.2f}s -- merging is not linear"
+
+
+def test_combine_inline_elements_passes_through_elements_without_text_as_html():
+    """An element whose text_as_html is None (the default) must not be parsed as HTML. It is
+    classified as non-mergeable and passed through untouched -- classifying every element eagerly
+    would otherwise reach BeautifulSoup(None) and raise TypeError (ML-1713 review)."""
+    singleton = Text(text="x")  # metadata.text_as_html defaults to None
+    assert singleton.metadata.text_as_html is None
+
+    # Singleton, and a same-/different-depth pair, none of which should raise.
+    assert combine_inline_elements([(singleton, 2)]) == [(singleton, 2)]
+
+    a, b = Text(text="a"), Text(text="b")
+    combined = combine_inline_elements([(a, 1), (b, 2)])
+    assert [e.text for e, _ in combined] == ["a", "b"]  # not merged, not crashed

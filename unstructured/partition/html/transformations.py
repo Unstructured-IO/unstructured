@@ -187,8 +187,9 @@ def combine_inline_elements(
     }
 
     Each element is paired with its DOM-nesting depth; merging is only allowed between elements at
-    the same depth (see `can_unstructured_elements_be_merged`). The depth travels with the element
-    rather than being stored on it.
+    the same depth. Depth equality is checked here; the HTML content rule is
+    `_element_html_is_inline_mergeable` (both combined are `can_unstructured_elements_be_merged`).
+    The depth travels with the element rather than being stored on it.
 
     Args:
         elements_with_depth (list[tuple[Element, int]]): (element, nesting-depth) pairs to combine.
@@ -246,9 +247,12 @@ def _element_html_is_inline_mergeable(element: elements.Element) -> bool:
     Parses only the element's own ``text_as_html``. `combine_inline_elements` computes this
     once per element, so a growing merged run is never re-parsed -- re-parsing the accumulated
     run each step made merging O(n^2) (ML-1713)."""
-    html_tags = BeautifulSoup(element.metadata.text_as_html, "html.parser").find_all(
-        recursive=False
-    )
+    html = element.metadata.text_as_html
+    if not isinstance(html, str):
+        # No HTML to classify (e.g. text_as_html defaults to None) -> not mergeable. The
+        # element is left untouched, as before this became a per-element check.
+        return False
+    html_tags = BeautifulSoup(html, "html.parser").find_all(recursive=False)
     ontology_elements = [parse_html_to_ontology_element(html_tag) for html_tag in html_tags]
     for ontology_element in ontology_elements:
         if ontology_element.children:
