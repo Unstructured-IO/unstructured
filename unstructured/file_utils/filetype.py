@@ -673,19 +673,21 @@ class _FileTypeDetectionContext:
 
         Raises:
             UnicodeDecodeError if file cannot be read as text.
+            UnprocessableEntityError if file encoding cannot be determined.
         """
-        # TODO: only attempts fallback character-set detection for file-path case, not for
-        # file-like object case. Seems like we should do both.
-
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)
             file.seek(0)
-            return (
-                content
-                if isinstance(content, str)
-                else content.decode(encoding=self.encoding, errors="ignore")
-            )
+            
+            if isinstance(content, str):
+                return content
+                
+            try:
+                return content.decode(encoding=self.encoding)
+            except UnicodeDecodeError:
+                encoding, _ = detect_file_encoding(file=content)
+                return content.decode(encoding=encoding, errors="ignore")
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --
