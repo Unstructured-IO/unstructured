@@ -114,6 +114,36 @@ def test_partition_csv_from_file_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
+def test_partition_csv_preserves_numeric_cell_text_in_table_html(tmp_path):
+    file_path = tmp_path / "financial-metrics.csv"
+    file_path.write_text(
+        "metric,value\n"
+        "revenue,478923\n"
+        "shares,1234567\n"
+        "ticker,000001\n"
+        "account,000123\n"
+        "clause,007\n"
+        "ratio,0.000123\n"
+        "market cap,999999999999999999\n",
+        encoding="utf-8",
+    )
+
+    table = partition_csv(filename=str(file_path))[0]
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        "<tr><td>metric</td><td>value</td></tr>"
+        "<tr><td>revenue</td><td>478923</td></tr>"
+        "<tr><td>shares</td><td>1234567</td></tr>"
+        "<tr><td>ticker</td><td>000001</td></tr>"
+        "<tr><td>account</td><td>000123</td></tr>"
+        "<tr><td>clause</td><td>007</td></tr>"
+        "<tr><td>ratio</td><td>0.000123</td></tr>"
+        "<tr><td>market cap</td><td>999999999999999999</td></tr>"
+        "</table>"
+    )
+
+
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 

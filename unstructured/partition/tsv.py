@@ -5,7 +5,7 @@ from typing import IO, Any, Optional
 import pandas as pd
 
 from unstructured.chunking import add_chunking_strategy
-from unstructured.common.html_table import HtmlTable
+from unstructured.common.html_table import HtmlTable, htmlify_dataframe
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import (
@@ -41,18 +41,22 @@ def partition_tsv(
 
     header = 0 if include_header else None
 
+    read_kw: dict[str, Any] = {
+        "sep": "\t",
+        "header": header,
+        "dtype": str,
+        "keep_default_na": False,
+    }
     if filename:
-        dataframe = pd.read_csv(filename, sep="\t", header=header)
+        dataframe = pd.read_csv(filename, **read_kw)
     else:
         assert file is not None
         # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
         # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
         f = spooled_to_bytes_io_if_needed(file)
-        dataframe = pd.read_csv(f, sep="\t", header=header)
+        dataframe = pd.read_csv(f, **read_kw)
 
-    html_table = HtmlTable.from_html_text(
-        dataframe.to_html(index=False, header=include_header, na_rep="")
-    )
+    html_table = HtmlTable.from_html_text(htmlify_dataframe(dataframe, include_header))
 
     metadata = ElementMetadata(
         filename=filename,
