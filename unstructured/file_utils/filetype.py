@@ -681,22 +681,29 @@ class _FileTypeDetectionContext:
             file.seek(0)
             content = file.read(4096)
             file.seek(0)
-            return (
+            text = (
                 content
                 if isinstance(content, str)
                 else content.decode(encoding=self.encoding, errors="ignore")
             )
+        else:
+            file_path = self.file_path
+            assert file_path is not None  # -- guaranteed by `._validate` --
 
-        file_path = self.file_path
-        assert file_path is not None  # -- guaranteed by `._validate` --
+            try:
+                with open(file_path, encoding=self.encoding) as f:
+                    text = f.read(4096)
+            except UnicodeDecodeError:
+                encoding, _ = detect_file_encoding(filename=file_path)
+                with open(file_path, encoding=encoding) as f:
+                    text = f.read(4096)
 
-        try:
-            with open(file_path, encoding=self.encoding) as f:
-                return f.read(4096)
-        except UnicodeDecodeError:
-            encoding, _ = detect_file_encoding(filename=file_path)
-            with open(file_path, encoding=encoding) as f:
-                return f.read(4096)
+        # -- a leading UTF-8 BOM survives a plain "utf-8" decode as a literal U+FEFF character,
+        # -- which defeats content-shape checks (e.g. JSON's leading "[" or "{" test) that assume
+        # -- the text starts with actual content. Only one BOM can ever be produced by decoding,
+        # -- so remove at most one; `.lstrip()` would also strip a legitimate U+FEFF appearing in
+        # -- the actual content immediately after it. --
+        return text.removeprefix("\ufeff")
 
     @cached_property
     def json_disambiguation_text(self) -> tuple[str, bool]:

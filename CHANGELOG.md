@@ -35,6 +35,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **Fix JSON misdetection for UTF-8 BOM-prefixed content without a file extension**: `detect_filetype()` decoded textual content head as plain `"utf-8"`, leaving a leading byte-order-mark as a literal `U+FEFF` character. This defeated the JSON content-shape check (which requires the first non-whitespace character to be `[` or `{`), so a BOM-prefixed JSON payload with no `.json`/`.ndjson` extension and a generic `text/plain` MIME guess fell through to `FileType.TXT` instead of `FileType.JSON`. The leading BOM is now stripped before content-shape differentiation.
 
 ## 0.25.0
 
