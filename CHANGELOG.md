@@ -1,8 +1,18 @@
-## 0.26.2
+## 0.26.3
 
 ### Fixes
 
 - **Use fallback character-set detection for file-like objects**: `FileTypeDetectionContext.text_head()` now applies the same `detect_file_encoding()` fallback to file-like objects as it does to file paths when the declared encoding cannot decode the content. Previously it decoded with `errors="ignore"`, silently stripping characters and corrupting the text head for non-UTF-8 streams such as S3/GCS objects and API uploads.
+
+## 0.26.2
+
+### Fixes
+
+- **Linear-time inline element merging in HTML partitioning (ML-1713)**: `combine_inline_elements` re-parsed the growing merged run on every step and appended text via attribute `+=`, making a long run of mergeable inline elements O(n²) — seconds for a few hundred elements. Each element's mergeability is now computed once from its own HTML and the run's text is joined once when it closes, so merging is linear with identical output.
+
+## 0.26.1
+
+### Fixes
 
 - **Bound array-stream decoding in `is_pdf_too_complex` (SEC-146)**: fixes a quadratic `bytes +=` accumulation over array-based `/Contents` (CVE-2026-33123) that let a crafted PDF spike CPU/memory. Accumulation now uses a `bytearray`, with per-page and document-wide caps on decoded bytes and array entries that fail closed on crafted content, and every file is inspected by default (small files are no longer skipped, since a small compressed file can declare huge content). Indirect `/Contents` arrays are now dereferenced (they were being skipped), a single unreadable stream no longer skips the rest of its page, and operator counting no longer allocates a full match list. Bumps `pypdf` to `>=6.9.1` so its own patched code path is used.
 
