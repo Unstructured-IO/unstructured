@@ -59,6 +59,11 @@ def test_clean_bullets(text, expected):
         ("1..2.3 four", "1..2.3 four"),
         ("Fig. 2: The relationship", "Fig. 2: The relationship"),
         ("23 is everywhere", "23 is everywhere"),
+        # Text with no tokens has no bullet to strip and is returned unchanged, matching
+        # the other cleaners in this module.
+        ("", ""),
+        ("   ", "   "),
+        ("\n", "\n"),
     ],
 )
 def test_clean_ordered_bullets(text, expected):
