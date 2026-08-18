@@ -992,6 +992,7 @@ def _partition_pdf_or_image_local(
 
     if file is None:
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         pdfminer_config = _enable_detect_vertical_if_rotated(
             inferred_document_layout,
@@ -1051,6 +1052,7 @@ def _partition_pdf_or_image_local(
         )
     else:
         inferred_document_layout = _run_layout_inference(process_data_with_model, file)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         if hasattr(file, "seek"):
             file.seek(0)
@@ -1250,6 +1252,18 @@ def _partition_pdf_with_pdfparser(
             elements.append(PageBreak(text=""))
 
     return elements
+
+
+def _record_image_layout_document_type(document_layout: "DocumentLayout", is_image: bool) -> None:
+    """Record an image format already discovered during successful layout inference."""
+    if not is_image:
+        return
+    with contextlib.suppress(Exception):
+        for page in document_layout.pages:
+            image_format = get_page_image_metadata(page).get("format")
+            if image_format:
+                set_partition_document_type(image_format)
+                return
 
 
 def _partition_pdf_or_image_with_ocr(

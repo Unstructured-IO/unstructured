@@ -279,6 +279,40 @@ def test_preparation_failure_still_suppresses_nested_event(monkeypatch, captured
     assert captured_events[0]["partitioner"] == "partition_email"
 
 
+@pytest.mark.parametrize(
+    ("exception", "partitioner_name", "argument_name"),
+    [
+        (KeyboardInterrupt(), "partition_image", "strategy"),
+        (SystemExit(), "partition_text", "chunking_strategy"),
+    ],
+)
+def test_preparation_control_exception_resets_invocation_context(
+    exception, partitioner_name, argument_name, captured_events
+):
+    called = False
+
+    class Poison:
+        def __str__(self):
+            raise exception
+
+    def process(**kwargs):
+        nonlocal called
+        called = True
+        return []
+
+    failing = _named_partitioner(partitioner_name, process)
+    succeeding = _named_partitioner("partition_text", lambda: [Text("ok")])
+
+    with pytest.raises(type(exception)) as exc_info:
+        failing(**{argument_name: Poison()})
+
+    assert exc_info.value is exception
+    assert called is False
+    assert telemetry._CURRENT_INVOCATION.get() is None
+    assert succeeding()[0].text == "ok"
+    assert [event["partitioner"] for event in captured_events] == ["partition_text"]
+
+
 def test_invocation_context_is_reset_after_processing_error(captured_events):
     def fail():
         raise RuntimeError("processing failed")
@@ -341,6 +375,38 @@ def test_actual_execution_markers_are_reported(captured_events):
     assert event["table_extraction"] == "true"
 
 
+def test_nested_strategy_marker_cannot_change_strategyless_root(captured_events):
+    def nested():
+        telemetry.set_partition_strategy_used("hi_res")
+        return []
+
+    partition_pdf = _named_partitioner("partition_pdf", nested, "pdf")
+    partition_email = _named_partitioner("partition_email", partition_pdf, "eml")
+
+    partition_email()
+
+    assert captured_events[0]["strategy_used"] == "not_applicable"
+
+
+@pytest.mark.parametrize(
+    ("detected_type", "expected_strategy"),
+    [("eml", "not_applicable"), ("pdf", "ocr_only")],
+)
+def test_auto_root_accepts_strategy_only_for_pdf_or_image(
+    detected_type, expected_strategy, captured_events
+):
+    def process():
+        telemetry.set_partition_document_type(detected_type)
+        telemetry.set_partition_strategy_used("ocr_only")
+        return []
+
+    partition = _named_partitioner("partition", process, None)
+
+    partition()
+
+    assert captured_events[0]["strategy_used"] == expected_strategy
+
+
 def test_omitted_image_strategy_uses_public_signature_default(captured_events):
     def process(strategy="hi_res"):
         telemetry.set_partition_strategy_used(strategy)
@@ -366,6 +432,37 @@ def test_direct_image_records_type_resolved_by_processing(captured_events):
     assert captured_events[0]["document_type"] == "jpg"
 
 
+def test_resolved_root_document_type_is_write_once_and_precedes_output_metadata(captured_events):
+    result = [Text("body", metadata=ElementMetadata(filetype="application/pdf"))]
+
+    def process():
+        telemetry.set_partition_document_type("eml")
+        telemetry.set_partition_document_type("pdf")
+        return result
+
+    partition = _named_partitioner("partition", process, None)
+
+    partition()
+
+    assert captured_events[0]["document_type"] == "eml"
+
+
+def test_inferred_image_type_is_available_to_later_error_event(captured_events):
+    expected = RuntimeError("later image processing failed")
+
+    def process():
+        telemetry.set_partition_document_type("HEIF")
+        raise expected
+
+    partition_image = _named_partitioner("partition_image", process, None)
+
+    with pytest.raises(RuntimeError) as exc_info:
+        partition_image()
+
+    assert exc_info.value is expected
+    assert captured_events[0]["document_type"] == "heic"
+
+
 def test_structured_remote_or_serialized_table_does_not_claim_local_extraction(captured_events):
     result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
     partition_api = _named_partitioner("partition_via_api", lambda: result, None)
@@ -382,6 +479,27 @@ def test_structured_native_table_reports_local_extraction(captured_events):
     partition_csv()
 
     assert captured_events[0]["table_extraction"] == "true"
+
+
+@pytest.mark.parametrize("nested_name", ["partition_html", "partition_docx", "partition_csv"])
+def test_delegated_local_table_parser_reports_extraction(nested_name, captured_events):
+    result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    nested = _named_partitioner(nested_name, lambda: result)
+    outer = _named_partitioner("partition_email", nested, "eml")
+
+    outer()
+
+    assert captured_events[0]["table_extraction"] == "true"
+
+
+def test_nested_serialized_table_does_not_claim_local_extraction(captured_events):
+    result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    nested = _named_partitioner("partition_json", lambda: result, "json")
+    outer = _named_partitioner("partition_email", nested, "eml")
+
+    outer()
+
+    assert captured_events[0]["table_extraction"] == "false"
 
 
 def test_full_result_is_not_scanned_when_delivery_slot_is_occupied():

@@ -114,6 +114,7 @@ class _Invocation:
     chunking_strategy: str
     ocr_used: bool = False
     table_extraction: bool = False
+    nested_local_table_parser_used: bool = False
 
 
 _CURRENT_INVOCATION: ContextVar[_Invocation | None] = ContextVar(
@@ -173,25 +174,29 @@ def partition_runtime_telemetry(
             # The current internal dispatch graph is synchronous; ContextVar state does not cross
             # into a newly-created thread, so any future threaded dispatch must propagate context.
             if active_invocation is not None:
-                return func(*args, **kwargs)
+                result = func(*args, **kwargs)
+                if partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS:
+                    active_invocation.nested_local_table_parser_used = True
+                return result
 
             try:
                 invocation = _new_invocation(partitioner)
                 token = _CURRENT_INVOCATION.set(invocation)
             except Exception:
                 return func(*args, **kwargs)
-            with suppress(Exception):
-                _prepare_invocation(invocation, signature, document_type, args, kwargs)
             try:
-                result = func(*args, **kwargs)
-            except BaseException:
                 with suppress(Exception):
-                    _finish_error(invocation)
-                raise
-            else:
-                with suppress(Exception):
-                    _finish_success(invocation, result)
-                return result
+                    _prepare_invocation(invocation, signature, document_type, args, kwargs)
+                try:
+                    result = func(*args, **kwargs)
+                except BaseException:
+                    with suppress(Exception):
+                        _finish_error(invocation)
+                    raise
+                else:
+                    with suppress(Exception):
+                        _finish_success(invocation, result)
+                    return result
             finally:
                 with suppress(Exception):
                     _CURRENT_INVOCATION.reset(token)
@@ -208,11 +213,16 @@ def set_partition_document_type(document_type: Any) -> None:
     with suppress(Exception):
         _ensure_process_state()
         invocation = _CURRENT_INVOCATION.get()
-        if invocation is not None and invocation.partitioner in {
-            "partition",
-            "partition_audio",
-            "partition_image",
-        }:
+        if (
+            invocation is not None
+            and invocation.document_type is None
+            and invocation.partitioner
+            in {
+                "partition",
+                "partition_audio",
+                "partition_image",
+            }
+        ):
             invocation.document_type = _normalize_document_type(document_type)
             if invocation.document_type not in _IMAGE_TYPES | {"pdf"}:
                 invocation.strategy_used = "not_applicable"
@@ -238,7 +248,13 @@ def set_partition_strategy_used(strategy: Any) -> None:
     with suppress(Exception):
         _ensure_process_state()
         invocation = _CURRENT_INVOCATION.get()
-        if invocation is not None:
+        if invocation is not None and (
+            invocation.partitioner in {"partition_image", "partition_pdf"}
+            or (
+                invocation.partitioner == "partition"
+                and invocation.document_type in _IMAGE_TYPES | {"pdf"}
+            )
+        ):
             value = str(strategy)
             invocation.strategy_used = (
                 value if value in {"fast", "hi_res", "ocr_only"} else "unknown"
@@ -353,9 +369,13 @@ def _finish_success(invocation: _Invocation, result: Any) -> None:
 
     def build_params() -> dict[str, Any]:
         inferred_type, counts, has_embeddings, has_table_structure = _summarize_elements(documents)
-        document_type = inferred_type or invocation.document_type or "unknown"
+        document_type = invocation.document_type or inferred_type or "unknown"
         table_extraction = invocation.table_extraction or (
-            invocation.partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS and has_table_structure
+            (
+                invocation.partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS
+                or invocation.nested_local_table_parser_used
+            )
+            and has_table_structure
         )
         params = _base_params(invocation, "success")
         params.update(
@@ -395,6 +415,8 @@ def _normalize_document_type(value: Any) -> str:
     normalized = str(raw).lower().lstrip(".")
     if normalized == "jpeg":
         normalized = "jpg"
+    if normalized == "heif":
+        normalized = "heic"
     if normalized == "unk":
         normalized = "unknown"
     if normalized in _DOCUMENT_TYPES:
