@@ -502,6 +502,52 @@ def test_nested_serialized_table_does_not_claim_local_extraction(captured_events
     assert captured_events[0]["table_extraction"] == "false"
 
 
+@pytest.mark.parametrize("local_first", [True, False])
+def test_table_free_local_child_cannot_claim_serialized_child_table(local_first, captured_events):
+    local = _named_partitioner("partition_html", lambda: [Text("body")], "html")
+    serialized_result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    serialized = _named_partitioner("partition_json", lambda: serialized_result, "json")
+
+    def process():
+        children = (local, serialized) if local_first else (serialized, local)
+        return [element for child in children for element in child()]
+
+    outer = _named_partitioner("partition_email", process, "eml")
+
+    outer()
+
+    assert captured_events[0]["table_extraction"] == "false"
+
+
+def test_local_child_table_provenance_survives_heterogeneous_children(captured_events):
+    local_result = [Table("local", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    serialized_result = [
+        Table("serialized", metadata=ElementMetadata(text_as_html="<table></table>"))
+    ]
+    local = _named_partitioner("partition_html", lambda: local_result, "html")
+    serialized = _named_partitioner("partition_json", lambda: serialized_result, "json")
+    outer = _named_partitioner("partition_email", lambda: [*local(), *serialized()], "eml")
+
+    outer()
+
+    assert captured_events[0]["table_extraction"] == "true"
+
+
+def test_dropped_event_does_not_scan_nested_local_result():
+    class PoisonList(list):
+        def __iter__(self):
+            raise AssertionError("dropped event inspected nested partition result")
+
+    nested = _named_partitioner("partition_html", lambda: PoisonList(), "html")
+    outer = _named_partitioner("partition_email", lambda: nested(), "eml")
+
+    assert telemetry._DELIVERY_SLOT.acquire(blocking=False)
+    try:
+        assert isinstance(outer(), PoisonList)
+    finally:
+        telemetry._DELIVERY_SLOT.release()
+
+
 def test_full_result_is_not_scanned_when_delivery_slot_is_occupied():
     class PoisonDocument:
         def __iter__(self):

@@ -9,7 +9,7 @@ import platform
 import threading
 from contextlib import suppress
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, ParamSpec, TypeVar
 
 import requests
@@ -114,7 +114,7 @@ class _Invocation:
     chunking_strategy: str
     ocr_used: bool = False
     table_extraction: bool = False
-    nested_local_table_parser_used: bool = False
+    nested_local_table_results: list[Any] = field(default_factory=list)
 
 
 _CURRENT_INVOCATION: ContextVar[_Invocation | None] = ContextVar(
@@ -176,7 +176,8 @@ def partition_runtime_telemetry(
             if active_invocation is not None:
                 result = func(*args, **kwargs)
                 if partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS:
-                    active_invocation.nested_local_table_parser_used = True
+                    with suppress(Exception):
+                        active_invocation.nested_local_table_results.append(result)
                 return result
 
             try:
@@ -370,12 +371,15 @@ def _finish_success(invocation: _Invocation, result: Any) -> None:
     def build_params() -> dict[str, Any]:
         inferred_type, counts, has_embeddings, has_table_structure = _summarize_elements(documents)
         document_type = invocation.document_type or inferred_type or "unknown"
-        table_extraction = invocation.table_extraction or (
-            (
+        table_extraction = (
+            invocation.table_extraction
+            or (
                 invocation.partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS
-                or invocation.nested_local_table_parser_used
+                and has_table_structure
             )
-            and has_table_structure
+            or any(
+                _has_structured_table(result) for result in invocation.nested_local_table_results
+            )
         )
         params = _base_params(invocation, "success")
         params.update(
@@ -487,6 +491,19 @@ def _summarize_elements(
         {"num_elements": num_elements, **counts, "num_other_elements": other},
         has_embeddings,
         has_table_structure,
+    )
+
+
+def _has_structured_table(result: Any) -> bool:
+    """Whether a concrete local child result contains table structure."""
+    if not isinstance(result, (list, tuple)):
+        return False
+    from unstructured.documents.elements import Table
+
+    return any(
+        isinstance(element, Table)
+        and getattr(getattr(element, "metadata", None), "text_as_html", None) is not None
+        for element in result
     )
 
 
