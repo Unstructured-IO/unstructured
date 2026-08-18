@@ -53,6 +53,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 STYLE_TO_ELEMENT_MAPPING = {
@@ -131,6 +132,7 @@ class PicturePartitionerT(Protocol):
 # ================================================================================================
 
 
+@partition_runtime_telemetry("docx")
 @apply_metadata(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(

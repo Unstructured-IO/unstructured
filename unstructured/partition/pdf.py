@@ -79,6 +79,11 @@ from unstructured.partition.utils.constants import (
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
+from unstructured.telemetry import (
+    mark_partition_ocr_used,
+    partition_runtime_telemetry,
+    set_partition_strategy_used,
+)
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
@@ -133,6 +138,7 @@ def default_hi_res_model() -> str:
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
+@partition_runtime_telemetry("pdf")
 @apply_metadata(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
@@ -346,6 +352,7 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
     )
+    set_partition_strategy_used(strategy)
 
     if file is not None:
         file.seek(0)
@@ -1315,6 +1322,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
+    mark_partition_ocr_used()
     ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
     metadata = ElementMetadata(

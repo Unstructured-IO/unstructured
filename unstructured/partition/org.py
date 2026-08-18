@@ -8,10 +8,12 @@ from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
+from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "org"
 
 
+@partition_runtime_telemetry("org")
 def partition_org(
     filename: str | None = None,
     *,

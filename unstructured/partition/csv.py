@@ -12,12 +12,14 @@ from unstructured.common.html_table import HtmlTable
 from unstructured.documents.elements import Element, ElementMetadata, Table
 from unstructured.file_utils.model import FileType
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN: str = "csv"
 CSV_FIELD_LIMIT = 10 * 1048576  # 10MiB
 
 
+@partition_runtime_telemetry("csv")
 @apply_metadata(FileType.CSV)
 @add_chunking_strategy
 def partition_csv(
