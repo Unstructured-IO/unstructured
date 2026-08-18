@@ -43,7 +43,7 @@ def runtime_session(monkeypatch):
 @pytest.fixture
 def captured_events(monkeypatch):
     events: list[dict[str, object]] = []
-    monkeypatch.setattr(telemetry, "_schedule_delivery", lambda params: events.append(params))
+    monkeypatch.setattr(telemetry, "_schedule_delivery", lambda build: events.append(build()))
     return events
 
 
@@ -91,7 +91,7 @@ def test_success_preserves_result_and_reports_exact_final_counts(captured_events
     assert event["document_type"] == "txt"
     assert event["strategy_requested"] == "not_applicable"
     assert event["strategy_used"] == "not_applicable"
-    assert event["table_extraction"] == "true"
+    assert event["table_extraction"] == "false"
     assert event["ocr_used"] == "false"
     assert event["chunking_strategy"] == "by_title"
     assert event["has_embeddings"] == "true"
@@ -157,8 +157,16 @@ def test_telemetry_preparation_failure_does_not_change_result(monkeypatch):
 
     assert partition_text() is expected
 
-    monkeypatch.setattr(telemetry, "_start_invocation", Mock(side_effect=RuntimeError("broken")))
+    monkeypatch.setattr(telemetry, "_prepare_invocation", Mock(side_effect=RuntimeError("broken")))
     assert partition_text() is expected
+
+
+def test_caller_process_control_exception_is_not_swallowed(monkeypatch):
+    monkeypatch.setattr(telemetry, "_telemetry_opt_out", Mock(side_effect=KeyboardInterrupt()))
+    partition_text = _named_partitioner("partition_text", lambda: [Text("not reached")])
+
+    with pytest.raises(KeyboardInterrupt):
+        partition_text()
 
 
 def test_delivery_failure_is_contained_and_releases_slot(runtime_session):
@@ -214,7 +222,7 @@ def test_opt_out_skips_all_runtime_telemetry_work(monkeypatch, variable):
     monkeypatch.setenv(variable, " false ")
     start = Mock(side_effect=AssertionError("must not inspect arguments"))
     schedule = Mock(side_effect=AssertionError("must not schedule delivery"))
-    monkeypatch.setattr(telemetry, "_start_invocation", start)
+    monkeypatch.setattr(telemetry, "_new_invocation", start)
     monkeypatch.setattr(telemetry, "_schedule_delivery", schedule)
     expected = [Text("ok")]
     partition_text = _named_partitioner("partition_text", lambda: expected)
@@ -245,6 +253,30 @@ def test_nested_public_dispatch_emits_only_outer_event(captured_events):
     assert len(captured_events) == 1
     assert captured_events[0]["partitioner"] == "partition_email"
     assert captured_events[0]["document_type"] == "eml"
+
+
+def test_nested_auto_dispatch_cannot_replace_outer_document_type(captured_events):
+    def nested():
+        telemetry.set_partition_document_type("pdf")
+        return [Title("nested")]
+
+    inner = _named_partitioner("partition", nested)
+    outer = _named_partitioner("partition_email", inner, "eml")
+
+    outer()
+
+    assert captured_events[0]["document_type"] == "eml"
+
+
+def test_preparation_failure_still_suppresses_nested_event(monkeypatch, captured_events):
+    monkeypatch.setattr(telemetry, "_prepare_invocation", Mock(side_effect=RuntimeError("broken")))
+    inner = _named_partitioner("partition_html", lambda: [Title("nested")], "html")
+    outer = _named_partitioner("partition_email", inner, "eml")
+
+    outer()
+
+    assert len(captured_events) == 1
+    assert captured_events[0]["partitioner"] == "partition_email"
 
 
 def test_invocation_context_is_reset_after_processing_error(captured_events):
@@ -307,6 +339,86 @@ def test_actual_execution_markers_are_reported(captured_events):
     assert event["strategy_used"] == "ocr_only"
     assert event["ocr_used"] == "true"
     assert event["table_extraction"] == "true"
+
+
+def test_omitted_image_strategy_uses_public_signature_default(captured_events):
+    def process(strategy="hi_res"):
+        telemetry.set_partition_strategy_used(strategy)
+        return []
+
+    partition_image = _named_partitioner("partition_image", process, "png")
+
+    partition_image()
+
+    assert captured_events[0]["strategy_requested"] == "hi_res"
+    assert captured_events[0]["strategy_used"] == "hi_res"
+
+
+def test_direct_image_records_type_resolved_by_processing(captured_events):
+    def process():
+        telemetry.set_partition_document_type("JPEG")
+        return []
+
+    partition_image = _named_partitioner("partition_image", process, None)
+
+    partition_image()
+
+    assert captured_events[0]["document_type"] == "jpg"
+
+
+def test_structured_remote_or_serialized_table_does_not_claim_local_extraction(captured_events):
+    result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    partition_api = _named_partitioner("partition_via_api", lambda: result, None)
+
+    partition_api()
+
+    assert captured_events[0]["table_extraction"] == "false"
+
+
+def test_structured_native_table_reports_local_extraction(captured_events):
+    result = [Table("table", metadata=ElementMetadata(text_as_html="<table></table>"))]
+    partition_csv = _named_partitioner("partition_csv", lambda: result, "csv")
+
+    partition_csv()
+
+    assert captured_events[0]["table_extraction"] == "true"
+
+
+def test_full_result_is_not_scanned_when_delivery_slot_is_occupied():
+    class PoisonDocument:
+        def __iter__(self):
+            raise AssertionError("dropped event inspected partition result")
+
+    assert telemetry._DELIVERY_SLOT.acquire(blocking=False)
+    try:
+        telemetry._finish_success(
+            telemetry._new_invocation("partition_text"),
+            PoisonDocument(),
+        )
+    finally:
+        telemetry._DELIVERY_SLOT.release()
+
+
+def test_pid_change_resets_inherited_delivery_and_invocation_state(monkeypatch):
+    original_pid = telemetry._PROCESS_ID
+    original_slot = telemetry._DELIVERY_SLOT
+    original_context = telemetry._CURRENT_INVOCATION
+    token = original_context.set(telemetry._new_invocation("partition_email"))
+    try:
+        assert original_slot.acquire(blocking=False)
+        monkeypatch.setattr(telemetry.os, "getpid", lambda: original_pid + 1)
+
+        telemetry._ensure_process_state()
+
+        assert telemetry._CURRENT_INVOCATION.get() is None
+        assert telemetry._DELIVERY_SLOT.acquire(blocking=False)
+        telemetry._DELIVERY_SLOT.release()
+    finally:
+        original_slot.release()
+        original_context.reset(token)
+        telemetry._DELIVERY_SLOT = original_slot
+        telemetry._CURRENT_INVOCATION = original_context
+        telemetry._PROCESS_ID = original_pid
 
 
 def test_stuck_transport_never_waits_and_capacity_is_bounded(runtime_session):

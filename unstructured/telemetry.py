@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import functools
 import inspect
+import os
 import platform
 import threading
 from contextlib import suppress
-from contextvars import ContextVar, Token
+from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Any, Callable, ParamSpec, TypeVar
 
@@ -23,6 +24,7 @@ _R = TypeVar("_R")
 _ENDPOINT = "https://packages.unstructured.io/v1/partition"
 _HTTP_TIMEOUT = (0.2, 0.2)
 _DELIVERY_SLOT = threading.BoundedSemaphore(1)
+_PROCESS_ID = os.getpid()
 
 _PARTITIONERS = {
     "partition",
@@ -93,6 +95,14 @@ _DOCUMENT_TYPES = {
     "other",
 }
 _IMAGE_TYPES = {"bmp", "heic", "jpg", "png", "tiff"}
+_LOCAL_TABLE_STRUCTURE_PARTITIONERS = {
+    "partition_csv",
+    "partition_docx",
+    "partition_html",
+    "partition_pptx",
+    "partition_tsv",
+    "partition_xlsx",
+}
 
 
 @dataclass
@@ -109,6 +119,23 @@ class _Invocation:
 _CURRENT_INVOCATION: ContextVar[_Invocation | None] = ContextVar(
     "partition_telemetry_invocation", default=None
 )
+
+
+def _reset_process_state() -> None:
+    """Reset inherited thread/context state in a forked child."""
+    global _CURRENT_INVOCATION, _DELIVERY_SLOT, _PROCESS_ID
+    _DELIVERY_SLOT = threading.BoundedSemaphore(1)
+    _CURRENT_INVOCATION = ContextVar("partition_telemetry_invocation", default=None)
+    _PROCESS_ID = os.getpid()
+
+
+def _ensure_process_state() -> None:
+    if os.getpid() != _PROCESS_ID:
+        _reset_process_state()
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_reset_process_state)
 
 
 def init_telemetry() -> None:
@@ -130,36 +157,43 @@ def partition_runtime_telemetry(
             # Opt-out is checked before argument inspection, context creation, or delivery work.
             try:
                 opted_out = _telemetry_opt_out()
-            except BaseException:
+            except Exception:
                 return func(*args, **kwargs)
             if opted_out:
+                return func(*args, **kwargs)
+
+            try:
+                _ensure_process_state()
+                active_invocation = _CURRENT_INVOCATION.get()
+            except Exception:
                 return func(*args, **kwargs)
 
             # Public partitioners routinely dispatch to other public partitioners internally.
             # Only the outermost call owns an event; nested calls can still record execution facts.
             # The current internal dispatch graph is synchronous; ContextVar state does not cross
             # into a newly-created thread, so any future threaded dispatch must propagate context.
-            if _CURRENT_INVOCATION.get() is not None:
+            if active_invocation is not None:
                 return func(*args, **kwargs)
 
             try:
-                invocation, token = _start_invocation(
-                    signature, partitioner, document_type, args, kwargs
-                )
-            except BaseException:
+                invocation = _new_invocation(partitioner)
+                token = _CURRENT_INVOCATION.set(invocation)
+            except Exception:
                 return func(*args, **kwargs)
+            with suppress(Exception):
+                _prepare_invocation(invocation, signature, document_type, args, kwargs)
             try:
                 result = func(*args, **kwargs)
             except BaseException:
-                with suppress(BaseException):
+                with suppress(Exception):
                     _finish_error(invocation)
                 raise
             else:
-                with suppress(BaseException):
+                with suppress(Exception):
                     _finish_success(invocation, result)
                 return result
             finally:
-                with suppress(BaseException):
+                with suppress(Exception):
                     _CURRENT_INVOCATION.reset(token)
 
         return wrapper
@@ -169,11 +203,19 @@ def partition_runtime_telemetry(
 
 def set_partition_document_type(document_type: Any) -> None:
     """Record a type already resolved by normal partition processing."""
-    invocation = _CURRENT_INVOCATION.get()
-    if invocation is not None:
-        invocation.document_type = _normalize_document_type(document_type)
-        if invocation.document_type not in _IMAGE_TYPES | {"pdf"}:
-            invocation.strategy_used = "not_applicable"
+    if document_type is None:
+        return
+    with suppress(Exception):
+        _ensure_process_state()
+        invocation = _CURRENT_INVOCATION.get()
+        if invocation is not None and invocation.partitioner in {
+            "partition",
+            "partition_audio",
+            "partition_image",
+        }:
+            invocation.document_type = _normalize_document_type(document_type)
+            if invocation.document_type not in _IMAGE_TYPES | {"pdf"}:
+                invocation.strategy_used = "not_applicable"
 
 
 def set_partition_document_type_from_mime(mime_type: str | None) -> None:
@@ -193,55 +235,35 @@ def set_partition_document_type_from_mime(mime_type: str | None) -> None:
 
 def set_partition_strategy_used(strategy: Any) -> None:
     """Record the strategy selected by normal PDF/image dispatch."""
-    invocation = _CURRENT_INVOCATION.get()
-    if invocation is not None:
-        value = str(strategy)
-        invocation.strategy_used = value if value in {"fast", "hi_res", "ocr_only"} else "unknown"
+    with suppress(Exception):
+        _ensure_process_state()
+        invocation = _CURRENT_INVOCATION.get()
+        if invocation is not None:
+            value = str(strategy)
+            invocation.strategy_used = (
+                value if value in {"fast", "hi_res", "ocr_only"} else "unknown"
+            )
 
 
 def mark_partition_ocr_used() -> None:
     """Record that an OCR engine is about to be invoked."""
-    invocation = _CURRENT_INVOCATION.get()
-    if invocation is not None:
-        invocation.ocr_used = True
+    with suppress(Exception):
+        _ensure_process_state()
+        invocation = _CURRENT_INVOCATION.get()
+        if invocation is not None:
+            invocation.ocr_used = True
 
 
 def mark_partition_table_extraction() -> None:
     """Record that a table-structure model is about to be invoked."""
-    invocation = _CURRENT_INVOCATION.get()
-    if invocation is not None:
-        invocation.table_extraction = True
+    with suppress(Exception):
+        _ensure_process_state()
+        invocation = _CURRENT_INVOCATION.get()
+        if invocation is not None:
+            invocation.table_extraction = True
 
 
-def _start_invocation(
-    signature: inspect.Signature,
-    partitioner: str,
-    document_type: str | None,
-    args: tuple[Any, ...],
-    kwargs: dict[str, Any],
-) -> tuple[_Invocation, Token[_Invocation | None]]:
-    try:
-        call_args = dict(signature.bind_partial(*args, **kwargs).arguments)
-    except Exception:
-        call_args = kwargs
-
-    requested = (
-        _get_call_argument(signature, call_args, "strategy", "auto")
-        if partitioner in {"partition", "partition_image", "partition_pdf"}
-        else "not_applicable"
-    )
-    if partitioner in {"partition_via_api", "partition_multiple_via_api"}:
-        requested = _get_call_argument(signature, call_args, "strategy", "auto")
-    requested = str(requested) if requested is not None else "not_applicable"
-    if requested not in {"auto", "fast", "hi_res", "ocr_only", "not_applicable"}:
-        requested = "other"
-
-    chunking = _get_call_argument(signature, call_args, "chunking_strategy", None)
-    chunking = "none" if chunking is None else str(chunking)
-    if chunking not in {"none", "basic", "by_title"}:
-        chunking = "other"
-
-    normalized_type = _normalize_document_type(document_type) if document_type else None
+def _new_invocation(partitioner: str) -> _Invocation:
     strategy_used = (
         "unknown"
         if partitioner
@@ -254,14 +276,47 @@ def _start_invocation(
         }
         else "not_applicable"
     )
-    invocation = _Invocation(
+    return _Invocation(
         partitioner=partitioner,
-        document_type=normalized_type,
-        strategy_requested=requested,
+        document_type=None,
+        strategy_requested="not_applicable",
         strategy_used=strategy_used,
-        chunking_strategy=chunking,
+        chunking_strategy="none",
     )
-    return invocation, _CURRENT_INVOCATION.set(invocation)
+
+
+def _prepare_invocation(
+    invocation: _Invocation,
+    signature: inspect.Signature,
+    document_type: str | None,
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+) -> None:
+    if document_type:
+        invocation.document_type = _normalize_document_type(document_type)
+    try:
+        call_args = dict(signature.bind_partial(*args, **kwargs).arguments)
+    except Exception:
+        call_args = kwargs
+
+    requested = (
+        _get_call_argument(signature, call_args, "strategy", "auto")
+        if invocation.partitioner in {"partition", "partition_image", "partition_pdf"}
+        else "not_applicable"
+    )
+    if invocation.partitioner in {"partition_via_api", "partition_multiple_via_api"}:
+        requested = _get_call_argument(signature, call_args, "strategy", "auto")
+    requested = str(requested) if requested is not None else "not_applicable"
+    if requested not in {"auto", "fast", "hi_res", "ocr_only", "not_applicable"}:
+        requested = "other"
+
+    chunking = _get_call_argument(signature, call_args, "chunking_strategy", None)
+    chunking = "none" if chunking is None else str(chunking)
+    if chunking not in {"none", "basic", "by_title"}:
+        chunking = "other"
+
+    invocation.strategy_requested = requested
+    invocation.chunking_strategy = chunking
 
 
 def _get_call_argument(
@@ -277,41 +332,48 @@ def _get_call_argument(
             extras = call_args.get(parameter.name)
             if isinstance(extras, dict) and name in extras:
                 return extras[name]
+    default_parameter = signature.parameters.get(name)
+    if default_parameter is not None and default_parameter.default is not inspect.Parameter.empty:
+        return default_parameter.default
     return default
 
 
 def _finish_error(invocation: _Invocation) -> None:
-    params = _base_params(invocation, "error")
-    if invocation.document_type is not None:
-        params["document_type"] = invocation.document_type
-    _schedule_delivery(params)
+    def build_params() -> dict[str, Any]:
+        params = _base_params(invocation, "error")
+        if invocation.document_type is not None:
+            params["document_type"] = invocation.document_type
+        return params
+
+    _schedule_delivery(build_params)
 
 
 def _finish_success(invocation: _Invocation, result: Any) -> None:
     documents = result if invocation.partitioner == "partition_multiple_via_api" else [result]
-    elements = [element for document in documents for element in document]
-    inferred_type = _document_type_from_elements(elements)
-    document_type = inferred_type or invocation.document_type or "unknown"
-    counts = _element_counts(elements)
-    params = _base_params(invocation, "success")
-    params.update(
-        {
-            "document_type": document_type,
-            "strategy_requested": invocation.strategy_requested,
-            "strategy_used": invocation.strategy_used,
-            "table_extraction": str(
-                invocation.table_extraction or _has_extracted_table_structure(elements)
-            ).lower(),
-            "ocr_used": str(invocation.ocr_used).lower(),
-            "chunking_strategy": invocation.chunking_strategy,
-            "has_embeddings": str(
-                any(bool(getattr(element, "embeddings", None)) for element in elements)
-            ).lower(),
-            "num_documents": len(documents),
-            **counts,
-        }
-    )
-    _schedule_delivery(params)
+
+    def build_params() -> dict[str, Any]:
+        inferred_type, counts, has_embeddings, has_table_structure = _summarize_elements(documents)
+        document_type = inferred_type or invocation.document_type or "unknown"
+        table_extraction = invocation.table_extraction or (
+            invocation.partitioner in _LOCAL_TABLE_STRUCTURE_PARTITIONERS and has_table_structure
+        )
+        params = _base_params(invocation, "success")
+        params.update(
+            {
+                "document_type": document_type,
+                "strategy_requested": invocation.strategy_requested,
+                "strategy_used": invocation.strategy_used,
+                "table_extraction": str(table_extraction).lower(),
+                "ocr_used": str(invocation.ocr_used).lower(),
+                "chunking_strategy": invocation.chunking_strategy,
+                "has_embeddings": str(has_embeddings).lower(),
+                "num_documents": len(documents),
+                **counts,
+            }
+        )
+        return params
+
+    _schedule_delivery(build_params)
 
 
 def _base_params(invocation: _Invocation, outcome: str) -> dict[str, Any]:
@@ -340,30 +402,9 @@ def _normalize_document_type(value: Any) -> str:
     return "other"
 
 
-def _document_type_from_elements(elements: list[Any]) -> str | None:
-    from unstructured.file_utils.model import FileType
-
-    document_types: set[str] = set()
-    for element in elements:
-        mime_type = getattr(getattr(element, "metadata", None), "filetype", None)
-        file_type = FileType.from_mime_type(mime_type)
-        if file_type is not None:
-            document_types.add(_normalize_document_type(file_type.value))
-    if not document_types:
-        return None
-    return next(iter(document_types)) if len(document_types) == 1 else "other"
-
-
-def _has_extracted_table_structure(elements: list[Any]) -> bool:
-    from unstructured.documents.elements import Table
-
-    return any(
-        isinstance(element, Table) and getattr(element.metadata, "text_as_html", None) is not None
-        for element in elements
-    )
-
-
-def _element_counts(elements: list[Any]) -> dict[str, int]:
+def _summarize_elements(
+    documents: Any,
+) -> tuple[str | None, dict[str, int], bool, bool]:
     from unstructured.documents.elements import (
         CompositeElement,
         Footer,
@@ -375,6 +416,7 @@ def _element_counts(elements: list[Any]) -> dict[str, int]:
         TableChunk,
         Title,
     )
+    from unstructured.file_utils.model import FileType
 
     categories: tuple[tuple[str, Any], ...] = (
         ("num_titles", Title),
@@ -387,31 +429,63 @@ def _element_counts(elements: list[Any]) -> dict[str, int]:
         ("num_composite_elements", CompositeElement),
     )
     counts = {name: 0 for name, _ in categories}
+    document_types: set[str] = set()
     other = 0
-    for element in elements:
-        for name, cls in categories:
-            if isinstance(element, cls):
-                counts[name] += 1
-                break
-        else:
-            other += 1
-    assert sum(counts.values()) + other == len(elements)
-    return {"num_elements": len(elements), **counts, "num_other_elements": other}
+    num_elements = 0
+    has_embeddings = False
+    has_table_structure = False
+    for document in documents:
+        for element in document:
+            num_elements += 1
+            metadata = getattr(element, "metadata", None)
+            mime_type = getattr(metadata, "filetype", None)
+            file_type = FileType.from_mime_type(mime_type)
+            if file_type is not None:
+                document_types.add(_normalize_document_type(file_type.value))
+            has_embeddings = has_embeddings or bool(getattr(element, "embeddings", None))
+            has_table_structure = has_table_structure or (
+                isinstance(element, Table) and getattr(metadata, "text_as_html", None) is not None
+            )
+            for name, cls in categories:
+                if isinstance(element, cls):
+                    counts[name] += 1
+                    break
+            else:
+                other += 1
+    assert sum(counts.values()) + other == num_elements
+    document_type = (
+        None
+        if not document_types
+        else next(iter(document_types))
+        if len(document_types) == 1
+        else "other"
+    )
+    return (
+        document_type,
+        {"num_elements": num_elements, **counts, "num_other_elements": other},
+        has_embeddings,
+        has_table_structure,
+    )
 
 
-def _schedule_delivery(params: dict[str, Any]) -> None:
+def _schedule_delivery(build_params: Callable[[], dict[str, Any]]) -> None:
     # No queue: one stalled transport occupies the sole slot and all later events are dropped.
+    _ensure_process_state()
     if not _DELIVERY_SLOT.acquire(blocking=False):
         return
     try:
+        params = build_params()
         threading.Thread(
             target=_deliver,
             args=(params,),
             name="unstructured-telemetry",
             daemon=True,
         ).start()
+    except Exception:
+        _DELIVERY_SLOT.release()
     except BaseException:
         _DELIVERY_SLOT.release()
+        raise
 
 
 def _deliver(params: dict[str, Any]) -> None:

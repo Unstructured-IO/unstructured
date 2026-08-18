@@ -82,6 +82,7 @@ from unstructured.patches.pdfminer import patch_psparser
 from unstructured.telemetry import (
     mark_partition_ocr_used,
     partition_runtime_telemetry,
+    set_partition_document_type,
     set_partition_strategy_used,
 )
 from unstructured.utils import first, requires_dependencies
@@ -1316,6 +1317,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
+    set_partition_document_type(image.format)
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
@@ -1544,6 +1546,7 @@ def document_to_element_list(
 
         page_image_metadata = get_page_image_metadata(page)
         image_format = page_image_metadata.get("format")
+        set_partition_document_type(image_format)
         image_width = page_image_metadata.get("width")
         image_height = page_image_metadata.get("height")
 
