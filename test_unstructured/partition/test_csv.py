@@ -86,6 +86,22 @@ def test_partition_csv_with_encoding():
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
 
 
+def test_partition_csv_with_utf_16_le_encoding():
+    """UTF-16-LE is what `str.encode("utf-16")` and Excel's "Unicode Text" export produce.
+
+    Delimiter-sniffing previously decoded its sample line-by-line, which raised
+    `UnicodeDecodeError: truncated data` for UTF-16-LE because `readlines()` splits on a 0x0A
+    byte that lands mid-code-unit and only the first fragment carries the BOM.
+    """
+    with open(example_doc_path("stanley-cups.csv")) as f:
+        utf_16_le_bytes = f.read().encode("utf-16")
+
+    elements = partition_csv(file=io.BytesIO(utf_16_le_bytes), encoding="utf-16")
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert elements[0].metadata.text_as_html == EXPECTED_TABLE
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_text", "expected_table"),
     [
@@ -259,6 +275,14 @@ class Describe_CsvPartitioningContext:
     def and_it_auto_detects_the_delimiter_for_a_semicolon_delimited_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("semicolon-delimited.csv"))
         assert ctx.delimiter == ";"
+
+    def and_it_auto_detects_the_delimiter_for_a_UTF_16_encoded_CSV_file(self):
+        # -- previously raised `UnicodeDecodeError: truncated data`: the sniff sample was
+        # -- decoded line-by-line, but `readlines()` splits UTF-16-LE mid-code-unit and only
+        # -- the first fragment carries the BOM --
+        file = io.BytesIO("a,b,c\nd,e,f\ng,h,i\n".encode("utf-16"))
+        ctx = _CsvPartitioningContext(file=file, encoding="utf-16")
+        assert ctx.delimiter == ","
 
     def but_it_returns_None_as_the_delimiter_for_a_single_column_CSV_file(self):
         ctx = _CsvPartitioningContext(example_doc_path("single-column.csv"))
