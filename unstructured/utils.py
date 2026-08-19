@@ -604,8 +604,8 @@ def catch_overlapping_and_nested_bboxes(
         if element.metadata.coordinates:
             box = cast(Points, element.metadata.coordinates.to_dict()["points"])
             pages_of_bboxes[n_page_to_ix].append(box)
-        text_labels[n_page_to_ix].append(f"{ix}. {element.category}")
-        text_content[n_page_to_ix].append(element.text)
+            text_labels[n_page_to_ix].append(f"{ix}. {element.category}")
+            text_content[n_page_to_ix].append(element.text)
 
     document_with_overlapping_flag = False
     overlapping_cases: list[dict[str, Any]] = []

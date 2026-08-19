@@ -1,3 +1,9 @@
+## 0.26.4
+
+### Fixes
+
+- **Keep overlap labels aligned with coordinate-bearing elements**: `catch_overlapping_and_nested_bboxes()` now excludes elements without coordinates from the parallel label and text collections, matching the existing bounding-box filtering. Previously, a coordinate-less element before an overlapping pair shifted those collections and caused the report to name the wrong elements, texts, and parent-child relationship.
+
 ## 0.26.3
 
 ### Fixes
