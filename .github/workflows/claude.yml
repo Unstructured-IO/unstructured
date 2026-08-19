@@ -34,4 +34,5 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.GH_ANTHROPIC_API_KEY }}
-          allowed_tools: "Bash(git:*),View,GlobTool,GrepTool,BatchTool"
+          claude_args: |
+            --allowedTools "Bash(git:*),View,GlobTool,GrepTool,BatchTool"
