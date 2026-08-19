@@ -312,6 +312,41 @@ def test_catch_overlapping_and_nested_bboxes_non_overlapping_case():
     assert overlapping_cases == []
 
 
+def test_catch_overlapping_and_nested_bboxes_ignores_elements_without_coordinates():
+    coordinate_system = PixelSpace(width=20, height=20)
+    elements = [
+        Title(
+            text="No coordinates",
+            metadata=ElementMetadata(page_number=1),
+        ),
+        Title(
+            text="Parent",
+            coordinates=((1, 1), (1, 10), (10, 10), (10, 1)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=1),
+        ),
+        NarrativeText(
+            text="Child",
+            coordinates=((3, 3), (3, 5), (5, 5), (5, 3)),
+            coordinate_system=coordinate_system,
+            metadata=ElementMetadata(page_number=1),
+        ),
+    ]
+
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(
+        elements,
+        nested_error_tolerance_px=1,
+    )
+
+    assert overlapping_flag is True
+    assert overlapping_cases[0]["overlapping_elements"] == [
+        "Title(ix=1)",
+        "NarrativeText(ix=2)",
+    ]
+    assert overlapping_cases[0]["parent_element"] == "Title(ix=1)"
+    assert overlapping_cases[0]["overlapping_case"] == "nested NarrativeText in Title"
+
+
 def test_only_returns_singleton_iterable():
     singleton_iterable = [42]
     result = utils.only(singleton_iterable)
