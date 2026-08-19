@@ -196,7 +196,7 @@ def test_delivery_disables_environment_redirects_retries_and_body_download(
     session.get.assert_called_once_with(
         "https://packages.unstructured.io/v1/partition",
         params=params,
-        timeout=(0.2, 0.2),
+        timeout=(0.5, 0.5),
         allow_redirects=False,
         stream=True,
     )
@@ -605,7 +605,7 @@ def test_stuck_transport_never_waits_and_capacity_is_bounded(runtime_session):
     assert session.get.call_args.args[0] == "https://packages.unstructured.io/v1/partition"
     assert session.get.call_args.kwargs == {
         "params": session.get.call_args.kwargs["params"],
-        "timeout": (0.2, 0.2),
+        "timeout": (0.5, 0.5),
         "allow_redirects": False,
         "stream": True,
     }

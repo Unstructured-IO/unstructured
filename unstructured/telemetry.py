@@ -22,7 +22,7 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 _ENDPOINT = "https://packages.unstructured.io/v1/partition"
-_HTTP_TIMEOUT = (0.2, 0.2)
+_HTTP_TIMEOUT = (0.5, 0.5)
 _DELIVERY_SLOT = threading.BoundedSemaphore(1)
 _PROCESS_ID = os.getpid()
 
