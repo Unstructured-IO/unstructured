@@ -1,3 +1,9 @@
+## 0.26.4
+
+### Fixes
+
+- **`partition_csv()` no longer crashes on UTF-16-LE CSV files**: delimiter sniffing decoded its sample line-by-line, but `readlines()` splits the raw bytes on `0x0A`, which in multi-byte encodings like UTF-16 lands mid-code-unit, and only the first fragment carries the BOM. A UTF-16-LE file (what `str.encode("utf-16")` and Excel's "Unicode Text" export produce) raised `UnicodeDecodeError: truncated data` even when the correct `encoding` was passed; UTF-16-BE silently sniffed mojibake. The sample is now decoded as a single stream with an incremental decoder that tolerates a character split at the read boundary.
+
 ## 0.26.3
 
 ### Fixes

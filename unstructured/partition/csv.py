@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import codecs
 import contextlib
 import csv
 from functools import cached_property
@@ -127,9 +128,16 @@ class _CsvPartitioningContext:
 
         with self.open() as file:
             # -- read whole lines, sniffer can be confused by a trailing partial line --
-            data = "\n".join(
-                ln.decode(self._encoding or "utf-8") for ln in file.readlines(num_bytes)
-            )
+            sample_bytes = b"".join(file.readlines(num_bytes))
+
+        # -- Decode the sample as a single stream, not line-by-line. `readlines()` splits on the
+        # -- 0x0A byte, which in a multi-byte encoding like UTF-16 can land mid-character, and a
+        # -- BOM appears only at the start of the stream. Decoding each fragment separately
+        # -- raised `UnicodeDecodeError: truncated data` for UTF-16-LE and silently produced
+        # -- mojibake for UTF-16-BE. `final=False` buffers a character split at the read
+        # -- boundary instead of raising on it.
+        decoder = codecs.getincrementaldecoder(self._encoding or "utf-8")()
+        data = decoder.decode(sample_bytes, final=False)
 
         try:
             return sniffer.sniff(data, delimiters=",;|").delimiter
