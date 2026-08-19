@@ -1,3 +1,9 @@
+## 0.26.5
+
+### Fixes
+
+- **File-type detection no longer crashes on non-UTF-8 text starting with `{` or `[`**: `_TextFileDifferentiator._is_json` parsed the raw bytes with `json.load()`, which only auto-detects the UTF-8/16/32 family, and caught only `json.JSONDecodeError`. A plain-text file in any other character set (e.g. cp1252/latin-1) whose first non-whitespace character is `{` or `[` — a log file or INI-style config — raised `UnicodeDecodeError` from `detect_filetype()` and `partition()` instead of classifying as TXT. The check now treats an undecodable payload as not-JSON after retrying with the declared `encoding`, so an explicitly-declared legacy-encoded JSON file still classifies as JSON. Regression of the encoding-aware detection fixed in #707 (issue #705), reintroduced when detection was rewritten.
+
 ## 0.26.3
 
 ### Fixes
