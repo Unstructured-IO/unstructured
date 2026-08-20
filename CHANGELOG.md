@@ -14,7 +14,7 @@
 
 ### Enhancements
 
-- **Run the spaCy pipeline once per distinct text**: `_process()` in `unstructured.nlp.tokenize` was uncached while `word_tokenize()`, `pos_tag()` and `sent_tokenize()` each cached only their own extracted view, so every helper paid for its own identical pipeline run. Classifying one element via `is_possible_narrative_text()` reached all three and ran spaCy three times on the same string. The `Doc` is now memoized and shared, cutting `partition_html()` on a text-heavy document by ~2.8x (400 paragraphs: 1127ms -> 395ms). Texts above 8 KiB bypass the cache so a single very large element cannot pin an outsized `Doc` in memory.
+- **Run the spaCy pipeline once per distinct text**: `_process()` in `unstructured.nlp.tokenize` was uncached while `word_tokenize()`, `pos_tag()` and `sent_tokenize()` each cached only their own extracted view, so every helper paid for its own identical pipeline run. Classifying one element via `is_possible_narrative_text()` reached all three and ran spaCy three times on the same string. The `Doc` is now memoized and shared, cutting `partition_html()` on a text-heavy document by ~2.8x (400 paragraphs: 1127ms -> 395ms). Texts longer than 8,192 characters bypass the cache so a single very large element cannot pin an outsized `Doc` in memory.
 
 ## 0.26.3
 

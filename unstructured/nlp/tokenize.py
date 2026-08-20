@@ -19,7 +19,8 @@ from filelock import FileLock
 logger = logging.getLogger(__name__)
 
 CACHE_MAX_SIZE: Final[int] = 128
-# -- Element text is a paragraph or a table cell; 8 KiB covers that with room to spare. --
+# -- Characters, not bytes: `Doc` size tracks token count, which tracks characters rather
+# -- than UTF-8 width. Element text is a paragraph or a table cell, so 8,192 covers it. --
 MAX_CACHEABLE_CHARS: Final[int] = 8192
 
 _SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
@@ -166,8 +167,9 @@ def _process(text: str) -> spacy.tokens.Doc:
     # -- str() handles numpy.str_ from OCR pipelines --
     text = str(text)
     # -- Docs are far heavier than the token lists the other caches hold, and this accepts text
-    # -- up to spaCy's 1M-char limit. Cache the element-sized strings this is actually called
-    # -- with; stream anything larger, where a repeat hit is unlikely to pay for the residency.
+    # -- up to spaCy's 1M-character limit. Cache the element-sized strings this is actually
+    # -- called with; stream anything longer, where a repeat hit is unlikely to pay for the
+    # -- residency.
     if len(text) > MAX_CACHEABLE_CHARS:
         return _run_pipeline(text)
     return _process_cached(text)
