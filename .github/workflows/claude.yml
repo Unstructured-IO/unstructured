@@ -35,4 +35,4 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.GH_ANTHROPIC_API_KEY }}
           claude_args: |
-            --allowedTools "Bash(git:*),View,GlobTool,GrepTool,BatchTool"
+            --allowedTools "Bash(git:*),Read,Glob,Grep"
