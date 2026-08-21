@@ -194,7 +194,7 @@ def test_delivery_disables_environment_redirects_retries_and_body_download(
     for mount_call in session.mount.call_args_list:
         assert mount_call.args[1].max_retries.total == 0
     session.get.assert_called_once_with(
-        "https://packages.unstructured.io/v1/partition",
+        "https://packages.unstructured.io/python-telemetry",
         params=params,
         timeout=(0.5, 0.5),
         allow_redirects=False,
@@ -602,7 +602,7 @@ def test_stuck_transport_never_waits_and_capacity_is_bounded(runtime_session):
     # The sole slot is occupied: another event is dropped without another worker or request.
     assert partition_text()[0].text == "ok"
     assert session.get.call_count == 1
-    assert session.get.call_args.args[0] == "https://packages.unstructured.io/v1/partition"
+    assert session.get.call_args.args[0] == "https://packages.unstructured.io/python-telemetry"
     assert session.get.call_args.kwargs == {
         "params": session.get.call_args.kwargs["params"],
         "timeout": (0.5, 0.5),

@@ -21,7 +21,7 @@ from unstructured.utils import _telemetry_opt_out, scarf_analytics
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
-_ENDPOINT = "https://packages.unstructured.io/v1/partition"
+_ENDPOINT = "https://packages.unstructured.io/python-telemetry"
 _HTTP_TIMEOUT = (0.5, 0.5)
 _DELIVERY_SLOT = threading.BoundedSemaphore(1)
 _PROCESS_ID = os.getpid()
