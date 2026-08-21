@@ -1279,6 +1279,21 @@ class Describe_Chunker:
         # -- computation is only on first call, all chunks get exactly the same orig-elements --
         assert chunker._orig_elements is orig_elements
 
+    def it_does_not_mutate_the_callers_original_element_when_stripping_orig_elements(self):
+        """The elements passed in don't belong to `_Chunker`; it must not mutate them."""
+        opts = ChunkingOptions(include_orig_elements=True)
+        inner = Text("Porta volupat.")
+        element = CompositeElement(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(orig_elements=[inner]),
+        )
+        chunker = _Chunker([element], text=element.text, opts=opts)
+
+        chunker._orig_elements
+
+        # -- the caller's own element must still have its original `.orig_elements` value --
+        assert element.metadata.orig_elements == [inner]
+
 
 class Describe_TableChunker:
     """Unit-test suite for `unstructured.chunking.base._TableChunker` objects."""

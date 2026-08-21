@@ -47,6 +47,7 @@
 ### Fixes
 
 - **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+- **`Chunker._orig_elements` no longer mutates the caller's original elements**: `copy.copy(e)` created a shallow copy whose `.metadata` was the *same object* as the original element's `.metadata`; clearing `orig_elements` on the copy (`orig_element.metadata.orig_elements = None`) mutated the caller's original element in place, contradicting the code's own comment that these elements "don't belong to us." Now uses `copy.deepcopy(e)`, matching the sibling `_TableChunker._orig_elements`'s existing correct pattern.
 
 ## 0.25.0
 
