@@ -55,9 +55,6 @@ jobs:
       - name: Set up Python
         run: uv python install
 
-      - name: Install dependencies
-        run: uv sync --locked --only-group release --no-install-project
-
       - name: Validate version matches release tag
         env:
           TAG: ${{ inputs.tag || github.event.release.tag_name }}
@@ -82,7 +79,7 @@ jobs:
 
       - name: Validate artifact
         id: validate
-        run: uv run --no-sync twine check dist/*
+        run: uvx --from twine==7.0.0 twine check dist/*
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
@@ -112,7 +109,7 @@ jobs:
           steps.validate.outcome == 'success'
         run: |
           EXIT_CODE=0
-          uv run --no-sync twine upload -r azure dist/* || EXIT_CODE=$?
+          uvx --from twine==7.0.0 twine upload -r azure dist/* || EXIT_CODE=$?
           if [[ $EXIT_CODE -eq 0 ]]; then
             echo "Successfully published to Azure Artifacts (or already existed)"
           else

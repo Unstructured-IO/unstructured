@@ -1,3 +1,9 @@
+## 0.27.1
+
+### Fixes
+
+- **Support Core Metadata 2.5 package publishing**: Upgrade the PyPI publishing action and Twine release tooling so artifacts produced by Hatchling 1.32 and later pass metadata validation. Release workflows now validate artifacts before upload and can safely retry a failed upload from an existing published GitHub release tag without moving or recreating that tag.
+
 ## 0.27.0
 
 ### Enhancements
