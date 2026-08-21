@@ -1,3 +1,9 @@
+## 0.27.19
+
+### Fixes
+
+- **Extract `<details>`/`<summary>` content instead of discarding it**: both tags were mapped to `RemovedBlock`, so `partition_html()` silently dropped every disclosure widget and everything inside it. FAQ and documentation pages built from accordions lost all of their questions and answers, and the caller saw a shorter element list rather than an error. `<details>` is now `Flow` (an ordinary block container) and `<summary>` is `Heading`, which emits a `Title` -- so `chunk_by_title()` opens a new section per entry and a question stays attached to its own answer. Resolves #3919.
+
 ## 0.27.18
 
 ### Fixes
