@@ -10,6 +10,12 @@
 
 - **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
 
+## 0.27.2
+
+### Fixes
+
+- **Extract `<details>`/`<summary>` content instead of discarding it**: both tags were mapped to `RemovedBlock`, so `partition_html()` silently dropped every disclosure widget and everything inside it. FAQ and documentation pages built from accordions lost all of their questions and answers, and the caller saw a shorter element list rather than an error. `<details>` is now `Flow` (an ordinary block container) and `<summary>` is `Heading`, which emits a `Title` -- so `chunk_by_title()` opens a new section per entry and a question stays attached to its own answer. Resolves #3919.
+
 ## 0.26.3
 
 ### Fixes

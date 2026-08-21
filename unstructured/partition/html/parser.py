@@ -1018,8 +1018,10 @@ element_class_lookup.get_namespace(None).update(
         # -- removed phrasing --
         "button": RemovedPhrasing,
         "label": RemovedPhrasing,
+        # -- disclosure widget: `<summary>` is its heading, the rest is ordinary flow content --
+        "details": Flow,
+        "summary": Heading,
         # -- removed block --
-        "details": RemovedBlock,  # -- likely boilerplate --
         "dl": RemovedBlock,
         "dd": RemovedBlock,
         "dt": RemovedBlock,
@@ -1030,6 +1032,5 @@ element_class_lookup.get_namespace(None).update(
         # -- removed form-related --
         "form": RemovedBlock,
         "input": RemovedBlock,
-        "summary": RemovedBlock,  # -- child of `details`
     }
 )
