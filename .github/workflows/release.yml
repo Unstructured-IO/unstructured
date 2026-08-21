@@ -4,6 +4,12 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag whose failed package upload should be retried
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -21,10 +27,25 @@ jobs:
     # Skip opencv wheel releases (tagged 'opencv-*') produced by the
     # build-opencv-wheels workflow - those aren't package releases and would
     # otherwise trigger a spurious PyPI publish failure.
-    if: ${{ !startsWith(github.event.release.tag_name, 'opencv-') }}
+    if: ${{ !startsWith(inputs.tag || github.event.release.tag_name, 'opencv-') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Validate manual release tag
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          PUBLISHED_TAG=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}" \
+            --jq 'select(.draft == false) | .tag_name')
+          if [[ "$PUBLISHED_TAG" != "$TAG" ]]; then
+            echo "Tag '$TAG' does not identify a published GitHub release"
+            exit 1
+          fi
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
@@ -39,7 +60,7 @@ jobs:
 
       - name: Validate version matches release tag
         env:
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: |
           PKG_VERSION=$(uv run --script - <<'PYEOF'
           # /// script
@@ -59,12 +80,19 @@ jobs:
         id: build
         run: uv build
 
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1
+      - name: Validate artifact
+        id: validate
+        run: uv run --no-sync twine check dist/*
 
-      # Best-effort: attempt Azure upload even if PyPI fails, but only if build succeeded.
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+      # Best-effort: attempt Azure upload even if PyPI fails, but only for a valid artifact.
       - name: Create .pypirc for Azure Artifacts
-        if: always() && steps.build.outcome == 'success'
+        if: >-
+          always() &&
+          steps.build.outcome == 'success' &&
+          steps.validate.outcome == 'success'
         run: |
           cat <<EOF > ~/.pypirc
           [distutils]
@@ -78,7 +106,10 @@ jobs:
           EOF
 
       - name: Publish package to Azure Artifacts
-        if: always() && steps.build.outcome == 'success'
+        if: >-
+          always() &&
+          steps.build.outcome == 'success' &&
+          steps.validate.outcome == 'success'
         run: |
           EXIT_CODE=0
           uv run --no-sync twine upload -r azure dist/* || EXIT_CODE=$?
