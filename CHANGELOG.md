@@ -1,3 +1,9 @@
+## 0.27.0
+
+### Enhancements
+
+- **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
+
 ## 0.26.3
 
 ### Fixes

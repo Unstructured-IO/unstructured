@@ -129,7 +129,7 @@ fi
 
 docker exec -i -e PYTHONUNBUFFERED=1 "$CID" python - <<PY |& tee "${PY_LOG_DIR}/${SCENARIO}.log"
 import logging
-# Telemetry runs at package init unless the scenario sets DO_NOT_TRACK.
+# Startup and per-partition runtime telemetry run unless the scenario sets DO_NOT_TRACK.
 from unstructured.partition.auto import partition
 import urllib.request, time, os, sys
 

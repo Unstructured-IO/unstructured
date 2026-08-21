@@ -12,6 +12,7 @@ from unstructured.documents.elements import Element
 from unstructured.logger import logger
 from unstructured.partition.common.common import exactly_one
 from unstructured.staging.base import elements_from_dicts, elements_from_json
+from unstructured.telemetry import partition_runtime_telemetry
 
 # Default retry configuration taken from the client code
 DEFAULT_RETRIES_INITIAL_INTERVAL_SEC = 3000
@@ -21,6 +22,7 @@ DEFAULT_RETRIES_MAX_ELAPSED_TIME_SEC = 1800000
 DEFAULT_RETRIES_CONNECTION_ERRORS = True
 
 
+@partition_runtime_telemetry()
 def partition_via_api(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
@@ -229,6 +231,7 @@ def get_retries_config(
     return retries_config
 
 
+@partition_runtime_telemetry()
 def partition_multiple_via_api(
     filenames: Optional[list[str]] = None,
     content_types: Optional[list[str]] = None,
