@@ -1,5 +1,9 @@
 ## 0.27.1
 
+### Enhancements
+
+- **Batch spaCy processing during PDF text classification**: FAST PDF partitioning now processes page text through `nlp.pipe()` before calling the existing element classifier, avoiding repeated statistical-pipeline execution while preserving classification rules and output order.
+
 ### Fixes
 
 - **Support Core Metadata 2.5 package publishing**: Upgrade the PyPI publishing action and Twine release tooling so artifacts produced by Hatchling 1.32 and later pass metadata validation. Release workflows now validate artifacts before upload and can safely retry a failed upload from an existing published GitHub release tag without moving or recreating that tag.

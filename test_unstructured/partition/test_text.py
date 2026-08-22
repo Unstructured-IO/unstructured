@@ -12,9 +12,9 @@ from pytest_mock import MockerFixture
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
 from unstructured.file_utils.model import FileType
-from unstructured.partition.text import partition_text
+from unstructured.partition.text import element_from_text, partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_OUTPUT = [
@@ -50,6 +50,21 @@ The example is simple and repetitive and long and somewhat boring, but it serves
 
 End.
 """
+
+
+def test_element_from_numeric_text_skips_nlp(mocker: MockerFixture):
+    narrative = mocker.patch(
+        "unstructured.partition.text.is_possible_narrative_text",
+        side_effect=AssertionError("numeric text should not reach narrative NLP rules"),
+    )
+    title = mocker.patch(
+        "unstructured.partition.text.is_possible_title",
+        side_effect=AssertionError("numeric text should not reach title NLP rules"),
+    )
+
+    assert element_from_text("123456") == Text("123456")
+    narrative.assert_not_called()
+    title.assert_not_called()
 
 
 @pytest.mark.parametrize(

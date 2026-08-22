@@ -115,57 +115,91 @@ def element_from_text(
     coordinates: tuple[tuple[float, float], ...] | None = None,
     coordinate_system: CoordinateSystem | None = None,
 ) -> Element:
+    element = _element_from_text_without_nlp(
+        text,
+        coordinates=coordinates,
+        coordinate_system=coordinate_system,
+    )
+    if element is not None:
+        return element
+    return _element_from_text_with_nlp(
+        text,
+        coordinates=coordinates,
+        coordinate_system=coordinate_system,
+    )
+
+
+def _element_from_text_without_nlp(
+    text: str,
+    coordinates: tuple[tuple[float, float], ...] | None = None,
+    coordinate_system: CoordinateSystem | None = None,
+) -> Element | None:
+    """Return an element when non-NLP classification rules are conclusive."""
     if _is_in_header_position(coordinates, coordinate_system):
         return Header(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif _is_in_footer_position(coordinates, coordinate_system):
+    if _is_in_footer_position(coordinates, coordinate_system):
         return Footer(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_bulleted_text(text):
+    if is_bulleted_text(text):
         clean_text = clean_bullets(text)
         return ListItem(
             text=clean_text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_email_address(text):
+    if is_email_address(text):
         return EmailAddress(text=text)
-    elif is_us_city_state_zip(text):
+    if is_us_city_state_zip(text):
         return Address(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_possible_numbered_list(text):
+    if is_possible_numbered_list(text):
         return ListItem(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_possible_narrative_text(text):
-        return NarrativeText(
-            text=text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-        )
-    elif is_possible_title(text):
-        return Title(
-            text=text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-        )
-    else:
+    if text.isnumeric():
         return Text(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
+    return None
+
+
+def _element_from_text_with_nlp(
+    text: str,
+    coordinates: tuple[tuple[float, float], ...] | None = None,
+    coordinate_system: CoordinateSystem | None = None,
+) -> Element:
+    """Classify text using rules that may require sentence segmentation or POS tagging."""
+    if is_possible_narrative_text(text):
+        return NarrativeText(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    if is_possible_title(text):
+        return Title(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    return Text(
+        text=text,
+        coordinates=coordinates,
+        coordinate_system=coordinate_system,
+    )
 
 
 # ================================================================================================
