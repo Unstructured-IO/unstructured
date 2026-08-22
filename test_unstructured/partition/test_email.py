@@ -389,6 +389,32 @@ def test_partition_email_silently_skips_attachments_it_cannot_partition():
     ]
 
 
+def test_partition_email_does_not_raise_on_multipart_attachment():
+    """A multipart/* "attachment" (e.g. a PGP/MIME-signed forwarded message) must not crash.
+
+    `email.contentmanager` has no `get_content()` handler for any `multipart/*` content-type, so
+    without special-casing this in `_AttachmentPartitioner._file_bytes`, resolving such an
+    attachment's bytes raises `KeyError` -- crashing the whole `partition_email()` call instead
+    of gracefully processing or skipping just that one attachment. Regression test for #3922.
+
+    The fixture's attachment is itself a genuine boundary-bearing `multipart/signed` MIME part
+    (a PGP-signed forwarded message), so this also guards a second, subtler bug: serializing
+    that part verbatim (with its own `Content-Disposition: attachment` header intact) and
+    re-parsing it as a new root message made `EmailMessage.get_body()` skip it entirely, i.e.
+    the attachment partitioned to zero elements instead of surfacing its signed body text.
+    """
+    elements = partition_email(
+        example_doc_path("eml/mime-attach-multipart-signed.eml"), process_attachments=True
+    )
+
+    # -- No exception; the outer email body is partitioned ... --
+    assert elements[0] == NarrativeText("This is the main email body.")
+    # -- ... and the signed attachment's own body is also partitioned, not silently dropped. --
+    assert elements[1] == NarrativeText("This is the signed forwarded message body.")
+    assert elements[1].metadata.filename == "signed-message.eml"
+    assert elements[1].metadata.attached_to_filename == "mime-attach-multipart-signed.eml"
+
+
 # ================================================================================================
 # ISOLATED UNIT TESTS
 # ================================================================================================
