@@ -1,3 +1,9 @@
+## 0.27.2
+
+### Fixes
+
+- **chore(ci): bump `anthropics/claude-code-action` to `v1`.** Moves the `@claude` workflow off the deprecated `@beta` pin and updates the tool allowlist to the current Claude Code CLI tool names (`Read`/`Glob`/`Grep`).
+
 ## 0.27.1
 
 ### Fixes
