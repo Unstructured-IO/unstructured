@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import pathlib
 
 import pytest
 
@@ -1298,6 +1299,10 @@ class Describe_TextFileDifferentiator:
             (b"", False),
             # -- valid JSON, but not for our purposes --
             (b'"This is not a JSON"', False),
+            # -- starts with "{"/"[" but is non-UTF text (cp1252), not JSON; previously raised
+            # -- UnicodeDecodeError instead of returning False --
+            ('{"name": "café", "city": "münchen"}'.encode("cp1252"), False),
+            ("[config]\nname=caf\xe9\nport=8080\n".encode("cp1252"), False),
         ],
     )
     def it_distinguishes_a_JSON_file_from_other_text_files(
@@ -1307,6 +1312,24 @@ class Describe_TextFileDifferentiator:
         differentiator = _TextFileDifferentiator(ctx)
 
         assert differentiator._is_json is expected_value
+
+    def and_it_does_not_raise_on_a_non_UTF_text_file_path_that_starts_with_a_brace(
+        self, tmp_path: pathlib.Path
+    ):
+        """A cp1252/latin-1 text file starting with "[" or "{" is not-JSON, not an error."""
+        file_path = tmp_path / "notes.txt"
+        file_path.write_bytes("[2026-08-19] M\xfcnchen report\n".encode("cp1252"))
+
+        ctx = _FileTypeDetectionContext(str(file_path))
+
+        assert _TextFileDifferentiator(ctx)._is_json is False
+
+    def and_it_classifies_JSON_in_a_declared_non_UTF_encoding_as_JSON(self):
+        content = '{"name": "café", "city": "münchen"}'.encode("cp1252")
+
+        ctx = _FileTypeDetectionContext(file=io.BytesIO(content), encoding="cp1252")
+
+        assert _TextFileDifferentiator(ctx)._is_json is True
 
 
 class Describe_ZipFileDetector:

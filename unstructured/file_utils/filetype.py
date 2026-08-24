@@ -984,6 +984,21 @@ class _TextFileDifferentiator:
             return True
         except json.JSONDecodeError:
             return False
+        except (UnicodeDecodeError, UnicodeError):
+            # -- `json.load()` reads the raw bytes and auto-detects only the UTF-8/16/32
+            # -- family (the encodings valid for JSON interchange, RFC 8259). A text file in
+            # -- any other character set whose first non-whitespace character is "{" or "["
+            # -- (e.g. a cp1252 log or INI file) lands here. Retry with the declared encoding
+            # -- so an explicitly-declared legacy-encoded JSON still classifies as JSON;
+            # -- otherwise the file is not (interchangeable) JSON, not an error --
+            try:
+                with self._ctx.open() as file:
+                    content = file.read()
+                text = content.decode(self._ctx.encoding) if isinstance(content, bytes) else content
+                json.loads(text)
+                return True
+            except (json.JSONDecodeError, UnicodeDecodeError, UnicodeError):
+                return False
 
 
 class _ZipFileDetector:
