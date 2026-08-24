@@ -18,11 +18,13 @@ from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.safe_http import safe_get
+from unstructured.telemetry import partition_runtime_telemetry, set_partition_document_type
 from unstructured.utils import dependency_exists
 
 Partitioner: TypeAlias = Callable[..., list[Element]]
 
 
+@partition_runtime_telemetry()
 def partition(
     filename: Optional[str] = None,
     *,
@@ -170,6 +172,8 @@ def partition(
             content_type=content_type,
             metadata_file_path=metadata_filename,
         )
+
+    set_partition_document_type(file_type)
 
     if file is not None:
         file.seek(0)

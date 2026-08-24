@@ -43,6 +43,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 DETECTION_ORIGIN = "pptx"
@@ -78,6 +79,7 @@ class AbstractPicturePartitioner(Protocol):
 # ================================================================================================
 
 
+@partition_runtime_telemetry("pptx")
 @apply_metadata(FileType.PPTX)
 @add_chunking_strategy
 def partition_pptx(

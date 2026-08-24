@@ -13,10 +13,12 @@ from unstructured.partition.common.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.common.metadata import apply_metadata, get_last_modified_date
+from unstructured.telemetry import partition_runtime_telemetry
 
 DETECTION_ORIGIN: str = "tsv"
 
 
+@partition_runtime_telemetry("tsv")
 @apply_metadata(FileType.TSV)
 @add_chunking_strategy
 def partition_tsv(

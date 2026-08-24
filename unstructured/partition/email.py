@@ -24,10 +24,12 @@ from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
+from unstructured.telemetry import partition_runtime_telemetry
 
 VALID_CONTENT_SOURCES: Final[tuple[str, ...]] = ("text/html", "text/plain")
 
 
+@partition_runtime_telemetry("eml")
 def partition_email(
     filename: str | None = None,
     *,

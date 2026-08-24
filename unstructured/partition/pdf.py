@@ -79,6 +79,12 @@ from unstructured.partition.utils.constants import (
 )
 from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import patch_psparser
+from unstructured.telemetry import (
+    mark_partition_ocr_used,
+    partition_runtime_telemetry,
+    set_partition_document_type,
+    set_partition_strategy_used,
+)
 from unstructured.utils import first, requires_dependencies
 
 if TYPE_CHECKING:
@@ -133,6 +139,7 @@ def default_hi_res_model() -> str:
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
+@partition_runtime_telemetry("pdf")
 @apply_metadata(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
@@ -346,6 +353,7 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
     )
+    set_partition_strategy_used(strategy)
 
     if file is not None:
         file.seek(0)
@@ -984,6 +992,7 @@ def _partition_pdf_or_image_local(
 
     if file is None:
         inferred_document_layout = _run_layout_inference(process_file_with_model, filename)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         pdfminer_config = _enable_detect_vertical_if_rotated(
             inferred_document_layout,
@@ -1043,6 +1052,7 @@ def _partition_pdf_or_image_local(
         )
     else:
         inferred_document_layout = _run_layout_inference(process_data_with_model, file)
+        _record_image_layout_document_type(inferred_document_layout, is_image)
 
         if hasattr(file, "seek"):
             file.seek(0)
@@ -1244,6 +1254,18 @@ def _partition_pdf_with_pdfparser(
     return elements
 
 
+def _record_image_layout_document_type(document_layout: "DocumentLayout", is_image: bool) -> None:
+    """Record an image format already discovered during successful layout inference."""
+    if not is_image:
+        return
+    with contextlib.suppress(Exception):
+        for page in document_layout.pages:
+            image_format = get_page_image_metadata(page).get("format")
+            if image_format:
+                set_partition_document_type(image_format)
+                return
+
+
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
@@ -1309,12 +1331,14 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
     from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
+    set_partition_document_type(image.format)
     ocr_agent = OCRAgent.get_agent(language=ocr_languages)
 
     # NOTE(christine): `pytesseract.image_to_string()` returns sorted text
     if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
+    mark_partition_ocr_used()
     ocr_data = ocr_agent.get_layout_elements_from_image(image=image)
 
     metadata = ElementMetadata(
@@ -1536,6 +1560,7 @@ def document_to_element_list(
 
         page_image_metadata = get_page_image_metadata(page)
         image_format = page_image_metadata.get("format")
+        set_partition_document_type(image_format)
         image_width = page_image_metadata.get("width")
         image_height = page_image_metadata.get("height")
 
