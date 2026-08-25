@@ -1551,3 +1551,77 @@ def test_partition_html_leaves_page_number_None_when_not_present():
     html_text = "<html><body><p>No page markup.</p></body></html>"
     elements = partition_html(text=html_text)
     assert all(e.metadata.page_number is None for e in elements)
+
+
+# -- disclosure widgets (`<details>`/`<summary>`) -------------------------------------------------
+
+
+def test_partition_html_extracts_details_and_summary_content():
+    """`<details>` and `<summary>` were mapped to `RemovedBlock`, so an accordion vanished.
+
+    FAQ pages are commonly built this way, and every question and answer was dropped silently --
+    the caller got a shorter element list, not an error. See #3919.
+    """
+    html_text = (
+        "<html><body>"
+        "<h1>Support FAQ</h1>"
+        "<details><summary>Which Bluetooth profiles are supported?</summary>"
+        "<p>Your device supports A2DP and HFP profiles.</p></details>"
+        "<details open><summary>How do I pair my hearing aid?</summary>"
+        "<p>Open settings and select Bluetooth.</p></details>"
+        "</body></html>"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert [(type(e).__name__, e.text) for e in elements] == [
+        ("Title", "Support FAQ"),
+        ("Title", "Which Bluetooth profiles are supported?"),
+        ("NarrativeText", "Your device supports A2DP and HFP profiles."),
+        ("Title", "How do I pair my hearing aid?"),
+        ("NarrativeText", "Open settings and select Bluetooth."),
+    ]
+
+
+def test_partition_html_makes_a_summary_start_its_own_chunk_section():
+    """The reason the element type matters: `chunk_by_title` opens a new section at a `Title`.
+
+    Two unrelated Q&A pairs land in separate chunks instead of one blended chunk. Small sections
+    are still merged under the default `combine_text_under_n_chars`, so that is disabled here to
+    isolate the sectioning behaviour rather than the merging.
+    """
+    html_text = (
+        "<html><body>"
+        "<details><summary>First question?</summary><p>First answer.</p></details>"
+        "<details><summary>Second question?</summary><p>Second answer.</p></details>"
+        "</body></html>"
+    )
+
+    chunks = chunk_by_title(
+        partition_html(text=html_text), max_characters=200, combine_text_under_n_chars=0
+    )
+
+    assert [c.text for c in chunks] == [
+        "First question?\n\nFirst answer.",
+        "Second question?\n\nSecond answer.",
+    ]
+
+
+def test_partition_html_extracts_a_details_block_that_has_no_summary():
+    html_text = "<html><body><details><p>Just the body.</p></details></body></html>"
+
+    assert [e.text for e in partition_html(text=html_text)] == ["Just the body."]
+
+
+def test_partition_html_extracts_nested_details_blocks():
+    html_text = (
+        "<html><body><details><summary>Outer</summary>"
+        "<details><summary>Inner</summary><p>Innermost body.</p></details>"
+        "</details></body></html>"
+    )
+
+    assert [(type(e).__name__, e.text) for e in partition_html(text=html_text)] == [
+        ("Title", "Outer"),
+        ("Title", "Inner"),
+        ("Text", "Innermost body."),
+    ]
