@@ -1,0 +1,36 @@
+From: sender@example.com
+To: recipient@example.com
+Subject: Test with PGP-signed forwarded message attachment
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============6075316962646898834=="
+
+--===============6075316962646898834==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+This is the main email body.
+
+--===============6075316962646898834==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="pgp-sha256"; boundary="===============3567714482309737971=="
+Content-Disposition: attachment; filename="signed-message.eml"
+MIME-Version: 1.0
+
+--===============3567714482309737971==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+This is the signed forwarded message body.
+
+--===============3567714482309737971==
+MIME-Version: 1.0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+fakefakefake
+-----END PGP SIGNATURE-----
+
+--===============3567714482309737971==--
+
+--===============6075316962646898834==--
