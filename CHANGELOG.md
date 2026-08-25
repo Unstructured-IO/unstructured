@@ -16,6 +16,12 @@
 
 - **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
 
+## 0.27.2
+
+### Enhancements
+
+- **Run the spaCy pipeline once per distinct text**: `_process()` in `unstructured.nlp.tokenize` was uncached while `word_tokenize()`, `pos_tag()` and `sent_tokenize()` each cached only their own extracted view, so every helper paid for its own identical pipeline run. Classifying one element via `is_possible_narrative_text()` reached all three and ran spaCy three times on the same string. The `Doc` is now memoized and shared, cutting `partition_html()` on a text-heavy document by ~2.8x (400 paragraphs: 1127ms -> 395ms). Texts longer than 8,192 characters bypass the cache so a single very large element cannot pin an outsized `Doc` in memory.
+
 ## 0.26.3
 
 ### Fixes
