@@ -34,12 +34,14 @@ from unstructured.partition.text_type import (
     is_possible_numbered_list,
     is_possible_title,
 )
+from unstructured.telemetry import partition_runtime_telemetry
 
 _CellCoordinate: TypeAlias = "tuple[int, int]"
 
 DETECTION_ORIGIN: str = "xlsx"
 
 
+@partition_runtime_telemetry("xlsx")
 @apply_metadata(FileType.XLSX)
 @add_chunking_strategy
 def partition_xlsx(

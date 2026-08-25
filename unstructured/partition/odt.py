@@ -9,9 +9,11 @@ from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.docx import partition_docx
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import requires_dependencies
 
 
+@partition_runtime_telemetry("odt")
 def partition_odt(
     filename: Optional[str] = None,
     *,

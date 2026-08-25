@@ -16,9 +16,11 @@ from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 
+@partition_runtime_telemetry("msg")
 def partition_msg(
     filename: Optional[str] = None,
     *,
