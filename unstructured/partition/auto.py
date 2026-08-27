@@ -16,6 +16,7 @@ from unstructured.logger import logger
 from unstructured.partition.common import UnsupportedFileFormatError
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.lang import check_language_args
+from unstructured.partition.common.metadata import is_attachment_element
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.safe_http import safe_get
 from unstructured.telemetry import partition_runtime_telemetry, set_partition_document_type
@@ -203,8 +204,10 @@ def partition(
             element.metadata.data_source = data_source_metadata
             # -- an attachment's elements were assigned their own (correct) filetype by the
             # -- nested `partition()` call that produced them; don't re-stamp them with the
-            # -- containing document's type (e.g. an attached PDF is not `message/rfc822`) --
-            if element.metadata.attached_to_filename:
+            # -- containing document's type (e.g. an attached PDF is not `message/rfc822`).
+            # -- Note this cannot key on `.metadata.attached_to_filename`, which is `None`
+            # -- whenever the containing document's file-name is unknown. --
+            if is_attachment_element(element):
                 continue
             if content_type is not None:
                 out_filetype = FileType.from_mime_type(content_type)

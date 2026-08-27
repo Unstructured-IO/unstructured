@@ -48,6 +48,7 @@ from unstructured.file_utils.filetype import detect_filetype
 from unstructured.file_utils.model import FileType, create_file_type, register_partitioner
 from unstructured.partition.auto import _PartitionerLoader, partition
 from unstructured.partition.common import UnsupportedFileFormatError
+from unstructured.partition.common.metadata import is_attachment_element
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_from_json, elements_to_dicts, elements_to_json
 
@@ -1429,8 +1430,31 @@ def test_auto_partition_preserves_the_filetype_of_attachment_elements(file_name:
     """
     elements = partition(example_doc_path(file_name), process_attachments=True)
 
-    attachment_elements = [e for e in elements if e.metadata.attached_to_filename]
+    attachment_elements = [e for e in elements if is_attachment_element(e)]
     assert attachment_elements
+    assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    ["eml/fake-email-attachment.eml", "fake-email-attachment.msg"],
+)
+def test_auto_partition_preserves_attachment_filetype_when_container_filename_is_unknown(
+    file_name: str,
+):
+    """The attachment guard must not depend on `.metadata.attached_to_filename`.
+
+    That field is `None` when the containing document's file-name is unknown -- partitioning a
+    file-like object with no `metadata_filename` -- so keying the guard on it would let the
+    containing document's filetype overwrite the attachment's in exactly that case.
+    """
+    with open(example_doc_path(file_name), "rb") as f:
+        elements = partition(file=f, process_attachments=True)
+
+    attachment_elements = [e for e in elements if is_attachment_element(e)]
+    assert attachment_elements
+    # -- precondition: this is the case the `attached_to_filename` guard cannot see --
+    assert all(e.metadata.attached_to_filename is None for e in attachment_elements)
     assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
 
 
