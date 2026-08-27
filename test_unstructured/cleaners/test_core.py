@@ -293,6 +293,25 @@ def test_group_bullet_paragraph_keeps_hyphens_inside_dash_bullet_items():
     ]
 
 
+@pytest.mark.parametrize(
+    "separator",
+    ["\x0c", "\x0b", "\x85", "\u2028", "\u2029", "\x1c"],
+    ids=["form-feed", "vertical-tab", "nel", "line-sep", "para-sep", "file-sep"],
+)
+def test_group_bullet_paragraph_splits_bullets_behind_a_line_separator(separator: str):
+    """A separator between the newline and the dash must not prevent the split.
+
+    These characters sit where indentation would, so the indentation class has to consume
+    them; refusing them leaves the `(?<=\\n)` lookbehind unable to reach the dash and both
+    items collapse into one. They are whitespace, and the rejoin normalises whitespace
+    away regardless, so consuming them loses nothing.
+    """
+    assert core.group_bullet_paragraph(f"- a here\n{separator}- b here") == [
+        "- a here ",
+        "- b here",
+    ]
+
+
 def test_group_bullet_paragraph_splits_indented_dash_bullets():
     text = """- top level item
   - nested my-service item"""

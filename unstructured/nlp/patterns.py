@@ -72,9 +72,16 @@ UNAMBIGUOUS_BULLETS_PATTERN = "|".join(b for b in UNICODE_BULLETS if b not in AM
 AMBIGUOUS_BULLETS_PATTERN = "|".join(AMBIGUOUS_BULLETS)
 # An ambiguous glyph is a bullet only when whitespace (or the end of the text) follows it.
 QUALIFIED_AMBIGUOUS_BULLET = f"(?:{AMBIGUOUS_BULLETS_PATTERN})(?=\\s|$)"
-# Horizontal whitespace only: indentation may be a tab, a NO-BREAK SPACE or an EM SPACE in
-# extracted text, but a newline is a line break, not indentation.
-HORIZONTAL_WHITESPACE = r"[^\S\n\r]*"
+# Any whitespace except a newline or carriage return. Indentation may be a tab, a NO-BREAK
+# SPACE or an EM SPACE in extracted text, so the class has to be wider than " \t".
+#
+# It deliberately still admits FORM FEED, VERTICAL TAB, NEL, LINE SEPARATOR and friends.
+# Those sit BETWEEN the newline and the bullet, so a class that refused them would leave
+# the `(?<=\n)` lookbehind unable to reach the dash, and "- a\n\x0c- b" would collapse into
+# a single item instead of two. They are consumed rather than preserved, which matches the
+# previous behaviour: the paragraph is rejoined with `PARAGRAPH_PATTERN` (`\s*\n\s*`)
+# substituted for a space, so this whitespace was normalised away regardless.
+NON_NEWLINE_WHITESPACE = r"[^\S\n\r]*"
 # The ambiguous branch is anchored to the start of a line so this regex stays safe under
 # `.split()` as well as `.match()`: unanchored, it splits "Amount - forty" mid-line.
 # Indentation is deliberately NOT consumed here -- that would make `.match()` strip a
@@ -92,7 +99,7 @@ UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})
 # only when whitespace follows it, so a hyphen or a minus sign is left alone.
 BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
-    f"|(?:(?:(?<=\\n)|\\A){HORIZONTAL_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
+    f"|(?:(?:(?<=\\n)|\\A){NON_NEWLINE_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
