@@ -1,3 +1,9 @@
+## 0.27.3
+
+### Fixes
+
+- **Updated README:** Added Sign up Link for Transform MCP in README. 
+
 ## 0.27.2
 
 ### Fixes
