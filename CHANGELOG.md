@@ -1,3 +1,9 @@
+## 0.27.3
+
+### Fixes
+
+- **Write LabelBox staging text files as UTF-8**: `stage_for_label_box()` opened each `<external-id>.txt` file in text mode without an explicit encoding, so the element text was encoded with the platform's locale codec. Any element text outside that codec raised `UnicodeEncodeError` (Windows `cp1252`, or a POSIX/`C` locale in a container), and where it did not raise, the staged file was written in the locale encoding while LabelBox reads it as UTF-8. The other staging serializers in `unstructured.staging.base` already pass an explicit encoding.
+
 ## 0.27.2
 
 ### Fixes

@@ -82,7 +82,7 @@ def stage_for_label_box(
         output_filename = f"{element_id}.txt"
         data_url = "/".join([url_prefix.rstrip("/"), output_filename])
         output_filepath = os.path.join(output_directory, output_filename)
-        with open(output_filepath, "w+") as output_text_file:
+        with open(output_filepath, "w+", encoding="utf-8") as output_text_file:
             output_text_file.write(element.text)
 
         element_config: Dict[str, Any] = {
