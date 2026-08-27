@@ -1,8 +1,14 @@
-## 0.27.4-dev0
+## 0.27.5-dev0
 
 ### Fixes
 
 - **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them.
+
+## 0.27.4
+
+### Fixes
+
+- **Treat `-` and `–` as a bullet only at the start of a line and only when whitespace or the end of the line follows**: `partition_text` no longer splits a line at every hyphen, so hyphenated values survive partitioning — phone numbers, SSNs, ISO dates, cards, IBANs, UUIDs, hyphenated names, YAML values and hyphenated hostnames. Affects `FileType.TXT` and its 18 extensions plus `.eml`/`.msg`; PDF/DOCX/PPTX/HTML are unchanged. A line like `-123.45` also keeps its leading character and is no longer classified as a `ListItem`. **Behavior changes:** an inline dash list on a single line (`- one - two - three`) no longer splits into separate elements, and a dash with no separating whitespace (`-item`) is no longer a bullet. `- item`, a lone `-`, and unambiguous glyphs (`•`, `○`, `*`, …) are unchanged.
 
 ## 0.27.3
 

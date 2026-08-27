@@ -130,6 +130,24 @@ def test_partition_email_partitions_an_html_part_with_quoted_printable_encoded_I
 # -- edge-cases ----------------------------------------------------------------------------------
 
 
+def test_partition_email_does_not_split_hyphenated_values_in_the_body():
+    """`.eml` bodies are dense with short `Field: value` lines, the worst case for the bug.
+
+    Each of these lines used to become one element per hyphen-delimited fragment, so a regex
+    or PII pass downstream could never match the value.
+    """
+    assert [e.text for e in partition_email(example_doc_path("eml/hyphenated-values.eml"))] == [
+        "Customer: Acme Corp",
+        "Phone: 555-123-4567",
+        "SSN: 456-78-9012",
+        "Effective: 2026-08-19",
+        "Card: 4111-1111-1111-1111",
+        "Contact: Jean-Luc Picard",
+        "Service: my-service-prod",
+        "Thanks",
+    ]
+
+
 def test_partition_email_accepts_a_whitespace_only_file():
     """Should produce no elements but should not raise an exception."""
     assert partition_email(example_doc_path("eml/empty.eml")) == []
