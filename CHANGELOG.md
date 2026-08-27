@@ -1,3 +1,9 @@
+## 0.27.3
+
+### Enhancements
+
+- **Add OrcaRouter embedding encoder**: Adds an OpenAI-compatible embedder backed by [OrcaRouter](https://www.orcarouter.ai). Like the existing OctoAI embedder it talks to the OpenAI embeddings API through the OpenAI SDK against a custom base URL (`https://api.orcarouter.ai/v1`), registered as the `orcarouter` embedding provider. OrcaRouter exposes a provider/model namespace across many models on one endpoint, and its gateway also provides zero-trust security controls for AI agents on the same endpoint.
+
 ## 0.27.2
 
 ### Fixes
