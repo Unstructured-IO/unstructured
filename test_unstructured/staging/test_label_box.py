@@ -1,3 +1,4 @@
+import builtins
 import os
 
 import pytest
@@ -139,5 +140,35 @@ def test_stage_for_label_box(
             assert element_config["data"].endswith(f"{element_config['externalId']}.txt")
 
             output_filepath = os.path.join(output_directory, f"{element_config['externalId']}.txt")
-            with open(output_filepath) as data_file:
+            with open(output_filepath, encoding="utf-8") as data_file:
                 assert data_file.read().strip() == element.text.strip()
+
+
+def test_stage_for_label_box_writes_text_files_as_utf8(output_directory, url_prefix, monkeypatch):
+    """Element text is staged as UTF-8 rather than in the platform's locale encoding.
+
+    LabelBox reads the staged files as UTF-8, and text outside the locale codec (for example
+    ``cp1252`` on Windows, or ASCII under a POSIX/``C`` locale) otherwise raises
+    ``UnicodeEncodeError``. Record the encoding each text-mode ``open()`` is given so the
+    assertion holds on a UTF-8 platform too.
+    """
+    text = "Sales figures — 第一季度 café"
+    text_mode_encodings = []
+    real_open = builtins.open
+
+    def recording_open(file, mode="r", buffering=-1, encoding=None, *args, **kwargs):
+        if "b" not in mode:
+            text_mode_encodings.append(encoding)
+        return real_open(file, mode, buffering, encoding, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "open", recording_open)
+    config = label_box.stage_for_label_box(
+        [NarrativeText(text=text)], output_directory, url_prefix, create_directory=True
+    )
+    monkeypatch.undo()
+
+    assert text_mode_encodings == ["utf-8"]
+
+    output_filepath = os.path.join(output_directory, f"{config[0]['externalId']}.txt")
+    with open(output_filepath, "rb") as data_file:
+        assert data_file.read().decode("utf-8") == text
