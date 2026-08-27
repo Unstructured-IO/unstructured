@@ -293,6 +293,12 @@ def test_partition_text_does_not_split_hyphenated_values(text: str, expected: li
             "Agenda\n\n- top one\n  - nested my-service\n\nDone",
             ["Agenda", "top one", "nested my-service", "Done"],
         ),
+        # -- indentation in extracted text is not always an ASCII space: NO-BREAK SPACE
+        # -- (U+00A0), EM SPACE (U+2003) and a tab must all read as indentation --
+        (
+            "Agenda\n\n- top one\n\u00a0- nbsp nested\n\u2003- em nested\n\t- tab nested\n\nDone",
+            ["Agenda", "top one", "nbsp nested", "em nested", "tab nested", "Done"],
+        ),
         # -- en-dash bullets at line start still split --
         (
             "Agenda\n\n– first item here\n– second item here\n\nDone",
@@ -318,8 +324,12 @@ def test_partition_text_still_recognizes_bullets(text: str, expected: list[str])
         ("-item\n\nDone", [("Title", "-item"), ("Title", "Done")]),
         # -- ...whereas an unambiguous glyph needs no separator --
         ("•item\n\nDone", [("ListItem", "item"), ("Title", "Done")]),
-        # -- a lone dash is still an empty bullet --
+        # -- a separated dash is still a bullet --
         ("- item\n\nDone", [("ListItem", "item"), ("Title", "Done")]),
+        # -- a lone dash is an empty bullet and is dropped entirely; this exercises the
+        # -- end-of-text branch of the qualifier and `_is_empty_bullet` --
+        ("-\n\nDone", [("Title", "Done")]),
+        ("–\n\nDone", [("Title", "Done")]),
     ],
 )
 def test_partition_text_does_not_mistake_signs_for_bullets(

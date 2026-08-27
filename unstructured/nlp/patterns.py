@@ -72,8 +72,17 @@ UNAMBIGUOUS_BULLETS_PATTERN = "|".join(b for b in UNICODE_BULLETS if b not in AM
 AMBIGUOUS_BULLETS_PATTERN = "|".join(AMBIGUOUS_BULLETS)
 # An ambiguous glyph is a bullet only when whitespace (or the end of the text) follows it.
 QUALIFIED_AMBIGUOUS_BULLET = f"(?:{AMBIGUOUS_BULLETS_PATTERN})(?=\\s|$)"
+# Horizontal whitespace only: indentation may be a tab, a NO-BREAK SPACE or an EM SPACE in
+# extracted text, but a newline is a line break, not indentation.
+HORIZONTAL_WHITESPACE = r"[^\S\n\r]*"
+# The ambiguous branch is anchored to the start of a line so this regex stays safe under
+# `.split()` as well as `.match()`: unanchored, it splits "Amount - forty" mid-line.
+# Indentation is deliberately NOT consumed here -- that would make `.match()` strip a
+# leading "  - item" while leaving "  \u25cf item" alone, an asymmetry between glyph
+# classes. BULLET_SPLIT_RE_0W below handles indentation for the splitting path.
 UNICODE_BULLETS_RE = re.compile(
-    f"(?:(?:{UNAMBIGUOUS_BULLETS_PATTERN})|{QUALIFIED_AMBIGUOUS_BULLET})(?!{BULLETS_PATTERN})",
+    f"(?:(?:{UNAMBIGUOUS_BULLETS_PATTERN})|(?:(?:(?<=\\n)|\\A){QUALIFIED_AMBIGUOUS_BULLET}))"
+    f"(?!{BULLETS_PATTERN})",
 )
 # zero-width positive lookahead so bullet characters will not be removed when using
 # .split(). Retained for backwards compatibility; prefer BULLET_SPLIT_RE_0W, which does
@@ -83,7 +92,7 @@ UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})
 # only when whitespace follows it, so a hyphen or a minus sign is left alone.
 BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
-    f"|(?:(?:(?<=\\n)|(?<![\\s\\S]))[ \\t]*(?={QUALIFIED_AMBIGUOUS_BULLET}))",
+    f"|(?:(?:(?<=\\n)|\\A){HORIZONTAL_WHITESPACE}(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 

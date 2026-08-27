@@ -40,6 +40,7 @@ def test_clean_non_ascii_chars(text, expected):
         ("–10 °C", "–10 °C"),
         ("-5", "-5"),
         ("-item", "-item"),
+        ("-", ""),  # a lone dash is an empty bullet: the end-of-text branch
     ],
 )
 def test_clean_bullets(text, expected):
