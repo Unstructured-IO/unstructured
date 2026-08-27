@@ -53,23 +53,37 @@ UNICODE_BULLETS: Final[List[str]] = [
 ]
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
 
-# NOTE - `-` (U+002D) and `–` (U+2013) are bullet glyphs *and* ordinary intra-word /
-# intra-number punctuation. They must never be used as an UNANCHORED split delimiter or
-# every hyphenated value is shredded ("090-1234-5678" -> three paragraphs). They stay in
-# UNICODE_BULLETS because the `.match()`-anchored consumers (clean_bullets,
-# is_bulleted_text, _is_empty_bullet) are line-start anchored and are correct to treat a
-# leading "- item" as a bullet.
+# NOTE - `-` (U+002D) and `–` (U+2013) are bullet glyphs *and* ordinary punctuation: an
+# intra-word hyphen, an intra-number separator, or a minus sign. Two conditions have to
+# hold before one of them may be read as a bullet, or ordinary text loses characters:
+#
+#   1. It must be at the start of a line. Used as an UNANCHORED delimiter, every
+#      hyphenated value is shredded ("090-1234-5678" -> three paragraphs).
+#   2. It must be followed by whitespace (or end there). A bullet is separated from the
+#      item it introduces; a sign is not. Without this, "-123.45" reads as a bullet and
+#      is silently rewritten to "123.45", flipping the value. Compare E_BULLET_PATTERN
+#      below, which already requires `(?=\s)` for the same reason.
+#
+# They stay in UNICODE_BULLETS so `clean_bullets`, `is_bulleted_text` and
+# `_is_empty_bullet` still recognise a leading "- item", via the qualified alternation in
+# UNICODE_BULLETS_RE.
 AMBIGUOUS_BULLETS: Final[List[str]] = ["-", "\u2013"]
 UNAMBIGUOUS_BULLETS_PATTERN = "|".join(b for b in UNICODE_BULLETS if b not in AMBIGUOUS_BULLETS)
 AMBIGUOUS_BULLETS_PATTERN = "|".join(AMBIGUOUS_BULLETS)
-UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
-# zero-width positive lookahead so bullet characters will not be removed when using .split()
+# An ambiguous glyph is a bullet only when whitespace (or the end of the text) follows it.
+QUALIFIED_AMBIGUOUS_BULLET = f"(?:{AMBIGUOUS_BULLETS_PATTERN})(?=\\s|$)"
+UNICODE_BULLETS_RE = re.compile(
+    f"(?:(?:{UNAMBIGUOUS_BULLETS_PATTERN})|{QUALIFIED_AMBIGUOUS_BULLET})(?!{BULLETS_PATTERN})",
+)
+# zero-width positive lookahead so bullet characters will not be removed when using
+# .split(). Retained for backwards compatibility; prefer BULLET_SPLIT_RE_0W, which does
+# not split hyphenated values.
 UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})")
-# Same zero-width split, but ambiguous bullets only count at the start of a line, so an
-# intra-word hyphen inside a bullet item is left alone.
+# Same zero-width split, but an ambiguous bullet counts only at the start of a line and
+# only when whitespace follows it, so a hyphen or a minus sign is left alone.
 BULLET_SPLIT_RE_0W = re.compile(
     f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
-    f"|(?:(?:(?<=\\n)|(?<![\\s\\S]))[ \\t]*(?={AMBIGUOUS_BULLETS_PATTERN}))",
+    f"|(?:(?:(?<=\\n)|(?<![\\s\\S]))[ \\t]*(?={QUALIFIED_AMBIGUOUS_BULLET}))",
 )
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 

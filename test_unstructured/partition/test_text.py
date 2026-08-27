@@ -307,6 +307,41 @@ def test_partition_text_still_recognizes_bullets(text: str, expected: list[str])
     assert [e.text for e in partition_text(text=text)] == expected
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # -- a leading minus sign is not a bullet; stripping it flips the value --
+        ("-123.45\n\nDone", [("Text", "-123.45"), ("Title", "Done")]),
+        ("–10 °C\n\nDone", [("Text", "–10 °C"), ("Title", "Done")]),
+        ("-5\n\nDone", [("Text", "-5"), ("Title", "Done")]),
+        # -- a bullet is separated from the item it introduces; this is not --
+        ("-item\n\nDone", [("Title", "-item"), ("Title", "Done")]),
+        # -- ...whereas an unambiguous glyph needs no separator --
+        ("•item\n\nDone", [("ListItem", "item"), ("Title", "Done")]),
+        # -- a lone dash is still an empty bullet --
+        ("- item\n\nDone", [("ListItem", "item"), ("Title", "Done")]),
+    ],
+)
+def test_partition_text_does_not_mistake_signs_for_bullets(
+    text: str, expected: list[tuple[str, str]]
+):
+    assert [(type(e).__name__, e.text) for e in partition_text(text=text)] == expected
+
+
+def test_partition_text_keeps_signs_on_lines_wrapped_under_a_bullet():
+    """Continuation lines starting with a negative number keep their sign.
+
+    They are folded into the bullet item above rather than each becoming a bullet whose
+    minus sign is stripped.
+    """
+    text = "- readings\n-5 °C\n-10 °C\n\nDone"
+
+    assert [(type(e).__name__, e.text) for e in partition_text(text=text)] == [
+        ("ListItem", "readings -5 °C -10 °C"),
+        ("Title", "Done"),
+    ]
+
+
 def test_partition_text_keeps_short_unrelated_lines_separate():
     """The Apache-License case the comment in `group_broken_paragraphs` cites."""
     text = "Apache License\nVersion 2.0, January 2004\nhttp://www.apache.org/licenses/\n\nEnd"

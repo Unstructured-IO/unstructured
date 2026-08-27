@@ -35,6 +35,11 @@ def test_clean_non_ascii_chars(text, expected):
         ("Text with – inside", "Text with – inside"),
         ("- A HYPHEN bullet point!", "A HYPHEN bullet point!"),
         ("Text with a my-service hyphen inside", "Text with a my-service hyphen inside"),
+        # -- a sign is not a bullet: it is not separated from what follows it --
+        ("-123.45", "-123.45"),
+        ("–10 °C", "–10 °C"),
+        ("-5", "-5"),
+        ("-item", "-item"),
     ],
 )
 def test_clean_bullets(text, expected):
