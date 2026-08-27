@@ -1417,6 +1417,23 @@ def test_auto_partition_applies_the_correct_filetype_for_all_filetypes(
     )
 
 
+@pytest.mark.parametrize(
+    "file_name",
+    ["eml/fake-email-attachment.eml", "fake-email-attachment.msg"],
+)
+def test_auto_partition_preserves_the_filetype_of_attachment_elements(file_name: str):
+    """Attachment elements keep their own filetype, not the containing message's.
+
+    Their filetype was assigned by the nested `partition()` call that produced them, so the
+    outer call must not re-stamp them with e.g. `message/rfc822`.
+    """
+    elements = partition(example_doc_path(file_name), process_attachments=True)
+
+    attachment_elements = [e for e in elements if e.metadata.attached_to_filename]
+    assert attachment_elements
+    assert all(e.metadata.filetype == FileType.TXT.mime_type for e in attachment_elements)
+
+
 def test_detect_filetype_maps_file_to_bytes_io_when_spooled_temp_file_used(mocker):
     detect_filetype_mock = MagicMock(return_value=FileType.JSON)
     mocker.patch("unstructured.file_utils.filetype._FileTypeDetector", detect_filetype_mock)

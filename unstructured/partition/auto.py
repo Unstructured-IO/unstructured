@@ -201,6 +201,11 @@ def partition(
         for element in elements:
             element.metadata.url = url
             element.metadata.data_source = data_source_metadata
+            # -- an attachment's elements were assigned their own (correct) filetype by the
+            # -- nested `partition()` call that produced them; don't re-stamp them with the
+            # -- containing document's type (e.g. an attached PDF is not `message/rfc822`) --
+            if element.metadata.attached_to_filename:
+                continue
             if content_type is not None:
                 out_filetype = FileType.from_mime_type(content_type)
                 element.metadata.filetype = out_filetype.mime_type if out_filetype else None
