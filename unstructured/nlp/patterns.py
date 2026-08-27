@@ -52,9 +52,25 @@ UNICODE_BULLETS: Final[List[str]] = [
     "·",
 ]
 BULLETS_PATTERN = "|".join(UNICODE_BULLETS)
+
+# NOTE - `-` (U+002D) and `–` (U+2013) are bullet glyphs *and* ordinary intra-word /
+# intra-number punctuation. They must never be used as an UNANCHORED split delimiter or
+# every hyphenated value is shredded ("090-1234-5678" -> three paragraphs). They stay in
+# UNICODE_BULLETS because the `.match()`-anchored consumers (clean_bullets,
+# is_bulleted_text, _is_empty_bullet) are line-start anchored and are correct to treat a
+# leading "- item" as a bullet.
+AMBIGUOUS_BULLETS: Final[List[str]] = ["-", "\u2013"]
+UNAMBIGUOUS_BULLETS_PATTERN = "|".join(b for b in UNICODE_BULLETS if b not in AMBIGUOUS_BULLETS)
+AMBIGUOUS_BULLETS_PATTERN = "|".join(AMBIGUOUS_BULLETS)
 UNICODE_BULLETS_RE = re.compile(f"(?:{BULLETS_PATTERN})(?!{BULLETS_PATTERN})")
 # zero-width positive lookahead so bullet characters will not be removed when using .split()
 UNICODE_BULLETS_RE_0W = re.compile(f"(?={BULLETS_PATTERN})(?<!{BULLETS_PATTERN})")
+# Same zero-width split, but ambiguous bullets only count at the start of a line, so an
+# intra-word hyphen inside a bullet item is left alone.
+BULLET_SPLIT_RE_0W = re.compile(
+    f"(?:(?={UNAMBIGUOUS_BULLETS_PATTERN})(?<!{UNAMBIGUOUS_BULLETS_PATTERN}))"
+    f"|(?:(?:(?<=\\n)|(?<![\\s\\S]))[ \\t]*(?={AMBIGUOUS_BULLETS_PATTERN}))",
+)
 E_BULLET_PATTERN = re.compile(r"^e(?=\s)", re.MULTILINE)
 
 # NOTE(klaijan) - Captures reference of format [1] or [i] or [a] at any point in the line.
@@ -73,7 +89,7 @@ EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 PARAGRAPH_PATTERN = r"\s*\n\s*"
 
 PARAGRAPH_PATTERN_RE = re.compile(
-    f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
+    f"((?:{UNAMBIGUOUS_BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{UNAMBIGUOUS_BULLETS_PATTERN}|$)",
 )
 DOUBLE_PARAGRAPH_PATTERN_RE = re.compile("(" + PARAGRAPH_PATTERN + "){2}")
 
