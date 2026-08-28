@@ -1,3 +1,9 @@
+## 0.27.5-dev0
+
+### Fixes
+
+- **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them, including when the containing document is a file-like object with no known file-name.
+
 ## 0.27.4
 
 ### Fixes
@@ -8,7 +14,7 @@
 
 ### Fixes
 
-- **Updated README:** Added Sign up Link for Transform MCP in README. 
+- **Updated README:** Added Sign up Link for Transform MCP in README.
 
 ## 0.27.2
 
