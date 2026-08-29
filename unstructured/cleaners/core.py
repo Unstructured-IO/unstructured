@@ -59,6 +59,10 @@ def clean_ordered_bullets(text) -> str:
     a.b This is a very important point -> This is a very important point
     """
     text_sp = text.split()
+    # Text that is empty or only whitespace has no first token to inspect. Return it
+    # unchanged, matching the other cleaners in this module rather than raising.
+    if not text_sp:
+        return text
     text_cl = " ".join(text_sp[1:])
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return text

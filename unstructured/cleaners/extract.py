@@ -118,6 +118,10 @@ def extract_ordered_bullets(text) -> tuple:
     """
     a, b, c, temp = None, None, None, None
     text_sp = text.split()
+    # Text that is empty or only whitespace has no first token to inspect, so it carries
+    # no bullet. Report that rather than raising on the missing token.
+    if not text_sp:
+        return a, b, c
     if any(["." not in text_sp[0], ".." in text_sp[0]]):
         return a, b, c
 
