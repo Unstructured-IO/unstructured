@@ -37,7 +37,7 @@ def partition(
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
     strategy: str = PartitionStrategy.AUTO,
-    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
+    skip_infer_table_types: Optional[list[str]] = None,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
@@ -175,6 +175,11 @@ def partition(
         )
 
     set_partition_document_type(file_type)
+
+    # -- `None` is the documented default; set the actual default here so callers
+    # -- can tell an explicit value from the default (https://github.com/Unstructured-IO/unstructured/issues/3063)
+    if skip_infer_table_types is None:
+        skip_infer_table_types = ["pdf", "jpg", "png", "heic"]
 
     if file is not None:
         file.seek(0)
