@@ -1,5 +1,9 @@
 ## 0.27.5
 
+### Enhancements
+
+- **Batch spaCy processing during PDF text classification**: FAST PDF partitioning now processes page text through `nlp.pipe()` before calling the existing element classifier, avoiding repeated statistical-pipeline execution while preserving classification rules and output order.
+
 ### Fixes
 
 - **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them, including when the containing document is a file-like object with no known file-name.

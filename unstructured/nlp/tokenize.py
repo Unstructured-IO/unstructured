@@ -10,6 +10,9 @@ import sysconfig
 import tempfile
 import urllib.error
 import urllib.request
+from collections.abc import Iterable, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from functools import lru_cache
 from typing import Final, List, Tuple
 
@@ -19,6 +22,12 @@ from filelock import FileLock
 logger = logging.getLogger(__name__)
 
 CACHE_MAX_SIZE: Final[int] = 128
+BATCH_SIZE: Final[int] = 256
+
+_BATCH_DOCS: ContextVar[Mapping[str, spacy.tokens.Doc] | None] = ContextVar(
+    "unstructured_batch_docs",
+    default=None,
+)
 
 _SPACY_MODEL_NAME: Final[str] = "en_core_web_sm"
 _SPACY_MODEL_VERSION: Final[str] = "3.8.0"
@@ -148,11 +157,8 @@ def _get_nlp() -> spacy.language.Language:
     return _load_spacy_model()
 
 
-def _process(text: str) -> spacy.tokens.Doc:
-    """Run the spaCy pipeline once. All public functions extract what they need from the Doc."""
-    # -- str() handles numpy.str_ from OCR pipelines --
-    text = str(text)
-    nlp = _get_nlp()
+def _prepare_text(text: str, nlp: spacy.language.Language) -> str:
+    """Normalize and bound text before sending it through spaCy."""
     if len(text) > nlp.max_length:
         logger.warning(
             "Input text of length %d exceeds spaCy max_length=%d; "
@@ -162,9 +168,57 @@ def _process(text: str) -> spacy.tokens.Doc:
         )
         # Prefer to cut at the last whitespace within the budget so we don't split a token.
         cut = text.rfind(" ", max(0, nlp.max_length - 256), nlp.max_length)
-        truncated = text[: cut if cut != -1 else nlp.max_length]
-        return nlp(truncated)
-    return nlp(text)
+        return text[: cut if cut != -1 else nlp.max_length]
+    return text
+
+
+@contextmanager
+def batch_process_texts(
+    texts: Iterable[str],
+    *,
+    batch_size: int = BATCH_SIZE,
+) -> Iterator[None]:
+    """Preprocess unique texts with ``nlp.pipe`` for reuse by tokenizer helpers.
+
+    Documents are stored only for the lifetime of this context. ``batch_size`` controls
+    spaCy's pipeline execution batch; callers with large inputs should use multiple
+    bounded contexts to release returned documents between chunks. Existing sentence,
+    word, and POS tokenization functions keep their normal behavior while avoiding
+    repeated spaCy pipeline execution for texts included in the batch.
+    """
+    unique_texts = tuple(dict.fromkeys(str(text) for text in texts))
+    lowercase_variants = tuple(text.lower() for text in unique_texts if text.isupper())
+    pipeline_inputs = tuple(dict.fromkeys((*unique_texts, *lowercase_variants)))
+    if not pipeline_inputs:
+        yield
+        return
+
+    nlp = _get_nlp()
+    prepared_inputs = tuple(_prepare_text(text, nlp) for text in pipeline_inputs)
+    docs = dict(
+        zip(
+            pipeline_inputs,
+            nlp.pipe(prepared_inputs, batch_size=max(1, batch_size)),
+            strict=True,
+        )
+    )
+    token = _BATCH_DOCS.set(docs)
+    try:
+        yield
+    finally:
+        _BATCH_DOCS.reset(token)
+
+
+def _process(text: str) -> spacy.tokens.Doc:
+    """Return a batched spaCy document when available, otherwise process one text."""
+    # -- str() handles numpy.str_ from OCR pipelines --
+    text = str(text)
+    batch_docs = _BATCH_DOCS.get()
+    if batch_docs is not None and text in batch_docs:
+        return batch_docs[text]
+
+    nlp = _get_nlp()
+    return nlp(_prepare_text(text, nlp))
 
 
 def sent_tokenize(text: str) -> List[str]:

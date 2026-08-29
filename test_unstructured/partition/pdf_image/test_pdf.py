@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import io
 import logging
 import math
@@ -1425,6 +1426,32 @@ def test_partition_pdf_with_fast_finds_headers_footers():
     elements = pdf.partition_pdf(filename, strategy="fast")
     assert isinstance(elements[0], Header)
     assert isinstance(elements[-1], Footer)
+    assert [element.text for element in elements] == [
+        "I Am A Header",
+        "Title",
+        "Here is a lovely sentences.",
+        "I Am A Footer",
+    ]
+
+
+def test_partition_pdf_with_fast_batches_only_nlp_candidates(monkeypatch):
+    filename = example_doc_path("pdf/header-test-doc.pdf")
+    real_batch_process_texts = pdf.batch_process_texts
+    text_batches = []
+
+    @contextlib.contextmanager
+    def recording_batch_process_texts(texts):
+        texts = tuple(texts)
+        text_batches.append(texts)
+        with real_batch_process_texts(texts):
+            yield
+
+    monkeypatch.setattr(pdf, "BATCH_SIZE", 1)
+    monkeypatch.setattr(pdf, "batch_process_texts", recording_batch_process_texts)
+
+    elements = pdf.partition_pdf(filename, strategy="fast")
+
+    assert text_batches == [("Title",), ("Here is a lovely sentences.",)]
     assert [element.text for element in elements] == [
         "I Am A Header",
         "Title",
