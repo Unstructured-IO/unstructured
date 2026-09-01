@@ -1,3 +1,9 @@
+## 0.27.6
+
+### Fixes
+
+- **Stop encoding detection from returning mojibake for shift_jis and iso_8859_1 text**: `detect_file_encoding()` no longer accepts a high-confidence `charset_normalizer` result outside `COMMON_ENCODINGS` (johab, windows-1250), which decoded cleanly as garbage. When detection is inconclusive or out of set, candidates are ranked inside `COMMON_ENCODINGS` instead of taking the first codec that decodes, so `iso_8859_1` no longer shadows later CJK codecs.
+
 ## 0.27.5
 
 ### Fixes
