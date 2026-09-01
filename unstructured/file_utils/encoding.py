@@ -1,6 +1,6 @@
 from typing import IO, Optional, Tuple, Union
 
-from charset_normalizer import detect
+from charset_normalizer import detect, from_bytes
 
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.common.common import convert_to_bytes
@@ -75,20 +75,16 @@ def detect_file_encoding(
     encoding = result["encoding"]
     confidence = result["confidence"]
 
-    if encoding is None or confidence is None or confidence < ENCODE_REC_THRESHOLD:
-        # Encoding detection failed, fallback to predefined encodings
-        for enc in COMMON_ENCODINGS:
-            try:
-                if filename:
-                    with open(filename, encoding=enc) as f:
-                        file_text = f.read()
-                else:
-                    file_text = byte_data.decode(enc)
-                encoding = enc
-                break
-            except (UnicodeDecodeError, UnicodeError):
-                continue
-        else:
+    if (
+        encoding is None
+        or confidence is None
+        or confidence < ENCODE_REC_THRESHOLD
+        or not validate_encoding(encoding)
+    ):
+        # iso_8859_1 maps every byte, so first-success over COMMON_ENCODINGS never
+        # reaches later CJK codecs. Rank candidates inside the supported set instead.
+        best = from_bytes(byte_data, cp_isolation=COMMON_ENCODINGS).best()
+        if best is None:
             # NOTE: Use UnprocessableEntityError instead of UnicodeDecodeError to avoid
             # logging the entire file content. UnicodeDecodeError automatically stores
             # the complete input data, which can be problematic for large files.
@@ -96,19 +92,19 @@ def detect_file_encoding(
                 "Unable to determine file encoding after trying all common encodings. "
                 "File may be corrupted or in an unsupported format."
             ) from None
+        encoding = best.encoding
 
-    else:
-        # NOTE: Catch UnicodeDecodeError to avoid logging the entire file content.
-        # UnicodeDecodeError automatically stores the complete input data in its
-        # 'object' attribute, which can cause issues with large files in logging
-        # and error reporting systems.
-        try:
-            file_text = byte_data.decode(encoding)
-        except (UnicodeDecodeError, UnicodeError):
-            raise UnprocessableEntityError(
-                f"File encoding detection failed: detected '{encoding}' but decode failed. "
-                f"File may be corrupted or in an unsupported format."
-            ) from None
+    # NOTE: Catch UnicodeDecodeError to avoid logging the entire file content.
+    # UnicodeDecodeError automatically stores the complete input data in its
+    # 'object' attribute, which can cause issues with large files in logging
+    # and error reporting systems.
+    try:
+        file_text = byte_data.decode(encoding)
+    except (UnicodeDecodeError, UnicodeError):
+        raise UnprocessableEntityError(
+            f"File encoding detection failed: detected '{encoding}' but decode failed. "
+            f"File may be corrupted or in an unsupported format."
+        ) from None
 
     formatted_encoding = format_encoding_str(encoding)
 

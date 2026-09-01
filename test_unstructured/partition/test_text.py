@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from pathlib import Path
 from typing import Optional, Type
 
 import pytest
@@ -109,6 +110,25 @@ def test_partition_text_from_filename_raises_econding_error(
     with pytest.raises(error):
         filename = example_doc_path(filename)
         partition_text(filename=filename, encoding=encoding)
+
+
+@pytest.mark.parametrize(
+    ("text", "encoding"),
+    [
+        ("会議室予約", "shift_jis"),
+        ("café très à Paris", "iso_8859_1"),
+        ("Bonjour, ça va très bien. Le café est déjà prêt.", "iso_8859_1"),
+    ],
+)
+def test_partition_text_recovers_shift_jis_and_latin1_when_detect_picks_out_of_set_codec(
+    text: str, encoding: str, tmp_path: Path
+):
+    path = tmp_path / "sample.txt"
+    path.write_bytes(text.encode(encoding))
+
+    elements = partition_text(filename=str(path))
+
+    assert elements[0].text == text
 
 
 def test_partition_text_from_file():

@@ -11,6 +11,15 @@ import pytest
 from unstructured.errors import UnprocessableEntityError
 from unstructured.file_utils.encoding import detect_file_encoding
 
+# Samples from Unstructured-IO/unstructured#4466. charset_normalizer.detect() reports
+# johab / windows-1250 for these (outside COMMON_ENCODINGS); both still decode, so the
+# UnprocessableEntityError guard never fires and the mojibake becomes the element text.
+_OUT_OF_SET_DETECT_CASES = [
+    ("会議室予約", "shift_jis"),
+    ("café très à Paris", "iso_8859_1"),
+    ("Bonjour, ça va très bien. Le café est déjà prêt.", "iso_8859_1"),
+]
+
 
 def test_charset_detection_failure():
     """Test encoding detection failure with memory safety checks."""
@@ -69,3 +78,35 @@ def test_decode_failure():
 
         assert exception_memory < 10_000  # Small in-memory footprint
         assert serialized_size < 10_000  # Small serialization footprint
+
+
+@pytest.mark.parametrize(("text", "encoding"), _OUT_OF_SET_DETECT_CASES)
+@pytest.mark.parametrize("via", ["filename", "file"])
+def test_detect_file_encoding_recovers_text_when_detect_returns_out_of_set_codec(
+    text: str, encoding: str, via: str, tmp_path
+):
+    payload = text.encode(encoding)
+    if via == "filename":
+        path = tmp_path / "sample.txt"
+        path.write_bytes(payload)
+        detected, file_text = detect_file_encoding(filename=str(path))
+    else:
+        detected, file_text = detect_file_encoding(file=payload)
+
+    assert file_text == text
+    assert detected not in {"johab", "windows-1250"}
+
+
+def test_detect_file_encoding_fallback_reaches_cjk_instead_of_stopping_at_latin1(tmp_path):
+    """COMMON_ENCODINGS fallback must not take iso_8859_1 just because it never raises."""
+    text = "会議室予約"
+    encoding = "shift_jis"
+    path = tmp_path / "sample.txt"
+    path.write_bytes(text.encode(encoding))
+    detect_result = {"encoding": None, "confidence": None}
+    with patch("unstructured.file_utils.encoding.detect", return_value=detect_result):
+        detected, file_text = detect_file_encoding(filename=str(path))
+
+    assert file_text == text
+    assert file_text != text.encode(encoding).decode("iso_8859_1")
+    assert detected not in {"iso-8859-1", "latin-1"}
