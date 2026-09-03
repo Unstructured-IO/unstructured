@@ -11,9 +11,36 @@ from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 from lxml import etree
 from lxml.html import fragment_fromstring
+from typing_extensions import TypeAlias
 
 if TYPE_CHECKING:
     from lxml.html import HtmlElement
+
+# -- (cell_text, colspan, rowspan) for one HTML `<td>` --
+SpannedCell: TypeAlias = "tuple[str, int, int]"
+
+
+def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
+    """Format a single `<td>` element, escaping and normalizing `cell_text`.
+
+    `colspan`/`rowspan` attributes are only emitted when greater than 1 (the implicit default),
+    to minimize character overhead in the common no-span case.
+    """
+    # -- take care of things like '<' and '>' in the text --
+    s = html.escape(cell_text)
+    # -- substitute <br/> elements for line-feeds in the text --
+    s = "<br/>".join(s.split("\n"))
+    # -- normalize whitespace in cell --
+    text = " ".join(s.split())
+
+    attrs = ""
+    if colspan > 1:
+        attrs += f' colspan="{colspan}"'
+    if rowspan > 1:
+        attrs += f' rowspan="{rowspan}"'
+
+    # -- emit void `<td/>` when cell text is empty string --
+    return f"<td{attrs}>{text}</td>" if text else f"<td{attrs}/>"
 
 
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
@@ -32,20 +59,87 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             # -- suppress emission of rows with no cells --
             if not row_cell_strs:
                 continue
-            yield f"<tr>{''.join(iter_tds(row_cell_strs))}</tr>"
-
-    def iter_tds(row_cell_strs: Sequence[str]) -> Iterator[str]:
-        for s in row_cell_strs:
-            # -- take care of things like '<' and '>' in the text --
-            s = html.escape(s)
-            # -- substitute <br/> elements for line-feeds in the text --
-            s = "<br/>".join(s.split("\n"))
-            # -- normalize whitespace in cell --
-            cell_text = " ".join(s.split())
-            # -- emit void `<td/>` when cell text is empty string --
-            yield f"<td>{cell_text}</td>" if cell_text else "<td/>"
+            yield f"<tr>{''.join(_format_td(s) for s in row_cell_strs)}</tr>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]) -> str:
+    """Like `htmlify_matrix_of_cell_texts()` but each cell can also carry a colspan/rowspan.
+
+    Each row of `matrix` is a sequence of `(cell_text, colspan, rowspan)` triples, one for each
+    grid-position that is the top-left corner of a (possibly 1x1) cell. A grid-position covered by
+    the colspan/rowspan of an earlier cell (in the same row or a prior row) must simply be omitted
+    from `matrix` by the caller; this function has no notion of the overall grid-shape, only of the
+    cells it is told to emit.
+    """
+
+    def iter_trs(rows: Sequence[Sequence[SpannedCell]]) -> Iterator[str]:
+        for row in rows:
+            # -- suppress emission of rows with no cells --
+            if not row:
+                continue
+            tds = (_format_td(text, colspan, rowspan) for text, colspan, rowspan in row)
+            yield f"<tr>{''.join(tds)}</tr>"
+
+    return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def collapse_matrix_of_keyed_cells_to_spans(
+    matrix: Sequence[Sequence[tuple[str, object]]],
+) -> list[list[SpannedCell]]:
+    """Collapse a full row/column grid of `(cell_text, merge_key)` cells into merged spans.
+
+    `matrix` must be "rectangular" in the sense that it represents every grid-position of the
+    table, including positions covered by a merge, unlike the `matrix` consumed by
+    `htmlify_matrix_of_spanned_cell_texts()`. Two grid-positions belong to the same merged region
+    exactly when their `merge_key` compares equal with `==`; a grid-position that is not merged
+    with any other must be given a `merge_key` that compares equal only to itself (e.g. a unique
+    `object()` instance).
+
+    Only rectangular merged regions are supported (as is guaranteed by, e.g., DOCX and XLSX merge
+    semantics) -- an "L-shaped" or otherwise irregular region of matching keys produces undefined
+    (but not exception-raising) results.
+
+    Returns one row per row of `matrix`, each containing a `(cell_text, colspan, rowspan)` triple
+    for each cell that "originates" a merged region (or an unmerged 1x1 cell), in left-to-right
+    order. A grid-position covered by the colspan/rowspan of such a cell is omitted.
+    """
+    n_rows = len(matrix)
+    consumed = [[False] * len(row) for row in matrix]
+    spanned_rows: list[list[SpannedCell]] = []
+
+    for r, row in enumerate(matrix):
+        spanned_row: list[SpannedCell] = []
+        for c, (text, key) in enumerate(row):
+            if consumed[r][c]:
+                continue
+            consumed[r][c] = True
+
+            # -- extend rightward while the merge-key matches --
+            colspan = 1
+            while c + colspan < len(row) and row[c + colspan][1] == key:
+                consumed[r][c + colspan] = True
+                colspan += 1
+
+            # -- extend downward while the same colspan-wide run of merge-keys matches --
+            rowspan = 1
+            next_r = r + 1
+            while next_r < n_rows:
+                next_row = matrix[next_r]
+                if c + colspan > len(next_row):
+                    break
+                if any(next_row[c + i][1] != key for i in range(colspan)):
+                    break
+                for i in range(colspan):
+                    consumed[next_r][c + i] = True
+                rowspan += 1
+                next_r += 1
+
+            spanned_row.append((text, colspan, rowspan))
+        spanned_rows.append(spanned_row)
+
+    return spanned_rows
 
 
 class HtmlTable:

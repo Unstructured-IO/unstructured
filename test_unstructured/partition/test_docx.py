@@ -149,6 +149,35 @@ def test_partition_docx_processes_table():
     assert elements[0].metadata.filename == "fake_table.docx"
 
 
+def test_partition_docx_table_with_merged_cells_reports_spans_instead_of_duplicating_text():
+    """A merged cell's text must appear in exactly one `<td>`, marked with colspan/rowspan.
+
+    Fixture table is:
+
+        +---+-------+
+        | a | b     |
+        |   +---+---+
+        |   | c | d |
+        +---+---+   |
+        | e     |   |
+        +-------+---+
+    """
+    elements = partition_docx(example_doc_path("docx-tables.docx"), infer_table_structure=True)
+    tables = [e for e in elements if isinstance(e, Table)]
+    table = next(t for t in tables if t.text == "a b c d e")
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        '<tr><td rowspan="2">a</td><td colspan="2">b</td></tr>'
+        '<tr><td>c</td><td rowspan="2">d</td></tr>'
+        '<tr><td colspan="2">e</td></tr>'
+        "</table>"
+    )
+    # -- no cell's text is duplicated across more than one `<td>` --
+    for letter in "abcde":
+        assert table.metadata.text_as_html.count(f">{letter}<") == 1
+
+
 def test_partition_docx_grabs_header_and_footer():
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
 
@@ -1072,6 +1101,31 @@ class Describe_DocxPartitioner:
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
         assert " ".join(_DocxPartitioner(opts)._iter_table_texts(table)) == "a b c d e"
 
+    def and_the_html_of_a_merged_cell_carries_colspan_and_rowspan_instead_of_repeating_text(
+        self, opts_args: dict[str, Any]
+    ):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+
+        assert _DocxPartitioner(opts)._convert_table_to_html(table) == (
+            "<table>"
+            '<tr><td rowspan="2">a</td><td colspan="2">b</td></tr>'
+            '<tr><td>c</td><td rowspan="2">d</td></tr>'
+            '<tr><td colspan="2">e</td></tr>'
+            "</table>"
+        )
+
     def it_can_partition_tables_with_incomplete_rows(self):
         """DOCX permits table rows to start late and end early.
 
@@ -1128,7 +1182,7 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>a</td><td/></tr>"
+            '<tr><td colspan="2">a</td><td/></tr>'
             "<tr><td>b</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
@@ -1143,8 +1197,8 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>b</td><td/></tr>"
-            "<tr><td>a</td><td>c</td><td>d</td></tr>"
+            '<tr><td rowspan="2">a</td><td>b</td><td/></tr>'
+            "<tr><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # -- late-start, early-end, and >2 rows vertical span --
@@ -1162,10 +1216,10 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d e f", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>a</td><td>b</td><td>c</td></tr>"
-            "<tr><td/><td>d</td><td>d</td><td/></tr>"
-            "<tr><td>e</td><td>d</td><td>d</td><td>f</td></tr>"
-            "<tr><td/><td>d</td><td>d</td><td/></tr>"
+            '<tr><td colspan="2">a</td><td>b</td><td>c</td></tr>'
+            '<tr><td/><td colspan="2" rowspan="3">d</td><td/></tr>'
+            "<tr><td>e</td><td>f</td></tr>"
+            "<tr><td/><td/></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1175,14 +1229,14 @@ class Describe_DocxPartitioner:
         assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            '<tr><td colspan="2" rowspan="3">Data</td><td/></tr>'
+            "<tr><td/></tr>"
+            "<tr><td/></tr>"
             "<tr><td/><td>More</td><td/></tr>"
             "<tr><td>Dato</td><td/></tr>"
-            "<tr><td>WTF?</td><td>WTF?</td><td/></tr>"
-            "<tr><td>Strange</td><td>Strange</td><td/></tr>"
-            "<tr><td/><td>Format</td><td>Format</td></tr>"
+            '<tr><td colspan="2">WTF?</td><td/></tr>'
+            '<tr><td colspan="2">Strange</td><td/></tr>'
+            '<tr><td/><td colspan="2">Format</td></tr>'
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
 
