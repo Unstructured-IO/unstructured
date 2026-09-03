@@ -2,7 +2,7 @@
 
 ### Fixes
 
-- **Improve `US_PHONE_NUMBERS_PATTERN` matching performance.** The separator runs in the US phone-number regex are now bounded, keeping match time linear on long sequences of separator characters. Every phone format the previous pattern accepted is still accepted. **Behavior change:** a "phone number" separated by four or more consecutive separator characters is no longer matched.
+- **Improve `US_PHONE_NUMBERS_PATTERN` matching performance.** Each separator run between digit groups in the US phone-number regex is now bounded to three characters, keeping match time linear on long sequences of separator characters. Phone formats using ordinary separators are unaffected. **Behavior change:** where a separator run exceeds the bound, it is no longer absorbed into the match — the result may cover a shorter span than before, or, for a long run between the last two digit groups, may not match at all.
 
 ## 0.27.5
 
