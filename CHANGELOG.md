@@ -1,3 +1,9 @@
+## 0.27.10
+
+### Fixes
+
+- **Never let a chunk's rows span more than one source `<thead>`/`<tbody>`/`<tfoot>` row-group when a `rowspan="0"` cell is involved.** Row-group boundaries were correctly used to compute rowspan-bound groups, but the chunk accumulator could still pack an already-grouped `rowspan="0"` header together with a following row-group's rows when both fit the character budget — since section wrappers are stripped from emitted chunk HTML, the reparsed, flattened result let that span reach into rows it was never meant to bind. A row-group change is now a hard chunk boundary whenever a `rowspan="0"` row is involved; ordinary rows (and rows with a real, positive `rowspan` meant to carry across a boundary, e.g. a repeated header) are unaffected.
+
 ## 0.27.9
 
 ### Fixes

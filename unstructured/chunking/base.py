@@ -1251,6 +1251,23 @@ class _HtmlTableSplitter:
         accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
         for group in self._iter_rowspan_bound_row_groups():
+            # -- Crossing a row-group boundary is only unsafe when a span already accumulated
+            # -- could reach further than the one row it currently occupies (see
+            # -- `crosses_a_row_group_unsafely_if_extended`) -- an ordinary header row (or any
+            # -- row with no real rowspan) is always safe to pack with whatever comes next,
+            # -- row-group or not, and forcing a flush there would needlessly fragment perfectly
+            # -- normal tables that were never at risk.
+            if (
+                accum.row_group_key is not None
+                and group[0].row_group_key is not accum.row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
+                for text, html in accum.flush():
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
             # -- if group won't fit, any WIP chunk is done, send it on its way --
             if not accum.will_fit(group):
                 for text, html in accum.flush():
@@ -1807,6 +1824,37 @@ class _RowAccumulator:
     def will_fit(self, rows: Sequence[HtmlRow]) -> bool:
         """True when `rows` (a rowspan-bound group) will fit in space left by accumulated rows."""
         return self._remaining_space >= self._measured_rows_text_len(rows)
+
+    @property
+    def row_group_key(self) -> object | None:
+        """Row-group identity shared by the rows already accumulated, `None` if empty.
+
+        A rowspan-bound group never itself spans two row-groups (`_iter_rowspan_bound_row_groups`
+        guarantees that), so any one row's key stands for the whole accumulation.
+        """
+        return self._rows[0].row_group_key if self._rows else None
+
+    @property
+    def crosses_a_row_group_unsafely_if_extended(self) -> bool:
+        """True when appending a row from a DIFFERENT row-group could corrupt a span already
+        held here.
+
+        Only `rowspan="0"` (`max_rowspan is None`) is row-group-scoped by the HTML spec --
+        "spans every remaining row IN THE ROW GROUP". A group of size 1 whose row declares it
+        was clipped down to exactly itself only because it sits last in its OWN row-group
+        (`_iter_rowspan_bound_row_groups` guarantees a size-1 group never means that for any
+        other reason). `HtmlTable.from_html_text` strips section wrappers when building the row
+        model, so appending a different row-group's rows after such a row would emit a flat,
+        wrapper-less `<table>` in which `rowspan="0"` legitimately -- by HTML's own rules, absent
+        any visible section boundary -- reaches into rows it was never meant to bind.
+
+        A POSITIVE declared span (e.g. `rowspan="2"`) is NOT row-group-scoped -- it is meant to,
+        and is already elsewhere in this codebase treated as intended to, extend into whatever
+        row follows it regardless of section (e.g. a `<thead>` header row repeated/carried
+        forward into the body). Flushing on those would fragment ordinary, correct tables that
+        were never at risk -- see `and_it_preserves_source_header_row_html_for_carried_rows`.
+        """
+        return any(row.max_rowspan is None for row in self._rows)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
