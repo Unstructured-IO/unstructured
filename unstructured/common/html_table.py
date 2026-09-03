@@ -76,9 +76,11 @@ def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]
 
     def iter_trs(rows: Sequence[Sequence[SpannedCell]]) -> Iterator[str]:
         for row in rows:
-            # -- suppress emission of rows with no cells --
-            if not row:
-                continue
+            # -- Unlike `htmlify_matrix_of_cell_texts()`, an empty row here is NOT suppressed: it
+            # -- represents a real grid-row entirely covered by a `rowspan` from an earlier row
+            # -- (its cells were already emitted there). Suppressing it would drop a `<tr>`, which
+            # -- shifts the column-placement of every subsequent row under HTML's rowspan model
+            # -- (rowspan counts actual `<tr>` elements, not "rows that happened to have content").
             tds = (_format_td(text, colspan, rowspan) for text, colspan, rowspan in row)
             yield f"<tr>{''.join(tds)}</tr>"
 

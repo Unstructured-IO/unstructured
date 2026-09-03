@@ -63,13 +63,38 @@ class Describe_htmlify_matrix_of_spanned_cell_texts:
             '<table><tr><td colspan="2"/></tr></table>'
         )
 
-    def it_suppresses_rows_with_no_cells(self):
-        assert htmlify_matrix_of_spanned_cell_texts([[("a", 1, 1)], []]) == (
-            "<table><tr><td>a</td></tr></table>"
+    def it_emits_an_empty_tr_for_a_row_entirely_consumed_by_a_rowspan(self):
+        """A row with no originating cells still needs its own `<tr>`.
+
+        HTML `rowspan` counts actual `<tr>` elements, not "rows that happened to have content";
+        dropping this row would shift the column-placement of every row after it.
+        """
+        assert htmlify_matrix_of_spanned_cell_texts([[("a", 1, 2)], [], [("b", 1, 1)]]) == (
+            '<table><tr><td rowspan="2">a</td></tr><tr></tr><tr><td>b</td></tr></table>'
         )
 
     def it_handles_an_empty_matrix(self):
         assert htmlify_matrix_of_spanned_cell_texts([]) == ""
+
+    def it_renders_a_full_width_vertical_merge_via_the_full_collapse_and_render_pipeline(self):
+        """Regression: `collapse_matrix_of_keyed_cells_to_spans()` and
+        `htmlify_matrix_of_spanned_cell_texts()` were each unit-tested individually, but their
+        interaction was not -- the collapse step legitimately produces an empty row for a grid-row
+        entirely covered by a multi-column `rowspan`, and the render step must still emit a `<tr>`
+        for it rather than suppressing it.
+        """
+        keyed_matrix = [
+            [("a", "M"), ("a", "M")],
+            [("a", "M"), ("a", "M")],
+            [("c", "C1"), ("d", "C2")],
+        ]
+        spanned_matrix = collapse_matrix_of_keyed_cells_to_spans(keyed_matrix)
+        assert spanned_matrix == [[("a", 2, 2)], [], [("c", 1, 1), ("d", 1, 1)]]
+        assert htmlify_matrix_of_spanned_cell_texts(spanned_matrix) == (
+            '<table><tr><td colspan="2" rowspan="2">a</td></tr>'
+            "<tr></tr>"
+            "<tr><td>c</td><td>d</td></tr></table>"
+        )
 
 
 class Describe_collapse_matrix_of_keyed_cells_to_spans:

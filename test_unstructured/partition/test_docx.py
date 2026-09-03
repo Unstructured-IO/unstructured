@@ -178,6 +178,34 @@ def test_partition_docx_table_with_merged_cells_reports_spans_instead_of_duplica
         assert table.metadata.text_as_html.count(f">{letter}<") == 1
 
 
+def test_partition_docx_table_with_full_width_vertical_merge_reports_a_tr_for_every_row(tmp_path):
+    """A grid-row entirely covered by a `rowspan` (no originating cells of its own) still needs
+    its own `<tr>` in the output. HTML `rowspan` counts actual `<tr>` elements, not "rows that
+    happened to have content" -- suppressing this row would shift the column-placement of every
+    row after it.
+
+        +---+
+        | A |
+        |   |
+        +---+
+        | B |
+        +---+
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=1)
+    table.cell(0, 0).merge(table.cell(1, 0)).text = "A"
+    table.cell(2, 0).text = "B"
+    docx_path = tmp_path / "vertical-merge.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    assert table_element.metadata.text_as_html == (
+        '<table><tr><td rowspan="2">A</td></tr><tr></tr><tr><td>B</td></tr></table>'
+    )
+
+
 def test_partition_docx_grabs_header_and_footer():
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
 
