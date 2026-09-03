@@ -3019,6 +3019,72 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_keeps_rows_bound_by_an_active_rowspan_in_the_same_chunk(self):
+        """A split between rows still covered by an earlier row's `rowspan` would leave that
+        `rowspan` claiming more rows than are present in its chunk, and would shift every cell
+        in the continuation chunk into the wrong column (its `<table>` has no earlier row to
+        carry the span forward). The row-fit measurement only counts cell *text*, so a short-text,
+        markup-heavy table like this one can silently cross that boundary without the fix."""
+        opts = ChunkingOptions(max_characters=50)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="3">AAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+            </table>
+            """
+        )
+
+        # -- the whole rowspan-bound group is emitted as one chunk, even though it exceeds
+        # -- `max_characters`, same tolerance already granted a single oversized row or cell --
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "AAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy zzzzzzzzzzzzzzzzzzzz",
+                "<table>"
+                '<tr><td rowspan="3">AAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "<tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_keeps_a_fully_consumed_continuation_row_with_its_rowspan_origin(self):
+        """The empty `<tr>` a fully-consumed continuation row emits (so a `rowspan` still counts
+        actual `<tr>` elements) must never be separated from the row whose `rowspan` covers it,
+        and a later, independent row may still join the same chunk when there's room."""
+        opts = ChunkingOptions(max_characters=70)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td colspan="2" rowspan="2">BIGMERGEBIGMERGEBIGMERGE</td></tr>
+              <tr></tr>
+              <tr><td>pppppppppppppppppppp</td><td>qqqqqqqqqqqqqqqqqqqq</td></tr>
+              <tr><td>rrrrrrrrrrrrrrrrrrrr</td><td>ssssssssssssssssssss</td></tr>
+              <tr><td>tttttttttttttttttttt</td><td>uuuuuuuuuuuuuuuuuuuu</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "BIGMERGEBIGMERGEBIGMERGE pppppppppppppppppppp qqqqqqqqqqqqqqqqqqqq",
+                "<table>"
+                '<tr><td colspan="2" rowspan="2">BIGMERGEBIGMERGEBIGMERGE</td></tr>'
+                "<tr/>"
+                "<tr><td>pppppppppppppppppppp</td><td>qqqqqqqqqqqqqqqqqqqq</td></tr>"
+                "</table>",
+            ),
+            (
+                "rrrrrrrrrrrrrrrrrrrr ssssssssssssssssssss",
+                "<table><tr><td>rrrrrrrrrrrrrrrrrrrr</td><td>ssssssssssssssssssss</td></tr></table>",
+            ),
+            (
+                "tttttttttttttttttttt uuuuuuuuuuuuuuuuuuuu",
+                "<table><tr><td>tttttttttttttttttttt</td><td>uuuuuuuuuuuuuuuuuuuu</td></tr></table>",
+            ),
+        ]
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
@@ -3217,7 +3283,7 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=100)
         row = HtmlRow(fragment_fromstring("<tr><td>foo</td><td>bar</td></tr>"))
 
-        accum.add_row(row)
+        accum.add_rows([row])
 
         assert accum._rows == [row]
         assert accum._row_text_len == len("foo bar")
@@ -3226,8 +3292,8 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=3, measure=lambda text: len(text.split()))
         row = HtmlRow(fragment_fromstring("<tr><td>supercalifragilisticexpialidocious</td></tr>"))
 
-        assert accum.will_fit(row) is True
-        accum.add_row(row)
+        assert accum.will_fit([row]) is True
+        accum.add_rows([row])
 
         # -- one token of text plus one separator leaves one token of space --
         assert accum._remaining_space == 1
@@ -3251,7 +3317,7 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=21)
         row = HtmlRow(fragment_fromstring(row_html))
 
-        assert accum.will_fit(row) is expected_value
+        assert accum.will_fit([row]) is expected_value
 
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
@@ -3270,15 +3336,17 @@ class Describe_RowAccumulator:
     ):
         """There is no overhead beyond row HTML for additional rows."""
         accum = _RowAccumulator(maxlen=48)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>")))
+        accum.add_rows(
+            [HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>"))]
+        )
         # -- remaining space is 48 - 26 = 21 --
         row = HtmlRow(fragment_fromstring(row_html))
 
-        assert accum.will_fit(row) is expected_value
+        assert accum.will_fit([row]) is expected_value
 
     def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
         accum = _RowAccumulator(maxlen=100)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>"))])
 
         text, html = next(accum.flush())
 
@@ -3289,8 +3357,8 @@ class Describe_RowAccumulator:
 
     def and_the_HTML_contains_as_many_rows_as_were_accumulated(self):
         accum = _RowAccumulator(maxlen=100)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>")))
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>"))])
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>"))])
 
         text, html = next(accum.flush())
 

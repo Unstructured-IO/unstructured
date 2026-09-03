@@ -6,7 +6,7 @@ import collections
 import copy
 import uuid
 from functools import cached_property
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, Sequence, cast
 
 import regex
 from lxml.etree import ParserError, tostring
@@ -1240,26 +1240,43 @@ class _HtmlTableSplitter:
     def _iter_subtables(self) -> Iterator[TextAndHtml]:
         """Generate (text, html) pairs containing as many whole rows as will fit in window.
 
-        Falls back to splitting rows into whole cells when a single row is by itself too big to
-        fit in the chunking window.
+        Rows joined by an active `rowspan` are kept together as one atomic group — splitting
+        between them would leave a `rowspan` whose declared count exceeds the rows actually
+        present in its chunk, and would shift every following row in the continuation chunk into
+        the wrong column (that chunk's `<table>` has no earlier row to carry the span forward).
+        Falls back to splitting rows into whole cells when a single row (or, when rowspan-bound,
+        a whole such group) is by itself too big to fit in the chunking window.
         """
         is_first_chunk = True
         accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
-        for row in self._table_element.iter_rows():
-            # -- if row won't fit, any WIP chunk is done, send it on its way --
-            if not accum.will_fit(row):
+        for group in self._iter_rowspan_bound_row_groups():
+            # -- if group won't fit, any WIP chunk is done, send it on its way --
+            if not accum.will_fit(group):
                 for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
                 accum = _RowAccumulator(
                     maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
                 )
-            # -- if row fits, add it to accumulator --
-            if accum.will_fit(row):
-                accum.add_row(row)
-            else:  # -- otherwise, single row is bigger than chunking window --
-                for text, html in self._iter_row_splits(row, maxlen=self._maxlen(is_first_chunk)):
+            # -- if group fits, add it to accumulator --
+            if accum.will_fit(group):
+                accum.add_rows(group)
+            elif len(group) == 1:  # -- a single row is bigger than the chunking window --
+                for text, html in self._iter_row_splits(
+                    group[0], maxlen=self._maxlen(is_first_chunk)
+                ):
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
+            else:
+                # -- A rowspan-bound group doesn't fit even in an empty chunking window. Splitting
+                # -- it would corrupt the span it exists to protect, so it's emitted whole, same
+                # -- tolerance the codebase already grants a single oversized row/cell.
+                accum.add_rows(group)
+                for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
                 accum = _RowAccumulator(
@@ -1269,6 +1286,26 @@ class _HtmlTableSplitter:
         for text, html in accum.flush():
             yield self._prepend_repeated_headers(text, html, is_first_chunk)
             is_first_chunk = False
+
+    def _iter_rowspan_bound_row_groups(self) -> Iterator[tuple[HtmlRow, ...]]:
+        """Group consecutive rows that a `rowspan` binds together.
+
+        A row whose cell declares `rowspan=N` binds the next `N-1` rows to it (they carry that
+        cell's continuation and would misplace their own cells, or overclaim the span's row
+        count, if split into a different chunk). Spans starting in different rows of the same
+        group can reach further than the row that opened the group, so the group's far edge is
+        the max reach of every span opened before it closes — the standard overlapping-interval
+        merge. A run of rows with no multi-row `rowspan` at all yields one-row groups, identical
+        to the pre-grouping behavior.
+        """
+        rows = list(self._table_element.iter_rows())
+        group_start = 0
+        group_end = -1  # -- index of the furthest row any span opened so far reaches --
+        for idx, row in enumerate(rows):
+            group_end = max(group_end, idx + row.max_rowspan - 1)
+            if idx == group_end:
+                yield tuple(rows[group_start : idx + 1])
+                group_start = idx + 1
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
@@ -1707,10 +1744,13 @@ class _RowAccumulator:
         self._rows: list[HtmlRow] = []
         self._row_text_len = 0
 
-    def add_row(self, row: HtmlRow) -> None:
-        """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
-        self._rows.append(row)
-        self._row_text_len += self._measured_row_text_len(row)
+    def add_rows(self, rows: Sequence[HtmlRow]) -> None:
+        """Add `rows` (a rowspan-bound group, possibly of length 1) to this accumulation.
+
+        Caller is responsible for ensuring the group will fit.
+        """
+        self._rows.extend(rows)
+        self._row_text_len += self._measured_rows_text_len(rows)
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
@@ -1723,9 +1763,9 @@ class _RowAccumulator:
         self._row_text_len = 0
         yield text, html
 
-    def will_fit(self, row: HtmlRow) -> bool:
-        """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= self._measured_row_text_len(row)
+    def will_fit(self, rows: Sequence[HtmlRow]) -> bool:
+        """True when `rows` (a rowspan-bound group) will fit in space left by accumulated rows."""
+        return self._remaining_space >= self._measured_rows_text_len(rows)
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1743,9 +1783,12 @@ class _RowAccumulator:
         separators_len = len(self._rows)
         return self._maxlen - separators_len - self._row_text_len
 
-    def _measured_row_text_len(self, row: HtmlRow) -> int:
-        """Length of `row` text in configured chunk-size units."""
-        return self._measure(" ".join(row.iter_cell_texts()))
+    def _measured_rows_text_len(self, rows: Sequence[HtmlRow]) -> int:
+        """Length of the joined cell text of `rows` in configured chunk-size units."""
+        texts: list[str] = []
+        for row in rows:
+            texts.extend(row.iter_cell_texts())
+        return self._measure(" ".join(texts))
 
 
 # ================================================================================================

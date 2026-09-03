@@ -285,6 +285,11 @@ class HtmlRow:
         """Length of the normalized text, as it would appear in `element.text`."""
         return len(" ".join(self.iter_cell_texts()))
 
+    @cached_property
+    def max_rowspan(self) -> int:
+        """Largest `rowspan` declared by any cell in this row, `1` when none span multiple rows."""
+        return max((cell.rowspan for cell in self.iter_cells()), default=1)
+
 
 class HtmlCell:
     """A `<td>` element."""
@@ -301,3 +306,11 @@ class HtmlCell:
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
         return " ".join(self._td.text_content().split())
+
+    @cached_property
+    def rowspan(self) -> int:
+        """Declared `rowspan` for this cell, `1` when absent or unparseable."""
+        try:
+            return max(1, int(self._td.attrib.get("rowspan", 1)))
+        except (TypeError, ValueError):
+            return 1

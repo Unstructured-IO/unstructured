@@ -1,3 +1,9 @@
+## 0.27.7
+
+### Fixes
+
+- **Keep rows bound by an active `rowspan` in the same table chunk.** Table chunking split purely on row *text* length, unaware that a `rowspan` crossing the boundary would overclaim rows in one chunk and shift cells into the wrong column in the next. Such rows are now kept together as one unit, same tolerance already given a single oversized row or cell.
+
 ## 0.27.6
 
 ### Fixes
