@@ -1,3 +1,9 @@
+## 0.27.6
+
+### Fixes
+
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge. Merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry.
+
 ## 0.27.5
 
 ### Fixes
