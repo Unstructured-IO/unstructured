@@ -1,3 +1,9 @@
+## 0.27.8
+
+### Fixes
+
+- **Don't drop a table's trailing rows when a `rowspan` reaches past the last row, and honor `rowspan="0"`.** The rowspan-aware chunking boundary added in 0.27.7 could silently lose an entire table's tail when a declared `rowspan` named more rows than the table had, and treated `rowspan="0"` (HTML's "span every remaining row") as no span at all, letting a chunk boundary fall through it. Both now resolve to "the rest of the table" and are never split or dropped.
+
 ## 0.27.7
 
 ### Fixes

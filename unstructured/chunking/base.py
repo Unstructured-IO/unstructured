@@ -1297,15 +1297,25 @@ class _HtmlTableSplitter:
         the max reach of every span opened before it closes — the standard overlapping-interval
         merge. A run of rows with no multi-row `rowspan` at all yields one-row groups, identical
         to the pre-grouping behavior.
+
+        A declared span can reach past the last row the table actually has (a malformed but
+        browser-tolerated document, which clips it to the rows present) or be `rowspan="0"`
+        (spans every remaining row) — both resolve to "the rest of the table" here, and the
+        final, possibly-still-open group is always yielded rather than silently dropped.
         """
         rows = list(self._table_element.iter_rows())
         group_start = 0
         group_end = -1  # -- index of the furthest row any span opened so far reaches --
         for idx, row in enumerate(rows):
-            group_end = max(group_end, idx + row.max_rowspan - 1)
+            row_reach = len(rows) - 1 if row.max_rowspan is None else idx + row.max_rowspan - 1
+            group_end = max(group_end, row_reach)
             if idx == group_end:
                 yield tuple(rows[group_start : idx + 1])
                 group_start = idx + 1
+        # -- a span reaching past the last row (or `rowspan="0"`) leaves a final group that
+        # -- never hits `idx == group_end` inside the loop; emit it rather than drop it --
+        if group_start < len(rows):
+            yield tuple(rows[group_start:])
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""

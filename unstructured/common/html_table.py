@@ -286,9 +286,16 @@ class HtmlRow:
         return len(" ".join(self.iter_cell_texts()))
 
     @cached_property
-    def max_rowspan(self) -> int:
-        """Largest `rowspan` declared by any cell in this row, `1` when none span multiple rows."""
-        return max((cell.rowspan for cell in self.iter_cells()), default=1)
+    def max_rowspan(self) -> int | None:
+        """Largest `rowspan` declared by any cell in this row, `1` when none span multiple rows.
+
+        `None` when any cell in this row declares `rowspan="0"` (HTML's "span every remaining
+        row"), since it reaches farther than any positive count could name.
+        """
+        spans = [cell.rowspan for cell in self.iter_cells()]
+        if any(span is None for span in spans):
+            return None
+        return max((span for span in spans if span is not None), default=1)
 
 
 class HtmlCell:
@@ -308,9 +315,15 @@ class HtmlCell:
         return " ".join(self._td.text_content().split())
 
     @cached_property
-    def rowspan(self) -> int:
-        """Declared `rowspan` for this cell, `1` when absent or unparseable."""
+    def rowspan(self) -> int | None:
+        """Declared `rowspan` for this cell, `1` when absent or unparseable.
+
+        `None` for `rowspan="0"`, HTML's spelling for "spans every remaining row in the
+        containing row group." This model doesn't track `<thead>`/`<tbody>`/`<tfoot>`
+        boundaries (see `HtmlTable`), so that resolves to the end of the table.
+        """
         try:
-            return max(1, int(self._td.attrib.get("rowspan", 1)))
+            value = int(self._td.attrib.get("rowspan", 1))
         except (TypeError, ValueError):
             return 1
+        return None if value == 0 else max(1, value)

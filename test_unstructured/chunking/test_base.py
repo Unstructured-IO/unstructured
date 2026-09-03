@@ -3085,6 +3085,54 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_does_not_drop_a_rowspan_that_reaches_past_the_last_row(self):
+        """A malformed but browser-tolerated `rowspan` naming more rows than the table has must
+        still yield its rows as one group, not disappear because the group-closing index it
+        names is never reached."""
+        opts = ChunkingOptions(max_characters=25)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="3">A</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "A xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="3">A</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_treats_rowspan_0_as_spanning_every_remaining_row(self):
+        """`rowspan="0"` is HTML's spelling for "spans every remaining row in the row group" —
+        the largest possible span, not the absence of one. This model doesn't track
+        `<thead>`/`<tbody>`/`<tfoot>` boundaries, so it resolves to the rest of the table."""
+        opts = ChunkingOptions(max_characters=15)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Region xxxxxxxxxxxxx yyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
