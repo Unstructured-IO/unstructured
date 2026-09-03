@@ -28,6 +28,7 @@ from unstructured.chunking.base import (
     is_title,
 )
 from unstructured.chunking.dispatch import reconstruct_table_from_chunks
+from unstructured.chunking.title import chunk_by_title
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
@@ -3251,6 +3252,103 @@ class Describe_HtmlTableSplitter:
                 "<table><tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr></table>",
             ),
         ]
+
+    def and_it_clips_a_positive_rowspan_even_when_a_huge_window_would_otherwise_merge_sections(
+        self,
+    ):
+        """The row-group boundary must hold for a CLIPPED positive `rowspan` too, not only
+        `rowspan="0"` -- and must hold even when the character budget alone would happily pack
+        the clipped group and the next row-group's rows into one chunk. A tight budget (as in
+        `and_it_clips_a_positive_rowspan_at_the_end_of_its_own_tbody`) would pass even without
+        this protection, purely by accident; this uses a window large enough that only the
+        clipped-group tracking itself can be responsible for keeping the groups apart."""
+        opts = ChunkingOptions(max_characters=100_000)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+                <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+                <tr><td>wwwwwwwwwwwwwwwwwwww</td></tr>
+              </tfoot>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- the tbody's clipped 2-row group is its own chunk (declared rowspan=5, but its own
+        # -- row-group only has 2 rows); the tfoot's rows are a separate chunk -- despite an
+        # -- enormous window that would gladly merge both into one --
+        assert chunks == [
+            (
+                "AAAAAAAAAAAAAAAAAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+            (
+                "zzzzzzzzzzzzzzzzzzzz wwwwwwwwwwwwwwwwwwww",
+                "<table>"
+                "<tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>"
+                "<tr><td>wwwwwwwwwwwwwwwwwwww</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_clips_a_positive_rowspan_through_the_public_chunk_by_title_path(self):
+        """Same clipped-positive-rowspan protection, exercised through the actual public
+        `chunk_by_title()` entry point rather than only the internal splitter class.
+
+        Note: a reparsed chunk's own `max_rowspan` can legitimately exceed ITS OWN row count --
+        an overdeclared span clipped to its source row-group is tolerated as-is (not rewritten),
+        same as the pre-existing `rowspan` reaching past the last row of a table. So the bound
+        checked by `and_no_emitted_chunk_lets_a_span_reparse_across_its_source_row_group` isn't a
+        valid way to catch THIS bug -- it can't tell "overdeclared within its own group" from
+        "reached into a different group's rows" from the reparsed chunk alone. What actually
+        distinguishes the fixed from the broken behavior is whether tbody and tfoot content ever
+        land in the same chunk -- check that directly instead."""
+        html = (
+            "<table>"
+            "<tbody>"
+            '<tr><td rowspan="5">alpha bravo charlie</td><td>delta echo foxtrot</td></tr>'
+            "<tr><td>golf hotel india</td></tr>"
+            "</tbody>"
+            "<tfoot>"
+            "<tr><td>juliet kilo lima</td></tr>"
+            "<tr><td>mike november oscar</td></tr>"
+            "</tfoot>"
+            "</table>"
+        )
+        text = (
+            "alpha bravo charlie delta echo foxtrot golf hotel india "
+            "juliet kilo lima mike november oscar"
+        )
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=75)
+
+        assert len(chunks) > 1
+        for chunk in chunks:
+            assert isinstance(chunk, TableChunk)
+            # -- every emitted chunk is well-formed, parseable HTML --
+            html = chunk.metadata.text_as_html
+            assert html.startswith("<table>")
+            assert html.endswith("</table>")
+            # -- the tbody group and the tfoot group never land in the same chunk; if they did,
+            # -- the tbody's rowspan="5" would legitimately (per HTML's own rules, once section
+            # -- wrappers are stripped) reach into the tfoot rows and shift them a column over --
+            has_tbody_content = "golf" in html
+            has_tfoot_content = "juliet" in html or "mike" in html
+            assert not (has_tbody_content and has_tfoot_content)
+        # -- no cell text lost or duplicated across the whole set of chunks --
+        combined_text = " ".join(chunk.text for chunk in chunks)
+        for word in ("alpha", "delta", "golf", "juliet", "mike"):
+            assert combined_text.count(word) == 1
 
     def and_it_still_spans_the_whole_group_for_a_sectionless_rowspan_0_table(self):
         """The original motivating case (no explicit `<thead>`/`<tbody>`/`<tfoot>`) must keep

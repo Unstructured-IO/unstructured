@@ -1,3 +1,9 @@
+## 0.27.11
+
+### Fixes
+
+- **Also treat a clipped positive `rowspan` as a hard chunk boundary, not only `rowspan="0"`.** A positive `rowspan` that declares more rows than its own `<thead>`/`<tbody>`/`<tfoot>` row-group actually has is clipped to that row-group when grouping rows for chunking, but its emitted HTML still carries the original, uncorrected declared value. If such a group got packed into the same chunk as a following row-group's rows, that value would legitimately reach into rows it was never meant to bind, once section wrappers are stripped. A row-group change is now also a hard chunk boundary whenever the preceding group's span was clipped this way — a `<thead>` row's positive span is unaffected, since it's already handled separately as a repeated/carried-forward header.
+
 ## 0.27.10
 
 ### Fixes
