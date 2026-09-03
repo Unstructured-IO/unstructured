@@ -152,10 +152,12 @@ class HtmlTable:
         table: HtmlElement,
         header_row_idxs: set[int] | None = None,
         source_row_htmls: Sequence[str] | None = None,
+        row_group_keys: Sequence[object] | None = None,
     ):
         self._table = table
         self._header_row_idxs = header_row_idxs or set()
         self._source_row_htmls = tuple(source_row_htmls or ())
+        self._row_group_keys = tuple(row_group_keys or ())
 
     @classmethod
     def from_html_text(cls, html_text: str) -> HtmlTable:
@@ -166,7 +168,8 @@ class HtmlTable:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
 
-        # -- capture header semantics and source row HTML before compactification strips details --
+        # -- capture header semantics, source row HTML, and row-group identity before
+        # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
         header_row_idxs = {
@@ -174,6 +177,12 @@ class HtmlTable:
             for idx, tr in enumerate(rows)
             if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
         }
+        # -- Each row's row-group is identified by its immediate parent element: a specific
+        # -- `<thead>`/`<tbody>`/`<tfoot>` when present, or the `<table>` itself for a row with no
+        # -- section wrapper. Captured now (identity survives the `.drop_tag()` below even though
+        # -- the dropped element becomes detached) so a `rowspan` can later be prevented from
+        # -- binding rows across a real section boundary.
+        row_group_keys = tuple(tr.getparent() for tr in rows)
 
         # -- remove `<thead>`, `<tbody>`, and `<tfoot>` noise elements when present --
         noise_elements = table.xpath(".//thead | .//tbody | .//tfoot")
@@ -214,7 +223,12 @@ class HtmlTable:
                     suffix = " " if e.tail[-1].isspace() else ""
                     e.tail = prefix + " ".join(parts) + suffix
 
-        return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
+        return cls(
+            table,
+            header_row_idxs=header_row_idxs,
+            source_row_htmls=source_row_htmls,
+            row_group_keys=row_group_keys,
+        )
 
     @cached_property
     def html(self) -> str:
@@ -232,7 +246,13 @@ class HtmlTable:
         rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
         for idx, tr in enumerate(rows):
             source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
-            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)
+            row_group_key = self._row_group_keys[idx] if idx < len(self._row_group_keys) else None
+            yield HtmlRow(
+                tr,
+                is_header=(idx in self._header_row_idxs),
+                source_html=source_html,
+                row_group_key=row_group_key,
+            )
 
     @cached_property
     def text(self) -> str:
@@ -245,10 +265,17 @@ class HtmlTable:
 class HtmlRow:
     """A `<tr>` element."""
 
-    def __init__(self, tr: HtmlElement, is_header: bool = False, source_html: str | None = None):
+    def __init__(
+        self,
+        tr: HtmlElement,
+        is_header: bool = False,
+        source_html: str | None = None,
+        row_group_key: object = None,
+    ):
         self._tr = tr
         self._is_header = is_header
         self._source_html = source_html
+        self._row_group_key = row_group_key
 
     @cached_property
     def html(self) -> str:
@@ -268,6 +295,17 @@ class HtmlRow:
     def source_html(self) -> str | None:
         """Original source `<tr>` HTML captured before compactification, when available."""
         return self._source_html
+
+    @property
+    def row_group_key(self) -> object:
+        """Identity of this row's containing row-group (a `<thead>`/`<tbody>`/`<tfoot>` element,
+        or the `<table>` itself for a row with no section wrapper).
+
+        Two rows compare equal on this value (`is`) exactly when they belong to the same row-group
+        for `rowspan` purposes. `None` when unknown (e.g. an `HtmlRow` constructed directly rather
+        than via `HtmlTable.iter_rows()`), in which case all such rows are treated as one group.
+        """
+        return self._row_group_key
 
     def iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each cell of this row as a separate string.

@@ -1300,22 +1300,53 @@ class _HtmlTableSplitter:
 
         A declared span can reach past the last row the table actually has (a malformed but
         browser-tolerated document, which clips it to the rows present) or be `rowspan="0"`
-        (spans every remaining row) — both resolve to "the rest of the table" here, and the
-        final, possibly-still-open group is always yielded rather than silently dropped.
+        (spans every remaining row) — both resolve to "the rest of the table's own row-group"
+        here (see `_group_last_idx`), and the final, possibly-still-open group is always yielded
+        rather than silently dropped.
         """
         rows = list(self._table_element.iter_rows())
+        group_last_idx = self._group_last_idx(rows)
         group_start = 0
         group_end = -1  # -- index of the furthest row any span opened so far reaches --
         for idx, row in enumerate(rows):
-            row_reach = len(rows) - 1 if row.max_rowspan is None else idx + row.max_rowspan - 1
+            own_group_last = group_last_idx[idx]
+            row_reach = (
+                own_group_last
+                if row.max_rowspan is None
+                else min(idx + row.max_rowspan - 1, own_group_last)
+            )
             group_end = max(group_end, row_reach)
             if idx == group_end:
                 yield tuple(rows[group_start : idx + 1])
                 group_start = idx + 1
-        # -- a span reaching past the last row (or `rowspan="0"`) leaves a final group that
-        # -- never hits `idx == group_end` inside the loop; emit it rather than drop it --
+        # -- a span reaching past the last row of its own row-group (or `rowspan="0"`) leaves a
+        # -- final group that never hits `idx == group_end` inside the loop; emit it rather than
+        # -- drop it --
         if group_start < len(rows):
             yield tuple(rows[group_start:])
+
+    @staticmethod
+    def _group_last_idx(rows: Sequence[HtmlRow]) -> list[int]:
+        """For each row-index in `rows`, the index of the last row sharing its row-group.
+
+        Rows are grouped by identity of `HtmlRow.row_group_key` (a specific `<thead>`/`<tbody>`/
+        `<tfoot>` element, or the `<table>` itself for a row with no section wrapper), so a
+        `rowspan` — including `rowspan="0"`, HTML's "spans every remaining row in the row group"
+        — can never bind rows across a real section boundary. A table with no explicit sections
+        has exactly one row-group (the whole table), matching the simpler pre-row-group behavior.
+        """
+        n = len(rows)
+        last_idx = [0] * n
+        i = 0
+        while i < n:
+            key = rows[i].row_group_key
+            j = i
+            while j + 1 < n and rows[j + 1].row_group_key is key:
+                j += 1
+            for k in range(i, j + 1):
+                last_idx[k] = j
+            i = j + 1
+        return last_idx
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""

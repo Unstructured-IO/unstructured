@@ -3133,6 +3133,90 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_bounds_a_rowspan_0_header_to_its_own_thead_instead_of_the_whole_table(self):
+        """`rowspan="0"` spans every remaining row in its OWN row-group, not the whole table. A
+        one-row `<thead>` closes the header's span there; the following `<tbody>` must still
+        chunk normally instead of being swallowed into one unbounded group with the header."""
+        opts = ChunkingOptions(max_characters=200)
+        body_rows = "".join(f"<tr><td>{i:040d}</td></tr>" for i in range(50))
+        html_table = HtmlTable.from_html_text(
+            f"""
+            <table>
+              <thead><tr><th rowspan="0">Header</th></tr></thead>
+              <tbody>{body_rows}</tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- bounded into many chunks, not one ~2KB chunk holding the header + all 50 body rows --
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert len(html) < 300
+        # -- the header's own one-row group is still emitted intact, on its own --
+        assert chunks[0][1].startswith('<table><tr><td rowspan="0">Header</td></tr>')
+
+    def and_it_clips_a_positive_rowspan_at_the_end_of_its_own_tbody(self):
+        """A `rowspan` declared inside one `<tbody>` must not reach into a following `<tbody>` or
+        `<tfoot>` — each row-group bounds its own spans, however far they claim to reach."""
+        opts = ChunkingOptions(max_characters=70)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+                <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+              </tfoot>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- the tbody's 2-row group (bound by the rowspan, clipped to the tbody's own last row,
+        # -- not the declared rowspan=5) is one chunk; the tfoot row is independent and separate --
+        assert chunks == [
+            (
+                "AAAAAAAAAAAAAAAAAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+            (
+                "zzzzzzzzzzzzzzzzzzzz",
+                "<table><tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr></table>",
+            ),
+        ]
+
+    def and_it_still_spans_the_whole_group_for_a_sectionless_rowspan_0_table(self):
+        """The original motivating case (no explicit `<thead>`/`<tbody>`/`<tfoot>`) must keep
+        working exactly as before row-groups were introduced: a table with no section wrapper is
+        itself one row-group, so `rowspan="0"` still reaches every row the table has."""
+        opts = ChunkingOptions(max_characters=15)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Region xxxxxxxxxxxxx yyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""

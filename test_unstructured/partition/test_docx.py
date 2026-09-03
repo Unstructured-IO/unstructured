@@ -206,6 +206,43 @@ def test_partition_docx_table_with_full_width_vertical_merge_reports_a_tr_for_ev
     )
 
 
+def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geometry(tmp_path):
+    """A DOCX table with a real vertical merge, partitioned then chunked with a small window,
+    must never split between rows an active `rowspan` still covers -- doing so would leave a
+    continuation `TableChunk` with cells shifted into the wrong column. This is the DOCX-specific
+    fix (real `colspan`/`rowspan` output) and the general rowspan-aware chunker exercised together
+    end to end, rather than only unit-tested in isolation.
+    """
+    document = docx.Document()
+    table = document.add_table(rows=4, cols=2)
+    table.cell(0, 0).merge(table.cell(1, 0)).merge(table.cell(2, 0)).text = "REGIONWIDE TOTAL"
+    table.cell(0, 1).text = "alpha bravo charlie"
+    table.cell(1, 1).text = "delta echo foxtrot"
+    table.cell(2, 1).text = "golf hotel india"
+    table.cell(3, 0).text = "juliet"
+    table.cell(3, 1).text = "kilo lima mike"
+    docx_path = tmp_path / "merged-cell-chunking.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+    assert 'rowspan="3"' in table_element.metadata.text_as_html
+
+    chunks = chunk_by_title([table_element], max_characters=60)
+
+    assert len(chunks) > 1, "fixture should be oversized enough to actually require a split"
+    for chunk in chunks:
+        assert isinstance(chunk, TableChunk)
+        # -- every emitted chunk must itself be well-formed, parseable HTML --
+        html = chunk.metadata.text_as_html
+        assert html.startswith("<table>")
+        assert html.endswith("</table>")
+    # -- no cell's text is lost or duplicated across the whole set of chunks --
+    combined_text = " ".join(chunk.text for chunk in chunks)
+    for word in ("REGIONWIDE", "alpha", "delta", "golf", "juliet", "kilo"):
+        assert combined_text.count(word) == 1
+
+
 def test_partition_docx_grabs_header_and_footer():
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
 

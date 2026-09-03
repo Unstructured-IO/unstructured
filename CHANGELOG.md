@@ -1,3 +1,9 @@
+## 0.27.9
+
+### Fixes
+
+- **Scope `rowspan` chunk-boundary protection to its actual `<thead>`/`<tbody>`/`<tfoot>` row-group, not the whole table.** A `rowspan="0"` cell in a short `<thead>` (or any positive `rowspan`) was previously resolved as reaching to the end of the entire table rather than the end of its own row-group, so a real, bounded `<tbody>` following it could get swallowed into one unbounded chunk alongside the header. Rows are now grouped by their actual containing section (or the whole table, when there is none), and a span can no longer bind rows across a real section boundary.
+
 ## 0.27.8
 
 ### Fixes
