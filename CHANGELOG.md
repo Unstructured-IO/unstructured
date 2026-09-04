@@ -1,56 +1,8 @@
-## 0.27.14
-
-### Fixes
-
-- **Bound a singleton oversized row's `rowspan` before splitting it cell-by-cell.** A rowspan-bound row too large to fit any chunk even alone was handed to the cell splitter with its original, uncorrected `rowspan` still attached — the self-correcting rewrite only applied to rows that pass through the normal row accumulator. A public caller reassembling separately-emitted chunks (`reconstruct_table_from_chunks()`) could see that stale span reach into rows from a later chunk, the exact corruption this mechanism exists to prevent. The row's own bound is now applied before it's split.
-
-## 0.27.13
-
-### Fixes
-
-- **Preserve a cell's actual HTML when correcting a clipped or `rowspan="0"` `rowspan`, and bound the `<thead>` row's own original occurrence even when header repetition is configured.** Correcting an overreaching `rowspan` previously reconstructed the cell from its plain text, discarding any nested table, hyperlink, image, or other markup and attribute the source cell carried. Only the `rowspan` attribute is now rewritten on a copy of the real cell; everything else survives unchanged. Separately, a `<thead>` row's ORIGINAL, wrapper-less occurrence was being exempted from this correction whenever header repetition was merely configured — not only for an actual repeated/carried copy (a different artifact, already safely wrapped in its own real `<thead>`) — leaving that first occurrence still vulnerable to exactly the cross-row-group corruption this mechanism exists to prevent. The exemption is now scoped correctly: every row is bounded to its own row-group, full stop.
-
-## 0.27.12
-
-### Fixes
-
-- **Rewrite chunked-table `rowspan` handling to self-correct emitted span values, instead of tracking which chunk boundaries are unsafe to cross.** A clipped or `rowspan="0"` cell's emitted HTML previously always carried its original declared value, relying on chunk-boundary bookkeeping to keep it away from rows it didn't truly cover. That value is now rewritten, at the point each chunk is assembled, to the number of rows actually present in that same chunk — an emitted `rowspan` can no longer overreach regardless of what else the chunker decides to pack alongside it. Also fixes two remaining gaps in the boundary bookkeeping this replaces: an overdeclared `<thead>` `rowspan` was exempted from clipping even when header repetition isn't active for it (so nothing else protected it), and the accumulator compared a candidate row-group against the FIRST row it had accumulated rather than the most recent one, which could miss a real transition when an earlier and later row happened to share the same row-group identity.
-
-## 0.27.11
-
-### Fixes
-
-- **Also treat a clipped positive `rowspan` as a hard chunk boundary, not only `rowspan="0"`.** A positive `rowspan` that declares more rows than its own `<thead>`/`<tbody>`/`<tfoot>` row-group actually has is clipped to that row-group when grouping rows for chunking, but its emitted HTML still carries the original, uncorrected declared value. If such a group got packed into the same chunk as a following row-group's rows, that value would legitimately reach into rows it was never meant to bind, once section wrappers are stripped. A row-group change is now also a hard chunk boundary whenever the preceding group's span was clipped this way — a `<thead>` row's positive span is unaffected, since it's already handled separately as a repeated/carried-forward header.
-
-## 0.27.10
-
-### Fixes
-
-- **Never let a chunk's rows span more than one source `<thead>`/`<tbody>`/`<tfoot>` row-group when a `rowspan="0"` cell is involved.** Row-group boundaries were correctly used to compute rowspan-bound groups, but the chunk accumulator could still pack an already-grouped `rowspan="0"` header together with a following row-group's rows when both fit the character budget — since section wrappers are stripped from emitted chunk HTML, the reparsed, flattened result let that span reach into rows it was never meant to bind. A row-group change is now a hard chunk boundary whenever a `rowspan="0"` row is involved; ordinary rows (and rows with a real, positive `rowspan` meant to carry across a boundary, e.g. a repeated header) are unaffected.
-
-## 0.27.9
-
-### Fixes
-
-- **Scope `rowspan` chunk-boundary protection to its actual `<thead>`/`<tbody>`/`<tfoot>` row-group, not the whole table.** A `rowspan="0"` cell in a short `<thead>` (or any positive `rowspan`) was previously resolved as reaching to the end of the entire table rather than the end of its own row-group, so a real, bounded `<tbody>` following it could get swallowed into one unbounded chunk alongside the header. Rows are now grouped by their actual containing section (or the whole table, when there is none), and a span can no longer bind rows across a real section boundary.
-
-## 0.27.8
-
-### Fixes
-
-- **Don't drop a table's trailing rows when a `rowspan` reaches past the last row, and honor `rowspan="0"`.** The rowspan-aware chunking boundary added in 0.27.7 could silently lose an entire table's tail when a declared `rowspan` named more rows than the table had, and treated `rowspan="0"` (HTML's "span every remaining row") as no span at all, letting a chunk boundary fall through it. Both now resolve to "the rest of the table" and are never split or dropped.
-
-## 0.27.7
-
-### Fixes
-
-- **Keep rows bound by an active `rowspan` in the same table chunk.** Table chunking split purely on row *text* length, unaware that a `rowspan` crossing the boundary would overclaim rows in one chunk and shift cells into the wrong column in the next. Such rows are now kept together as one unit, same tolerance already given a single oversized row or cell.
-
 ## 0.27.6
 
 ### Fixes
 
-- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge. Merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry.
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
 
 ## 0.27.5
 
