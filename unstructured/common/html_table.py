@@ -74,20 +74,15 @@ def _tr_html(cells: Sequence[SpannedCell]) -> str:
 def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]) -> str:
     """Like `htmlify_matrix_of_cell_texts()` but each cell can also carry a colspan/rowspan.
 
-    Each row of `matrix` is a sequence of `(cell_text, colspan, rowspan)` triples, one for each
-    grid-position that is the top-left corner of a (possibly 1x1) cell. A grid-position covered by
-    the colspan/rowspan of an earlier cell (in the same row or a prior row) must simply be omitted
-    from `matrix` by the caller; this function has no notion of the overall grid-shape, only of the
-    cells it is told to emit.
+    Each row of `matrix` is a sequence of `(cell_text, colspan, rowspan)` triples for each
+    grid-position that is the top-left corner of a cell; a caller must omit any grid-position
+    covered by an earlier cell's colspan/rowspan.
     """
 
     def iter_trs(rows: Sequence[Sequence[SpannedCell]]) -> Iterator[str]:
         for row in rows:
-            # -- Unlike `htmlify_matrix_of_cell_texts()`, an empty row here is NOT suppressed: it
-            # -- represents a real grid-row entirely covered by a `rowspan` from an earlier row
-            # -- (its cells were already emitted there). Suppressing it would drop a `<tr>`, which
-            # -- shifts the column-placement of every subsequent row under HTML's rowspan model
-            # -- (rowspan counts actual `<tr>` elements, not "rows that happened to have content").
+            # -- an empty row is a real grid-row fully covered by a prior row's rowspan, and must
+            # -- still emit a `<tr>` to keep the rowspan's row-count accounting correct --
             yield _tr_html(row)
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
@@ -98,20 +93,13 @@ def collapse_matrix_of_keyed_cells_to_spans(
 ) -> list[list[SpannedCell]]:
     """Collapse a full row/column grid of `(cell_text, merge_key)` cells into merged spans.
 
-    `matrix` must be "rectangular" in the sense that it represents every grid-position of the
-    table, including positions covered by a merge, unlike the `matrix` consumed by
-    `htmlify_matrix_of_spanned_cell_texts()`. Two grid-positions belong to the same merged region
-    exactly when their `merge_key` compares equal with `==`; a grid-position that is not merged
-    with any other must be given a `merge_key` that compares equal only to itself (e.g. a unique
-    `object()` instance).
+    `matrix` must cover every grid-position of the table, including ones covered by a merge.
+    Grid-positions sharing an `==`-equal `merge_key` belong to the same merged region; give an
+    unmerged position a `merge_key` unique to itself (e.g. a fresh `object()`). Only rectangular
+    merged regions are supported.
 
-    Only rectangular merged regions are supported (as is guaranteed by, e.g., DOCX and XLSX merge
-    semantics) -- an "L-shaped" or otherwise irregular region of matching keys produces undefined
-    (but not exception-raising) results.
-
-    Returns one row per row of `matrix`, each containing a `(cell_text, colspan, rowspan)` triple
-    for each cell that "originates" a merged region (or an unmerged 1x1 cell), in left-to-right
-    order. A grid-position covered by the colspan/rowspan of such a cell is omitted.
+    Returns one row per row of `matrix`, each holding a `(cell_text, colspan, rowspan)` triple for
+    every cell that originates a region (or unmerged 1x1 cell); covered positions are omitted.
     """
     n_rows = len(matrix)
     consumed = [[False] * len(row) for row in matrix]
@@ -183,11 +171,8 @@ class HtmlTable:
             for idx, tr in enumerate(rows)
             if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
         }
-        # -- Each row's row-group is identified by its immediate parent element: a specific
-        # -- `<thead>`/`<tbody>`/`<tfoot>` when present, or the `<table>` itself for a row with no
-        # -- section wrapper. Captured now (identity survives the `.drop_tag()` below even though
-        # -- the dropped element becomes detached) so a `rowspan` can later be prevented from
-        # -- binding rows across a real section boundary.
+        # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
+        # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
         row_group_keys = tuple(tr.getparent() for tr in rows)
 
         # -- remove `<thead>`, `<tbody>`, and `<tfoot>` noise elements when present --
@@ -304,12 +289,10 @@ class HtmlRow:
 
     @property
     def row_group_key(self) -> object:
-        """Identity of this row's containing row-group (a `<thead>`/`<tbody>`/`<tfoot>` element,
-        or the `<table>` itself for a row with no section wrapper).
+        """Identity of this row's containing row-group, for `rowspan` grouping purposes.
 
-        Two rows compare equal on this value (`is`) exactly when they belong to the same row-group
-        for `rowspan` purposes. `None` when unknown (e.g. an `HtmlRow` constructed directly rather
-        than via `HtmlTable.iter_rows()`), in which case all such rows are treated as one group.
+        `None` when unknown (e.g. an `HtmlRow` constructed directly rather than via
+        `HtmlTable.iter_rows()`), in which case all such rows are treated as one group.
         """
         return self._row_group_key
 
@@ -344,19 +327,9 @@ class HtmlRow:
     def _clipped_tr(self, max_rowspan: int) -> HtmlElement:
         """A deep-copied `<tr>` with any over-reaching cell `rowspan` clipped to `max_rowspan`.
 
-        `max_rowspan` is supplied by the caller as the number of rows -- including this one --
-        that are actually going to be present, in order, starting at this row in the emitted
-        fragment; this method has no notion of the wider table or chunking context. Passing the
-        row's own true remaining reach here is what makes the emitted `rowspan` self-correct: it
-        can never claim more rows than truly follow it, regardless of what a caller subsequently
-        decides to place after this row.
-
-        Cells whose declared span already fits within `max_rowspan` are left completely untouched
-        (not even reserialized). A cell that needs correction has ONLY its `rowspan` attribute
-        rewritten (set to the corrected value, or removed entirely when the correction is `1`) --
-        every other tag, child element, attribute, and cell content is preserved exactly as in the
-        source. This operates on a deep-copied `<tr>` so nested tables, links, images, and other
-        markup a naive text-only reconstruction would discard all survive unchanged.
+        `max_rowspan` is the number of rows, including this one, actually present starting here in
+        the emitted fragment. Only an over-reaching cell's `rowspan` attribute is rewritten (or
+        removed, when the correction is `1`); everything else is preserved unchanged.
         """
         tr = copy.deepcopy(self._tr)
         for td in tr:
@@ -377,10 +350,8 @@ class HtmlRow:
         return etree.tostring(self._clipped_tr(max_rowspan), encoding=str)
 
     def row_clipped_to_rows(self, max_rowspan: int) -> "HtmlRow":
-        """This row, with any over-reaching cell `rowspan` clipped to `max_rowspan` (see
-        `_clipped_tr()`), as a fresh `HtmlRow` -- for callers (like `_iter_row_splits()`'s
-        singleton-oversized-row path) that need to keep working with a row object rather than a
-        serialized string, e.g. to iterate its cells for further splitting.
+        """This row, with any over-reaching cell `rowspan` clipped to `max_rowspan`, as a fresh
+        `HtmlRow` -- for callers that need a row object rather than a serialized string.
         """
         return HtmlRow(
             self._clipped_tr(max_rowspan),
