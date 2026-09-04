@@ -1263,7 +1263,6 @@ class _HtmlTableSplitter:
                 accum = _RowAccumulator(
                     maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
                 )
-            # -- if group won't fit, any WIP chunk is done, send it on its way --
             if not accum.will_fit(group):
                 for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
@@ -1271,7 +1270,6 @@ class _HtmlTableSplitter:
                 accum = _RowAccumulator(
                     maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
                 )
-            # -- if group fits, add it to accumulator --
             if accum.will_fit(group):
                 accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
             elif len(group) == 1:  # -- a single row is bigger than the chunking window --

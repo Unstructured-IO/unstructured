@@ -209,10 +209,7 @@ def test_partition_docx_table_with_full_width_vertical_merge_reports_a_tr_for_ev
 def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geometry(tmp_path):
     """A DOCX table with a real vertical merge, partitioned then chunked with a small window,
     must never split between rows an active `rowspan` still covers -- doing so would leave a
-    continuation `TableChunk` with cells shifted into the wrong column. This is the DOCX-specific
-    fix (real `colspan`/`rowspan` output) and the general rowspan-aware chunker exercised together
-    end to end, rather than only unit-tested in isolation.
-    """
+    continuation `TableChunk` with cells shifted into the wrong column."""
     document = docx.Document()
     table = document.add_table(rows=4, cols=2)
     table.cell(0, 0).merge(table.cell(1, 0)).merge(table.cell(2, 0)).text = "REGIONWIDE TOTAL"
