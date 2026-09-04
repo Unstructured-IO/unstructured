@@ -1283,8 +1283,17 @@ class _HtmlTableSplitter:
             if accum.will_fit(group):
                 accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
             elif len(group) == 1:  # -- a single row is bigger than the chunking window --
+                # -- Even though this row is emitted alone (no other row from this chunk is
+                # -- present for its span to misplace), its literal `rowspan` attribute must still
+                # -- be corrected: a public caller can later reassemble multiple separately-emitted
+                # -- chunks (`reconstruct_table_from_chunks()`), at which point an uncorrected span
+                # -- from this chunk would reach into whatever rows follow in the reassembled
+                # -- table. Bounding it here, exactly like the multi-row accumulator path, is what
+                # -- keeps the emitted HTML self-correcting independent of what a caller does with
+                # -- it afterward. --
+                bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
                 for text, html in self._iter_row_splits(
-                    group[0], maxlen=self._maxlen(is_first_chunk)
+                    bounded_row, maxlen=self._maxlen(is_first_chunk)
                 ):
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False

@@ -341,10 +341,8 @@ class HtmlRow:
             return None
         return max((span for span in spans if span is not None), default=1)
 
-    def html_clipped_to_rows(self, max_rowspan: int) -> str:
-        """Serialize this row's `<tr>`, clipping any cell's `rowspan` down to `max_rowspan` when
-        its declared value (or `rowspan="0"`, HTML's "spans every remaining row") would otherwise
-        claim more rows than `max_rowspan` names.
+    def _clipped_tr(self, max_rowspan: int) -> HtmlElement:
+        """A deep-copied `<tr>` with any over-reaching cell `rowspan` clipped to `max_rowspan`.
 
         `max_rowspan` is supplied by the caller as the number of rows -- including this one --
         that are actually going to be present, in order, starting at this row in the emitted
@@ -369,7 +367,27 @@ class HtmlRow:
                 td.attrib.pop("rowspan", None)
             else:
                 td.attrib["rowspan"] = str(max_rowspan)
-        return etree.tostring(tr, encoding=str)
+        return tr
+
+    def html_clipped_to_rows(self, max_rowspan: int) -> str:
+        """Serialize this row's `<tr>`, clipping any cell's `rowspan` down to `max_rowspan` when
+        its declared value (or `rowspan="0"`, HTML's "spans every remaining row") would otherwise
+        claim more rows than `max_rowspan` names. See `_clipped_tr()` for the clipping rules.
+        """
+        return etree.tostring(self._clipped_tr(max_rowspan), encoding=str)
+
+    def row_clipped_to_rows(self, max_rowspan: int) -> "HtmlRow":
+        """This row, with any over-reaching cell `rowspan` clipped to `max_rowspan` (see
+        `_clipped_tr()`), as a fresh `HtmlRow` -- for callers (like `_iter_row_splits()`'s
+        singleton-oversized-row path) that need to keep working with a row object rather than a
+        serialized string, e.g. to iterate its cells for further splitting.
+        """
+        return HtmlRow(
+            self._clipped_tr(max_rowspan),
+            is_header=self._is_header,
+            source_html=self._source_html,
+            row_group_key=self._row_group_key,
+        )
 
 
 class HtmlCell:

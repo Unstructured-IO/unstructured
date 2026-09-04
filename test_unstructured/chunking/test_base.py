@@ -3587,6 +3587,102 @@ class Describe_HtmlTableSplitter:
         for word in ("NW", "Southwest", "Midwest"):
             assert combined_text.count(word) == 1
 
+    def and_it_bounds_a_positive_rowspan_in_a_multi_cell_oversized_singleton_row(self):
+        """A singleton rowspan-bound group whose ROW as a whole is too big for the chunking
+        window, but whose FIRST cell fits on its own, is emitted via `_CellAccumulator` (which
+        serializes a fitting cell's real `.html`, preserving its original `rowspan`) -- not via
+        `_iter_cell_splits` (which only ever emits plain, span-less text fragments and so was
+        never at risk here). This is the reachable case the "inert" reasoning missed: the row's
+        OWN, uncorrected declared span survives into that first sub-chunk unless it is bounded
+        before being handed to the row splitter."""
+        opts = ChunkingOptions(max_characters=20)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="3">Region</th><th>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>NW</td><td>Q1</td></tr>
+                <tr><td>SW</td><td>Q2</td></tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- the one-row thead's own bound is "1" (no other row in its group), so the header's
+        # -- first sub-chunk must carry no rowspan claim at all --
+        assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
+
+    def and_it_bounds_a_rowspan_0_in_a_multi_cell_oversized_singleton_row(self):
+        """Same reachable gap as the positive-rowspan case above, for `rowspan="0"` specifically
+        -- HTML's own "spans every remaining row" form, which this codebase always treats as
+        clipped (there is no literal count to fall back on)."""
+        opts = ChunkingOptions(max_characters=20)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr>
+                  <td rowspan="0">Region</td><td>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
+
+    def and_it_bounds_a_singleton_oversized_rows_span_through_chunk_by_title_and_reconstruction(
+        self,
+    ):
+        """End-to-end through the public `chunk_by_title()` entry point, then back through
+        `reconstruct_table_from_chunks()` -- the actual round-trip a caller performs -- reparsing
+        the reconstructed table with `pandas.read_html()` (which honors `rowspan`/`colspan` when
+        building a grid) to catch real column-shift corruption, not just inspect chunk strings."""
+        html = (
+            "<table>"
+            "<thead>"
+            '<tr><th rowspan="3">Region</th><th>' + "z" * 150 + "</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>NW</td><td>Q1</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        text = "Region " + "z" * 150 + " NW Q1 Southwest Territory Q2"
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=50, repeat_table_headers=False)
+        [reconstructed] = reconstruct_table_from_chunks(chunks)
+
+        html_out = reconstructed.metadata.text_as_html
+        assert html_out is not None
+        grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
+        # -- "Region"'s uncorrected `rowspan="3"` reaches exactly 3 rows deep (this row plus the
+        # -- next 2), not far enough to displace the much-later NW/Southwest Territory rows -- so
+        # -- this checks the actual corrupted rows directly, immediately following "Region", not
+        # -- rows the span happens not to reach in this particular fixture --
+        assert grid[0][0] == "Region"
+        for row in grid[1:9]:
+            assert row[0] != "Region", f"a later row still carries Region's uncorrected span: {row}"
+        for row in grid:
+            if "NW" in row:
+                assert row == ["NW", "Q1"]
+            if "Southwest Territory" in row:
+                assert row == ["Southwest Territory", "Q2"]
+        # -- no cell text lost or duplicated across the whole reconstructed table --
+        combined_text = reconstructed.text
+        for word in ("Region", "NW", "Southwest"):
+            assert combined_text.count(word) == 1
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""

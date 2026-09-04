@@ -1,3 +1,9 @@
+## 0.27.14
+
+### Fixes
+
+- **Bound a singleton oversized row's `rowspan` before splitting it cell-by-cell.** A rowspan-bound row too large to fit any chunk even alone was handed to the cell splitter with its original, uncorrected `rowspan` still attached — the self-correcting rewrite only applied to rows that pass through the normal row accumulator. A public caller reassembling separately-emitted chunks (`reconstruct_table_from_chunks()`) could see that stale span reach into rows from a later chunk, the exact corruption this mechanism exists to prevent. The row's own bound is now applied before it's split.
+
 ## 0.27.13
 
 ### Fixes
