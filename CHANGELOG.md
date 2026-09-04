@@ -1,3 +1,9 @@
+## 0.27.6
+
+### Fixes
+
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+
 ## 0.27.5
 
 ### Fixes

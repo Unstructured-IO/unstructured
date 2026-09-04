@@ -149,6 +149,97 @@ def test_partition_docx_processes_table():
     assert elements[0].metadata.filename == "fake_table.docx"
 
 
+def test_partition_docx_table_with_merged_cells_reports_spans_instead_of_duplicating_text():
+    """A merged cell's text must appear in exactly one `<td>`, marked with colspan/rowspan.
+
+    Fixture table is:
+
+        +---+-------+
+        | a | b     |
+        |   +---+---+
+        |   | c | d |
+        +---+---+   |
+        | e     |   |
+        +-------+---+
+    """
+    elements = partition_docx(example_doc_path("docx-tables.docx"), infer_table_structure=True)
+    tables = [e for e in elements if isinstance(e, Table)]
+    table = next(t for t in tables if t.text == "a b c d e")
+
+    assert table.metadata.text_as_html == (
+        "<table>"
+        '<tr><td rowspan="2">a</td><td colspan="2">b</td></tr>'
+        '<tr><td>c</td><td rowspan="2">d</td></tr>'
+        '<tr><td colspan="2">e</td></tr>'
+        "</table>"
+    )
+    # -- no cell's text is duplicated across more than one `<td>` --
+    for letter in "abcde":
+        assert table.metadata.text_as_html.count(f">{letter}<") == 1
+
+
+def test_partition_docx_table_with_full_width_vertical_merge_reports_a_tr_for_every_row(tmp_path):
+    """A grid-row entirely covered by a `rowspan` (no originating cells of its own) still needs
+    its own `<tr>` in the output. HTML `rowspan` counts actual `<tr>` elements, not "rows that
+    happened to have content" -- suppressing this row would shift the column-placement of every
+    row after it.
+
+        +---+
+        | A |
+        |   |
+        +---+
+        | B |
+        +---+
+    """
+    document = docx.Document()
+    table = document.add_table(rows=3, cols=1)
+    table.cell(0, 0).merge(table.cell(1, 0)).text = "A"
+    table.cell(2, 0).text = "B"
+    docx_path = tmp_path / "vertical-merge.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    assert table_element.metadata.text_as_html == (
+        '<table><tr><td rowspan="2">A</td></tr><tr></tr><tr><td>B</td></tr></table>'
+    )
+
+
+def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geometry(tmp_path):
+    """A DOCX table with a real vertical merge, partitioned then chunked with a small window,
+    must never split between rows an active `rowspan` still covers -- doing so would leave a
+    continuation `TableChunk` with cells shifted into the wrong column."""
+    document = docx.Document()
+    table = document.add_table(rows=4, cols=2)
+    table.cell(0, 0).merge(table.cell(1, 0)).merge(table.cell(2, 0)).text = "REGIONWIDE TOTAL"
+    table.cell(0, 1).text = "alpha bravo charlie"
+    table.cell(1, 1).text = "delta echo foxtrot"
+    table.cell(2, 1).text = "golf hotel india"
+    table.cell(3, 0).text = "juliet"
+    table.cell(3, 1).text = "kilo lima mike"
+    docx_path = tmp_path / "merged-cell-chunking.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+    assert 'rowspan="3"' in table_element.metadata.text_as_html
+
+    chunks = chunk_by_title([table_element], max_characters=60)
+
+    assert len(chunks) > 1, "fixture should be oversized enough to actually require a split"
+    for chunk in chunks:
+        assert isinstance(chunk, TableChunk)
+        # -- every emitted chunk must itself be well-formed, parseable HTML --
+        html = chunk.metadata.text_as_html
+        assert html.startswith("<table>")
+        assert html.endswith("</table>")
+    # -- no cell's text is lost or duplicated across the whole set of chunks --
+    combined_text = " ".join(chunk.text for chunk in chunks)
+    for word in ("REGIONWIDE", "alpha", "delta", "golf", "juliet", "kilo"):
+        assert combined_text.count(word) == 1
+
+
 def test_partition_docx_grabs_header_and_footer():
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
 
@@ -1072,6 +1163,31 @@ class Describe_DocxPartitioner:
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
         assert " ".join(_DocxPartitioner(opts)._iter_table_texts(table)) == "a b c d e"
 
+    def and_the_html_of_a_merged_cell_carries_colspan_and_rowspan_instead_of_repeating_text(
+        self, opts_args: dict[str, Any]
+    ):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+
+        assert _DocxPartitioner(opts)._convert_table_to_html(table) == (
+            "<table>"
+            '<tr><td rowspan="2">a</td><td colspan="2">b</td></tr>'
+            '<tr><td>c</td><td rowspan="2">d</td></tr>'
+            '<tr><td colspan="2">e</td></tr>'
+            "</table>"
+        )
+
     def it_can_partition_tables_with_incomplete_rows(self):
         """DOCX permits table rows to start late and end early.
 
@@ -1128,7 +1244,7 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>a</td><td/></tr>"
+            '<tr><td colspan="2">a</td><td/></tr>'
             "<tr><td>b</td><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
@@ -1143,8 +1259,8 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>b</td><td/></tr>"
-            "<tr><td>a</td><td>c</td><td>d</td></tr>"
+            '<tr><td rowspan="2">a</td><td>b</td><td/></tr>'
+            "<tr><td>c</td><td>d</td></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # -- late-start, early-end, and >2 rows vertical span --
@@ -1162,10 +1278,10 @@ class Describe_DocxPartitioner:
         assert e.text == "a b c d e f", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>a</td><td>a</td><td>b</td><td>c</td></tr>"
-            "<tr><td/><td>d</td><td>d</td><td/></tr>"
-            "<tr><td>e</td><td>d</td><td>d</td><td>f</td></tr>"
-            "<tr><td/><td>d</td><td>d</td><td/></tr>"
+            '<tr><td colspan="2">a</td><td>b</td><td>c</td></tr>'
+            '<tr><td/><td colspan="2" rowspan="3">d</td><td/></tr>'
+            "<tr><td>e</td><td>f</td></tr>"
+            "<tr><td/><td/></tr>"
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
         # --
@@ -1175,14 +1291,14 @@ class Describe_DocxPartitioner:
         assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
         assert e.metadata.text_as_html == (
             "<table>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
-            "<tr><td>Data</td><td>Data</td><td/></tr>"
+            '<tr><td colspan="2" rowspan="3">Data</td><td/></tr>'
+            "<tr><td/></tr>"
+            "<tr><td/></tr>"
             "<tr><td/><td>More</td><td/></tr>"
             "<tr><td>Dato</td><td/></tr>"
-            "<tr><td>WTF?</td><td>WTF?</td><td/></tr>"
-            "<tr><td>Strange</td><td>Strange</td><td/></tr>"
-            "<tr><td/><td>Format</td><td>Format</td></tr>"
+            '<tr><td colspan="2">WTF?</td><td/></tr>'
+            '<tr><td colspan="2">Strange</td><td/></tr>'
+            '<tr><td/><td colspan="2">Format</td></tr>'
             "</table>"
         ), f"actual {e.metadata.text_as_html=}"
 

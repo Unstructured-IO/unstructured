@@ -5,15 +5,43 @@ Used during partitioning as well as chunking.
 
 from __future__ import annotations
 
+import copy
 import html
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
 
 from lxml import etree
 from lxml.html import fragment_fromstring
+from typing_extensions import TypeAlias
 
 if TYPE_CHECKING:
     from lxml.html import HtmlElement
+
+# -- (cell_text, colspan, rowspan) for one HTML `<td>` --
+SpannedCell: TypeAlias = "tuple[str, int, int]"
+
+
+def _format_td(cell_text: str, colspan: int = 1, rowspan: int = 1) -> str:
+    """Format a single `<td>` element, escaping and normalizing `cell_text`.
+
+    `colspan`/`rowspan` attributes are only emitted when greater than 1 (the implicit default),
+    to minimize character overhead in the common no-span case.
+    """
+    # -- take care of things like '<' and '>' in the text --
+    s = html.escape(cell_text)
+    # -- substitute <br/> elements for line-feeds in the text --
+    s = "<br/>".join(s.split("\n"))
+    # -- normalize whitespace in cell --
+    text = " ".join(s.split())
+
+    attrs = ""
+    if colspan > 1:
+        attrs += f' colspan="{colspan}"'
+    if rowspan > 1:
+        attrs += f' rowspan="{rowspan}"'
+
+    # -- emit void `<td/>` when cell text is empty string --
+    return f"<td{attrs}>{text}</td>" if text else f"<td{attrs}/>"
 
 
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
@@ -32,20 +60,82 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             # -- suppress emission of rows with no cells --
             if not row_cell_strs:
                 continue
-            yield f"<tr>{''.join(iter_tds(row_cell_strs))}</tr>"
-
-    def iter_tds(row_cell_strs: Sequence[str]) -> Iterator[str]:
-        for s in row_cell_strs:
-            # -- take care of things like '<' and '>' in the text --
-            s = html.escape(s)
-            # -- substitute <br/> elements for line-feeds in the text --
-            s = "<br/>".join(s.split("\n"))
-            # -- normalize whitespace in cell --
-            cell_text = " ".join(s.split())
-            # -- emit void `<td/>` when cell text is empty string --
-            yield f"<td>{cell_text}</td>" if cell_text else "<td/>"
+            yield f"<tr>{''.join(_format_td(s) for s in row_cell_strs)}</tr>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def _tr_html(cells: Sequence[SpannedCell]) -> str:
+    """Serialize one `<tr>` from `(cell_text, colspan, rowspan)` triples."""
+    tds = (_format_td(text, colspan, rowspan) for text, colspan, rowspan in cells)
+    return f"<tr>{''.join(tds)}</tr>"
+
+
+def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]) -> str:
+    """Like `htmlify_matrix_of_cell_texts()` but each cell can also carry a colspan/rowspan.
+
+    Each row of `matrix` is a sequence of `(cell_text, colspan, rowspan)` triples for each
+    grid-position that is the top-left corner of a cell; a caller must omit any grid-position
+    covered by an earlier cell's colspan/rowspan.
+    """
+
+    def iter_trs(rows: Sequence[Sequence[SpannedCell]]) -> Iterator[str]:
+        for row in rows:
+            # -- an empty row is a real grid-row fully covered by a prior row's rowspan, and must
+            # -- still emit a `<tr>` to keep the rowspan's row-count accounting correct --
+            yield _tr_html(row)
+
+    return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def collapse_matrix_of_keyed_cells_to_spans(
+    matrix: Sequence[Sequence[tuple[str, object]]],
+) -> list[list[SpannedCell]]:
+    """Collapse a full row/column grid of `(cell_text, merge_key)` cells into merged spans.
+
+    `matrix` must cover every grid-position of the table, including ones covered by a merge.
+    Grid-positions sharing an `==`-equal `merge_key` belong to the same merged region; give an
+    unmerged position a `merge_key` unique to itself (e.g. a fresh `object()`). Only rectangular
+    merged regions are supported.
+
+    Returns one row per row of `matrix`, each holding a `(cell_text, colspan, rowspan)` triple for
+    every cell that originates a region (or unmerged 1x1 cell); covered positions are omitted.
+    """
+    n_rows = len(matrix)
+    consumed = [[False] * len(row) for row in matrix]
+    spanned_rows: list[list[SpannedCell]] = []
+
+    for r, row in enumerate(matrix):
+        spanned_row: list[SpannedCell] = []
+        for c, (text, key) in enumerate(row):
+            if consumed[r][c]:
+                continue
+            consumed[r][c] = True
+
+            # -- extend rightward while the merge-key matches --
+            colspan = 1
+            while c + colspan < len(row) and row[c + colspan][1] == key:
+                consumed[r][c + colspan] = True
+                colspan += 1
+
+            # -- extend downward while the same colspan-wide run of merge-keys matches --
+            rowspan = 1
+            next_r = r + 1
+            while next_r < n_rows:
+                next_row = matrix[next_r]
+                if c + colspan > len(next_row):
+                    break
+                if any(next_row[c + i][1] != key for i in range(colspan)):
+                    break
+                for i in range(colspan):
+                    consumed[next_r][c + i] = True
+                rowspan += 1
+                next_r += 1
+
+            spanned_row.append((text, colspan, rowspan))
+        spanned_rows.append(spanned_row)
+
+    return spanned_rows
 
 
 class HtmlTable:
@@ -56,10 +146,12 @@ class HtmlTable:
         table: HtmlElement,
         header_row_idxs: set[int] | None = None,
         source_row_htmls: Sequence[str] | None = None,
+        row_group_keys: Sequence[object] | None = None,
     ):
         self._table = table
         self._header_row_idxs = header_row_idxs or set()
         self._source_row_htmls = tuple(source_row_htmls or ())
+        self._row_group_keys = tuple(row_group_keys or ())
 
     @classmethod
     def from_html_text(cls, html_text: str) -> HtmlTable:
@@ -70,7 +162,8 @@ class HtmlTable:
             raise ValueError("`html_text` contains no `<table>` element")
         table = tables[0]
 
-        # -- capture header semantics and source row HTML before compactification strips details --
+        # -- capture header semantics, source row HTML, and row-group identity before
+        # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
         header_row_idxs = {
@@ -78,6 +171,9 @@ class HtmlTable:
             for idx, tr in enumerate(rows)
             if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
         }
+        # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
+        # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
+        row_group_keys = tuple(tr.getparent() for tr in rows)
 
         # -- remove `<thead>`, `<tbody>`, and `<tfoot>` noise elements when present --
         noise_elements = table.xpath(".//thead | .//tbody | .//tfoot")
@@ -118,7 +214,12 @@ class HtmlTable:
                     suffix = " " if e.tail[-1].isspace() else ""
                     e.tail = prefix + " ".join(parts) + suffix
 
-        return cls(table, header_row_idxs=header_row_idxs, source_row_htmls=source_row_htmls)
+        return cls(
+            table,
+            header_row_idxs=header_row_idxs,
+            source_row_htmls=source_row_htmls,
+            row_group_keys=row_group_keys,
+        )
 
     @cached_property
     def html(self) -> str:
@@ -136,7 +237,13 @@ class HtmlTable:
         rows = cast("list[HtmlElement]", self._table.xpath("./tr"))
         for idx, tr in enumerate(rows):
             source_html = self._source_row_htmls[idx] if idx < len(self._source_row_htmls) else None
-            yield HtmlRow(tr, is_header=(idx in self._header_row_idxs), source_html=source_html)
+            row_group_key = self._row_group_keys[idx] if idx < len(self._row_group_keys) else None
+            yield HtmlRow(
+                tr,
+                is_header=(idx in self._header_row_idxs),
+                source_html=source_html,
+                row_group_key=row_group_key,
+            )
 
     @cached_property
     def text(self) -> str:
@@ -149,10 +256,17 @@ class HtmlTable:
 class HtmlRow:
     """A `<tr>` element."""
 
-    def __init__(self, tr: HtmlElement, is_header: bool = False, source_html: str | None = None):
+    def __init__(
+        self,
+        tr: HtmlElement,
+        is_header: bool = False,
+        source_html: str | None = None,
+        row_group_key: object = None,
+    ):
         self._tr = tr
         self._is_header = is_header
         self._source_html = source_html
+        self._row_group_key = row_group_key
 
     @cached_property
     def html(self) -> str:
@@ -173,6 +287,15 @@ class HtmlRow:
         """Original source `<tr>` HTML captured before compactification, when available."""
         return self._source_html
 
+    @property
+    def row_group_key(self) -> object:
+        """Identity of this row's containing row-group, for `rowspan` grouping purposes.
+
+        `None` when unknown (e.g. an `HtmlRow` constructed directly rather than via
+        `HtmlTable.iter_rows()`), in which case all such rows are treated as one group.
+        """
+        return self._row_group_key
+
     def iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each cell of this row as a separate string.
 
@@ -188,6 +311,54 @@ class HtmlRow:
     def text_len(self) -> int:
         """Length of the normalized text, as it would appear in `element.text`."""
         return len(" ".join(self.iter_cell_texts()))
+
+    @cached_property
+    def max_rowspan(self) -> int | None:
+        """Largest `rowspan` declared by any cell in this row, `1` when none span multiple rows.
+
+        `None` when any cell in this row declares `rowspan="0"` (HTML's "span every remaining
+        row"), since it reaches farther than any positive count could name.
+        """
+        spans = [cell.rowspan for cell in self.iter_cells()]
+        if any(span is None for span in spans):
+            return None
+        return max((span for span in spans if span is not None), default=1)
+
+    def _clipped_tr(self, max_rowspan: int) -> HtmlElement:
+        """A deep-copied `<tr>` with any over-reaching cell `rowspan` clipped to `max_rowspan`.
+
+        `max_rowspan` is the number of rows, including this one, actually present starting here in
+        the emitted fragment. Only an over-reaching cell's `rowspan` attribute is rewritten (or
+        removed, when the correction is `1`); everything else is preserved unchanged.
+        """
+        tr = copy.deepcopy(self._tr)
+        for td in tr:
+            rowspan = HtmlCell(td).rowspan
+            if rowspan is not None and rowspan <= max_rowspan:
+                continue  # -- already fits; leave this cell untouched --
+            if max_rowspan <= 1:
+                td.attrib.pop("rowspan", None)
+            else:
+                td.attrib["rowspan"] = str(max_rowspan)
+        return tr
+
+    def html_clipped_to_rows(self, max_rowspan: int) -> str:
+        """Serialize this row's `<tr>`, clipping any cell's `rowspan` down to `max_rowspan` when
+        its declared value (or `rowspan="0"`, HTML's "spans every remaining row") would otherwise
+        claim more rows than `max_rowspan` names. See `_clipped_tr()` for the clipping rules.
+        """
+        return etree.tostring(self._clipped_tr(max_rowspan), encoding=str)
+
+    def row_clipped_to_rows(self, max_rowspan: int) -> "HtmlRow":
+        """This row, with any over-reaching cell `rowspan` clipped to `max_rowspan`, as a fresh
+        `HtmlRow` -- for callers that need a row object rather than a serialized string.
+        """
+        return HtmlRow(
+            self._clipped_tr(max_rowspan),
+            is_header=self._is_header,
+            source_html=self._source_html,
+            row_group_key=self._row_group_key,
+        )
 
 
 class HtmlCell:
@@ -205,3 +376,30 @@ class HtmlCell:
     def text(self) -> str:
         """Text inside `<td>` element, empty string when no text."""
         return " ".join(self._td.text_content().split())
+
+    @cached_property
+    def rowspan(self) -> int | None:
+        """Declared `rowspan` for this cell, `1` when absent or unparseable.
+
+        `None` for `rowspan="0"`, HTML's spelling for "spans every remaining row in the
+        containing row group." This model doesn't track `<thead>`/`<tbody>`/`<tfoot>`
+        boundaries (see `HtmlTable`), so that resolves to the end of the table.
+        """
+        try:
+            value = int(self._td.attrib.get("rowspan", 1))
+        except (TypeError, ValueError):
+            return 1
+        return None if value == 0 else max(1, value)
+
+    @cached_property
+    def colspan(self) -> int:
+        """Declared `colspan` for this cell, `1` when absent, unparseable, or non-positive.
+
+        Unlike `rowspan`, HTML gives `colspan="0"` no special "spans every remaining column"
+        meaning, so it is simply treated as the default of `1`.
+        """
+        try:
+            value = int(self._td.attrib.get("colspan", 1))
+        except (TypeError, ValueError):
+            return 1
+        return max(1, value)

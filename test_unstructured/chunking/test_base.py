@@ -4,9 +4,11 @@
 
 from __future__ import annotations
 
+import io
 import logging
 from typing import Any, Sequence
 
+import pandas as pd
 import pytest
 from lxml.html import fragment_fromstring
 
@@ -28,6 +30,7 @@ from unstructured.chunking.base import (
     is_title,
 )
 from unstructured.chunking.dispatch import reconstruct_table_from_chunks
+from unstructured.chunking.title import chunk_by_title
 from unstructured.common.html_table import HtmlCell, HtmlRow, HtmlTable
 from unstructured.documents.elements import (
     CheckBox,
@@ -1576,7 +1579,13 @@ class Describe_TableChunker:
             repeat_table_headers=True,
         )
 
-        assert len(chunks) == 3
+        # -- the header's one-row thead group is isolated into its own leading chunk --
+        assert len(chunks) == 4
+        original_html = chunks[0].metadata.text_as_html
+        assert original_html is not None
+        original_table = fragment_fromstring(original_html)
+        assert original_table.xpath("./tr[1]/td[1]/@rowspan") == []
+
         continuation_html = chunks[1].metadata.text_as_html
         assert continuation_html is not None
         continuation_table = fragment_fromstring(continuation_html)
@@ -3019,6 +3028,618 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_keeps_rows_bound_by_an_active_rowspan_in_the_same_chunk(self):
+        """A split between rows still covered by an earlier row's `rowspan` would leave that
+        `rowspan` claiming more rows than are present in its chunk, and would shift every cell
+        in the continuation chunk into the wrong column (its `<table>` has no earlier row to
+        carry the span forward). The row-fit measurement only counts cell *text*, so a short-text,
+        markup-heavy table like this one can silently cross that boundary without the fix."""
+        opts = ChunkingOptions(max_characters=50)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="3">AAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+            </table>
+            """
+        )
+
+        # -- the whole rowspan-bound group is emitted as one chunk, even though it exceeds
+        # -- `max_characters`, same tolerance already granted a single oversized row or cell --
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "AAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy zzzzzzzzzzzzzzzzzzzz",
+                "<table>"
+                '<tr><td rowspan="3">AAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "<tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_keeps_a_fully_consumed_continuation_row_with_its_rowspan_origin(self):
+        """The empty `<tr>` a fully-consumed continuation row emits (so a `rowspan` still counts
+        actual `<tr>` elements) must never be separated from the row whose `rowspan` covers it,
+        and a later, independent row may still join the same chunk when there's room."""
+        opts = ChunkingOptions(max_characters=70)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td colspan="2" rowspan="2">BIGMERGEBIGMERGEBIGMERGE</td></tr>
+              <tr></tr>
+              <tr><td>pppppppppppppppppppp</td><td>qqqqqqqqqqqqqqqqqqqq</td></tr>
+              <tr><td>rrrrrrrrrrrrrrrrrrrr</td><td>ssssssssssssssssssss</td></tr>
+              <tr><td>tttttttttttttttttttt</td><td>uuuuuuuuuuuuuuuuuuuu</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "BIGMERGEBIGMERGEBIGMERGE pppppppppppppppppppp qqqqqqqqqqqqqqqqqqqq",
+                "<table>"
+                '<tr><td colspan="2" rowspan="2">BIGMERGEBIGMERGEBIGMERGE</td></tr>'
+                "<tr/>"
+                "<tr><td>pppppppppppppppppppp</td><td>qqqqqqqqqqqqqqqqqqqq</td></tr>"
+                "</table>",
+            ),
+            (
+                "rrrrrrrrrrrrrrrrrrrr ssssssssssssssssssss",
+                "<table><tr><td>rrrrrrrrrrrrrrrrrrrr</td><td>ssssssssssssssssssss</td></tr></table>",
+            ),
+            (
+                "tttttttttttttttttttt uuuuuuuuuuuuuuuuuuuu",
+                "<table><tr><td>tttttttttttttttttttt</td><td>uuuuuuuuuuuuuuuuuuuu</td></tr></table>",
+            ),
+        ]
+
+    def and_it_does_not_drop_a_rowspan_that_reaches_past_the_last_row(self):
+        """A malformed but browser-tolerated `rowspan` naming more rows than the table has must
+        still yield its rows as one group, not disappear because the group-closing index it
+        names is never reached -- and the emitted `rowspan` is rewritten from its overdeclared
+        "3" down to "2", the number of rows the table (and this chunk) actually has, so the
+        emitted HTML is self-consistent regardless of what a caller inspects it in isolation."""
+        opts = ChunkingOptions(max_characters=25)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="3">A</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "A xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="2">A</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_treats_rowspan_0_as_spanning_every_remaining_row(self):
+        """`rowspan="0"` is HTML's spelling for "spans every remaining row in the row group" —
+        the largest possible span, not the absence of one. This model doesn't track
+        `<thead>`/`<tbody>`/`<tfoot>` boundaries here (no explicit sections), so it resolves to
+        the rest of the table -- emitted as the literal, self-consistent count ("2") rather than
+        the ambiguous "0", since both rows land in this same chunk."""
+        opts = ChunkingOptions(max_characters=15)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Region xxxxxxxxxxxxx yyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="2">Region</td><td>xxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_bounds_a_rowspan_0_header_to_its_own_thead_instead_of_the_whole_table(self):
+        """`rowspan="0"` spans every remaining row in its OWN row-group, not the whole table. A
+        one-row `<thead>` closes the header's span there; the following `<tbody>` must still
+        chunk normally instead of being swallowed into one unbounded group with the header."""
+        opts = ChunkingOptions(max_characters=200)
+        body_rows = "".join(f"<tr><td>{i:040d}</td></tr>" for i in range(50))
+        html_table = HtmlTable.from_html_text(
+            f"""
+            <table>
+              <thead><tr><th rowspan="0">Header</th></tr></thead>
+              <tbody>{body_rows}</tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert len(html) < 300
+        # -- the header's one-row group is emitted alone, with an implicit rowspan (no attribute) --
+        assert chunks[0][1] == "<table><tr><td>Header</td></tr></table>"
+        assert chunks[0][1].count("<tr>") == 1
+
+    def and_it_bounds_a_rowspan_0_header_even_when_a_huge_window_would_otherwise_merge_sections(
+        self,
+    ):
+        """The row-group boundary must hold even when the character budget alone would happily
+        pack the header and every body row into one chunk -- it is model-derived, not a lucky
+        side-effect of a small `max_characters` accidentally forcing separate chunks."""
+        opts = ChunkingOptions(max_characters=100_000)
+        body_rows = "".join(f"<tr><td>{i:040d}</td></tr>" for i in range(50))
+        html_table = HtmlTable.from_html_text(
+            f"""
+            <table>
+              <thead><tr><th rowspan="0">Header</th></tr></thead>
+              <tbody>{body_rows}</tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) == 2
+        assert chunks[0][1] == "<table><tr><td>Header</td></tr></table>"
+        assert chunks[1][1].count("<tr>") == 50
+
+    def and_no_emitted_chunk_lets_a_span_reparse_across_its_source_row_group(self):
+        """General invariant check: reparsing each emitted chunk must never reveal a `rowspan`
+        binding rows that came from two different source row-groups -- if it did, the chunk's
+        own `rowspan` count would exceed the rows the chunk actually has (or would have, on a
+        different split), silently reintroducing the corruption this whole feature prevents."""
+        opts = ChunkingOptions(max_characters=200)
+        body_rows = "".join(f"<tr><td>{i:040d}</td></tr>" for i in range(50))
+        html_table = HtmlTable.from_html_text(
+            f"""
+            <table>
+              <thead><tr><th rowspan="0">Header</th></tr></thead>
+              <tbody>{body_rows}</tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        for _, html in chunks:
+            reparsed = HtmlTable.from_html_text(html)
+            rows = list(reparsed.iter_rows())
+            for idx, row in enumerate(rows):
+                if row.max_rowspan is not None:
+                    assert idx + row.max_rowspan - 1 < len(rows)
+
+    def and_it_clips_a_positive_rowspan_at_the_end_of_its_own_tbody(self):
+        """A `rowspan` declared inside one `<tbody>` must not reach into a following `<tbody>` or
+        `<tfoot>` — each row-group bounds its own spans, however far they claim to reach. The
+        overdeclared "5" is rewritten to "2" (the tbody's own row count), so the emitted chunk is
+        self-consistent even inspected on its own, not merely safe because the tfoot landed
+        elsewhere."""
+        opts = ChunkingOptions(max_characters=70)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+                <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+              </tfoot>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- rowspan is clipped to the tbody's own 2-row count; the tfoot row is a separate chunk --
+        assert chunks == [
+            (
+                "AAAAAAAAAAAAAAAAAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="2">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+            (
+                "zzzzzzzzzzzzzzzzzzzz",
+                "<table><tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr></table>",
+            ),
+        ]
+
+    def and_it_clips_a_positive_rowspan_even_when_a_huge_window_would_otherwise_merge_sections(
+        self,
+    ):
+        """The row-group boundary must hold for a CLIPPED positive `rowspan` too, not only
+        `rowspan="0"` -- and must hold even when the character budget alone would happily pack
+        the clipped group and the next row-group's rows into one chunk. A tight budget (as in
+        `and_it_clips_a_positive_rowspan_at_the_end_of_its_own_tbody`) would pass even without
+        this protection, purely by accident; this uses a window large enough that only the
+        clipped-group tracking itself can be responsible for keeping the groups apart."""
+        opts = ChunkingOptions(max_characters=100_000)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr><td rowspan="5">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>
+                <tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>
+                <tr><td>wwwwwwwwwwwwwwwwwwww</td></tr>
+              </tfoot>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- rowspan is clipped to the tbody's row count; the tfoot rows stay a separate chunk --
+        assert chunks == [
+            (
+                "AAAAAAAAAAAAAAAAAAAA xxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="2">AAAAAAAAAAAAAAAAAAAA</td><td>xxxxxxxxxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+            (
+                "zzzzzzzzzzzzzzzzzzzz wwwwwwwwwwwwwwwwwwww",
+                "<table>"
+                "<tr><td>zzzzzzzzzzzzzzzzzzzz</td></tr>"
+                "<tr><td>wwwwwwwwwwwwwwwwwwww</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_it_clips_a_positive_rowspan_through_the_public_chunk_by_title_path(self):
+        """Same clipped-positive-rowspan protection, exercised through the public
+        `chunk_by_title()` entry point: tbody and tfoot content must never land in the same
+        chunk, and the rewritten rowspan must match the tbody's own row count."""
+        html = (
+            "<table>"
+            "<tbody>"
+            '<tr><td rowspan="5">alpha bravo charlie</td><td>delta echo foxtrot</td></tr>'
+            "<tr><td>golf hotel india</td></tr>"
+            "</tbody>"
+            "<tfoot>"
+            "<tr><td>juliet kilo lima</td></tr>"
+            "<tr><td>mike november oscar</td></tr>"
+            "</tfoot>"
+            "</table>"
+        )
+        text = (
+            "alpha bravo charlie delta echo foxtrot golf hotel india "
+            "juliet kilo lima mike november oscar"
+        )
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=75)
+
+        assert len(chunks) > 1
+        for chunk in chunks:
+            assert isinstance(chunk, TableChunk)
+            # -- every emitted chunk is well-formed, parseable HTML --
+            html = chunk.metadata.text_as_html
+            assert html.startswith("<table>")
+            assert html.endswith("</table>")
+            # -- tbody and tfoot content must never share a chunk, or the tbody's rowspan="5"
+            # -- would reach into the tfoot rows and shift them a column over --
+            has_tbody_content = "golf" in html
+            has_tfoot_content = "juliet" in html or "mike" in html
+            assert not (has_tbody_content and has_tfoot_content)
+        # -- no cell text lost or duplicated across the whole set of chunks --
+        combined_text = " ".join(chunk.text for chunk in chunks)
+        for word in ("alpha", "delta", "golf", "juliet", "mike"):
+            assert combined_text.count(word) == 1
+
+    def and_it_still_spans_the_whole_group_for_a_sectionless_rowspan_0_table(self):
+        """A table with no explicit `<thead>`/`<tbody>`/`<tfoot>` is itself one row-group, so
+        `rowspan="0"` reaches every row the table has -- emitted as the literal count ("2")
+        rather than the ambiguous "0"."""
+        opts = ChunkingOptions(max_characters=15)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>
+              <tr><td>yyyyyyyyyyyyy</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "Region xxxxxxxxxxxxx yyyyyyyyyyyyy",
+                "<table>"
+                '<tr><td rowspan="2">Region</td><td>xxxxxxxxxxxxx</td></tr>'
+                "<tr><td>yyyyyyyyyyyyy</td></tr>"
+                "</table>",
+            ),
+        ]
+
+    def and_an_exactly_fitting_positive_rowspan_is_emitted_unchanged(self):
+        """A `rowspan` whose declared value already matches its own row-group's row count is
+        never rewritten -- the self-correction is a no-op whenever the declared value was
+        already honest, so ordinary, correct tables see no behavior change at all."""
+        opts = ChunkingOptions(max_characters=100)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td rowspan="2">A</td><td>B</td></tr>
+              <tr><td>C</td></tr>
+            </table>
+            """
+        )
+
+        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
+            (
+                "A B C",
+                '<table><tr><td rowspan="2">A</td><td>B</td></tr><tr><td>C</td></tr></table>',
+            ),
+        ]
+
+    def and_it_clips_an_overdeclared_thead_rowspan_when_header_repetition_is_not_active(self):
+        """A `<thead>` row's overdeclared positive `rowspan` is only exempt from clipping when
+        header repetition is actually configured and active for it -- `_prepend_repeated_headers`
+        is what makes reaching past the header's own section safe, and that mechanism plays no
+        part when `repeat_table_headers=False`. Without it, nothing else protects an overreaching
+        `<thead>` span from binding body rows it was never meant to cover, so it must be clipped
+        exactly like a `<tbody>`/`<tfoot>` span would be."""
+        opts = ChunkingOptions(max_characters=200)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <thead><tr><th rowspan="3">Header</th><th>HX</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>B</td></tr>
+                <tr><td>C</td><td>D</td></tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        # -- header_row_count=0 (the default) means no repeat-header exemption applies here --
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) == 2
+        for _, html in chunks:
+            reparsed = HtmlTable.from_html_text(html)
+            rows = list(reparsed.iter_rows())
+            for idx, row in enumerate(rows):
+                if row.max_rowspan is not None:
+                    assert idx + row.max_rowspan - 1 < len(rows)
+        # -- the header's declared "3" is clipped to "1" (its own thead has one row) --
+        assert chunks[0][1] == "<table><tr><td>Header</td><td>HX</td></tr></table>"
+        assert (
+            chunks[1][1]
+            == "<table><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></table>"
+        )
+
+    def and_it_does_not_let_a_clipped_span_bind_a_later_direct_row_of_the_same_key(self):
+        """`_RowAccumulator` must compare a candidate group's row-group identity against the
+        MOST RECENTLY accumulated row-group, not the first one ever added to this accumulator --
+        a direct (sectionless) row before and after an explicit `<tbody>` both key by the same
+        `<table>` element, so comparing against the first accumulated row can mistake a real
+        transition (leaving the clipped tbody group) for "no change", letting the clipped span
+        bind the trailing direct row it was never meant to cover."""
+        opts = ChunkingOptions(max_characters=200)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tr><td>Lead</td><td>X</td></tr>
+              <tbody><tr><td rowspan="2">Scoped</td><td>Inside</td></tr></tbody>
+              <tr><td>After</td><td>Y</td></tr>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) == 2
+        for _, html in chunks:
+            reparsed = HtmlTable.from_html_text(html)
+            rows = list(reparsed.iter_rows())
+            for idx, row in enumerate(rows):
+                if row.max_rowspan is not None:
+                    assert idx + row.max_rowspan - 1 < len(rows)
+        # -- "Scoped"'s declared "2" is clipped to "1" (its own tbody has one row) --
+        assert (
+            chunks[0][1] == "<table><tr><td>Lead</td><td>X</td></tr>"
+            "<tr><td>Scoped</td><td>Inside</td></tr></table>"
+        )
+        assert chunks[1][1] == "<table><tr><td>After</td><td>Y</td></tr></table>"
+
+    def and_it_preserves_non_text_cell_content_when_correcting_a_clipped_rowspan(self):
+        """`HtmlRow.html_clipped_to_rows()` must only ever touch the `rowspan` attribute -- a
+        nested table, a hyperlink, an image-only cell, and any other cell attribute must survive
+        a correction completely unchanged."""
+        opts = ChunkingOptions(max_characters=100_000)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr>
+                  <td rowspan="0">Group</td>
+                  <td data-note="keep-me">
+                    <table><tr><td>Q1</td><td>100</td></tr></table>
+                    <a href="https://example.com/details">details</a>
+                  </td>
+                  <td><img src="chart.png" alt="Chart"/></td>
+                </tr>
+                <tr><td>Other</td><td>row</td><td>content</td></tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- rowspan="0" always goes through the correction path, exercising this cell's
+        # -- non-text content on every run, not only when a chunk boundary forces it --
+        assert chunks == [
+            (
+                "Group Q1100details Other row content",
+                "<table>"
+                '<tr><td rowspan="2">Group</td>'
+                "<td><table><tr><td>Q1</td><td>100</td></tr></table><a>details</a></td>"
+                "<td><img/></td></tr>"
+                "<tr><td>Other</td><td>row</td><td>content</td></tr>"
+                "</table>",
+            )
+        ]
+
+    def and_it_bounds_the_theads_own_original_occurrence_even_when_repetition_is_configured(
+        self,
+    ):
+        """The carried-header exemption must apply only to a REPEATED copy
+        `_prepend_repeated_headers` injects onto a continuation chunk (a separate artifact built
+        from `row.source_html`/`row.html`, wrapped in its own real `<thead>`) -- never to the
+        header row's own ORIGINAL, wrapper-less occurrence. Before this fix,
+        `repeat_table_headers=True` alone was enough to exempt that original occurrence too, so
+        its overreaching `rowspan` could merge with body rows from a different row-group in the
+        same wrapper-less chunk and shift their columns.
+
+        Verified by reparsing each chunk's own emitted HTML with `pandas.read_html` (which
+        correctly honors `rowspan`/`colspan` when building a grid) and checking that no body
+        value has been shifted into the wrong column -- a genuine geometry check, not just a
+        string/row-count comparison."""
+        html = (
+            "<table>"
+            "<thead>"
+            '<tr><th rowspan="3">Region</th><th>Quarter</th></tr>'
+            "</thead>"
+            "<tbody>"
+            "<tr><td>NW</td><td>Q1</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        text = "Region Quarter NW Q1 Southwest Territory Q2 Midwest Territory Q3"
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=60, repeat_table_headers=True)
+
+        assert len(chunks) > 1
+        for chunk in chunks:
+            html_out = chunk.metadata.text_as_html
+            assert html_out is not None
+            grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
+            for row in grid:
+                if "NW" in row:
+                    assert row[0] == "NW"
+                    assert row[1] == "Q1"
+                if "Southwest Territory" in row:
+                    assert row[0] == "Southwest Territory"
+                    assert row[1] == "Q2"
+                if "Midwest Territory" in row:
+                    assert row[0] == "Midwest Territory"
+                    assert row[1] == "Q3"
+        # -- no cell text lost or duplicated across the whole set of chunks --
+        combined_text = " ".join(chunk.text for chunk in chunks)
+        for word in ("NW", "Southwest", "Midwest"):
+            assert combined_text.count(word) == 1
+
+    def and_it_bounds_a_positive_rowspan_in_a_multi_cell_oversized_singleton_row(self):
+        """A singleton rowspan-bound group whose ROW as a whole is too big for the chunking
+        window, but whose FIRST cell fits on its own, is emitted via `_CellAccumulator`, which
+        serializes the cell's real `.html` including its original `rowspan` -- that span must be
+        bounded before reaching the row splitter, or it survives uncorrected into the sub-chunk."""
+        opts = ChunkingOptions(max_characters=20)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="3">Region</th><th>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>NW</td><td>Q1</td></tr>
+                <tr><td>SW</td><td>Q2</td></tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- the one-row thead's own bound is "1" (no other row in its group), so the header's
+        # -- first sub-chunk must carry no rowspan claim at all --
+        assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
+
+    def and_it_bounds_a_rowspan_0_in_a_multi_cell_oversized_singleton_row(self):
+        """Same reachable gap as the positive-rowspan case above, for `rowspan="0"` specifically
+        -- HTML's own "spans every remaining row" form, which this codebase always treats as
+        clipped (there is no literal count to fall back on)."""
+        opts = ChunkingOptions(max_characters=20)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr>
+                  <td rowspan="0">Region</td><td>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert chunks[0] == ("Region", "<table><tr><td>Region</td></tr></table>")
+
+    def and_it_bounds_a_singleton_oversized_rows_span_through_chunk_by_title_and_reconstruction(
+        self,
+    ):
+        """End-to-end through the public `chunk_by_title()` entry point, then back through
+        `reconstruct_table_from_chunks()` -- the actual round-trip a caller performs -- reparsing
+        the reconstructed table with `pandas.read_html()` (which honors `rowspan`/`colspan` when
+        building a grid) to catch real column-shift corruption, not just inspect chunk strings."""
+        html = (
+            "<table>"
+            "<thead>"
+            '<tr><th rowspan="3">Region</th><th>' + "z" * 150 + "</th></tr>"
+            "</thead>"
+            "<tbody>"
+            "<tr><td>NW</td><td>Q1</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        text = "Region " + "z" * 150 + " NW Q1 Southwest Territory Q2"
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=50, repeat_table_headers=False)
+        [reconstructed] = reconstruct_table_from_chunks(chunks)
+
+        html_out = reconstructed.metadata.text_as_html
+        assert html_out is not None
+        grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
+        # -- an uncorrected rowspan="3" reaches 3 rows deep, so check the rows immediately
+        # -- following "Region" rather than the much-later NW/Southwest Territory rows --
+        assert grid[0][0] == "Region"
+        for row in grid[1:9]:
+            assert row[0] != "Region", f"a later row still carries Region's uncorrected span: {row}"
+        for row in grid:
+            if "NW" in row:
+                assert row == ["NW", "Q1"]
+            if "Southwest Territory" in row:
+                assert row == ["Southwest Territory", "Q2"]
+        # -- no cell text lost or duplicated across the whole reconstructed table --
+        combined_text = reconstructed.text
+        for word in ("Region", "NW", "Southwest"):
+            assert combined_text.count(word) == 1
+
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
@@ -3217,7 +3838,7 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=100)
         row = HtmlRow(fragment_fromstring("<tr><td>foo</td><td>bar</td></tr>"))
 
-        accum.add_row(row)
+        accum.add_rows([row])
 
         assert accum._rows == [row]
         assert accum._row_text_len == len("foo bar")
@@ -3226,8 +3847,8 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=3, measure=lambda text: len(text.split()))
         row = HtmlRow(fragment_fromstring("<tr><td>supercalifragilisticexpialidocious</td></tr>"))
 
-        assert accum.will_fit(row) is True
-        accum.add_row(row)
+        assert accum.will_fit([row]) is True
+        accum.add_rows([row])
 
         # -- one token of text plus one separator leaves one token of space --
         assert accum._remaining_space == 1
@@ -3251,7 +3872,7 @@ class Describe_RowAccumulator:
         accum = _RowAccumulator(maxlen=21)
         row = HtmlRow(fragment_fromstring(row_html))
 
-        assert accum.will_fit(row) is expected_value
+        assert accum.will_fit([row]) is expected_value
 
     @pytest.mark.parametrize(
         ("row_html", "expected_value"),
@@ -3270,15 +3891,17 @@ class Describe_RowAccumulator:
     ):
         """There is no overhead beyond row HTML for additional rows."""
         accum = _RowAccumulator(maxlen=48)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>")))
+        accum.add_rows(
+            [HtmlRow(fragment_fromstring("<tr><td>abcdefghijklmnopqrstuvwxyz</td></tr>"))]
+        )
         # -- remaining space is 48 - 26 = 21 --
         row = HtmlRow(fragment_fromstring(row_html))
 
-        assert accum.will_fit(row) is expected_value
+        assert accum.will_fit([row]) is expected_value
 
     def it_generates_a_TextAndHtml_pair_and_resets_itself_to_empty_when_flushed(self):
         accum = _RowAccumulator(maxlen=100)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>"))])
 
         text, html = next(accum.flush())
 
@@ -3289,8 +3912,8 @@ class Describe_RowAccumulator:
 
     def and_the_HTML_contains_as_many_rows_as_were_accumulated(self):
         accum = _RowAccumulator(maxlen=100)
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>")))
-        accum.add_row(HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>")))
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>abcde fghij klmno</td></tr>"))])
+        accum.add_rows([HtmlRow(fragment_fromstring("<tr><td>pqrst uvwxy z</td></tr>"))])
 
         text, html = next(accum.flush())
 

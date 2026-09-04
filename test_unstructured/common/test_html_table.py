@@ -11,7 +11,9 @@ from unstructured.common.html_table import (
     HtmlCell,
     HtmlRow,
     HtmlTable,
+    collapse_matrix_of_keyed_cells_to_spans,
     htmlify_matrix_of_cell_texts,
+    htmlify_matrix_of_spanned_cell_texts,
 )
 
 
@@ -41,6 +43,112 @@ class Describe_htmlify_matrix_of_cell_texts:
 
     def test_htmlify_matrix_handles_empty_matrix(self):
         assert htmlify_matrix_of_cell_texts([]) == ""
+
+
+class Describe_htmlify_matrix_of_spanned_cell_texts:
+    """Unit-test suite for `html_table.htmlify_matrix_of_spanned_cell_texts()`."""
+
+    def it_emits_plain_cells_when_no_span_is_greater_than_1(self):
+        assert htmlify_matrix_of_spanned_cell_texts(
+            [[("a", 1, 1), ("b", 1, 1)], [("c", 1, 1), ("d", 1, 1)]]
+        ) == ("<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table>")
+
+    def it_emits_colspan_and_rowspan_attributes_only_when_greater_than_1(self):
+        assert htmlify_matrix_of_spanned_cell_texts([[("a", 2, 3)], [("b", 1, 1)]]) == (
+            '<table><tr><td colspan="2" rowspan="3">a</td></tr><tr><td>b</td></tr></table>'
+        )
+
+    def it_emits_a_void_td_for_an_empty_spanned_cell(self):
+        assert htmlify_matrix_of_spanned_cell_texts([[("", 2, 1)]]) == (
+            '<table><tr><td colspan="2"/></tr></table>'
+        )
+
+    def it_emits_an_empty_tr_for_a_row_entirely_consumed_by_a_rowspan(self):
+        """A row with no originating cells still needs its own `<tr>`.
+
+        HTML `rowspan` counts actual `<tr>` elements, not "rows that happened to have content";
+        dropping this row would shift the column-placement of every row after it.
+        """
+        assert htmlify_matrix_of_spanned_cell_texts([[("a", 1, 2)], [], [("b", 1, 1)]]) == (
+            '<table><tr><td rowspan="2">a</td></tr><tr></tr><tr><td>b</td></tr></table>'
+        )
+
+    def it_handles_an_empty_matrix(self):
+        assert htmlify_matrix_of_spanned_cell_texts([]) == ""
+
+    def it_renders_a_full_width_vertical_merge_via_the_full_collapse_and_render_pipeline(self):
+        """Regression: `collapse_matrix_of_keyed_cells_to_spans()` and
+        `htmlify_matrix_of_spanned_cell_texts()` were each unit-tested individually, but their
+        interaction was not -- the collapse step legitimately produces an empty row for a grid-row
+        entirely covered by a multi-column `rowspan`, and the render step must still emit a `<tr>`
+        for it rather than suppressing it.
+        """
+        keyed_matrix = [
+            [("a", "M"), ("a", "M")],
+            [("a", "M"), ("a", "M")],
+            [("c", "C1"), ("d", "C2")],
+        ]
+        spanned_matrix = collapse_matrix_of_keyed_cells_to_spans(keyed_matrix)
+        assert spanned_matrix == [[("a", 2, 2)], [], [("c", 1, 1), ("d", 1, 1)]]
+        assert htmlify_matrix_of_spanned_cell_texts(spanned_matrix) == (
+            '<table><tr><td colspan="2" rowspan="2">a</td></tr>'
+            "<tr></tr>"
+            "<tr><td>c</td><td>d</td></tr></table>"
+        )
+
+
+class Describe_collapse_matrix_of_keyed_cells_to_spans:
+    """Unit-test suite for `html_table.collapse_matrix_of_keyed_cells_to_spans()`."""
+
+    def it_leaves_a_matrix_with_no_repeated_keys_unchanged(self):
+        matrix = [[("a", 1), ("b", 2)], [("c", 3), ("d", 4)]]
+        assert collapse_matrix_of_keyed_cells_to_spans(matrix) == [
+            [("a", 1, 1), ("b", 1, 1)],
+            [("c", 1, 1), ("d", 1, 1)],
+        ]
+
+    def it_collapses_a_horizontal_run_of_matching_keys_into_a_colspan(self):
+        matrix = [[("a", 1), ("a", 1), ("b", 2)]]
+        assert collapse_matrix_of_keyed_cells_to_spans(matrix) == [[("a", 2, 1), ("b", 1, 1)]]
+
+    def it_collapses_a_vertical_run_of_matching_keys_into_a_rowspan(self):
+        matrix = [[("a", 1)], [("a", 1)], [("b", 2)]]
+        assert collapse_matrix_of_keyed_cells_to_spans(matrix) == [
+            [("a", 1, 2)],
+            [],
+            [("b", 1, 1)],
+        ]
+
+    def it_collapses_a_rectangular_region_into_a_single_cell_with_colspan_and_rowspan(self):
+        """Reproduces the docx-tables.docx merged-cell fixture geometry.
+
+        +---+-------+
+        | a | b     |
+        |   +---+---+
+        |   | c | d |
+        +---+---+   |
+        | e     |   |
+        +-------+---+
+        """
+        matrix = [
+            [("a", 1), ("b", 2), ("b", 2)],
+            [("a", 1), ("c", 3), ("d", 4)],
+            [("e", 5), ("e", 5), ("d", 4)],
+        ]
+        assert collapse_matrix_of_keyed_cells_to_spans(matrix) == [
+            [("a", 1, 2), ("b", 2, 1)],
+            [("c", 1, 1), ("d", 1, 2)],
+            [("e", 2, 1)],
+        ]
+
+    def it_treats_distinct_keys_as_never_merged_even_when_their_text_matches(self):
+        matrix = [[("", 1), ("", 2)]]
+        assert collapse_matrix_of_keyed_cells_to_spans(matrix) == [
+            [("", 1, 1), ("", 1, 1)],
+        ]
+
+    def it_handles_an_empty_matrix(self):
+        assert collapse_matrix_of_keyed_cells_to_spans([]) == []
 
 
 class DescribeHtmlTable:

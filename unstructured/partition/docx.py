@@ -27,7 +27,10 @@ from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
-from unstructured.common.html_table import htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import (
+    collapse_matrix_of_keyed_cells_to_spans,
+    htmlify_matrix_of_spanned_cell_texts,
+)
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -496,6 +499,10 @@ class _DocxPartitioner:
             </tbody>
             </table>
 
+        A merged cell (`gridSpan` and/or `vMerge`) is emitted as a single `<td>` carrying the
+        appropriate `colspan`/`rowspan` attribute rather than being repeated into every grid
+        position it visually covers.
+
         `is_nested` is used for recursive calls when a nested table is encountered. Certain
         behaviors are different in that case, but the caller can safely ignore that parameter and
         allow it to take its default value.
@@ -513,35 +520,52 @@ class _DocxPartitioner:
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
                     for row in table.rows:
-                        yield from iter_row_cells_as_text(row)
+                        yield from (text for text, _ in iter_row_cells(row))
 
-        def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
-            """Generate the normalized text of each cell in `row` as a separate string.
+        def cell_text(cell: _Cell) -> str:
+            """The normalized text of `cell`, including that of any table nested in it."""
+            text = " ".join(iter_cell_block_items(cell))
+            return " ".join(text.split())
 
-            The text of each paragraph within a cell is not separated. A table nested in a cell is
-            converted to a normalized string of its contents and combined with the text of the
-            cell that contains the table.
+        def iter_row_cells(row: _Row) -> Iterator[tuple[str, _Cell | None]]:
+            """Generate (cell_text, cell) for each layout-grid position in `row`.
+
+            `cell` is `None` for a grid-position with no `tc` element -- the (rare) case of a row
+            that starts late or ends early, or one where `row.cells` raises because the table has
+            merged or malformed cells; `cell_text` is the empty string in each such case.
             """
             # -- Each omitted cell at the start of the row (pretty rare) gets the empty string.
             # -- This preserves column alignment when one or more initial cells are omitted.
             for _ in range(row.grid_cols_before):
-                yield ""
+                yield "", None
 
             try:
                 # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
                 # -- table has merged or malformed cells. always wrap in try/except.
                 for cell in row.cells:
-                    cell_text = " ".join(iter_cell_block_items(cell))
-                    yield " ".join(cell_text.split())
+                    yield cell_text(cell), cell
             except Exception as e:
-                logging.warning(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
-                yield ""
+                logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
+                yield "", None
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
-                yield ""
+                yield "", None
 
-        return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
+        def iter_row_merge_keyed_texts(row: _Row) -> Iterator[tuple[str, object]]:
+            """Generate (cell_text, merge_key) for each layout-grid position in `row`.
+
+            `merge_key` is shared by every grid-position spanned by the same merged cell (DOCX
+            resolves both `gridSpan` and `vMerge="continue"` to the same underlying `tc` element),
+            and is otherwise unique, so it can be fed to `collapse_matrix_of_keyed_cells_to_spans()`
+            to recover the original merge geometry.
+            """
+            for text, cell in iter_row_cells(row):
+                yield text, (cell._tc if cell is not None else object())
+
+        matrix = [list(iter_row_merge_keyed_texts(row)) for row in table.rows]
+        spanned_matrix = collapse_matrix_of_keyed_cells_to_spans(matrix)
+        return htmlify_matrix_of_spanned_cell_texts(spanned_matrix)
 
     @cached_property
     def _document(self) -> Document:

@@ -6,7 +6,7 @@ import collections
 import copy
 import uuid
 from functools import cached_property
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, Sequence, cast
 
 import regex
 from lxml.etree import ParserError, tostring
@@ -1240,26 +1240,57 @@ class _HtmlTableSplitter:
     def _iter_subtables(self) -> Iterator[TextAndHtml]:
         """Generate (text, html) pairs containing as many whole rows as will fit in window.
 
-        Falls back to splitting rows into whole cells when a single row is by itself too big to
-        fit in the chunking window.
+        Rows joined by an active `rowspan` are kept together as one atomic group, since splitting
+        them would leave a `rowspan` overclaiming rows and misplace every following row's columns.
+        Falls back to splitting into whole cells when a single row (or rowspan-bound group) is by
+        itself too big to fit in the chunking window.
         """
         is_first_chunk = True
         accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
-        for row in self._table_element.iter_rows():
-            # -- if row won't fit, any WIP chunk is done, send it on its way --
-            if not accum.will_fit(row):
+        for group, group_bounds, group_is_clipped in self._iter_rowspan_bound_row_groups():
+            # -- flush before crossing a row-group boundary only if a clipped span is already
+            # -- accumulated (see `crosses_a_row_group_unsafely_if_extended`); `group_bounds`
+            # -- below is what actually guarantees an emitted rowspan can never overreach --
+            if (
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
+                and accum.crosses_a_row_group_unsafely_if_extended
+            ):
                 for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
                 accum = _RowAccumulator(
                     maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
                 )
-            # -- if row fits, add it to accumulator --
-            if accum.will_fit(row):
-                accum.add_row(row)
-            else:  # -- otherwise, single row is bigger than chunking window --
-                for text, html in self._iter_row_splits(row, maxlen=self._maxlen(is_first_chunk)):
+            if not accum.will_fit(group):
+                for text, html in accum.flush():
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
+            if accum.will_fit(group):
+                accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
+            elif len(group) == 1:  # -- a single row is bigger than the chunking window --
+                # -- bound the span even though this row is emitted alone: a caller reassembling
+                # -- chunks later (`reconstruct_table_from_chunks()`) would otherwise see it reach
+                # -- into whatever rows follow in the reassembled table --
+                bounded_row = group[0].row_clipped_to_rows(group_bounds[0])
+                for text, html in self._iter_row_splits(
+                    bounded_row, maxlen=self._maxlen(is_first_chunk)
+                ):
+                    yield self._prepend_repeated_headers(text, html, is_first_chunk)
+                    is_first_chunk = False
+                accum = _RowAccumulator(
+                    maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure
+                )
+            else:
+                # -- A rowspan-bound group doesn't fit even in an empty chunking window. Splitting
+                # -- it would corrupt the span it exists to protect, so it's emitted whole, same
+                # -- tolerance the codebase already grants a single oversized row/cell.
+                accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
+                for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
                 accum = _RowAccumulator(
@@ -1269,6 +1300,81 @@ class _HtmlTableSplitter:
         for text, html in accum.flush():
             yield self._prepend_repeated_headers(text, html, is_first_chunk)
             is_first_chunk = False
+
+    def _iter_rowspan_bound_row_groups(
+        self,
+    ) -> Iterator[tuple[tuple[HtmlRow, ...], tuple[int, ...], bool]]:
+        """Group consecutive rows that a `rowspan` binds together.
+
+        A row whose cell declares `rowspan=N` binds the next `N-1` rows to it, since splitting
+        them across chunks would misplace their cells or overclaim the span's row count. A group's
+        far edge is the max reach of every span opened within it (standard overlapping-interval
+        merge); a span reaching past its own row-group's last row, or `rowspan="0"`, clips to that
+        row-group's end (see `_group_last_idx`) and is always yielded rather than dropped.
+
+        Yields, per group: the rows, a same-length tuple of per-row safe rowspan bounds (consumed
+        by `HtmlRow.html_clipped_to_rows()` so an emitted rowspan can never claim a row that isn't
+        actually present in its chunk), and a bool for whether the group's far edge was clipped
+        (used by `_RowAccumulator.crosses_a_row_group_unsafely_if_extended` to avoid packing a
+        clipped group together with a different row-group's rows).
+        """
+        rows = list(self._table_element.iter_rows())
+        n = len(rows)
+        group_last_idx = self._group_last_idx(rows)
+        reach = [0] * n
+        clipped = [False] * n
+        bound: list[int] = [0] * n
+        for idx, row in enumerate(rows):
+            own_group_last = group_last_idx[idx]
+            bound[idx] = own_group_last - idx + 1
+            if row.max_rowspan is None:
+                reach[idx] = own_group_last
+                clipped[idx] = True
+            else:
+                declared_reach = idx + row.max_rowspan - 1
+                reach[idx] = min(declared_reach, own_group_last)
+                clipped[idx] = declared_reach > own_group_last
+
+        group_start = 0
+        group_end = -1  # -- index of the furthest row any span opened so far reaches --
+        for idx in range(n):
+            group_end = max(group_end, reach[idx])
+            if idx == group_end:
+                yield (
+                    tuple(rows[group_start : idx + 1]),
+                    tuple(bound[group_start : idx + 1]),
+                    any(clipped[group_start : idx + 1]),
+                )
+                group_start = idx + 1
+        # -- a span reaching past the last row of its own row-group (or `rowspan="0"`) leaves a
+        # -- final group that never hits `idx == group_end` inside the loop; emit it rather than
+        # -- drop it. It's always clipped -- that's exactly why it never closed on its own. --
+        if group_start < n:
+            yield (
+                tuple(rows[group_start:]),
+                tuple(bound[group_start:]),
+                True,
+            )
+
+    @staticmethod
+    def _group_last_idx(rows: Sequence[HtmlRow]) -> list[int]:
+        """For each row-index in `rows`, the index of the last row sharing its row-group.
+
+        Rows are grouped by identity of `HtmlRow.row_group_key`, so a `rowspan` can never bind
+        rows across a real `<thead>`/`<tbody>`/`<tfoot>` boundary.
+        """
+        n = len(rows)
+        last_idx = [0] * n
+        i = 0
+        while i < n:
+            key = rows[i].row_group_key
+            j = i
+            while j + 1 < n and rows[j + 1].row_group_key is key:
+                j += 1
+            for k in range(i, j + 1):
+                last_idx[k] = j
+            i = j + 1
+        return last_idx
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
@@ -1705,27 +1811,69 @@ class _RowAccumulator:
         self._maxlen = maxlen
         self._measure = measure
         self._rows: list[HtmlRow] = []
+        self._bounds: list[int | None] = []
         self._row_text_len = 0
+        self._has_clipped_group = False
 
-    def add_row(self, row: HtmlRow) -> None:
-        """Add `row` to this accumulation. Caller is responsible for ensuring it will fit."""
-        self._rows.append(row)
-        self._row_text_len += self._measured_row_text_len(row)
+    def add_rows(
+        self,
+        rows: Sequence[HtmlRow],
+        bounds: Sequence[int | None] | None = None,
+        is_clipped: bool = False,
+    ) -> None:
+        """Add `rows` (a rowspan-bound group, possibly of length 1) to this accumulation.
+
+        `bounds` is `rows`' own per-row safe-rowspan-bound (see `_iter_rowspan_bound_row_groups`),
+        carried so `flush()` can rewrite an overreaching cell's `rowspan` to match; `None` means no
+        bound applies and every declared span is trusted as-is. `is_clipped` marks whether the
+        group's far edge was clipped by its own row-group boundary; once set for this accumulation
+        it stays set (see `crosses_a_row_group_unsafely_if_extended`).
+
+        Caller is responsible for ensuring the group will fit.
+        """
+        self._rows.extend(rows)
+        self._bounds.extend(bounds if bounds is not None else (None,) * len(rows))
+        self._row_text_len += self._measured_rows_text_len(rows)
+        self._has_clipped_group = self._has_clipped_group or is_clipped
 
     def flush(self) -> Iterator[TextAndHtml]:
         """Generate zero-or-one (text, html) pairs for accumulated sub-table."""
         if not self._rows:
             return
         text = " ".join(self._iter_cell_texts())
-        trs_str = "".join(r.html for r in self._rows)
+        trs_str = "".join(
+            row.html_clipped_to_rows(bound)
+            if bound is not None and (row.max_rowspan is None or row.max_rowspan > bound)
+            else row.html
+            for row, bound in zip(self._rows, self._bounds)
+        )
         html = f"<table>{trs_str}</table>"
         self._rows.clear()
+        self._bounds.clear()
         self._row_text_len = 0
+        self._has_clipped_group = False
         yield text, html
 
-    def will_fit(self, row: HtmlRow) -> bool:
-        """True when `row` will fit within remaining space left by accummulated rows."""
-        return self._remaining_space >= self._measured_row_text_len(row)
+    def will_fit(self, rows: Sequence[HtmlRow]) -> bool:
+        """True when `rows` (a rowspan-bound group) will fit in space left by accumulated rows."""
+        return self._remaining_space >= self._measured_rows_text_len(rows)
+
+    @property
+    def last_row_group_key(self) -> object | None:
+        """Row-group identity of the most recently accumulated row, `None` if empty."""
+        return self._rows[-1].row_group_key if self._rows else None
+
+    @property
+    def crosses_a_row_group_unsafely_if_extended(self) -> bool:
+        """True when appending a row from a different row-group would blend unrelated content.
+
+        A semantic boundary, not a correctness one -- `flush()`'s bounds-based rewrite already
+        guarantees column placement can't corrupt. Only true once a clipped group (one whose far
+        edge didn't reflect its span's literal declared value) has been accumulated; an unclipped
+        span is safe to extend across a row-group boundary, since its literal value already stops
+        at the right row regardless of what follows.
+        """
+        return self._has_clipped_group
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each row cell as a separate string.
@@ -1743,9 +1891,12 @@ class _RowAccumulator:
         separators_len = len(self._rows)
         return self._maxlen - separators_len - self._row_text_len
 
-    def _measured_row_text_len(self, row: HtmlRow) -> int:
-        """Length of `row` text in configured chunk-size units."""
-        return self._measure(" ".join(row.iter_cell_texts()))
+    def _measured_rows_text_len(self, rows: Sequence[HtmlRow]) -> int:
+        """Length of the joined cell text of `rows` in configured chunk-size units."""
+        texts: list[str] = []
+        for row in rows:
+            texts.extend(row.iter_cell_texts())
+        return self._measure(" ".join(texts))
 
 
 # ================================================================================================
