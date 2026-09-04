@@ -1,6 +1,7 @@
 """Tests for the regex constants in `unstructured.nlp.patterns`."""
 
-import time
+import subprocess
+import sys
 
 import pytest
 
@@ -8,19 +9,43 @@ from unstructured.nlp.patterns import US_PHONE_NUMBERS_RE
 
 SEPARATOR_CHARS = ["-", ".", " ", "(", ")"]
 
-# Sized so that a regression to unbounded separator runs is unambiguous while the test
-# still finishes promptly: the current pattern matches this payload in ~0.3ms, the
-# unbounded form took ~940ms. Keeping the payload small bounds how long a regressed
-# pattern can occupy a test worker before the assertion is reached.
-PAYLOAD_LENGTH = 800
+PAYLOAD_LENGTH = 2000
 
-# ~900x above the expected match time and ~4x below a regression, so the test is stable
-# on a slow or loaded runner without losing its signal.
-TIME_BUDGET_SECONDS = 0.25
+# The current pattern matches these payloads in under a millisecond, so this is orders of
+# magnitude of headroom on a slow or loaded runner while still bounding a regression.
+TIME_BUDGET_SECONDS = 5.0
+
+_MATCH_SCRIPT = "import re, sys; re.search(sys.argv[1], sys.argv[2])"
+
+
+def _search_completes_within(payload: str, timeout: float) -> bool:
+    """Run the pattern against `payload` in a subprocess, bounded by `timeout`.
+
+    CPython does not check for signals while a regex match is in progress, so an
+    in-process alarm cannot interrupt one and a wall-clock assertion after the call
+    cannot bound it. A separate process is what makes the budget enforceable.
+
+    Args:
+        payload (str): The text to match against.
+        timeout (float): Seconds to allow before killing the subprocess.
+
+    Returns:
+        bool: True if the match completed within the timeout.
+    """
+    try:
+        subprocess.run(
+            [sys.executable, "-c", _MATCH_SCRIPT, US_PHONE_NUMBERS_RE.pattern, payload],
+            timeout=timeout,
+            capture_output=True,
+            check=True,
+        )
+    except subprocess.TimeoutExpired:
+        return False
+    return True
 
 
 @pytest.mark.parametrize("char", SEPARATOR_CHARS)
-def test_us_phone_numbers_pattern_matches_long_separator_runs_quickly(char: str):
+def test_us_phone_numbers_pattern_matches_long_separator_runs_within_budget(char: str):
     """A long run of separator characters must match in linear time.
 
     Such runs are common in extracted document text -- table borders, Markdown
@@ -29,39 +54,60 @@ def test_us_phone_numbers_pattern_matches_long_separator_runs_quickly(char: str)
     Args:
         char (str): A single character drawn from the pattern's separator classes.
     """
-    payload = char * PAYLOAD_LENGTH
-
-    start = time.perf_counter()
-    match = US_PHONE_NUMBERS_RE.search(payload)
-    elapsed = time.perf_counter() - start
-
-    assert match is None, "separator-only input should not be read as a phone number"
-    assert elapsed < TIME_BUDGET_SECONDS, (
-        f"matching {PAYLOAD_LENGTH} {char!r} characters took {elapsed:.3f}s "
-        f"(budget {TIME_BUDGET_SECONDS}s) -- the separator runs are likely unbounded again"
+    assert _search_completes_within(char * PAYLOAD_LENGTH, TIME_BUDGET_SECONDS), (
+        f"matching {PAYLOAD_LENGTH} {char!r} characters exceeded {TIME_BUDGET_SECONDS}s "
+        f"-- the separator runs are likely unbounded again"
     )
 
 
-def test_us_phone_numbers_pattern_matches_separator_run_with_digit_tail_quickly():
+def test_us_phone_numbers_pattern_matches_separator_run_with_digit_tail_within_budget():
     """A separator run followed by digits must also match in linear time."""
     payload = " " * PAYLOAD_LENGTH + "1234"
 
-    start = time.perf_counter()
-    US_PHONE_NUMBERS_RE.search(payload)
-    elapsed = time.perf_counter() - start
-
-    assert elapsed < TIME_BUDGET_SECONDS, (
-        f"matching a {PAYLOAD_LENGTH}-space run followed by digits took {elapsed:.3f}s "
-        f"(budget {TIME_BUDGET_SECONDS}s) -- the separator runs are likely unbounded again"
+    assert _search_completes_within(payload, TIME_BUDGET_SECONDS), (
+        f"matching a {PAYLOAD_LENGTH}-space run followed by digits exceeded "
+        f"{TIME_BUDGET_SECONDS}s -- the separator runs are likely unbounded again"
     )
+
+
+@pytest.mark.parametrize("char", SEPARATOR_CHARS)
+def test_us_phone_numbers_pattern_does_not_read_separators_as_a_phone_number(char: str):
+    """Separator-only text contains no phone number.
+
+    Args:
+        char (str): A single character drawn from the pattern's separator classes.
+    """
+    assert US_PHONE_NUMBERS_RE.search(char * 40) is None
+
+
+@pytest.mark.parametrize(
+    ("run_length", "is_matched"),
+    [(0, True), (1, True), (2, True), (3, True), (4, False), (5, False), (10, False)],
+)
+def test_us_phone_numbers_pattern_bounds_the_run_between_final_digit_groups(
+    run_length: int, is_matched: bool
+):
+    """Pin the bound at three characters where no adjacent class can absorb the overflow.
+
+    Between the last two digit groups a single separator class applies, so this is the
+    position that distinguishes `{0,3}` from a looser bound: a four-character run must
+    not match.
+
+    Args:
+        run_length (int): Number of separator characters between the digit groups.
+        is_matched (bool): Whether the pattern is expected to match.
+    """
+    text = "867" + ("-" * run_length) + "5309"
+
+    assert (US_PHONE_NUMBERS_RE.search(text) is not None) is is_matched
 
 
 @pytest.mark.parametrize("char", ["-", ".", " "])
 def test_us_phone_numbers_pattern_does_not_absorb_long_separator_runs(char: str):
     """A separator run past the bound is excluded from the match rather than absorbed.
 
-    The leading digit group is dropped and a shorter trailing span matches instead, so
-    the run itself never appears in full inside the result.
+    Earlier in the string the leading digit group is dropped and a shorter trailing span
+    matches instead, so the run itself never appears in full inside the result.
 
     Args:
         char (str): A separator character to repeat between the digit groups.
@@ -73,15 +119,6 @@ def test_us_phone_numbers_pattern_does_not_absorb_long_separator_runs(char: str)
     assert match is not None
     assert match.group() != text
     assert len(match.group()) < len(text)
-
-
-def test_us_phone_numbers_pattern_rejects_long_run_between_final_digit_groups():
-    """A run past the bound between the last two digit groups leaves nothing to match.
-
-    Unlike a run earlier in the string, there is no shorter trailing span that satisfies
-    the pattern, so the input is not matched at all.
-    """
-    assert US_PHONE_NUMBERS_RE.search("867" + ("-" * 10) + "5309") is None
 
 
 @pytest.mark.parametrize(
