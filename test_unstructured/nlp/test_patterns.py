@@ -102,6 +102,31 @@ def test_us_phone_numbers_pattern_bounds_the_run_between_final_digit_groups(
     assert (US_PHONE_NUMBERS_RE.search(text) is not None) is is_matched
 
 
+@pytest.mark.parametrize(
+    ("run_length", "is_full_match"),
+    [(1, True), (2, True), (3, True), (4, False), (6, False), (10, False)],
+)
+def test_us_phone_numbers_pattern_bounds_the_combined_separator_run(
+    run_length: int, is_full_match: bool
+):
+    """The bound holds across adjacent separator classes, not only within one.
+
+    Between the country code and the prefix two separator runs sit either side of an
+    optional area-code group. The area code's trailing run is nested inside that optional
+    group, so when no area code is present the two runs cannot combine to accept more
+    than three characters.
+
+    Args:
+        run_length (int): Number of separator characters between the digit groups.
+        is_full_match (bool): Whether the whole string is expected to match.
+    """
+    text = "215" + ("-" * run_length) + "867-5309"
+
+    match = US_PHONE_NUMBERS_RE.search(text)
+
+    assert (match is not None and match.group() == text) is is_full_match
+
+
 @pytest.mark.parametrize("char", ["-", ".", " "])
 def test_us_phone_numbers_pattern_does_not_absorb_long_separator_runs(char: str):
     """A separator run past the bound is excluded from the match rather than absorbed.
