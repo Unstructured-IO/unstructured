@@ -5,6 +5,7 @@ Used during partitioning as well as chunking.
 
 from __future__ import annotations
 
+import copy
 import html
 from functools import cached_property
 from typing import TYPE_CHECKING, Iterator, Sequence, cast
@@ -352,18 +353,23 @@ class HtmlRow:
         can never claim more rows than truly follow it, regardless of what a caller subsequently
         decides to place after this row.
 
-        Cells whose declared span already fits within `max_rowspan` are unaffected -- only an
-        actually-overreaching declaration is rewritten.
+        Cells whose declared span already fits within `max_rowspan` are left completely untouched
+        (not even reserialized). A cell that needs correction has ONLY its `rowspan` attribute
+        rewritten (set to the corrected value, or removed entirely when the correction is `1`) --
+        every other tag, child element, attribute, and cell content is preserved exactly as in the
+        source. This operates on a deep-copied `<tr>` so nested tables, links, images, and other
+        markup a naive text-only reconstruction would discard all survive unchanged.
         """
-        cells = [
-            (
-                cell.text,
-                cell.colspan,
-                max_rowspan if cell.rowspan is None else min(cell.rowspan, max_rowspan),
-            )
-            for cell in self.iter_cells()
-        ]
-        return _tr_html(cells)
+        tr = copy.deepcopy(self._tr)
+        for td in tr:
+            rowspan = HtmlCell(td).rowspan
+            if rowspan is not None and rowspan <= max_rowspan:
+                continue  # -- already fits; leave this cell untouched --
+            if max_rowspan <= 1:
+                td.attrib.pop("rowspan", None)
+            else:
+                td.attrib["rowspan"] = str(max_rowspan)
+        return etree.tostring(tr, encoding=str)
 
 
 class HtmlCell:

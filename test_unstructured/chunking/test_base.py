@@ -4,9 +4,11 @@
 
 from __future__ import annotations
 
+import io
 import logging
 from typing import Any, Sequence
 
+import pandas as pd
 import pytest
 from lxml.html import fragment_fromstring
 
@@ -1577,7 +1579,17 @@ class Describe_TableChunker:
             repeat_table_headers=True,
         )
 
-        assert len(chunks) == 3
+        # -- 4 chunks, not 3: the header's own ORIGINAL occurrence is now correctly bounded to its
+        # -- own 1-row thead group (its declared rowspan="2" overreaches that group by one row),
+        # -- so it can no longer share a chunk with any body row and is isolated into its own
+        # -- leading chunk -- separate from (and unaffected by) the carried/repeated copies below --
+        assert len(chunks) == 4
+        original_html = chunks[0].metadata.text_as_html
+        assert original_html is not None
+        original_table = fragment_fromstring(original_html)
+        # -- the original occurrence's overreaching rowspan is corrected away (not left as "2") --
+        assert original_table.xpath("./tr[1]/td[1]/@rowspan") == []
+
         continuation_html = chunks[1].metadata.text_as_html
         assert continuation_html is not None
         continuation_table = fragment_fromstring(continuation_html)
@@ -3480,6 +3492,100 @@ class Describe_HtmlTableSplitter:
             "<tr><td>Scoped</td><td>Inside</td></tr></table>"
         )
         assert chunks[1][1] == "<table><tr><td>After</td><td>Y</td></tr></table>"
+
+    def and_it_preserves_non_text_cell_content_when_correcting_a_clipped_rowspan(self):
+        """`HtmlRow.html_clipped_to_rows()` must only ever touch the `rowspan` attribute -- a
+        nested table, a hyperlink, an image-only cell, and any other cell attribute must survive
+        a correction completely unchanged. Reconstructing a cell from its plain `.text` (the
+        pre-fix behavior) would flatten all of this into concatenated text or an emptied `<td/>`.
+        """
+        opts = ChunkingOptions(max_characters=100_000)
+        html_table = HtmlTable.from_html_text(
+            """
+            <table>
+              <tbody>
+                <tr>
+                  <td rowspan="0">Group</td>
+                  <td data-note="keep-me">
+                    <table><tr><td>Q1</td><td>100</td></tr></table>
+                    <a href="https://example.com/details">details</a>
+                  </td>
+                  <td><img src="chart.png" alt="Chart"/></td>
+                </tr>
+                <tr><td>Other</td><td>row</td><td>content</td></tr>
+              </tbody>
+            </table>
+            """
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        # -- `rowspan="0"` unconditionally goes through the correction path (its true reach is
+        # -- always rewritten to a literal count), which is exactly what exercises this cell's
+        # -- non-text content on every run -- not just when a chunk boundary happens to force it --
+        assert chunks == [
+            (
+                "Group Q1100details Other row content",
+                "<table>"
+                '<tr><td rowspan="2">Group</td>'
+                "<td><table><tr><td>Q1</td><td>100</td></tr></table><a>details</a></td>"
+                "<td><img/></td></tr>"
+                "<tr><td>Other</td><td>row</td><td>content</td></tr>"
+                "</table>",
+            )
+        ]
+
+    def and_it_bounds_the_theads_own_original_occurrence_even_when_repetition_is_configured(
+        self,
+    ):
+        """The carried-header exemption must apply only to a REPEATED copy
+        `_prepend_repeated_headers` injects onto a continuation chunk (a separate artifact built
+        from `row.source_html`/`row.html`, wrapped in its own real `<thead>`) -- never to the
+        header row's own ORIGINAL, wrapper-less occurrence. Before this fix,
+        `repeat_table_headers=True` alone was enough to exempt that original occurrence too, so
+        its overreaching `rowspan` could merge with body rows from a different row-group in the
+        same wrapper-less chunk and shift their columns.
+
+        Verified by reparsing each chunk's own emitted HTML with `pandas.read_html` (which
+        correctly honors `rowspan`/`colspan` when building a grid) and checking that no body
+        value has been shifted into the wrong column -- a genuine geometry check, not just a
+        string/row-count comparison."""
+        html = (
+            "<table>"
+            "<thead>"
+            '<tr><th rowspan="3">Region</th><th>Quarter</th></tr>'
+            "</thead>"
+            "<tbody>"
+            "<tr><td>NW</td><td>Q1</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3</td></tr>"
+            "</tbody>"
+            "</table>"
+        )
+        text = "Region Quarter NW Q1 Southwest Territory Q2 Midwest Territory Q3"
+        table = Table(text, metadata=ElementMetadata(text_as_html=html))
+
+        chunks = chunk_by_title([table], max_characters=60, repeat_table_headers=True)
+
+        assert len(chunks) > 1
+        for chunk in chunks:
+            html_out = chunk.metadata.text_as_html
+            assert html_out is not None
+            grid = pd.read_html(io.StringIO(html_out))[0].to_numpy().tolist()
+            for row in grid:
+                if "NW" in row:
+                    assert row[0] == "NW"
+                    assert row[1] == "Q1"
+                if "Southwest Territory" in row:
+                    assert row[0] == "Southwest Territory"
+                    assert row[1] == "Q2"
+                if "Midwest Territory" in row:
+                    assert row[0] == "Midwest Territory"
+                    assert row[1] == "Q3"
+        # -- no cell text lost or duplicated across the whole set of chunks --
+        combined_text = " ".join(chunk.text for chunk in chunks)
+        for word in ("NW", "Southwest", "Midwest"):
+            assert combined_text.count(word) == 1
 
 
 class Describe_TextSplitter:

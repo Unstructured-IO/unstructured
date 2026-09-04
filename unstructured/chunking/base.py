@@ -1309,7 +1309,7 @@ class _HtmlTableSplitter:
 
     def _iter_rowspan_bound_row_groups(
         self,
-    ) -> Iterator[tuple[tuple[HtmlRow, ...], tuple[int | None, ...], bool]]:
+    ) -> Iterator[tuple[tuple[HtmlRow, ...], tuple[int, ...], bool]]:
         """Group consecutive rows that a `rowspan` binds together.
 
         A row whose cell declares `rowspan=N` binds the next `N-1` rows to it (they carry that
@@ -1329,9 +1329,8 @@ class _HtmlTableSplitter:
         Each yielded group is paired with two things:
 
         - A same-length tuple of per-row **safe rowspan bounds**: for the row at position `p`
-          within the group, either the true number of rows (starting at that row, within its own
-          row-group) it may safely claim, or `None` when the row is an actively carried-forward
-          header row (see below) and should be emitted with its span exactly as declared. This is
+          within the group, the true number of rows (starting at that row, within its own
+          row-group) it may safely claim. This is
           consumed by `HtmlRow.html_clipped_to_rows()` at emission time and is the *structural*
           safety net: whatever else this class's grouping/accumulation logic decides to pack into
           the same chunk, an emitted `rowspan` can never claim a row that isn't genuinely present
@@ -1344,43 +1343,38 @@ class _HtmlTableSplitter:
 
         `rowspan="0"` is always clipped — there is no literal count for it to fall back on. A
         POSITIVE span (e.g. `rowspan="5"`) that declares more rows than its own row-group actually
-        has (`idx + max_rowspan - 1 > own_group_last`) is clipped the same way — UNLESS it is an
-        **actively carried-forward header row**: a `<thead>` row, within the configured header-row
-        count, whose header text is actually going to be repeated onto continuation chunks via
-        `_prepend_repeated_headers` (`self._should_repeat_headers`). That combination is already
-        established elsewhere in this codebase as intentionally extending a header's span past its
-        own section — see `and_it_preserves_source_header_row_html_for_carried_rows` — so such a
-        row is exempted from both the per-row bound (`None`, emit as declared) and the group-clip
-        flag. A `<thead>` row whose span merely happens to overreach with no active repetition
-        configured (e.g. `repeat_table_headers=False`) gets no such exemption: its bound is clipped
-        like any other, since nothing else protects it from binding rows it was never meant to
-        cover. A span that fits entirely within its own row-group as declared is never clipped —
-        its literal value already stops at the right row regardless of what follows.
+        has (`idx + max_rowspan - 1 > own_group_last`) is clipped the same way, with NO exemption
+        for a `<thead>` row even when header repetition is configured. Every row this function
+        iterates is the row's own ORIGINAL, single occurrence in the source table — repeated
+        copies injected onto continuation chunks are an entirely separate artifact, built by
+        `_as_header_row_html`/`_header_rows_html` from `row.source_html`/`row.html` and wrapped in
+        their own real `<thead>` element, never routed through this function's bounds or through
+        `HtmlRow.html_clipped_to_rows()` at all. So a repeated copy's span is already scoped by an
+        actual `<thead>` boundary in the HTML it's emitted into (see
+        `and_it_preserves_source_header_row_html_for_carried_rows`) and needs no exemption here;
+        exempting the ORIGINAL occurrence from its own bound — as an earlier version of this
+        function did, reasoning from "repetition is configured" rather than "this occurrence is a
+        repeated copy" — left that first, wrapper-less occurrence exposed to exactly the
+        cross-row-group corruption this function exists to prevent. A span that fits entirely
+        within its own row-group as declared is never clipped — its literal value already stops at
+        the right row regardless of what follows.
         """
         rows = list(self._table_element.iter_rows())
         n = len(rows)
         group_last_idx = self._group_last_idx(rows)
         reach = [0] * n
         clipped = [False] * n
-        bound: list[int | None] = [None] * n
+        bound: list[int] = [0] * n
         for idx, row in enumerate(rows):
             own_group_last = group_last_idx[idx]
-            is_thead = getattr(row.row_group_key, "tag", None) == "thead"
-            is_carried_header = (
-                is_thead and idx < self._header_row_count and self._should_repeat_headers
-            )
+            bound[idx] = own_group_last - idx + 1
             if row.max_rowspan is None:
                 reach[idx] = own_group_last
                 clipped[idx] = True
-                bound[idx] = own_group_last - idx + 1
             else:
                 declared_reach = idx + row.max_rowspan - 1
-                overreaches = declared_reach > own_group_last
                 reach[idx] = min(declared_reach, own_group_last)
-                clipped[idx] = overreaches and not is_carried_header
-                bound[idx] = (
-                    None if (overreaches and is_carried_header) else (own_group_last - idx + 1)
-                )
+                clipped[idx] = declared_reach > own_group_last
 
         group_start = 0
         group_end = -1  # -- index of the furthest row any span opened so far reaches --

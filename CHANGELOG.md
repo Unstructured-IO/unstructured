@@ -1,3 +1,9 @@
+## 0.27.13
+
+### Fixes
+
+- **Preserve a cell's actual HTML when correcting a clipped or `rowspan="0"` `rowspan`, and bound the `<thead>` row's own original occurrence even when header repetition is configured.** Correcting an overreaching `rowspan` previously reconstructed the cell from its plain text, discarding any nested table, hyperlink, image, or other markup and attribute the source cell carried. Only the `rowspan` attribute is now rewritten on a copy of the real cell; everything else survives unchanged. Separately, a `<thead>` row's ORIGINAL, wrapper-less occurrence was being exempted from this correction whenever header repetition was merely configured — not only for an actual repeated/carried copy (a different artifact, already safely wrapped in its own real `<thead>`) — leaving that first occurrence still vulnerable to exactly the cross-row-group corruption this mechanism exists to prevent. The exemption is now scoped correctly: every row is bounded to its own row-group, full stop.
+
 ## 0.27.12
 
 ### Fixes
