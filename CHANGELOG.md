@@ -1,3 +1,9 @@
+## 0.27.12
+
+### Fixes
+
+- **Rewrite chunked-table `rowspan` handling to self-correct emitted span values, instead of tracking which chunk boundaries are unsafe to cross.** A clipped or `rowspan="0"` cell's emitted HTML previously always carried its original declared value, relying on chunk-boundary bookkeeping to keep it away from rows it didn't truly cover. That value is now rewritten, at the point each chunk is assembled, to the number of rows actually present in that same chunk — an emitted `rowspan` can no longer overreach regardless of what else the chunker decides to pack alongside it. Also fixes two remaining gaps in the boundary bookkeeping this replaces: an overdeclared `<thead>` `rowspan` was exempted from clipping even when header repetition isn't active for it (so nothing else protected it), and the accumulator compared a candidate row-group against the FIRST row it had accumulated rather than the most recent one, which could miss a real transition when an earlier and later row happened to share the same row-group identity.
+
 ## 0.27.11
 
 ### Fixes

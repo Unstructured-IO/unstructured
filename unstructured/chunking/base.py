@@ -1250,16 +1250,19 @@ class _HtmlTableSplitter:
         is_first_chunk = True
         accum = _RowAccumulator(maxlen=self._maxlen(is_first_chunk), measure=self._opts.measure)
 
-        for group, group_is_clipped in self._iter_rowspan_bound_row_groups():
+        for group, group_bounds, group_is_clipped in self._iter_rowspan_bound_row_groups():
             # -- Crossing a row-group boundary is only unsafe when a span already accumulated
             # -- was clipped by ITS OWN row-group boundary (see
             # -- `crosses_a_row_group_unsafely_if_extended`) -- an ordinary row, or a span that
             # -- fits entirely within its own row-group as declared, is always safe to pack with
             # -- whatever comes next, row-group or not, and forcing a flush there would needlessly
-            # -- fragment perfectly normal tables that were never at risk.
+            # -- fragment perfectly normal tables that were never at risk. This check is a
+            # -- semantic nicety, not a correctness requirement: `group_bounds` (below) is what
+            # -- actually guarantees an emitted `rowspan` can never overreach, independent of
+            # -- whether this flush decision fires correctly.
             if (
-                accum.row_group_key is not None
-                and group[0].row_group_key is not accum.row_group_key
+                accum.last_row_group_key is not None
+                and group[0].row_group_key is not accum.last_row_group_key
                 and accum.crosses_a_row_group_unsafely_if_extended
             ):
                 for text, html in accum.flush():
@@ -1278,7 +1281,7 @@ class _HtmlTableSplitter:
                 )
             # -- if group fits, add it to accumulator --
             if accum.will_fit(group):
-                accum.add_rows(group, is_clipped=group_is_clipped)
+                accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
             elif len(group) == 1:  # -- a single row is bigger than the chunking window --
                 for text, html in self._iter_row_splits(
                     group[0], maxlen=self._maxlen(is_first_chunk)
@@ -1292,7 +1295,7 @@ class _HtmlTableSplitter:
                 # -- A rowspan-bound group doesn't fit even in an empty chunking window. Splitting
                 # -- it would corrupt the span it exists to protect, so it's emitted whole, same
                 # -- tolerance the codebase already grants a single oversized row/cell.
-                accum.add_rows(group, is_clipped=group_is_clipped)
+                accum.add_rows(group, group_bounds, is_clipped=group_is_clipped)
                 for text, html in accum.flush():
                     yield self._prepend_repeated_headers(text, html, is_first_chunk)
                     is_first_chunk = False
@@ -1306,7 +1309,7 @@ class _HtmlTableSplitter:
 
     def _iter_rowspan_bound_row_groups(
         self,
-    ) -> Iterator[tuple[tuple[HtmlRow, ...], bool]]:
+    ) -> Iterator[tuple[tuple[HtmlRow, ...], tuple[int | None, ...], bool]]:
         """Group consecutive rows that a `rowspan` binds together.
 
         A row whose cell declares `rowspan=N` binds the next `N-1` rows to it (they carry that
@@ -1323,46 +1326,82 @@ class _HtmlTableSplitter:
         here (see `_group_last_idx`), and the final, possibly-still-open group is always yielded
         rather than silently dropped.
 
-        Each yielded group is paired with a `bool`: whether the group's far edge was *clipped* by
-        its own row-group boundary in a way that's unsafe to extend across that boundary.
-        `rowspan="0"` is always clipped this way, regardless of section — there is no literal
-        count for it to fall back on, so its emitted HTML would let it reach into whatever
-        follows once section wrappers are stripped. A POSITIVE span (e.g. `rowspan="5"`) that
-        declares more rows than its own row-group actually has (`idx + max_rowspan - 1 >
-        own_group_last`) is clipped the same way -- UNLESS its own row-group is a `<thead>`: a
-        `<thead>` row's positive span is already established, elsewhere in this codebase, as
-        intentionally extending past its own section (a header repeated/carried forward into the
-        body via `_prepend_repeated_headers`, independent of this grouping mechanism entirely) --
-        see `and_it_preserves_source_header_row_html_for_carried_rows`. A span that fits entirely
-        within its own row-group as declared is never clipped — its literal value already stops
-        at the right row regardless of what follows, so packing more rows after it is always safe.
+        Each yielded group is paired with two things:
+
+        - A same-length tuple of per-row **safe rowspan bounds**: for the row at position `p`
+          within the group, either the true number of rows (starting at that row, within its own
+          row-group) it may safely claim, or `None` when the row is an actively carried-forward
+          header row (see below) and should be emitted with its span exactly as declared. This is
+          consumed by `HtmlRow.html_clipped_to_rows()` at emission time and is the *structural*
+          safety net: whatever else this class's grouping/accumulation logic decides to pack into
+          the same chunk, an emitted `rowspan` can never claim a row that isn't genuinely present
+          in that same chunk, because it is rewritten to match this bound regardless.
+        - A `bool`: whether the group's far edge was *clipped* by its own row-group boundary in a
+          way that makes it unsafe to *also* pack a different row-group's rows into the same
+          chunk (used only by `_RowAccumulator.crosses_a_row_group_unsafely_if_extended` to decide
+          when to keep a clipped group isolated in its own chunk, a semantic — not correctness —
+          concern now that the per-row bounds above independently guarantee correctness).
+
+        `rowspan="0"` is always clipped — there is no literal count for it to fall back on. A
+        POSITIVE span (e.g. `rowspan="5"`) that declares more rows than its own row-group actually
+        has (`idx + max_rowspan - 1 > own_group_last`) is clipped the same way — UNLESS it is an
+        **actively carried-forward header row**: a `<thead>` row, within the configured header-row
+        count, whose header text is actually going to be repeated onto continuation chunks via
+        `_prepend_repeated_headers` (`self._should_repeat_headers`). That combination is already
+        established elsewhere in this codebase as intentionally extending a header's span past its
+        own section — see `and_it_preserves_source_header_row_html_for_carried_rows` — so such a
+        row is exempted from both the per-row bound (`None`, emit as declared) and the group-clip
+        flag. A `<thead>` row whose span merely happens to overreach with no active repetition
+        configured (e.g. `repeat_table_headers=False`) gets no such exemption: its bound is clipped
+        like any other, since nothing else protects it from binding rows it was never meant to
+        cover. A span that fits entirely within its own row-group as declared is never clipped —
+        its literal value already stops at the right row regardless of what follows.
         """
         rows = list(self._table_element.iter_rows())
+        n = len(rows)
         group_last_idx = self._group_last_idx(rows)
-        group_start = 0
-        group_end = -1  # -- index of the furthest row any span opened so far reaches --
-        group_clipped = False
+        reach = [0] * n
+        clipped = [False] * n
+        bound: list[int | None] = [None] * n
         for idx, row in enumerate(rows):
             own_group_last = group_last_idx[idx]
             is_thead = getattr(row.row_group_key, "tag", None) == "thead"
+            is_carried_header = (
+                is_thead and idx < self._header_row_count and self._should_repeat_headers
+            )
             if row.max_rowspan is None:
-                row_reach = own_group_last
-                row_clipped = True
+                reach[idx] = own_group_last
+                clipped[idx] = True
+                bound[idx] = own_group_last - idx + 1
             else:
                 declared_reach = idx + row.max_rowspan - 1
-                row_reach = min(declared_reach, own_group_last)
-                row_clipped = declared_reach > own_group_last and not is_thead
-            group_end = max(group_end, row_reach)
-            group_clipped = group_clipped or row_clipped
+                overreaches = declared_reach > own_group_last
+                reach[idx] = min(declared_reach, own_group_last)
+                clipped[idx] = overreaches and not is_carried_header
+                bound[idx] = (
+                    None if (overreaches and is_carried_header) else (own_group_last - idx + 1)
+                )
+
+        group_start = 0
+        group_end = -1  # -- index of the furthest row any span opened so far reaches --
+        for idx in range(n):
+            group_end = max(group_end, reach[idx])
             if idx == group_end:
-                yield tuple(rows[group_start : idx + 1]), group_clipped
+                yield (
+                    tuple(rows[group_start : idx + 1]),
+                    tuple(bound[group_start : idx + 1]),
+                    any(clipped[group_start : idx + 1]),
+                )
                 group_start = idx + 1
-                group_clipped = False
         # -- a span reaching past the last row of its own row-group (or `rowspan="0"`) leaves a
         # -- final group that never hits `idx == group_end` inside the loop; emit it rather than
         # -- drop it. It's always clipped -- that's exactly why it never closed on its own. --
-        if group_start < len(rows):
-            yield tuple(rows[group_start:]), True
+        if group_start < n:
+            yield (
+                tuple(rows[group_start:]),
+                tuple(bound[group_start:]),
+                True,
+            )
 
     @staticmethod
     def _group_last_idx(rows: Sequence[HtmlRow]) -> list[int]:
@@ -1822,21 +1861,36 @@ class _RowAccumulator:
         self._maxlen = maxlen
         self._measure = measure
         self._rows: list[HtmlRow] = []
+        self._bounds: list[int | None] = []
         self._row_text_len = 0
         self._has_clipped_group = False
 
-    def add_rows(self, rows: Sequence[HtmlRow], is_clipped: bool = False) -> None:
+    def add_rows(
+        self,
+        rows: Sequence[HtmlRow],
+        bounds: Sequence[int | None] | None = None,
+        is_clipped: bool = False,
+    ) -> None:
         """Add `rows` (a rowspan-bound group, possibly of length 1) to this accumulation.
 
+        `bounds` is `rows`' own per-row safe-rowspan-bound (see `_iter_rowspan_bound_row_groups`),
+        carried alongside so `flush()` can rewrite an overreaching cell's `rowspan` to match --
+        the structural guarantee that an emitted span can never claim a row that isn't genuinely
+        present, independent of whatever else this accumulator goes on to hold. Omitted (`None`)
+        means "no bound for any of these rows" -- every declared span is trusted as-is, the
+        pre-existing behavior for callers unconcerned with row-group correctness.
+
         `is_clipped` is whether the group's far edge was clipped by its own row-group boundary
-        (see `_iter_rowspan_bound_row_groups`) rather than reflecting a span's literal declared
-        value -- once true for any group in this accumulation, it stays true (a single clipped
-        group anywhere in the accumulated rows is enough to make extending across a row-group
-        boundary unsafe).
+        rather than reflecting a span's literal declared value -- once true for any group in this
+        accumulation, it stays true (a single clipped group anywhere in the accumulated rows is
+        enough to make extending across a row-group boundary unsafe -- see
+        `crosses_a_row_group_unsafely_if_extended`, a semantic nicety independent of `bounds`'
+        correctness guarantee).
 
         Caller is responsible for ensuring the group will fit.
         """
         self._rows.extend(rows)
+        self._bounds.extend(bounds if bounds is not None else (None,) * len(rows))
         self._row_text_len += self._measured_rows_text_len(rows)
         self._has_clipped_group = self._has_clipped_group or is_clipped
 
@@ -1845,9 +1899,15 @@ class _RowAccumulator:
         if not self._rows:
             return
         text = " ".join(self._iter_cell_texts())
-        trs_str = "".join(r.html for r in self._rows)
+        trs_str = "".join(
+            row.html_clipped_to_rows(bound)
+            if bound is not None and (row.max_rowspan is None or row.max_rowspan > bound)
+            else row.html
+            for row, bound in zip(self._rows, self._bounds)
+        )
         html = f"<table>{trs_str}</table>"
         self._rows.clear()
+        self._bounds.clear()
         self._row_text_len = 0
         self._has_clipped_group = False
         yield text, html
@@ -1857,29 +1917,32 @@ class _RowAccumulator:
         return self._remaining_space >= self._measured_rows_text_len(rows)
 
     @property
-    def row_group_key(self) -> object | None:
-        """Row-group identity shared by the rows already accumulated, `None` if empty.
+    def last_row_group_key(self) -> object | None:
+        """Row-group identity of the most recently accumulated row, `None` if empty.
 
-        A rowspan-bound group never itself spans two row-groups (`_iter_rowspan_bound_row_groups`
-        guarantees that), so any one row's key stands for the whole accumulation.
+        Used to decide whether the NEXT group differs from what's already accumulated -- a
+        rowspan-bound group never itself spans two row-groups (`_iter_rowspan_bound_row_groups`
+        guarantees that), but the accumulation as a WHOLE can span several, one appended after
+        another, so it's the last one added -- not the first -- that the next comparison is
+        against.
         """
-        return self._rows[0].row_group_key if self._rows else None
+        return self._rows[-1].row_group_key if self._rows else None
 
     @property
     def crosses_a_row_group_unsafely_if_extended(self) -> bool:
-        """True when appending a row from a DIFFERENT row-group could corrupt a span already
-        held here.
+        """True when appending a row from a DIFFERENT row-group would blend content that never
+        belonged together, even though `flush()`'s `bounds`-based rewrite (see `add_rows`) already
+        guarantees this can never corrupt column placement.
 
-        True whenever any group accumulated so far was *clipped* by its own row-group boundary
-        (tracked via `add_rows`'s `is_clipped` argument) -- `rowspan="0"` (which is row-group-
-        scoped by the HTML spec, "spans every remaining row IN THE ROW GROUP") is always clipped
-        by construction, and so is a positive declared span (e.g. `rowspan="5"`) that named more
-        rows than its own row-group actually had. In either case the emitted cell's HTML still
-        carries the original, uncorrected declared value -- never rewritten to match the clip --
-        and `HtmlTable.from_html_text` strips section wrappers when building the row model, so
-        appending a different row-group's rows after such a group would emit a flat, wrapper-less
-        `<table>` in which that declared value legitimately -- by HTML's own rules, absent any
-        visible section boundary -- reaches into rows it was never meant to bind.
+        This is a semantic boundary, not a correctness one: `rowspan="0"` (which is row-group-
+        scoped by the HTML spec, "spans every remaining row IN THE ROW GROUP") and a positive
+        declared span (e.g. `rowspan="5"`) that named more rows than its own row-group actually
+        had are both cases where the cell's declared value doesn't reflect a real, intentional
+        span past its own section -- `flush()` will rewrite the emitted `rowspan` to match reality
+        regardless of what gets appended here, so the only thing this property still protects
+        against is a clipped group's row-group getting visually absorbed into unrelated content
+        that happens to fit the same chunking window, which is undesirable even though it would no
+        longer be geometrically wrong.
 
         A span that fit entirely within its own row-group AS DECLARED (never clipped) is safe to
         extend across a row-group boundary -- its literal value already stops at the right row

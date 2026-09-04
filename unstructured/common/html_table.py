@@ -64,6 +64,12 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
 
 
+def _tr_html(cells: Sequence[SpannedCell]) -> str:
+    """Serialize one `<tr>` from `(cell_text, colspan, rowspan)` triples."""
+    tds = (_format_td(text, colspan, rowspan) for text, colspan, rowspan in cells)
+    return f"<tr>{''.join(tds)}</tr>"
+
+
 def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]) -> str:
     """Like `htmlify_matrix_of_cell_texts()` but each cell can also carry a colspan/rowspan.
 
@@ -81,8 +87,7 @@ def htmlify_matrix_of_spanned_cell_texts(matrix: Sequence[Sequence[SpannedCell]]
             # -- (its cells were already emitted there). Suppressing it would drop a `<tr>`, which
             # -- shifts the column-placement of every subsequent row under HTML's rowspan model
             # -- (rowspan counts actual `<tr>` elements, not "rows that happened to have content").
-            tds = (_format_td(text, colspan, rowspan) for text, colspan, rowspan in row)
-            yield f"<tr>{''.join(tds)}</tr>"
+            yield _tr_html(row)
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
 
@@ -335,6 +340,31 @@ class HtmlRow:
             return None
         return max((span for span in spans if span is not None), default=1)
 
+    def html_clipped_to_rows(self, max_rowspan: int) -> str:
+        """Serialize this row's `<tr>`, clipping any cell's `rowspan` down to `max_rowspan` when
+        its declared value (or `rowspan="0"`, HTML's "spans every remaining row") would otherwise
+        claim more rows than `max_rowspan` names.
+
+        `max_rowspan` is supplied by the caller as the number of rows -- including this one --
+        that are actually going to be present, in order, starting at this row in the emitted
+        fragment; this method has no notion of the wider table or chunking context. Passing the
+        row's own true remaining reach here is what makes the emitted `rowspan` self-correct: it
+        can never claim more rows than truly follow it, regardless of what a caller subsequently
+        decides to place after this row.
+
+        Cells whose declared span already fits within `max_rowspan` are unaffected -- only an
+        actually-overreaching declaration is rewritten.
+        """
+        cells = [
+            (
+                cell.text,
+                cell.colspan,
+                max_rowspan if cell.rowspan is None else min(cell.rowspan, max_rowspan),
+            )
+            for cell in self.iter_cells()
+        ]
+        return _tr_html(cells)
+
 
 class HtmlCell:
     """A `<td>` element."""
@@ -365,3 +395,16 @@ class HtmlCell:
         except (TypeError, ValueError):
             return 1
         return None if value == 0 else max(1, value)
+
+    @cached_property
+    def colspan(self) -> int:
+        """Declared `colspan` for this cell, `1` when absent, unparseable, or non-positive.
+
+        Unlike `rowspan`, HTML gives `colspan="0"` no special "spans every remaining column"
+        meaning, so it is simply treated as the default of `1`.
+        """
+        try:
+            value = int(self._td.attrib.get("colspan", 1))
+        except (TypeError, ValueError):
+            return 1
+        return max(1, value)
