@@ -106,21 +106,43 @@ def test_us_phone_numbers_pattern_bounds_the_run_between_final_digit_groups(
     ("run_length", "is_full_match"),
     [(1, True), (2, True), (3, True), (4, False), (6, False), (10, False)],
 )
-def test_us_phone_numbers_pattern_bounds_the_combined_separator_run(
+def test_us_phone_numbers_pattern_bounds_the_run_before_the_prefix(
     run_length: int, is_full_match: bool
 ):
-    """The bound holds across adjacent separator classes, not only within one.
+    """With no area code present, the runs either side of it cannot merge.
 
-    Between the country code and the prefix two separator runs sit either side of an
-    optional area-code group. The area code's trailing run is nested inside that optional
-    group, so when no area code is present the two runs cannot combine to accept more
-    than three characters.
+    The area code's trailing separator run is nested inside the optional area-code group,
+    so when that group does not participate only the leading run applies. Without the
+    nesting these two runs are adjacent and accept six characters between them.
 
     Args:
-        run_length (int): Number of separator characters between the digit groups.
+        run_length (int): Number of separator characters before the prefix.
         is_full_match (bool): Whether the whole string is expected to match.
     """
     text = "215" + ("-" * run_length) + "867-5309"
+
+    match = US_PHONE_NUMBERS_RE.search(text)
+
+    assert (match is not None and match.group() == text) is is_full_match
+
+
+@pytest.mark.parametrize(
+    ("run_length", "is_full_match"),
+    [(0, True), (1, True), (3, True), (4, False), (5, False)],
+)
+def test_us_phone_numbers_pattern_bounds_the_run_after_the_area_code(
+    run_length: int, is_full_match: bool
+):
+    """The area code's own trailing run is bounded when that group does participate.
+
+    Covers the other separator branch: here the optional area-code group matches, so the
+    run being bounded is the one nested inside it rather than the leading run.
+
+    Args:
+        run_length (int): Number of separator characters after the area code.
+        is_full_match (bool): Whether the whole string is expected to match.
+    """
+    text = "1-800" + ("-" * run_length) + "867-5309"
 
     match = US_PHONE_NUMBERS_RE.search(text)
 
