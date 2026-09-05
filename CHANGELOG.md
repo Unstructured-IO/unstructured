@@ -1,3 +1,9 @@
+## 0.27.6-dev0
+
+### Fixes
+
+- **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
+
 ## 0.27.5
 
 ### Fixes

@@ -439,6 +439,19 @@ class DescribeFlow:
         with pytest.raises(StopIteration):
             e = next(elements)
 
+    def it_ignores_a_processing_instruction_node(self):
+        """A stray `<?xml ...?>` in the HTML must not break element iteration (issue #4358).
+
+        `remove_pis=True` on the parser drops the processing-instruction node, so it never
+        reaches the traversal as a bare `_ProcessingInstruction` (which has no `.is_phrasing`).
+        """
+        html_text = '<div><p>before</p><?xml version="1.0"?><p>after</p></div>'
+        div = etree.fromstring(html_text, html_parser).xpath(".//div")[0]
+
+        elements = list(div.iter_elements())
+
+        assert elements == [Text("before"), Text("after")]
+
     # -- ._page_number ----------------------------------------------------
 
     def it_returns_None_when_no_data_page_number_in_tree(self):
