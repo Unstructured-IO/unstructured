@@ -487,6 +487,13 @@ def elements_to_ndjson(
 def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
     out_elements: list[Element] = []
     for element in elements:
+        # -- the copy exists only so the two fields below can be rounded without touching the
+        # -- caller's element; most elements carry neither, and this runs over every element of
+        # -- every serialized document --
+        if not element.metadata.coordinates and not element.metadata.detection_class_prob:
+            out_elements.append(element)
+            continue
+
         el = deepcopy(element)
         if el.metadata.coordinates:
             precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
