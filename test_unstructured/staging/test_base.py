@@ -1011,3 +1011,18 @@ def test_element_to_md_with_none_mime_type():
     result = base.element_to_md(image_element)
     assert "![Test Image](data:image/*" in result
     assert "base64," in result
+
+
+def test_fix_metadata_field_precision_leaves_elements_with_nothing_to_round_alone():
+    """Copying an element to round fields it does not have is waste.
+
+    Both `elements_to_json()` and `orig_elements` serialization run this over every element, so the
+    copy was paid on every element of every document, not only the ones carrying coordinates.
+    """
+    element = Text("Lorem Ipsum")
+    assert element.metadata.coordinates is None
+    assert element.metadata.detection_class_prob is None
+
+    (result,) = base._fix_metadata_field_precision([element])
+
+    assert result is element
