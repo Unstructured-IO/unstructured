@@ -1,0 +1,33 @@
+unstructured/__version__.py
+  s_bbec982434ba1e::t_3d75cb8a740551 1
+test_unstructured/staging/test_base.py
+  s_bbec982434ba1e::t_006e7a020657a4 1014-1028
+unstructured/documents/elements.py
+  s_bbec982434ba1e::t_c57d789531ec4f 439,445-449
+  s_bbec982434ba1e::t_c09cfb1aca3870 238-244
+  s_bbec982434ba1e::t_66eaea2bc4e909 450
+test_unstructured/documents/test_elements.py
+  s_bbec982434ba1e::t_006e7a020657a4 12,430-435,457-467
+  s_bbec982434ba1e::t_c57d789531ec4f 436-456
+  s_bbec982434ba1e::t_8730d503db799b 468
+unstructured/staging/base.py
+  s_bbec982434ba1e::t_c09cfb1aca3870 490-496
+CHANGELOG.md
+  s_bbec982434ba1e::t_3d75cb8a740551 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "0b56c32d3a94f038ad4224d99fa72cd9f6ab9f0b",
+  "prompts": {},
+  "sessions": {
+    "s_bbec982434ba1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c01cb0da-3c2e-4677-add9-902ae5c584e4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    }
+  }
+}
