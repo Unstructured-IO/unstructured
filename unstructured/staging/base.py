@@ -494,6 +494,10 @@ def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
             out_elements.append(element)
             continue
 
+        # -- mint the id on the caller's element first. `Element.id` caches on first access, so
+        # -- without this the copy below takes a fresh uuid with it and every call reports a
+        # -- different `element_id` for the same element --
+        _ = element.id
         el = deepcopy(element)
         if el.metadata.coordinates:
             precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
