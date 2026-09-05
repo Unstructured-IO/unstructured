@@ -1,0 +1,25 @@
+unstructured/staging/base.py
+  s_bbec982434ba1e::t_3bed8a3ae0e819 497-500
+test_unstructured/documents/test_elements.py
+  s_bbec982434ba1e::t_3bed8a3ae0e819 469-473,480,482-495
+  s_bbec982434ba1e::t_866863b9fea039 474-479,481
+CHANGELOG.md
+  s_bbec982434ba1e::t_3bed8a3ae0e819 1
+  s_bbec982434ba1e::t_fde288808559f8 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "dbc99bdb52485e28bc70ff4ae5eec0aff2d585c4",
+  "prompts": {},
+  "sessions": {
+    "s_bbec982434ba1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c01cb0da-3c2e-4677-add9-902ae5c584e4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "paulkarayan <pk@unstructured.io>"
+    }
+  }
+}
