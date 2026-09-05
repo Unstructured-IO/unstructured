@@ -1,3 +1,9 @@
+## 0.27.6
+
+### Fixes
+
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
+
 ## 0.27.5
 
 ### Fixes

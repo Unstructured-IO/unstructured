@@ -14,6 +14,8 @@ from typing import Any, Iterator
 import docx
 import pytest
 from docx.document import Document
+from docx.enum.section import WD_SECTION
+from docx.section import Section
 from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
 
@@ -1277,6 +1279,35 @@ class Describe_DocxPartitioner:
 
         element = next(footer_iter)
         assert element.text == "para1\ncell1 a b c d e f\npara2"
+
+    def it_traverses_document_blocks_once_for_many_sections(
+        self, opts_args: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+    ):
+        """Partitioning avoids the per-section full-prefix scans in python-docx."""
+        document = docx.Document()
+        expected_texts: list[str] = []
+        for section_idx in range(25):
+            text = f"section-{section_idx}"
+            document.add_paragraph(text)
+            expected_texts.append(text)
+            if section_idx < 24:
+                document.add_section(WD_SECTION.CONTINUOUS)
+
+        file = io.BytesIO()
+        document.save(file)
+        file.seek(0)
+        opts_args["file"] = file
+
+        def fail_on_section_scan(_self: Section) -> Iterator[Paragraph]:
+            raise AssertionError("partitioner must not scan each section from document start")
+
+        monkeypatch.setattr(Section, "iter_inner_content", fail_on_section_scan)
+
+        elements = list(
+            _DocxPartitioner.iter_document_elements(DocxPartitionerOptions(**opts_args))
+        )
+
+        assert [element.text for element in elements] == expected_texts
 
 
 def test_partition_docx_skips_malformed_row_cells():

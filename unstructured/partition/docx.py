@@ -394,32 +394,39 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
-        # -- This implementation composes a collection of iterators into a "combined" iterator
-        # -- return value using `yield from`. You can think of the return value as an Element
-        # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
-        # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
-        # -- those small lists), is more flexible for later iterator operations like filter,
-        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
-        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
-        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
-        # -- characteristic of a generator avoids repeated code to form interim results into lists.
-        for section_idx, section in enumerate(self._document.sections):
-            yield from self._iter_section_page_breaks(section_idx, section)
-            yield from self._iter_section_headers(section)
+        sections = iter(enumerate(self._document.sections))
+        section_idx, section = next(sections)
 
-            for block_item in section.iter_inner_content():
-                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
-                # -- Paragraph is more common so check that first.
-                if isinstance(block_item, Paragraph):
-                    yield from self._iter_paragraph_elements(block_item)
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield from self._iter_table_element(block_item)
+        yield from self._iter_section_page_breaks(section_idx, section)
+        yield from self._iter_section_headers(section)
 
-            yield from self._iter_section_footers(section)
+        # -- Iterate document blocks only once. `Section.iter_inner_content()` scans from the start
+        # -- of the document to find each section's boundaries, which becomes prohibitively
+        # -- expensive for documents with many sections and paragraphs.
+        for block_item in self._document.iter_inner_content():
+            # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+            # -- Paragraph is more common so check that first.
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+            elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                block_item, DocxTable
+            ):
+                yield from self._iter_table_element(block_item)
+
+            # -- A paragraph-level sectPr marks the final paragraph governed by the current
+            # -- section. The final section's sectPr lives directly under w:body, so it is handled
+            # -- after the loop.
+            if (
+                isinstance(block_item, Paragraph)
+                and block_item._p.pPr is not None
+                and block_item._p.pPr.sectPr is section._sectPr
+            ):
+                yield from self._iter_section_footers(section)
+                section_idx, section = next(sections)
+                yield from self._iter_section_page_breaks(section_idx, section)
+                yield from self._iter_section_headers(section)
+
+        yield from self._iter_section_footers(section)
 
     def _iter_sectionless_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in a docx `document` that has no sections.
