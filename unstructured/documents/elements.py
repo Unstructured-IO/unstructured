@@ -235,6 +235,13 @@ class ElementMetadata:
     # -- `.fields` dict used by other parts of the library like chunking and weaviate.
     DEBUG_FIELD_NAMES = frozenset(["detection_origin"])
 
+    #: Fields that `.to_dict()` replaces with their serialized form. Deep-copying them there
+    #: would only build a copy that is thrown away on the next few lines, and `orig_elements` on
+    #: a chunk holds every source element of that chunk.
+    SEPARATELY_SERIALIZED_FIELD_NAMES = frozenset(
+        ["coordinates", "data_source", "orig_elements", "key_value_pairs"]
+    )
+
     def __init__(
         self,
         attached_to_filename: Optional[str] = None,
@@ -429,11 +436,17 @@ class ElementMetadata:
         """
         from unstructured.staging.base import elements_to_base64_gzipped_json
 
-        meta_dict = copy.deepcopy(dict(self.fields))
+        meta_dict = dict(self.fields)
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
+
+        # -- drop the fields replaced by their serialized form below, then copy what is left so a
+        # -- caller mutating the returned dict cannot reach back into this metadata --
+        for field_name in self.SEPARATELY_SERIALIZED_FIELD_NAMES:
+            meta_dict.pop(field_name, None)
+        meta_dict = copy.deepcopy(meta_dict)
 
         # -- don't serialize empty lists --
         meta_dict: dict[str, Any] = {

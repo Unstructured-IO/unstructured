@@ -9,6 +9,7 @@ import io
 import json
 import pathlib
 from functools import partial
+from unittest.mock import patch
 
 import pytest
 
@@ -425,6 +426,45 @@ class DescribeElementMetadata:
         assert len(restored) == 2
         assert restored[0].text == "Lorem"
         assert restored[1].text == "Lorem Ipsum"
+
+    def and_it_does_not_deep_copy_the_sub_objects_it_reserializes(self):
+        """`to_dict()` replaces `orig_elements` with its base64 form, so copying it first is waste.
+
+        On a chunk, `orig_elements` holds every source element of that chunk, so the discarded copy
+        dominated the cost of serializing it.
+        """
+        meta = ElementMetadata(
+            orig_elements=assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")]),
+            page_number=2,
+        )
+        copied_dicts = []
+        real_deepcopy = copy.deepcopy
+
+        def recording_deepcopy(x, memo=None):
+            if isinstance(x, dict):
+                copied_dicts.append(x)
+            return real_deepcopy(x, memo)
+
+        with patch.object(copy, "deepcopy", recording_deepcopy):
+            meta.to_dict()
+
+        assert copied_dicts, "expected `to_dict()` to copy its remaining fields"
+        assert all(
+            separately_serialized_field not in copied
+            for copied in copied_dicts
+            for separately_serialized_field in ElementMetadata.SEPARATELY_SERIALIZED_FIELD_NAMES
+        )
+
+    def and_it_serializes_orig_elements_the_same_way_on_every_call(self):
+        """Two `to_dict()` calls on one metadata must agree on the ids of its `orig_elements`.
+
+        `Element.id` mints a uuid on first access and caches it on that instance. Copying the
+        elements meant each call materialized ids on throwaway copies, so consecutive
+        serializations of one chunk reported different ids for the same source elements.
+        """
+        meta = ElementMetadata(orig_elements=[Title("Lorem"), Text("Lorem Ipsum")])
+
+        assert meta.to_dict()["orig_elements"] == meta.to_dict()["orig_elements"]
 
     def but_unlike_in_ElementMetadata_unknown_fields_in_sub_objects_are_ignored(self):
         """Metadata sub-objects ignore fields they do not explicitly define.
