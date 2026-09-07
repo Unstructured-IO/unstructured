@@ -113,6 +113,12 @@ TEX_ENCODINGS = (
     "latex",
     "application/x-latex",
 )
+"""TeX/LaTeX annotation encodings recognized in MathML `<annotation>` elements.
+
+The order is significant. More specific MIME-style encodings are preferred over
+legacy shorthand values when multiple supported annotations are present.
+"""
+
 
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
@@ -694,7 +700,25 @@ class Phrasing(etree.ElementBase):
 
 
 class Math(Phrasing):
+    """Custom element-class for `<math>` element.
+
+    Provides basic math annotations.
+    """
+
     def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
+        """Generate a text segment for the mathematical expression and its tail.
+
+        The mathematical representation is selected in this order:
+
+        1. The first non-empty `<annotation>` whose ``encoding`` is one of the
+           supported TeX/LaTeX encodings.
+        2. The `<math>` element's ``alttext`` attribute.
+
+        No mathematical text segment is emitted when neither representation is
+        available. Tail text is always preserved according to normal
+        :class:`Phrasing` behavior.
+        """
+
         latex = None
 
         for encoding in TEX_ENCODINGS:
