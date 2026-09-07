@@ -107,6 +107,13 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
+TEX_ENCODINGS = (
+    "application/x-tex",
+    "TeX",
+    "latex",
+    "application/x-latex",
+)
+
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
 # ------------------------------------------------------------------------------------------------
@@ -686,6 +693,29 @@ class Phrasing(etree.ElementBase):
             yield from e.iter_text_segments(emphasis)
 
 
+class Math(Phrasing):
+    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
+        latex = None
+
+        for encoding in TEX_ENCODINGS:
+            annotations_latex = self.find(f".//annotation[@encoding='{encoding}']")
+            if annotations_latex is not None:
+                latex = annotations_latex.text
+                break
+
+        if not latex or not latex.strip():
+            alt_text = self.get("alttext")
+            if alt_text is not None:
+                latex = alt_text
+
+        if latex:
+            yield TextSegment(
+                latex.strip(),
+                self._annotation(latex, enclosing_emphasis),
+            )
+
+        yield from self._iter_tail_segment(enclosing_emphasis)
+
 class Anchor(Phrasing):
     """Custom element-class for `<a>` element.
 
@@ -983,6 +1013,8 @@ element_class_lookup.get_namespace(None).update(
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
+        # -- math --
+        "math": Math,
         # -- annotated phrasing --
         "a": Anchor,
         "b": Bold,
