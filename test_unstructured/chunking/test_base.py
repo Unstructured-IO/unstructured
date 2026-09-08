@@ -3054,6 +3054,8 @@ class Describe_HtmlTableSplitter:
             assert len(html) <= 50
         # -- no text lost or duplicated across the split --
         assert " ".join(text for text, _ in chunks).replace(" & ", " ").split() == ["x"] * 20
+        # -- the escape itself actually landed in the emitted HTML, not just the parallel text --
+        assert any("&amp;" in html for _, html in chunks)
 
     def and_it_accounts_for_colspan_and_escaping_together_when_splitting_an_oversized_cell(self):
         """A large `colspan` and heavy escaping both eat into a cell's usable content budget at
