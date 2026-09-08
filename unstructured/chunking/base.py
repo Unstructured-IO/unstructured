@@ -1522,12 +1522,12 @@ class _HtmlTableSplitter:
         split = _TextSplitter(opts)
 
         text, remainder = split(cell.text)
-        yield text, f"<table><tr><td>{text}</td></tr></table>"
+        yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
 
         # -- an oversized cell will have a remainder, split that up into additional chunks.
         while remainder:
             text, remainder = split(remainder)
-            yield text, f"<table><tr><td>{text}</td></tr></table>"
+            yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
 
     @cached_property
     def _header_text(self) -> str:

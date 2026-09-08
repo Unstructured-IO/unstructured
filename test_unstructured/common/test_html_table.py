@@ -397,6 +397,10 @@ class DescribeHtmlCell:
             '<td><a href="#">Category Link</a></td>'
         )
 
+    def and_it_preserves_colspan_and_rowspan_on_an_empty_cell(self):
+        cell = HtmlCell(fragment_fromstring('<td colspan="2" rowspan="3"></td>'))
+        assert cell.html == '<td colspan="2" rowspan="3"/>'
+
     @pytest.mark.parametrize(
         ("cell_html", "expected_value"),
         [

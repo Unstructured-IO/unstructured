@@ -3009,6 +3009,19 @@ class Describe_HtmlTableSplitter:
             ),
         ]
 
+    def and_it_preserves_colspan_when_splitting_an_oversized_cell(self):
+        opts = ChunkingOptions(max_characters=50)
+        words = " ".join(["word"] * 30)
+        html_table = HtmlTable.from_html_text(
+            f'<table><tr><td colspan="2">{words}</td></tr></table>'
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert html.startswith('<table><tr><td colspan="2">')
+
     def and_it_uses_the_configured_measurement_units_for_row_fitting(
         self, monkeypatch: pytest.MonkeyPatch
     ):

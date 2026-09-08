@@ -370,7 +370,9 @@ class HtmlCell:
     @cached_property
     def html(self) -> str:
         """Like  "<td>foo bar baz</td>"."""
-        return etree.tostring(self._td, encoding=str) if self.text else "<td/>"
+        if self.text:
+            return etree.tostring(self._td, encoding=str)
+        return _format_td("", self.colspan, self.rowspan or 1)
 
     @cached_property
     def text(self) -> str:
