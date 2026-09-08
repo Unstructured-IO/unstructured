@@ -234,8 +234,10 @@ def test_partition_docx_table_with_merged_cell_in_nested_table_does_not_duplicat
 
 def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geometry(tmp_path):
     """A DOCX table with a real vertical merge, partitioned then chunked with a small window,
-    must never split between rows an active `rowspan` still covers -- doing so would leave a
-    continuation `TableChunk` with cells shifted into the wrong column."""
+    must never split between rows an active `rowspan` still covers without correcting for it --
+    doing so would leave a continuation `TableChunk` with cells shifted into the wrong column.
+    Splitting is fine as long as the covering cell's `rowspan` is rewritten to match, and
+    re-materialized in whichever fragment doesn't hold the row that originally declared it."""
     document = docx.Document()
     table = document.add_table(rows=4, cols=2)
     table.cell(0, 0).merge(table.cell(1, 0)).merge(table.cell(2, 0)).text = "REGIONWIDE TOTAL"
@@ -253,18 +255,24 @@ def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geom
 
     chunks = chunk_by_title([table_element], max_characters=60)
 
-    assert len(chunks) == 2, "fixture should be oversized enough to actually require a split"
+    assert len(chunks) == 3, "fixture should be oversized enough to actually require a split"
     assert all(isinstance(chunk, TableChunk) for chunk in chunks)
-    # -- the rowspan-3 group is never split -- it lands whole in the first chunk --
+    assert all(len(chunk.text) <= 60 for chunk in chunks)
+    # -- the rowspan-3 group is itself too big for the window, so it's split on a row boundary;
+    # -- the covering cell's rowspan is rewritten to the rows present in the first fragment --
     assert chunks[0].metadata.text_as_html == (
         "<table>"
-        '<tr><td rowspan="3">REGIONWIDE TOTAL</td><td>alpha bravo charlie</td></tr>'
+        '<tr><td rowspan="2">REGIONWIDE TOTAL</td><td>alpha bravo charlie</td></tr>'
         "<tr><td>delta echo foxtrot</td></tr>"
-        "<tr><td>golf hotel india</td></tr>"
         "</table>"
     )
-    # -- the final row lands in its own chunk with both its cells correctly positioned --
+    # -- the covering cell is re-materialized (rowspan="1") in the next fragment, which doesn't
+    # -- include the row that originally declared the span, keeping columns aligned --
     assert chunks[1].metadata.text_as_html == (
+        "<table><tr><td>REGIONWIDE TOTAL</td><td>golf hotel india</td></tr></table>"
+    )
+    # -- the final row lands in its own chunk with both its cells correctly positioned --
+    assert chunks[2].metadata.text_as_html == (
         "<table><tr><td>juliet</td><td>kilo lima mike</td></tr></table>"
     )
 
