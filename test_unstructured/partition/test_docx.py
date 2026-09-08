@@ -206,6 +206,32 @@ def test_partition_docx_table_with_full_width_vertical_merge_reports_a_tr_for_ev
     )
 
 
+def test_partition_docx_table_with_merged_cell_in_nested_table_does_not_duplicate_its_text(
+    tmp_path,
+):
+    """A merged cell in a table nested inside another table's cell contributes its text once.
+
+    Nested tables are flattened to plain text rather than nested `<table>` HTML, but that
+    flattening must still collapse a merged cell to a single occurrence of its text.
+    """
+    document = docx.Document()
+    outer_table = document.add_table(rows=1, cols=1)
+    nested_table = outer_table.cell(0, 0).add_table(rows=2, cols=2)
+    nested_table.cell(0, 0).merge(nested_table.cell(0, 1)).text = "MERGEDNESTED"
+    nested_table.cell(1, 0).text = "foo"
+    nested_table.cell(1, 1).text = "bar"
+    docx_path = tmp_path / "nested-merged-cell.docx"
+    document.save(str(docx_path))
+
+    elements = partition_docx(str(docx_path), infer_table_structure=True)
+    table_element = next(e for e in elements if isinstance(e, Table))
+
+    assert table_element.text == "MERGEDNESTED foo bar"
+    assert table_element.metadata.text_as_html == (
+        "<table><tr><td>MERGEDNESTED foo bar</td></tr></table>"
+    )
+
+
 def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geometry(tmp_path):
     """A DOCX table with a real vertical merge, partitioned then chunked with a small window,
     must never split between rows an active `rowspan` still covers -- doing so would leave a
@@ -227,17 +253,20 @@ def test_partition_docx_merged_cell_table_chunks_without_corrupting_rowspan_geom
 
     chunks = chunk_by_title([table_element], max_characters=60)
 
-    assert len(chunks) > 1, "fixture should be oversized enough to actually require a split"
-    for chunk in chunks:
-        assert isinstance(chunk, TableChunk)
-        # -- every emitted chunk must itself be well-formed, parseable HTML --
-        html = chunk.metadata.text_as_html
-        assert html.startswith("<table>")
-        assert html.endswith("</table>")
-    # -- no cell's text is lost or duplicated across the whole set of chunks --
-    combined_text = " ".join(chunk.text for chunk in chunks)
-    for word in ("REGIONWIDE", "alpha", "delta", "golf", "juliet", "kilo"):
-        assert combined_text.count(word) == 1
+    assert len(chunks) == 2, "fixture should be oversized enough to actually require a split"
+    assert all(isinstance(chunk, TableChunk) for chunk in chunks)
+    # -- the rowspan-3 group is never split -- it lands whole in the first chunk --
+    assert chunks[0].metadata.text_as_html == (
+        "<table>"
+        '<tr><td rowspan="3">REGIONWIDE TOTAL</td><td>alpha bravo charlie</td></tr>'
+        "<tr><td>delta echo foxtrot</td></tr>"
+        "<tr><td>golf hotel india</td></tr>"
+        "</table>"
+    )
+    # -- the final row lands in its own chunk with both its cells correctly positioned --
+    assert chunks[1].metadata.text_as_html == (
+        "<table><tr><td>juliet</td><td>kilo lima mike</td></tr></table>"
+    )
 
 
 def test_partition_docx_grabs_header_and_footer():

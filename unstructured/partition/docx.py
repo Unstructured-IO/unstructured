@@ -519,8 +519,14 @@ class _DocxPartitioner:
                     # -- structure only
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
+                    seen_tcs: set[Any] = set()
                     for row in table.rows:
-                        yield from (text for text, _ in iter_row_cells(row))
+                        for text, nested_cell in iter_row_cells(row):
+                            if nested_cell is not None:
+                                if nested_cell._tc in seen_tcs:
+                                    continue
+                                seen_tcs.add(nested_cell._tc)
+                            yield text
 
         def cell_text(cell: _Cell) -> str:
             """The normalized text of `cell`, including that of any table nested in it."""

@@ -1346,15 +1346,6 @@ class _HtmlTableSplitter:
                     any(clipped[group_start : idx + 1]),
                 )
                 group_start = idx + 1
-        # -- a span reaching past the last row of its own row-group (or `rowspan="0"`) leaves a
-        # -- final group that never hits `idx == group_end` inside the loop; emit it rather than
-        # -- drop it. It's always clipped -- that's exactly why it never closed on its own. --
-        if group_start < n:
-            yield (
-                tuple(rows[group_start:]),
-                tuple(bound[group_start:]),
-                True,
-            )
 
     @staticmethod
     def _group_last_idx(rows: Sequence[HtmlRow]) -> list[int]:

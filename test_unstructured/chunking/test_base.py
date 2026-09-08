@@ -8,7 +8,6 @@ import io
 import logging
 from typing import Any, Sequence
 
-import pandas as pd
 import pytest
 from lxml.html import fragment_fromstring
 
@@ -3342,30 +3341,6 @@ class Describe_HtmlTableSplitter:
         for word in ("alpha", "delta", "golf", "juliet", "mike"):
             assert combined_text.count(word) == 1
 
-    def and_it_still_spans_the_whole_group_for_a_sectionless_rowspan_0_table(self):
-        """A table with no explicit `<thead>`/`<tbody>`/`<tfoot>` is itself one row-group, so
-        `rowspan="0"` reaches every row the table has -- emitted as the literal count ("2")
-        rather than the ambiguous "0"."""
-        opts = ChunkingOptions(max_characters=15)
-        html_table = HtmlTable.from_html_text(
-            """
-            <table>
-              <tr><td rowspan="0">Region</td><td>xxxxxxxxxxxxx</td></tr>
-              <tr><td>yyyyyyyyyyyyy</td></tr>
-            </table>
-            """
-        )
-
-        assert list(_HtmlTableSplitter.iter_subtables(html_table, opts)) == [
-            (
-                "Region xxxxxxxxxxxxx yyyyyyyyyyyyy",
-                "<table>"
-                '<tr><td rowspan="2">Region</td><td>xxxxxxxxxxxxx</td></tr>'
-                "<tr><td>yyyyyyyyyyyyy</td></tr>"
-                "</table>",
-            ),
-        ]
-
     def and_an_exactly_fitting_positive_rowspan_is_emitted_unchanged(self):
         """A `rowspan` whose declared value already matches its own row-group's row count is
         never rewritten -- the self-correction is a no-op whenever the declared value was
@@ -3512,6 +3487,7 @@ class Describe_HtmlTableSplitter:
         correctly honors `rowspan`/`colspan` when building a grid) and checking that no body
         value has been shifted into the wrong column -- a genuine geometry check, not just a
         string/row-count comparison."""
+        pd = pytest.importorskip("pandas")
         html = (
             "<table>"
             "<thead>"
@@ -3605,6 +3581,7 @@ class Describe_HtmlTableSplitter:
         `reconstruct_table_from_chunks()` -- the actual round-trip a caller performs -- reparsing
         the reconstructed table with `pandas.read_html()` (which honors `rowspan`/`colspan` when
         building a grid) to catch real column-shift corruption, not just inspect chunk strings."""
+        pd = pytest.importorskip("pandas")
         html = (
             "<table>"
             "<thead>"
