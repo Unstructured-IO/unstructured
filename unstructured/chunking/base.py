@@ -1507,9 +1507,6 @@ class _HtmlTableSplitter:
 
     def _iter_cell_splits(self, cell: HtmlCell, maxlen: int) -> Iterator[TextAndHtml]:
         """Split a single oversized cell into sub-sub-sub-table HTML fragments."""
-        # -- 33 is len("<table><tr><td></td></tr></table>"), HTML overhead beyond text content --
-        # -- For token-based chunking, we subtract 33 chars worth of overhead but still use tokens
-        # -- for the actual content limit. For character-based, we use the reduced character limit.
         if self._opts.use_token_counting:
             # -- In token mode, keep token limit but account for HTML overhead in char terms --
             # -- The HTML tags themselves are usually ~10-15 tokens, so we reduce by a small amount
@@ -1517,17 +1514,87 @@ class _HtmlTableSplitter:
                 max_tokens=max(1, maxlen - 10),
                 tokenizer=self._opts._kwargs.get("tokenizer"),
             )
-        else:
-            opts = ChunkingOptions(max_characters=max(1, maxlen - 33))
-        split = _TextSplitter(opts)
+            split = _TextSplitter(opts)
 
-        text, remainder = split(cell.text)
-        yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
-
-        # -- an oversized cell will have a remainder, split that up into additional chunks.
-        while remainder:
-            text, remainder = split(remainder)
+            text, remainder = split(cell.text)
             yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
+
+            while remainder:
+                text, remainder = split(remainder)
+                yield text, f"<table><tr>{_format_td(text, cell.colspan, rowspan=1)}</tr></table>"
+            return
+
+        # -- overhead depends on this cell's own colspan, so derive it from an empty wrapper --
+        empty_td = _format_td("", cell.colspan, rowspan=1)
+        empty_fragment_len = len(f"<table><tr>{empty_td}</tr></table>")
+        budget = max(1, maxlen - empty_fragment_len)
+
+        remaining = cell.text
+        while True:
+            text, html, remaining = self._split_cell_fragment(
+                remaining, cell.colspan, maxlen, budget
+            )
+            yield text, html
+            if not remaining:
+                return
+
+    @staticmethod
+    def _split_cell_fragment(
+        text: str, colspan: int, maxlen: int, budget: int
+    ) -> tuple[str, str, str]:
+        """Split `text` at a word boundary and format it as a `<td>` fragment, guaranteeing
+        `len(html) <= maxlen`.
+
+        `budget` is only an upper bound on the raw-text length handed to the word-boundary
+        splitter -- escaping (`&`, `<`, `>`) can expand a raw character into several, so the
+        actual formatted length isn't known until after splitting. Binary-searches `budget` for
+        the largest word-boundary split whose formatted fragment still fits (valid because a
+        larger budget only ever grows the selected raw text, and escaping never shrinks it, so
+        formatted length is non-decreasing in `budget`). Falls back to a raw, non-word-boundary
+        truncation if even a single raw character can't fit (e.g. a lone `&` whose escaped form
+        alone is longer than the room left). Returns `(split_text, html, remainder)`.
+        """
+        lo, hi, best = 1, budget, None
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            split = _TextSplitter(ChunkingOptions(max_characters=mid))
+            split_text, remainder = split(text)
+            html = f"<table><tr>{_format_td(split_text, colspan, rowspan=1)}</tr></table>"
+            if len(html) <= maxlen:
+                best = (split_text, html, remainder)
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        return (
+            best
+            if best is not None
+            else _HtmlTableSplitter._truncate_cell_fragment(text, colspan, maxlen)
+        )
+
+    @staticmethod
+    def _truncate_cell_fragment(text: str, colspan: int, maxlen: int) -> tuple[str, str, str]:
+        """Binary-search the longest raw-text prefix of `text` whose escaped, formatted `<td>`
+        fragment fits within `maxlen`, ignoring word boundaries.
+
+        `html.escape()` never shrinks a character, so formatted length is non-decreasing in
+        prefix length, making the search valid. A one-character prefix is used even if it still
+        overflows (a fixed `colspan` attribute makes the wrapper itself too large for `maxlen`)
+        so the caller always makes forward progress on `text`.
+        """
+        lo, hi, best = 0, len(text), 0
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            candidate = f"<table><tr>{_format_td(text[:mid], colspan, rowspan=1)}</tr></table>"
+            if len(candidate) <= maxlen:
+                best, lo = mid, mid + 1
+            else:
+                hi = mid - 1
+        best = max(best, 1) if text else 0
+
+        split_text = text[:best]
+        html = f"<table><tr>{_format_td(split_text, colspan, rowspan=1)}</tr></table>"
+        return split_text, html, text[best:]
 
     @cached_property
     def _header_text(self) -> str:

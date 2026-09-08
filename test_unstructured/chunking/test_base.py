@@ -3021,6 +3021,55 @@ class Describe_HtmlTableSplitter:
         assert len(chunks) > 1
         for _, html in chunks:
             assert html.startswith('<table><tr><td colspan="2">')
+            assert len(html) <= 50
+
+    def and_it_accounts_for_a_large_colspan_attributes_own_overhead_when_splitting(self):
+        """A `colspan` attribute is real characters ("` colspan="100""), on top of the plain
+        `<td></td>` overhead a fixed constant would assume -- a cell with a large `colspan` must
+        reserve more room for it, not just for the text content."""
+        opts = ChunkingOptions(max_characters=50)
+        words = " ".join(["word"] * 30)
+        html_table = HtmlTable.from_html_text(
+            f'<table><tr><td colspan="100">{words}</td></tr></table>'
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert html.startswith('<table><tr><td colspan="100">')
+            assert len(html) <= 50
+
+    def and_it_accounts_for_html_escaping_when_splitting_an_oversized_cell(self):
+        """Cell text is HTML-escaped (`&` -> `&amp;`, etc.) when formatted, which can make the
+        formatted fragment longer than the raw text a word-boundary split was budgeted for."""
+        opts = ChunkingOptions(max_characters=50)
+        text = " & ".join(["x"] * 20)
+        html_table = HtmlTable.from_html_text(f"<table><tr><td>{text}</td></tr></table>")
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert len(html) <= 50
+        # -- no text lost or duplicated across the split --
+        assert " ".join(text for text, _ in chunks).replace(" & ", " ").split() == ["x"] * 20
+
+    def and_it_accounts_for_colspan_and_escaping_together_when_splitting_an_oversized_cell(self):
+        """A large `colspan` and heavy escaping both eat into a cell's usable content budget at
+        once -- neither can be handled in isolation from the other."""
+        opts = ChunkingOptions(max_characters=80)
+        text = " & ".join(["word"] * 20)
+        html_table = HtmlTable.from_html_text(
+            f'<table><tr><td colspan="20">{text}</td></tr></table>'
+        )
+
+        chunks = list(_HtmlTableSplitter.iter_subtables(html_table, opts))
+
+        assert len(chunks) > 1
+        for _, html in chunks:
+            assert html.startswith('<table><tr><td colspan="20">')
+            assert len(html) <= 80
 
     def and_it_uses_the_configured_measurement_units_for_row_fitting(
         self, monkeypatch: pytest.MonkeyPatch
