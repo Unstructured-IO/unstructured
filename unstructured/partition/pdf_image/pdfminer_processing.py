@@ -5,7 +5,7 @@ import os
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterable, List, Optional, Union, cast
 
 import numpy as np
-from pdfminer.layout import LAParams, LTChar, LTContainer, LTTextBox
+from pdfminer.layout import LAParams, LTChar, LTContainer, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import decode_text, open_filename
 from unstructured_inference.config import inference_config
@@ -418,21 +418,21 @@ def _ltchar_is_rotated(char: LTChar) -> bool:
     return abs(rotation_radians) > 0.001
 
 
-def _get_text_fidelity_stats(obj) -> tuple[int, int, int]:
+def _get_text_fidelity_stats(obj: LTItem) -> tuple[int, int, int]:
     """Return total, low-fidelity, and invisible character counts for a PDFMiner object."""
 
     low_fidelity_chars = 0
     invisible_chars = 0
     total_chars = 0
 
-    def extract_chars(layout_obj):
+    def extract_chars(layout_obj: LTItem) -> None:
         """Recursively extract all LTChar objects from layout."""
         nonlocal invisible_chars, low_fidelity_chars, total_chars
 
         if isinstance(layout_obj, LTChar):
             total_chars += 1
 
-            invisible = hasattr(layout_obj, "rendermode") and layout_obj.rendermode == 3
+            invisible = getattr(layout_obj, "rendermode", None) == 3
             if invisible:
                 invisible_chars += 1
 
@@ -443,21 +443,21 @@ def _get_text_fidelity_stats(obj) -> tuple[int, int, int]:
                 low_fidelity_chars += 1
         elif isinstance(layout_obj, LTContainer):
             # Recursively process container's children
-            for child in layout_obj:
+            for child in cast(Iterable[LTItem], layout_obj):
                 extract_chars(child)
 
     extract_chars(obj)
     return total_chars, low_fidelity_chars, invisible_chars
 
 
-def text_contains_invisible_text(obj) -> bool:
+def text_contains_invisible_text(obj: LTItem) -> bool:
     """Return True when a text object contains render-mode-3 invisible characters."""
 
     _, _, invisible_chars = _get_text_fidelity_stats(obj)
     return invisible_chars > 0
 
 
-def text_is_embedded(obj, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
+def text_is_embedded(obj: LTItem, threshold=env_config.PDF_MAX_EMBED_LOW_FIDELITY_TEXT_RATIO):
     """Check if text object contains too many low_fidelity text: invisible or rotated
 
     Low fidelity text means that even though the text is extracted from pdf data but its

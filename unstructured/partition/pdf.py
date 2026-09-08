@@ -7,7 +7,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, Iterable, Optional, Union, cast
 
 import numpy as np
 import wrapt
@@ -1429,7 +1429,7 @@ def _extract_text_parts(item: LTItem) -> list[tuple[str, bool]]:
 
     if isinstance(item, LTContainer):
         text_parts: list[tuple[str, bool]] = []
-        for child in item:
+        for child in cast(Iterable[LTItem], item):
             text_parts.extend(_extract_text_parts(child))
         return text_parts
 
