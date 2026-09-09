@@ -10,11 +10,9 @@ on:
 jobs:
   check-version:  
     runs-on: ubuntu-latest
-    env:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     steps:
       - name: Checkout codes
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4 
       - name: Get PR information
         id: pr-info
         run: |
@@ -51,7 +49,7 @@ jobs:
       - name: Restore Message from Cache
         if: env.SKIP_STEPS != 'true'
         id: restore-cache
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@v4
         with: 
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH  }}
@@ -71,16 +69,15 @@ jobs:
           cat message_cache.txt
       - name: Store Message in Cache
         if: env.SKIP_STEPS != 'true'
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@v4
         with:
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH }}
       - name: Slack Notification
-        if: env.SKIP_STEPS != 'true' && env.SLACK_BOT_TOKEN != ''
-        uses: slackapi/slack-github-action@v4
+        if: env.SKIP_STEPS != 'true'
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          method: chat.postMessage
-          token: ${{ env.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: C05S1QMKL5D
-            text: ${{ toJSON(env.SLACK_MESSAGE) }}
+          channel-id: 'C05S1QMKL5D'
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
