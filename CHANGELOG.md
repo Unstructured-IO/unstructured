@@ -3,6 +3,7 @@
 ### Fixes
 
 - **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
 
 ## 0.27.5
 
