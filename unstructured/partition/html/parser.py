@@ -109,7 +109,7 @@ from unstructured.partition.text_type import (
 
 TEX_ENCODINGS = (
     "application/x-tex",
-    "TeX",
+    "tex",
     "latex",
     "application/x-latex",
 )
@@ -699,46 +699,105 @@ class Phrasing(etree.ElementBase):
             yield from e.iter_text_segments(emphasis)
 
 
-class Math(Phrasing):
+class Math(Flow, Phrasing):
     """Custom element-class for `<math>` element.
 
     Provides basic math annotations.
     """
 
-    def iter_text_segments(self, enclosing_emphasis: str = "") -> Iterator[TextSegment | Element]:
-        """Generate a text segment for the mathematical expression and its tail.
+    @property
+    def is_phrasing(self) -> bool:
+        return (self.get("display") or "").strip().lower() != "block"
 
-        The mathematical representation is selected in this order:
+    @property
+    def _latex(self) -> str | None:
+        semantics = self.find("./semantics")
+        if semantics is not None:
+            for child in semantics:
+                if child.tag != "annotation":
+                    continue
+                
+                encoding = child.get("encoding")
 
-        1. The first non-empty `<annotation>` whose ``encoding`` is one of the
-           supported TeX/LaTeX encodings.
-        2. The `<math>` element's ``alttext`` attribute.
+                if encoding is None:
+                    continue
 
-        No mathematical text segment is emitted when neither representation is
-        available. Tail text is always preserved according to normal
-        :class:`Phrasing` behavior.
-        """
+                encoding = encoding.strip().lower()
+                if encoding not in TEX_ENCODINGS:
+                    continue
 
-        latex = None
+                annotations_latex = child.text
 
-        for encoding in TEX_ENCODINGS:
-            annotations_latex = self.find(f".//annotation[@encoding='{encoding}']")
-            if annotations_latex is not None:
-                latex = annotations_latex.text
-                break
-
-        if not latex or not latex.strip():
-            alt_text = self.get("alttext")
-            if alt_text is not None:
-                latex = alt_text
-
-        if latex:
+                if annotations_latex is not None and annotations_latex.strip():
+                    return annotations_latex.strip()
+        
+        alt_text = self.get("alttext")
+        if alt_text is not None and alt_text.strip():
+            return alt_text
+        
+        return None
+        
+    def iter_text_segments(
+        self, enclosing_emphasis: str = ""
+    ) -> Iterator[TextSegment | Element]:
+        """Emit inline math as phrasing content."""
+        if latex := self._latex:
             yield TextSegment(
-                latex.strip(),
+                latex,
                 self._annotation(latex, enclosing_emphasis),
             )
 
         yield from self._iter_tail_segment(enclosing_emphasis)
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Emit display math as its own document element."""
+        if latex := self._latex:
+            yield Text(
+                latex,
+                metadata=ElementMetadata(page_number=self._page_number),
+            )
+
+    @staticmethod
+    def _normalize_katex(root: etree._Element) -> None:
+        """Remove redundant KaTeX visual HTML when usable MathML is present."""\
+        
+        for katex in root.xpath(
+            ".//*[contains(concat(' ', normalize-space(@class), ' '), ' katex ')]"
+        ):
+            mathml = None
+            visual = None
+
+            for child in katex:
+                classes = child.get("class")
+                if classes is None:
+                    continue
+
+                classes = classes.split()
+
+                if "katex-mathml" in classes:
+                    mathml = child
+                elif "katex-html" in classes:
+                    visual = child
+                    
+            if mathml is None or visual is None:
+                continue
+
+            math = mathml.find(".//math")
+
+            if math is None or not math._latex:
+                continue
+
+            tail = visual.tail
+            previous = visual.getprevious()
+
+            katex.remove(visual)
+
+            if tail:
+                if previous is not None:
+                    previous.tail = (previous.tail or "") + tail
+                else:
+                    katex.text = (katex.text or "") + tail
+
 
 class Anchor(Phrasing):
     """Custom element-class for `<a>` element.

@@ -1557,6 +1557,8 @@ def test_partition_html_leaves_page_number_None_when_not_present():
     (
         "application/x-tex",
         "TeX",
+        "tex",
+        "TEX",
         "latex",
         "application/x-latex",
     ),
@@ -1613,13 +1615,13 @@ def test_partition_html_uses_math_alttext_when_tex_annotation_is_absent():
     assert len(elements) == 1
     assert elements[0].text == r"The value is \sqrt{2} approximately."
 
-def test_partition_html_prefers_tex_annotation_over_math_alttext():
+def test_partition_html_prefers_math_alttext_over_tex_annotation():
     html = r"""
     <html>
       <body>
         <p>
           Value:
-          <math alttext="wrong fallback">
+          <math alttext="preferred alttext">
             <semantics>
               <mrow>
                 <mi>x</mi>
@@ -1635,7 +1637,7 @@ def test_partition_html_prefers_tex_annotation_over_math_alttext():
     elements = partition_html(text=html)
 
     assert len(elements) == 1
-    assert elements[0].text == r"Value: x^{2}"
+    assert elements[0].text == "Value: preferred alttext"
 
 def test_partition_html_falls_back_to_math_alttext_when_tex_annotation_is_empty():
     html = r"""
@@ -1716,3 +1718,253 @@ def test_partition_html_ignores_unrecognized_math_annotation_encoding():
 
     assert len(elements) == 1
     assert elements[0].text == r"Value: x^{2}"
+
+
+def test_partition_html_uses_outer_math_annotation_not_nested_semantics_annotation():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math>
+            <semantics>
+              <mrow>
+                <math>
+                  <semantics>
+                    <mi>x</mi>
+                    <annotation encoding="tex">INNER</annotation>
+                  </semantics>
+                </math>
+              </mrow>
+              <annotation encoding="tex">OUTER</annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: OUTER"]
+
+
+def test_partition_html_skips_empty_math_annotation_and_uses_later_supported_annotation():
+    html = r"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math>
+            <semantics>
+              <mi>x</mi>
+              <annotation encoding="application/x-tex">   </annotation>
+              <annotation encoding="tex">x^{2}</annotation>
+            </semantics>
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == [r"Value: x^{2}"]
+
+
+@pytest.mark.parametrize("display", ["block", "BLOCK", "Block"])
+def test_partition_html_emits_display_math_as_element_boundary(display: str):
+    html = f"""
+    <html>
+      <body>
+        <div>Before<math display="{display}" alttext="x=1"></math>After</div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before", "x=1", "After"]
+
+
+def test_partition_html_keeps_adjacent_display_math_as_separate_elements():
+    html = """
+    <html>
+      <body>
+        <div>
+          <math display="block" alttext="x=1"></math>
+          <math display="block" alttext="y=2"></math>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["x=1", "y=2"]
+
+
+@pytest.mark.parametrize("display_attribute", ["", ' display="inline"'])
+def test_partition_html_keeps_non_display_math_inline(display_attribute: str):
+    html = (
+        "<html><body><div>Before "
+        f'<math{display_attribute} alttext="x=1"></math>'
+        " After</div></body></html>"
+    )
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x=1 After"]
+
+
+def test_partition_html_preserves_page_number_on_display_math():
+    html = """
+    <html>
+      <body>
+        <div data-page-number="7">
+          Before
+          <math display="block" alttext="x=1"></math>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before", "x=1", "After"]
+    assert [element.metadata.page_number for element in elements] == [7, 7, 7]
+
+
+def test_partition_html_does_not_duplicate_paired_katex_output():
+    html = r"""
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math alttext="x^2">
+                <semantics>
+                  <msup><mi>x</mi><mn>2</mn></msup>
+                  <annotation encoding="application/x-tex">x^2</annotation>
+                </semantics>
+              </math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x^2 After"]
+    assert elements[0].text.count("x^2") == 1
+
+
+def test_partition_html_keeps_katex_html_when_mathml_is_unusable():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math>
+                <semantics><mi>x</mi></semantics>
+              </math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x2 After"]
+
+
+def test_partition_html_keeps_katex_html_only_output():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>2</span></span>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x2 After"]
+
+
+def test_partition_html_keeps_katex_mathml_only_output():
+    html = r"""
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml">
+              <math alttext="x^2">
+                <semantics>
+                  <msup><mi>x</mi><mn>2</mn></msup>
+                  <annotation encoding="application/x-tex">x^2</annotation>
+                </semantics>
+              </math>
+            </span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before x^2 After"]
+
+
+def test_partition_html_keeps_two_separate_identical_katex_equations():
+    html = """
+    <html>
+      <body>
+        <div>
+          Before
+          <span class="katex">
+            <span class="katex-mathml"><math alttext="2"></math></span>
+            <span class="katex-html" aria-hidden="true"><span>2</span></span>
+          </span>
+          and
+          <span class="katex">
+            <span class="katex-mathml"><math alttext="2"></math></span>
+            <span class="katex-html" aria-hidden="true"><span>2</span></span>
+          </span>
+          After
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Before 2 and 2 After"]
+    assert elements[0].text.count("2") == 2

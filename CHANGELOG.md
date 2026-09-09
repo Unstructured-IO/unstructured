@@ -4,6 +4,10 @@
 
 - **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
 
+### Enhancements
+
+- **Add basic MathML support.** `<math>` elements now extract a textual representation from alttext or supported TeX/LaTeX `<annotation>` values, including case-insensitive annotation encodings. Inline math remains part of surrounding text, while display="block" math is emitted as a separate element boundary. KaTeX's paired MathML/HTML output is also handled without duplicating the same expression.
+
 ## 0.27.5
 
 ### Fixes
