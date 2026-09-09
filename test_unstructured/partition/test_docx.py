@@ -1462,6 +1462,25 @@ class Describe_DocxPartitioner:
 
         assert [element.text for element in elements] == expected_texts
 
+    def it_partitions_a_document_without_a_body_level_sectPr(self, opts_args: dict[str, Any]):
+        """A paragraph-level final section boundary does not require a body-level sentinel."""
+        document = docx.Document()
+        document.sections[0].header.paragraphs[0].text = "Header"
+        document.sections[0].footer.paragraphs[0].text = "Footer"
+        paragraph = document.add_paragraph("Body")
+        paragraph._p.get_or_add_pPr().append(document._element.body.sectPr)
+
+        file = io.BytesIO()
+        document.save(file)
+        file.seek(0)
+        opts_args["file"] = file
+
+        elements = list(
+            _DocxPartitioner.iter_document_elements(DocxPartitionerOptions(**opts_args))
+        )
+
+        assert [element.text for element in elements] == ["Header", "Body", "Footer"]
+
 
 def test_partition_docx_skips_malformed_row_cells():
     """Test that partition_docx does not crash on a DOCX with malformed/merged table rows."""

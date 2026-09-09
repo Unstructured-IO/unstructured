@@ -425,7 +425,10 @@ class _DocxPartitioner:
                 and block_item._p.pPr.sectPr is section._sectPr
             ):
                 yield from self._iter_section_footers(section)
-                section_idx, section = next(sections)
+                next_section = next(sections, None)
+                if next_section is None:
+                    return
+                section_idx, section = next_section
                 yield from self._iter_section_page_breaks(section_idx, section)
                 yield from self._iter_section_headers(section)
 
