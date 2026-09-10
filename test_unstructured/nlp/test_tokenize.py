@@ -43,6 +43,51 @@ def test_tokenizers_functions_run():
     tokenize.pos_tag(sentence)
 
 
+def test_batch_process_texts_reuses_pipe_docs_without_changing_results(monkeypatch):
+    texts = (
+        "This is one sentence. This is another sentence.",
+        "THIS REPORT SHOWS RESULTS",
+    )
+
+    def analyze():
+        return [
+            (
+                tokenize.sent_tokenize(text),
+                tokenize.word_tokenize(text),
+                tokenize.pos_tag(text.lower() if text.isupper() else text),
+            )
+            for text in texts
+        ]
+
+    expected = analyze()
+    tokenize._tokenize_for_cache.cache_clear()
+    tokenize.word_tokenize.cache_clear()
+    tokenize.pos_tag.cache_clear()
+
+    real_nlp = tokenize._get_nlp()
+    pipe_calls = []
+
+    class CountingNlp:
+        max_length = real_nlp.max_length
+
+        def __call__(self, text):
+            raise AssertionError(f"unexpected individual spaCy call for {text!r}")
+
+        def pipe(self, inputs, *, batch_size):
+            inputs = tuple(inputs)
+            pipe_calls.append((inputs, batch_size))
+            return real_nlp.pipe(inputs, batch_size=batch_size)
+
+    monkeypatch.setattr(tokenize, "_get_nlp", lambda: CountingNlp())
+
+    with tokenize.batch_process_texts(texts, batch_size=64):
+        actual = analyze()
+
+    assert actual == expected
+    assert pipe_calls == [((*texts, texts[1].lower()), 64)]
+    assert tokenize._BATCH_DOCS.get() is None
+
+
 def test_process_truncates_text_exceeding_spacy_max_length(caplog):
     # Build text well above spaCy's default 1,000,000-char limit, like the prod trace.
     nlp = tokenize._get_nlp()

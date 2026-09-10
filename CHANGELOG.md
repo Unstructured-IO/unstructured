@@ -1,5 +1,9 @@
 ## 0.27.8-dev0
 
+### Enhancements
+
+- **Batch spaCy processing during PDF text classification**: FAST PDF partitioning now processes page text through `nlp.pipe()` before calling the existing element classifier, avoiding repeated statistical-pipeline execution while preserving classification rules and output order.
+
 ### Fixes
 
 - **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
