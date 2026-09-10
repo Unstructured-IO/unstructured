@@ -1,8 +1,14 @@
-## 0.27.7-dev0
+## 0.27.8-dev0
 
 ### Fixes
 
 - **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
+
+## 0.27.7
+
+### Fixes
+
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
 
 ## 0.27.6
 
