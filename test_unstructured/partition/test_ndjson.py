@@ -457,3 +457,30 @@ def it_partitions_arbitrary_lines_from_a_file_like_object():
     assert all(isinstance(e, Text) for e in elements)
     assert '"sku": "A-100"' in elements[0].text
     assert '"sku": "B-200"' in elements[1].text
+
+
+# -- encoding -------------------------------------------------------------------------------------
+
+
+def it_honors_an_explicit_encoding_for_a_non_utf8_file():
+    # -- a UTF-16 payload is unreadable as UTF-8, so an ignored `encoding=` argument surfaces as
+    # -- UnicodeDecodeError rather than as a wrong result --
+    payload = '{"sku": "A-100"}\n{"sku": "B-200"}\n'
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = os.path.join(tmpdir, "utf16.ndjson")
+        with open(path, "w", encoding="utf-16") as f:
+            f.write(payload)
+
+        elements = partition_ndjson(filename=path, encoding="utf-16")
+
+    assert len(elements) == 2
+    assert '"sku": "A-100"' in elements[0].text
+
+
+def it_honors_an_explicit_encoding_for_a_non_utf8_file_like_object():
+    payload = '{"sku": "A-100"}\n{"sku": "B-200"}\n'.encode("utf-16")
+
+    elements = partition_ndjson(file=io.BytesIO(payload), encoding="utf-16")
+
+    assert len(elements) == 2
+    assert '"sku": "A-100"' in elements[0].text
