@@ -16,6 +16,7 @@ from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.json_partitioning import (
@@ -36,6 +37,7 @@ def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
+    encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
@@ -68,6 +70,9 @@ def partition_json(
         A file-like object as bytes --> open(filename, "rb").
     text
         The string representation of the .json document.
+    encoding
+        The encoding method used to decode the input bytes when drawn from `filename` or `file`.
+        Defaults to detecting the encoding when not specified.
     metadata_last_modified
         The last modified date for the document.
     """
@@ -79,12 +84,10 @@ def partition_json(
     last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
     if filename is not None:
-        with open(filename, encoding="utf8") as f:
-            file_text = f.read()
+        _, file_text = read_txt_file(filename=filename, encoding=encoding)
 
     elif file is not None:
-        file_content = file.read()
-        file_text = file_content if isinstance(file_content, str) else file_content.decode()
+        _, file_text = read_txt_file(file=file, encoding=encoding)
         file.seek(0)
 
     elif text is not None:
