@@ -32,4 +32,4 @@ def _validate_datasaur_entity(entity: Dict[str, Any]):
         if key not in entity:
             raise ValueError(f"Key '{key}' was expected but not present in the Datasaur entity.")
         if not isinstance(entity[key], _type):
-            raise ValueError(f"Expected type {_type} for {key}. Got {type(key)}.")
+            raise ValueError(f"Expected type {_type} for {key}. Got {type(entity[key])}.")
