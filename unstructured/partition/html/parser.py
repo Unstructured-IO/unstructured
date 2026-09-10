@@ -711,32 +711,33 @@ class Math(Flow, Phrasing):
 
     @property
     def _latex(self) -> str | None:
-        semantics = self.find("./semantics")
-        if semantics is not None:
-            for child in semantics:
-                if child.tag != "annotation":
-                    continue
-                
-                encoding = child.get("encoding")
+        if len(self) == 1 and not (self.text or "").strip() and not (self[0].tail or "").strip():
+            semantics = self.find("./semantics")
+            if semantics is not None:
+                for child in semantics:
+                    if child.tag != "annotation":
+                        continue
+                    
+                    encoding = child.get("encoding")
 
-                if encoding is None:
-                    continue
+                    if encoding is None:
+                        continue
 
-                encoding = encoding.strip().lower()
-                if encoding not in TEX_ENCODINGS:
-                    continue
+                    encoding = encoding.strip().lower()
+                    if encoding not in TEX_ENCODINGS:
+                        continue
 
-                annotations_latex = child.text
+                    annotations_latex = child.text
 
-                if annotations_latex is not None and annotations_latex.strip():
-                    return annotations_latex.strip()
-        
+                    if annotations_latex is not None and annotations_latex.strip():
+                        return annotations_latex.strip()
+
         alt_text = self.get("alttext")
         if alt_text is not None and alt_text.strip():
             return alt_text
-        
+
         return None
-        
+
     def iter_text_segments(
         self, enclosing_emphasis: str = ""
     ) -> Iterator[TextSegment | Element]:
@@ -778,8 +779,11 @@ class Math(Flow, Phrasing):
                     mathml = child
                 elif "katex-html" in classes:
                     visual = child
-                    
+
             if mathml is None or visual is None:
+                continue
+
+            if katex.xpath("ancestor::table"):
                 continue
 
             math = mathml.find(".//math")

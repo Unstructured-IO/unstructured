@@ -1615,7 +1615,7 @@ def test_partition_html_uses_math_alttext_when_tex_annotation_is_absent():
     assert len(elements) == 1
     assert elements[0].text == r"The value is \sqrt{2} approximately."
 
-def test_partition_html_prefers_math_alttext_over_tex_annotation():
+def test_partition_html_prefers_tex_annotation_over_math_alttext():
     html = r"""
     <html>
       <body>
@@ -1637,7 +1637,88 @@ def test_partition_html_prefers_math_alttext_over_tex_annotation():
     elements = partition_html(text=html)
 
     assert len(elements) == 1
-    assert elements[0].text == "Value: preferred alttext"
+    assert elements[0].text == r"Value: x^{2}"
+
+
+@pytest.mark.parametrize(
+    "math_contents",
+    (
+        # -- the semantics node only describes the first part of the root expression --
+        """
+        <semantics>
+          <mi>x</mi>
+          <annotation encoding="tex">x</annotation>
+        </semantics>
+        <mo>+</mo>
+        <mi>y</mi>
+        """,
+        # -- the semantics node only describes the last part of the root expression --
+        """
+        <mi>x</mi>
+        <mo>+</mo>
+        <semantics>
+          <mi>y</mi>
+          <annotation encoding="tex">y</annotation>
+        </semantics>
+        """,
+        # -- multiple semantics children cannot each represent the complete root expression --
+        """
+        <semantics>
+          <mi>x</mi>
+          <annotation encoding="tex">x</annotation>
+        </semantics>
+        <semantics>
+          <mi>y</mi>
+          <annotation encoding="tex">y</annotation>
+        </semantics>
+        """,
+    ),
+)
+def test_partition_html_uses_math_alttext_when_semantics_does_not_cover_root_expression(
+    math_contents: str,
+):
+    html = f"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x+y">
+            {math_contents}
+          </math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: x+y"]
+
+
+@pytest.mark.parametrize(
+    ("before_semantics", "after_semantics"),
+    (("x+", ""), ("", "+y")),
+)
+def test_partition_html_uses_math_alttext_when_semantics_has_root_text_outside_it(
+    before_semantics: str, after_semantics: str
+):
+    html = f"""
+    <html>
+      <body>
+        <p>
+          Value:
+          <math alttext="x+y">{before_semantics}<semantics>
+            <mi>x</mi>
+            <annotation encoding="tex">x</annotation>
+          </semantics>{after_semantics}</math>
+        </p>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["Value: x+y"]
 
 def test_partition_html_falls_back_to_math_alttext_when_tex_annotation_is_empty():
     html = r"""
@@ -1834,6 +1915,34 @@ def test_partition_html_preserves_page_number_on_display_math():
 
     assert [element.text for element in elements] == ["Before", "x=1", "After"]
     assert [element.metadata.page_number for element in elements] == [7, 7, 7]
+
+
+def test_partition_html_preserves_katex_visual_fallback_in_table_cells():
+    html = r"""
+    <html>
+      <body>
+        <table>
+          <tr>
+            <td>
+              <span class="katex">
+                <span class="katex-mathml">
+                  <math alttext="x^2"></math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                  <span class="base"><span>x</span><span>2</span></span>
+                </span>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert elements == [Table("x 2")]
+    assert elements[0].metadata.text_as_html == "<table><tr><td>x 2</td></tr></table>"
 
 
 def test_partition_html_does_not_duplicate_paired_katex_output():
