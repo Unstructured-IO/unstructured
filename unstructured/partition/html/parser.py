@@ -107,6 +107,19 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 
+TEX_ENCODINGS = (
+    "application/x-tex",
+    "tex",
+    "latex",
+    "application/x-latex",
+)
+"""TeX/LaTeX annotation encodings recognized in MathML `<annotation>` elements.
+
+The order is significant. More specific MIME-style encodings are preferred over
+legacy shorthand values when multiple supported annotations are present.
+"""
+
+
 # ------------------------------------------------------------------------------------------------
 # DOMAIN MODEL
 # ------------------------------------------------------------------------------------------------
@@ -686,6 +699,110 @@ class Phrasing(etree.ElementBase):
             yield from e.iter_text_segments(emphasis)
 
 
+class Math(Flow, Phrasing):
+    """Custom element-class for `<math>` element.
+
+    Provides basic math annotations.
+    """
+
+    @property
+    def is_phrasing(self) -> bool:
+        return (self.get("display") or "").strip().lower() != "block"
+
+    @property
+    def _latex(self) -> str | None:
+        if len(self) == 1 and not (self.text or "").strip() and not (self[0].tail or "").strip():
+            semantics = self.find("./semantics")
+            if semantics is not None:
+                for child in semantics:
+                    if child.tag != "annotation":
+                        continue
+                    
+                    encoding = child.get("encoding")
+
+                    if encoding is None:
+                        continue
+
+                    encoding = encoding.strip().lower()
+                    if encoding not in TEX_ENCODINGS:
+                        continue
+
+                    annotations_latex = child.text
+
+                    if annotations_latex is not None and annotations_latex.strip():
+                        return annotations_latex.strip()
+
+        alt_text = self.get("alttext")
+        if alt_text is not None and alt_text.strip():
+            return alt_text
+
+        return None
+
+    def iter_text_segments(
+        self, enclosing_emphasis: str = ""
+    ) -> Iterator[TextSegment | Element]:
+        """Emit inline math as phrasing content."""
+        if latex := self._latex:
+            yield TextSegment(
+                latex,
+                self._annotation(latex, enclosing_emphasis),
+            )
+
+        yield from self._iter_tail_segment(enclosing_emphasis)
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Emit display math as its own document element."""
+        if latex := self._latex:
+            yield Text(
+                latex,
+                metadata=ElementMetadata(page_number=self._page_number),
+            )
+
+    @staticmethod
+    def _normalize_katex(root: etree._Element) -> None:
+        """Remove redundant KaTeX visual HTML when usable MathML is present."""\
+        
+        for katex in root.xpath(
+            ".//*[contains(concat(' ', normalize-space(@class), ' '), ' katex ')]"
+        ):
+            mathml = None
+            visual = None
+
+            for child in katex:
+                classes = child.get("class")
+                if classes is None:
+                    continue
+
+                classes = classes.split()
+
+                if "katex-mathml" in classes:
+                    mathml = child
+                elif "katex-html" in classes:
+                    visual = child
+
+            if mathml is None or visual is None:
+                continue
+
+            if katex.xpath("ancestor::table"):
+                continue
+
+            math = mathml.find(".//math")
+
+            if math is None or not math._latex:
+                continue
+
+            tail = visual.tail
+            previous = visual.getprevious()
+
+            katex.remove(visual)
+
+            if tail:
+                if previous is not None:
+                    previous.tail = (previous.tail or "") + tail
+                else:
+                    katex.text = (katex.text or "") + tail
+
+
 class Anchor(Phrasing):
     """Custom element-class for `<a>` element.
 
@@ -988,6 +1105,8 @@ element_class_lookup.get_namespace(None).update(
         "img": ImageBlock,
         # -- table --
         "table": TableBlock,
+        # -- math --
+        "math": Math,
         # -- annotated phrasing --
         "a": Anchor,
         "b": Bold,
