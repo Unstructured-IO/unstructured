@@ -15,6 +15,9 @@
 ### Fixes
 
 - **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+### Enhancements
+
+- **Expose invisible PDF text in element metadata**: PDF text extracted from content streams now sets `contains_invisible_text` when it includes render-mode-3 characters. The optional signal remains scoped to the affected text snippet and is preserved when list items are combined or elements are chunked, allowing downstream consumers to filter or audit hidden text without changing extracted content.
 
 ## 0.27.5
 
