@@ -563,3 +563,39 @@ def it_rehydrates_on_a_detect_then_partition_sequence_over_the_same_file_handle(
     elements = partition_json(file=file)
 
     assert elements[0] == Title(text="These are a few of my favorite things:")
+
+
+# -- encoding -------------------------------------------------------------------------------------
+
+
+def it_honors_an_explicit_encoding_for_a_non_utf8_file():
+    # -- a UTF-16 payload is unreadable as UTF-8, so an ignored `encoding=` argument surfaces as
+    # -- UnicodeDecodeError rather than as a wrong result --
+    payload = json.dumps([{"sku": "A-100"}, {"sku": "B-200"}])
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = os.path.join(tmpdir, "utf16.json")
+        with open(path, "w", encoding="utf-16") as f:
+            f.write(payload)
+
+        elements = partition_json(filename=path, encoding="utf-16")
+
+    assert len(elements) == 2
+    assert '"sku": "A-100"' in elements[0].text
+
+
+def it_honors_an_explicit_encoding_for_a_non_utf8_file_like_object():
+    payload = json.dumps([{"sku": "A-100"}, {"sku": "B-200"}]).encode("utf-16")
+
+    elements = partition_json(file=io.BytesIO(payload), encoding="utf-16")
+
+    assert len(elements) == 2
+    assert '"sku": "A-100"' in elements[0].text
+
+
+def it_detects_the_encoding_of_a_non_utf8_file_when_none_is_specified():
+    payload = json.dumps([{"sku": "A-100"}]).encode("utf-16")
+
+    elements = partition_json(file=io.BytesIO(payload))
+
+    assert len(elements) == 1
+    assert '"sku": "A-100"' in elements[0].text
