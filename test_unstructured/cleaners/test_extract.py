@@ -15,8 +15,21 @@ def test_get_indexed_match_raises_with_bad_index():
 
 
 def test_get_indexed_match_raises_with_index_too_high():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The largest index was 2"):
         extract._get_indexed_match("BLAH BLAH BLAH", "BLAH", 4)
+
+
+def test_get_indexed_match_raises_with_no_matches():
+    with pytest.raises(ValueError, match="No matches were found"):
+        extract._get_indexed_match("BLAH BLAH BLAH", "XYZ", 0)
+
+
+def test_extract_text_before_and_after_with_absent_pattern():
+    with pytest.raises(ValueError, match="No matches were found"):
+        extract.extract_text_before("hello world", "xyz")
+
+    with pytest.raises(ValueError, match="No matches were found"):
+        extract.extract_text_after("hello world", "xyz")
 
 
 def test_extract_text_before():
