@@ -374,6 +374,80 @@ class Describe_PreElementAccumulator:
 # -- FLOW (BLOCK-ITEM) ELEMENTS ------------------------------------------------------------------
 
 
+class DescribeListItemBlock:
+    @pytest.mark.parametrize("tag", ["p", "div", "blockquote"])
+    @pytest.mark.parametrize("text", ["list item one.", "A", "* literal bullet"])
+    def it_adopts_a_single_text_block(self, tag: str, text: str):
+        root = etree.fromstring(f"<ul><li>\n<{tag}>{text}</{tag}>\n</li></ul>", html_parser)
+
+        (element,) = root.find("body").iter_elements()
+
+        assert element == ListItem(text)
+        assert element.metadata.category_depth == 1
+
+    def it_preserves_annotations_and_nested_list_depth(self):
+        root = etree.fromstring(
+            '<ul><li>outer<ul><li data-page-number="3"><p>'
+            '<a href="https://example.com">link</a> <b>bold</b>'
+            "</p></li></ul></li></ul>",
+            html_parser,
+        )
+
+        outer, inner = root.find("body").iter_elements()
+
+        assert outer == ListItem("outer")
+        assert inner == ListItem("link bold")
+        assert inner.metadata.category_depth == 2
+        assert inner.metadata.page_number == 3
+        assert inner.metadata.link_texts == ["link"]
+        assert inner.metadata.link_urls == ["https://example.com"]
+        assert inner.metadata.emphasized_text_contents == ["bold"]
+        assert inner.metadata.emphasized_text_tags == ["b"]
+
+    def it_preserves_child_page_number_and_following_text(self):
+        root = etree.fromstring(
+            '<ul data-page-number="2"><li><p data-page-number="3">'
+            "first<br>second</p></li>following text</ul>",
+            html_parser,
+        )
+
+        item, following = root.find("body").iter_elements()
+
+        assert item == ListItem("first second")
+        assert item.metadata.page_number == 3
+        assert following.text == "following text"
+        assert following.metadata.page_number == 2
+
+    @pytest.mark.parametrize(
+        "content",
+        [
+            "<p>first paragraph</p><p>second paragraph</p>",
+            "prefix<p>paragraph text</p>",
+            "<p>paragraph text</p>suffix",
+            "<b>prefix</b><p>paragraph text</p>",
+            "<div><p>first paragraph</p><p>second paragraph</p></div>",
+            "<div><span><p>first paragraph</p><p>second paragraph</p></span></div>",
+            "<ul><li>nested item</li></ul>",
+            "<pre>  code\n  block</pre>",
+            "<h2>heading text</h2>",
+            "<table><tr><td>cell text</td></tr></table>",
+            '<img src="https://example.com/image.png" alt="picture">',
+            "<figure>ignored text</figure>",
+            "<p> </p>",
+            "plain list item",
+        ],
+    )
+    def it_retains_normal_traversal_for_other_content(self, content: str):
+        root = etree.fromstring(f"<ul><li>{content}</li></ul>", html_parser)
+        li = root.xpath(".//li")[0]
+
+        actual = list(li.iter_elements())
+        expected = list(Flow.iter_elements(li))
+
+        assert actual == expected
+        assert [e.metadata.to_dict() for e in actual] == [e.metadata.to_dict() for e in expected]
+
+
 class DescribeFlow:
     """Isolated unit-test suite for `unstructured.partition.html.parser.Flow`.
 
