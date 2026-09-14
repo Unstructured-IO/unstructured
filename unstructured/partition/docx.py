@@ -27,7 +27,10 @@ from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
-from unstructured.common.html_table import htmlify_matrix_of_cell_texts
+from unstructured.common.html_table import (
+    collapse_matrix_of_keyed_cells_to_spans,
+    htmlify_matrix_of_spanned_cell_texts,
+)
 from unstructured.documents.elements import (
     Address,
     Element,
@@ -53,6 +56,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 STYLE_TO_ELEMENT_MAPPING = {
@@ -131,6 +135,7 @@ class PicturePartitionerT(Protocol):
 # ================================================================================================
 
 
+@partition_runtime_telemetry("docx")
 @apply_metadata(FileType.DOCX)
 @add_chunking_strategy
 def partition_docx(
@@ -392,32 +397,42 @@ class _DocxPartitioner:
 
     def _iter_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in (docx) `document` in document order."""
-        # -- This implementation composes a collection of iterators into a "combined" iterator
-        # -- return value using `yield from`. You can think of the return value as an Element
-        # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
-        # -- and using `elements.extend()` for the results of each of the function calls, but is
-        # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
-        # -- those small lists), is more flexible for later iterator operations like filter,
-        # -- chain, map, etc. and is perhaps more elegant and simpler to read once you have the
-        # -- concept of what it's doing. You can see the same pattern repeating in the "sub"
-        # -- functions like `._iter_paragraph_elements()` where the "just return when done"
-        # -- characteristic of a generator avoids repeated code to form interim results into lists.
-        for section_idx, section in enumerate(self._document.sections):
-            yield from self._iter_section_page_breaks(section_idx, section)
-            yield from self._iter_section_headers(section)
+        sections = iter(enumerate(self._document.sections))
+        section_idx, section = next(sections)
 
-            for block_item in section.iter_inner_content():
-                # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
-                # -- Paragraph is more common so check that first.
-                if isinstance(block_item, Paragraph):
-                    yield from self._iter_paragraph_elements(block_item)
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield from self._iter_table_element(block_item)
+        yield from self._iter_section_page_breaks(section_idx, section)
+        yield from self._iter_section_headers(section)
 
-            yield from self._iter_section_footers(section)
+        # -- Iterate document blocks only once. `Section.iter_inner_content()` scans from the start
+        # -- of the document to find each section's boundaries, which becomes prohibitively
+        # -- expensive for documents with many sections and paragraphs.
+        for block_item in self._document.iter_inner_content():
+            # -- a block-item can be a Paragraph or a Table, maybe others later so elif here.
+            # -- Paragraph is more common so check that first.
+            if isinstance(block_item, Paragraph):
+                yield from self._iter_paragraph_elements(block_item)
+            elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                block_item, DocxTable
+            ):
+                yield from self._iter_table_element(block_item)
+
+            # -- A paragraph-level sectPr marks the final paragraph governed by the current
+            # -- section. The final section's sectPr lives directly under w:body, so it is handled
+            # -- after the loop.
+            if (
+                isinstance(block_item, Paragraph)
+                and block_item._p.pPr is not None
+                and block_item._p.pPr.sectPr is section._sectPr
+            ):
+                yield from self._iter_section_footers(section)
+                next_section = next(sections, None)
+                if next_section is None:
+                    return
+                section_idx, section = next_section
+                yield from self._iter_section_page_breaks(section_idx, section)
+                yield from self._iter_section_headers(section)
+
+        yield from self._iter_section_footers(section)
 
     def _iter_sectionless_document_elements(self) -> Iterator[Element]:
         """Generate each document-element in a docx `document` that has no sections.
@@ -494,6 +509,10 @@ class _DocxPartitioner:
             </tbody>
             </table>
 
+        A merged cell (`gridSpan` and/or `vMerge`) is emitted as a single `<td>` carrying the
+        appropriate `colspan`/`rowspan` attribute rather than being repeated into every grid
+        position it visually covers.
+
         `is_nested` is used for recursive calls when a nested table is encountered. Certain
         behaviors are different in that case, but the caller can safely ignore that parameter and
         allow it to take its default value.
@@ -510,36 +529,59 @@ class _DocxPartitioner:
                     # -- structure only
                     yield paragraph.text
                 elif isinstance(table := block_item, DocxTable):
+                    seen_tcs: set[Any] = set()
                     for row in table.rows:
-                        yield from iter_row_cells_as_text(row)
+                        for text, nested_cell in iter_row_cells(row):
+                            if nested_cell is not None:
+                                if nested_cell._tc in seen_tcs:
+                                    continue
+                                seen_tcs.add(nested_cell._tc)
+                            yield text
 
-        def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
-            """Generate the normalized text of each cell in `row` as a separate string.
+        def cell_text(cell: _Cell) -> str:
+            """The normalized text of `cell`, including that of any table nested in it."""
+            text = " ".join(iter_cell_block_items(cell))
+            return " ".join(text.split())
 
-            The text of each paragraph within a cell is not separated. A table nested in a cell is
-            converted to a normalized string of its contents and combined with the text of the
-            cell that contains the table.
+        def iter_row_cells(row: _Row) -> Iterator[tuple[str, _Cell | None]]:
+            """Generate (cell_text, cell) for each layout-grid position in `row`.
+
+            `cell` is `None` for a grid-position with no `tc` element -- the (rare) case of a row
+            that starts late or ends early, or one where `row.cells` raises because the table has
+            merged or malformed cells; `cell_text` is the empty string in each such case.
             """
             # -- Each omitted cell at the start of the row (pretty rare) gets the empty string.
             # -- This preserves column alignment when one or more initial cells are omitted.
             for _ in range(row.grid_cols_before):
-                yield ""
+                yield "", None
 
             try:
                 # -- row.cells may introduce `ValueError: no tc element at grid_offset=X` if the
                 # -- table has merged or malformed cells. always wrap in try/except.
                 for cell in row.cells:
-                    cell_text = " ".join(iter_cell_block_items(cell))
-                    yield " ".join(cell_text.split())
+                    yield cell_text(cell), cell
             except Exception as e:
-                logging.warning(f"Skipping cell in _iter_row_cells_as_text due to: {e}")
-                yield ""
+                logging.warning(f"Skipping cell in _convert_table_to_html due to: {e}")
+                yield "", None
 
             # -- Each omitted cell at the end of the row (also rare) gets the empty string. --
             for _ in range(row.grid_cols_after):
-                yield ""
+                yield "", None
 
-        return htmlify_matrix_of_cell_texts([list(iter_row_cells_as_text(r)) for r in table.rows])
+        def iter_row_merge_keyed_texts(row: _Row) -> Iterator[tuple[str, object]]:
+            """Generate (cell_text, merge_key) for each layout-grid position in `row`.
+
+            `merge_key` is shared by every grid-position spanned by the same merged cell (DOCX
+            resolves both `gridSpan` and `vMerge="continue"` to the same underlying `tc` element),
+            and is otherwise unique, so it can be fed to `collapse_matrix_of_keyed_cells_to_spans()`
+            to recover the original merge geometry.
+            """
+            for text, cell in iter_row_cells(row):
+                yield text, (cell._tc if cell is not None else object())
+
+        matrix = [list(iter_row_merge_keyed_texts(row)) for row in table.rows]
+        spanned_matrix = collapse_matrix_of_keyed_cells_to_spans(matrix)
+        return htmlify_matrix_of_spanned_cell_texts(spanned_matrix)
 
     @cached_property
     def _document(self) -> Document:

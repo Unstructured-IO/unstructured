@@ -10,6 +10,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+import networkx as nx
+import numpy as np
 import pandas as pd
 import pandas.testing as pdt
 import pytest
@@ -32,6 +34,7 @@ from unstructured.documents.elements import ListItem, Table, Text, Title
 from unstructured.errors import UnprocessableEntityError
 from unstructured.partition.xlsx import (
     _ConnectedComponent,
+    _ConnectedComponents,
     _SubtableParser,
     _XlsxPartitionerOptions,
     partition_xlsx,
@@ -704,3 +707,84 @@ class Describe_SubtableParser:
         )
 
         assert trailing_single_cell_row_texts == expected_value
+
+
+def _legacy_xlsx_components(worksheet_df):
+    """Original dense graph implementation, retained only as a compatibility oracle."""
+    rows, cols = worksheet_df.shape
+    graph = nx.grid_2d_graph(rows, cols)
+    graph.remove_nodes_from(
+        (row, col)
+        for row in range(rows)
+        for col in range(cols)
+        if pd.isna(worksheet_df.iloc[row, col])
+    )
+    return list(
+        _ConnectedComponents(worksheet_df)._merge_overlapping_tables(
+            [_ConnectedComponent(worksheet_df, cells) for cells in nx.connected_components(graph)]
+        )
+    )
+
+
+def test_sparse_xlsx_matches_legacy_for_every_three_by_three_occupancy():
+    # Exhaustive shapes cover diagonal separation, holes, bridges, and row-overlap merging.
+    for bits in range(1 << 9):
+        frame = pd.DataFrame(
+            [
+                ["value" if bits & (1 << (row * 3 + col)) else None for col in range(3)]
+                for row in range(3)
+            ]
+        )
+        actual = list(_ConnectedComponents(frame))
+        expected = _legacy_xlsx_components(frame)
+        assert [c._cell_coordinate_set for c in actual] == [
+            c._cell_coordinate_set for c in expected
+        ], bits
+
+
+@pytest.mark.parametrize("include_header", [False, True])
+@pytest.mark.parametrize("infer_table_structure", [False, True])
+def test_sparse_xlsx_serialized_output_matches_legacy(
+    tmp_path, monkeypatch, include_header, infer_table_structure
+):
+    rng = np.random.default_rng(4357)
+    path = tmp_path / "compatibility.xlsx"
+    with pd.ExcelWriter(path) as writer:
+        for index, density in enumerate([0.0, 0.05, 0.3, 0.7, 1.0]):
+            values = rng.choice([None, "", "text", 0, False, 3.5], size=(12, 9))
+            values[rng.random((12, 9)) > density] = None
+            pd.DataFrame(values).to_excel(
+                writer, sheet_name=f"case{index}", index=False, header=False
+            )
+    kwargs = {"include_header": include_header, "infer_table_structure": infer_table_structure}
+    actual = [element.to_dict() for element in partition_xlsx(str(path), **kwargs)]
+    monkeypatch.setattr(
+        _ConnectedComponents,
+        "_connected_components",
+        property(lambda self: _legacy_xlsx_components(self._worksheet_df)),
+    )
+    expected = [element.to_dict() for element in partition_xlsx(str(path), **kwargs)]
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "stanley-cups.xlsx",
+        "emoji.xlsx",
+        "empty.xlsx",
+        "more-than-1k-cells.xlsx",
+        "xlsx-subtable-cases.xlsx",
+        "language-docs/eng_spa.xlsx",
+    ],
+)
+def test_sparse_xlsx_existing_workbook_output_matches_legacy(filename, monkeypatch):
+    path = str(Path("example-docs") / filename)
+    actual = [element.to_dict() for element in partition_xlsx(path)]
+    monkeypatch.setattr(
+        _ConnectedComponents,
+        "_connected_components",
+        property(lambda self: _legacy_xlsx_components(self._worksheet_df)),
+    )
+    expected = [element.to_dict() for element in partition_xlsx(path)]
+    assert actual == expected

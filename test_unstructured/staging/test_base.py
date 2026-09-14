@@ -29,6 +29,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     PageBreak,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -252,6 +253,7 @@ def test_all_elements_preserved_when_serialized():
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
         Text(text="text", metadata=metadata, element_id="8"),
+        TableChunk(text="table chunk", metadata=metadata, element_id="9"),
         PageBreak(text=""),
     ]
 
@@ -271,6 +273,7 @@ def test_serialized_deserialize_elements_to_json(tmpdir: str):
         ListItem(text="list", metadata=metadata, element_id="6"),
         Image(text="image", metadata=metadata, element_id="7"),
         Text(text="text", metadata=metadata, element_id="8"),
+        TableChunk(text="table chunk", metadata=metadata, element_id="9"),
         PageBreak(text=""),
     ]
 
@@ -709,7 +712,7 @@ def test_create_file_from_elements_markdown_passes_formula_normalization_flag():
 
 
 def test_element_to_md_formula_auto_plain_for_noisy_ocr():
-    text = "_ CRo—CR O= OR"
+    text = "_ CRo-CR O= OR"
     assert base.element_to_md(Formula(text)) == text
 
 

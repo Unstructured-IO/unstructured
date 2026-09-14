@@ -4,7 +4,6 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-import requests
 from markdown.extensions.fenced_code import FencedCodeExtension
 from pytest_mock import MockFixture
 
@@ -61,7 +60,7 @@ def test_partition_md_from_url():
         status_code=200,
         headers={"Content-Type": "text/markdown"},
     )
-    with patch.object(requests, "get", return_value=response) as _:
+    with patch("unstructured.partition.md.safe_get", return_value=response) as _:
         elements = partition_md(url="https://fake.url")
 
     assert len(elements) > 0
@@ -78,7 +77,10 @@ def test_partition_md_from_url_raises_with_bad_status_code():
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
-    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+    with (
+        patch("unstructured.partition.md.safe_get", return_value=response) as _,
+        pytest.raises(ValueError),
+    ):
         partition_md(url="https://fake.url")
 
 
@@ -92,7 +94,10 @@ def test_partition_md_from_url_raises_with_bad_content_type():
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
-    with patch.object(requests, "get", return_value=response) as _, pytest.raises(ValueError):
+    with (
+        patch("unstructured.partition.md.safe_get", return_value=response) as _,
+        pytest.raises(ValueError),
+    ):
         partition_md(url="https://fake.url")
 
 

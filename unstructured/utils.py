@@ -77,6 +77,24 @@ def read_from_jsonl(filename: str) -> list[dict[str, Any]]:
         return [json.loads(line) for line in input_file]
 
 
+def _reject_json_constant(constant: str) -> None:
+    """Raise so `NaN`/`Infinity`/`-Infinity` are treated as malformed JSON.
+
+    Raised as `JSONDecodeError` so it flows through callers' existing decode-error handling and
+    surfaces as the canonical "Not a valid json"/"Not a valid ndjson" ValueError.
+    """
+    raise json.JSONDecodeError(f"Non-standard JSON constant: {constant}", constant, 0)
+
+
+def loads_strict_json(text: str) -> Any:
+    """`json.loads` that rejects the non-standard constants Python accepts by default.
+
+    Lives here (a low-level module) so both `file_utils.filetype` and
+    `partition.common.json_partitioning` can share it without an import cycle.
+    """
+    return json.loads(text, parse_constant=_reject_json_constant)
+
+
 def requires_dependencies(
     dependencies: str | list[str],
     extras: Optional[str] = None,
@@ -159,6 +177,9 @@ def only(it: Iterable[Any]) -> Any:
     return out
 
 
+_NVIDIA_SMI_TIMEOUT_SECONDS = 1.0
+
+
 def _telemetry_opt_out() -> bool:
     """True if telemetry should be disabled via env.
 
@@ -170,27 +191,25 @@ def _telemetry_opt_out() -> bool:
     )
 
 
-def _telemetry_opt_in() -> bool:
-    """True if telemetry is explicitly enabled via env. Only 'true' and '1' opt in."""
-    return (os.getenv("UNSTRUCTURED_TELEMETRY_ENABLED") or "").strip().lower() in (
-        "true",
-        "1",
-    )
-
-
 def scarf_analytics():
-    """Send a lightweight analytics ping. Off by default.
+    """Send a lightweight library-load analytics ping unless it is opted out.
 
-    Set UNSTRUCTURED_TELEMETRY_ENABLED=true to opt in.
     Opt-out env vars (DO_NOT_TRACK, SCARF_NO_ANALYTICS): any non-empty value opts out.
     """
-    if _telemetry_opt_out() or not _telemetry_opt_in():
+    if _telemetry_opt_out():
         return
 
     try:
-        subprocess.check_output(["nvidia-smi"], stderr=subprocess.DEVNULL)
+        subprocess.run(
+            ["nvidia-smi"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+            timeout=_NVIDIA_SMI_TIMEOUT_SECONDS,
+        )
         gpu_present = True
-    except (OSError, subprocess.CalledProcessError):
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         gpu_present = False
 
     python_version = ".".join(platform.python_version().split(".")[:2])

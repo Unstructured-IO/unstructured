@@ -168,6 +168,11 @@ class ElementMetadata:
     detection_class_prob: Optional[float]
     # -- DEBUG field, the detection mechanism that emitted this element --
     detection_origin: Optional[str]
+    # -- per-attribute model provenance for enrichments. Maps a written attribute name (e.g.
+    # -- "text", "text_as_html", "embeddings") to a list of records in application order, each
+    # -- {"type", "provider", "model"}. Authoring enrichments overwrite (reset the list);
+    # -- additive enrichments append (preserving the prior author). --
+    enrichment_origins: Optional[dict[str, list[dict[str, str]]]]
     emphasized_text_contents: Optional[list[str]]
     emphasized_text_tags: Optional[list[str]]
     file_directory: Optional[str]
@@ -239,6 +244,7 @@ class ElementMetadata:
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
+        enrichment_origins: Optional[dict[str, list[dict[str, str]]]] = None,
         emphasized_text_contents: Optional[list[str]] = None,
         emphasized_text_tags: Optional[list[str]] = None,
         file_directory: Optional[str] = None,
@@ -284,6 +290,7 @@ class ElementMetadata:
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
+        self.enrichment_origins = enrichment_origins
         self.emphasized_text_contents = emphasized_text_contents
         self.emphasized_text_tags = emphasized_text_tags
 
@@ -502,6 +509,11 @@ class ConsolidationStrategy(enum.Enum):
     LIST_UNIQUE = "list_unique"
     """Union list values across elements, preserving order. Only suitable for `List` fields."""
 
+    DICT_LIST_UNIQUE = "dict_list_unique"
+    """Merge dict-of-list values across elements: union keys, and per key concatenate the lists
+    then drop duplicate records, preserving first-seen order. Suitable for `dict[str, list]`
+    fields like `enrichment_origins`."""
+
     @classmethod
     def field_consolidation_strategies(cls) -> dict[str, ConsolidationStrategy]:
         """Mapping from ElementMetadata field-name to its consolidation strategy.
@@ -519,6 +531,7 @@ class ConsolidationStrategy(enum.Enum):
             "data_source": cls.FIRST,
             "detection_class_prob": cls.DROP,
             "detection_origin": cls.DROP,
+            "enrichment_origins": cls.DICT_LIST_UNIQUE,
             "emphasized_text_contents": cls.LIST_CONCATENATE,
             "emphasized_text_tags": cls.LIST_CONCATENATE,
             "file_directory": cls.FIRST,

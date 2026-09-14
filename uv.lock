@@ -4195,11 +4195,11 @@ wheels = [
 
 [[package]]
 name = "packaging"
-version = "26.0"
+version = "26.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/65/ee/299d360cdc32edc7d2cf530f3accf79c4fca01e96ffc950d8a52213bd8e4/packaging-26.0.tar.gz", hash = "sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4", size = 143416, upload-time = "2026-01-21T20:50:39.064Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz", hash = "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79", size = 313412, upload-time = "2026-08-04T18:15:28.737Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/b9/c538f279a4e237a006a2c98387d081e9eb060d203d8ed34467cc0f0b9b53/packaging-26.0-py3-none-any.whl", hash = "sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529", size = 74366, upload-time = "2026-01-21T20:50:37.788Z" },
+    { url = "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl", hash = "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c", size = 129956, upload-time = "2026-08-04T18:15:27.159Z" },
 ]
 
 [[package]]
@@ -7111,7 +7111,7 @@ wheels = [
 
 [[package]]
 name = "twine"
-version = "6.2.0"
+version = "7.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "id" },
@@ -7124,9 +7124,9 @@ dependencies = [
     { name = "rich" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/a8/949edebe3a82774c1ec34f637f5dd82d1cf22c25e963b7d63771083bbee5/twine-6.2.0.tar.gz", hash = "sha256:e5ed0d2fd70c9959770dce51c8f39c8945c574e18173a7b81802dab51b4b75cf", size = 172262, upload-time = "2025-09-04T15:43:17.255Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/3c/58f808a359700f39a967dffede33efeac809262c03303fa3eec6afff8f49/twine-7.0.0.tar.gz", hash = "sha256:85cdb29c518efef867360ae4acd4b0dfd61c8654a22fca08e6f8539f05022177", size = 215032, upload-time = "2026-07-27T15:59:00.825Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/7a/882d99539b19b1490cac5d77c67338d126e4122c8276bf640e411650c830/twine-6.2.0-py3-none-any.whl", hash = "sha256:418ebf08ccda9a8caaebe414433b0ba5e25eb5e4a927667122fbe8f829f985d8", size = 42727, upload-time = "2025-09-04T15:43:15.994Z" },
+    { url = "https://files.pythonhosted.org/packages/96/08/ddcdc06225eaad6de0e48e1002b06d919dbde20582d0662c7af51308e5d6/twine-7.0.0-py3-none-any.whl", hash = "sha256:b854164df26db268af05f49aa5c0344b10e27a494343ff05b1e0bad3b135f5a7", size = 43204, upload-time = "2026-07-27T15:58:59.260Z" },
 ]
 
 [[package]]
@@ -7226,6 +7226,7 @@ dependencies = [
     { name = "installer" },
     { name = "langdetect" },
     { name = "lxml" },
+    { name = "nh3" },
     { name = "numba" },
     { name = "numpy" },
     { name = "psutil" },
@@ -7378,6 +7379,7 @@ test = [
     { name = "freezegun" },
     { name = "grpcio" },
     { name = "mypy" },
+    { name = "networkx" },
     { name = "pip-licenses" },
     { name = "pydantic" },
     { name = "pytest" },
@@ -7414,6 +7416,7 @@ requires-dist = [
     { name = "msoffcrypto-tool", marker = "extra == 'all-docs'", specifier = ">=6.0.0,<7.0.0" },
     { name = "msoffcrypto-tool", marker = "extra == 'local-inference'", specifier = ">=6.0.0,<7.0.0" },
     { name = "msoffcrypto-tool", marker = "extra == 'xlsx'", specifier = ">=6.0.0,<7.0.0" },
+    { name = "nh3", specifier = ">=0.3.0,<1.0.0" },
     { name = "numba", specifier = ">=0.60.0,<1.0.0" },
     { name = "numpy", specifier = ">=1.26.0,<3.0.0" },
     { name = "openai-whisper", marker = "extra == 'all-docs'", specifier = ">=20231117,<20270000" },
@@ -7460,10 +7463,10 @@ requires-dist = [
     { name = "pypandoc-binary", marker = "sys_platform != 'win32' and extra == 'org'", specifier = ">=1.16.2,<2.0.0" },
     { name = "pypandoc-binary", marker = "sys_platform != 'win32' and extra == 'rst'", specifier = ">=1.16.2,<2.0.0" },
     { name = "pypandoc-binary", marker = "sys_platform != 'win32' and extra == 'rtf'", specifier = ">=1.16.2,<2.0.0" },
-    { name = "pypdf", marker = "extra == 'all-docs'", specifier = ">=6.6.2,<7.0.0" },
-    { name = "pypdf", marker = "extra == 'image'", specifier = ">=6.6.2,<7.0.0" },
-    { name = "pypdf", marker = "extra == 'local-inference'", specifier = ">=6.6.2,<7.0.0" },
-    { name = "pypdf", marker = "extra == 'pdf'", specifier = ">=6.6.2,<7.0.0" },
+    { name = "pypdf", marker = "extra == 'all-docs'", specifier = ">=6.9.1,<7.0.0" },
+    { name = "pypdf", marker = "extra == 'image'", specifier = ">=6.9.1,<7.0.0" },
+    { name = "pypdf", marker = "extra == 'local-inference'", specifier = ">=6.9.1,<7.0.0" },
+    { name = "pypdf", marker = "extra == 'pdf'", specifier = ">=6.9.1,<7.0.0" },
     { name = "python-docx", marker = "extra == 'all-docs'", specifier = ">=1.2.0,<2.0.0" },
     { name = "python-docx", marker = "extra == 'doc'", specifier = ">=1.2.0,<2.0.0" },
     { name = "python-docx", marker = "extra == 'docx'", specifier = ">=1.2.0,<2.0.0" },
@@ -7488,14 +7491,14 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'huggingface'", specifier = ">=5.2.0,<6.0.0" },
     { name = "typing-extensions", specifier = ">=4.15.0,<5.0.0" },
     { name = "unstructured-client", specifier = ">=0.25.9,<1.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'all-docs'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'image'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'local-inference'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'pdf'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'all-docs'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'image'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'local-inference'", specifier = ">=1.6.10,<2.0.0" },
-    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'pdf'", specifier = ">=1.6.10,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'all-docs'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'image'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'local-inference'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "python_full_version == '3.12.*' and sys_platform == 'win32' and extra == 'pdf'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'all-docs'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'image'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'local-inference'", specifier = ">=1.6.12,<2.0.0" },
+    { name = "unstructured-inference", marker = "sys_platform != 'win32' and extra == 'pdf'", specifier = ">=1.6.12,<2.0.0" },
     { name = "unstructured-ingest", extras = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "python_full_version < '3.13' and sys_platform == 'win32' and extra == 'ingest'", specifier = ">=1.4.0,<2.0.0" },
     { name = "unstructured-ingest", extras = ["airtable", "astradb", "azure", "azure-ai-search", "bedrock", "biomed", "box", "chroma", "confluence", "couchbase", "databricks-volumes", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "hubspot", "huggingface", "jira", "kafka", "kdbai", "milvus", "mongodb", "notion", "octoai", "onedrive", "openai", "opensearch", "outlook", "pinecone", "postgres", "qdrant", "reddit", "remote", "s3", "salesforce", "sftp", "sharepoint", "singlestore", "slack", "vectara", "vertexai", "voyageai", "weaviate", "wikipedia"], marker = "sys_platform != 'win32' and extra == 'ingest'", specifier = ">=1.4.0,<2.0.0" },
     { name = "unstructured-paddleocr", marker = "extra == 'paddleocr'", specifier = "==2.10.0" },
@@ -7513,12 +7516,13 @@ provides-extras = ["all-docs", "audio", "chunking-tokens", "csv", "doc", "docx",
 [package.metadata.requires-dev]
 dev = [{ name = "pre-commit", specifier = ">=4.5.1,<5.0.0" }]
 lint = [{ name = "ruff", specifier = ">=0.15.0,<1.0.0" }]
-release = [{ name = "twine", specifier = ">=6.0.0,<7.0.0" }]
+release = [{ name = "twine", specifier = ">=7.0.0,<8.0.0" }]
 test = [
     { name = "coverage", specifier = ">=7.13.3,<8.0.0" },
     { name = "freezegun", specifier = ">=1.5.5,<2.0.0" },
     { name = "grpcio", specifier = ">=1.78.0,<2.0.0" },
     { name = "mypy", specifier = ">=1.19.1,<2.0.0" },
+    { name = "networkx", specifier = ">=3.2.0,<4.0.0" },
     { name = "pip-licenses", specifier = ">=5.0.0,<6.0.0" },
     { name = "pydantic", specifier = ">=2.12.5,<3.0.0" },
     { name = "pytest", specifier = ">=9.0.2,<10.0.0" },
@@ -7554,7 +7558,7 @@ wheels = [
 
 [[package]]
 name = "unstructured-inference"
-version = "1.6.10"
+version = "1.6.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "accelerate", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
@@ -7565,6 +7569,7 @@ dependencies = [
     { name = "onnxruntime", version = "1.25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "opencv-python", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "pandas", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
+    { name = "pdfminer-six", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "pypdfium2", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "rapidfuzz", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "scipy", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
@@ -7572,9 +7577,9 @@ dependencies = [
     { name = "torch", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
     { name = "transformers", marker = "python_full_version == '3.12.*' or sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9a/aa/5d0a01facf2f4d00ce1b3e8a2f23e179b584b0a2d89acd647143583eb5da/unstructured_inference-1.6.10.tar.gz", hash = "sha256:b3a2809561b7a2f8840217082dea1234708fb50c86e654f83c6731d68b6051ed", size = 47868, upload-time = "2026-04-26T20:09:57.927Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/14/a1/f4c89b3e455b6d19f4f8329724aa662e1679f202b42d5fadd52a3098d07b/unstructured_inference-1.6.12.tar.gz", hash = "sha256:7403c64b3597c32b5036d4836ec572c183f7cf3c756f820657a164e19beb4f00", size = 49931, upload-time = "2026-06-09T19:06:09.93Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/3b/75d00d8a771cc34c50f8d97ec831de0d966287f675910c0134ef5e0b7e9c/unstructured_inference-1.6.10-py3-none-any.whl", hash = "sha256:28dc73fe9ce952d03b256520525f7e2c1656920be8eb6204193e890cbaf2c73a", size = 55132, upload-time = "2026-04-26T20:09:56.455Z" },
+    { url = "https://files.pythonhosted.org/packages/56/f4/78b2c83658ea7096b40a344b19c9c8860ec8e11c51b24089aa4351e3ba27/unstructured_inference-1.6.12-py3-none-any.whl", hash = "sha256:05e37217c6765b62a27b7031747a7927caefbe08e88a7a95ada8449d82d2fe77", size = 57237, upload-time = "2026-06-09T19:06:08.435Z" },
 ]
 
 [[package]]

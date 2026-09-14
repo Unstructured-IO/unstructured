@@ -250,7 +250,9 @@ def test_save_elements(
 
 
 @pytest.mark.parametrize("storage_enabled", [False, True])
-def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
+def test_save_elements_with_output_dir_path_none(
+    monkeypatch, storage_enabled, isolated_global_working_dir
+):
     monkeypatch.setenv(
         "GLOBAL_WORKING_DIR_ENABLED",
         "true" if storage_enabled else "false",

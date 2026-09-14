@@ -1,8 +1,182 @@
-## 0.22.32
+## 0.27.8-dev0
 
 ### Enhancements
 
-- **Optimize XLSX subtable detection memory usage**: replace dense worksheet-sized graph construction with sparse connected-component traversal over populated cells, preserving existing `partition_xlsx()` output while reducing peak memory on sparse sheets.
+- Optimize XLSX subtable detection using sparse populated-cell traversal; preserve table grouping and output without introducing size limits.
+
+### Fixes
+
+- **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
+
+- **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
+
+## 0.27.7
+
+### Fixes
+
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
+
+## 0.27.6
+
+### Fixes
+
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+
+## 0.27.5
+
+### Fixes
+
+- **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them, including when the containing document is a file-like object with no known file-name.
+
+## 0.27.4
+
+### Fixes
+
+- **Treat `-` and `–` as a bullet only at the start of a line and only when whitespace or the end of the line follows**: `partition_text` no longer splits a line at every hyphen, so hyphenated values survive partitioning — phone numbers, SSNs, ISO dates, cards, IBANs, UUIDs, hyphenated names, YAML values and hyphenated hostnames. Affects `FileType.TXT` and its 18 extensions plus `.eml`/`.msg`; PDF/DOCX/PPTX/HTML are unchanged. A line like `-123.45` also keeps its leading character and is no longer classified as a `ListItem`. **Behavior changes:** an inline dash list on a single line (`- one - two - three`) no longer splits into separate elements, and a dash with no separating whitespace (`-item`) is no longer a bullet. `- item`, a lone `-`, and unambiguous glyphs (`•`, `○`, `*`, …) are unchanged.
+
+## 0.27.3
+
+### Fixes
+
+- **Updated README:** Added Sign up Link for Transform MCP in README.
+
+## 0.27.2
+
+### Fixes
+
+- **chore(ci): bump `anthropics/claude-code-action` to `v1`.** Moves the `@claude` workflow off the deprecated `@beta` pin and updates the tool allowlist to the current Claude Code CLI tool names (`Read`/`Glob`/`Grep`).
+
+## 0.27.1
+
+### Fixes
+
+- **Support Core Metadata 2.5 package publishing**: Upgrade the PyPI publishing action and Twine release tooling so artifacts produced by Hatchling 1.32 and later pass metadata validation. Release workflows now validate artifacts before upload and can safely retry a failed upload from an existing published GitHub release tag without moving or recreating that tag.
+
+## 0.27.0
+
+### Enhancements
+
+- **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
+
+## 0.26.3
+
+### Fixes
+
+- **Use fallback character-set detection for file-like objects**: `FileTypeDetectionContext.text_head()` now applies the same `detect_file_encoding()` fallback to file-like objects as it does to file paths when the declared encoding cannot decode the content. Previously it decoded with `errors="ignore"`, silently stripping characters and corrupting the text head for non-UTF-8 streams such as S3/GCS objects and API uploads.
+
+## 0.26.2
+
+### Fixes
+
+- **Linear-time inline element merging in HTML partitioning (ML-1713)**: `combine_inline_elements` re-parsed the growing merged run on every step and appended text via attribute `+=`, making a long run of mergeable inline elements O(n²) — seconds for a few hundred elements. Each element's mergeability is now computed once from its own HTML and the run's text is joined once when it closes, so merging is linear with identical output.
+
+## 0.26.1
+
+### Fixes
+
+- **Bound array-stream decoding in `is_pdf_too_complex` (SEC-146)**: fixes a quadratic `bytes +=` accumulation over array-based `/Contents` (CVE-2026-33123) that let a crafted PDF spike CPU/memory. Accumulation now uses a `bytearray`, with per-page and document-wide caps on decoded bytes and array entries that fail closed on crafted content, and every file is inspected by default (small files are no longer skipped, since a small compressed file can declare huge content). Indirect `/Contents` arrays are now dereferenced (they were being skipped), a single unreadable stream no longer skips the rest of its page, and operator counting no longer allocates a full match list. Bumps `pypdf` to `>=6.9.1` so its own patched code path is used.
+
+## 0.26.0
+
+### Fixes
+
+- **Restore default-on library-load telemetry**: The lightweight library-load ping once again runs by default when `unstructured` is imported. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (after trimming whitespace) before import to disable it; empty and whitespace-only values retain the default behavior. This removes the `UNSTRUCTURED_TELEMETRY_ENABLED` explicit opt-in gate introduced by #4281 while preserving the existing endpoint and payload. The best-effort `nvidia-smi` GPU probe now has a one-second timeout, and GPU-probe and request failures remain non-fatal.
+
+- **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
+
+## 0.25.2
+
+### Enhancements
+
+- **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
+- **Add lazy chunking entry points**: `iter_chunk_elements()` and `iter_chunks_by_title()` yield each chunk as it is formed, alongside the list-returning `chunk_elements()` and `chunk_by_title()`, which are now defined in terms of them. Same options, same chunks, same order — chunking was already lazy internally and this exposes that pipeline rather than adding a second one. Chunks are no longer accumulated in a list, so a caller that also reads elements lazily holds only the pre-chunk being formed; see the docstrings for two limits on that — `iter_chunks_by_title()` reads one pre-chunk ahead in order to combine undersized ones, and the default `include_orig_elements=True` retains source elements (`image_base64` payloads included) in every chunk. Options are validated at the call rather than on first advance, and an unknown `tokenizer` used with `max_tokens` now raises there too, in both forms.
+
+### Fixes
+
+- **Reject an empty `tokenizer` when chunking by `max_tokens`**: `""` is not `None`, so it slipped past the "tokenizer is required" check while still leaving the chunkers without a token counter — the window was then silently measured in characters, making `max_tokens=20` mean 20 characters. It now raises the same `ValueError` as omitting `tokenizer` altogether.
+
+## 0.25.1
+
+### Fixes
+
+- **Update README.md**: readme-only changes; added a link to Unstructured Pipelines to the README. No library behavior changes.
+
+## 0.25.0
+
+### Enhancements
+
+- **Partition arbitrary JSON and NDJSON**: `partition_json()` and `partition_ndjson()` now handle any valid JSON/NDJSON payload, not just serialized Unstructured output. Arrays (and NDJSON files) of serialized elements keep rehydrating as before; any other valid payload (bare objects, arrays of records, NDJSON lines, scalars) becomes `Text` elements containing the pretty-printed JSON instead of raising. The schema pre-gates in `partition()` are removed accordingly, a compact single-line JSON object now detects as `FileType.JSON` rather than NDJSON (JSON/NDJSON disambiguation examines at most the first 1 MiB of the file), and malformed input still raises `ValueError` (empty or whitespace-only documents yield no elements). One degraded case: NDJSON whose first record alone exceeds the 1 MiB disambiguation bound now classifies as JSON and fails `partition()` with `ValueError` (calling `partition_ndjson()` directly still handles it). Rehydration is chosen by an explicit shape predicate, with these consequences: an element-shaped payload whose contents cannot be rehydrated (e.g. corrupt `metadata`) raises `ValueError` with the underlying error chained, and an array (or NDJSON file) mixing element-shaped and arbitrary items partitions whole as arbitrary JSON - no partial rehydration that silently drops the arbitrary items. An empty JSON object yields one `Text` containing `{}` (an empty array yields no elements). One intended routing note: a one-record serialized-element file (a single object, not an array) routed through `partition()`/`detect_filetype()` now emits pretty-printed `Text` with alphabetized keys instead of rehydrating, since rehydration applies only to arrays (direct `partition_ndjson()` behavior is unchanged).
+- **Serialized `TableChunk` elements now rehydrate**: `elements_from_dicts()` (and with it `partition_json()` and `partition_ndjson()`) previously dropped serialized `TableChunk` elements silently because the type is not in the shared element-type map; it is now special-cased like `CheckBox`. This completes the table-reconstruction feature (#4291), whose `reconstruct_table_from_chunks()` expects deserialized chunks and now has a deserialization path to feed it. Behavior change: payloads of serialized chunked output containing split tables now return the `TableChunk` elements (previously omitted from results).
+- **`is_json_processable()` and `is_ndjson_processable()` are deprecated**: partitioning and file-type detection no longer route through these prefix-sniffing helpers. They keep working unchanged for downstream callers - now emitting a `DeprecationWarning` - and will be removed in a future release.
+
+## 0.24.2
+
+### Fixes
+
+- **Update README.md**: readme-only changes; added the Unstructured Transform MCP to the README. No library behavior changes.
+
+## 0.24.1
+
+### Fixes
+
+- **Fix stored XSS in v2 (ontology) HTML output** (GHSA-v5mq-3xhg-98m9): `partition_html(html_parser_version="v2")`, `elements_to_html()`, and `metadata.text_as_html` previously emitted untrusted document markup without output encoding, allowing attacker-controlled content (`on*` handlers, `javascript:` links, tag/attribute breakout) to execute when the HTML was viewed. Output is now sanitized — text and attribute values are HTML-escaped, event-handler attributes are dropped, tags/attributes are allowlisted, and URL schemes are filtered (`http`/`https`/`mailto`/`tel`/relative preserved; `data:` limited to raster image MIME types on `img[src]`). Legitimate formatting is unaffected.
+
+## 0.24.0
+
+### Enhancements
+
+- **Centralize outbound URL fetching**: `partition`, `partition_html`, and `partition_md` now route `url=` fetches through a single shared helper (`unstructured/safe_http.py`) instead of ad-hoc `requests.get` calls. The helper applies an `http`/`https` scheme allowlist, a hostname denylist with IDNA normalization, address validation performed at connect time, manual redirect handling with per-hop re-validation (dropping credential material on cross-origin hops), refusal of proxied requests, and a default `(connect, read)` timeout. **Behavior change:** fetches that resolve to non-routable, loopback, or link-local addresses are now rejected by default. Set `UNSTRUCTURED_ALLOW_PRIVATE_URL=1` (or pass `allow_private=True`) to opt out for controlled local usage.
+
+## 0.23.3
+
+### Fixes
+
+- **Stabilize the partition-runtime benchmark CI check**: the gate compared each run against a single all-time-minimum runtime, which a one-off fast runner could poison into an unbeatable floor (a frozen ~81s baseline vs a real ~130s fleet), failing every PR. It now compares against a rolling median of recent `main` runs with a warm-up period, so runner-speed variance can't block unrelated PRs. CI/tooling only; no library behavior changes.
+
+## 0.23.2
+
+### Enhancements
+
+- **v2 (ontology) HTML parser derives `category_depth` from heading level**: `partition_html(html_parser_version="v2")` now sets `category_depth` from a heading's HTML level (`h1`→0, `h2`→1, …) via a shared helper reused by the v1 parser, instead of DOM nesting depth. Depth no longer changes from multi-column layout alone, and `parent_id` chains subsections under their enclosing heading. Layout structure and `text_as_html` are preserved.
+
+### Fixes
+
+- **`unstructured_elements_to_ontology` handles empty and malformed input**: returns an empty `Document` for empty input (instead of raising `IndexError`), and a layout container whose `parent_id` matches no open container now nests in the current container rather than popping to the document root and mis-nesting subsequent content.
+
+## 0.23.1
+
+### Enhancements
+
+- **Extract filled AcroForm field values as text**: values typed into fillable PDF form fields live in widget annotations rather than the page content stream, so pdfminer's text pass missed them. They are now recovered for both the `fast` and `hi_res` strategies and emitted as elements alongside the content-stream text.
+
+### Fixes
+
+- **Fix inferred/extracted layout merge skipping subregion removal for single-region pages**: the rule that removes an inferred box overlapping an extracted region was gated on `any(extracted_to_keep)`, which evaluated `False` when the only kept extracted region was at index 0. On single-region pages (e.g. a PDF whose only text is one filled form field) this left a duplicate element; the guard now checks the array size.
+
+## 0.23.0
+
+### Enhancements
+
+- **Add `enrichment_origins` metadata field for per-attribute model provenance**: `ElementMetadata` gains a serialized `enrichment_origins` field mapping a written attribute name (e.g. `text`, `text_as_html`, `embeddings`) to a list of records `{"type", "provider", "model"}`, in application order. Enrichment producers stamp which model wrote (or contributed to) each attribute; authoring enrichments overwrite the list while additive ones append, preserving the prior author. A new `ConsolidationStrategy.DICT_LIST_UNIQUE` merges these dicts across elements during chunking (union keys, concatenate then dedupe records, preserving first-seen order).
+
+## 0.22.34
+
+### Fixes
+
+- **Keep extracted text aligned with rotated PDF page images in hi_res**: when unstructured-inference rotates a rendered page image to make its text upright, the same rotation is now mirrored onto the pdfminer-extracted coordinates so the extracted-text layer and the object-detection layer share one coordinate frame and merge correctly. Previously the two layers could be off by the page's `/Rotate`, scattering extracted text in the merged output.
+
+## 0.22.33
+
+### Fixes
+
+- **Fix over-aggressive de-duplication of embedded text on dense PDF pages**: `remove_duplicate_elements` chunks its IoU computation for pages with more than ~2000 extracted elements, but the per-chunk "keep" mask was not offset by the chunk's global start index. As a result, every element in a chunk after the first was compared against itself (and earlier elements) and wrongly dropped, so dense pages (large tables, engineering drawings) lost a large fraction of their extracted text. The diagonal offset is now applied per chunk so only genuine later-duplicate boxes are removed.
+
+## 0.22.32
+
+### Fixes
+
+- **Recover text inside PDF figure overlays in hi_res**: hi_res pdfminer extraction only pulled text from objects exposing `get_text` (e.g. `LTTextBox`), and `extract_text_objects` only collected `LTTextLine`. Text held as loose `LTChar`s inside an `LTFigure` - for example text drawn into a figure/XObject overlay rather than the main content stream - was dropped from the output. hi_res now groups such loose characters into text lines, inserting spaces on wide inter-character gaps and skipping hidden (render mode 3) and rotated characters.
 
 ## 0.22.31
 
@@ -114,7 +288,7 @@
 
 ### Enhancements
 
-- **Deduplicate PDF rendering**: Remove `_render_pdf_pages` and delegate to `unstructured-inference`'s `convert_pdf_to_image` (which already has lazy per-page rendering). Peak memory for `path_only=True` drops from O(n_pages) to O(1 page) — 97% reduction on a 100-page PDF. Bumps inference dep to `>=1.6.2`.
+- **Deduplicate PDF rendering**: Remove `_render_pdf_pages` and delegate to `unstructured-inference`'s `convert_pdf_to_image` (which already has lazy per-page rendering). Peak memory for `path_only=True` drops from O(n_pages) to O(1 page) - 97% reduction on a 100-page PDF. Bumps inference dep to `>=1.6.2`.
 
 ## 0.22.13
 
