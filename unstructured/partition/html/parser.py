@@ -943,7 +943,12 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 # ------------------------------------------------------------------------------------------------
 
 
-html_parser = etree.HTMLParser(remove_comments=True)
+# NOTE(VSathveek): `remove_pis=True` drops processing-instruction nodes (e.g. a
+# stray `<?xml ...?>` declaration) at parse time, just as `remove_comments` drops
+# comments. Without it such a node reaches the element traversal as a bare `lxml`
+# `_ProcessingInstruction`, which has no `is_phrasing` and raises AttributeError
+# (issue #4358).
+html_parser = etree.HTMLParser(remove_comments=True, remove_pis=True)
 # -- elements that don't have a registered class get DefaultElement --
 fallback = etree.ElementDefaultClassLookup(element=DefaultElement)
 # -- elements that do have a registered class are assigned that class via lookup --
