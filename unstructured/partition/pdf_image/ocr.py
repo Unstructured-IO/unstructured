@@ -23,6 +23,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT, OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.telemetry import mark_partition_ocr_used, mark_partition_table_extraction
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -231,6 +232,7 @@ def supplement_page_layout_with_ocr(
         language = tesseract_to_paddle_language(ocr_languages)
     _ocr_agent = OCRAgent.get_instance(ocr_agent_module=ocr_agent, language=language)
     if ocr_mode == OCRMode.FULL_PAGE.value:
+        mark_partition_ocr_used()
         ocr_layout = _ocr_agent.get_layout_from_image(image)
         if ocr_layout_dumper:
             ocr_layout_dumper.add_ocred_page(ocr_layout.as_list())
@@ -255,6 +257,7 @@ def supplement_page_layout_with_ocr(
             )
             # Note(yuming): instead of getting OCR layout, we just need
             # the text extraced from OCR for individual elements
+            mark_partition_ocr_used()
             text_from_ocr = _ocr_agent.get_text_from_image(cropped_image)
             page_layout.elements_array.texts[i] = text_from_ocr
     else:
@@ -324,6 +327,7 @@ def supplement_element_with_table_extraction(
             table_element_image=cropped_image,
             ocr_agent=ocr_agent,
         )
+        mark_partition_table_extraction()
         tatr_cells = tables_agent.predict(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
         )
@@ -347,6 +351,7 @@ def get_table_tokens(
 ) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
+    mark_partition_ocr_used()
     ocr_layout = ocr_agent.get_layout_from_image(image=table_element_image)
     table_tokens = []
     for i, text in enumerate(ocr_layout.texts):

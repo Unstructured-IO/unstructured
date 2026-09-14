@@ -9,8 +9,10 @@ from unstructured.file_utils.model import FileType
 from unstructured.partition.common.common import convert_office_doc, exactly_one
 from unstructured.partition.common.metadata import get_last_modified_date
 from unstructured.partition.docx import partition_docx
+from unstructured.telemetry import partition_runtime_telemetry
 
 
+@partition_runtime_telemetry("doc")
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

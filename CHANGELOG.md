@@ -1,8 +1,100 @@
-## 0.25.2
+## 0.27.8-dev0
 
 ### Fixes
 
-- **Reject unsuccessful URL responses before partitioning**: the general `partition(url=...)` path now raises for HTTP error responses before attempting to classify and partition the response body, preventing 4xx/5xx error pages from being returned as document content.
+- Reject HTTP error responses before URL partitioning so error pages are not ingested as documents.
+
+### Fixes
+
+- **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
+
+- **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
+
+## 0.27.7
+
+### Fixes
+
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
+
+## 0.27.6
+
+### Fixes
+
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+
+## 0.27.5
+
+### Fixes
+
+- **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them, including when the containing document is a file-like object with no known file-name.
+
+## 0.27.4
+
+### Fixes
+
+- **Treat `-` and `–` as a bullet only at the start of a line and only when whitespace or the end of the line follows**: `partition_text` no longer splits a line at every hyphen, so hyphenated values survive partitioning — phone numbers, SSNs, ISO dates, cards, IBANs, UUIDs, hyphenated names, YAML values and hyphenated hostnames. Affects `FileType.TXT` and its 18 extensions plus `.eml`/`.msg`; PDF/DOCX/PPTX/HTML are unchanged. A line like `-123.45` also keeps its leading character and is no longer classified as a `ListItem`. **Behavior changes:** an inline dash list on a single line (`- one - two - three`) no longer splits into separate elements, and a dash with no separating whitespace (`-item`) is no longer a bullet. `- item`, a lone `-`, and unambiguous glyphs (`•`, `○`, `*`, …) are unchanged.
+
+## 0.27.3
+
+### Fixes
+
+- **Updated README:** Added Sign up Link for Transform MCP in README.
+
+## 0.27.2
+
+### Fixes
+
+- **chore(ci): bump `anthropics/claude-code-action` to `v1`.** Moves the `@claude` workflow off the deprecated `@beta` pin and updates the tool allowlist to the current Claude Code CLI tool names (`Read`/`Glob`/`Grep`).
+
+## 0.27.1
+
+### Fixes
+
+- **Support Core Metadata 2.5 package publishing**: Upgrade the PyPI publishing action and Twine release tooling so artifacts produced by Hatchling 1.32 and later pass metadata validation. Release workflows now validate artifacts before upload and can safely retry a failed upload from an existing published GitHub release tag without moving or recreating that tag.
+
+## 0.27.0
+
+### Enhancements
+
+- **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
+
+## 0.26.3
+
+### Fixes
+
+- **Use fallback character-set detection for file-like objects**: `FileTypeDetectionContext.text_head()` now applies the same `detect_file_encoding()` fallback to file-like objects as it does to file paths when the declared encoding cannot decode the content. Previously it decoded with `errors="ignore"`, silently stripping characters and corrupting the text head for non-UTF-8 streams such as S3/GCS objects and API uploads.
+
+## 0.26.2
+
+### Fixes
+
+- **Linear-time inline element merging in HTML partitioning (ML-1713)**: `combine_inline_elements` re-parsed the growing merged run on every step and appended text via attribute `+=`, making a long run of mergeable inline elements O(n²) — seconds for a few hundred elements. Each element's mergeability is now computed once from its own HTML and the run's text is joined once when it closes, so merging is linear with identical output.
+
+## 0.26.1
+
+### Fixes
+
+- **Bound array-stream decoding in `is_pdf_too_complex` (SEC-146)**: fixes a quadratic `bytes +=` accumulation over array-based `/Contents` (CVE-2026-33123) that let a crafted PDF spike CPU/memory. Accumulation now uses a `bytearray`, with per-page and document-wide caps on decoded bytes and array entries that fail closed on crafted content, and every file is inspected by default (small files are no longer skipped, since a small compressed file can declare huge content). Indirect `/Contents` arrays are now dereferenced (they were being skipped), a single unreadable stream no longer skips the rest of its page, and operator counting no longer allocates a full match list. Bumps `pypdf` to `>=6.9.1` so its own patched code path is used.
+
+## 0.26.0
+
+### Fixes
+
+- **Restore default-on library-load telemetry**: The lightweight library-load ping once again runs by default when `unstructured` is imported. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value (after trimming whitespace) before import to disable it; empty and whitespace-only values retain the default behavior. This removes the `UNSTRUCTURED_TELEMETRY_ENABLED` explicit opt-in gate introduced by #4281 while preserving the existing endpoint and payload. The best-effort `nvidia-smi` GPU probe now has a one-second timeout, and GPU-probe and request failures remain non-fatal.
+
+- **Stop the `GLOBAL_WORKING_DIR` tests from disturbing other pytest-xdist workers**: test-only change, no library behavior changes. The two tests exercising `GLOBAL_WORKING_DIR_ENABLED` now redirect the working dir to a private `tmp_path` and restore `tempfile.tempdir` unconditionally, rather than moving the shared pgid-keyed directory aside mid-run and leaving the worker's `tempfile.tempdir` pointed at it. That shared path made `test_dockerfile` fail intermittently, with an unrelated test dying inside `tempfile`.
+
+## 0.25.2
+
+### Enhancements
+
+- **Speed up HTML element hierarchy reconstruction**: `elements_to_html()` now indexes elements by ID before attaching children, avoiding repeated linear parent scans.
+
+- **Add lazy chunking entry points**: `iter_chunk_elements()` and `iter_chunks_by_title()` yield each chunk as it is formed, alongside the list-returning `chunk_elements()` and `chunk_by_title()`, which are now defined in terms of them. Same options, same chunks, same order — chunking was already lazy internally and this exposes that pipeline rather than adding a second one. Chunks are no longer accumulated in a list, so a caller that also reads elements lazily holds only the pre-chunk being formed; see the docstrings for two limits on that — `iter_chunks_by_title()` reads one pre-chunk ahead in order to combine undersized ones, and the default `include_orig_elements=True` retains source elements (`image_base64` payloads included) in every chunk. Options are validated at the call rather than on first advance, and an unknown `tokenizer` used with `max_tokens` now raises there too, in both forms.
+
+### Fixes
+
+- **Reject an empty `tokenizer` when chunking by `max_tokens`**: `""` is not `None`, so it slipped past the "tokenizer is required" check while still leaving the chunkers without a token counter — the window was then silently measured in characters, making `max_tokens=20` mean 20 characters. It now raises the same `ValueError` as omitting `tokenizer` altogether.
 
 ## 0.25.1
 

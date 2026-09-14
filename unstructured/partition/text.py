@@ -35,8 +35,10 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.telemetry import partition_runtime_telemetry
 
 
+@partition_runtime_telemetry("txt")
 @apply_metadata(FileType.TXT)
 @add_chunking_strategy
 def partition_text(

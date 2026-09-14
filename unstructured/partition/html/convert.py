@@ -262,12 +262,14 @@ def _group_element_children(children: list[ElementHtml]) -> list[ElementHtml]:
 
 def _elements_to_html_tags_by_parent(elements: list[ElementHtml]) -> list[ElementHtml]:
     parent_to_children_map: dict[str, list[ElementHtml]] = defaultdict(list)
+    elements_by_id: dict[str, ElementHtml] = {}
     for element in elements:
+        elements_by_id.setdefault(element.element.id, element)
         if element.element.metadata.parent_id is not None:
             parent_to_children_map[element.element.metadata.parent_id].append(element)
     for parent_id, children in parent_to_children_map.items():
         grouped_children = _group_element_children(children)
-        parent = next((el for el in elements if el.element.id == parent_id), None)
+        parent = elements_by_id.get(parent_id)
         if parent is None:
             logger.warning(f"Parent element with id {parent_id} not found. Skipping.")
             continue

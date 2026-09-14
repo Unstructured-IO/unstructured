@@ -28,6 +28,7 @@ MIME-types. Additional differentiators are planned, one for `application/x-ole-s
 
 from __future__ import annotations
 
+import codecs
 import contextlib
 import functools
 import importlib.util
@@ -671,21 +672,42 @@ class _FileTypeDetectionContext:
     def text_head(self) -> str:
         """The initial characters of the text file for use with text-format differentiation.
 
+        Uses fallback character-set detection when the declared encoding cannot
+        decode the content, for both file paths and file-like objects.
+
         Raises:
-            UnicodeDecodeError if file cannot be read as text.
+            UnprocessableEntityError when the file cannot be decoded with the declared
+            encoding or any of the common fallback encodings.
         """
-        # TODO: only attempts fallback character-set detection for file-path case, not for
-        # file-like object case. Seems like we should do both.
 
         if file := self._file_arg:
             file.seek(0)
             content = file.read(4096)
+            if not isinstance(content, str):
+                eof_reached = len(file.read(1)) == 0
             file.seek(0)
-            return (
-                content
-                if isinstance(content, str)
-                else content.decode(encoding=self.encoding, errors="ignore")
-            )
+            if isinstance(content, str):
+                return content
+            try:
+                return content.decode(encoding=self.encoding)
+            except (UnicodeDecodeError, UnicodeError):
+                # A multi-byte character split at the 4096-byte read boundary
+                # raises UnicodeDecodeError even though the content is validly
+                # encoded. Decode incrementally with final=eof_reached so an
+                # incomplete trailing sequence is buffered when more content
+                # follows, while a genuinely truncated stream still falls
+                # through to character-set detection.
+                decoder = codecs.getincrementaldecoder(self.encoding)()
+                try:
+                    return decoder.decode(content, final=eof_reached)
+                except (UnicodeDecodeError, UnicodeError):
+                    # Use the same fallback character-set detection as the
+                    # file-path branch. Decoding with errors="ignore" silently
+                    # stripped undecodable characters and corrupted the text
+                    # head for non-UTF-8 streams (S3/GCS objects, API uploads)
+                    # — issue #4434.
+                    _, file_text = detect_file_encoding(file=content)
+                    return file_text[:4096]
 
         file_path = self.file_path
         assert file_path is not None  # -- guaranteed by `._validate` --

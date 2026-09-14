@@ -20,9 +20,11 @@ from unstructured.partition.html.transformations import (
     parse_html_to_ontology,
 )
 from unstructured.safe_http import safe_get
+from unstructured.telemetry import partition_runtime_telemetry
 from unstructured.utils import is_temp_file_path
 
 
+@partition_runtime_telemetry("html")
 @apply_metadata(FileType.HTML)
 @add_chunking_strategy
 def partition_html(
