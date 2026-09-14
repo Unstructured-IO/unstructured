@@ -21,7 +21,10 @@ from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.file_utils.model import FileType
 from unstructured.logger import logger
 from unstructured.partition.common import EXPECTED_ATTACHMENT_ERRORS
-from unstructured.partition.common.metadata import get_last_modified_date
+from unstructured.partition.common.metadata import (
+    get_last_modified_date,
+    mark_as_attachment_element,
+)
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 from unstructured.telemetry import partition_runtime_telemetry
@@ -416,6 +419,7 @@ class _AttachmentPartitioner:
 
         for e in elements:
             e.metadata.attached_to_filename = self._attached_to_filename
+            mark_as_attachment_element(e)
             yield e
 
     @cached_property

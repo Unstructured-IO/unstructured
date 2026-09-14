@@ -1,3 +1,51 @@
+## 0.27.8-dev0
+
+### Enhancements
+
+- **Reuse spaCy results across tokenization helpers.** Cache the processed `Doc` for text up to 8,192 characters so sentence, word, and part-of-speech tokenization run the spaCy pipeline only once per distinct text.
+
+### Fixes
+
+- **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
+
+- **A stray processing instruction no longer crashes HTML partitioning.** `partition_html` (and formats that route through it, such as `.md`) raised `AttributeError: 'lxml.etree._ProcessingInstruction' object has no attribute 'is_phrasing'` when the HTML contained a processing-instruction node like a `<?xml ...?>` declaration. The parser now drops processing instructions at parse time, the same way it already drops comments.
+
+## 0.27.7
+
+### Fixes
+
+- **Partition multi-section DOCX files in linear time**: DOCX partitioning now traverses body blocks once and switches section metadata at each section boundary instead of asking `python-docx` to rescan the document prefix for every section. This preserves header, body, footer, and page-break ordering while avoiding severe slowdowns on documents with hundreds of sections and thousands of paragraphs.
+
+## 0.27.6
+
+### Fixes
+
+- **Stop duplicating merged-cell text in DOCX `text_as_html`.** A merged cell (`gridSpan`/`vMerge`) was repeated into every `<td>` its merge visually covered, with no `colspan`/`rowspan` attribute marking the merge; merged cells are now emitted once, with `colspan`/`rowspan` reflecting the true geometry. Since DOCX tables can now carry real spans, table chunking was also made rowspan-aware, so a chunk boundary can no longer split a table in a way that misattributes a spanned cell's rows to the wrong columns.
+
+## 0.27.5
+
+### Fixes
+
+- **Attachment elements keep their own filetype.** When partitioning an email with attachments, `auto.partition()` re-stamped `metadata.filetype` on every element with the containing message's type, so content extracted from an attached PDF was labelled `message/rfc822`. Attachment elements now retain the filetype assigned by the nested `partition()` call that produced them, including when the containing document is a file-like object with no known file-name.
+
+## 0.27.4
+
+### Fixes
+
+- **Treat `-` and `–` as a bullet only at the start of a line and only when whitespace or the end of the line follows**: `partition_text` no longer splits a line at every hyphen, so hyphenated values survive partitioning — phone numbers, SSNs, ISO dates, cards, IBANs, UUIDs, hyphenated names, YAML values and hyphenated hostnames. Affects `FileType.TXT` and its 18 extensions plus `.eml`/`.msg`; PDF/DOCX/PPTX/HTML are unchanged. A line like `-123.45` also keeps its leading character and is no longer classified as a `ListItem`. **Behavior changes:** an inline dash list on a single line (`- one - two - three`) no longer splits into separate elements, and a dash with no separating whitespace (`-item`) is no longer a bullet. `- item`, a lone `-`, and unambiguous glyphs (`•`, `○`, `*`, …) are unchanged.
+
+## 0.27.3
+
+### Fixes
+
+- **Updated README:** Added Sign up Link for Transform MCP in README.
+
+## 0.27.2
+
+### Fixes
+
+- **chore(ci): bump `anthropics/claude-code-action` to `v1`.** Moves the `@claude` workflow off the deprecated `@beta` pin and updates the tool allowlist to the current Claude Code CLI tool names (`Read`/`Glob`/`Grep`).
+
 ## 0.27.1
 
 ### Fixes
@@ -9,12 +57,6 @@
 ### Enhancements
 
 - **Add privacy-bounded partition runtime telemetry**: Each top-level public partition call now makes one best-effort local attempt to send an event with fixed-enum runtime characteristics and aggregate final-element counts. Nested dispatch is suppressed. Delivery uses one non-queued daemon worker with tight connect/read timeouts; it disables redirects, retries, response-body downloads, proxy settings, and netrc credentials. A stuck transport cannot block document processing or process exit, at most one daemon can remain stranded, and later events drop while that slot is occupied. The event contains no document content, filenames, paths, URLs, caller MIME strings, exception details, credentials, or persistent identifiers. Set either `DO_NOT_TRACK` or `SCARF_NO_ANALYTICS` to any non-empty value after trimming to disable both startup and runtime telemetry before any runtime telemetry collection or delivery work.
-
-## 0.27.2
-
-### Enhancements
-
-- **Run the spaCy pipeline once per distinct text**: `_process()` in `unstructured.nlp.tokenize` was uncached while `word_tokenize()`, `pos_tag()` and `sent_tokenize()` each cached only their own extracted view, so every helper paid for its own identical pipeline run. Classifying one element via `is_possible_narrative_text()` reached all three and ran spaCy three times on the same string. The `Doc` is now memoized and shared, cutting `partition_html()` on a text-heavy document by ~2.8x (400 paragraphs: 1127ms -> 395ms). Texts longer than 8,192 characters bypass the cache so a single very large element cannot pin an outsized `Doc` in memory.
 
 ## 0.26.3
 

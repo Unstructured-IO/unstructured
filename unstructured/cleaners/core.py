@@ -12,13 +12,13 @@ from unstructured.file_utils.encoding import (
     format_encoding_str,
 )
 from unstructured.nlp.patterns import (
+    BULLET_SPLIT_RE_0W,
     DOUBLE_PARAGRAPH_PATTERN_RE,
     E_BULLET_PATTERN,
     LINE_BREAK_RE,
     PARAGRAPH_PATTERN,
     PARAGRAPH_PATTERN_RE,
     UNICODE_BULLETS_RE,
-    UNICODE_BULLETS_RE_0W,
 )
 
 
@@ -126,7 +126,7 @@ def group_bullet_paragraph(paragraph: str) -> list:
     # to determine list element type.
     paragraph = E_BULLET_PATTERN.sub("·", paragraph).strip()
 
-    bullet_paras = UNICODE_BULLETS_RE_0W.split(paragraph)
+    bullet_paras = BULLET_SPLIT_RE_0W.split(paragraph)
     clean_paragraphs = []
     for bullet in bullet_paras:
         if bullet:
