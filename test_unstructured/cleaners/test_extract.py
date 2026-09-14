@@ -19,6 +19,16 @@ def test_get_indexed_match_raises_with_index_too_high():
         extract._get_indexed_match("BLAH BLAH BLAH", "BLAH", 4)
 
 
+def test_get_indexed_match_raises_value_error_with_zero_matches():
+    """Regression test: when the pattern has zero matches at all (not just an
+    out-of-range index on an otherwise-matching pattern), the "not found" branch
+    referenced the loop variable `i`, which Python never binds when a for-loop's
+    iterable is empty -- raising UnboundLocalError instead of the intended
+    ValueError."""
+    with pytest.raises(ValueError):
+        extract._get_indexed_match("no digits here", r"[0-9]+")
+
+
 def test_extract_text_before():
     text = "Teacher: BLAH BLAH BLAH; Student: BLAH BLAH BLAH!"
     assert extract.extract_text_before(text, "BLAH", 1) == "Teacher: BLAH"
