@@ -55,9 +55,7 @@ The following is a list of tasks to be completed before submitting a pull reques
 
 Unstructured open source projects are licensed under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
 
-Include a license at the top of new `setup.py` files:
-
-- [Python license example](https://github.com/Unstructured-IO/unstructured/blob/main/setup.py)
+Include the Apache-2.0 license header at the top of new source files (the project now builds with hatchling via `pyproject.toml`; the old `setup.py` was removed in the uv migration).
 
 
 ## Conventions
