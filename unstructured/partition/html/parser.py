@@ -711,6 +711,7 @@ class Math(Flow, Phrasing):
 
     @property
     def _latex(self) -> str | None:
+        """Parse basic MathML/Latex"""
         if len(self) == 1 and not (self.text or "").strip() and not (self[0].tail or "").strip():
             semantics = self.find("./semantics")
             if semantics is not None:
@@ -738,6 +739,22 @@ class Math(Flow, Phrasing):
 
         return None
 
+    @cached_property
+    def _page_number(self) -> int | None:
+        """Page number from the nearest valid ancestor, including phrasing wrappers."""
+        element: etree._Element | None = self
+        while element is not None:
+            page_attr = element.get("data-page-number")
+            if page_attr is not None:
+                try:
+                    return int(page_attr)
+                except (ValueError, TypeError):
+                    pass
+            element = element.getparent()
+
+        return None
+
+
     def iter_text_segments(
         self, enclosing_emphasis: str = ""
     ) -> Iterator[TextSegment | Element]:
@@ -760,7 +777,7 @@ class Math(Flow, Phrasing):
 
     @staticmethod
     def _normalize_katex(root: etree._Element) -> None:
-        """Remove redundant KaTeX visual HTML when usable MathML is present."""\
+        """Remove redundant KaTeX visual HTML when usable MathML is present."""
         
         for katex in root.xpath(
             ".//*[contains(concat(' ', normalize-space(@class), ' '), ' katex ')]"

@@ -37,6 +37,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import partition_html
+from unstructured.partition.html.convert import elements_to_html
 from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
 
 # ================================================================================================
@@ -2077,3 +2078,51 @@ def test_partition_html_keeps_two_separate_identical_katex_equations():
 
     assert [element.text for element in elements] == ["Before 2 and 2 After"]
     assert elements[0].text.count("2") == 2
+
+def test_partition_html_preserves_page_number_on_span_wrapped_katex_display_math():
+    html = r"""
+    <html>
+      <body>
+        <div data-page-number="7">
+          <span class="katex">
+            <span class="katex-mathml">
+              <math display="block" alttext="x=1"></math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>=</span><span>1</span></span>
+            </span>
+          </span>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    assert [element.text for element in elements] == ["x=1"]
+    assert [element.metadata.page_number for element in elements] == [7]
+
+
+def test_partition_html_preserves_span_wrapped_katex_display_math_in_page_grouped_html():
+    html = r"""
+    <html>
+      <body>
+        <div data-page-number="7">
+          <span class="katex">
+            <span class="katex-mathml">
+              <math display="block" alttext="x=1"></math>
+            </span>
+            <span class="katex-html" aria-hidden="true">
+              <span class="base"><span>x</span><span>=</span><span>1</span></span>
+            </span>
+          </span>
+        </div>
+      </body>
+    </html>
+    """
+
+    elements = partition_html(text=html)
+
+    html_output = elements_to_html(elements, no_group_by_page=False)
+
+    assert "x=1" in html_output
