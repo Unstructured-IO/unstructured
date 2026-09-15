@@ -1,5 +1,9 @@
 ## 0.27.8-dev0
 
+### Enhancements
+
+- **Reuse spaCy results across tokenization helpers.** Cache the processed `Doc` for text up to 8,192 characters so sentence, word, and part-of-speech tokenization run the spaCy pipeline only once per distinct text.
+
 ### Fixes
 
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
