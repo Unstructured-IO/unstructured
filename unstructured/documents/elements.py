@@ -164,6 +164,8 @@ class ElementMetadata:
     category_depth: Optional[int]
     coordinates: Optional[CoordinatesMetadata]
     data_source: Optional[DataSourceMetadata]
+    # -- True when PDF content-stream text includes characters rendered invisibly. --
+    contains_invisible_text: Optional[bool]
     # -- Detection Model Class Probabilities from Unstructured-Inference Hi-Res --
     detection_class_prob: Optional[float]
     # -- DEBUG field, the detection mechanism that emitted this element --
@@ -241,6 +243,7 @@ class ElementMetadata:
         bcc_recipient: Optional[list[str]] = None,
         category_depth: Optional[int] = None,
         cc_recipient: Optional[list[str]] = None,
+        contains_invisible_text: Optional[bool] = None,
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
@@ -287,6 +290,7 @@ class ElementMetadata:
         self.bcc_recipient = bcc_recipient
         self.category_depth = category_depth
         self.cc_recipient = cc_recipient
+        self.contains_invisible_text = contains_invisible_text
         self.coordinates = coordinates
         self.data_source = data_source
         self.detection_class_prob = detection_class_prob
@@ -514,6 +518,9 @@ class ConsolidationStrategy(enum.Enum):
     then drop duplicate records, preserving first-seen order. Suitable for `dict[str, list]`
     fields like `enrichment_origins`."""
 
+    ANY = "any"
+    """Use True when any consolidated field value is truthy."""
+
     @classmethod
     def field_consolidation_strategies(cls) -> dict[str, ConsolidationStrategy]:
         """Mapping from ElementMetadata field-name to its consolidation strategy.
@@ -527,6 +534,7 @@ class ConsolidationStrategy(enum.Enum):
             "cc_recipient": cls.FIRST,
             "bcc_recipient": cls.FIRST,
             "category_depth": cls.DROP,
+            "contains_invisible_text": cls.ANY,
             "coordinates": cls.DROP,
             "data_source": cls.FIRST,
             "detection_class_prob": cls.DROP,
