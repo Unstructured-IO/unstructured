@@ -480,6 +480,28 @@ class ListItemBlock(Flow):
 
     _ElementCls = ListItem
 
+    def iter_elements(self) -> Iterator[Element]:
+        """Adopt a sole text block, as produced by Markdown loose lists."""
+        if len(self) == 1 and not (self.text or "").strip():
+            child = self[0]
+            # Only unwrap ordinary text blocks, not tables, images, headings, or code.
+            # Multiple paragraphs (including those nested inside inline markup) retain
+            # normal traversal rather than being collapsed into a single list item.
+            if (
+                type(child) in (Flow, BlockItem)
+                and not (child.tail or "").strip()
+                and all(node.is_phrasing for node in child.iterdescendants())
+            ):
+                # Use the list item's accumulator to retain its list-nesting depth.
+                for element in self._element_from_text_or_tail(
+                    child.text or "", deque(child), ListItem
+                ):
+                    element.metadata.page_number = child._page_number
+                    yield element
+                return
+
+        yield from super().iter_elements()
+
 
 class Pre(BlockItem):
     """Custom element-class for `<pre>` element.
