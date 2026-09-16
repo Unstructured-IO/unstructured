@@ -16,13 +16,13 @@ from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common.common import exactly_one
 from unstructured.partition.common.json_partitioning import (
     elements_from_arbitrary_value,
     is_element_shaped_dict,
     loads_strict_json,
+    read_json_text,
     rehydrate_elements,
 )
 from unstructured.partition.common.metadata import get_last_modified_date
@@ -37,8 +37,8 @@ def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
-    encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    encoding: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions a JSON document into its constituent elements.
@@ -84,10 +84,10 @@ def partition_json(
     last_modified = get_last_modified_date(filename) if filename else None
     file_text = ""
     if filename is not None:
-        _, file_text = read_txt_file(filename=filename, encoding=encoding)
+        file_text = read_json_text(filename=filename, encoding=encoding)
 
     elif file is not None:
-        _, file_text = read_txt_file(file=file, encoding=encoding)
+        file_text = read_json_text(file=file, encoding=encoding)
         file.seek(0)
 
     elif text is not None:

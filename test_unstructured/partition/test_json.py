@@ -599,3 +599,79 @@ def it_detects_the_encoding_of_a_non_utf8_file_when_none_is_specified():
 
     assert len(elements) == 1
     assert '"sku": "A-100"' in elements[0].text
+
+
+# -- valid UTF-8 must survive detection ------------------------------------------------------------
+
+# A run of zero-width spaces is valid UTF-8 that `charset_normalizer.detect()` reports as CP932
+# with high confidence. Decoding it that way still yields parseable JSON, so a detection-first
+# reader would silently replace the text instead of failing -- assert the exact string, because an
+# ASCII-only assertion passes straight through the corruption.
+_ZWS_TEXT = "A\u200bB\u200bC\u200bD\u200bE\u200bF\u200bG\u200bH"
+_ZWS_ELEMENT = {
+    "type": "NarrativeText",
+    "element_id": "eb2b8e2b7f8f4f0f9e0e1a2b3c4d5e6f",
+    "text": _ZWS_TEXT,
+    "metadata": {},
+}
+
+
+def it_preserves_valid_utf8_that_detection_would_read_as_another_codec():
+    payload = json.dumps([_ZWS_ELEMENT], ensure_ascii=False).encode("utf-8")
+
+    elements = partition_json(file=io.BytesIO(payload))
+
+    assert elements[0].text == _ZWS_TEXT
+
+
+def and_it_preserves_that_text_when_reading_from_a_filename_too():
+    payload = json.dumps([_ZWS_ELEMENT], ensure_ascii=False).encode("utf-8")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = os.path.join(tmpdir, "zws.json")
+        with open(path, "wb") as f:
+            f.write(payload)
+
+        elements = partition_json(filename=path)
+
+    assert elements[0].text == _ZWS_TEXT
+
+
+# -- the file-like contract ------------------------------------------------------------------------
+
+
+def it_accepts_a_text_stream_and_passes_the_decoded_string_through():
+    elements = partition_json(file=io.StringIO(json.dumps([_ZWS_ELEMENT], ensure_ascii=False)))
+
+    assert elements[0].text == _ZWS_TEXT
+
+
+def it_reads_a_binary_stream_from_its_current_position():
+    payload = json.dumps([_ZWS_ELEMENT], ensure_ascii=False).encode("utf-8")
+    stream = io.BytesIO(b"leading-bytes" + payload)
+    stream.seek(len(b"leading-bytes"))
+
+    elements = partition_json(file=stream)
+
+    assert elements[0].text == _ZWS_TEXT
+
+
+def it_accepts_a_temporary_file_wrapper():
+    payload = json.dumps([_ZWS_ELEMENT], ensure_ascii=False).encode("utf-8")
+    with tempfile.TemporaryFile() as f:
+        f.write(payload)
+        f.seek(0)
+
+        elements = partition_json(file=f)
+
+    assert elements[0].text == _ZWS_TEXT
+
+
+# -- positional-argument compatibility ---------------------------------------------------------
+
+
+def it_keeps_metadata_last_modified_as_the_fourth_positional_argument():
+    # -- inserting a parameter ahead of `metadata_last_modified` would silently rebind existing
+    # -- four-positional-argument calls --
+    elements = partition_json(None, None, json.dumps([_ZWS_ELEMENT]), "2020-01-02T03:04:05")
+
+    assert elements[0].metadata.last_modified == "2020-01-02T03:04:05"
