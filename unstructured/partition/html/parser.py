@@ -480,6 +480,28 @@ class ListItemBlock(Flow):
 
     _ElementCls = ListItem
 
+    def iter_elements(self) -> Iterator[Element]:
+        """Adopt a sole text block, as produced by Markdown loose lists."""
+        if len(self) == 1 and not (self.text or "").strip():
+            child = self[0]
+            # Only unwrap ordinary text blocks, not tables, images, headings, or code.
+            # Multiple paragraphs (including those nested inside inline markup) retain
+            # normal traversal rather than being collapsed into a single list item.
+            if (
+                type(child) in (Flow, BlockItem)
+                and not (child.tail or "").strip()
+                and all(node.is_phrasing for node in child.iterdescendants())
+            ):
+                # Use the list item's accumulator to retain its list-nesting depth.
+                for element in self._element_from_text_or_tail(
+                    child.text or "", deque(child), ListItem
+                ):
+                    element.metadata.page_number = child._page_number
+                    yield element
+                return
+
+        yield from super().iter_elements()
+
 
 class Pre(BlockItem):
     """Custom element-class for `<pre>` element.
@@ -943,7 +965,12 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
 # ------------------------------------------------------------------------------------------------
 
 
-html_parser = etree.HTMLParser(remove_comments=True)
+# NOTE(VSathveek): `remove_pis=True` drops processing-instruction nodes (e.g. a
+# stray `<?xml ...?>` declaration) at parse time, just as `remove_comments` drops
+# comments. Without it such a node reaches the element traversal as a bare `lxml`
+# `_ProcessingInstruction`, which has no `is_phrasing` and raises AttributeError
+# (issue #4358).
+html_parser = etree.HTMLParser(remove_comments=True, remove_pis=True)
 # -- elements that don't have a registered class get DefaultElement --
 fallback = etree.ElementDefaultClassLookup(element=DefaultElement)
 # -- elements that do have a registered class are assigned that class via lookup --
