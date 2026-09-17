@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import io
+import pathlib
 from typing import Any
 from unittest.mock import patch
 
@@ -409,3 +411,37 @@ def test_partition_md_tables_only_differs_from_default_for_code_fence():
     tables_only_els = partition_md(text=text, extensions=["tables"])
     assert default_el.category == ElementType.CODE_SNIPPET
     assert any(e.category == ElementType.TITLE for e in tables_only_els)
+
+
+# -- encoding -------------------------------------------------------------------------------------
+
+# cp1252 is the discriminator here: charset detection misreads these bytes, so an explicit
+# `encoding` is the only way to recover the text. A UTF-16 payload carries a BOM and decodes
+# correctly either way, so it would pass even if the argument were ignored.
+_CP1252_TEXT = "Café naïve sección"
+_CP1252_DOC = f"# Heading\n\n{_CP1252_TEXT}\n"
+
+
+def test_partition_md_honors_an_explicit_encoding_for_a_filename(tmp_path: pathlib.Path):
+    path = tmp_path / "cp1252.md"
+    path.write_bytes(_CP1252_DOC.encode("cp1252"))
+
+    elements = partition_md(filename=str(path), encoding="cp1252")
+
+    assert _CP1252_TEXT in " ".join(e.text for e in elements)
+
+
+def test_partition_md_honors_an_explicit_encoding_for_a_file_like_object():
+    elements = partition_md(file=io.BytesIO(_CP1252_DOC.encode("cp1252")), encoding="cp1252")
+
+    assert _CP1252_TEXT in " ".join(e.text for e in elements)
+
+
+def test_partition_md_still_detects_the_encoding_when_none_is_given(tmp_path: pathlib.Path):
+    # Omitting `encoding` must keep the previous auto-detecting behavior.
+    path = tmp_path / "utf8.md"
+    path.write_bytes(_CP1252_DOC.encode("utf-8"))
+
+    elements = partition_md(filename=str(path))
+
+    assert _CP1252_TEXT in " ".join(e.text for e in elements)
