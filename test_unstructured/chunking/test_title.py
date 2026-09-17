@@ -543,6 +543,29 @@ def test_it_considers_separator_length_when_pre_chunking():
     ]
 
 
+def test_it_does_not_combine_pre_chunks_past_new_after_n_chars():
+    """`combine_text_under_n_chars` above the soft-max must not recombine full pre-chunks.
+
+    Each section here is already over `new_after_n_chars`, so the soft-max has declared it full.
+    A larger combine-threshold used to merge all three anyway, producing a chunk several times
+    the requested soft-max.
+    """
+    elements: list[Element] = [
+        Title("Section A"),
+        Text("a" * 110),
+        Title("Section B"),
+        Text("b" * 110),
+        Title("Section C"),
+        Text("c" * 110),
+    ]
+
+    chunks = chunk_by_title(
+        elements, max_characters=500, new_after_n_chars=100, combine_text_under_n_chars=400
+    )
+
+    assert [len(chunk.text) for chunk in chunks] == [121, 121, 121]
+
+
 # ================================================================================================
 # UNIT-TESTS
 # ================================================================================================
@@ -681,6 +704,29 @@ class Describe_ByTitleChunkingOptions:
             _ByTitleChunkingOptions.new(
                 max_characters=max_characters, combine_text_under_n_chars=combine_text_under_n_chars
             )
+
+    @pytest.mark.parametrize(
+        ("combine_text_under_n_chars", "new_after_n_chars", "expected_value"),
+        [(400, 100, 100), (100, 100, 100), (50, 100, 50), (None, 100, 100), (None, None, 500)],
+    )
+    def it_caps_combine_text_under_n_chars_at_new_after_n_chars(
+        self,
+        combine_text_under_n_chars: Optional[int],
+        new_after_n_chars: Optional[int],
+        expected_value: int,
+    ):
+        """`new_after_n_chars` takes precedence when the two options conflict.
+
+        A combine-threshold above the soft-max would recombine pre-chunks the soft-max has
+        already declared full, producing chunks larger than the caller asked for.
+        """
+        opts = _ByTitleChunkingOptions.new(
+            max_characters=500,
+            new_after_n_chars=new_after_n_chars,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+        )
+
+        assert opts.combine_text_under_n_chars == expected_value
 
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
         """Caller can specify `new_after_n_chars` arg without specifying any other options."""
