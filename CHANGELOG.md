@@ -6,6 +6,8 @@
 
 ### Fixes
 
+- **`partition_via_api()` now sends the `content_type` it accepts.** The parameter has been part of the signature since the helper was introduced and is documented as "a string defining the file content in MIME type", but it was never read: the `shared.Files` object was built from `content` and `file_name` only, so the caller's MIME type never reached the API and the server fell back to sniffing the file name. `shared.Files` has a `content_type` field, which is now populated when the caller supplies one; omitting it leaves the field unset so the existing inference is unchanged.
+
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
