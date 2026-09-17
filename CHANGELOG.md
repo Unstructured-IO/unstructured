@@ -6,6 +6,8 @@
 
 ### Fixes
 
+- **`partition_md()` accepts an `encoding` argument.** It read the source through `read_txt_file()` without passing one and had no `encoding` parameter, so a caller's codec was swallowed by `**kwargs` (documented there as forwarded to `partition_html`). Charset detection covers a BOM-bearing payload, but a legacy single-byte codepage such as cp1252 is misread -- `Café naïve` decodes as `Café naďve` -- and there was no way to correct it, while the equivalent `partition_text()` call takes `encoding` and gets it right. The parameter is added after the existing ones so current positional calls keep binding as before, and omitting it preserves the detecting behavior.
+
 - **Recognize HTML and Markdown loose-list items.** A list item containing a single ordinary text block (such as `<li><p>text</p></li>`) now produces a `ListItem`, preserving inline annotations and list depth. Multi-paragraph items and specialized blocks retain their existing behavior. Resolves #3499.
 
 - **`partition_doc()` and `partition_ppt()` no longer fail on a document whose name contains multi-byte characters.** `convert_office_doc()` decoded `soffice` stdout and stderr with a strict UTF-8 decode purely to log them and to check whether stdout was empty. LibreOffice echoes the input path using the console encoding, which on Windows is the locale codepage, so a document whose name or path contains multi-byte characters raised `UnicodeDecodeError` and aborted a conversion that would otherwise have succeeded. All three decode sites now go through one helper using `errors="backslashreplace"`, which keeps the message pure ASCII -- readable, still loggable by a handler using the locale codepage, and showing the offending bytes. Resolves #3652.
