@@ -1979,6 +1979,41 @@ class Describe_TableChunker:
             (c.text, c.metadata.text_as_html) for c in baseline_chunks
         ]
 
+    def and_it_does_not_repeat_headers_whose_combined_text_is_pathologically_large(self):
+        header_a = "A" * 30
+        header_b = "B" * 30
+        table_html = (
+            "<table><thead>"
+            f"<tr><th>{header_a}</th></tr>"
+            f"<tr><th>{header_b}</th></tr>"
+            "</thead><tbody>"
+            "<tr><td>Body chunk one text</td></tr>"
+            "<tr><td>Body chunk two text</td></tr>"
+            "<tr><td>Body chunk three text</td></tr>"
+            "</tbody></table>"
+        )
+        table_text = (
+            f"{header_a}\n{header_b}\n"
+            "Body chunk one text\nBody chunk two text\nBody chunk three text"
+        )
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=60,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=60,
+            repeat_table_headers=False,
+        )
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"

@@ -292,13 +292,14 @@ class DescribeHtmlTable:
             "<table>"
             "  <thead><tr><td>head-from-thead</td></tr></thead>"
             "  <tbody>"
-            "    <tr><th>head-from-th</th></tr>"
+            "    <tr><th>all-th-head-a</th><th>all-th-head-b</th></tr>"
+            "    <tr><th>row-head</th><td>body-value</td></tr>"
             "    <tr><td>body</td></tr>"
             "  </tbody>"
             "</table>"
         )
 
-        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False]
+        assert [row.is_header for row in html_table.iter_rows()] == [True, True, False, False]
 
     def and_it_preserves_source_row_html_before_compactification(self):
         html_table = HtmlTable.from_html_text(

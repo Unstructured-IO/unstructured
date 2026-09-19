@@ -1638,9 +1638,12 @@ class _HtmlTableSplitter:
         if not self._header_rows:
             return False
 
-        # -- guard against pathological headers where a single repeated header row would consume
-        # -- more than half the chunking window.
-        return self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+        # -- guard against pathological headers where one row consumes more than half the window
+        # -- or all repeated rows together leave no room for continuation content.
+        return (
+            self._max_header_row_len <= (self._opts.hard_max + 1) // 2
+            and self._header_text_len < self._opts.hard_max
+        )
 
     @cached_property
     def _max_header_row_len(self) -> int:

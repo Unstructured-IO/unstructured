@@ -421,12 +421,17 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     (element,) = partition_html(text=html_text)
 
     assert isinstance(element, Table)
+    assert element.text == (
+        "Lorem Ipsum Lorem ipsum dolor sit amet nulla Ut enim non ad minim\nveniam quis Dolor Equis"
+    )
     assert element.metadata.text_as_html == (
         "<table>"
-        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
-        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
-        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
-        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "<thead><tr><th>Lorem</th><th>Ipsum</th></tr></thead>"
+        "<tbody>"
+        "<tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>"
+        "<tr><th>Ut enim non</th><td>ad minim<br/>veniam quis</td></tr>"
+        "</tbody>"
+        "<tfoot><tr><th>Dolor</th><td>Equis</td></tr></tfoot>"
         "</table>"
     )
 
@@ -478,10 +483,12 @@ def test_it_provides_parseable_HTML_in_text_as_html():
     assert etree.tostring(html, encoding=str) == (
         "<html><body>"
         "<table>"
-        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
-        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
-        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
-        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "<thead><tr><th>Lorem</th><th>Ipsum</th></tr></thead>"
+        "<tbody>"
+        "<tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>"
+        "<tr><th>Ut enim non</th><td>ad minim<br/>veniam quis</td></tr>"
+        "</tbody>"
+        "<tfoot><tr><th>Dolor</th><td>Equis</td></tr></tfoot>"
         "</table>"
         "</body></html>"
     )
@@ -490,8 +497,18 @@ def test_it_provides_parseable_HTML_in_text_as_html():
 @pytest.mark.parametrize(
     ("tag", "expected_text_as_html"),
     [
-        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        (
+            "thead",
+            "<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead></table>",
+        ),
+        (
+            "tbody",
+            "<table><tbody><tr><th>Header 1</th><th>Header 2</th></tr></tbody></table>",
+        ),
+        (
+            "tfoot",
+            "<table><tfoot><tr><th>Header 1</th><th>Header 2</th></tr></tfoot></table>",
+        ),
     ],
 )
 def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
@@ -505,6 +522,50 @@ def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_ht
         )
     )
     assert elements[0].metadata.text_as_html == expected_text_as_html
+
+
+def test_partition_html_preserves_table_structure_in_source_order_without_attributes():
+    html_text = (
+        '<table class="source-table">'
+        '<tfoot id="foot"><tr><th scope="row">F</th></tr></tfoot>'
+        '<tr class="direct"><td onclick="alert(1)">D &amp; &lt;x&gt;</td></tr>'
+        '<tbody><tr><td colspan="2">B1</td></tr></tbody>'
+        '<tbody style="color:red"><tr><th rowspan="2">B2</th></tr></tbody>'
+        "<thead><tr><td>H</td></tr></thead>"
+        "</table>"
+    )
+
+    (element,) = partition_html(text=html_text)
+
+    assert element.text == "F D & <x> B1 B2 H"
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<tfoot><tr><th>F</th></tr></tfoot>"
+        "<tr><td>D &amp; &lt;x&gt;</td></tr>"
+        "<tbody><tr><td>B1</td></tr></tbody>"
+        "<tbody><tr><th>B2</th></tr></tbody>"
+        "<thead><tr><td>H</td></tr></thead>"
+        "</table>"
+    )
+    reconstructed = etree.fromstring(element.metadata.text_as_html)
+    assert [node.tag for node in reconstructed.iter()] == [
+        "table",
+        "tfoot",
+        "tr",
+        "th",
+        "tr",
+        "td",
+        "tbody",
+        "tr",
+        "td",
+        "tbody",
+        "tr",
+        "th",
+        "thead",
+        "tr",
+        "td",
+    ]
+    assert all(not node.attrib for node in reconstructed.iter())
 
 
 def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it():
@@ -1184,7 +1245,7 @@ def test_partition_html_links():
     [
         (
             "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
-            "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>",
+            "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
         ),
         (
             "<table>"

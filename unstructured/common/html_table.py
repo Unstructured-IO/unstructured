@@ -166,11 +166,11 @@ class HtmlTable:
         # -- compactification strips those details --
         rows = cast("list[HtmlElement]", table.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr"))
         source_row_htmls = tuple(etree.tostring(tr, encoding=str) for tr in rows)
-        header_row_idxs = {
-            idx
-            for idx, tr in enumerate(rows)
-            if tr.getparent().tag == "thead" or bool(tr.xpath("./th"))
-        }
+        header_row_idxs = set()
+        for idx, tr in enumerate(rows):
+            cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))
+            if tr.getparent().tag == "thead" or (cells and all(cell.tag == "th" for cell in cells)):
+                header_row_idxs.add(idx)
         # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
         # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
         row_group_keys = tuple(tr.getparent() for tr in rows)
