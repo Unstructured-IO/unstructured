@@ -1980,8 +1980,10 @@ class Describe_TableChunker:
         ]
 
     def and_it_does_not_repeat_headers_whose_combined_text_is_pathologically_large(self):
-        header_a = "A" * 30
-        header_b = "B" * 30
+        # -- 29 + one joining space + 29 = hard_max - 1, which leaves room for neither the
+        # -- continuation separator nor the minimum one-unit body fragment.
+        header_a = "A" * 29
+        header_b = "B" * 29
         table_html = (
             "<table><thead>"
             f"<tr><th>{header_a}</th></tr>"

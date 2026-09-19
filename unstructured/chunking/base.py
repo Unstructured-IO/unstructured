@@ -1642,7 +1642,7 @@ class _HtmlTableSplitter:
         # -- or all repeated rows together leave no room for continuation content.
         return (
             self._max_header_row_len <= (self._opts.hard_max + 1) // 2
-            and self._header_text_len < self._opts.hard_max
+            and self._header_text_len + 2 <= self._opts.hard_max
         )
 
     @cached_property
