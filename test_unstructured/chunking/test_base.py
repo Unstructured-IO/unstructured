@@ -2302,6 +2302,24 @@ class Describe_TableChunker:
         assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
         assert all(len(c.text) <= 100 for c in repeated)
 
+    @pytest.mark.parametrize("rowspan", ["4", "0"])
+    def and_it_keeps_a_fitting_header_prefix_out_of_the_reduced_first_fragment(self, rowspan: str):
+        table_html = (
+            f'<table><tbody><tr><th rowspan="{rowspan}">H</th><th>{"X" * 23}</th></tr>'
+            f"<tr><th>{'G' * 25}</th></tr>"
+            f"<tr><td>{'a' * 30}</td></tr><tr><td>{'b' * 30}</td></tr>"
+            "</tbody></table>"
+        )
+        table_text = " ".join(("H", "X" * 23, "G" * 25, "a" * 30, "b" * 30))
+
+        repeated = self._table_chunks(table_text, table_html, 100, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 100, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
+
     def and_it_keeps_repetition_when_a_rowspan_bound_header_group_fits_the_first_chunk(self):
         header_a = "H"
         header_b = "A" * 22

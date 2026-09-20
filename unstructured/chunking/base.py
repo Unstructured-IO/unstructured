@@ -1510,7 +1510,7 @@ class _HtmlTableSplitter:
 
     def _iter_row_splits(self, row: HtmlRow, maxlen: int) -> Iterator[TextAndHtml]:
         """Split oversized row into (text, html) pairs containing as many cells as will fit."""
-        accum = _CellAccumulator(maxlen=maxlen)
+        accum = _CellAccumulator(maxlen=maxlen, measure=self._opts.measure)
 
         for cell in row.iter_cells():
             # -- if cell won't fit, flush and check again --
@@ -1674,6 +1674,11 @@ class _HtmlTableSplitter:
         maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
         if self._opts.use_token_counting and maxlen > 11:
             return False
+
+        if self._header_text_len > maxlen and any(
+            idx < self._header_row_count for idx in self._reduced_budget_header_row_idxs
+        ):
+            return True
 
         for idx, row in enumerate(self._table_element.iter_rows()):
             # -- Header rows only need scanning when the real packing decisions can route their
@@ -2096,8 +2101,9 @@ class _CellAccumulator:
     subtable composed of all those rows that fit in the window.
     """
 
-    def __init__(self, maxlen: int):
+    def __init__(self, maxlen: int, measure: Callable[[str], int] = len):
         self._maxlen = maxlen
+        self._measure = measure
         self._cells: list[HtmlCell] = []
 
     def add_cell(self, cell: HtmlCell) -> None:
@@ -2116,7 +2122,10 @@ class _CellAccumulator:
 
     def will_fit(self, cell: HtmlCell) -> bool:
         """True when `cell` will fit within remaining space left by accummulated cells."""
-        return self._remaining_space >= len(cell.text)
+        texts = [c.text for c in self._cells if c.text]
+        if cell.text:
+            texts.append(cell.text)
+        return self._measure(" ".join(texts)) <= self._maxlen
 
     def _iter_cell_texts(self) -> Iterator[str]:
         """Generate contents of each accumulated cell as a separate string.
