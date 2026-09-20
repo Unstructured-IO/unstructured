@@ -1680,6 +1680,13 @@ class _HtmlTableSplitter:
             # -- group into a reduced-budget row/cell split. All body rows are scanned.
             if idx < self._header_row_count and idx not in self._reduced_budget_header_row_idxs:
                 continue
+            if idx < self._header_row_count:
+                row_text_len = self._opts.measure(" ".join(row.iter_cell_texts()))
+                if row_text_len <= self._opts.hard_max and row_text_len > maxlen:
+                    # -- The oversized-group splitter reserves header room for every fragment.
+                    # -- Avoid degrading a size-compliant header row for headers the first
+                    # -- fragment would not even carry. --
+                    return True
             for cell in row.iter_cells():
                 if self._opts.measure(cell.text) <= maxlen:
                     continue
@@ -1687,10 +1694,13 @@ class _HtmlTableSplitter:
                     if maxlen <= 11:
                         return True
                     continue
+                probe = (
+                    f"{chr(39)} {chr(39)}" if any(c.isspace() for c in cell.text) else chr(39) * 2
+                )
                 two_char_fragment_len = len(
                     # -- a quote has the longest `html.escape()` spelling of any character;
-                    # -- require capacity for two so splitting cannot degrade to one character.
-                    f"<table><tr>{_format_td(chr(39) * 2, cell.colspan, rowspan=1)}</tr></table>"
+                    # -- include a normalized separator when the actual cell has whitespace. --
+                    f"<table><tr>{_format_td(probe, cell.colspan, rowspan=1)}</tr></table>"
                 )
                 if maxlen < two_char_fragment_len:
                     return True

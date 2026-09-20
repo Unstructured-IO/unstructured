@@ -2216,6 +2216,70 @@ class Describe_TableChunker:
         )
         assert all(c.text.count("'") >= 2 for c in chunks[1:])
 
+    def and_it_accounts_for_whitespace_between_maximally_escaped_characters(self):
+        header_a = "A" * 59
+        header_b = "B" * 54
+        body = ("' " * 1_000).strip()
+        table_html = (
+            "<table><thead>"
+            f"<tr><th>{header_a}</th></tr><tr><th>{header_b}</th></tr>"
+            f"</thead><tbody><tr><td>{html_stdlib.escape(body)}</td></tr></tbody></table>"
+        )
+        table_text = f"{header_a} {header_b} {body}"
+
+        repeated = self._table_chunks(table_text, table_html, 160, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 160, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
+
+    def and_it_does_not_degrade_a_first_fragment_rowspan_for_the_continuation_budget(self):
+        header_a = "H" * 20
+        header_b = "X" * 15
+        header_c = "G" * 30
+        table_html = (
+            f'<table><tbody><tr><th rowspan="6">{header_a}</th><th>{header_b}</th></tr>'
+            f"<tr><th>{header_c}</th></tr>"
+            + "".join(f"<tr><td>{letter * 10}</td></tr>" for letter in "abc")
+            + "<tr><td>VALUE</td><td>Q</td></tr></tbody></table>"
+        )
+        table_text = " ".join(
+            (header_a, header_b, header_c, "a" * 10, "b" * 10, "c" * 10, "VALUE", "Q")
+        )
+
+        repeated = self._table_chunks(table_text, table_html, 100, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 100, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
+        assert 'rowspan="5"' in (repeated[0].metadata.text_as_html or "")
+
+    def and_it_does_not_degrade_a_bound_header_row_for_the_continuation_budget(self):
+        header_a = "H" * 5
+        header_b = "X" * 5
+        header_c = "G" * 95
+        table_html = (
+            f'<table><tbody><tr><th rowspan="6">{header_a}</th><th>{header_b}</th></tr>'
+            f"<tr><th>{header_c}</th></tr>"
+            + "".join(f"<tr><td>{letter * 30}</td></tr>" for letter in "abc")
+            + "<tr><td>VALUE</td><td>Q</td></tr></tbody></table>"
+        )
+        table_text = " ".join(
+            (header_a, header_b, header_c, "a" * 30, "b" * 30, "c" * 30, "VALUE", "Q")
+        )
+
+        repeated = self._table_chunks(table_text, table_html, 200, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 200, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
+
     def and_it_keeps_repetition_when_a_rowspan_bound_header_group_fits_the_first_chunk(self):
         header_a = "H"
         header_b = "A" * 22
@@ -2754,6 +2818,28 @@ class Describe_TableChunker:
         assert reconstructed.xpath("./tr[1]/td/text()") == ["Body 1", "Alpha"]
         assert reconstructed.xpath("./tr[1]/th") == []
 
+    def and_it_preserves_original_header_span_geometry_when_reconstructing_wrapped_text(self):
+        table_html = (
+            "<table><tbody>"
+            '<tr><th rowspan="3">foo <br/>bar</th><th>Quarter</th></tr>'
+            "<tr><td>Northwest Territory</td><td>Q1</td></tr>"
+            "<tr><td>Southwest Territory</td><td>Q2</td></tr>"
+            "<tr><td>Midwest Territory</td><td>Q3</td></tr>"
+            "</tbody></table>"
+        )
+        chunks = self._table_chunks(
+            "foo bar Quarter Northwest Territory Q1 Southwest Territory Q2 Midwest Territory Q3",
+            table_html,
+            80,
+            repeat_table_headers=True,
+        )
+
+        [table] = reconstruct_table_from_chunks(chunks)
+        reconstructed = fragment_fromstring(table.metadata.text_as_html or "")
+
+        assert table.text.count("foo bar") == 1
+        assert reconstructed.xpath("./thead/tr[1]/th[1]/@rowspan") == ["3"]
+
     def and_it_preserves_header_attributes_in_reconstructed_canonical_thead(self):
         table_html = (
             "<table>"
@@ -2798,10 +2884,9 @@ class Describe_TableChunker:
         assert reconstructed.xpath("./thead/tr[1]/th[1]/@abbr") == ["region-code"]
         assert reconstructed.xpath("./thead/tr[1]/th[2]/@colspan") == ["2"]
         assert reconstructed.xpath("./thead/tr[2]/th[1]/@headers") == ["sales-group"]
-        # -- "Revenue"'s rowspan="2" reaches one row past the header block into the first body
-        # -- row (Northwest's); only 2 header rows are ever carried into a repeated copy, so that
-        # -- reach is clipped away rather than claiming an arbitrary continuation's body row --
-        assert reconstructed.xpath("./thead/tr[2]/th[2]/@rowspan") == []
+        # -- Reconstruction restores the original header geometry, so Revenue again reaches the
+        # -- original Northwest row rather than retaining the continuation copy's clipped span. --
+        assert reconstructed.xpath("./thead/tr[2]/th[2]/@rowspan") == ["2"]
         assert reconstructed.xpath("./tr[1]/th") == []
         assert self._row_texts(table.metadata.text_as_html) == expected_rows
 
