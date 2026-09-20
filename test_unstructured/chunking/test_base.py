@@ -2024,6 +2024,35 @@ class Describe_TableChunker:
                 )
             ).endswith(body)
 
+    def and_it_does_not_repeat_sparse_headers_with_pathologically_large_markup(self):
+        body_rows = "".join(f"<tr><td>{'x' * 450}</td></tr>" for _ in range(20))
+        table_html = (
+            "<table><thead><tr><th>H</th>"
+            f"{'<th/>' * 1_000}"
+            f"</tr></thead><tbody>{body_rows}</tbody></table>"
+        )
+        table_text = "H " + " ".join("x" * 450 for _ in range(20))
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=500,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=500,
+            repeat_table_headers=False,
+        )
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+            0
+        ] * len(repeated_header_chunks)
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"

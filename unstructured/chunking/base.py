@@ -1645,11 +1645,13 @@ class _HtmlTableSplitter:
             return False
 
         # -- guard against pathological headers where one row consumes more than half the window,
-        # -- all repeated rows together leave less than a quarter for continuation content, or
-        # -- the remaining window would force an oversized body cell into one-unit fragments.
+        # -- all repeated rows together leave less than a quarter for continuation content, the
+        # -- serialized header markup is disproportionate to the window, or the remaining window
+        # -- would force an oversized body cell into one-unit fragments.
         return (
             self._max_header_row_len <= (self._opts.hard_max + 1) // 2
             and self._header_text_len <= (3 * self._opts.hard_max) // 4
+            and self._opts.measure(self._header_rows_html) <= 4 * self._opts.hard_max
             and not self._would_starve_oversized_body_cell
         )
 
