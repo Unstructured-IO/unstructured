@@ -3366,6 +3366,32 @@ class Describe_HtmlTableSplitter:
         assert splitter._would_starve_oversized_body_cell is True
         assert splitter.carried_over_header_row_count == 0
 
+    def it_only_measures_the_header_prefix_when_materializing_incoming_spans(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        n_body_rows = 100
+        html_table = HtmlTable.from_html_text(
+            f'<table><tr><th rowspan="{n_body_rows + 1}">H</th></tr>'
+            + "".join(
+                f'<tr><td rowspan="{n_body_rows - idx}">{"A" * 95}</td></tr>'
+                for idx in range(n_body_rows)
+            )
+            + "</table>"
+        )
+        measured_texts: list[str] = []
+
+        def measure(_self: ChunkingOptions, text: str) -> int:
+            measured_texts.append(text)
+            return len(text)
+
+        monkeypatch.setattr(ChunkingOptions, "measure", measure)
+        splitter = _HtmlTableSplitter(
+            html_table, ChunkingOptions(max_characters=500), header_row_count=1
+        )
+
+        assert splitter._materialized_row_text_lens == (1,)
+        assert measured_texts == ["H"]
+
     def it_splits_an_HTML_table_on_whole_row_boundaries_when_possible(self):
         opts = ChunkingOptions(max_characters=(40))
         html_table = HtmlTable.from_html_text(

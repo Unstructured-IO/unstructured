@@ -1716,13 +1716,17 @@ class _HtmlTableSplitter:
 
     @cached_property
     def _materialized_row_text_lens(self) -> tuple[int, ...]:
-        """Per-row size including text from incoming rowspans materialized at a split."""
+        """Header-row sizes including text from incoming rowspans materialized at a split."""
         measured: list[int] = []
 
         for group, _bounds, _is_clipped in self._iter_rowspan_bound_row_groups():
+            if len(measured) >= self._header_row_count:
+                break
             active: list[tuple[int, str]] = []
             n = len(group)
             for idx, row in enumerate(group):
+                if len(measured) >= self._header_row_count:
+                    break
                 active = [(reach, text) for reach, text in active if reach >= idx]
                 texts = [text for _reach, text in active if text]
                 texts.extend(row.iter_cell_texts())
