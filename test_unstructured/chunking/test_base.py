@@ -2053,6 +2053,41 @@ class Describe_TableChunker:
             0
         ] * len(repeated_header_chunks)
 
+    def and_it_does_not_starve_an_oversized_header_cell_bound_to_body_rows(self):
+        header_a = "H" * 58
+        header_b = "G" * 31
+        body_a = "a" * 29
+        body_b = "b" * 29
+        table_html = (
+            "<table><thead>"
+            f'<tr><th rowspan="4">{header_a}</th></tr>'
+            f"<tr><th>{header_b}</th></tr>"
+            "</thead><tbody>"
+            f"<tr><td>{body_a}</td></tr><tr><td>{body_b}</td></tr>"
+            "</tbody></table>"
+        )
+        table_text = " ".join((header_a, header_b, body_a, body_b))
+
+        repeated_header_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=120,
+            repeat_table_headers=True,
+        )
+        baseline_chunks = self._table_chunks(
+            table_text=table_text,
+            table_html=table_html,
+            max_characters=120,
+            repeat_table_headers=False,
+        )
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+            (c.text, c.metadata.text_as_html) for c in baseline_chunks
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+            0
+        ] * len(repeated_header_chunks)
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"

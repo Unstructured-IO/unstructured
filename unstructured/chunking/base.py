@@ -1659,13 +1659,20 @@ class _HtmlTableSplitter:
     def _would_starve_oversized_body_cell(self) -> bool:
         """True when repetition would leave no usable split budget for an oversized body cell."""
         maxlen = max(1, self._opts.hard_max - self._header_text_len - 1)
-        rows = tuple(self._table_element.iter_rows())[self._header_row_count :]
-        for row in rows:
+        if self._opts.use_token_counting and maxlen > 11:
+            return False
+
+        for idx, row in enumerate(self._table_element.iter_rows()):
+            # -- A singleton header row is emitted in the first full-sized chunk. A header row
+            # -- whose rowspan binds later rows can enter the reduced-budget split path, so scan
+            # -- it along with every body row.
+            if idx < self._header_row_count and row.max_rowspan == 1:
+                continue
             for cell in row.iter_cells():
                 if self._opts.measure(cell.text) <= maxlen:
                     continue
                 if self._opts.use_token_counting:
-                    if maxlen <= 10:
+                    if maxlen <= 11:
                         return True
                     continue
                 empty_fragment_len = len(

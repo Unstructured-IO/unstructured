@@ -169,11 +169,15 @@ class HtmlTable:
         header_row_idxs = set()
         for idx, tr in enumerate(rows):
             cells = cast("list[HtmlElement]", tr.xpath("./th | ./td"))
-            has_th = any(cell.tag == "th" for cell in cells)
-            has_nonempty_td = any(
-                cell.tag == "td" and bool(cell.text_content().strip()) for cell in cells
+            first_th_idx = next((i for i, cell in enumerate(cells) if cell.tag == "th"), None)
+            has_blank_corner = first_th_idx is not None and all(
+                cell.tag == "td" and not cell.text_content().strip()
+                for cell in cells[:first_th_idx]
             )
-            if tr.getparent().tag == "thead" or (has_th and not has_nonempty_td):
+            has_only_th_after_corner = first_th_idx is not None and all(
+                cell.tag == "th" for cell in cells[first_th_idx:]
+            )
+            if tr.getparent().tag == "thead" or (has_blank_corner and has_only_th_after_corner):
                 header_row_idxs.add(idx)
         # -- row-group identity is each row's parent element (a `<thead>`/`<tbody>`/`<tfoot>`, or
         # -- the `<table>` itself); captured now since it survives `.drop_tag()` below --
@@ -283,7 +287,7 @@ class HtmlRow:
 
     @property
     def is_header(self) -> bool:
-        """True for a `<thead>` row or a row with `<th>` cells and no non-empty `<td>` cells."""
+        """True for a `<thead>` row or an all-`<th>` row after optional blank corner cells."""
         return self._is_header
 
     @property

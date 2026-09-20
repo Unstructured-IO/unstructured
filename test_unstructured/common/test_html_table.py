@@ -294,13 +294,21 @@ class DescribeHtmlTable:
             "  <tbody>"
             "    <tr><th>all-th-head-a</th><th>all-th-head-b</th></tr>"
             "    <tr><td></td><th>head-after-empty-corner</th></tr>"
+            "    <tr><th>sparse-row-head</th><td></td></tr>"
             "    <tr><th>row-head</th><td>body-value</td></tr>"
             "    <tr><td>body</td></tr>"
             "  </tbody>"
             "</table>"
         )
 
-        assert [row.is_header for row in html_table.iter_rows()] == [True, True, True, False, False]
+        assert [row.is_header for row in html_table.iter_rows()] == [
+            True,
+            True,
+            True,
+            False,
+            False,
+            False,
+        ]
 
     def and_it_preserves_source_row_html_before_compactification(self):
         html_table = HtmlTable.from_html_text(
