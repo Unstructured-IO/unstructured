@@ -2255,6 +2255,65 @@ class Describe_TableChunker:
         ]
         assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
 
+    def and_it_retains_nonadjacent_incoming_rowspans_across_an_empty_covered_row(self):
+        left = "A" * 20
+        right = "B" * 20
+        middle = "c" * 40
+        last = "z" * 30
+        table_html = (
+            "<table><tbody>"
+            f'<tr><th rowspan="5">{left}</th><th>x</th><th rowspan="4">{right}</th></tr>'
+            f'<tr><td rowspan="2">{middle}</td></tr>'
+            "<tr></tr>"
+            "<tr><td>VALUE</td></tr>"
+            f"<tr><td>{last}</td><td/></tr>"
+            "</tbody></table>"
+        )
+        # -- Repetition leaves a 56-character continuation budget, forcing the middle row into
+        # -- cell splitting and leaving only the non-adjacent incoming spans active on row 3. --
+        chunks = chunk_by_title(
+            [
+                Table(
+                    " ".join((left, "x", right, middle, "VALUE", last)),
+                    metadata=ElementMetadata(text_as_html=table_html),
+                )
+            ],
+            max_characters=100,
+            repeat_table_headers=True,
+        )
+
+        expanded_rows: list[list[str]] = []
+        for chunk in chunks:
+            chunk_html = chunk.metadata.text_as_html
+            assert chunk_html is not None
+            table = fragment_fromstring(chunk_html)
+            active: dict[int, tuple[str, int]] = {}
+            for row in table.xpath("./tr | ./thead/tr | ./tbody/tr"):
+                values: dict[int, str] = {
+                    col: text for col, (text, remaining) in active.items() if remaining > 0
+                }
+                next_active = {
+                    col: (text, remaining - 1)
+                    for col, (text, remaining) in active.items()
+                    if remaining > 1
+                }
+                col = 0
+                for cell in row.xpath("./td | ./th"):
+                    while col in values:
+                        col += 1
+                    text = " ".join(cell.text_content().split())
+                    colspan = int(cell.get("colspan", "1"))
+                    rowspan = int(cell.get("rowspan", "1"))
+                    values[col] = text
+                    if rowspan > 1:
+                        next_active[col] = (text, rowspan - 1)
+                    col += colspan
+                active = next_active
+                expanded_rows.append([values[idx] for idx in sorted(values)])
+
+        assert [left, "VALUE", right] in expanded_rows
+        assert all(len(chunk.text) <= 100 for chunk in chunks)
+
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
             "<table>\n"

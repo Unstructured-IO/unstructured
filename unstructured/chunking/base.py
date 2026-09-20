@@ -1417,7 +1417,7 @@ class _HtmlTableSplitter:
             own_idx = 0
             col = 0
             while True:
-                if next_span is not None and next_span.col == col:
+                if next_span is not None and next_span.col <= col:
                     if materialize:
                         remaining = next_span.reach_idx - idx + 1
                         cells.append(_format_td(next_span.text, next_span.colspan, remaining))
@@ -1440,6 +1440,17 @@ class _HtmlTableSplitter:
                     if cell_reach > idx:
                         new_active.append(_OpenSpan(col, cell.colspan, cell.text, cell_reach))
                     col += cell.colspan
+                    continue
+                if next_span is not None:
+                    # -- A row can have no originating cell before a later incoming span (for
+                    # -- example, an empty row fully covered by non-adjacent rowspans). Advance
+                    # -- across that gap rather than dropping the still-live span. When this row
+                    # -- is materialized in a new fragment, emit an empty cell so the later span
+                    # -- retains its original column. --
+                    gap = next_span.col - col
+                    if materialize and gap > 0:
+                        cells.append(_format_td("", colspan=gap, rowspan=1))
+                    col = next_span.col
                     continue
                 break
             return cells, texts, new_active
