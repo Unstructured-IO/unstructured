@@ -1675,10 +1675,10 @@ class _HtmlTableSplitter:
                     if maxlen <= 11:
                         return True
                     continue
-                empty_fragment_len = len(
-                    f"<table><tr>{_format_td('', cell.colspan, rowspan=1)}</tr></table>"
+                one_char_fragment_len = len(
+                    f"<table><tr>{_format_td('x', cell.colspan, rowspan=1)}</tr></table>"
                 )
-                if maxlen <= empty_fragment_len:
+                if maxlen <= one_char_fragment_len:
                     return True
         return False
 

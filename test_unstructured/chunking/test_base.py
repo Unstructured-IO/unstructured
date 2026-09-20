@@ -1985,6 +1985,8 @@ class Describe_TableChunker:
         for max_characters, header_a, header_b in (
             (500, "A" * 248, "B" * 249),
             (100, "A" * 37, "B" * 37),
+            (100, "A" * 33, "B" * 33),
+            (120, "A" * 42, "B" * 42),
             (60, "A" * 25, "B" * 25),
         ):
             table_html = (
