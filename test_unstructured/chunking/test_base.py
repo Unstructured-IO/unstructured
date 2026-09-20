@@ -2280,6 +2280,28 @@ class Describe_TableChunker:
         ]
         assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
 
+    def and_it_accounts_for_incoming_span_text_in_the_header_split_preflight(self):
+        header_a = "H" * 20
+        header_b = "X" * 5
+        header_c = "G" * 30
+        body_rows = [letter * 20 for letter in "abcd"]
+        table_html = (
+            f'<table><tbody><tr><th rowspan="6">{header_a}</th><th>{header_b}</th></tr>'
+            f"<tr><th>{header_c}</th></tr>"
+            + "".join(f"<tr><td>{text}</td></tr>" for text in body_rows)
+            + "</tbody></table>"
+        )
+        table_text = " ".join((header_a, header_b, header_c, *body_rows))
+
+        repeated = self._table_chunks(table_text, table_html, 100, repeat_table_headers=True)
+        baseline = self._table_chunks(table_text, table_html, 100, repeat_table_headers=False)
+
+        assert [(c.text, c.metadata.text_as_html) for c in repeated] == [
+            (c.text, c.metadata.text_as_html) for c in baseline
+        ]
+        assert [c.metadata.num_carried_over_header_rows for c in repeated] == [0] * len(repeated)
+        assert all(len(c.text) <= 100 for c in repeated)
+
     def and_it_keeps_repetition_when_a_rowspan_bound_header_group_fits_the_first_chunk(self):
         header_a = "H"
         header_b = "A" * 22

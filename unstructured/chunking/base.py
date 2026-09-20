@@ -1681,7 +1681,7 @@ class _HtmlTableSplitter:
             if idx < self._header_row_count and idx not in self._reduced_budget_header_row_idxs:
                 continue
             if idx < self._header_row_count:
-                row_text_len = self._opts.measure(" ".join(row.iter_cell_texts()))
+                row_text_len = self._materialized_row_text_lens[idx]
                 if row_text_len <= self._opts.hard_max and row_text_len > maxlen:
                     # -- The oversized-group splitter reserves header room for every fragment.
                     # -- Avoid degrading a size-compliant header row for headers the first
@@ -1705,6 +1705,27 @@ class _HtmlTableSplitter:
                 if maxlen < two_char_fragment_len:
                     return True
         return False
+
+    @cached_property
+    def _materialized_row_text_lens(self) -> tuple[int, ...]:
+        """Per-row size including text from incoming rowspans materialized at a split."""
+        measured: list[int] = []
+
+        for group, _bounds, _is_clipped in self._iter_rowspan_bound_row_groups():
+            active: list[tuple[int, str]] = []
+            n = len(group)
+            for idx, row in enumerate(group):
+                active = [(reach, text) for reach, text in active if reach >= idx]
+                texts = [text for _reach, text in active if text]
+                texts.extend(row.iter_cell_texts())
+                measured.append(self._opts.measure(" ".join(texts)))
+
+                for cell in row.iter_cells():
+                    reach = n - 1 if cell.rowspan is None else min(idx + cell.rowspan - 1, n - 1)
+                    if reach > idx:
+                        active.append((reach, cell.text))
+
+        return tuple(measured)
 
     @cached_property
     def _reduced_budget_header_row_idxs(self) -> set[int]:
