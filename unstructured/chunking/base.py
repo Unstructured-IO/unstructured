@@ -1491,7 +1491,9 @@ class _HtmlTableSplitter:
                 tr = _HtmlTableSplitter._parse_row_fragment(f"<tr>{''.join(mat_cells)}</tr>")
                 bounded_row = HtmlRow(tr).row_clipped_to_rows(1)
                 yield from self._iter_row_splits(bounded_row, maxlen=maxlen)
-                active = []
+                # -- retain coverage anchored in an earlier row; only spans declared by the row
+                # -- being degraded to cell-level fragments are discarded --
+                active = [span for span in active if span.reach_idx > idx]
 
         yield from flush_fragment()
 
@@ -1676,7 +1678,8 @@ class _HtmlTableSplitter:
                         return True
                     continue
                 one_char_fragment_len = len(
-                    f"<table><tr>{_format_td('x', cell.colspan, rowspan=1)}</tr></table>"
+                    # -- a quote has the longest `html.escape()` spelling of any character --
+                    f"<table><tr>{_format_td(chr(39), cell.colspan, rowspan=1)}</tr></table>"
                 )
                 if maxlen <= one_char_fragment_len:
                     return True

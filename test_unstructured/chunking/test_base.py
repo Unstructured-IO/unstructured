@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import html as html_stdlib
 import io
 import logging
 from typing import Any, Sequence
@@ -2055,6 +2056,38 @@ class Describe_TableChunker:
             0
         ] * len(repeated_header_chunks)
 
+    def and_it_reserves_space_for_the_longest_single_character_html_escape(self):
+        header_a = "A" * 55
+        header_b = "B" * 56
+        for body_char in "&<'\"":
+            body = body_char * 1_000
+            table_html = (
+                "<table><thead>"
+                f"<tr><th>{header_a}</th></tr><tr><th>{header_b}</th></tr>"
+                f"</thead><tbody><tr><td>{html_stdlib.escape(body)}</td></tr></tbody></table>"
+            )
+            table_text = f"{header_a} {header_b} {body}"
+
+            repeated_header_chunks = self._table_chunks(
+                table_text=table_text,
+                table_html=table_html,
+                max_characters=150,
+                repeat_table_headers=True,
+            )
+            baseline_chunks = self._table_chunks(
+                table_text=table_text,
+                table_html=table_html,
+                max_characters=150,
+                repeat_table_headers=False,
+            )
+
+            assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+                (c.text, c.metadata.text_as_html) for c in baseline_chunks
+            ]
+            assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+                0
+            ] * len(repeated_header_chunks)
+
     def and_it_does_not_starve_an_oversized_header_cell_bound_to_body_rows(self):
         header_a = "H" * 58
         header_b = "G" * 31
@@ -3832,6 +3865,31 @@ class Describe_HtmlTableSplitter:
 
         assert len(chunks) > 1
         assert all(len(chunk.text) <= 60 for chunk in chunks)
+
+    def and_it_retains_incoming_rowspan_coverage_after_cell_level_splitting(self):
+        html = (
+            "<table><tbody>"
+            '<tr><th rowspan="4">HHHHHHHHHHHHHHHHHHHH</th><th>x</th></tr>'
+            f"<tr><td>{'a' * 30}</td></tr>"
+            "<tr><td>VALUE</td></tr>"
+            f"<tr><td>{'c' * 30}</td></tr>"
+            "</tbody></table>"
+        )
+        table = Table(
+            f"{'H' * 20} x {'a' * 30} VALUE {'c' * 30}",
+            metadata=ElementMetadata(text_as_html=html),
+        )
+
+        chunks = chunk_by_title([table], max_characters=60, repeat_table_headers=True)
+
+        assert all(len(chunk.text) <= 60 for chunk in chunks)
+        value_chunk = next(chunk for chunk in chunks if "VALUE" in chunk.text)
+        value_html = fragment_fromstring(value_chunk.metadata.text_as_html or "")
+        value_row = next(row for row in value_html.xpath(".//tr") if "VALUE" in row.text_content())
+        assert [cell.text_content() for cell in value_row.xpath("./td | ./th")] == [
+            "HHHHHHHHHHHHHHHHHHHH",
+            "VALUE",
+        ]
 
     def and_it_bounds_a_positive_rowspan_whose_own_row_is_oversized_even_alone(self):
         """`Region`'s `rowspan="3"` exactly reaches the table's last row, so it opens a 3-row
