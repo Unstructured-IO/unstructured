@@ -1639,10 +1639,10 @@ class _HtmlTableSplitter:
             return False
 
         # -- guard against pathological headers where one row consumes more than half the window
-        # -- or all repeated rows together leave no room for continuation content.
+        # -- or all repeated rows together leave less than a quarter for continuation content.
         return (
             self._max_header_row_len <= (self._opts.hard_max + 1) // 2
-            and self._header_text_len + 2 <= self._opts.hard_max
+            and self._header_text_len <= (3 * self._opts.hard_max) // 4
         )
 
     @cached_property

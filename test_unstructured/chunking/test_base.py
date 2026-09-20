@@ -1980,41 +1980,48 @@ class Describe_TableChunker:
         ]
 
     def and_it_does_not_repeat_headers_whose_combined_text_is_pathologically_large(self):
-        # -- 29 + one joining space + 29 = hard_max - 1, which leaves room for neither the
-        # -- continuation separator nor the minimum one-unit body fragment.
-        header_a = "A" * 29
-        header_b = "B" * 29
-        table_html = (
-            "<table><thead>"
-            f"<tr><th>{header_a}</th></tr>"
-            f"<tr><th>{header_b}</th></tr>"
-            "</thead><tbody>"
-            "<tr><td>Body chunk one text</td></tr>"
-            "<tr><td>Body chunk two text</td></tr>"
-            "<tr><td>Body chunk three text</td></tr>"
-            "</tbody></table>"
-        )
-        table_text = (
-            f"{header_a}\n{header_b}\n"
-            "Body chunk one text\nBody chunk two text\nBody chunk three text"
-        )
+        body = "x" * 10_000
 
-        repeated_header_chunks = self._table_chunks(
-            table_text=table_text,
-            table_html=table_html,
-            max_characters=60,
-            repeat_table_headers=True,
-        )
-        baseline_chunks = self._table_chunks(
-            table_text=table_text,
-            table_html=table_html,
-            max_characters=60,
-            repeat_table_headers=False,
-        )
+        for max_characters, header_a, header_b in (
+            (500, "A" * 248, "B" * 249),
+            (60, "A" * 29, "B" * 29),
+        ):
+            table_html = (
+                "<table><thead>"
+                f"<tr><th>{header_a}</th></tr>"
+                f"<tr><th>{header_b}</th></tr>"
+                "</thead><tbody>"
+                f"<tr><td>{body}</td></tr>"
+                "</tbody></table>"
+            )
+            table_text = f"{header_a}\n{header_b}\n{body}"
 
-        assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
-            (c.text, c.metadata.text_as_html) for c in baseline_chunks
-        ]
+            repeated_header_chunks = self._table_chunks(
+                table_text=table_text,
+                table_html=table_html,
+                max_characters=max_characters,
+                repeat_table_headers=True,
+            )
+            baseline_chunks = self._table_chunks(
+                table_text=table_text,
+                table_html=table_html,
+                max_characters=max_characters,
+                repeat_table_headers=False,
+            )
+
+            assert [(c.text, c.metadata.text_as_html) for c in repeated_header_chunks] == [
+                (c.text, c.metadata.text_as_html) for c in baseline_chunks
+            ]
+            assert [c.metadata.num_carried_over_header_rows for c in repeated_header_chunks] == [
+                0
+            ] * len(repeated_header_chunks)
+            assert "".join(
+                "".join(table.xpath(".//td//text()"))
+                for table in (
+                    fragment_fromstring(c.metadata.text_as_html or "")
+                    for c in repeated_header_chunks
+                )
+            ).endswith(body)
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
